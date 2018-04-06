@@ -1,0 +1,27 @@
+
+func min(int a, int b) -> int
+{
+    return (a < b) ? a : b;
+}
+
+func max(int a, int b) -> int
+{
+    return (a > b) ? a : b;
+}
+
+func selector(int a, int b, comp(int, int) -> int) -> int
+{
+    return print(comp(a, b));
+}
+
+func select(int a, int b)
+{
+    return selector(a, b, min);
+}
+
+func main()
+{
+    return select(10, 12);
+}
+
+

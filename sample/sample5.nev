@@ -1,0 +1,13 @@
+
+
+func min(int a, int b) -> int
+{
+    return (a < b) ? a : b;
+}
+
+func main()
+{
+    return min(a, 20);
+}
+
+

@@ -1,0 +1,33 @@
+/**
+ * comments
+ */
+func counter(int by) -> () -> int
+{
+    int a = 0;
+
+    inc() -> int
+    {
+        a = a + by;
+        return a;
+    }
+
+    return inc;
+}
+
+func main()
+{
+    cnt1() -> int;
+    cnt10() -> int;
+
+    cnt1 = counter(1);
+    cnt10 = counter(10);
+
+    print(cnt1());
+    print(cnt1());
+
+    print(cnt10());
+    print(cnt10());
+
+    return 0;
+}
+

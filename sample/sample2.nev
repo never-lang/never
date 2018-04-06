@@ -1,0 +1,22 @@
+
+func min(int a, int b) -> int
+{
+    return (a < b) ? a : b;
+}
+
+func twice(single_func(int, int) -> int) -> (int, int) -> int
+{
+    func twice_func(int a, int b) -> int
+    {
+        return 2 * single_func(a, b);
+    }
+
+    return twice_func;
+}
+
+func main()
+{
+    return print(twice_min(12, 15));
+}
+
+

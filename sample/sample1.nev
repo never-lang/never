@@ -1,0 +1,21 @@
+
+func min(int a, int b) -> int
+{
+    return (a < b) ? a : b;
+}
+
+func minCoeff(int coeff) -> (int, int) -> int
+{
+    func min(int a, int b) -> int
+    {
+        return (a < b) ? coeff * a : coeff * b;
+    }
+
+    return min;
+}
+
+func main()
+{
+    return print(my_func(10, 15));
+}
+
