@@ -45,14 +45,14 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TOK_LTE = 258,
-    TOK_GTE = 259,
-    TOK_ID = 260,
-    TOK_NUM = 261,
-    TOK_INT = 262,
-    TOK_FUNC = 263,
-    TOK_RET = 264,
-    TOK_RETURN = 265,
+    TOK_ID = 258,
+    TOK_NUM = 259,
+    TOK_INT = 260,
+    TOK_FUNC = 261,
+    TOK_RET = 262,
+    TOK_RETURN = 263,
+    TOK_LTE = 264,
+    TOK_GTE = 265,
     TOK_EQ = 266,
     NEG = 267
   };
