@@ -45,25 +45,22 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TOK_ID = 258,
-    TOK_NUM = 259,
-    TOK_INT = 260,
-    TOK_FUNC = 261,
-    TOK_RET = 262,
-    TOK_RETURN = 263,
-    NEG = 264
+    TOK_LTE = 258,
+    TOK_GTE = 259,
+    TOK_ID = 260,
+    TOK_NUM = 261,
+    TOK_INT = 262,
+    TOK_FUNC = 263,
+    TOK_RET = 264,
+    TOK_RETURN = 265,
+    TOK_EQ = 266,
+    NEG = 267
   };
 #endif
 
 /* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
-#endif
 
 
-extern YYSTYPE yylval;
 
 int yyparse (void);
 

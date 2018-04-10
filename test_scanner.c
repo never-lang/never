@@ -1,8 +1,13 @@
 #include <stdio.h>
+#include "types.h"
 #include "scanner.h"
+
+extern FILE * yyin;
 
 int main(int argc, char * argv[])
 {
+    token tokp;
+
     argv++;
     argc--;
 
@@ -15,7 +20,7 @@ int main(int argc, char * argv[])
         yyin = stdin;
     }
 
-    yylex();
+    lex_scan(&tokp);
 
     return 0;
 }

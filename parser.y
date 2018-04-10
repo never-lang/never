@@ -1,7 +1,13 @@
 
 %{
 #include <stdio.h>
+#include "types.h"
 #include "scanner.h"
+
+int yylex(token * tokp)
+{
+    return lex_scan(tokp);
+}
 
 int yyerror(char * str)
 {
@@ -9,19 +15,22 @@ int yyerror(char * str)
     return 0;
 }
 %}
+%pure-parser
 
+%token TOK_LTE
+%token TOK_GTE
 %token TOK_ID
 %token TOK_NUM
-%token TOK_INT
+%token <val.int_value> TOK_INT
 %token TOK_FUNC
 %token TOK_RET /* -> */
 %token TOK_RETURN
 
+%right '?' ':'
+%left '<' '>' TOK_LTE TOK_GTE TOK_EQ
 %left '+' '-'
 %left '*' '/'
 %precedence NEG
-%right '?' ':'
-%left '<' '>' '='
 
 %start never
 
@@ -35,8 +44,10 @@ expr: expr '-' expr;
 expr: expr '*' expr;
 expr: expr '/' expr;
 expr: expr '<' expr;
+expr: expr TOK_LTE expr;
 expr: expr '>' expr;
-expr: expr '=' expr;
+expr: expr TOK_GTE expr;
+expr: expr TOK_EQ expr;
 expr: '(' expr ')';
 expr: expr '?' expr ':' expr;
 expr: func;

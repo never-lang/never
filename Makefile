@@ -4,7 +4,6 @@ LDFLAGS=
 LEX=flex
 BISON=bison
 BFLAGS=--report=solved --defines
-LFLAGS=--header-file=scanner.h
 
 test_object: object.o
 

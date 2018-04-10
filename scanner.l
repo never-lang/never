@@ -4,11 +4,16 @@
 %{
 #include <stdio.h>
 #include "parser.h"
+#include "types.h"
+
+#define YY_DECL int lex_scan(token * tokp)
 %}
 
 DIGIT [0-9]
 ID [a-zA-Z_][a-zA-Z0-9_]*
 
+%option pointer
+%option noyylineno
 %option noyywrap
 
 %%
@@ -38,9 +43,24 @@ int {
     return yytext[0];
 }
 
-"<"|">"|"=" {
+"==" {
+    printf("==\n");
+    return TOK_EQ;
+}
+
+"<"|">" {
     printf("<>= %s\n", yytext);
     return yytext[0];
+}
+
+"<=" {
+    printf("<=\n");
+    return TOK_LTE;
+}
+
+">=" {
+    printf("=>\n");
+    return TOK_GTE;
 }
 
 "->" {
@@ -64,7 +84,11 @@ int {
 }
 
 {DIGIT}+ {
-    printf("number %s\n", yytext);
+    int result;
+    sscanf(yytext, "%i", &result);
+    tokp->val.int_value = result;
+
+    printf("number %d\n", result);
     return TOK_NUM;
 }
 
