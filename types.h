@@ -12,6 +12,7 @@ typedef union token_value
     int int_value;
     char * str_value;
     expr * expr_value;
+    expr_list * expr_list_value;
     arg * arg_value;
     arg_list * arg_list_value;
     func * func_value;

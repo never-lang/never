@@ -18,13 +18,14 @@ int yyerror(char * str)
 %pure-parser
 
 %token <val.str_value> TOK_ID
-%token <val.str_int> TOK_NUM
+%token <val.int_value> TOK_NUM
 %token <val.str_value> TOK_INT
 %token <val.str_value> TOK_FUNC
 %token <val.str_value> TOK_RET /* -> */
 %token <val.str_value> TOK_RETURN
 
 %type <val.expr_value> expr
+%type <val.expr_list_value> expr_list
 %type <val.arg_value> arg
 %type <val.arg_list_value> arg_list
 %type <val.func_value> func
@@ -44,58 +45,72 @@ int yyerror(char * str)
 
 expr: TOK_ID
 {
+    $$ = expr_new_str($1);
 };
 
 expr: TOK_NUM
 {
+    $$ = expr_new_int($1);
 };
 
 expr: '-' expr %prec NEG
 {
+    $$ = expr_new_one(EXPR_NEG, $2);
 };
 
 expr: expr '+' expr
 {
+    $$ = expr_new_two(EXPR_ADD, $1, $3);
 };
 
 expr: expr '-' expr
 {
+    $$ = expr_new_two(EXPR_SUB, $1, $3);
 };
 
 expr: expr '*' expr
 {
+    $$ = expr_new_two(EXPR_MUL, $1, $3);
 };
 
 expr: expr '/' expr
 {
+    $$ = expr_new_two(EXPR_DIV, $1, $3);
 };
 
 expr: expr '<' expr
 {
+    $$ = expr_new_two(EXPR_LT, $1, $3);
 };
 
 expr: expr TOK_LTE expr
 {
+    $$ = expr_new_two(EXPR_LTE, $1, $3);
 };
 
 expr: expr '>' expr
 {
+    $$ = expr_new_two(EXPR_GT, $1, $3);
 };
 
 expr: expr TOK_GTE expr
 {
+    $$ = expr_new_two(EXPR_GTE, $1, $3);
 };
 
 expr: expr TOK_EQ expr
 {
+    $$ = expr_new_two(EXPR_EQ, $1, $3);
 };
 
 expr: '(' expr ')'
 {
+    $$ = expr_new_one(EXPR_SUP, $2);
 };
 
 expr: expr '?' expr ':' expr
 {
+    $$ = expr_new_three(EXPR_COND, $1, $3, $5);
 }
 ;
 
@@ -109,10 +124,13 @@ expr: TOK_ID '(' expr_list ')'
 
 expr_list: expr
 {
+    $$ = expr_list_new();
+    expr_list_add_end($$, $1);
 };
 
 expr_list: expr_list ',' expr
 {
+    expr_list_add_end($$, $3);
 };
 
 arg: TOK_INT

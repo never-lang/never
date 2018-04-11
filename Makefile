@@ -13,7 +13,13 @@ test_parser: scanner.o parser.o expr.o arg.o func.o never.o
 
 gc: gc.o object.o scanner.o
 
-
 %.c : %.y
 	${BISON} ${BFLAGS} -o $@ $<
+
+test_parser.o: test_parser.c parser.y expr.h arg.h func.h never.h
+
+expr.o: expr.c expr.h
+arg.o: arg.c arg.h
+func.o: func.c func.h
+
 
