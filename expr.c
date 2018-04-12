@@ -12,12 +12,12 @@ expr * expr_new_int(int int_value)
     return ret;
 }
 
-expr * expr_new_str(char * str_value)
+expr * expr_new_id(char * id)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = EXPR_STR;
-    ret->str_value = str_value;
+    ret->id = id;
     
     return ret;
 }
@@ -54,6 +54,17 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * exp
     ret->left_value = expr_left;
     ret->middle_value = expr_middle;
     ret->right_value = expr_right;
+    
+    return ret;
+}
+
+expr * expr_new_call(char * func_id, expr_list * args)
+{
+    expr * ret = (expr *) malloc(sizeof(expr));
+    
+    ret->type = EXPR_CALL;
+    ret->func_id = func_id;
+    ret->args = args;
     
     return ret;
 }
@@ -100,9 +111,7 @@ void expr_list_delete(expr_list * list)
         expr_list_node_delete(node);
         node = tmp;
     }
-    
-    list->head = NULL;
-    list->tail = NULL;
+    free(list);    
 }
 
 void expr_list_add_beg(expr_list * list, expr * value)

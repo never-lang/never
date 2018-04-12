@@ -45,7 +45,7 @@ int yyerror(char * str)
 
 expr: TOK_ID
 {
-    $$ = expr_new_str($1);
+    $$ = expr_new_id($1);
 };
 
 expr: TOK_NUM
@@ -120,6 +120,7 @@ expr: func
 
 expr: TOK_ID '(' expr_list ')'
 {
+    $$ = expr_new_call($1, $3);
 };
 
 expr_list: expr
@@ -135,50 +136,63 @@ expr_list: expr_list ',' expr
 
 arg: TOK_INT
 {
+    $$ = arg_new_int(NULL);
 };
 
 arg: TOK_INT TOK_ID
 {
+    $$ = arg_new_int($2);
 };
 
 arg: '(' ')'
 {
+    $$ = arg_new_func(NULL, NULL, NULL);
 };
 
 arg: '(' ')' TOK_RET arg
 {
+    $$ = arg_new_func(NULL, NULL, $4);
 };
 
 arg: '(' arg_list ')'
 {
+    $$ = arg_new_func(NULL, $2, NULL);
 };
 
 arg: '(' arg_list ')' TOK_RET arg
 {
+    $$ = arg_new_func(NULL, $2, $5);
 };
 
 arg: TOK_ID '(' ')'
 {
+    $$ = arg_new_func($1, NULL, NULL);
 };
 
 arg: TOK_ID '(' ')' TOK_RET arg
 {
+    $$ = arg_new_func($1, NULL, $5);
 };
 
 arg: TOK_ID '(' arg_list ')'
 {
+    $$ = arg_new_func($1, $3, NULL);
 };
 
 arg: TOK_ID '(' arg_list ')' TOK_RET arg
 {
+    $$ = arg_new_func($1, $3, $6);
 };
 
 arg_list: arg
 {
+    $$ = arg_list_new();
+    arg_list_add_end($$, $1);
 };
 
 arg_list: arg_list ',' arg
 {
+    arg_list_add_end($$, $3);
 };
 
 func: TOK_FUNC TOK_ID '(' ')' func_body

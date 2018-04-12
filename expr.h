@@ -15,6 +15,9 @@
 #define EXPR_EQ   12
 #define EXPR_SUP  13 /* ( expr ) */
 #define EXPR_COND 14
+#define EXPR_CALL 15
+
+struct expr_list;
 
 typedef struct expr
 {
@@ -22,12 +25,17 @@ typedef struct expr
     union
     {
         int int_value;
-        char * str_value;
+        char * id;
         struct
         {
             struct expr * left_value;
             struct expr * right_value;
             struct expr * middle_value; /* in ternary left_expr ? middle_expr : right_expr */
+        };
+        struct
+        {
+            char * func_id;
+            struct expr_list * args;
         };
     };
 } expr;
@@ -46,10 +54,11 @@ typedef struct expr_list
 } expr_list;
 
 expr * expr_new_int(int int_value);
-expr * expr_new_str(char * str_value);
+expr * expr_new_id(char * id);
 expr * expr_new_one(int type, expr * expr_left);
 expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * expr_right);
+expr * expr_new_call(char * func_id, expr_list * args);
 
 void expr_delete(expr * value);
 
