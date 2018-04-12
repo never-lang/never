@@ -197,34 +197,43 @@ arg_list: arg_list ',' arg
 
 func: TOK_FUNC TOK_ID '(' ')' func_body
 {
+    $$ = func_new($2, NULL, NULL, $5);
 };
 
 func: TOK_FUNC TOK_ID '(' ')' TOK_RET arg func_body
 {
+    $$ = func_new($2, NULL, $6, $7);
 };
 
 func: TOK_FUNC TOK_ID '(' arg_list ')' func_body
 {
+    $$ = func_new($2, $4, NULL, $6);
 };
 
 func: TOK_FUNC TOK_ID '(' arg_list ')' TOK_RET arg func_body
 {
+    $$ = func_new($2, $4, $7, $8);
 };
 
 func_body: '{' func_list TOK_RETURN expr ';' '}'
 {
+    $$ = func_body_new($2, $4);
 };
 
 func_body: '{' TOK_RETURN expr ';' '}'
 {
+    $$ = func_body_new(NULL, $3);
 };
 
 func_list: func
 {
+    $$ = func_list_new();
+    func_list_add_end($$, $1);
 };
 
 func_list: func_list func
 {
+    func_list_add_end($$, $2);
 };
 
 never: func_list
