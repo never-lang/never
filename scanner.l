@@ -16,6 +16,8 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
 %option noyylineno
 %option noyywrap
 
+%x C_COMMENT
+
 %%
 
 func {
@@ -93,9 +95,15 @@ int {
 }
 
 {ID} {
+    tokp->val.str_value = strdup(yytext);
     printf("id %s\n", yytext);
     return TOK_ID;
 }
+
+"/*"            { BEGIN(C_COMMENT); }
+<C_COMMENT>"*/" { BEGIN(INITIAL); }
+<C_COMMENT>\n   { }
+<C_COMMENT>.    { }
 
 <<EOF>> {
     yyterminate();

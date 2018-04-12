@@ -7,6 +7,8 @@ arg * arg_new_int(char * id)
     
     value->type = ARG_INT;
     value->id = id;
+    value->args = NULL;
+    value->ret = NULL;
     
     return value;
 }

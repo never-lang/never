@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "types.h"
 #include "scanner.h"
+#include "never.h"
 
 int yylex(token * tokp)
 {
@@ -111,11 +112,11 @@ expr: '(' expr ')'
 expr: expr '?' expr ':' expr
 {
     $$ = expr_new_three(EXPR_COND, $1, $3, $5);
-}
-;
+};
 
 expr: func
 {
+    $$ = expr_new_func($1);
 };
 
 expr: TOK_ID '(' expr_list ')'
@@ -238,7 +239,11 @@ func_list: func_list func
 
 never: func_list
 {
+    $$ = never_new($1);
+    
+    never_delete($$);
 };
 
 %%
+
 

@@ -18,7 +18,7 @@ typedef struct func
 typedef struct func_body
 {
     struct func_list * funcs;
-    expr * ret;   
+    struct expr * ret;   
 } func_body;
 
 typedef struct func_list_node

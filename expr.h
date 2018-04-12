@@ -2,7 +2,7 @@
 #define __EXPR_H__
 
 #define EXPR_INT  1
-#define EXPR_STR  2
+#define EXPR_ID  2
 #define EXPR_NEG  3
 #define EXPR_ADD  4
 #define EXPR_SUB  5
@@ -16,8 +16,10 @@
 #define EXPR_SUP  13 /* ( expr ) */
 #define EXPR_COND 14
 #define EXPR_CALL 15
+#define EXPR_FUNC 16
 
-struct expr_list;
+typedef struct func func;
+typedef struct expr_list expr_list;
 
 typedef struct expr
 {
@@ -26,6 +28,7 @@ typedef struct expr
     {
         int int_value;
         char * id;
+        struct func * func_value;
         struct
         {
             struct expr * left_value;
@@ -58,6 +61,7 @@ expr * expr_new_id(char * id);
 expr * expr_new_one(int type, expr * expr_left);
 expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * expr_right);
+expr * expr_new_func(func * value); 
 expr * expr_new_call(char * func_id, expr_list * args);
 
 void expr_delete(expr * value);

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "expr.h"
+#include "func.h"
 
 expr * expr_new_int(int int_value)
 {
@@ -16,7 +17,7 @@ expr * expr_new_id(char * id)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
-    ret->type = EXPR_STR;
+    ret->type = EXPR_ID;
     ret->id = id;
     
     return ret;
@@ -58,6 +59,16 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * exp
     return ret;
 }
 
+expr * expr_new_func(func * value)
+{
+    expr * ret = (expr *) malloc(sizeof(expr));
+    
+    ret->type = EXPR_FUNC;
+    ret->func_value = value;
+    
+    return ret;
+}
+
 expr * expr_new_call(char * func_id, expr_list * args)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
@@ -71,6 +82,43 @@ expr * expr_new_call(char * func_id, expr_list * args)
 
 void expr_delete(expr * value)
 {
+    switch (value->type)
+    {
+        case EXPR_ID:
+            free(value->id);
+        break;
+        case EXPR_NEG:
+            expr_delete(value->left_value);
+        break;
+        case EXPR_ADD:
+        case EXPR_SUB:
+        case EXPR_MUL:
+        case EXPR_DIV:
+        case EXPR_LT:
+        case EXPR_GT:
+        case EXPR_LTE:
+        case EXPR_GTE:
+        case EXPR_EQ:
+            expr_delete(value->left_value);
+            expr_delete(value->right_value);
+        break;
+        case EXPR_SUP: /* ( expr ) */
+            expr_delete(value->left_value);
+        break;
+        case EXPR_COND:
+            expr_delete(value->left_value);
+            expr_delete(value->middle_value);
+            expr_delete(value->right_value);
+        break;
+        case EXPR_CALL:
+            free(value->func_id);
+            expr_list_delete(value->args);
+        break;
+        case EXPR_FUNC:
+            func_delete(value->func_value);
+        break;
+    }
+
     free(value);
 }
 

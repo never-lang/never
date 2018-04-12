@@ -1,33 +1,21 @@
 /**
  * comments
  */
-func counter(int by) -> () -> int
+func counter(int by, int from, int to) -> () -> int
 {
-    int a = 0;
-
-    inc() -> int
+    func dec() -> int
     {
-        a = a + by;
-        return a;
+        return -100;
     }
 
-    return inc;
+    return func inc() -> int /* this is crazy */
+    {
+        return a + by;
+    };
 }
 
 func main()
 {
-    cnt1() -> int;
-    cnt10() -> int;
-
-    cnt1 = counter(1);
-    cnt10 = counter(10);
-
-    print(cnt1());
-    print(cnt1());
-
-    print(cnt10());
-    print(cnt10());
-
-    return 0;
+    return counter(100);
 }
 
