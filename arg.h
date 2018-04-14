@@ -1,8 +1,11 @@
 #ifndef __ARG_H__
 #define __ARG_H__
 
-#define ARG_INT  1
-#define ARG_FUNC 2
+enum
+{
+    ARG_INT = 1,
+    ARG_FUNC = 2
+};
 
 typedef struct arg
 {

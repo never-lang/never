@@ -221,9 +221,19 @@ func_body: '{' func_list TOK_RETURN expr ';' '}'
     $$ = func_body_new($2, $4);
 };
 
+func_body: '{' func_list '}'
+{
+    $$ = func_body_new($2, NULL);
+};
+
 func_body: '{' TOK_RETURN expr ';' '}'
 {
     $$ = func_body_new(NULL, $3);
+};
+
+func_body: '{' '}'
+{
+    $$ = func_body_new(NULL, NULL);
 };
 
 func_list: func

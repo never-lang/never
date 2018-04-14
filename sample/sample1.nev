@@ -1,4 +1,9 @@
-
+/**
+ * functional programming language
+ * syntactically scoped
+ * first class functions
+ * call by value
+ */
 func min(int a, int b) -> int
 {
     return (a < b) ? a : b;
@@ -12,6 +17,16 @@ func minCoeff(int coeff) -> (int, int) -> int
     }
 
     return min;
+}
+
+func print(int a) -> int
+{
+    return 0;
+}
+
+func my_func(int a, int b) -> int
+{
+    return minCoeff(a + b);
 }
 
 func main()

@@ -1,22 +1,25 @@
 #ifndef __EXPR_H__
 #define __EXPR_H__
 
-#define EXPR_INT  1
-#define EXPR_ID  2
-#define EXPR_NEG  3
-#define EXPR_ADD  4
-#define EXPR_SUB  5
-#define EXPR_MUL  6
-#define EXPR_DIV  7
-#define EXPR_LT   8
-#define EXPR_GT   9
-#define EXPR_LTE  10
-#define EXPR_GTE  11
-#define EXPR_EQ   12
-#define EXPR_SUP  13 /* ( expr ) */
-#define EXPR_COND 14
-#define EXPR_CALL 15
-#define EXPR_FUNC 16
+enum
+{
+    EXPR_INT = 1,
+    EXPR_ID  = 2,
+    EXPR_NEG = 3,
+    EXPR_ADD = 4,
+    EXPR_SUB = 5,
+    EXPR_MUL = 6,
+    EXPR_DIV = 7,
+    EXPR_LT  = 8,
+    EXPR_GT  = 9,
+    EXPR_LTE = 10,
+    EXPR_GTE = 11,
+    EXPR_EQ  = 12,
+    EXPR_SUP = 13, /* ( expr ) */
+    EXPR_COND = 14,
+    EXPR_CALL = 15,
+    EXPR_FUNC = 16
+};
 
 typedef struct func func;
 typedef struct expr_list expr_list;
