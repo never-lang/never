@@ -4,6 +4,7 @@
 #include "types.h"
 #include "scanner.h"
 #include "never.h"
+#include "typecheck.h"
 
 int yylex(token * tokp)
 {
@@ -250,6 +251,8 @@ func_list: func_list func
 never: func_list
 {
     $$ = never_new($1);
+    
+    print_functions($$);
     
     never_delete($$);
 };

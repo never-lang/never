@@ -9,7 +9,7 @@ typedef struct never
 } never;
 
 never * never_new(func_list * funcs);
-void never_delete(never * n);
+void never_delete(never * nev);
 
 #endif /* __NEVER_H__ */
 

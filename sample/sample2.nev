@@ -8,6 +8,11 @@ func twice(single_func(int, int) -> int) -> (int, int) -> int
 {
     func twice_func(int a, int b) -> int
     {
+        func one_more(int a, int b) -> int
+        {
+            return 1000;
+        }
+    
         return 2 * single_func(a, b);
     }
 

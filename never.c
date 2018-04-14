@@ -10,13 +10,13 @@ never * never_new(func_list * funcs)
     return n;
 }
 
-void never_delete(never * n)
+void never_delete(never * nev)
 {
-    if (n->funcs)
+    if (nev->funcs)
     {
-        func_list_delete(n->funcs);
+        func_list_delete(nev->funcs);
     }
-    free(n);
+    free(nev);
 }
 
 
