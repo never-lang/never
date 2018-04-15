@@ -1608,13 +1608,15 @@ yyreduce:
     print_functions((yyval.val.never_value));
     print_symtabs((yyval.val.never_value));
     
+    never_check_undefined_ids((yyval.val.never_value));
+    
     never_delete((yyval.val.never_value));
 }
-#line 1614 "parser.c" /* yacc.c:1646  */
+#line 1616 "parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1618 "parser.c" /* yacc.c:1646  */
+#line 1620 "parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1842,7 +1844,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 263 "parser.y" /* yacc.c:1906  */
+#line 265 "parser.y" /* yacc.c:1906  */
 
 
 

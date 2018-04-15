@@ -16,9 +16,9 @@ enum
     EXPR_GTE = 11,
     EXPR_EQ  = 12,
     EXPR_SUP = 13, /* ( expr ) */
-    EXPR_COND = 14,
-    EXPR_CALL = 15,
-    EXPR_FUNC = 16
+    EXPR_COND = 14, /* expr ? expr : expr */
+    EXPR_CALL = 15, /* ID ( expr_list) */
+    EXPR_FUNC = 16  /* func ID ( ... ) */
 };
 
 typedef struct func func;
@@ -34,9 +34,9 @@ typedef struct expr
         struct func * func_value;
         struct
         {
-            struct expr * left_value;
-            struct expr * right_value;
-            struct expr * middle_value; /* in ternary left_expr ? middle_expr : right_expr */
+            struct expr * left;
+            struct expr * right;
+            struct expr * middle; /* in ternary left_expr ? middle_expr : right_expr */
         };
         struct
         {

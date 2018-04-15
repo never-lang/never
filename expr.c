@@ -23,38 +23,38 @@ expr * expr_new_id(char * id)
     return ret;
 }
 
-expr * expr_new_one(int type, expr * expr_left)
+expr * expr_new_one(int type, expr * left)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = type;
-    ret->left_value = expr_left;
-    ret->middle_value = NULL;
-    ret->right_value = NULL;
+    ret->left = left;
+    ret->middle = NULL;
+    ret->right = NULL;
     
     return ret;
 }
 
-expr * expr_new_two(int type, expr * expr_left, expr * expr_right)
+expr * expr_new_two(int type, expr * left, expr * right)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = type;
-    ret->left_value = expr_left;
-    ret->middle_value = NULL;
-    ret->right_value = expr_right;
+    ret->left = left;
+    ret->middle = NULL;
+    ret->right = right;
     
     return ret;
 }
 
-expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * expr_right)
+expr * expr_new_three(int type, expr * left, expr * middle, expr * right)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = type;
-    ret->left_value = expr_left;
-    ret->middle_value = expr_middle;
-    ret->right_value = expr_right;
+    ret->left = left;
+    ret->middle = middle;
+    ret->right = right;
     
     return ret;
 }
@@ -88,7 +88,7 @@ void expr_delete(expr * value)
             free(value->id);
         break;
         case EXPR_NEG:
-            expr_delete(value->left_value);
+            expr_delete(value->left);
         break;
         case EXPR_ADD:
         case EXPR_SUB:
@@ -99,16 +99,16 @@ void expr_delete(expr * value)
         case EXPR_LTE:
         case EXPR_GTE:
         case EXPR_EQ:
-            expr_delete(value->left_value);
-            expr_delete(value->right_value);
+            expr_delete(value->left);
+            expr_delete(value->right);
         break;
         case EXPR_SUP: /* ( expr ) */
-            expr_delete(value->left_value);
+            expr_delete(value->left);
         break;
         case EXPR_COND:
-            expr_delete(value->left_value);
-            expr_delete(value->middle_value);
-            expr_delete(value->right_value);
+            expr_delete(value->left);
+            expr_delete(value->middle);
+            expr_delete(value->right);
         break;
         case EXPR_CALL:
             free(value->func_id);

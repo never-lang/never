@@ -56,16 +56,16 @@ symtab_entry * symtab_entry_lookup_arg_func(symtab_entry * entries, unsigned int
                                             int type, const char * id)
 {
     unsigned int times = 0;
-    unsigned int hs = hash(id);
+    unsigned int index = hash(id) % size;
 
-    while (entries[hs % size].type != 0)
+    while (entries[index].type != 0)
     {
-        if (strcmp(entries[hs % size].id, id) == 0)
+        if (strcmp(entries[index].id, id) == 0)
         {
-            return &entries[hs % size];
+            return &entries[index];
         }
         
-        hs = hs + 1;
+        index = (index + 1) % size;
         if (times++ > size)
         {
             return NULL;
@@ -174,6 +174,8 @@ void symtab_print(symtab * tab)
 {
     int i;
     
+    printf("[%p, %p]\n", tab, tab->parent);
+        
     for (i = 0; i < tab->size; i++)
     {
         if (tab->entries[i].type != 0)

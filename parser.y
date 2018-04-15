@@ -257,6 +257,8 @@ never: func_list
     print_functions($$);
     print_symtabs($$);
     
+    never_check_undefined_ids($$);
+    
     never_delete($$);
 };
 

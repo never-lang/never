@@ -13,10 +13,10 @@ func minCoeff(int coeff, int p1, int p2, int p3, int p4) -> (int, int) -> int
 {
     func min(int n_a, int n_b) -> int
     {
-        return (a < b) ? coeff * a : coeff * b;
+        return (n_a < n_b) ? coeff * n_a : coeff * n_b;
     }
 
-    return min;
+    return min(p1, p2);
 }
 
 func print(int a, int, (), funcZ(int, int) -> (int) -> () -> int) -> int
