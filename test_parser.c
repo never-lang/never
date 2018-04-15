@@ -10,8 +10,8 @@ int main(int argc, char * argv[])
     freopen(argv[1], "r", stdin);
 
     yyin = stdin;
-    yyparse();
 
+    yyparse();
     yylex_destroy();
 
     return 0;

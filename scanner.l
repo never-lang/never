@@ -3,10 +3,23 @@
  */
 %{
 #include <stdio.h>
+#include <stdarg.h>
 #include "parser.h"
 #include "types.h"
 
 #define YY_DECL int lex_scan(token * tokp)
+
+unsigned int line_number = 1;
+
+void scanner_printf(const char * format, ...)
+{
+    va_list ap;
+
+    va_start(ap, format);
+    /* vprintf(format, ap); */
+    va_end(ap);
+}
+
 %}
 
 DIGIT [0-9]
@@ -19,69 +32,74 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
 %x C_COMMENT
 
 %%
+[ \t\r]+
+
+\n {
+	line_number++;
+}
 
 func {
-    printf("func\n");
+    scanner_printf("func\n");
     return TOK_FUNC;
 }
 
 return {
-    printf("return\n");
+    scanner_printf("return\n");
     return TOK_RETURN;    
 }
 
 int {
-    printf("int\n");
+    scanner_printf("int\n");
     return TOK_INT;
 }
 
 "+"|"-"|"/"|"*" {
-    printf("operator %s\n", yytext);
+    scanner_printf("operator %s\n", yytext);
     return yytext[0];
 }
 
 "?"|":" {
-    printf("%s\n", yytext);
+    scanner_printf("%s\n", yytext);
     return yytext[0];
 }
 
 "==" {
-    printf("==\n");
+    scanner_printf("==\n");
     return TOK_EQ;
 }
 
 "<"|">" {
-    printf("<>= %s\n", yytext);
+    scanner_printf("<>= %s\n", yytext);
     return yytext[0];
 }
 
 "<=" {
-    printf("<=\n");
+    scanner_printf("<=\n");
     return TOK_LTE;
 }
 
 ">=" {
-    printf("=>\n");
+    scanner_printf("=>\n");
     return TOK_GTE;
 }
 
 "->" {
-    printf("return %s\n", yytext);
+    scanner_printf("return %s\n", yytext);
     return TOK_RET;
 }
 
 "("|")" {
-    printf("open|close paren\n");
+    scanner_printf("open|close paren\n");
     return yytext[0];
 }
 
 "{"|"}" {
-    printf("open|close bracket\n");
+    scanner_printf("open|close bracket\n");
     return yytext[0];
 }
 
 ","|";" {
-    printf("%s\n", yytext);
+    scanner_printf("%s\n", yytext);
     return yytext[0];
 }
 
@@ -90,13 +108,13 @@ int {
     sscanf(yytext, "%i", &result);
     tokp->val.int_value = result;
 
-    printf("number %d\n", result);
+    scanner_printf("number %d\n", result);
     return TOK_NUM;
 }
 
 {ID} {
     tokp->val.str_value = strdup(yytext);
-    printf("id %s\n", yytext);
+    scanner_printf("id %s\n", yytext);
     return TOK_ID;
 }
 

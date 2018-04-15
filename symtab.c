@@ -1,12 +1,15 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 #include "symtab.h"
 
+#define HASH_MAGIC 5381
+
 unsigned int hash(const char * str)
 {
     char c;
-    unsigned int val = 5381;
+    unsigned int val = HASH_MAGIC;
 
     while ((c = *str++) != 0)
     {
@@ -49,33 +52,32 @@ void symtab_entry_add_arg_func(symtab_entry * entries, unsigned int size,
     entries[index].arg_func_value = arg_func_value;
 }
 
-void * symtab_entry_lookup_arg_func(symtab_entry * entries, unsigned int size, int type, const char * id)
+symtab_entry * symtab_entry_lookup_arg_func(symtab_entry * entries, unsigned int size, 
+                                            int type, const char * id)
 {
     unsigned int times = 0;
-    unsigned int index = hash(id) % size;
+    unsigned int hs = hash(id);
 
-    while (entries[index].type == type && strcmp(entries[index].id, id) != 0)
+    while (entries[hs % size].type != 0)
     {
-        index = (index + 1) % size;
+        if (strcmp(entries[hs % size].id, id) == 0)
+        {
+            return &entries[hs % size];
+        }
+        
+        hs = hs + 1;
         if (times++ > size)
         {
             return NULL;
         }
     }
-    
-    if (entries[index].type == type && strcmp(entries[index].id, id) == 0)
-    {
-        return entries[index].arg_func_value;
-    }
-    else
-    {
-        return NULL;
-    }
+
+    return NULL;
 }
 
 void symtab_entry_resize(symtab_entry * entries, int size, symtab_entry * entries_new, int size_new)
 {
-    int i;
+    int i = 0;
     
     for (i = 0; i < size; i++)
     {
@@ -123,6 +125,11 @@ void symtab_resize(symtab * tab)
 
 void symtab_add_arg(symtab * tab, arg * arg_value)
 {
+    if (arg_value->id == NULL)
+    {
+        return;
+    }
+
     symtab_entry_add_arg_func(tab->entries, tab->size, SYMTAB_ARG, arg_value->id, arg_value);
     tab->count++;
     symtab_resize(tab);    
@@ -130,34 +137,50 @@ void symtab_add_arg(symtab * tab, arg * arg_value)
 
 void symtab_add_func(symtab * tab, func * func_value)
 {
+    if (func_value->id == NULL)
+    {
+        return;
+    }
+
     symtab_entry_add_arg_func(tab->entries, tab->size, SYMTAB_FUNC, func_value->id, func_value);
     tab->count++;
     symtab_resize(tab);
 }
 
-arg * symtab_lookup_arg(symtab * tab, const char * id)
+symtab_entry * symtab_lookup_type(symtab * tab, int type, const char * id)
 {
-    arg * lookup = (arg *)symtab_entry_lookup_arg_func(tab->entries, tab->size, SYMTAB_ARG, id);
-    if (lookup == NULL && tab->parent != NULL)
+    symtab_entry * entry = symtab_entry_lookup_arg_func(tab->entries, tab->size, type, id);
+    if (entry == NULL && tab->parent != NULL)
     {
-        return symtab_lookup_arg(tab->parent, id);
+        return symtab_lookup_type(tab->parent, type, id);
     }
     else
     {
-        return lookup;
+        return entry;
     }
 }
 
-func * symtab_lookup_func(symtab * tab, const char * id)
+symtab_entry * symtab_lookup_arg(symtab * tab, const char * id)
 {
-    func * lookup = (func *)symtab_entry_lookup_arg_func(tab->entries, tab->size, SYMTAB_FUNC, id);
-    if (lookup == NULL && tab->parent != NULL)
+    return symtab_lookup_type(tab, SYMTAB_ARG, id);
+}
+
+symtab_entry * symtab_lookup_func(symtab * tab, const char * id)
+{
+    return symtab_lookup_type(tab, SYMTAB_FUNC, id);
+}
+
+void symtab_print(symtab * tab)
+{
+    int i;
+    
+    for (i = 0; i < tab->size; i++)
     {
-        return symtab_lookup_func(tab->parent, id);
-    }
-    else
-    {
-        return lookup;
+        if (tab->entries[i].type != 0)
+        {
+            printf("[%d][%s]\n", tab->entries[i].type, tab->entries[i].id);
+        }
     }
 }
+
 

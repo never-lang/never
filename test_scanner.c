@@ -22,6 +22,8 @@ int main(int argc, char * argv[])
 
     lex_scan(&tokp);
 
+    fclose(yyin);
+    
     return 0;
 }
 

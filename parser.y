@@ -252,7 +252,10 @@ never: func_list
 {
     $$ = never_new($1);
     
+    symtab_add_entry_never($$);
+    
     print_functions($$);
+    print_symtabs($$);
     
     never_delete($$);
 };

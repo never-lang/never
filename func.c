@@ -9,6 +9,7 @@ func * func_new(char * id, arg_list * args, arg * ret, func_body * body)
     value->args = args;
     value->ret = ret;
     value->body = body;
+    value->stab = NULL;
     
     return value;
 }
@@ -30,6 +31,10 @@ void func_delete(func * value)
     if (value->body)
     {
         func_body_delete(value->body);
+    }
+    if (value->stab)
+    {
+        symtab_delete(value->stab);
     }
     
     free(value);

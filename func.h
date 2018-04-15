@@ -3,6 +3,7 @@
 
 #include "expr.h"
 #include "arg.h"
+#include "symtab.h"
 
 struct func_body;
 struct func_list;
@@ -13,6 +14,7 @@ typedef struct func
     arg_list * args;
     arg * ret;
     struct func_body * body;
+    struct symtab * stab;
 } func;
 
 typedef struct func_body

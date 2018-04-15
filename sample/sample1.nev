@@ -9,9 +9,9 @@ func min(int a, int b) -> int
     return (a < b) ? a : b;
 }
 
-func minCoeff(int coeff) -> (int, int) -> int
+func minCoeff(int coeff, int p1, int p2, int p3, int p4) -> (int, int) -> int
 {
-    func min(int a, int b) -> int
+    func min(int n_a, int n_b) -> int
     {
         return (a < b) ? coeff * a : coeff * b;
     }
@@ -19,7 +19,7 @@ func minCoeff(int coeff) -> (int, int) -> int
     return min;
 }
 
-func print(int a) -> int
+func print(int a, int, (), funcZ(int, int) -> (int) -> () -> int) -> int
 {
     return 0;
 }

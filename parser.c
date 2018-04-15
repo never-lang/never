@@ -1603,15 +1603,18 @@ yyreduce:
     {
     (yyval.val.never_value) = never_new((yyvsp[0].val.func_list_value));
     
+    symtab_add_entry_never((yyval.val.never_value));
+    
     print_functions((yyval.val.never_value));
+    print_symtabs((yyval.val.never_value));
     
     never_delete((yyval.val.never_value));
 }
-#line 1611 "parser.c" /* yacc.c:1646  */
+#line 1614 "parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1615 "parser.c" /* yacc.c:1646  */
+#line 1618 "parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1839,7 +1842,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 260 "parser.y" /* yacc.c:1906  */
+#line 263 "parser.y" /* yacc.c:1906  */
 
 
 

@@ -2,10 +2,12 @@
 #define __NEVER_H__
 
 #include "func.h"
+#include "symtab.h"
 
 typedef struct never
 {
     func_list * funcs;
+    symtab * stab;
 } never;
 
 never * never_new(func_list * funcs);
