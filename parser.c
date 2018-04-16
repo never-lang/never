@@ -1601,22 +1601,28 @@ yyreduce:
   case 42:
 #line 252 "parser.y" /* yacc.c:1646  */
     {
+    int typecheck_res;
     (yyval.val.never_value) = never_new((yyvsp[0].val.func_list_value));
     
-    symtab_add_entry_never((yyval.val.never_value));
+    typecheck_res = TYPECHECK_SUCC;
+    symtab_add_entry_never((yyval.val.never_value), &typecheck_res);
     
     print_functions((yyval.val.never_value));
     print_symtabs((yyval.val.never_value));
+
+    typecheck_res = TYPECHECK_SUCC;
+    never_check_undefined_ids((yyval.val.never_value), &typecheck_res);
     
-    never_check_undefined_ids((yyval.val.never_value));
+    typecheck_res = TYPECHECK_SUCC;
+    never_check_func_call((yyval.val.never_value), &typecheck_res);
     
     never_delete((yyval.val.never_value));
 }
-#line 1616 "parser.c" /* yacc.c:1646  */
+#line 1622 "parser.c" /* yacc.c:1646  */
     break;
 
 
-#line 1620 "parser.c" /* yacc.c:1646  */
+#line 1626 "parser.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1844,7 +1850,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 265 "parser.y" /* yacc.c:1906  */
+#line 271 "parser.y" /* yacc.c:1906  */
 
 
 

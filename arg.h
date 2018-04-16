@@ -24,6 +24,7 @@ typedef struct arg_list_node
 
 typedef struct arg_list
 {
+    int count;
     arg_list_node * head;
     arg_list_node * tail;
 } arg_list;

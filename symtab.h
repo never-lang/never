@@ -6,6 +6,12 @@
 
 enum
 {
+    SYMTAB_FLAT = 0,
+    SYMTAB_NESTED = 1
+};
+
+enum
+{
     SYMTAB_ARG = 1,
     SYMTAB_FUNC = 2
 };
@@ -39,9 +45,9 @@ void symtab_delete(symtab * tab);
 void symtab_add_arg(symtab * tab, arg * arg_value);
 void symtab_add_func(symtab * tab, func * func_value);
 
-symtab_entry * symtab_lookup_type(symtab * tab, int type, const char * id);
-symtab_entry * symtab_lookup_arg(symtab * tab, const char * id);
-symtab_entry * symtab_lookup_func(symtab * tab, const char * id);
+symtab_entry * symtab_lookup_type(symtab * tab, int type, const char * id, char nested);
+symtab_entry * symtab_lookup_arg(symtab * tab, const char * id, char nested);
+symtab_entry * symtab_lookup_func(symtab * tab, const char * id, char nested);
 
 void symtab_resize(symtab * tab);
 

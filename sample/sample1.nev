@@ -4,29 +4,34 @@
  * first class functions
  * call by value
  */
-func min(int a, int b) -> int
+func min(int a, int b, int c) -> int
 {
     return (a < b) ? a : b;
 }
 
-func minCoeff(int coeff, int p1, int p2, int p3, int p4) -> (int, int) -> int
+func minCoeff(int coeff, int p1, int p2) -> int
 {
     func min(int n_a, int n_b) -> int
     {
-        return (n_a < n_b) ? coeff * n_a : coeff * n_b;
+        return coeff * (n_a < n_b ? n_a : n_b);
     }
 
-    return min(p1, p2);
+    return min;
 }
 
-func print(int a, int, (), funcZ(int, int) -> (int) -> () -> int) -> int
+func crazy(int a, int, (), funcZ(int, int) -> (int) -> () -> int) -> int
+{
+    return 0;
+}
+
+func print(int a) -> int
 {
     return 0;
 }
 
 func my_func(int a, int b) -> int
 {
-    return minCoeff(a + b);
+    return minCoeff(2, a, b);
 }
 
 func main()

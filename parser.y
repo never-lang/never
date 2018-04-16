@@ -250,14 +250,20 @@ func_list: func_list func
 
 never: func_list
 {
+    int typecheck_res;
     $$ = never_new($1);
     
-    symtab_add_entry_never($$);
+    typecheck_res = TYPECHECK_SUCC;
+    symtab_add_entry_never($$, &typecheck_res);
     
     print_functions($$);
     print_symtabs($$);
+
+    typecheck_res = TYPECHECK_SUCC;
+    never_check_undefined_ids($$, &typecheck_res);
     
-    never_check_undefined_ids($$);
+    typecheck_res = TYPECHECK_SUCC;
+    never_check_func_call($$, &typecheck_res);
     
     never_delete($$);
 };

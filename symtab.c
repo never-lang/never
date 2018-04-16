@@ -147,12 +147,14 @@ void symtab_add_func(symtab * tab, func * func_value)
     symtab_resize(tab);
 }
 
-symtab_entry * symtab_lookup_type(symtab * tab, int type, const char * id)
+symtab_entry * symtab_lookup_type(symtab * tab, int type, const char * id, char nested)
 {
-    symtab_entry * entry = symtab_entry_lookup_arg_func(tab->entries, tab->size, type, id);
-    if (entry == NULL && tab->parent != NULL)
+    symtab_entry * entry = NULL;
+
+    entry = symtab_entry_lookup_arg_func(tab->entries, tab->size, type, id);
+    if (nested && entry == NULL && tab->parent != NULL)
     {
-        return symtab_lookup_type(tab->parent, type, id);
+        return symtab_lookup_type(tab->parent, type, id, nested);
     }
     else
     {
@@ -160,14 +162,14 @@ symtab_entry * symtab_lookup_type(symtab * tab, int type, const char * id)
     }
 }
 
-symtab_entry * symtab_lookup_arg(symtab * tab, const char * id)
+symtab_entry * symtab_lookup_arg(symtab * tab, const char * id, char nested)
 {
-    return symtab_lookup_type(tab, SYMTAB_ARG, id);
+    return symtab_lookup_type(tab, SYMTAB_ARG, id, nested);
 }
 
-symtab_entry * symtab_lookup_func(symtab * tab, const char * id)
+symtab_entry * symtab_lookup_func(symtab * tab, const char * id, char nested)
 {
-    return symtab_lookup_type(tab, SYMTAB_FUNC, id);
+    return symtab_lookup_type(tab, SYMTAB_FUNC, id, nested);
 }
 
 void symtab_print(symtab * tab)

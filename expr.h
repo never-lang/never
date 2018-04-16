@@ -1,7 +1,7 @@
 #ifndef __EXPR_H__
 #define __EXPR_H__
 
-enum
+typedef enum expr_type
 {
     EXPR_INT = 1,
     EXPR_ID  = 2,
@@ -19,19 +19,35 @@ enum
     EXPR_COND = 14, /* expr ? expr : expr */
     EXPR_CALL = 15, /* ID ( expr_list) */
     EXPR_FUNC = 16  /* func ID ( ... ) */
-};
+} expr_type;
+
+typedef enum comb_type
+{
+    COMB_TYPE_UNKNOWN = 0,
+    COMB_TYPE_ERR  = 1,
+    COMB_TYPE_VOID = 2,
+    COMB_TYPE_BOOL = 3,
+    COMB_TYPE_INT  = 4,
+    COMB_TYPE_FUNC = 5
+} comb_type;
 
 typedef struct func func;
 typedef struct expr_list expr_list;
 
 typedef struct expr
 {
-    int type;
+    expr_type type;
+    comb_type comb;
     union
     {
         int int_value;
         char * id;
-        struct func * func_value;
+        struct
+        {
+            struct func * func_value;
+            struct arg_list * comb_args; /* function arguments */
+            struct arg * comb_ret; /* function ret */
+        };
         struct
         {
             struct expr * left;
@@ -55,6 +71,7 @@ typedef struct expr_list_node
 
 typedef struct expr_list
 {
+    int count;
     expr_list_node * head;
     expr_list_node * tail;
 } expr_list;

@@ -67,6 +67,7 @@ arg_list * arg_list_new()
 {
     arg_list * list = (arg_list *)malloc(sizeof(arg_list));
     
+    list->count = 0;
     list->head = NULL;
     list->tail = NULL;
     
@@ -90,6 +91,7 @@ void arg_list_add_beg(arg_list * list, arg * value)
 {
     arg_list_node * node = arg_list_node_new(value);
     
+    list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
         list->head = list->tail = node;
@@ -106,6 +108,7 @@ void arg_list_add_end(arg_list * list, arg * value)
 {
     arg_list_node * node = arg_list_node_new(value);
     
+    list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
         list->head = list->tail = node;

@@ -9,6 +9,7 @@ expr * expr_new_int(int int_value)
     
     ret->type = EXPR_INT;
     ret->int_value = int_value;
+    ret->comb = COMB_TYPE_INT;
     
     return ret;
 }
@@ -19,6 +20,7 @@ expr * expr_new_id(char * id)
     
     ret->type = EXPR_ID;
     ret->id = id;
+    ret->comb = COMB_TYPE_UNKNOWN;
     
     return ret;
 }
@@ -28,6 +30,7 @@ expr * expr_new_one(int type, expr * left)
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = type;
+    ret->comb = COMB_TYPE_UNKNOWN;
     ret->left = left;
     ret->middle = NULL;
     ret->right = NULL;
@@ -40,6 +43,7 @@ expr * expr_new_two(int type, expr * left, expr * right)
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = type;
+    ret->comb = COMB_TYPE_UNKNOWN;
     ret->left = left;
     ret->middle = NULL;
     ret->right = right;
@@ -52,6 +56,7 @@ expr * expr_new_three(int type, expr * left, expr * middle, expr * right)
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = type;
+    ret->comb = COMB_TYPE_UNKNOWN;
     ret->left = left;
     ret->middle = middle;
     ret->right = right;
@@ -64,6 +69,7 @@ expr * expr_new_func(func * value)
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = EXPR_FUNC;
+    ret->comb = COMB_TYPE_UNKNOWN;
     ret->func_value = value;
     
     return ret;
@@ -74,6 +80,7 @@ expr * expr_new_call(char * func_id, expr_list * args)
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = EXPR_CALL;
+    ret->comb = COMB_TYPE_UNKNOWN;
     ret->func_id = func_id;
     ret->args = args;
     
@@ -84,6 +91,8 @@ void expr_delete(expr * value)
 {
     switch (value->type)
     {
+        case EXPR_INT:
+        break;
         case EXPR_ID:
             free(value->id);
         break;
@@ -143,6 +152,7 @@ expr_list * expr_list_new()
 {
     expr_list * list = (expr_list *)malloc(sizeof(expr_list));
     
+    list->count = 0;
     list->head = NULL;
     list->tail = NULL;
     
@@ -166,6 +176,7 @@ void expr_list_add_beg(expr_list * list, expr * value)
 {
     expr_list_node * node = expr_list_node_new(value);
     
+    list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
         list->head = list->tail = node;
@@ -181,7 +192,8 @@ void expr_list_add_beg(expr_list * list, expr * value)
 void expr_list_add_end(expr_list * list, expr * value)
 {
     expr_list_node * node = expr_list_node_new(value);
-    
+
+    list->count++;    
     if (list->head == NULL && list->tail == NULL)
     {
         list->head = list->tail = node;
