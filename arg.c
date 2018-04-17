@@ -17,7 +17,7 @@ arg * arg_new_func(char * id, arg_list * args, arg * ret)
 {
     arg * value = (arg *)malloc(sizeof(arg));
     
-    value->type = ARG_INT;
+    value->type = ARG_FUNC;
     value->id = id;
     value->args = args;
     value->ret = ret;

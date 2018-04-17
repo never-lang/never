@@ -24,5 +24,5 @@ expr.o: expr.c expr.h
 arg.o: arg.c arg.h
 func.o: func.c func.h
 symtab.o: symtab.c symtab.h
-typecheck.o: typecheck.c typecheck.h symtab.h
+typecheck.o: typecheck.c typecheck.h symtab.h expr.h arg.h func.h
 

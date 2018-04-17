@@ -60,7 +60,7 @@ symtab_entry * symtab_entry_lookup_arg_func(symtab_entry * entries, unsigned int
 
     while (entries[index].type != 0)
     {
-        if (strcmp(entries[index].id, id) == 0)
+        if (entries[index].type == type && strcmp(entries[index].id, id) == 0)
         {
             return &entries[index];
         }
@@ -180,9 +180,28 @@ void symtab_print(symtab * tab)
         
     for (i = 0; i < tab->size; i++)
     {
-        if (tab->entries[i].type != 0)
+        if (tab->entries[i].type == SYMTAB_ARG)
         {
-            printf("[%d][%s]\n", tab->entries[i].type, tab->entries[i].id);
+            arg * arg_value = (arg *)tab->entries[i].arg_func_value;            
+            if (arg_value)
+            {
+                if (arg_value->type == ARG_INT)
+                {
+                    printf("[I][%s]\n", arg_value->id);
+                }
+                else if (arg_value->type == ARG_FUNC)
+                {
+                    printf("[P][%s]\n", arg_value->id);
+                }
+            }
+            else
+            {
+                printf("[U][%s]\n", tab->entries[i].id);
+            }
+        }
+        else if (tab->entries[i].type == SYMTAB_FUNC)
+        {
+            printf("[F][%s]\n", tab->entries[i].id);
         }
     }
 }

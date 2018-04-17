@@ -121,7 +121,10 @@ void expr_delete(expr * value)
         break;
         case EXPR_CALL:
             free(value->func_id);
-            expr_list_delete(value->args);
+            if (value->args != NULL)
+            {
+                expr_list_delete(value->args);
+            }
         break;
         case EXPR_FUNC:
             func_delete(value->func_value);
@@ -144,7 +147,10 @@ expr_list_node * expr_list_node_new(expr * value)
 
 void expr_list_node_delete(expr_list_node * node)
 {
-    expr_delete(node->value);
+    if (node->value != NULL)
+    {
+        expr_delete(node->value);
+    }
     free(node);
 }
 
@@ -205,5 +211,20 @@ void expr_list_add_end(expr_list * list, expr * value)
         list->head = node;
     }
 }
+
+const char * comb_type_str(comb_type type)
+{
+    switch (type)
+    {
+        case COMB_TYPE_UNKNOWN: return "unknown";
+        case COMB_TYPE_ERR: return "error";
+        case COMB_TYPE_VOID: return "void";
+        case COMB_TYPE_BOOL: return "bool";
+        case COMB_TYPE_INT: return "int";
+        case COMB_TYPE_FUNC: return "func";
+    }
+    return "unknown comb type!";
+}
+
 
 

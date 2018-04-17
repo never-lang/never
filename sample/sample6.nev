@@ -1,14 +1,16 @@
 /**
  * comments
  */
-func counter(int by, int from, int to) -> () -> int
+ 
+ /* this is crazy */ 
+func counter(int by, int from, int to) -> (int, int) -> (int, int, int) -> int
 {
     func dec() -> int
     {
         return by * from - to;
     }
 
-    return func increase(int a, int b) -> int /* this is crazy */
+    return func increase(int a, int b) -> (int, int, int) -> int
     {
         func inc(int x, int y) -> int
         {
@@ -22,7 +24,7 @@ func counter(int by, int from, int to) -> () -> int
     };
 }
 
-func main()
+func main() -> (int, int) -> (int, int, int) -> int
 {
     return counter(100, 10, 20);
 }

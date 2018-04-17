@@ -62,6 +62,6 @@ extern int yydebug;
 
 
 
-int yyparse (void);
+int yyparse (never ** nev);
 
 #endif /* !YY_YY_PARSER_H_INCLUDED  */

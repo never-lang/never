@@ -38,6 +38,8 @@ typedef struct expr
 {
     expr_type type;
     comb_type comb;
+    struct arg_list * comb_args; /* function arguments */
+    struct arg * comb_ret; /* function ret */
     union
     {
         int int_value;
@@ -45,8 +47,6 @@ typedef struct expr
         struct
         {
             struct func * func_value;
-            struct arg_list * comb_args; /* function arguments */
-            struct arg * comb_ret; /* function ret */
         };
         struct
         {
@@ -95,6 +95,7 @@ void expr_list_delete(expr_list * list);
 void expr_list_add_beg(expr_list * list, expr * value);
 void expr_list_add_end(expr_list * list, expr * value);
 
+const char * comb_type_str(comb_type type);
 
 #endif /* __EXPR_H__ */
 

@@ -4,14 +4,13 @@
 #include "types.h"
 #include "scanner.h"
 #include "never.h"
-#include "typecheck.h"
 
 int yylex(token * tokp)
 {
     return lex_scan(tokp);
 }
 
-int yyerror(char * str)
+int yyerror(never ** nev, char * str)
 {
     fprintf(stderr, "error: %s\n", str);
     return 0;
@@ -42,6 +41,8 @@ int yyerror(char * str)
 %precedence NEG
 
 %start never
+
+%parse-param { never ** nev }
 
 %%
 
@@ -118,6 +119,11 @@ expr: expr '?' expr ':' expr
 expr: func
 {
     $$ = expr_new_func($1);
+};
+
+expr: TOK_ID '(' ')'
+{
+    $$ = expr_new_call($1, NULL);
 };
 
 expr: TOK_ID '(' expr_list ')'
@@ -222,11 +228,6 @@ func_body: '{' func_list TOK_RETURN expr ';' '}'
     $$ = func_body_new($2, $4);
 };
 
-func_body: '{' func_list '}'
-{
-    $$ = func_body_new($2, NULL);
-};
-
 func_body: '{' TOK_RETURN expr ';' '}'
 {
     $$ = func_body_new(NULL, $3);
@@ -250,22 +251,7 @@ func_list: func_list func
 
 never: func_list
 {
-    int typecheck_res;
-    $$ = never_new($1);
-    
-    typecheck_res = TYPECHECK_SUCC;
-    symtab_add_entry_never($$, &typecheck_res);
-    
-    print_functions($$);
-    print_symtabs($$);
-
-    typecheck_res = TYPECHECK_SUCC;
-    never_check_undefined_ids($$, &typecheck_res);
-    
-    typecheck_res = TYPECHECK_SUCC;
-    never_check_func_call($$, &typecheck_res);
-    
-    never_delete($$);
+    $$ = *nev = never_new($1);
 };
 
 %%

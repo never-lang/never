@@ -2,9 +2,309 @@
 #include "typecheck.h"
 #include "symtab.h"
 
+int expr_set_return_type(expr * expr_value, arg * ret)
+{
+    if (ret == NULL)
+    {
+        expr_value->comb = COMB_TYPE_VOID;
+    }
+    else if (ret->type == ARG_INT)
+    {
+        expr_value->comb = COMB_TYPE_INT;
+    }
+    else if (ret->type == ARG_FUNC)
+    {
+        expr_value->comb = COMB_TYPE_FUNC;
+        expr_value->comb_args = ret->args;
+        expr_value->comb_ret = ret->ret;
+    }
+    else
+    {
+        expr_value->comb = COMB_TYPE_ERR;
+    }
+    return 0;
+}
+
 /*
  * check types
  */
+int arg_cmp(arg * arg_one, arg * arg_two)
+{
+    if (arg_one == NULL && arg_two == NULL)
+    {
+        return TYPECHECK_SUCC;
+    }
+    if ((arg_one == NULL && arg_two != NULL) || (arg_one != NULL && arg_two == NULL))
+    {
+        return TYPECHECK_FAIL;
+    }
+    if (arg_one->type == ARG_INT && arg_two->type == ARG_INT)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (arg_one->type == ARG_FUNC && arg_two->type == ARG_FUNC)
+    {
+        return func_cmp(arg_one->args, arg_one->ret, arg_two->args, arg_one->ret);
+    }
+    else
+    {
+        return TYPECHECK_FAIL;
+    }
+}
+
+int arg_list_cmp(arg_list * arg_one, arg_list * arg_two)
+{
+    if (arg_one == NULL && arg_two == NULL)
+    {
+        return TYPECHECK_SUCC;
+    }
+    if ((arg_one == NULL && arg_two != NULL) || (arg_one != NULL && arg_two == NULL))
+    {
+        return TYPECHECK_FAIL;
+    }
+
+    if (arg_one->count != arg_two->count)
+    {
+        return TYPECHECK_FAIL;
+    }
+    
+    arg_list_node * arg_one_node = arg_one->tail;
+    arg_list_node * arg_two_node = arg_two->tail;
+    while (arg_one_node != NULL && arg_two_node != NULL)
+    {
+        arg * arg_one_value = arg_one_node->value;
+        arg * arg_two_value = arg_two_node->value;
+        
+        if (arg_cmp(arg_one_value, arg_two_value) == TYPECHECK_FAIL)
+        {
+            return TYPECHECK_FAIL;
+        }
+        
+        arg_one_node = arg_one_node->next;
+        arg_two_node = arg_two_node->next;
+    }
+
+    return TYPECHECK_SUCC;
+}
+
+int func_cmp(arg_list * arg_list_one, arg * ret_one,
+             arg_list * arg_list_two, arg * ret_two)
+{
+    if (arg_list_cmp(arg_list_one, arg_list_two) == TYPECHECK_SUCC &&
+        arg_cmp(ret_one, ret_two) == TYPECHECK_SUCC)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else
+    {
+        return TYPECHECK_FAIL;
+    }
+}
+
+int arg_expr_cmp(arg * arg_value, expr * expr_value)
+{
+
+    if (arg_value == NULL && expr_value == NULL)
+    {
+        return TYPECHECK_SUCC;
+    }
+    if ((arg_value != NULL && expr_value == NULL) || (arg_value == NULL && expr_value != NULL))
+    {
+        return TYPECHECK_FAIL;
+    }
+
+    if (arg_value->type == ARG_INT && expr_value->comb == COMB_TYPE_INT)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (arg_value->type == ARG_FUNC && expr_value->comb == COMB_TYPE_FUNC)
+    {
+        return func_cmp(arg_value->args, arg_value->ret,
+                        expr_value->comb_args, expr_value->comb_ret);
+    }
+    else
+    {
+        return TYPECHECK_FAIL;
+    }
+}
+ 
+int arg_expr_lists_cmp(arg_list * args, expr_list * list)
+{
+    if (args == NULL && list == NULL)
+    {
+        return TYPECHECK_SUCC;
+    }
+    if ((args != NULL && list == NULL) || (args == NULL && list != NULL))
+    {
+        return TYPECHECK_FAIL;
+    }
+    if (args->count != list->count)
+    {
+        return TYPECHECK_FAIL;
+    }
+    
+    arg_list_node * arg_node = args->tail;
+    expr_list_node * expr_node = list->tail;
+    while (arg_node != NULL && expr_node != NULL)
+    {
+        arg * arg_value = arg_node->value;
+        expr * expr_value = expr_node->value;
+        
+        if (arg_expr_cmp(arg_value, expr_value) == TYPECHECK_FAIL)
+        {
+            return TYPECHECK_FAIL;
+        }
+        
+        arg_node = arg_node->next;
+        expr_node = expr_node->next;
+    }
+
+    return TYPECHECK_SUCC;
+} 
+
+int expr_id_check_type(symtab * tab, expr * value, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup_arg(tab, value->id, SYMTAB_NESTED);
+    if (entry != NULL && entry->arg_func_value)
+    {
+        arg * arg_value = (arg *)entry->arg_func_value;
+        if (arg_value->type == ARG_INT)
+        {
+             value->comb = COMB_TYPE_INT;
+        }
+        else if (arg_value->type == ARG_FUNC)
+        {
+             value->comb = COMB_TYPE_FUNC;
+             value->comb_args = arg_value->args;
+             value->comb_ret = arg_value->ret;
+        }
+    }
+    else
+    {                    
+        entry = symtab_lookup_func(tab, value->id, SYMTAB_NESTED);
+        if (entry != NULL && entry->arg_func_value)
+        {
+            func * func_value = (func *)entry->arg_func_value;
+            
+            value->comb = COMB_TYPE_FUNC;
+            value->comb_args = func_value->args;
+            value->comb_ret = func_value->ret;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            printf("cannot find variable %s\n", value->id);
+        }
+    }
+    return 0;
+}
+
+int expr_cond_check_type(symtab * tab, expr * value, int * result)
+{
+    expr_check_type(tab, value->left, result);
+    expr_check_type(tab, value->middle, result);
+    expr_check_type(tab, value->right, result);
+            
+    if (value->left->comb == COMB_TYPE_INT ||
+        value->left->comb == COMB_TYPE_BOOL)
+    {
+        if (value->middle->comb == value->right->comb)
+        {
+             if (value->middle->comb == COMB_TYPE_FUNC)
+             {
+                 if (func_cmp(value->middle->comb_args, value->middle->comb_ret,
+                              value->right->comb_args, value->right->comb_ret) == TYPECHECK_FAIL)
+                 {
+                     *result = TYPECHECK_FAIL;
+                      printf("functions are different %s %s\n",
+                             value->middle->id, value->right->id); 
+                 }
+             }
+             else
+             {
+                 value->comb = value->middle->comb;
+             }
+         }
+         else
+         {
+             printf("types on conditional expression do not match %s %s\n",
+                     comb_type_str(value->middle->comb),
+                     comb_type_str(value->right->comb));
+         }
+    }
+    else
+    {
+         *result = TYPECHECK_FAIL;
+         value->comb = COMB_TYPE_ERR;
+         printf("cannot execute conditional operator on %s\n",
+                 comb_type_str(value->left->comb));
+    }
+    return 0;
+}
+
+int expr_call_check_type(symtab * tab, expr * value, int * result)
+{
+    func * func_value = NULL;
+    symtab_entry * entry = NULL;
+         
+    if (value->args != NULL)
+    {
+        expr_list_check_type(tab, value->args, result);
+    }
+            
+    entry = symtab_lookup_func(tab, value->func_id, SYMTAB_NESTED);
+    if (entry != NULL)
+    {
+        func_value = (func *)entry->arg_func_value;
+        if (func_value)
+        {
+            if (arg_expr_lists_cmp(func_value->args, value->args) == TYPECHECK_SUCC)
+            {
+                expr_set_return_type(value, func_value->ret);
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                printf("function call type mismatch\n");
+            }
+        }
+    }
+    else
+    {
+        entry = symtab_lookup_arg(tab, value->func_id, SYMTAB_NESTED);
+        if (entry != NULL)
+        {
+            arg * arg_value = (arg *)entry->arg_func_value;
+            if (arg_value->type == ARG_FUNC)
+            {
+                if (arg_expr_lists_cmp(arg_value->args, value->args) == TYPECHECK_SUCC)
+                {
+                    expr_set_return_type(value, arg_value->ret);
+                }
+                else
+                {
+                    *result = TYPECHECK_FAIL;
+                    printf("function call type mismatch\n");
+                }
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                printf("expr_call cannot find function %s\n", value->func_id);
+            }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            printf("expr_call cannot find function %s\n", value->func_id);
+        }
+    }
+
+    return 0;
+}
+
 int expr_check_type(symtab * tab, expr * value, int * result)
 {
     switch (value->type)
@@ -13,44 +313,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             value->comb = COMB_TYPE_INT;
         break;
         case EXPR_ID:
-        {
-            symtab_entry * entry = NULL;
-            
-            entry = symtab_lookup_func(tab, value->id, SYMTAB_NESTED);
-            if (entry != NULL)
-            {
-                func * func_value = (func *)entry->arg_func_value;
-            
-                value->comb = COMB_TYPE_FUNC;
-                value->comb_args = func_value->args;
-                value->comb_ret = func_value->ret;
-            }
-            else
-            {
-                entry = symtab_lookup_arg(tab, value->id, SYMTAB_NESTED);
-                if (entry != NULL)
-                {
-                    if (entry->type == SYMTAB_ARG && entry->arg_func_value)
-                    {
-                        arg * arg_value = (arg *)entry->arg_func_value;
-                        if (arg_value->type == ARG_INT)
-                        {
-                            value->comb = COMB_TYPE_INT;
-                        }
-                        else if (arg_value->type == ARG_FUNC)
-                        {
-                            value->comb = COMB_TYPE_FUNC;
-                            value->comb_args = arg_value->args;
-                            value->comb_ret = arg_value->ret;
-                        }
-                    }
-                }
-                else
-                {
-                    printf("cannot find variable %s\n", value->id);
-                }
-            }
-        }
+            expr_id_check_type(tab, value, result);
         break;
         case EXPR_NEG:
         {
@@ -63,7 +326,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
-                printf("cannot negate type %d\n", value->left->comb);
+                printf("cannot negate type %s\n", comb_type_str(value->left->comb));
             }
         }
         break;
@@ -83,8 +346,9 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
-                printf("cannot exec arithmetic operation on types %d %d\n",
-                       value->left->comb, value->right->comb);
+                printf("cannot exec arithmetic operation on types %s %s\n",
+                       comb_type_str(value->left->comb),
+                       comb_type_str(value->right->comb));
             }
         }
         break;
@@ -126,72 +390,23 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
-                printf("cannot equal types %d %d\n",
-                       value->left->comb, value->right->comb);
+                printf("cannot equal types %s %s\n",
+                       comb_type_str(value->left->comb),
+                       comb_type_str(value->right->comb));
             }
         break;
         case EXPR_SUP:
             expr_check_type(tab, value->left, result);
+            
+            value->comb = value->left->comb;
+            value->comb_args = value->left->comb_args;
+            value->comb_ret = value->left->comb_ret;
         break;
         case EXPR_COND:
-        {
-            expr_check_type(tab, value->left, result);
-            expr_check_type(tab, value->middle, result);
-            expr_check_type(tab, value->right, result);
-            
-            if (value->left->comb == COMB_TYPE_INT ||
-                value->left->comb == COMB_TYPE_BOOL)
-            {
-                if (value->middle->comb == value->right->comb)
-                {
-                    if (value->middle->comb == COMB_TYPE_FUNC)
-                    {
-                    }
-                    else
-                    {
-                        value->comb = value->middle->comb;
-                    }
-                }
-                else
-                {
-                    printf("types on conditional expression do not match %d %d\n",
-                           value->middle->comb, value->right->comb);
-                }
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb = COMB_TYPE_ERR;
-                printf("cannot execute conditional operator on %d\n",
-                       value->left->comb);
-            }
-        }
+            expr_cond_check_type(tab, value, result);
         break;
         case EXPR_CALL:
-        {
-            symtab_entry * entry = NULL;
-            
-            entry = symtab_lookup_func(tab, value->func_id, SYMTAB_NESTED);
-            if (entry != NULL)
-            {
-                func * func_value = (func *)entry->arg_func_value;
-                if (func_value)
-                {
-                    
-                }
-            }
-            else
-            {
-                entry = symtab_lookup_arg(tab, value->func_id, SYMTAB_NESTED);
-                if (entry != NULL)
-                {
-                }
-                else
-                {
-                    printf("cannot find function %s\n", value->func_id);
-                }
-            }
-        }
+            expr_call_check_type(tab, value, result);
         break;
         case EXPR_FUNC:
         {
@@ -231,6 +446,12 @@ int func_check_type(symtab * tab, func * func_value, int * result)
     if (func_value->body && func_value->body->ret)
     {
         expr_check_type(tab, func_value->body->ret, result);
+        
+        if (arg_expr_cmp(func_value->ret, func_value->body->ret) == TYPECHECK_FAIL)
+        {
+            *result = TYPECHECK_FAIL;
+            printf("incorrect return type in function %s\n", func_value->id);
+        }
     }
 
     return 0;
@@ -264,30 +485,49 @@ int never_check_type(never * nev, int * result)
  */
 int expr_call_check_call(symtab * tab, expr * value, int * result)
 {
-    symtab_entry * entry = symtab_lookup_func(tab, value->func_id, SYMTAB_NESTED);
-    if (entry == NULL)
-    {
-        *result = TYPECHECK_FAIL;
-        printf("cannot find function %s\n", value->func_id);
-
-        return 0;
-    }
+    symtab_entry * entry = NULL;
     
-    if (entry->type == SYMTAB_FUNC)
+    entry = symtab_lookup_func(tab, value->id, SYMTAB_NESTED);
+    if (entry != NULL)
     {
-        func * func_value = entry->arg_func_value;
-        if (func_value && func_value->args && value->args &&
-            func_value->args->count != value->args->count)
+        if (entry->type == SYMTAB_FUNC)
+        {
+            func * func_value = entry->arg_func_value;
+            if (func_value && func_value->args && value->args &&
+                func_value->args->count != value->args->count)
+            {
+                *result = TYPECHECK_FAIL;
+                 printf("improper number of %s parameters, got %d but expected %d\n",
+                        value->func_id, value->args->count, func_value->args->count);
+            }
+        }
+        else
         {
             *result = TYPECHECK_FAIL;
-            printf("improper number of %s parameters, got %d but expected %d\n",
-                    value->func_id, value->args->count, func_value->args->count);
+            printf("found variable but function expected %s\n", value->func_id);
         }
     }
     else
     {
-        *result = TYPECHECK_FAIL;
-        printf("found variable but function expected %s\n", value->func_id);
+        entry = symtab_lookup_arg(tab, value->id, SYMTAB_NESTED);
+        if (entry != NULL)
+        {
+            arg * arg_value = (arg *)entry->arg_func_value;
+            if (arg_value->type == ARG_INT)
+            {
+                *result = TYPECHECK_FAIL;
+                printf("expected function but int found\n");
+            }
+            else
+            {
+                printf("found function %s\n", value->id);
+            }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            printf("cannot find function %s\n", value->func_id);
+        }
     }
     return 0;
 }
@@ -392,6 +632,44 @@ int never_check_func_call(never * nev, int * result)
 /*
  * Check undefined IDs
  */
+int expr_call_check_undefined_ids(symtab * tab, expr * value, int * result)
+{
+    symtab_entry * entry = NULL;
+            
+    entry = symtab_lookup_func(tab, value->id, SYMTAB_NESTED);
+    if (entry != NULL)
+    {
+        printf("\tfound function %s\n", value->id);
+        if (value->args != NULL)
+        {
+            expr_list_check_undefined_ids(tab, value->args, result);
+        }
+    }            
+    else
+    {
+        entry = symtab_lookup_arg(tab, value->id, SYMTAB_NESTED);
+        if (entry != NULL)
+        {
+            arg * arg_value = (arg *) entry->arg_func_value;
+            if (arg_value && arg_value->type == ARG_INT)
+            {
+                *result = TYPECHECK_FAIL;
+                 printf("\texpected function but parameter found %s\n", value->id);
+            }
+            else
+            {
+                printf("\tfound function %s\n", value->id);
+            }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            printf("\tcannot find function %s\n", value->id);
+        }
+    }
+    return 0;
+}
+ 
 int expr_check_undefined_ids(symtab * tab, expr * value, int * result)
 {
     switch (value->type)
@@ -434,24 +712,7 @@ int expr_check_undefined_ids(symtab * tab, expr * value, int * result)
             expr_check_undefined_ids(tab, value->right, result);
         break;
         case EXPR_CALL:
-        {
-            symtab_entry * entry = symtab_lookup_func(tab, value->id, SYMTAB_NESTED);
-            if (entry == NULL)
-            {
-                *result = TYPECHECK_FAIL;
-                printf("\tcannot find function %s\n", value->id);
-            }
-            else if (entry != NULL && entry->type == SYMTAB_ARG)
-            {
-                *result = TYPECHECK_FAIL;
-                printf("\texpected function but variable %s found\n", value->id);
-            }
-            else
-            {
-                printf("\tfound function %s\n", value->id);
-                expr_list_check_undefined_ids(tab, value->args, result);
-            }
-        }
+            expr_call_check_undefined_ids(tab, value, result);
         break;
         case EXPR_FUNC:
             func_check_undefined_ids(value->func_value->stab, value->func_value, result);
@@ -535,7 +796,7 @@ int symtab_add_arg_from_arg_list(symtab * tab, arg_list * list, int * result)
                 *result = TYPECHECK_FAIL;
                 if (entry->type == SYMTAB_FUNC)
                 {
-                    printf("function %s alread defined\n", entry->id);
+                    printf("function %s already defined\n", entry->id);
                 }
                 else if (entry->type == SYMTAB_ARG)
                 {
@@ -796,6 +1057,37 @@ int print_functions(never * nev)
     {
         print_func_list(nev->funcs, 1);
     }
+    return 0;
+}
+
+int never_sem_check(never * nev)
+{
+    int typecheck_res;
+    printf("---- add symbol table entries --- \n\n");
+    
+    typecheck_res = TYPECHECK_SUCC;
+    symtab_add_entry_never(nev, &typecheck_res);
+    
+    print_functions(nev);
+    print_symtabs(nev);
+
+    printf("---- check undefined ids --- \n\n");
+
+    typecheck_res = TYPECHECK_SUCC;
+    never_check_undefined_ids(nev, &typecheck_res);
+
+    printf("---- check function calls --- \n\n");
+
+    typecheck_res = TYPECHECK_SUCC;
+    never_check_func_call(nev, &typecheck_res);
+
+    printf("---- check types --- \n\n");
+    
+    typecheck_res = TYPECHECK_SUCC;
+    never_check_type(nev, &typecheck_res);
+    
+    never_delete(nev);
+    
     return 0;
 }
 

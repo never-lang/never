@@ -19,7 +19,7 @@ func twice(single_func(int, int) -> int) -> (int, int) -> int
     return twice_func;
 }
 
-func main()
+func main() -> int
 {
     return print(twice_min(12, 15));
 }

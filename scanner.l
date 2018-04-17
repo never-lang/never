@@ -4,8 +4,8 @@
 %{
 #include <stdio.h>
 #include <stdarg.h>
-#include "parser.h"
 #include "types.h"
+#include "parser.h"
 
 #define YY_DECL int lex_scan(token * tokp)
 

@@ -6,17 +6,17 @@
  */
 func min(int a, int b, int c) -> int
 {
-    return (a < b) ? a : b;
+    return a < b ? a : b;
 }
 
 func minCoeff(int coeff, int p1, int p2) -> int
 {
     func min(int n_a, int n_b) -> int
     {
-        return coeff * (n_a < n_b ? n_a : n_b);
+        return coeff * (n_a < n_b ? coeff * n_a : coeff * n_b);
     }
 
-    return min;
+    return min(10 * 20, 30 * 60);
 }
 
 func crazy(int a, int, (), funcZ(int, int) -> (int) -> () -> int) -> int
@@ -24,18 +24,23 @@ func crazy(int a, int, (), funcZ(int, int) -> (int) -> () -> int) -> int
     return 0;
 }
 
-func print(int a) -> int
+func print(f(int, int, int) -> int) -> f(int, int, int) -> int
 {
-    return 0;
+    return f;
 }
 
-func my_func(int a, int b) -> int
+func my_func(int a, int b, int c) -> int
 {
     return minCoeff(2, a, b);
 }
 
-func main()
+func void_func() -> int
 {
-    return print(my_func(10, 15));
+    return 0 < 0 ? 0 : 10;
+}
+
+func main() -> (int, int, int) -> int
+{
+    return print(my_func);
 }
 
