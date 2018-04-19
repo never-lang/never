@@ -52,15 +52,14 @@ void symtab_entry_add_arg_func(symtab_entry * entries, unsigned int size,
     entries[index].arg_func_value = arg_func_value;
 }
 
-symtab_entry * symtab_entry_lookup_arg_func(symtab_entry * entries, unsigned int size, 
-                                            int type, const char * id)
+symtab_entry * symtab_entry_lookup_arg_func(symtab_entry * entries, unsigned int size, const char * id)
 {
     unsigned int times = 0;
     unsigned int index = hash(id) % size;
 
     while (entries[index].type != 0)
     {
-        if (entries[index].type == type && strcmp(entries[index].id, id) == 0)
+        if (strcmp(entries[index].id, id) == 0)
         {
             return &entries[index];
         }
@@ -147,29 +146,19 @@ void symtab_add_func(symtab * tab, func * func_value)
     symtab_resize(tab);
 }
 
-symtab_entry * symtab_lookup_type(symtab * tab, int type, const char * id, char nested)
+symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_entry_lookup_arg_func(tab->entries, tab->size, type, id);
+    entry = symtab_entry_lookup_arg_func(tab->entries, tab->size, id);
     if (nested && entry == NULL && tab->parent != NULL)
     {
-        return symtab_lookup_type(tab->parent, type, id, nested);
+        return symtab_lookup(tab->parent, id, nested);
     }
     else
     {
         return entry;
     }
-}
-
-symtab_entry * symtab_lookup_arg(symtab * tab, const char * id, char nested)
-{
-    return symtab_lookup_type(tab, SYMTAB_ARG, id, nested);
-}
-
-symtab_entry * symtab_lookup_func(symtab * tab, const char * id, char nested)
-{
-    return symtab_lookup_type(tab, SYMTAB_FUNC, id, nested);
 }
 
 void symtab_print(symtab * tab)

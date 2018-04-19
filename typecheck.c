@@ -166,25 +166,10 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup_arg(tab, value->id, SYMTAB_NESTED);
+    entry = symtab_lookup(tab, value->id, SYMTAB_NESTED);
     if (entry != NULL && entry->arg_func_value)
     {
-        arg * arg_value = (arg *)entry->arg_func_value;
-        if (arg_value->type == ARG_INT)
-        {
-             value->comb = COMB_TYPE_INT;
-        }
-        else if (arg_value->type == ARG_FUNC)
-        {
-             value->comb = COMB_TYPE_FUNC;
-             value->comb_args = arg_value->args;
-             value->comb_ret = arg_value->ret;
-        }
-    }
-    else
-    {                    
-        entry = symtab_lookup_func(tab, value->id, SYMTAB_NESTED);
-        if (entry != NULL && entry->arg_func_value)
+        if (entry->type == SYMTAB_FUNC)
         {
             func * func_value = (func *)entry->arg_func_value;
             
@@ -192,11 +177,25 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             value->comb_args = func_value->args;
             value->comb_ret = func_value->ret;
         }
-        else
+        else if (entry->type == SYMTAB_ARG)
         {
-            *result = TYPECHECK_FAIL;
-            printf("cannot find variable %s\n", value->id);
+            arg * arg_value = (arg *)entry->arg_func_value;
+            if (arg_value->type == ARG_INT)
+            {
+                 value->comb = COMB_TYPE_INT;
+            }
+            else if (arg_value->type == ARG_FUNC)
+            {
+                 value->comb = COMB_TYPE_FUNC;
+                 value->comb_args = arg_value->args;
+                 value->comb_ret = arg_value->ret;
+            }
         }
+    }
+    else
+    {                    
+        *result = TYPECHECK_FAIL;
+        printf("cannot find variable %s\n", value->id);
     }
     return 0;
 }
@@ -254,12 +253,12 @@ int expr_call_check_type(symtab * tab, expr * value, int * result)
         expr_list_check_type(tab, value->args, result);
     }
             
-    entry = symtab_lookup_func(tab, value->func_id, SYMTAB_NESTED);
-    if (entry != NULL)
+    entry = symtab_lookup(tab, value->func_id, SYMTAB_NESTED);
+    if (entry != NULL && entry->arg_func_value)
     {
-        func_value = (func *)entry->arg_func_value;
-        if (func_value)
+        if (entry->type == SYMTAB_FUNC)
         {
+            func_value = (func *)entry->arg_func_value;
             if (arg_expr_lists_cmp(func_value->args, value->args) == TYPECHECK_SUCC)
             {
                 expr_set_return_type(value, func_value->ret);
@@ -270,11 +269,7 @@ int expr_call_check_type(symtab * tab, expr * value, int * result)
                 printf("function call type mismatch\n");
             }
         }
-    }
-    else
-    {
-        entry = symtab_lookup_arg(tab, value->func_id, SYMTAB_NESTED);
-        if (entry != NULL)
+        else if (entry->type == SYMTAB_ARG)
         {
             arg * arg_value = (arg *)entry->arg_func_value;
             if (arg_value->type == ARG_FUNC)
@@ -289,17 +284,17 @@ int expr_call_check_type(symtab * tab, expr * value, int * result)
                     printf("function call type mismatch\n");
                 }
             }
-            else
+            else if (arg_value->type == ARG_INT);
             {
                 *result = TYPECHECK_FAIL;
-                printf("expr_call cannot find function %s\n", value->func_id);
+                printf("expected function but parameter %s found\n", value->func_id);
             }
         }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            printf("expr_call cannot find function %s\n", value->func_id);
-        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        printf("expr_call cannot find function %s\n", value->func_id);
     }
 
     return 0;
@@ -487,13 +482,13 @@ int expr_call_check_call(symtab * tab, expr * value, int * result)
 {
     symtab_entry * entry = NULL;
     
-    entry = symtab_lookup_func(tab, value->id, SYMTAB_NESTED);
-    if (entry != NULL)
+    entry = symtab_lookup(tab, value->id, SYMTAB_NESTED);
+    if (entry != NULL && entry->arg_func_value)
     {
         if (entry->type == SYMTAB_FUNC)
         {
             func * func_value = entry->arg_func_value;
-            if (func_value && func_value->args && value->args &&
+            if (func_value->args && value->args &&
                 func_value->args->count != value->args->count)
             {
                 *result = TYPECHECK_FAIL;
@@ -501,16 +496,7 @@ int expr_call_check_call(symtab * tab, expr * value, int * result)
                         value->func_id, value->args->count, func_value->args->count);
             }
         }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            printf("found variable but function expected %s\n", value->func_id);
-        }
-    }
-    else
-    {
-        entry = symtab_lookup_arg(tab, value->id, SYMTAB_NESTED);
-        if (entry != NULL)
+        else if (entry->type == SYMTAB_ARG)
         {
             arg * arg_value = (arg *)entry->arg_func_value;
             if (arg_value->type == ARG_INT)
@@ -518,16 +504,16 @@ int expr_call_check_call(symtab * tab, expr * value, int * result)
                 *result = TYPECHECK_FAIL;
                 printf("expected function but int found\n");
             }
-            else
+            else if (arg_value->type == ARG_FUNC);
             {
                 printf("found function %s\n", value->id);
             }
         }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            printf("cannot find function %s\n", value->func_id);
-        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        printf("found variable but function expected %s\n", value->func_id);
     }
     return 0;
 }
@@ -636,19 +622,18 @@ int expr_call_check_undefined_ids(symtab * tab, expr * value, int * result)
 {
     symtab_entry * entry = NULL;
             
-    entry = symtab_lookup_func(tab, value->id, SYMTAB_NESTED);
+    entry = symtab_lookup(tab, value->id, SYMTAB_NESTED);
     if (entry != NULL)
     {
-        printf("\tfound function %s\n", value->id);
-        if (value->args != NULL)
+        if (entry->type == SYMTAB_FUNC)
         {
-            expr_list_check_undefined_ids(tab, value->args, result);
+            printf("\tfound function %s\n", value->id);
+            if (value->args != NULL)
+            {
+                expr_list_check_undefined_ids(tab, value->args, result);
+            }
         }
-    }            
-    else
-    {
-        entry = symtab_lookup_arg(tab, value->id, SYMTAB_NESTED);
-        if (entry != NULL)
+        else if (entry->type == SYMTAB_ARG)
         {
             arg * arg_value = (arg *) entry->arg_func_value;
             if (arg_value && arg_value->type == ARG_INT)
@@ -659,13 +644,13 @@ int expr_call_check_undefined_ids(symtab * tab, expr * value, int * result)
             else
             {
                 printf("\tfound function %s\n", value->id);
-            }
+            }            
         }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            printf("\tcannot find function %s\n", value->id);
-        }
+    }            
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        printf("\tcannot find function %s\n", value->id);
     }
     return 0;
 }
@@ -680,7 +665,7 @@ int expr_check_undefined_ids(symtab * tab, expr * value, int * result)
         case EXPR_ID:
         {
             printf("\tsearching id %s\n", value->id);
-            symtab_entry * entry = symtab_lookup_arg(tab, value->id, SYMTAB_NESTED);
+            symtab_entry * entry = symtab_lookup(tab, value->id, SYMTAB_NESTED);
             if (entry == NULL)
             {
                 *result = TYPECHECK_FAIL;
@@ -786,7 +771,7 @@ int symtab_add_arg_from_arg_list(symtab * tab, arg_list * list, int * result)
         arg * arg_value = node->value;
         if (arg_value && arg_value->id)
         {
-            symtab_entry * entry = symtab_lookup_arg(tab, arg_value->id, SYMTAB_FLAT);
+            symtab_entry * entry = symtab_lookup(tab, arg_value->id, SYMTAB_FLAT);
             if (entry == NULL)
             {
                 symtab_add_arg(tab, arg_value);
@@ -817,7 +802,7 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result)
         func * func_value = node->value;
         if (func_value && func_value->id)
         {
-            symtab_entry * entry = symtab_lookup_func(tab, func_value->id, SYMTAB_FLAT);
+            symtab_entry * entry = symtab_lookup(tab, func_value->id, SYMTAB_FLAT);
             if (entry == NULL)
             {
                 symtab_add_func(tab, func_value);

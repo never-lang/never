@@ -24,14 +24,14 @@ func crazy(int a, int, (), funcZ(int, int) -> (int) -> () -> int) -> int
     return 0;
 }
 
-func print(f(int, int, int) -> int) -> f(int, int, int) -> int
+func print(void_func(int, int, int) -> int) -> (int, int, int) -> int
 {
-    return f;
+    return void_func;
 }
 
 func my_func(int a, int b, int c) -> int
 {
-    return minCoeff(2, a, b);
+    return 2 * minCoeff(2, a, b);
 }
 
 func void_func() -> int
