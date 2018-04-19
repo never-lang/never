@@ -214,7 +214,13 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
              if (value->middle->comb == COMB_TYPE_FUNC)
              {
                  if (func_cmp(value->middle->comb_args, value->middle->comb_ret,
-                              value->right->comb_args, value->right->comb_ret) == TYPECHECK_FAIL)
+                              value->right->comb_args, value->right->comb_ret) == TYPECHECK_SUCC)
+                 {
+                     value->comb = COMB_TYPE_FUNC;
+                     value->comb_args = value->middle->comb_args;
+                     value->comb_ret = value->middle->comb_ret;
+                 }
+                 else
                  {
                      *result = TYPECHECK_FAIL;
                       printf("functions are different %s %s\n",
