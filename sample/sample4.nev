@@ -5,7 +5,7 @@ func min(int a, int b) -> int
     return (a < b) ? a : b;
 }
 
-func main()
+func main() -> int
 {
     return print(f1(a, b));
 }

@@ -8,14 +8,17 @@ extern FILE * yyin;
 
 int main(int argc, char * argv[])
 {
+    int ret;
     never * nev = NULL;
     freopen(argv[1], "r", stdin);
 
     yyin = stdin;
 
-    yyparse(&nev);
-    
-    never_sem_check(nev);    
+    ret = yyparse(&nev);
+    if (ret == 0)
+    {
+        never_sem_check(nev);
+    }
     
     yylex_destroy();
 

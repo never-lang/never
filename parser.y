@@ -39,6 +39,7 @@ int yyerror(never ** nev, char * str)
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/'
 %precedence NEG
+%left <val.str_value> '(' ')'
 
 %start never
 
@@ -121,12 +122,12 @@ expr: func
     $$ = expr_new_func($1);
 };
 
-expr: TOK_ID '(' ')'
+expr: expr '(' ')'
 {
     $$ = expr_new_call($1, NULL);
 };
 
-expr: TOK_ID '(' expr_list ')'
+expr: expr '(' expr_list ')'
 {
     $$ = expr_new_call($1, $3);
 };
@@ -152,19 +153,9 @@ arg: TOK_INT TOK_ID
     $$ = arg_new_int($2);
 };
 
-arg: '(' ')'
-{
-    $$ = arg_new_func(NULL, NULL, NULL);
-};
-
 arg: '(' ')' TOK_RET arg
 {
     $$ = arg_new_func(NULL, NULL, $4);
-};
-
-arg: '(' arg_list ')'
-{
-    $$ = arg_new_func(NULL, $2, NULL);
 };
 
 arg: '(' arg_list ')' TOK_RET arg
@@ -172,19 +163,9 @@ arg: '(' arg_list ')' TOK_RET arg
     $$ = arg_new_func(NULL, $2, $5);
 };
 
-arg: TOK_ID '(' ')'
-{
-    $$ = arg_new_func($1, NULL, NULL);
-};
-
 arg: TOK_ID '(' ')' TOK_RET arg
 {
     $$ = arg_new_func($1, NULL, $5);
-};
-
-arg: TOK_ID '(' arg_list ')'
-{
-    $$ = arg_new_func($1, $3, NULL);
 };
 
 arg: TOK_ID '(' arg_list ')' TOK_RET arg
@@ -203,19 +184,9 @@ arg_list: arg_list ',' arg
     arg_list_add_end($$, $3);
 };
 
-func: TOK_FUNC TOK_ID '(' ')' func_body
-{
-    $$ = func_new($2, NULL, NULL, $5);
-};
-
 func: TOK_FUNC TOK_ID '(' ')' TOK_RET arg func_body
 {
     $$ = func_new($2, NULL, $6, $7);
-};
-
-func: TOK_FUNC TOK_ID '(' arg_list ')' func_body
-{
-    $$ = func_new($2, $4, NULL, $6);
 };
 
 func: TOK_FUNC TOK_ID '(' arg_list ')' TOK_RET arg func_body

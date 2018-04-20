@@ -42,11 +42,11 @@ typedef struct expr
     struct arg * comb_ret; /* function ret */
     union
     {
-        int int_value;
-        char * id;
+        int int_value; /* EXPR_INT */
+        char * id;   /* EXPR_ID */
         struct
         {
-            struct func * func_value;
+            struct func * func_value; /* EXPR_FUNC */
         };
         struct
         {
@@ -56,7 +56,7 @@ typedef struct expr
         };
         struct
         {
-            char * func_id;
+            struct expr * func_expr; /* EXPR_CALL */
             struct expr_list * args;
         };
     };
@@ -82,7 +82,7 @@ expr * expr_new_one(int type, expr * expr_left);
 expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * expr_right);
 expr * expr_new_func(func * value); 
-expr * expr_new_call(char * func_id, expr_list * args);
+expr * expr_new_call(expr * func_expr, expr_list * args);
 
 void expr_delete(expr * value);
 

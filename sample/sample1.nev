@@ -19,7 +19,7 @@ func minCoeff(int coeff, int p1, int p2) -> int
     return min(10 * 20, 30 * 60);
 }
 
-func crazy(int a, int, (), funcZ(int, int) -> (int) -> () -> int) -> int
+func crazy(int a, int, () -> int, funcZ(int, int) -> (int) -> () -> int) -> int
 {
     return 0;
 }

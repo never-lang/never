@@ -75,13 +75,13 @@ expr * expr_new_func(func * value)
     return ret;
 }
 
-expr * expr_new_call(char * func_id, expr_list * args)
+expr * expr_new_call(expr * func_expr, expr_list * args)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = EXPR_CALL;
     ret->comb = COMB_TYPE_UNKNOWN;
-    ret->func_id = func_id;
+    ret->func_expr = func_expr;
     ret->args = args;
     
     return ret;
@@ -120,7 +120,10 @@ void expr_delete(expr * value)
             expr_delete(value->right);
         break;
         case EXPR_CALL:
-            free(value->func_id);
+            if (value->func_expr != NULL)
+            {
+                expr_delete(value->func_expr);
+            }
             if (value->args != NULL)
             {
                 expr_list_delete(value->args);
