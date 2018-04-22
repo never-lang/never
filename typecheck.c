@@ -251,10 +251,7 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
 
 int expr_call_check_type(symtab * tab, expr * value, int * result)
 {
-    if (value->func_expr != NULL)
-    {
-        expr_check_type(tab, value->func_expr, result);
-    }     
+    expr_check_type(tab, value->func_expr, result);
     if (value->args != NULL)
     {
         expr_list_check_type(tab, value->args, result);
