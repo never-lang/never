@@ -13,6 +13,8 @@ test_parser: scanner.o parser.o expr.o arg.o func.o never.o symtab.o typecheck.o
 
 test_symtab: symtab.o arg.o func.o expr.o
 
+test_freevar: freevar.o
+
 gc: gc.o object.o scanner.o
 
 %.c : %.y
