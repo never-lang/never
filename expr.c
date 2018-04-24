@@ -130,7 +130,10 @@ void expr_delete(expr * value)
             }
         break;
         case EXPR_FUNC:
-            func_delete(value->func_value);
+            if (value->func_value)
+            {
+                func_delete(value->func_value);
+            }
         break;
     }
 

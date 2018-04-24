@@ -23,7 +23,7 @@ typedef union token_value
 
 typedef struct token
 {
-    int type;
+    int line_no;
     token_value val;
 } token;
 

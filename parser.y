@@ -1,9 +1,12 @@
 
 %{
 #include <stdio.h>
+#include "utils.h"
 #include "types.h"
 #include "scanner.h"
 #include "never.h"
+
+extern int line_no;
 
 int yylex(token * tokp)
 {
@@ -12,8 +15,8 @@ int yylex(token * tokp)
 
 int yyerror(never ** nev, char * str)
 {
-    fprintf(stderr, "error: %s\n", str);
-    return 0;
+    print_error_msg(line_no, str);
+    return 1;
 }
 %}
 %token <val.str_value> TOK_ID
@@ -203,6 +206,16 @@ func: TOK_FUNC TOK_ID '(' ')' TOK_RET var func_body
 func: TOK_FUNC TOK_ID '(' var_list ')' TOK_RET var func_body
 {
     $$ = func_new($2, $4, $7, $8);
+};
+
+func: TOK_FUNC TOK_ID error
+{
+    print_error_msg(line_no, "error in function %s defined at %d", $2, $<line_no>2);
+    free($2);
+    
+    yyclearin;
+    yyerrok;
+    $$ = NULL;
 };
 
 func_body: '{' func_list TOK_RETURN expr ';' '}'

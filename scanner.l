@@ -9,7 +9,7 @@
 
 #define YY_DECL int lex_scan(token * tokp)
 
-unsigned int line_number = 1;
+unsigned int line_no = 1;
 
 void scanner_printf(const char * format, ...)
 {
@@ -35,70 +35,83 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
 [ \t\r]+
 
 \n {
-	line_number++;
+	line_no++;
 }
 
 func {
+    tokp->line_no = line_no;
     scanner_printf("func\n");
     return TOK_FUNC;
 }
 
 return {
+    tokp->line_no = line_no;    
     scanner_printf("return\n");
     return TOK_RETURN;    
 }
 
 int {
+    tokp->line_no = line_no;    
     scanner_printf("int\n");
     return TOK_INT;
 }
 
 "+"|"-"|"/"|"*" {
+    tokp->line_no = line_no;
     scanner_printf("operator %s\n", yytext);
     return yytext[0];
 }
 
 "?"|":" {
+    tokp->line_no = line_no;
     scanner_printf("%s\n", yytext);
     return yytext[0];
 }
 
 "==" {
+    tokp->line_no = line_no;
     scanner_printf("==\n");
     return TOK_EQ;
 }
 
 "<"|">" {
+    tokp->line_no = line_no;
     scanner_printf("<>= %s\n", yytext);
     return yytext[0];
 }
 
 "<=" {
+    tokp->line_no = line_no;
     scanner_printf("<=\n");
     return TOK_LTE;
 }
 
 ">=" {
+    tokp->line_no = line_no;
     scanner_printf("=>\n");
     return TOK_GTE;
 }
 
 "->" {
+    tokp->line_no = line_no;
     scanner_printf("return %s\n", yytext);
     return TOK_RET;
 }
 
 "("|")" {
+    tokp->line_no = line_no;
     scanner_printf("open|close paren\n");
     return yytext[0];
 }
 
 "{"|"}" {
+    tokp->line_no = line_no;
     scanner_printf("open|close bracket\n");
     return yytext[0];
 }
 
 ","|";" {
+    tokp->line_no = line_no;
     scanner_printf("%s\n", yytext);
     return yytext[0];
 }
@@ -107,20 +120,22 @@ int {
     int result;
     sscanf(yytext, "%i", &result);
     tokp->val.int_value = result;
-
+    tokp->line_no = line_no;
     scanner_printf("number %d\n", result);
     return TOK_NUM;
 }
 
 {ID} {
+    tokp->line_no = line_no;
     tokp->val.str_value = strdup(yytext);
+    tokp->line_no = line_no;
     scanner_printf("id %s\n", yytext);
     return TOK_ID;
 }
 
 "/*"            { BEGIN(C_COMMENT); }
 <C_COMMENT>"*/" { BEGIN(INITIAL); }
-<C_COMMENT>\n   { }
+<C_COMMENT>\n   { line_no++; }
 <C_COMMENT>.    { }
 
 <<EOF>> {

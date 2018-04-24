@@ -396,11 +396,14 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         break;
         case EXPR_FUNC:
         {
-            func_check_type(value->func_value->stab, value->func_value, result);
+            if (value->func_value)
+            {
+                func_check_type(value->func_value->stab, value->func_value, result);
             
-            value->comb = COMB_TYPE_FUNC;
-            value->comb_vars = value->func_value->vars;
-            value->comb_ret = value->func_value->ret;
+                value->comb = COMB_TYPE_FUNC;
+                value->comb_vars = value->func_value->vars;
+                value->comb_ret = value->func_value->ret;
+            }
         }
         break;
     }
@@ -570,7 +573,10 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
             }
         break;
         case EXPR_FUNC:
-            symtab_add_entry_func(stab, value->func_value, result);
+            if (value->func_value)
+            {
+                symtab_add_entry_func(stab, value->func_value, result);
+            }
         break;
     }
     return 0;
@@ -690,7 +696,10 @@ int print_symtabs_expr(expr * value)
             }
         break;
         case EXPR_FUNC:
-            print_symtabs_func(value->func_value);
+            if (value->func_value)
+            {
+                print_symtabs_func(value->func_value);
+            }
         break;
     }
     return 0;
