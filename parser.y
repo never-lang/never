@@ -27,8 +27,8 @@ int yyerror(never ** nev, char * str)
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
-%type <val.arg_value> arg
-%type <val.arg_list_value> arg_list
+%type <val.var_value> var
+%type <val.var_list_value> var_list
 %type <val.func_value> func
 %type <val.func_list_value> func_list
 %type <val.func_body_value> func_body
@@ -143,53 +143,53 @@ expr_list: expr_list ',' expr
     expr_list_add_end($$, $3);
 };
 
-arg: TOK_INT
+var: TOK_INT
 {
-    $$ = arg_new_int(NULL);
+    $$ = var_new_int(NULL);
 };
 
-arg: TOK_INT TOK_ID
+var: TOK_INT TOK_ID
 {
-    $$ = arg_new_int($2);
+    $$ = var_new_int($2);
 };
 
-arg: '(' ')' TOK_RET arg
+var: '(' ')' TOK_RET var
 {
-    $$ = arg_new_func(NULL, NULL, $4);
+    $$ = var_new_func(NULL, NULL, $4);
 };
 
-arg: '(' arg_list ')' TOK_RET arg
+var: '(' var_list ')' TOK_RET var
 {
-    $$ = arg_new_func(NULL, $2, $5);
+    $$ = var_new_func(NULL, $2, $5);
 };
 
-arg: TOK_ID '(' ')' TOK_RET arg
+var: TOK_ID '(' ')' TOK_RET var
 {
-    $$ = arg_new_func($1, NULL, $5);
+    $$ = var_new_func($1, NULL, $5);
 };
 
-arg: TOK_ID '(' arg_list ')' TOK_RET arg
+var: TOK_ID '(' var_list ')' TOK_RET var
 {
-    $$ = arg_new_func($1, $3, $6);
+    $$ = var_new_func($1, $3, $6);
 };
 
-arg_list: arg
+var_list: var
 {
-    $$ = arg_list_new();
-    arg_list_add_end($$, $1);
+    $$ = var_list_new();
+    var_list_add_end($$, $1);
 };
 
-arg_list: arg_list ',' arg
+var_list: var_list ',' var
 {
-    arg_list_add_end($$, $3);
+    var_list_add_end($$, $3);
 };
 
-func: TOK_FUNC TOK_ID '(' ')' TOK_RET arg func_body
+func: TOK_FUNC TOK_ID '(' ')' TOK_RET var func_body
 {
     $$ = func_new($2, NULL, $6, $7);
 };
 
-func: TOK_FUNC TOK_ID '(' arg_list ')' TOK_RET arg func_body
+func: TOK_FUNC TOK_ID '(' var_list ')' TOK_RET var func_body
 {
     $$ = func_new($2, $4, $7, $8);
 };

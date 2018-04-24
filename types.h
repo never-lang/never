@@ -2,7 +2,7 @@
 #define __TYPES_H__
 
 #include "expr.h"
-#include "arg.h"
+#include "var.h"
 #include "func.h"
 #include "never.h"
 
@@ -13,8 +13,8 @@ typedef union token_value
     char * str_value;
     expr * expr_value;
     expr_list * expr_list_value;
-    arg * arg_value;
-    arg_list * arg_list_value;
+    var * var_value;
+    var_list * var_list_value;
     func * func_value;
     func_list * func_list_value;
     func_body * func_body_value;

@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include "func.h"
 
-func * func_new(char * id, arg_list * args, arg * ret, func_body * body)
+func * func_new(char * id, var_list * vars, var * ret, func_body * body)
 {
     func * value = (func *)malloc(sizeof(func));
     
     value->id = id;
-    value->args = args;
+    value->vars = vars;
     value->ret = ret;
     value->body = body;
     value->stab = NULL;
@@ -20,13 +20,13 @@ void func_delete(func * value)
     {
         free(value->id);
     }
-    if (value->args)
+    if (value->vars)
     {
-        arg_list_delete(value->args);
+        var_list_delete(value->vars);
     }
     if (value->ret)
     {
-        arg_delete(value->ret);
+        var_delete(value->ret);
     }
     if (value->body)
     {

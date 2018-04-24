@@ -1,51 +1,51 @@
 #include <stdlib.h>
-#include "arg.h"
+#include "var.h"
 
-arg * arg_new_int(char * id)
+var * var_new_int(char * id)
 {
-    arg * value = (arg *)malloc(sizeof(arg));
+    var * value = (var *)malloc(sizeof(var));
     
-    value->type = ARG_INT;
+    value->type = VAR_INT;
     value->id = id;
-    value->args = NULL;
+    value->vars = NULL;
     value->ret = NULL;
     
     return value;
 }
 
-arg * arg_new_func(char * id, arg_list * args, arg * ret)
+var * var_new_func(char * id, var_list * vars, var * ret)
 {
-    arg * value = (arg *)malloc(sizeof(arg));
+    var * value = (var *)malloc(sizeof(var));
     
-    value->type = ARG_FUNC;
+    value->type = VAR_FUNC;
     value->id = id;
-    value->args = args;
+    value->vars = vars;
     value->ret = ret;
     
     return value;
 }
 
-void arg_delete(arg * value)
+void var_delete(var * value)
 {
     if (value->id)
     {
         free(value->id);
     }
-    if (value->args)
+    if (value->vars)
     {
-        arg_list_delete(value->args);
+        var_list_delete(value->vars);
     }
     if (value->ret)
     {
-        arg_delete(value->ret);
+        var_delete(value->ret);
     }
 
     free(value);
 }
 
-arg_list_node * arg_list_node_new(arg * value)
+var_list_node * var_list_node_new(var * value)
 {
-    arg_list_node * node = (arg_list_node *)malloc(sizeof(arg_list_node));
+    var_list_node * node = (var_list_node *)malloc(sizeof(var_list_node));
     
     node->value = value;
     node->prev = NULL;
@@ -54,18 +54,18 @@ arg_list_node * arg_list_node_new(arg * value)
     return node;
 }
 
-void arg_list_node_delete(arg_list_node * node)
+void var_list_node_delete(var_list_node * node)
 {
     if (node->value)
     {
-        arg_delete(node->value);
+        var_delete(node->value);
     }
     free(node);
 }
 
-arg_list * arg_list_new()
+var_list * var_list_new()
 {
-    arg_list * list = (arg_list *)malloc(sizeof(arg_list));
+    var_list * list = (var_list *)malloc(sizeof(var_list));
     
     list->count = 0;
     list->head = NULL;
@@ -74,22 +74,22 @@ arg_list * arg_list_new()
     return list;
 }
 
-void arg_list_delete(arg_list * list)
+void var_list_delete(var_list * list)
 {
-    arg_list_node * node = list->tail;
+    var_list_node * node = list->tail;
     
     while (node != NULL)
     {
-        arg_list_node * tmp = node->next;
-        arg_list_node_delete(node);
+        var_list_node * tmp = node->next;
+        var_list_node_delete(node);
         node = tmp;
     }
     free(list);    
 }
 
-void arg_list_add_beg(arg_list * list, arg * value)
+void var_list_add_beg(var_list * list, var * value)
 {
-    arg_list_node * node = arg_list_node_new(value);
+    var_list_node * node = var_list_node_new(value);
     
     list->count++;
     if (list->head == NULL && list->tail == NULL)
@@ -104,9 +104,9 @@ void arg_list_add_beg(arg_list * list, arg * value)
     }
 }
 
-void arg_list_add_end(arg_list * list, arg * value)
+void var_list_add_end(var_list * list, var * value)
 {
-    arg_list_node * node = arg_list_node_new(value);
+    var_list_node * node = var_list_node_new(value);
     
     list->count++;
     if (list->head == NULL && list->tail == NULL)

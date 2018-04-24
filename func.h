@@ -2,7 +2,7 @@
 #define __FUNC_H__
 
 #include "expr.h"
-#include "arg.h"
+#include "var.h"
 #include "symtab.h"
 
 struct func_body;
@@ -11,8 +11,8 @@ struct func_list;
 typedef struct func
 {
     char * id;
-    arg_list * args;
-    arg * ret;
+    var_list * vars;
+    var * ret;
     struct func_body * body;
     struct symtab * stab;
 } func;
@@ -36,7 +36,7 @@ typedef struct func_list
     func_list_node * tail;
 } func_list;
 
-func * func_new(char * id, arg_list * args, arg * ret, func_body * body);
+func * func_new(char * id, var_list * vars, var * ret, func_body * body);
 void func_delete(func * value);
 
 func_body * func_body_new(func_list * funcs, expr * ret);

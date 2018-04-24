@@ -2,20 +2,20 @@
 #include "typecheck.h"
 #include "symtab.h"
 
-int expr_set_return_type(expr * value, arg * ret)
+int expr_set_return_type(expr * value, var * ret)
 {
     if (ret == NULL)
     {
         value->comb = COMB_TYPE_VOID;
     }
-    else if (ret->type == ARG_INT)
+    else if (ret->type == VAR_INT)
     {
         value->comb = COMB_TYPE_INT;
     }
-    else if (ret->type == ARG_FUNC)
+    else if (ret->type == VAR_FUNC)
     {
         value->comb = COMB_TYPE_FUNC;
-        value->comb_args = ret->args;
+        value->comb_vars = ret->vars;
         value->comb_ret = ret->ret;
     }
     else
@@ -28,23 +28,23 @@ int expr_set_return_type(expr * value, arg * ret)
 /*
  * check types
  */
-int arg_cmp(arg * arg_one, arg * arg_two)
+int var_cmp(var * var_one, var * var_two)
 {
-    if (arg_one == NULL && arg_two == NULL)
+    if (var_one == NULL && var_two == NULL)
     {
         return TYPECHECK_SUCC;
     }
-    if ((arg_one == NULL && arg_two != NULL) || (arg_one != NULL && arg_two == NULL))
+    if ((var_one == NULL && var_two != NULL) || (var_one != NULL && var_two == NULL))
     {
         return TYPECHECK_FAIL;
     }
-    if (arg_one->type == ARG_INT && arg_two->type == ARG_INT)
+    if (var_one->type == VAR_INT && var_two->type == VAR_INT)
     {
         return TYPECHECK_SUCC;
     }
-    else if (arg_one->type == ARG_FUNC && arg_two->type == ARG_FUNC)
+    else if (var_one->type == VAR_FUNC && var_two->type == VAR_FUNC)
     {
-        return func_cmp(arg_one->args, arg_one->ret, arg_two->args, arg_one->ret);
+        return func_cmp(var_one->vars, var_one->ret, var_two->vars, var_one->ret);
     }
     else
     {
@@ -52,46 +52,46 @@ int arg_cmp(arg * arg_one, arg * arg_two)
     }
 }
 
-int arg_list_cmp(arg_list * arg_one, arg_list * arg_two)
+int var_list_cmp(var_list * var_one, var_list * var_two)
 {
-    if (arg_one == NULL && arg_two == NULL)
+    if (var_one == NULL && var_two == NULL)
     {
         return TYPECHECK_SUCC;
     }
-    if ((arg_one == NULL && arg_two != NULL) || (arg_one != NULL && arg_two == NULL))
+    if ((var_one == NULL && var_two != NULL) || (var_one != NULL && var_two == NULL))
     {
         return TYPECHECK_FAIL;
     }
 
-    if (arg_one->count != arg_two->count)
+    if (var_one->count != var_two->count)
     {
         return TYPECHECK_FAIL;
     }
     
-    arg_list_node * arg_one_node = arg_one->tail;
-    arg_list_node * arg_two_node = arg_two->tail;
-    while (arg_one_node != NULL && arg_two_node != NULL)
+    var_list_node * var_one_node = var_one->tail;
+    var_list_node * var_two_node = var_two->tail;
+    while (var_one_node != NULL && var_two_node != NULL)
     {
-        arg * arg_one_value = arg_one_node->value;
-        arg * arg_two_value = arg_two_node->value;
+        var * var_one_value = var_one_node->value;
+        var * var_two_value = var_two_node->value;
         
-        if (arg_cmp(arg_one_value, arg_two_value) == TYPECHECK_FAIL)
+        if (var_cmp(var_one_value, var_two_value) == TYPECHECK_FAIL)
         {
             return TYPECHECK_FAIL;
         }
         
-        arg_one_node = arg_one_node->next;
-        arg_two_node = arg_two_node->next;
+        var_one_node = var_one_node->next;
+        var_two_node = var_two_node->next;
     }
 
     return TYPECHECK_SUCC;
 }
 
-int func_cmp(arg_list * arg_list_one, arg * ret_one,
-             arg_list * arg_list_two, arg * ret_two)
+int func_cmp(var_list * var_list_one, var * ret_one,
+             var_list * var_list_two, var * ret_two)
 {
-    if (arg_list_cmp(arg_list_one, arg_list_two) == TYPECHECK_SUCC &&
-        arg_cmp(ret_one, ret_two) == TYPECHECK_SUCC)
+    if (var_list_cmp(var_list_one, var_list_two) == TYPECHECK_SUCC &&
+        var_cmp(ret_one, ret_two) == TYPECHECK_SUCC)
     {
         return TYPECHECK_SUCC;
     }
@@ -101,26 +101,26 @@ int func_cmp(arg_list * arg_list_one, arg * ret_one,
     }
 }
 
-int arg_expr_cmp(arg * arg_value, expr * expr_value)
+int var_expr_cmp(var * var_value, expr * expr_value)
 {
 
-    if (arg_value == NULL && expr_value == NULL)
+    if (var_value == NULL && expr_value == NULL)
     {
         return TYPECHECK_SUCC;
     }
-    if ((arg_value != NULL && expr_value == NULL) || (arg_value == NULL && expr_value != NULL))
+    if ((var_value != NULL && expr_value == NULL) || (var_value == NULL && expr_value != NULL))
     {
         return TYPECHECK_FAIL;
     }
 
-    if (arg_value->type == ARG_INT && expr_value->comb == COMB_TYPE_INT)
+    if (var_value->type == VAR_INT && expr_value->comb == COMB_TYPE_INT)
     {
         return TYPECHECK_SUCC;
     }
-    else if (arg_value->type == ARG_FUNC && expr_value->comb == COMB_TYPE_FUNC)
+    else if (var_value->type == VAR_FUNC && expr_value->comb == COMB_TYPE_FUNC)
     {
-        return func_cmp(arg_value->args, arg_value->ret,
-                        expr_value->comb_args, expr_value->comb_ret);
+        return func_cmp(var_value->vars, var_value->ret,
+                        expr_value->comb_vars, expr_value->comb_ret);
     }
     else
     {
@@ -128,34 +128,34 @@ int arg_expr_cmp(arg * arg_value, expr * expr_value)
     }
 }
  
-int arg_expr_list_cmp(arg_list * args, expr_list * list)
+int var_expr_list_cmp(var_list * vars, expr_list * list)
 {
-    if (args == NULL && list == NULL)
+    if (vars == NULL && list == NULL)
     {
         return TYPECHECK_SUCC;
     }
-    if ((args != NULL && list == NULL) || (args == NULL && list != NULL))
+    if ((vars != NULL && list == NULL) || (vars == NULL && list != NULL))
     {
         return TYPECHECK_FAIL;
     }
-    if (args->count != list->count)
+    if (vars->count != list->count)
     {
         return TYPECHECK_FAIL;
     }
     
-    arg_list_node * arg_node = args->tail;
+    var_list_node * var_node = vars->tail;
     expr_list_node * expr_node = list->tail;
-    while (arg_node != NULL && expr_node != NULL)
+    while (var_node != NULL && expr_node != NULL)
     {
-        arg * arg_value = arg_node->value;
+        var * var_value = var_node->value;
         expr * expr_value = expr_node->value;
         
-        if (arg_expr_cmp(arg_value, expr_value) == TYPECHECK_FAIL)
+        if (var_expr_cmp(var_value, expr_value) == TYPECHECK_FAIL)
         {
             return TYPECHECK_FAIL;
         }
         
-        arg_node = arg_node->next;
+        var_node = var_node->next;
         expr_node = expr_node->next;
     }
 
@@ -167,28 +167,28 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     symtab_entry * entry = NULL;
 
     entry = symtab_lookup(tab, value->id, SYMTAB_NESTED);
-    if (entry != NULL && entry->arg_func_value)
+    if (entry != NULL && entry->var_func_value)
     {
         if (entry->type == SYMTAB_FUNC)
         {
-            func * func_value = (func *)entry->arg_func_value;
+            func * func_value = (func *)entry->var_func_value;
             
             value->comb = COMB_TYPE_FUNC;
-            value->comb_args = func_value->args;
+            value->comb_vars = func_value->vars;
             value->comb_ret = func_value->ret;
         }
-        else if (entry->type == SYMTAB_ARG)
+        else if (entry->type == SYMTAB_VAR)
         {
-            arg * arg_value = (arg *)entry->arg_func_value;
-            if (arg_value->type == ARG_INT)
+            var * var_value = (var *)entry->var_func_value;
+            if (var_value->type == VAR_INT)
             {
                  value->comb = COMB_TYPE_INT;
             }
-            else if (arg_value->type == ARG_FUNC)
+            else if (var_value->type == VAR_FUNC)
             {
                  value->comb = COMB_TYPE_FUNC;
-                 value->comb_args = arg_value->args;
-                 value->comb_ret = arg_value->ret;
+                 value->comb_vars = var_value->vars;
+                 value->comb_ret = var_value->ret;
             }
         }
     }
@@ -213,11 +213,11 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
         {
              if (value->middle->comb == COMB_TYPE_FUNC)
              {
-                 if (func_cmp(value->middle->comb_args, value->middle->comb_ret,
-                              value->right->comb_args, value->right->comb_ret) == TYPECHECK_SUCC)
+                 if (func_cmp(value->middle->comb_vars, value->middle->comb_ret,
+                              value->right->comb_vars, value->right->comb_ret) == TYPECHECK_SUCC)
                  {
                      value->comb = COMB_TYPE_FUNC;
-                     value->comb_args = value->middle->comb_args;
+                     value->comb_vars = value->middle->comb_vars;
                      value->comb_ret = value->middle->comb_ret;
                  }
                  else
@@ -252,23 +252,23 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
 int expr_call_check_type(symtab * tab, expr * value, int * result)
 {
     expr_check_type(tab, value->func_expr, result);
-    if (value->args != NULL)
+    if (value->vars != NULL)
     {
-        expr_list_check_type(tab, value->args, result);
+        expr_list_check_type(tab, value->vars, result);
     }
 
     switch (value->func_expr->comb)
     {
         case COMB_TYPE_FUNC:
-            if (value->func_expr->comb_args->count != value->args->count)
+            if (value->func_expr->comb_vars->count != value->vars->count)
             {
                 *result = TYPECHECK_FAIL;
                  printf("improper number of parameters, got %d but expected %d\n",
-                        value->args->count, value->func_expr->comb_args->count);
+                        value->vars->count, value->func_expr->comb_vars->count);
             }
             else
             { 
-                if (arg_expr_list_cmp(value->func_expr->comb_args, value->args) == TYPECHECK_SUCC)
+                if (var_expr_list_cmp(value->func_expr->comb_vars, value->vars) == TYPECHECK_SUCC)
                 {
                     expr_set_return_type(value, value->func_expr->comb_ret);
                 }
@@ -385,7 +385,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             expr_check_type(tab, value->left, result);
             
             value->comb = value->left->comb;
-            value->comb_args = value->left->comb_args;
+            value->comb_vars = value->left->comb_vars;
             value->comb_ret = value->left->comb_ret;
         break;
         case EXPR_COND:
@@ -399,7 +399,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             func_check_type(value->func_value->stab, value->func_value, result);
             
             value->comb = COMB_TYPE_FUNC;
-            value->comb_args = value->func_value->args;
+            value->comb_vars = value->func_value->vars;
             value->comb_ret = value->func_value->ret;
         }
         break;
@@ -433,7 +433,7 @@ int func_check_type(symtab * tab, func * func_value, int * result)
     {
         expr_check_type(tab, func_value->body->ret, result);
         
-        if (arg_expr_cmp(func_value->ret, func_value->body->ret) == TYPECHECK_FAIL)
+        if (var_expr_cmp(func_value->ret, func_value->body->ret) == TYPECHECK_FAIL)
         {
             *result = TYPECHECK_FAIL;
             printf("incorrect return type in function %s\n", func_value->id);
@@ -469,18 +469,18 @@ int never_check_type(never * nev, int * result)
 /*
  * Add symbols to symtab
  */
-int symtab_add_arg_from_arg_list(symtab * tab, arg_list * list, int * result)
+int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result)
 {
-    arg_list_node * node = list->tail;
+    var_list_node * node = list->tail;
     while (node != NULL)
     {
-        arg * arg_value = node->value;
-        if (arg_value && arg_value->id)
+        var * var_value = node->value;
+        if (var_value && var_value->id)
         {
-            symtab_entry * entry = symtab_lookup(tab, arg_value->id, SYMTAB_FLAT);
+            symtab_entry * entry = symtab_lookup(tab, var_value->id, SYMTAB_FLAT);
             if (entry == NULL)
             {
-                symtab_add_arg(tab, arg_value);
+                symtab_add_var(tab, var_value);
             }
             else
             {
@@ -489,7 +489,7 @@ int symtab_add_arg_from_arg_list(symtab * tab, arg_list * list, int * result)
                 {
                     printf("function %s already defined\n", entry->id);
                 }
-                else if (entry->type == SYMTAB_ARG)
+                else if (entry->type == SYMTAB_VAR)
                 {
                     printf("parameter %s already defined\n", entry->id);
                 }
@@ -520,7 +520,7 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result)
                 {
                     printf("function %s alread defined\n", entry->id);
                 }
-                else if (entry->type == SYMTAB_ARG)
+                else if (entry->type == SYMTAB_VAR)
                 {
                     printf("parameter %s already defined\n", entry->id);
                 }
@@ -564,9 +564,9 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
         break;
         case EXPR_CALL:
             symtab_add_entry_expr(stab, value->func_expr, result);
-            if (value->args != NULL)
+            if (value->vars != NULL)
             {
-                symtab_add_entry_expr_list(stab, value->args, result);
+                symtab_add_entry_expr_list(stab, value->vars, result);
             }
         break;
         case EXPR_FUNC:
@@ -597,9 +597,9 @@ int symtab_add_entry_func(symtab * stab_parent, func * func_value, int * result)
     {
         func_value->stab = symtab_new(32, stab_parent);
     }
-    if (func_value->args)
+    if (func_value->vars)
     {
-        symtab_add_arg_from_arg_list(func_value->stab, func_value->args, result);
+        symtab_add_var_from_var_list(func_value->stab, func_value->vars, result);
     }
     if (func_value->body && func_value->body->funcs)
     {
@@ -684,9 +684,9 @@ int print_symtabs_expr(expr * value)
         break;
         case EXPR_CALL:
             print_symtabs_expr(value->func_expr);
-            if (value->args != NULL)
+            if (value->vars != NULL)
             {
-                print_symtabs_expr_list(value->args);
+                print_symtabs_expr_list(value->vars);
             }
         break;
         case EXPR_FUNC:

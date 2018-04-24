@@ -451,8 +451,8 @@ static const char *const yytname[] =
   "$end", "error", "$undefined", "TOK_ID", "TOK_NUM", "TOK_INT",
   "TOK_FUNC", "TOK_RET", "TOK_RETURN", "'?'", "':'", "'<'", "'>'",
   "TOK_LTE", "TOK_GTE", "TOK_EQ", "'+'", "'-'", "'*'", "'/'", "NEG", "'('",
-  "')'", "','", "'{'", "';'", "'}'", "$accept", "expr", "expr_list", "arg",
-  "arg_list", "func", "func_body", "func_list", "never", YY_NULLPTR
+  "')'", "','", "'{'", "';'", "'}'", "$accept", "expr", "expr_list", "var",
+  "var_list", "func", "func_body", "func_list", "never", YY_NULLPTR
 };
 #endif
 
@@ -1431,7 +1431,7 @@ yyreduce:
   case 21:
 #line 147 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.arg_value) = arg_new_int(NULL);
+    (yyval.val.var_value) = var_new_int(NULL);
 }
 #line 1437 "parser.c" /* yacc.c:1646  */
     break;
@@ -1439,7 +1439,7 @@ yyreduce:
   case 22:
 #line 152 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.arg_value) = arg_new_int((yyvsp[0].val.str_value));
+    (yyval.val.var_value) = var_new_int((yyvsp[0].val.str_value));
 }
 #line 1445 "parser.c" /* yacc.c:1646  */
     break;
@@ -1447,7 +1447,7 @@ yyreduce:
   case 23:
 #line 157 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.arg_value) = arg_new_func(NULL, NULL, (yyvsp[0].val.arg_value));
+    (yyval.val.var_value) = var_new_func(NULL, NULL, (yyvsp[0].val.var_value));
 }
 #line 1453 "parser.c" /* yacc.c:1646  */
     break;
@@ -1455,7 +1455,7 @@ yyreduce:
   case 24:
 #line 162 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.arg_value) = arg_new_func(NULL, (yyvsp[-3].val.arg_list_value), (yyvsp[0].val.arg_value));
+    (yyval.val.var_value) = var_new_func(NULL, (yyvsp[-3].val.var_list_value), (yyvsp[0].val.var_value));
 }
 #line 1461 "parser.c" /* yacc.c:1646  */
     break;
@@ -1463,7 +1463,7 @@ yyreduce:
   case 25:
 #line 167 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.arg_value) = arg_new_func((yyvsp[-4].val.str_value), NULL, (yyvsp[0].val.arg_value));
+    (yyval.val.var_value) = var_new_func((yyvsp[-4].val.str_value), NULL, (yyvsp[0].val.var_value));
 }
 #line 1469 "parser.c" /* yacc.c:1646  */
     break;
@@ -1471,7 +1471,7 @@ yyreduce:
   case 26:
 #line 172 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.arg_value) = arg_new_func((yyvsp[-5].val.str_value), (yyvsp[-3].val.arg_list_value), (yyvsp[0].val.arg_value));
+    (yyval.val.var_value) = var_new_func((yyvsp[-5].val.str_value), (yyvsp[-3].val.var_list_value), (yyvsp[0].val.var_value));
 }
 #line 1477 "parser.c" /* yacc.c:1646  */
     break;
@@ -1479,8 +1479,8 @@ yyreduce:
   case 27:
 #line 177 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.arg_list_value) = arg_list_new();
-    arg_list_add_end((yyval.val.arg_list_value), (yyvsp[0].val.arg_value));
+    (yyval.val.var_list_value) = var_list_new();
+    var_list_add_end((yyval.val.var_list_value), (yyvsp[0].val.var_value));
 }
 #line 1486 "parser.c" /* yacc.c:1646  */
     break;
@@ -1488,7 +1488,7 @@ yyreduce:
   case 28:
 #line 183 "parser.y" /* yacc.c:1646  */
     {
-    arg_list_add_end((yyval.val.arg_list_value), (yyvsp[0].val.arg_value));
+    var_list_add_end((yyval.val.var_list_value), (yyvsp[0].val.var_value));
 }
 #line 1494 "parser.c" /* yacc.c:1646  */
     break;
@@ -1496,7 +1496,7 @@ yyreduce:
   case 29:
 #line 188 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.func_value) = func_new((yyvsp[-5].val.str_value), NULL, (yyvsp[-1].val.arg_value), (yyvsp[0].val.func_body_value));
+    (yyval.val.func_value) = func_new((yyvsp[-5].val.str_value), NULL, (yyvsp[-1].val.var_value), (yyvsp[0].val.func_body_value));
 }
 #line 1502 "parser.c" /* yacc.c:1646  */
     break;
@@ -1504,7 +1504,7 @@ yyreduce:
   case 30:
 #line 193 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.func_value) = func_new((yyvsp[-6].val.str_value), (yyvsp[-4].val.arg_list_value), (yyvsp[-1].val.arg_value), (yyvsp[0].val.func_body_value));
+    (yyval.val.func_value) = func_new((yyvsp[-6].val.str_value), (yyvsp[-4].val.var_list_value), (yyvsp[-1].val.var_value), (yyvsp[0].val.func_body_value));
 }
 #line 1510 "parser.c" /* yacc.c:1646  */
     break;

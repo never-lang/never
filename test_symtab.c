@@ -21,13 +21,13 @@ void test_two()
     symtab_add_func(tab, func_three);
     
     entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);
-    assert(entry->arg_func_value == func_one); 
+    assert(entry->var_func_value == func_one); 
     
     entry = symtab_lookup(tab, "func_two", SYMTAB_FLAT);
     assert(entry == NULL);
     
     entry = symtab_lookup(tab, "func_three", SYMTAB_FLAT);
-    assert(entry->arg_func_value == func_three); 
+    assert(entry->var_func_value == func_three); 
         
     func_delete(func_one);
     func_delete(func_three);
@@ -49,13 +49,13 @@ void test_three()
     symtab_add_func(tab, func_four);
 
     entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);     
-    assert(entry->arg_func_value == func_one); 
+    assert(entry->var_func_value == func_one); 
     
     entry = symtab_lookup(tab, "func_two", SYMTAB_FLAT); 
-    assert(entry->arg_func_value == func_two);
+    assert(entry->var_func_value == func_two);
     
     entry = symtab_lookup(tab, "func_three", SYMTAB_FLAT); 
-    assert(entry->arg_func_value == func_three); 
+    assert(entry->var_func_value == func_three); 
         
     func_delete(func_one);
     func_delete(func_two);
@@ -86,22 +86,22 @@ void test_four()
     symtab_add_func(tab_two, func_six);
     
     entry = symtab_lookup(tab_two, "func_one", SYMTAB_NESTED); 
-    assert(entry->arg_func_value == func_one); 
+    assert(entry->var_func_value == func_one); 
     
     entry = symtab_lookup(tab_two, "func_two", SYMTAB_NESTED); 
-    assert(entry->arg_func_value == func_two);
+    assert(entry->var_func_value == func_two);
     
     entry = symtab_lookup(tab_two, "func_three", SYMTAB_NESTED);
-    assert(entry->arg_func_value == func_three); 
+    assert(entry->var_func_value == func_three); 
     
     entry = symtab_lookup(tab_two, "func_four", SYMTAB_NESTED); 
-    assert(entry->arg_func_value == func_four);
+    assert(entry->var_func_value == func_four);
     
     entry = symtab_lookup(tab_two, "func_five", SYMTAB_NESTED); 
-    assert(entry->arg_func_value == func_five);
+    assert(entry->var_func_value == func_five);
     
     entry = symtab_lookup(tab_two, "func_six", SYMTAB_NESTED); 
-    assert(entry->arg_func_value == func_six);
+    assert(entry->var_func_value == func_six);
     
     entry = symtab_lookup(tab_two, "func_seven", SYMTAB_NESTED); 
     assert(entry == NULL);    
