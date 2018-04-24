@@ -16,8 +16,6 @@ int yyerror(never ** nev, char * str)
     return 0;
 }
 %}
-%pure-parser
-
 %token <val.str_value> TOK_ID
 %token <val.int_value> TOK_NUM
 %token <val.str_value> TOK_INT
@@ -43,6 +41,17 @@ int yyerror(never ** nev, char * str)
 
 %start never
 
+%destructor { free($$); } TOK_ID
+%destructor { expr_delete($$); } expr
+%destructor { expr_list_delete($$); } expr_list
+%destructor { var_delete($$); } var
+%destructor { var_list_delete($$); } var_list
+%destructor { func_delete($$); } func
+%destructor { func_list_delete($$); } func_list
+%destructor { func_body_delete($$); } func_body
+%destructor {  } never
+
+%pure-parser
 %parse-param { never ** nev }
 
 %%
@@ -140,7 +149,8 @@ expr_list: expr
 
 expr_list: expr_list ',' expr
 {
-    expr_list_add_end($$, $3);
+    expr_list_add_end($1, $3);
+    $$ = $1;
 };
 
 var: TOK_INT
@@ -181,7 +191,8 @@ var_list: var
 
 var_list: var_list ',' var
 {
-    var_list_add_end($$, $3);
+    var_list_add_end($1, $3);
+    $$ = $1;
 };
 
 func: TOK_FUNC TOK_ID '(' ')' TOK_RET var func_body
@@ -217,7 +228,8 @@ func_list: func
 
 func_list: func_list func
 {
-    func_list_add_end($$, $2);
+    func_list_add_end($1, $2);
+    $$ = $1;
 };
 
 never: func_list

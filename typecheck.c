@@ -804,8 +804,6 @@ int never_sem_check(never * nev)
     typecheck_res = TYPECHECK_SUCC;
     never_check_type(nev, &typecheck_res);
     
-    never_delete(nev);
-    
     return 0;
 }
 

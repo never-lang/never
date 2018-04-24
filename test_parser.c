@@ -20,6 +20,11 @@ int main(int argc, char * argv[])
         never_sem_check(nev);
     }
     
+    if (nev != NULL)
+    {
+        never_delete(nev);
+    }
+
     yylex_destroy();
 
     return 0;
