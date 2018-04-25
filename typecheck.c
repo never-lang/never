@@ -800,20 +800,18 @@ int print_functions(never * nev)
 
 int never_sem_check(never * nev)
 {
-    int typecheck_res;
+    int typecheck_res = TYPECHECK_SUCC;
     
     printf("---- add symbol table entries --- \n\n");
-    typecheck_res = TYPECHECK_SUCC;
     symtab_add_entry_never(nev, &typecheck_res);
     
     print_functions(nev);
     print_symtabs(nev);
 
     printf("---- check types --- \n\n");
-    typecheck_res = TYPECHECK_SUCC;
     never_check_type(nev, &typecheck_res);
     
-    return 0;
+    return typecheck_res;
 }
 
 

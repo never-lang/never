@@ -3,6 +3,7 @@
 #include "parser.h"
 #include "never.h"
 #include "typecheck.h"
+#include "gencode.h"
 
 extern FILE * yyin;
 
@@ -17,8 +18,13 @@ int main(int argc, char * argv[])
     ret = yyparse(&nev);
     if (ret == 0)
     {
-        never_sem_check(nev);
+        ret = never_sem_check(nev);
+        if (ret == 0)
+        {
+            never_gencode(nev);
+        }
     }
+    
     
     if (nev != NULL)
     {

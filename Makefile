@@ -9,7 +9,7 @@ test_object: object.o
 
 test_scanner: scanner.o
 
-test_parser: scanner.o parser.o expr.o var.o func.o never.o symtab.o typecheck.o utils.o
+test_parser: scanner.o parser.o expr.o var.o func.o never.o symtab.o typecheck.o gencode.o utils.o
 
 test_symtab: symtab.o var.o func.o expr.o
 
@@ -28,4 +28,6 @@ func.o: func.c func.h
 symtab.o: symtab.c symtab.h
 typecheck.o: typecheck.c typecheck.h symtab.h expr.h var.h func.h
 utils.o: utils.c utils.h
+gencode.o: gencode.c gencode.h
+
 
