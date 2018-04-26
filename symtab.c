@@ -85,6 +85,33 @@ void symtab_entry_resize(symtab_entry * entries, int size, symtab_entry * entrie
     }
 }
 
+void symtab_entry_print(symtab_entry * entry)
+{
+    if (entry->type == SYMTAB_VAR)
+    {
+        var * var_value = (var *)entry->var_func_value;            
+        if (var_value)
+        {
+            if (var_value->type == VAR_INT)
+            {
+                printf("[I][%s][%d]\n", var_value->id, entry->syn_level);
+            }
+            else if (var_value->type == VAR_FUNC)
+            {
+                printf("[P][%s][%d]\n", var_value->id, entry->syn_level);
+            }
+        }
+        else
+        {
+            printf("[U][%s][%d]\n", entry->id, entry->syn_level);
+        }
+    }
+    else if (entry->type == SYMTAB_FUNC)
+    {
+        printf("[F][%s][%d]\n", entry->id, entry->syn_level);
+    }
+}
+
 symtab * symtab_new(unsigned int size, symtab * parent)
 {
     symtab * tab = (symtab *)malloc(sizeof(symtab));
@@ -161,6 +188,19 @@ symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested)
     }
 }
 
+void symtab_set_syn_level(symtab * tab, unsigned int syn_level)
+{
+    int i;
+    
+    for (i = 0; i < tab->size; i++)
+    {
+        if (tab->entries[i].type != 0)
+        {
+            tab->entries[i].syn_level = syn_level;
+        }
+    }
+}
+
 void symtab_print(symtab * tab)
 {
     int i;
@@ -169,29 +209,7 @@ void symtab_print(symtab * tab)
         
     for (i = 0; i < tab->size; i++)
     {
-        if (tab->entries[i].type == SYMTAB_VAR)
-        {
-            var * var_value = (var *)tab->entries[i].var_func_value;            
-            if (var_value)
-            {
-                if (var_value->type == VAR_INT)
-                {
-                    printf("[I][%s]\n", var_value->id);
-                }
-                else if (var_value->type == VAR_FUNC)
-                {
-                    printf("[P][%s]\n", var_value->id);
-                }
-            }
-            else
-            {
-                printf("[U][%s]\n", tab->entries[i].id);
-            }
-        }
-        else if (tab->entries[i].type == SYMTAB_FUNC)
-        {
-            printf("[F][%s]\n", tab->entries[i].id);
-        }
+        symtab_entry_print(tab->entries + i);
     }
 }
 

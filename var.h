@@ -10,6 +10,7 @@ enum
 typedef struct var
 {
     int type;
+    int index;
     char * id;
     struct var_list * vars;
     struct var * ret;
