@@ -31,12 +31,9 @@ int symtab_add_entry_func(symtab * stab_parent, func * func_value, int * result)
 int symtab_add_entry_func_list(symtab * stab_parent, func_list * list, int * result);
 int symtab_add_entry_never(never * nev, int * result);
 
-int print_symtabs_expr(expr * value);
-int print_symtabs_expr_list(expr_list * list);
-int print_symtabs_func(func * func_value);
-int print_symtabs_func_list(func_list * list);
-int print_symtabs(never * nev);
-
+int print_func_expr(expr * value, int depth);
+int print_func_expr_list(expr_list * list, int depth);
+int print_func(func * value, int depth);
 int print_func_list(func_list * list, int depth);
 int print_functions(never * nev);
 

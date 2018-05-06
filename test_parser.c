@@ -22,9 +22,10 @@ int main(int argc, char * argv[])
         if (ret == 0)
         {
             never_gencode(nev);
+            
+            print_functions(nev);
         }
     }
-    
     
     if (nev != NULL)
     {

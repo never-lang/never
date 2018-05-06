@@ -14,12 +14,12 @@ func counter(int by, int from, int to) -> (int, int) -> (int, int, int) -> int
     {
         func inc(int x, int y) -> int
         {
-            return x * y * a * from;
+            return x * y * b * from * from;
         }
     
         return func increase_sub(int n_a, int n_b, int n_c) -> int
         {
-            return inc(n_a + n_b * n_c, 2);
+            return inc(n_a + n_b * n_c * to, 2);
         };
     };
 }

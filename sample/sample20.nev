@@ -15,12 +15,12 @@ func funGen2(f1(int a, int b) -> int) -> (int a, int b) -> int
     {
         return 2 * f1(a, b);
     }
-    return twice(a, b);
+    return twice;
 }
 
-func main()
+func main() -> int
 {
-    return funGen2(min);
+    return funGen2(min)(10, 20);
 }
 
 

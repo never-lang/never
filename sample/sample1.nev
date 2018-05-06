@@ -6,10 +6,10 @@
  */
 func min(int a, int b, int c) -> int
 {
-    return a < b ? a : b;
+    return a < b ? a : b * c;
 }
 
-func minCoeff(int coeff, int p1, int p2) -> int
+func minCoeff(int p1, int p2, int coeff) -> int
 {
     func min(int n_a, int n_b) -> int
     {

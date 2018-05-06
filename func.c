@@ -9,6 +9,7 @@ func * func_new(char * id, var_list * vars, var * ret, func_body * body)
     value->vars = vars;
     value->ret = ret;
     value->body = body;
+    value->freevars = NULL;
     value->stab = NULL;
     
     return value;
@@ -31,6 +32,10 @@ void func_delete(func * value)
     if (value->body)
     {
         func_body_delete(value->body);
+    }
+    if (value->freevars)
+    {
+        freevar_list_delete(value->freevars);
     }
     if (value->stab)
     {

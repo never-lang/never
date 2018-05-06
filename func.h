@@ -3,6 +3,7 @@
 
 #include "expr.h"
 #include "var.h"
+#include "freevar.h"
 #include "symtab.h"
 
 struct func_body;
@@ -14,6 +15,7 @@ typedef struct func
     var_list * vars;
     var * ret;
     struct func_body * body;
+    struct freevar_list * freevars;
     struct symtab * stab;
 } func;
 

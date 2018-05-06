@@ -653,9 +653,9 @@ int symtab_add_entry_never(never * nev, int * result)
 }
 
 /**
- * print symtabs
+ * print functions
  */
-int print_symtabs_expr(expr * value)
+int print_func_expr(expr * value, int depth)
 {
     switch (value->type)
     {
@@ -666,7 +666,7 @@ int print_symtabs_expr(expr * value)
             /* no symtabs possible */
         break;
         case EXPR_NEG:
-            print_symtabs_expr(value->left);
+            print_func_expr(value->left, depth);
         break;
         case EXPR_ADD:
         case EXPR_SUB:
@@ -677,35 +677,35 @@ int print_symtabs_expr(expr * value)
         case EXPR_LTE:
         case EXPR_GTE:
         case EXPR_EQ:
-            print_symtabs_expr(value->left);
-            print_symtabs_expr(value->right);
+            print_func_expr(value->left, depth);
+            print_func_expr(value->right, depth);
         break;
         case EXPR_SUP:
-            print_symtabs_expr(value->left);
+            print_func_expr(value->left, depth);
         break;
         case EXPR_COND:
-            print_symtabs_expr(value->left);
-            print_symtabs_expr(value->middle);
-            print_symtabs_expr(value->right);
+            print_func_expr(value->left, depth);
+            print_func_expr(value->middle, depth);
+            print_func_expr(value->right, depth);
         break;
         case EXPR_CALL:
-            print_symtabs_expr(value->func_expr);
+            print_func_expr(value->func_expr, depth);
             if (value->vars != NULL)
             {
-                print_symtabs_expr_list(value->vars);
+                print_func_expr_list(value->vars, depth);
             }
         break;
         case EXPR_FUNC:
             if (value->func_value)
             {
-                print_symtabs_func(value->func_value);
+                print_func(value->func_value, depth + 1);
             }
         break;
     }
     return 0;
 }
 
-int print_symtabs_expr_list(expr_list * list)
+int print_func_expr_list(expr_list * list, int depth)
 {
     expr_list_node * node = list->tail;
     while (node != NULL)
@@ -713,77 +713,50 @@ int print_symtabs_expr_list(expr_list * list)
         expr * value = node->value;
         if (value)
         {
-            print_symtabs_expr(value);
+            print_func_expr(value, depth);
         }
         node = node->next;
     }
     return 0;
 }
-
-int print_symtabs_func(func * func_value)
+ 
+ int print_func(func * value, int depth)
 {
-    if (func_value->id)
+    if (value->id != NULL)
     {
-        printf("function: %s\n", func_value->id);
+        printf("\nfunction (%d): %s\n", depth, value->id);
     }
-    if (func_value->stab)
+    if (value->stab)
     {
-        symtab_print(func_value->stab);
+        symtab_print(value->stab);
     }
-    if (func_value->body && func_value->body->funcs)
+    if (value->freevars != NULL)
     {
-        print_symtabs_func_list(func_value->body->funcs);
+        freevar_list_print(value->freevars);
     }
-    if (func_value->body && func_value->body->ret)
+    if (value->body != NULL && value->body->funcs != NULL)
     {
-        print_symtabs_expr(func_value->body->ret);
+        print_func_list(value->body->funcs, depth + 1);
     }
+    if (value->body && value->body->ret)
+    {
+        print_func_expr(value->body->ret, depth);
+    }
+    
     return 0;
-}
-
-int print_symtabs_func_list(func_list * list)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * func_value = node->value;
-        if (func_value)
-        {
-            print_symtabs_func(func_value);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int print_symtabs(never * nev)
-{
-    if (nev->stab)
-    {
-        symtab_print(nev->stab);
-    }
-    print_symtabs_func_list(nev->funcs);
-        
-    return 0;
-}
-
-/**
- * print functions
- */
+} 
+ 
 int print_func_list(func_list * list, int depth)
 {
     func_list_node * node = list->tail;
     while (node != NULL)
     {
-        func * func_value = node->value;
-        if (func_value && func_value->id)
+        func * value = node->value;
+        if (value != NULL)
         {
-            printf("function (%d): %s\n", depth, func_value->id);
+            print_func(value, depth);
         }
-        if (func_value && func_value->body && func_value->body->funcs)
-        {
-            print_func_list(func_value->body->funcs, depth + 1);
-        }
+        
         node = node->next;
     }
     return 0;
@@ -805,12 +778,9 @@ int never_sem_check(never * nev)
     printf("---- add symbol table entries --- \n\n");
     symtab_add_entry_never(nev, &typecheck_res);
     
-    print_functions(nev);
-    print_symtabs(nev);
-
     printf("---- check types --- \n\n");
     never_check_type(nev, &typecheck_res);
-    
+
     return typecheck_res;
 }
 

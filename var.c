@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "var.h"
 
 var * var_new_int(char * id)
@@ -121,5 +122,21 @@ void var_list_add_end(var_list * list, var * value)
         list->head = node;
     }
 }
+
+void var_print(var * value)
+{
+    printf("var %s %d %s\n", var_type_str(value->type), value->index, value->id);
+}
+
+char * var_type_str(int type)
+{
+    switch (type)
+    {
+        case VAR_INT: return "VAR_INT";
+        case VAR_FUNC: return "VAR_FUNC";
+    }
+    return "VAR_???";
+}
+
 
 

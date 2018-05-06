@@ -1,6 +1,8 @@
 #ifndef __EXPR_H__
 #define __EXPR_H__
 
+#include "freevar.h"
+
 typedef enum expr_type
 {
     EXPR_INT = 1,
@@ -31,6 +33,14 @@ typedef enum comb_type
     COMB_TYPE_FUNC = 5
 } comb_type;
 
+typedef enum id_type
+{
+    ID_TYPE_UNKNOWN = 0,
+    ID_TYPE_FUNC = 1,
+    ID_TYPE_LOCAL = 2,
+    ID_TYPE_GLOBAL = 3
+} id_type;
+
 typedef struct func func;
 typedef struct expr_list expr_list;
 
@@ -43,7 +53,17 @@ typedef struct expr
     union
     {
         int int_value; /* EXPR_INT */
-        char * id;   /* EXPR_ID */
+        struct /* EXPR_ID */
+        {
+            char * id;
+            id_type id_type_value;
+            union
+            {
+                var * id_var_value;
+                func * id_func_value;
+                freevar * id_freevar_value;
+            };
+        };
         struct
         {
             struct func * func_value; /* EXPR_FUNC */
