@@ -16,6 +16,7 @@ int yylex(token * tokp)
 int yyerror(never ** nev, char * str)
 {
     print_error_msg(line_no, str);
+    
     return 1;
 }
 %}

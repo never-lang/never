@@ -30,5 +30,6 @@ symtab.o: symtab.c symtab.h
 typecheck.o: typecheck.c typecheck.h symtab.h expr.h var.h func.h
 utils.o: utils.c utils.h
 gencode.o: gencode.c gencode.h
+bytecode.o: bytecode.c bytecode.h
 
 

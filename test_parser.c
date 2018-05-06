@@ -9,7 +9,7 @@ extern FILE * yyin;
 
 int main(int argc, char * argv[])
 {
-    int ret;
+    int ret = 0;
     never * nev = NULL;
     freopen(argv[1], "r", stdin);
 
