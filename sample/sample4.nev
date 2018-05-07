@@ -7,6 +7,6 @@ func min(int a, int b) -> int
 
 func main() -> int
 {
-    return print(f1(a, b));
+    return min(min(10, 20), 30);
 }
 

@@ -4,6 +4,9 @@
 #include "symtab.h"
 #include "freevar.h"
 
+/**
+ * free variables
+ */
 int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int * result)
 {
     symtab_entry * entry = NULL;
@@ -11,8 +14,6 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
     entry = symtab_lookup(func_value->stab, value->id, SYMTAB_NESTED);
     if (entry != NULL && entry->var_func_value)
     {
-        symtab_entry_print(entry);
-        
         if (entry->type == SYMTAB_FUNC)
         {
             func * func_value = (func *)entry->var_func_value;
@@ -141,6 +142,9 @@ int func_enum_vars(func * func_value)
     return 0;
 }
 
+/**
+ * free variables
+ */
 int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value, int * result)
 {
     /** search in symtab */
@@ -350,6 +354,201 @@ int never_gencode(never * nev)
             symtab_set_syn_level(nev->stab, syn_level);
         }
         func_list_gencode(syn_level, nev->funcs, &gencode_res);
+    }
+    
+    return gencode_res;
+}
+
+/**
+ * emit code
+ */
+int expr_int_emit(expr * value, int * result)
+{
+    printf("emit int %d\n", value->int_value);
+    return 0;
+} 
+ 
+int expr_id_emit(expr * value, int * result)
+{
+    switch (value->id_type_value)
+    {
+        case ID_TYPE_UNKNOWN:
+            printf("not recognized id, at this stage it is very bad\n");
+            assert(0);
+        break;
+        case ID_TYPE_LOCAL:
+            printf("emit id local\n");
+            var_print(value->id_var_value);
+        break;
+        case ID_TYPE_GLOBAL:
+            printf("emit id global\n");
+            freevar_print(value->id_freevar_value);
+        break;
+        case ID_TYPE_FUNC:
+            if (value->id_func_value->id)
+            {
+                printf("emit id func %s\n", value->id_func_value->id);
+            }
+            else
+            {
+                printf("emit id func (nil\n");
+            }
+        break;
+    }
+    return 0;
+} 
+ 
+int expr_emit(expr * value, int * result)
+{
+    switch (value->type)
+    {
+        case EXPR_INT:
+            expr_int_emit(value, result); 
+        break;
+        case EXPR_ID:
+            expr_id_emit(value, result);
+        break;
+        case EXPR_NEG:
+            expr_emit(value->left, result);
+            printf("op neg\n");
+        break;
+        case EXPR_ADD:
+            expr_emit(value->right, result);
+            expr_emit(value->left, result);
+            printf("op add\n");
+        break;
+        case EXPR_SUB:
+            expr_emit(value->right, result);
+            expr_emit(value->left, result);
+            printf("op sub\n");
+        break;
+        case EXPR_MUL:
+            expr_emit(value->right, result);
+            expr_emit(value->left, result);
+            printf("op mul\n");
+        break;
+        case EXPR_DIV:
+            expr_emit(value->right, result);
+            expr_emit(value->left, result);
+            printf("op div\n");
+        break;
+        case EXPR_LT:
+            expr_emit(value->right, result);
+            expr_emit(value->left, result);
+            printf("op lt\n");
+        break;
+        case EXPR_GT:
+            expr_emit(value->right, result);
+            expr_emit(value->left, result);
+            printf("op gt\n");
+        break;
+        case EXPR_LTE:
+            expr_emit(value->right, result);
+            expr_emit(value->left, result);
+            printf("op lte\n");
+        break;
+        case EXPR_GTE:
+            expr_emit(value->right, result);
+            expr_emit(value->left, result);
+            printf("op gte\n");
+        break;
+        case EXPR_EQ:
+            expr_emit(value->right, result);
+            expr_emit(value->right, result);
+            printf("op eq\n");
+        break;
+        break;
+        case EXPR_SUP:
+            expr_emit(value->left, result);
+        break;
+        case EXPR_COND:
+            expr_emit(value->left, result);
+            printf("jumpz labelA\n");
+            expr_emit(value->middle, result);
+            printf("jump labelB\n");
+            printf("label A\n");
+            expr_emit(value->right, result);
+            printf("labelB\n");
+        break;
+        case EXPR_CALL:
+            expr_list_emit(value->vars, result);
+            expr_emit(value->func_expr, result);
+            printf("call func\n");
+        break;
+        case EXPR_FUNC:
+        {
+            if (value->func_value)
+            {
+                func_emit(value->func_value, result);
+            }
+        }
+        break;
+    }
+    return 0;
+}
+
+int expr_list_emit(expr_list * list, int * result)
+{
+    expr_list_node * node = list->head;
+    while (node != NULL)
+    {
+        expr * value = node->value;
+        if (value != NULL)
+        {
+            expr_emit(value, result);
+        }
+        node = node->prev;
+    }
+
+    return 0;
+}
+
+int func_emit(func * func_value, int * result)
+{
+    if (func_value->id != NULL)
+    {
+        printf("\nemit func %s\n", func_value->id);
+    }
+    else
+    {
+        printf("\nemit func (nil)\n");
+    }
+
+    if (func_value->body && func_value->body->ret)
+    {
+        expr_emit(func_value->body->ret, result);
+        printf("emit ret\n");
+    }
+    if (func_value->body && func_value->body->funcs)
+    {
+        func_list_emit(func_value->body->funcs, result);
+    }
+        
+    return 0;
+}
+
+int func_list_emit(func_list * list, int * result)
+{
+    func_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        func * func_value = node->value;
+        if (func_value != NULL)
+        {
+            func_emit(func_value, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+int never_emit(never * nev)
+{
+    int gencode_res = 0;
+
+    if (nev->funcs)
+    {
+        func_list_emit(nev->funcs, &gencode_res);
     }
     
     return gencode_res;

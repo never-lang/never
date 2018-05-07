@@ -21,7 +21,7 @@ func twice(single_func(int, int) -> int) -> (int, int) -> int
 
 func main() -> int
 {
-    return print(twice_min(12, 15));
+    return twice(min)(12, 15);
 }
 
 

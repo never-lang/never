@@ -24,6 +24,8 @@ int main(int argc, char * argv[])
             never_gencode(nev);
             
             print_functions(nev);
+            
+            never_emit(nev);
         }
     }
     

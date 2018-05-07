@@ -36,9 +36,9 @@ typedef enum comb_type
 typedef enum id_type
 {
     ID_TYPE_UNKNOWN = 0,
-    ID_TYPE_FUNC = 1,
-    ID_TYPE_LOCAL = 2,
-    ID_TYPE_GLOBAL = 3
+    ID_TYPE_LOCAL = 1,
+    ID_TYPE_GLOBAL = 2,
+    ID_TYPE_FUNC = 3,
 } id_type;
 
 typedef struct func func;
@@ -60,8 +60,8 @@ typedef struct expr
             union
             {
                 var * id_var_value;
-                func * id_func_value;
                 freevar * id_freevar_value;
+                func * id_func_value;
             };
         };
         struct

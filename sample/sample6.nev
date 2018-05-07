@@ -3,7 +3,7 @@
  */
  
  /* this is crazy */ 
-func counter(int by, int from, int to) -> (int, int) -> (int, int, int) -> int
+func counter(int from, int to, int by) -> (int, int) -> (int, int, int) -> int
 {
     func dec() -> int
     {
