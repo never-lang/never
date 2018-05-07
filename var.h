@@ -44,6 +44,7 @@ void var_list_add_beg(var_list * list, var * value);
 void var_list_add_end(var_list * list, var * value);
 
 void var_print(var * value);
+void var_list_print(var_list * list);
 char * var_type_str(int type);
 
 #endif /* __VAR_H__ */

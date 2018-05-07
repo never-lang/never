@@ -37,6 +37,8 @@ int print_func(func * value, int depth);
 int print_func_list(func_list * list, int depth);
 int print_functions(never * nev);
 
+int func_main_check_type(symtab * tab, int * result);
+
 int never_sem_check(never * nev);
 
 #endif /* __TYPECHECK_H__ */

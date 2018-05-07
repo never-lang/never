@@ -771,6 +771,53 @@ int print_functions(never * nev)
     return 0;
 }
 
+int func_main_check_type(symtab * tab, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(tab, "main", SYMTAB_FLAT);
+    if (entry != NULL && entry->var_func_value)
+    {
+        if (entry->type == SYMTAB_FUNC)
+        {
+            func * func_value = (func *)entry->var_func_value;
+            if (func_value->vars != NULL)
+            {
+                if (func_value->vars->count > 0)
+                {
+                    printf("too many (%d) variables in function main\n", func_value->vars->count);
+                    *result = TYPECHECK_FAIL;
+                }
+            }
+            if (func_value->ret == NULL)
+            {
+                printf("incorrect function main return type\n");
+                *result = TYPECHECK_FAIL;
+            }
+            else
+            {
+                if (func_value->ret->type != VAR_INT)
+                {
+                    printf("incorrect function main return type\n");
+                    *result = TYPECHECK_FAIL;
+                }
+            }
+        }
+        else
+        {
+            printf("incorrect function main, expected function\n");
+            *result = TYPECHECK_FAIL;
+        }
+    }
+    else
+    {
+        printf("function main is not defined\n");
+        *result = TYPECHECK_FAIL;
+    }
+
+    return 0;
+}
+
 int never_sem_check(never * nev)
 {
     int typecheck_res = TYPECHECK_SUCC;
@@ -780,6 +827,10 @@ int never_sem_check(never * nev)
     
     printf("---- check types --- \n\n");
     never_check_type(nev, &typecheck_res);
+
+    /* printf("---- check function main\n\n");
+    func_main_check_type(nev->stab, &typecheck_res);
+    */
 
     return typecheck_res;
 }

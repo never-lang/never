@@ -128,6 +128,21 @@ void var_print(var * value)
     printf("var %s %d %s\n", var_type_str(value->type), value->index, value->id);
 }
 
+void var_list_print(var_list * list)
+{
+    var_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        var * value = node->value;
+        if (value != NULL)
+        {
+            var_print(value);
+        }
+    
+        node = node->next;
+    }
+}
+
 char * var_type_str(int type)
 {
     switch (type)
