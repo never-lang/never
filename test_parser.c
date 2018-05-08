@@ -6,17 +6,24 @@
 #include "gencode.h"
 
 extern FILE * yyin;
+extern int parse_result;
 
 int main(int argc, char * argv[])
 {
     int ret = 0;
     never * nev = NULL;
-    freopen(argv[1], "r", stdin);
+    
+    if (argc < 2)
+    {
+        printf("%s: no input files\n", argv[0]);
+        return 1;
+    }
+    
+    yyin = fopen(argv[1], "r");
+    parse_result = 0;
 
-    yyin = stdin;
-
-    ret = yyparse(&nev);
-    if (ret == 0)
+    yyparse(&nev);
+    if (parse_result == 0)
     {
         ret = never_sem_check(nev);
         if (ret == 0)
@@ -34,6 +41,7 @@ int main(int argc, char * argv[])
         never_delete(nev);
     }
 
+    fclose(yyin);
     yylex_destroy();
 
     return 0;

@@ -260,24 +260,15 @@ int expr_call_check_type(symtab * tab, expr * value, int * result)
     switch (value->func_expr->comb)
     {
         case COMB_TYPE_FUNC:
-            if (value->func_expr->comb_vars->count != value->vars->count)
+            if (var_expr_list_cmp(value->func_expr->comb_vars, value->vars) == TYPECHECK_SUCC)
             {
-                *result = TYPECHECK_FAIL;
-                 printf("improper number of parameters, got %d but expected %d\n",
-                        value->vars->count, value->func_expr->comb_vars->count);
+                expr_set_return_type(value, value->func_expr->comb_ret);
             }
             else
-            { 
-                if (var_expr_list_cmp(value->func_expr->comb_vars, value->vars) == TYPECHECK_SUCC)
-                {
-                    expr_set_return_type(value, value->func_expr->comb_ret);
-                }
-                else
-                {
-                    *result = TYPECHECK_FAIL;
-                    printf("function call type mismatch\n");
-                }
-            }            
+            {
+                *result = TYPECHECK_FAIL;
+                printf("function call type mismatch\n");
+            }
         break;
         case COMB_TYPE_INT:
         case COMB_TYPE_UNKNOWN:
@@ -785,7 +776,7 @@ int func_main_check_type(symtab * tab, int * result)
             {
                 if (func_value->vars->count > 0)
                 {
-                    printf("too many (%d) variables in function main\n", func_value->vars->count);
+                    printf("too many variables (%d) in function main, expected 0\n", func_value->vars->count);
                     *result = TYPECHECK_FAIL;
                 }
             }
@@ -829,8 +820,7 @@ int never_sem_check(never * nev)
     never_check_type(nev, &typecheck_res);
 
     /* printf("---- check function main\n\n");
-    func_main_check_type(nev->stab, &typecheck_res);
-    */
+    func_main_check_type(nev->stab, &typecheck_res); */
 
     return typecheck_res;
 }

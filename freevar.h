@@ -7,7 +7,8 @@ enum
 {
     FREEVAR_UNKNOWN = 0,
     FREEVAR_LOCAL = 1,
-    FREEVAR_GLOBAL = 2
+    FREEVAR_GLOBAL = 2,
+    FREEVAR_FUNC = 3
 };
 
 typedef struct freevar
@@ -19,6 +20,7 @@ typedef struct freevar
     {
         struct var * local_value;
         struct freevar * global_value;
+        struct func * func_value;
     };
 } freevar;
 

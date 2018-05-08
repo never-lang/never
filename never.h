@@ -6,8 +6,8 @@
 
 typedef struct never
 {
-    func_list * funcs;
     symtab * stab;
+    func_list * funcs;
 } never;
 
 never * never_new(func_list * funcs);

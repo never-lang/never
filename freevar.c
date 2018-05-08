@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "freevar.h"
+#include "func.h"
 
 freevar * freevar_new(char * id, int index)
 {
@@ -69,7 +70,7 @@ freevar * freevar_list_add(freevar_list * list, char * id)
 {
     freevar * freevar_value = NULL;
     freevar_list_node * node = list->tail;
-    
+
     while (node != NULL)
     {
         freevar * value = node->value;
@@ -123,16 +124,27 @@ void freevar_list_add_end(freevar_list * list, freevar * value)
 void freevar_print(freevar * value)
 {
     printf("freevar %s %d %s\n", freevar_type_str(value->type), value->index, value->id);
-    if (value->type == FREEVAR_LOCAL)
+
+    switch (value->type)
     {
-        var_print(value->local_value);
-    }
-    else if (value->type == FREEVAR_GLOBAL)
-    {
-        if (value->global_value)
-        {
-            freevar_print(value->global_value);
-        }
+        case FREEVAR_LOCAL:
+            if (value->local_value)
+            {
+                var_print(value->local_value);
+            }
+        break;
+        case FREEVAR_GLOBAL:
+            if (value->global_value)
+            {
+                freevar_print(value->global_value);
+            }
+        break;
+        case FREEVAR_FUNC:
+            if (value->func_value)
+            {
+                func_print(value->func_value);
+            }
+        break;
     }
 }
 
@@ -146,7 +158,6 @@ void freevar_list_print(freevar_list * list)
         {
             freevar_print(value);
         }
-    
         node = node->next;
     }
 }
@@ -158,6 +169,7 @@ char * freevar_type_str(int type)
         case FREEVAR_UNKNOWN: return "FREEVAR_UNKNOWN";
         case FREEVAR_LOCAL: return "FREEVAR_LOCAL";
         case FREEVAR_GLOBAL: return "FREEVAR_GLOBAL";
+        case FREEVAR_FUNC: return "FREEVAR_FUNC";
     }
     return "FREEVAR_???";
 }

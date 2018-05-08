@@ -6,6 +6,7 @@
 #include "scanner.h"
 #include "never.h"
 
+int parse_result;
 extern int line_no;
 
 int yylex(token * tokp)
@@ -15,11 +16,13 @@ int yylex(token * tokp)
 
 int yyerror(never ** nev, char * str)
 {
+    parse_result = 1;
     print_error_msg(line_no, str);
     
     return 1;
 }
 %}
+
 %token <val.str_value> TOK_ID
 %token <val.int_value> TOK_NUM
 %token <val.str_value> TOK_INT

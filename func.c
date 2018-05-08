@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "func.h"
 
 func * func_new(char * id, var_list * vars, var * ret, func_body * body)
@@ -43,6 +44,11 @@ void func_delete(func * value)
     }
     
     free(value);
+}
+
+void func_print(func * value)
+{
+    printf("func %s\n", value->id);
 }
 
 func_body * func_body_new(func_list * funcs, expr * ret)

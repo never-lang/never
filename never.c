@@ -4,9 +4,9 @@
 never * never_new(func_list * funcs)
 {
     never * n = (never *)malloc(sizeof(never));
-    
-    n->funcs = funcs;
+
     n->stab = NULL;
+    n->funcs = funcs;
     
     return n;
 }

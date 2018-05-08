@@ -16,11 +16,27 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
     {
         if (entry->type == SYMTAB_FUNC)
         {
-            func * func_value = (func *)entry->var_func_value;
-            if (func_value)
+            func * sup_func_value = (func *)entry->var_func_value;
+            if (sup_func_value)
             {
-                value->id_type_value = ID_TYPE_FUNC;
-                value->id_func_value = func_value;
+                if (syn_level == entry->syn_level || entry->syn_level == 0)
+                {
+                    value->id_type_value = ID_TYPE_FUNC;
+                    value->id_func_value = sup_func_value;
+                }
+                else
+                {
+                    freevar * freevar_value = NULL;
+                    if (func_value->freevars == NULL)
+                    {
+                        func_value->freevars = freevar_list_new();
+                    }
+                    
+                    freevar_value = freevar_list_add(func_value->freevars, value->id);
+                
+                    value->id_type_value = ID_TYPE_GLOBAL;
+                    value->id_freevar_value = freevar_value;
+                }
             }
         }
         else if (entry->type == SYMTAB_VAR)
@@ -95,15 +111,16 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
         break;
         case EXPR_CALL:
             expr_gencode(syn_level, func_value, value->func_expr, result);
-            expr_list_gencode(syn_level, func_value, value->vars, result);
+            if (value->vars)
+            {
+                expr_list_gencode(syn_level, func_value, value->vars, result);
+            }
         break;
         case EXPR_FUNC:
-        {
             if (value->func_value)
             {
                 func_gencode(syn_level + 1, value->func_value, result);
             }
-        }
         break;
     }
     return 0;
@@ -157,8 +174,8 @@ int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value, in
     {
         if (entry->type == SYMTAB_FUNC)
         {
-            printf("we should have found variable, not a function %s\n", freevar_value->id);
-            assert(0);
+            freevar_value->type = FREEVAR_FUNC;
+            freevar_value->func_value = entry->var_func_value;
         }
         else if (entry->type == SYMTAB_VAR)
         {
@@ -219,15 +236,16 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
         break;
         case EXPR_CALL:
             func_gencode_freevars_expr(func_value, value->func_expr, result);
-            func_gencode_freevars_expr_list(func_value, value->vars, result);
+            if (value->vars)
+            {
+                func_gencode_freevars_expr_list(func_value, value->vars, result);
+            }
         break;
         case EXPR_FUNC:
-        {
             if (value->func_value)
             {
                 func_gencode_freevars_func(func_value, value->func_value, result);
             }
-        }
         break;
     }
 
@@ -261,8 +279,7 @@ int func_gencode_freevars_func(func * func_value, func * subfunc_value, int * re
             if (freevar_value != NULL)
             {
                 func_gencode_freevars_freevar(func_value, freevar_value, result);
-            }
-        
+            }        
             node = node->next;
         }
     }
@@ -353,7 +370,7 @@ int never_gencode(never * nev)
         {
             symtab_set_syn_level(nev->stab, syn_level);
         }
-        func_list_gencode(syn_level, nev->funcs, &gencode_res);
+        func_list_gencode(syn_level + 1, nev->funcs, &gencode_res);
     }
     
     return gencode_res;
@@ -367,6 +384,33 @@ int expr_int_emit(expr * value, int * result)
     printf("emit int %d\n", value->int_value);
     return 0;
 } 
+
+int expr_id_func_emit(expr * value, int * result)
+{
+    if (value->id_func_value->id)
+    {
+        printf("emit id func %s\n", value->id_func_value->id);
+    }
+    else
+    {
+        printf("emit id func (nil\n");
+    }
+    if (value->id_func_value->freevars)
+    {
+        freevar_list_node * node = value->id_func_value->freevars->tail;
+        while (node != NULL)
+        {
+            freevar * value = node->value;
+            if (value != NULL)
+            {
+                freevar_print(value);
+            }
+            node = node->next;
+        }
+        printf("global vec %d\n", value->id_func_value->freevars->count);
+    }
+    return 0;
+}
  
 int expr_id_emit(expr * value, int * result)
 {
@@ -385,14 +429,7 @@ int expr_id_emit(expr * value, int * result)
             freevar_print(value->id_freevar_value);
         break;
         case ID_TYPE_FUNC:
-            if (value->id_func_value->id)
-            {
-                printf("emit id func %s\n", value->id_func_value->id);
-            }
-            else
-            {
-                printf("emit id func (nil\n");
-            }
+            expr_id_func_emit(value, result);
         break;
     }
     return 0;
@@ -466,22 +503,23 @@ int expr_emit(expr * value, int * result)
             printf("jumpz labelA\n");
             expr_emit(value->middle, result);
             printf("jump labelB\n");
-            printf("label A\n");
+            printf("labelA:\n");
             expr_emit(value->right, result);
-            printf("labelB\n");
+            printf("labelB:\n");
         break;
         case EXPR_CALL:
-            expr_list_emit(value->vars, result);
+            if (value->vars)
+            {
+                expr_list_emit(value->vars, result);
+            }
             expr_emit(value->func_expr, result);
             printf("call func\n");
         break;
         case EXPR_FUNC:
-        {
             if (value->func_value)
             {
                 func_emit(value->func_value, result);
             }
-        }
         break;
     }
     return 0;
@@ -507,17 +545,24 @@ int func_emit(func * func_value, int * result)
 {
     if (func_value->id != NULL)
     {
-        printf("\nemit func %s\n", func_value->id);
+        printf("\nemit func def %s\n", func_value->id);
     }
     else
     {
-        printf("\nemit func (nil)\n");
+        printf("\nemit func def (nil)\n");
     }
 
     if (func_value->body && func_value->body->ret)
     {
         expr_emit(func_value->body->ret, result);
-        printf("emit ret\n");
+        if (func_value->vars == NULL)
+        {
+            printf("emit ret 0 from %s\n", func_value->id);
+        }
+        else
+        {
+            printf("emit ret %d from %s\n", func_value->vars->count, func_value->id);
+        }
     }
     if (func_value->body && func_value->body->funcs)
     {
