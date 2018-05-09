@@ -25,6 +25,8 @@ int func_list_gencode(unsigned int syn_level, func_list * list, int * result);
 
 int never_gencode(never * nev);
 
+int expr_id_func_freevar_emit(freevar * value, int * result);
+int expr_id_func_freevar_list_emit(func * func_value, int * result);
 int expr_emit(expr * value, int * result);
 int expr_list_emit(expr_list * list, int * result);
 int func_emit(func * func_value, int * result);

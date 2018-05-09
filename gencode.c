@@ -385,6 +385,50 @@ int expr_int_emit(expr * value, int * result)
     return 0;
 } 
 
+int expr_id_func_freevar_emit(freevar * value, int * result)
+{
+    switch (value->type)
+    {
+        case FREEVAR_UNKNOWN:
+            printf("unknown freevar during emit\n");
+            assert(0);
+        break;
+        case FREEVAR_LOCAL:
+        case FREEVAR_GLOBAL:
+            freevar_print(value);
+        break;
+        case FREEVAR_FUNC:
+            expr_id_func_freevar_list_emit(value->func_value, result);
+            freevar_print(value);
+        break;
+    }
+
+    return 0;
+}
+
+int expr_id_func_freevar_list_emit(func * func_value, int * result)
+{
+    freevar_list_node * node;
+    if (func_value->freevars == NULL)
+    {
+        return 0;
+    }
+    
+    node = func_value->freevars->tail;
+    while (node != NULL)
+    {
+        freevar * value = node->value;
+        if (value != NULL)
+        {
+            expr_id_func_freevar_emit(value, result);
+        }
+        node = node->next;
+    }
+    printf("global vec %d\n", func_value->freevars->count);
+
+    return 0;
+}
+
 int expr_id_func_emit(expr * value, int * result)
 {
     if (value->id_func_value->id)
@@ -393,21 +437,11 @@ int expr_id_func_emit(expr * value, int * result)
     }
     else
     {
-        printf("emit id func (nil\n");
+        printf("emit id func (nil)\n");
     }
-    if (value->id_func_value->freevars)
+    if (value->id_func_value)
     {
-        freevar_list_node * node = value->id_func_value->freevars->tail;
-        while (node != NULL)
-        {
-            freevar * value = node->value;
-            if (value != NULL)
-            {
-                freevar_print(value);
-            }
-            node = node->next;
-        }
-        printf("global vec %d\n", value->id_func_value->freevars->count);
+        expr_id_func_freevar_list_emit(value->id_func_value, result);
     }
     return 0;
 }
@@ -508,6 +542,7 @@ int expr_emit(expr * value, int * result)
             printf("labelB:\n");
         break;
         case EXPR_CALL:
+            printf("mark\n");
             if (value->vars)
             {
                 expr_list_emit(value->vars, result);
