@@ -25,12 +25,15 @@ int func_list_gencode(unsigned int syn_level, func_list * list, int * result);
 
 int never_gencode(never * nev);
 
-int expr_id_func_freevar_emit(freevar * value, int * result);
-int expr_id_func_freevar_list_emit(func * func_value, int * result);
-int expr_emit(expr * value, int * result);
-int expr_list_emit(expr_list * list, int * result);
-int func_emit(func * func_value, int * result);
-int func_list_emit(func_list * list, int * result);
+int expr_int_emit(expr * value, int stack_level, int * result);
+int expr_id_func_freevar_emit(freevar * value, int stack_level, int * result);
+int expr_id_func_freevar_list_emit(func * func_value, int stack_level, int * result);
+int expr_id_func_emit(expr * value, int stack_level, int * result);
+int expr_id_emit(expr * value, int stack_level, int * result);
+int expr_emit(expr * value, int stack_level, int * result);
+int expr_list_emit(expr_list * list, int stack_level, int * result);
+int func_emit(func * func_value, int stack_level, int * result);
+int func_list_emit(func_list * list, int stack_level, int * result);
 int never_emit(never * nev);
 
 #endif /* __GENCODE_H__ */

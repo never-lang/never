@@ -1,0 +1,16 @@
+
+func get_func(int glob1) -> (int, int) -> int
+{
+    func min(int a, int b) -> int
+    {
+        return a < b ? glob1 * a : glob1 * b;
+    }
+    
+    return min;
+}
+
+func main() -> int
+{
+    return get_func(20)(10, 30);
+}
+

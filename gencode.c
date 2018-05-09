@@ -379,13 +379,13 @@ int never_gencode(never * nev)
 /**
  * emit code
  */
-int expr_int_emit(expr * value, int * result)
+int expr_int_emit(expr * value, int stack_level, int * result)
 {
-    printf("emit int %d\n", value->int_value);
+    printf("int %d st %d\n", value->int_value, stack_level);
     return 0;
 } 
 
-int expr_id_func_freevar_emit(freevar * value, int * result)
+int expr_id_func_freevar_emit(freevar * value, int stack_level, int * result)
 {
     switch (value->type)
     {
@@ -398,7 +398,7 @@ int expr_id_func_freevar_emit(freevar * value, int * result)
             freevar_print(value);
         break;
         case FREEVAR_FUNC:
-            expr_id_func_freevar_list_emit(value->func_value, result);
+            expr_id_func_freevar_list_emit(value->func_value, stack_level, result);
             freevar_print(value);
         break;
     }
@@ -406,8 +406,9 @@ int expr_id_func_freevar_emit(freevar * value, int * result)
     return 0;
 }
 
-int expr_id_func_freevar_list_emit(func * func_value, int * result)
+int expr_id_func_freevar_list_emit(func * func_value, int stack_level, int * result)
 {
+    int e = 0;
     freevar_list_node * node;
     if (func_value->freevars == NULL)
     {
@@ -420,7 +421,7 @@ int expr_id_func_freevar_list_emit(func * func_value, int * result)
         freevar * value = node->value;
         if (value != NULL)
         {
-            expr_id_func_freevar_emit(value, result);
+            expr_id_func_freevar_emit(value, stack_level + e++, result);
         }
         node = node->next;
     }
@@ -429,24 +430,24 @@ int expr_id_func_freevar_list_emit(func * func_value, int * result)
     return 0;
 }
 
-int expr_id_func_emit(expr * value, int * result)
+int expr_id_func_emit(expr * value, int stack_level, int * result)
 {
-    if (value->id_func_value->id)
+    if (value->id_func_value->id == NULL)
     {
-        printf("emit id func %s\n", value->id_func_value->id);
+        printf("id func (nil) st %d\n", stack_level);
     }
     else
     {
-        printf("emit id func (nil)\n");
+        printf("id func %s st %d\n", value->id_func_value->id, stack_level);
     }
     if (value->id_func_value)
     {
-        expr_id_func_freevar_list_emit(value->id_func_value, result);
+        expr_id_func_freevar_list_emit(value->id_func_value, stack_level, result);
     }
     return 0;
 }
  
-int expr_id_emit(expr * value, int * result)
+int expr_id_emit(expr * value, int stack_level, int * result)
 {
     switch (value->id_type_value)
     {
@@ -455,120 +456,125 @@ int expr_id_emit(expr * value, int * result)
             assert(0);
         break;
         case ID_TYPE_LOCAL:
-            printf("emit id local\n");
+            printf("id local st %d\n", stack_level);
             var_print(value->id_var_value);
         break;
         case ID_TYPE_GLOBAL:
-            printf("emit id global\n");
+            printf("id global st %d\n", stack_level);
             freevar_print(value->id_freevar_value);
         break;
         case ID_TYPE_FUNC:
-            expr_id_func_emit(value, result);
+            expr_id_func_emit(value, stack_level, result);
         break;
     }
     return 0;
 } 
  
-int expr_emit(expr * value, int * result)
+int expr_emit(expr * value, int stack_level, int * result)
 {
     switch (value->type)
     {
         case EXPR_INT:
-            expr_int_emit(value, result); 
+            expr_int_emit(value, stack_level, result); 
         break;
         case EXPR_ID:
-            expr_id_emit(value, result);
+            expr_id_emit(value, stack_level, result);
         break;
         case EXPR_NEG:
-            expr_emit(value->left, result);
+            expr_emit(value->left, stack_level, result);
             printf("op neg\n");
         break;
         case EXPR_ADD:
-            expr_emit(value->right, result);
-            expr_emit(value->left, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->left, stack_level + 1, result);
             printf("op add\n");
         break;
         case EXPR_SUB:
-            expr_emit(value->right, result);
-            expr_emit(value->left, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->left, stack_level + 1, result);
             printf("op sub\n");
         break;
         case EXPR_MUL:
-            expr_emit(value->right, result);
-            expr_emit(value->left, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->left, stack_level + 1, result);
             printf("op mul\n");
         break;
         case EXPR_DIV:
-            expr_emit(value->right, result);
-            expr_emit(value->left, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->left, stack_level + 1, result);
             printf("op div\n");
         break;
         case EXPR_LT:
-            expr_emit(value->right, result);
-            expr_emit(value->left, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->left, stack_level + 1, result);
             printf("op lt\n");
         break;
         case EXPR_GT:
-            expr_emit(value->right, result);
-            expr_emit(value->left, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->left, stack_level + 1, result);
             printf("op gt\n");
         break;
         case EXPR_LTE:
-            expr_emit(value->right, result);
-            expr_emit(value->left, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->left, stack_level + 1, result);
             printf("op lte\n");
         break;
         case EXPR_GTE:
-            expr_emit(value->right, result);
-            expr_emit(value->left, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->left, stack_level + 1, result);
             printf("op gte\n");
         break;
         case EXPR_EQ:
-            expr_emit(value->right, result);
-            expr_emit(value->right, result);
+            expr_emit(value->right, stack_level, result);
+            expr_emit(value->right, stack_level + 1, result);
             printf("op eq\n");
         break;
         break;
         case EXPR_SUP:
-            expr_emit(value->left, result);
+            expr_emit(value->left, stack_level, result);
         break;
         case EXPR_COND:
-            expr_emit(value->left, result);
+            expr_emit(value->left, stack_level, result);
             printf("jumpz labelA\n");
-            expr_emit(value->middle, result);
+            expr_emit(value->middle, stack_level, result);
             printf("jump labelB\n");
             printf("labelA:\n");
-            expr_emit(value->right, result);
+            expr_emit(value->right, stack_level, result);
             printf("labelB:\n");
         break;
         case EXPR_CALL:
+        {
+            int v = 0;
             printf("mark\n");
             if (value->vars)
             {
-                expr_list_emit(value->vars, result);
+                v = value->vars->count;
+                expr_list_emit(value->vars, stack_level, result);
             }
-            expr_emit(value->func_expr, result);
+            expr_emit(value->func_expr, stack_level + v, result);
             printf("call func\n");
+        }
         break;
         case EXPR_FUNC:
             if (value->func_value)
             {
-                func_emit(value->func_value, result);
+                func_emit(value->func_value, stack_level, result);
             }
         break;
     }
     return 0;
 }
 
-int expr_list_emit(expr_list * list, int * result)
+int expr_list_emit(expr_list * list, int stack_level, int * result)
 {
+    int e = 0;
     expr_list_node * node = list->head;
     while (node != NULL)
     {
         expr * value = node->value;
         if (value != NULL)
         {
-            expr_emit(value, result);
+            expr_emit(value, stack_level + e++, result);
         }
         node = node->prev;
     }
@@ -576,38 +582,38 @@ int expr_list_emit(expr_list * list, int * result)
     return 0;
 }
 
-int func_emit(func * func_value, int * result)
+int func_emit(func * func_value, int stack_level, int * result)
 {
     if (func_value->id != NULL)
     {
-        printf("\nemit func def %s\n", func_value->id);
+        printf("\nfunc def %s\n", func_value->id);
     }
     else
     {
-        printf("\nemit func def (nil)\n");
+        printf("\nfunc def (nil)\n");
     }
 
     if (func_value->body && func_value->body->ret)
     {
-        expr_emit(func_value->body->ret, result);
+        expr_emit(func_value->body->ret, stack_level, result);
         if (func_value->vars == NULL)
         {
-            printf("emit ret 0 from %s\n", func_value->id);
+            printf("ret 0 from %s\n", func_value->id);
         }
         else
         {
-            printf("emit ret %d from %s\n", func_value->vars->count, func_value->id);
+            printf("ret %d from %s\n", func_value->vars->count, func_value->id);
         }
     }
     if (func_value->body && func_value->body->funcs)
     {
-        func_list_emit(func_value->body->funcs, result);
+        func_list_emit(func_value->body->funcs, stack_level, result);
     }
         
     return 0;
 }
 
-int func_list_emit(func_list * list, int * result)
+int func_list_emit(func_list * list, int stack_level, int * result)
 {
     func_list_node * node = list->tail;
     while (node != NULL)
@@ -615,7 +621,7 @@ int func_list_emit(func_list * list, int * result)
         func * func_value = node->value;
         if (func_value != NULL)
         {
-            func_emit(func_value, result);
+            func_emit(func_value, stack_level, result);
         }
         node = node->next;
     }
@@ -624,11 +630,12 @@ int func_list_emit(func_list * list, int * result)
 
 int never_emit(never * nev)
 {
+    int stack_level = 0;
     int gencode_res = 0;
 
     if (nev->funcs)
     {
-        func_list_emit(nev->funcs, &gencode_res);
+        func_list_emit(nev->funcs, stack_level, &gencode_res);
     }
     
     return gencode_res;

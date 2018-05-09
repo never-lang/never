@@ -2,11 +2,11 @@
 
 func min(int a, int b) -> int
 {
-    return (a < b) ? a : b;
+    return (a < b) ? a : b * b;
 }
 
 func main() -> int
 {
-    return min(min(10 * 4, 20), 30);
+    return min(min(10 * 4, 8), min(20, 30));
 }
 
