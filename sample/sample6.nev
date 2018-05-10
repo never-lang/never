@@ -24,8 +24,8 @@ func counter(int from, int to, int by) -> (int, int) -> (int, int, int) -> int
     };
 }
 
-func main() -> (int, int) -> (int, int, int) -> int
+func main() -> int
 {
-    return counter(100, 10, 20);
+    return counter(100, 10, 20)(11, 12)(1, 2, 3);
 }
 

@@ -379,14 +379,22 @@ int never_gencode(never * nev)
 /**
  * emit code
  */
-int expr_int_emit(expr * value, int stack_level, int * result)
+int expr_int_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
-    printf("int %d st %d\n", value->int_value, stack_level);
+    bytecode bc = { 0 };
+    
+    bc.type = BYTECODE_INT;
+    bc.integer.value = value->int_value;
+
+    bytecode_add(code, &bc);
+
     return 0;
 } 
 
-int expr_id_func_freevar_emit(freevar * value, int stack_level, int * result)
+int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result)
 {
+    bytecode bc = { 0 };
+
     switch (value->type)
     {
         case FREEVAR_UNKNOWN:
@@ -394,22 +402,35 @@ int expr_id_func_freevar_emit(freevar * value, int stack_level, int * result)
             assert(0);
         break;
         case FREEVAR_LOCAL:
+            bc.type = BYTECODE_ID_LOCAL;
+            bc.id_local.stack_level = stack_level;
+            bc.id_local.index = value->local_value->index;
+
+            bytecode_add(code, &bc);
+        break;
         case FREEVAR_GLOBAL:
-            freevar_print(value);
+            bc.type = BYTECODE_ID_GLOBAL;
+            bc.id_global.index = value->global_value->index;
+
+            bytecode_add(code, &bc);
         break;
         case FREEVAR_FUNC:
-            expr_id_func_freevar_list_emit(value->func_value, stack_level, result);
-            freevar_print(value);
+            if (value != NULL)
+            {
+                expr_id_func_freevar_list_emit(value->func_value, stack_level, code, result);
+            }
         break;
     }
 
     return 0;
 }
 
-int expr_id_func_freevar_list_emit(func * func_value, int stack_level, int * result)
+int expr_id_func_freevar_list_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
     int e = 0;
+    bytecode bc = { 0 };
     freevar_list_node * node;
+    
     if (func_value->freevars == NULL)
     {
         return 0;
@@ -421,33 +442,35 @@ int expr_id_func_freevar_list_emit(func * func_value, int stack_level, int * res
         freevar * value = node->value;
         if (value != NULL)
         {
-            expr_id_func_freevar_emit(value, stack_level + e++, result);
+            expr_id_func_freevar_emit(value, stack_level + e++, code, result);
         }
         node = node->next;
     }
-    printf("global vec %d\n", func_value->freevars->count);
+    
+    bc.type = BYTECODE_GLOBAL_VEC;
+    bc.global_vec.count = func_value->freevars->count;
+    bytecode_add(code, &bc);
 
     return 0;
 }
 
-int expr_id_func_emit(expr * value, int stack_level, int * result)
+int expr_id_func_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
-    if (value->id_func_value->id == NULL)
+    bytecode bc = { 0 };
+    func * func_value = value->id_func_value;
+
+    bc.type = BYTECODE_ID_FUNC_FUNC;
+    bc.id_func.func_value = func_value;
+    bytecode_add(code, &bc);
+    
+    if (func_value)
     {
-        printf("id func (nil) st %d\n", stack_level);
-    }
-    else
-    {
-        printf("id func %s st %d\n", value->id_func_value->id, stack_level);
-    }
-    if (value->id_func_value)
-    {
-        expr_id_func_freevar_list_emit(value->id_func_value, stack_level, result);
+        expr_id_func_freevar_list_emit(func_value, stack_level, code, result);
     }
     return 0;
 }
  
-int expr_id_emit(expr * value, int stack_level, int * result)
+int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
     switch (value->id_type_value)
     {
@@ -456,116 +479,185 @@ int expr_id_emit(expr * value, int stack_level, int * result)
             assert(0);
         break;
         case ID_TYPE_LOCAL:
-            printf("id local st %d\n", stack_level);
-            var_print(value->id_var_value);
+        {
+            bytecode bc = { 0 };
+            
+            bc.type = BYTECODE_ID_LOCAL;
+            bc.id_local.stack_level = stack_level;
+            bc.id_local.index = value->id_var_value->index;
+        
+            bytecode_add(code, &bc);
+        }
         break;
         case ID_TYPE_GLOBAL:
-            printf("id global st %d\n", stack_level);
-            freevar_print(value->id_freevar_value);
+        {
+            bytecode bc = { 0 };
+            
+            bc.type = BYTECODE_ID_GLOBAL;
+            bc.id_global.index = value->id_freevar_value->index;
+
+            bytecode_add(code, &bc);        
+        }
         break;
         case ID_TYPE_FUNC:
-            expr_id_func_emit(value, stack_level, result);
+            expr_id_func_emit(value, stack_level, code, result);
         break;
     }
     return 0;
 } 
- 
-int expr_emit(expr * value, int stack_level, int * result)
+
+int expr_cond_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
+    bytecode bc = { 0 };
+    bytecode * cond, * condz;
+    bytecode * labelA, * labelB;
+
+    expr_emit(value->left, stack_level, code, result);
+
+    bc.type = BYTECODE_JUMPZ;
+    condz = bytecode_add(code, &bc);
+
+    expr_emit(value->middle, stack_level, code, result);
+
+    bc.type = BYTECODE_JUMP;
+    cond = bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelA = bytecode_add(code, &bc);    
+    condz->jump.offset = labelA->addr - condz->addr;
+
+    expr_emit(value->right, stack_level, code, result);
+
+    bc.type = BYTECODE_LABEL;
+    labelB = bytecode_add(code, &bc);
+    cond->jump.offset = labelB->addr - cond->addr;
+
+    return 0;
+}
+
+int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    int v = 0;
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_MARK;
+    bytecode_add(code, &bc);
+    
+    if (value->vars)
+    {
+         v = value->vars->count;
+         expr_list_emit(value->vars, stack_level, code, result);
+    }
+    expr_emit(value->func_expr, stack_level + v, code, result);
+
+    bc.type = BYTECODE_CALL;
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+ 
+int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+
     switch (value->type)
     {
         case EXPR_INT:
-            expr_int_emit(value, stack_level, result); 
+            expr_int_emit(value, stack_level, code, result); 
         break;
         case EXPR_ID:
-            expr_id_emit(value, stack_level, result);
+            expr_id_emit(value, stack_level, code, result);
         break;
         case EXPR_NEG:
-            expr_emit(value->left, stack_level, result);
-            printf("op neg\n");
+            expr_emit(value->left, stack_level, code, result);
+
+            bc.type = BYTECODE_OP_NEG;
+            bytecode_add(code, &bc);
         break;
         case EXPR_ADD:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->left, stack_level + 1, result);
-            printf("op add\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_ADD;
+            bytecode_add(code, &bc);
         break;
         case EXPR_SUB:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->left, stack_level + 1, result);
-            printf("op sub\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_SUB;
+            bytecode_add(code, &bc);
         break;
         case EXPR_MUL:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->left, stack_level + 1, result);
-            printf("op mul\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_MUL;
+            bytecode_add(code, &bc);
         break;
         case EXPR_DIV:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->left, stack_level + 1, result);
-            printf("op div\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_DIV;
+            bytecode_add(code, &bc);
         break;
         case EXPR_LT:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->left, stack_level + 1, result);
-            printf("op lt\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_LT;
+            bytecode_add(code, &bc);
         break;
         case EXPR_GT:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->left, stack_level + 1, result);
-            printf("op gt\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_GT;
+            bytecode_add(code, &bc);
         break;
         case EXPR_LTE:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->left, stack_level + 1, result);
-            printf("op lte\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_LTE;
+            bytecode_add(code, &bc);
         break;
         case EXPR_GTE:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->left, stack_level + 1, result);
-            printf("op gte\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_GTE;
+            bytecode_add(code, &bc);
         break;
         case EXPR_EQ:
-            expr_emit(value->right, stack_level, result);
-            expr_emit(value->right, stack_level + 1, result);
-            printf("op eq\n");
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_EQ;
+            bytecode_add(code, &bc);
         break;
         break;
         case EXPR_SUP:
-            expr_emit(value->left, stack_level, result);
+            expr_emit(value->left, stack_level, code, result);
         break;
         case EXPR_COND:
-            expr_emit(value->left, stack_level, result);
-            printf("jumpz labelA\n");
-            expr_emit(value->middle, stack_level, result);
-            printf("jump labelB\n");
-            printf("labelA:\n");
-            expr_emit(value->right, stack_level, result);
-            printf("labelB:\n");
+            expr_cond_emit(value, stack_level, code, result);
         break;
         case EXPR_CALL:
-        {
-            int v = 0;
-            printf("mark\n");
-            if (value->vars)
-            {
-                v = value->vars->count;
-                expr_list_emit(value->vars, stack_level, result);
-            }
-            expr_emit(value->func_expr, stack_level + v, result);
-            printf("call func\n");
-        }
+            expr_call_emit(value, stack_level, code, result);
         break;
         case EXPR_FUNC:
             if (value->func_value)
             {
-                func_emit(value->func_value, stack_level, result);
+                func_emit(value->func_value, stack_level, code, result);
             }
         break;
     }
     return 0;
 }
 
-int expr_list_emit(expr_list * list, int stack_level, int * result)
+int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code, int * result)
 {
     int e = 0;
     expr_list_node * node = list->head;
@@ -574,7 +666,7 @@ int expr_list_emit(expr_list * list, int stack_level, int * result)
         expr * value = node->value;
         if (value != NULL)
         {
-            expr_emit(value, stack_level + e++, result);
+            expr_emit(value, stack_level + e++, code, result);
         }
         node = node->prev;
     }
@@ -582,38 +674,37 @@ int expr_list_emit(expr_list * list, int stack_level, int * result)
     return 0;
 }
 
-int func_emit(func * func_value, int stack_level, int * result)
+int func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
-    if (func_value->id != NULL)
-    {
-        printf("\nfunc def %s\n", func_value->id);
-    }
-    else
-    {
-        printf("\nfunc def (nil)\n");
-    }
+    bytecode bc = { 0 };
+    
+    func_value->addr = code->addr;
+    bc.type = BYTECODE_FUNC_DEF;
+    bytecode_add(code, &bc);
 
     if (func_value->body && func_value->body->ret)
     {
-        expr_emit(func_value->body->ret, stack_level, result);
-        if (func_value->vars == NULL)
+        int vars = 0;
+        expr_emit(func_value->body->ret, stack_level, code, result);
+
+        if (func_value->vars != NULL)
         {
-            printf("ret 0 from %s\n", func_value->id);
+            vars = func_value->vars->count;
         }
-        else
-        {
-            printf("ret %d from %s\n", func_value->vars->count, func_value->id);
-        }
+
+        bc.type = BYTECODE_RET;
+        bc.ret.count = vars;
+        bytecode_add(code, &bc);
     }
     if (func_value->body && func_value->body->funcs)
     {
-        func_list_emit(func_value->body->funcs, stack_level, result);
+        func_list_emit(func_value->body->funcs, stack_level, code, result);
     }
         
     return 0;
 }
 
-int func_list_emit(func_list * list, int stack_level, int * result)
+int func_list_emit(func_list * list, int stack_level, bytecode_list * code, int * result)
 {
     func_list_node * node = list->tail;
     while (node != NULL)
@@ -621,21 +712,45 @@ int func_list_emit(func_list * list, int stack_level, int * result)
         func * func_value = node->value;
         if (func_value != NULL)
         {
-            func_emit(func_value, stack_level, result);
+            func_emit(func_value, stack_level, code, result);
         }
         node = node->next;
     }
     return 0;
 }
 
-int never_emit(never * nev)
+int func_main_emit(never * nev, int stack_level, bytecode_list * code, int * result)
+{
+    symtab_entry * entry = NULL;
+    entry = symtab_lookup(nev->stab, "main", SYMTAB_FLAT);
+    if (entry != NULL && entry->var_func_value)
+    {
+        bytecode bc = { 0 };
+        
+        bc.type = BYTECODE_ID_FUNC_FUNC;
+        bc.id_func.func_value = entry->var_func_value;
+        bytecode_add(code, &bc);
+
+        bc.type = BYTECODE_CALL;
+        bytecode_add(code, &bc);
+    }
+    else
+    {
+        *result = GENCODE_FAIL;
+        printf("no main function defined\n");
+    }
+    return 0;
+}
+
+int never_emit(never * nev, bytecode_list * code)
 {
     int stack_level = 0;
     int gencode_res = 0;
 
     if (nev->funcs)
     {
-        func_list_emit(nev->funcs, stack_level, &gencode_res);
+        func_main_emit(nev, stack_level, code, &gencode_res);
+        func_list_emit(nev->funcs, stack_level, code, &gencode_res);
     }
     
     return gencode_res;

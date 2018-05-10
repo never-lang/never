@@ -1,32 +1,128 @@
 #ifndef __BYTECODE_H__
 #define __BYTECODE_H__
 
+typedef enum bytecode_type
+{
+    BYTECODE_UNKNOWN = 0,
+    BYTECODE_INT,
+    BYTECODE_ID_LOCAL,
+    BYTECODE_ID_GLOBAL,
+    BYTECODE_ID_FUNC_FUNC,
+    BYTECODE_ID_FUNC_ADDR,
+    BYTECODE_JUMPZ,
+    BYTECODE_JUMP,
+    BYTECODE_LABEL,
+    BYTECODE_OP_NEG,
+    BYTECODE_OP_ADD,
+    BYTECODE_OP_SUB,
+    BYTECODE_OP_MUL,
+    BYTECODE_OP_DIV,
+    BYTECODE_OP_LT,
+    BYTECODE_OP_GT,
+    BYTECODE_OP_LTE,
+    BYTECODE_OP_GTE,
+    BYTECODE_OP_EQ,
+    BYTECODE_FUNC_DEF,
+    BYTECODE_GLOBAL_VEC,
+    BYTECODE_MARK,
+    BYTECODE_CALL,
+    BYTECODE_RET,
+    BYTECODE_END
+} bytecode_type;
+
 typedef struct bytecode
 {
-    int type;
+    bytecode_type type;
+    int addr;
+    union
+    {
+        struct
+        {
+            int value;     /* BYTECODE_INT */
+        } integer;
+        struct             /* BYTECODE_ID_LOCAL */
+        {
+            int stack_level;
+            int index;            
+        } id_local;
+        struct             /* BYTECODE_ID_GLOBAL */ 
+        {
+            int index;
+        } id_global;
+        union              /* BYTECODE_ID_FUNC_FUNC BYTECODE_ID_FUNC_ADDR */
+        {
+            struct func * func_value;
+            unsigned int func_addr;
+        } id_func;
+        struct             /* BYTECODE_JUMPZ BYTECODE_JUMP */
+        {
+            int offset;
+        } jump;
+        struct             /* BYTECODE_GLOBAL_VEC */
+        {
+            int count;
+        } global_vec;
+        struct             /* BYTECODE_RET */
+        {
+            int count;
+        } ret;
+    };
 } bytecode;
 
-typedef struct bytecode_node
+typedef struct bytecode_list_node
 {
-    bytecode * value;
-    struct bytecode_node * prev;
-    struct bytecode_node * next;
-} bytecode_node;
+    bytecode value;
+    struct bytecode_list_node * prev;
+    struct bytecode_list_node * next;
+} bytecode_list_node;
 
 typedef struct bytecode_list
 {
-    bytecode_node * head;
-    bytecode_node * tail;
+    unsigned int addr;
+    bytecode_list_node * head;
+    bytecode_list_node * tail;
 } bytecode_list;
 
-bytecode * bytecode_new();
-void bytecode_delete(bytecode * value);
+typedef struct bytecode_op_str
+{
+    bytecode_type type;
+    void (*print)(bytecode * code);
+} bytecode_op_str;
 
-bytecode_node * bytecode_node_new(bytecode * value);
-void bytecode_node_delete(bytecode_node * node);
+void bytecode_print_unknown(bytecode * code);
+void bytecode_print_int(bytecode * code);
+void bytecode_print_id_local(bytecode * code);
+void bytecode_print_id_global(bytecode * code);
+void bytecode_print_id_func_func(bytecode * code);
+void bytecode_print_id_func_addr(bytecode * code);
+void bytecode_print_jumpz(bytecode * code);
+void bytecode_print_jump(bytecode * code);
+void bytecode_print_label(bytecode * code);
+void bytecode_print_op_neg(bytecode * code);
+void bytecode_print_op_add(bytecode * code);
+void bytecode_print_op_sub(bytecode * code);
+void bytecode_print_op_mul(bytecode * code);
+void bytecode_print_op_div(bytecode * code);
+void bytecode_print_op_lt(bytecode * code);
+void bytecode_print_op_gt(bytecode * code);
+void bytecode_print_op_lte(bytecode * code);
+void bytecode_print_op_gte(bytecode * code);
+void bytecode_print_op_eq(bytecode * code);
+void bytecode_print_func_def(bytecode * code);
+void bytecode_print_global_vec(bytecode * code);
+void bytecode_print_mark(bytecode * code);
+void bytecode_print_call(bytecode * code);
+void bytecode_print_ret(bytecode * code);
+ 
+bytecode_list_node * bytecode_list_node_new(bytecode * value);
+void bytecode_list_node_delete(bytecode_list_node * node);
 
-bytecode_list * bytecode_list_new();
-void bytecode_list_delete(bytecode_list * list);
+bytecode_list * bytecode_new();
+void bytecode_delete(bytecode_list * code);
+
+bytecode * bytecode_add(bytecode_list * code, bytecode * value);
+void bytecode_func_addr(bytecode_list * code);
+void bytecode_print(bytecode_list * code);
 
 #endif /* __BYTECODE_H__ */
 

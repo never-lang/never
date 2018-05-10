@@ -813,14 +813,14 @@ int never_sem_check(never * nev)
 {
     int typecheck_res = TYPECHECK_SUCC;
     
-    printf("---- add symbol table entries --- \n\n");
+    printf("---- add symbol table entries ---\n");
     symtab_add_entry_never(nev, &typecheck_res);
     
-    printf("---- check types --- \n\n");
+    printf("---- check types ---\n");
     never_check_type(nev, &typecheck_res);
 
-    /* printf("---- check function main\n\n");
-    func_main_check_type(nev->stab, &typecheck_res); */
+    printf("---- check function main\n");
+    func_main_check_type(nev->stab, &typecheck_res);
 
     return typecheck_res;
 }

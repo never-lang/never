@@ -21,7 +21,6 @@ typedef struct symtab_entry
     int type;
     const char * id;
     void * var_func_value;
-    int attrib;   
     unsigned int syn_level;
 } symtab_entry;
 

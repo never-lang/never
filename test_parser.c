@@ -4,6 +4,7 @@
 #include "never.h"
 #include "typecheck.h"
 #include "gencode.h"
+#include "bytecode.h"
 
 extern FILE * yyin;
 extern int parse_result;
@@ -28,11 +29,19 @@ int main(int argc, char * argv[])
         ret = never_sem_check(nev);
         if (ret == 0)
         {
+            bytecode_list * code;
+        
             never_gencode(nev);
             
             print_functions(nev);
             
-            never_emit(nev);
+            code = bytecode_new();
+            
+            never_emit(nev, code);
+            
+            bytecode_func_addr(code);
+            bytecode_print(code);
+            bytecode_delete(code);
         }
     }
     

@@ -12,6 +12,7 @@ func * func_new(char * id, var_list * vars, var * ret, func_body * body)
     value->body = body;
     value->freevars = NULL;
     value->stab = NULL;
+    value->addr = 0;
     
     return value;
 }
@@ -48,7 +49,7 @@ void func_delete(func * value)
 
 void func_print(func * value)
 {
-    printf("func %s\n", value->id);
+    printf("func %s@%u\n", value->id, value->addr);
 }
 
 func_body * func_body_new(func_list * funcs, expr * ret)

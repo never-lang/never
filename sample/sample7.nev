@@ -10,7 +10,7 @@ func twice(int coeff, single_func(int, int) -> int) -> (int, int) -> int
 {
     func mult() -> int
     {
-        return 2 * coeff;
+        return -1122 * coeff;
     }
 
     func twice_func(int a, int b) -> int
