@@ -15,6 +15,8 @@ test_symtab: symtab.o var.o freevar.o func.o expr.o
 
 test_freevar: symtab.o var.o freevar.o func.o expr.o
 
+test_vm: vm.o
+
 gc: gc.o object.o scanner.o
 
 %.c : %.y
@@ -31,5 +33,6 @@ typecheck.o: typecheck.c typecheck.h symtab.h expr.h var.h func.h
 utils.o: utils.c utils.h
 gencode.o: gencode.c gencode.h
 bytecode.o: bytecode.c bytecode.h
+vm.o: vm.c vm.h
 
 

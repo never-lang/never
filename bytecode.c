@@ -240,9 +240,9 @@ void bytecode_func_addr(bytecode_list * code)
     }
 }
 
-void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, int * size)
+void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, unsigned int * size)
 {
-    int addr = 0;
+    unsigned int addr = 0;
     bytecode_list_node * node = NULL;
     
     *size = code->addr;
