@@ -10,6 +10,7 @@ expr * expr_new_int(int int_value)
     ret->type = EXPR_INT;
     ret->int_value = int_value;
     ret->comb = COMB_TYPE_INT;
+    ret->line_no = 0;
     
     return ret;
 }
@@ -21,6 +22,7 @@ expr * expr_new_id(char * id)
     ret->type = EXPR_ID;
     ret->id = id;
     ret->comb = COMB_TYPE_UNKNOWN;
+    ret->line_no = 0;
     
     return ret;
 }
@@ -31,6 +33,7 @@ expr * expr_new_one(int type, expr * left)
     
     ret->type = type;
     ret->comb = COMB_TYPE_UNKNOWN;
+    ret->line_no = 0;
     ret->left = left;
     ret->middle = NULL;
     ret->right = NULL;
@@ -44,6 +47,7 @@ expr * expr_new_two(int type, expr * left, expr * right)
     
     ret->type = type;
     ret->comb = COMB_TYPE_UNKNOWN;
+    ret->line_no = 0;
     ret->left = left;
     ret->middle = NULL;
     ret->right = right;
@@ -57,6 +61,7 @@ expr * expr_new_three(int type, expr * left, expr * middle, expr * right)
     
     ret->type = type;
     ret->comb = COMB_TYPE_UNKNOWN;
+    ret->line_no = 0;
     ret->left = left;
     ret->middle = middle;
     ret->right = right;
@@ -69,6 +74,7 @@ expr * expr_new_func(func * value)
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = EXPR_FUNC;
+    ret->line_no = 0;
     ret->comb = COMB_TYPE_UNKNOWN;
     ret->func_value = value;
     
@@ -80,6 +86,7 @@ expr * expr_new_call(expr * func_expr, expr_list * vars)
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = EXPR_CALL;
+    ret->line_no = 0;
     ret->comb = COMB_TYPE_UNKNOWN;
     ret->func_expr = func_expr;
     ret->vars = vars;

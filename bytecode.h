@@ -27,6 +27,7 @@ typedef enum bytecode_type
     BYTECODE_MARK,
     BYTECODE_CALL,
     BYTECODE_RET,
+    BYTECODE_LINE,
     BYTECODE_END
 } bytecode_type;
 
@@ -66,6 +67,10 @@ typedef struct bytecode
         {
             int count;
         } ret;
+        struct             /* BYTECODE_LINE */
+        {
+            unsigned int no;
+        } line;
     };
 } bytecode;
 
@@ -113,6 +118,7 @@ void bytecode_print_global_vec(bytecode * code);
 void bytecode_print_mark(bytecode * code);
 void bytecode_print_call(bytecode * code);
 void bytecode_print_ret(bytecode * code);
+void bytecode_print_line(bytecode * code);
  
 bytecode_list_node * bytecode_list_node_new(bytecode * value);
 void bytecode_list_node_delete(bytecode_list_node * node);

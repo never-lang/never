@@ -694,11 +694,15 @@ int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code, int 
 int func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
-    
+
     func_value->addr = code->addr;
     bc.type = BYTECODE_FUNC_DEF;
     bytecode_add(code, &bc);
 
+    bc.type = BYTECODE_LINE;
+    bc.line.no = func_value->line_no;
+    bytecode_add(code, &bc);
+    
     if (func_value->body && func_value->body->funcs)
     {
         bytecode * jump, * label;
@@ -725,6 +729,10 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code, int * re
 
         bc.type = BYTECODE_RET;
         bc.ret.count = vars;
+        bytecode_add(code, &bc);
+        
+        bc.type = BYTECODE_LINE;
+        bc.line.no = func_value->body->ret->line_no;
         bytecode_add(code, &bc);
     }
         

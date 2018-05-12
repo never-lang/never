@@ -14,6 +14,7 @@ typedef struct var
     char * id;
     struct var_list * vars;
     struct var * ret;
+    unsigned int line_no;
 } var;
 
 typedef struct var_list_node

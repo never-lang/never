@@ -28,7 +28,8 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
     { BYTECODE_MARK, bytecode_print_mark },
     { BYTECODE_CALL, bytecode_print_call },
-    { BYTECODE_RET, bytecode_print_ret }
+    { BYTECODE_RET, bytecode_print_ret },
+    { BYTECODE_LINE, bytecode_print_line }
 };
 
 static void bytecode_test_bytecode_op()
@@ -158,6 +159,11 @@ void bytecode_print_call(bytecode * code)
 void bytecode_print_ret(bytecode * code)
 {
     printf("%d: ret %d\n", code->addr, code->ret.count);
+}
+
+void bytecode_print_line(bytecode * code)
+{
+    printf("%d: line %u\n", code->addr, code->line.no);
 }
 
 bytecode_list_node * bytecode_list_node_new(bytecode * value)

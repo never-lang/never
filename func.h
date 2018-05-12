@@ -18,6 +18,7 @@ typedef struct func
     struct freevar_list * freevars;
     struct symtab * stab;
     unsigned int addr;
+    unsigned int line_no;
 } func;
 
 typedef struct func_body

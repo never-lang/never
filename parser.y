@@ -66,86 +66,103 @@ int yyerror(never ** nev, char * str)
 expr: TOK_ID
 {
     $$ = expr_new_id($1);
+    $$->line_no = $<line_no>1;
 };
 
 expr: TOK_NUM
 {
     $$ = expr_new_int($1);
+    $$->line_no = $<line_no>1;
 };
 
 expr: '-' expr %prec NEG
 {
     $$ = expr_new_one(EXPR_NEG, $2);
+    $$->line_no = $<line_no>1;
 };
 
 expr: expr '+' expr
 {
     $$ = expr_new_two(EXPR_ADD, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: expr '-' expr
 {
     $$ = expr_new_two(EXPR_SUB, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: expr '*' expr
 {
     $$ = expr_new_two(EXPR_MUL, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: expr '/' expr
 {
     $$ = expr_new_two(EXPR_DIV, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: expr '<' expr
 {
     $$ = expr_new_two(EXPR_LT, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: expr TOK_LTE expr
 {
     $$ = expr_new_two(EXPR_LTE, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: expr '>' expr
 {
     $$ = expr_new_two(EXPR_GT, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: expr TOK_GTE expr
 {
     $$ = expr_new_two(EXPR_GTE, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: expr TOK_EQ expr
 {
     $$ = expr_new_two(EXPR_EQ, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: '(' expr ')'
 {
     $$ = expr_new_one(EXPR_SUP, $2);
+    $$->line_no = $<line_no>1;
 };
 
 expr: expr '?' expr ':' expr
 {
     $$ = expr_new_three(EXPR_COND, $1, $3, $5);
+    $$->line_no = $<line_no>2;
 };
 
 expr: func
 {
     $$ = expr_new_func($1);
+    $$->line_no = $1->line_no;
 };
 
 expr: expr '(' ')'
 {
     $$ = expr_new_call($1, NULL);
+    $$->line_no = $1->line_no;
 };
 
 expr: expr '(' expr_list ')'
 {
     $$ = expr_new_call($1, $3);
+    $$->line_no = $1->line_no;
 };
 
 expr_list: expr
@@ -163,31 +180,37 @@ expr_list: expr_list ',' expr
 var: TOK_INT
 {
     $$ = var_new_int(NULL);
+    $$->line_no = $<line_no>1;
 };
 
 var: TOK_INT TOK_ID
 {
     $$ = var_new_int($2);
+    $$->line_no = $<line_no>2;
 };
 
 var: '(' ')' TOK_RET var
 {
     $$ = var_new_func(NULL, NULL, $4);
+    $$->line_no = $<line_no>4;
 };
 
 var: '(' var_list ')' TOK_RET var
 {
     $$ = var_new_func(NULL, $2, $5);
+    $$->line_no = $<line_no>5;
 };
 
 var: TOK_ID '(' ')' TOK_RET var
 {
     $$ = var_new_func($1, NULL, $5);
+    $$->line_no = $<line_no>5;
 };
 
 var: TOK_ID '(' var_list ')' TOK_RET var
 {
     $$ = var_new_func($1, $3, $6);
+    $$->line_no = $<line_no>6;
 };
 
 var_list: var
@@ -205,11 +228,13 @@ var_list: var_list ',' var
 func: TOK_FUNC TOK_ID '(' ')' TOK_RET var func_body
 {
     $$ = func_new($2, NULL, $6, $7);
+    $$->line_no = $<line_no>2;
 };
 
 func: TOK_FUNC TOK_ID '(' var_list ')' TOK_RET var func_body
 {
     $$ = func_new($2, $4, $7, $8);
+    $$->line_no = $<line_no>2;
 };
 
 func: TOK_FUNC TOK_ID error

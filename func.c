@@ -13,6 +13,7 @@ func * func_new(char * id, var_list * vars, var * ret, func_body * body)
     value->freevars = NULL;
     value->stab = NULL;
     value->addr = 0;
+    value->line_no = 0;
     
     return value;
 }

@@ -24,9 +24,9 @@ func crazy(int a, int, () -> int, funcZ(int, int) -> (int) -> () -> int) -> int
     return 0;
 }
 
-func print(void_func(int, int, int) -> int) -> (int, int, int) -> int
+func print(void_func(int, int, int) -> int) -> int
 {
-    return minCoeff;
+    return minCoeff(10, 20, 30);
 }
 
 func my_func(int a, int b, int c) -> int
@@ -39,7 +39,7 @@ func void_func() -> int
     return 0 < 0 ? 0 : 10;
 }
 
-func main() -> (int, int, int) -> int
+func main() -> int
 {
     return print(my_func);
 }

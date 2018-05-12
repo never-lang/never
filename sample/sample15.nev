@@ -1,0 +1,18 @@
+/**
+ * Crazy level max
+ */
+func min(int a, int b) -> int
+{ 
+    return a < b ? a : b;
+} 
+ 
+func max(int a, int b) -> int
+{
+    return a > b ? a : b;
+}
+
+func main() -> int
+{
+    return (1 < 2 ? min : max)(10, 20);
+}
+

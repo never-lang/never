@@ -11,6 +11,7 @@ var * var_new_int(char * id)
     value->id = id;
     value->vars = NULL;
     value->ret = NULL;
+    value->line_no = 0;
     
     return value;
 }
@@ -23,6 +24,7 @@ var * var_new_func(char * id, var_list * vars, var * ret)
     value->id = id;
     value->vars = vars;
     value->ret = ret;
+    value->line_no = 0;
     
     return value;
 }

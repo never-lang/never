@@ -50,6 +50,7 @@ typedef struct expr
     comb_type comb;
     struct var_list * comb_vars; /* function arguments */
     struct var * comb_ret; /* function ret */
+    unsigned int line_no;
     union
     {
         int int_value; /* EXPR_INT */
