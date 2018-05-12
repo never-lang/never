@@ -453,10 +453,9 @@ int expr_id_func_freevar_list_emit(func * func_value, int stack_level, bytecode_
     return 0;
 }
 
-int expr_id_func_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
-    func * func_value = value->id_func_value;
 
     expr_id_func_freevar_list_emit(func_value, stack_level, code, result);
 
@@ -497,7 +496,10 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * resu
         }
         break;
         case ID_TYPE_FUNC:
-            expr_id_func_emit(value, stack_level, code, result);
+            if (value->id_func_value != NULL)
+            {
+                expr_id_func_emit(value->id_func_value, stack_level, code, result);
+            }
         break;
     }
     return 0;
@@ -549,6 +551,23 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
 
     bc.type = BYTECODE_CALL;
     bytecode_add(code, &bc);
+
+    return 0;
+}
+
+int expr_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode * jump, * label;
+                
+    bc.type = BYTECODE_JUMP;
+    jump = bytecode_add(code, &bc);
+            
+    func_emit(func_value, stack_level, code, result);
+                
+    bc.type = BYTECODE_LABEL;
+    label = bytecode_add(code, &bc);
+    jump->jump.offset = label->addr - jump->addr;
 
     return 0;
 }
@@ -647,7 +666,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         case EXPR_FUNC:
             if (value->func_value)
             {
-                func_emit(value->func_value, stack_level, code, result);
+                expr_func_emit(value->func_value, stack_level, code, result);
+                expr_id_func_emit(value->func_value, stack_level, code, result);
             }
         break;
     }
