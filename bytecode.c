@@ -240,6 +240,43 @@ void bytecode_func_addr(bytecode_list * code)
     }
 }
 
+void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, int * size)
+{
+    int addr = 0;
+    bytecode_list_node * node = NULL;
+    
+    *size = code->addr;
+    *code_arr = (bytecode *)malloc(code->addr * sizeof(bytecode));
+    
+    node = code->tail;
+    while (node != NULL)
+    {
+        bytecode * bc = &node->value;
+        
+        if (node->value.addr != addr)
+        {
+            printf("incorrectly generated code\n");
+            assert(0);
+        }
+        if (node->value.type == BYTECODE_ID_FUNC_FUNC)
+        {
+            printf("cannot generate bytecode array with function pointers, use bytecode_func_addr\n");
+            assert(0);
+        }
+        
+        if (code != NULL)
+        {
+            *code_arr[addr++] = *bc;
+        }
+        node = node->next;
+    }
+}
+
+void bytecode_array_delete(bytecode * code_arr)
+{
+    free(code_arr);
+}
+
 void bytecode_print(bytecode_list * code)
 {
     bytecode_list_node * node = code->tail;

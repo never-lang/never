@@ -122,6 +122,8 @@ void bytecode_delete(bytecode_list * code);
 
 bytecode * bytecode_add(bytecode_list * code, bytecode * value);
 void bytecode_func_addr(bytecode_list * code);
+void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, int * size);
+
 void bytecode_print(bytecode_list * code);
 
 #endif /* __BYTECODE_H__ */
