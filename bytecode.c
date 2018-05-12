@@ -42,122 +42,122 @@ static void bytecode_test_bytecode_op()
 
 void bytecode_print_unknown(bytecode * code)
 {
-    printf("%d unknown\n", code->addr);
+    printf("%d: unknown\n", code->addr);
 }
 
 void bytecode_print_int(bytecode * code)
 {
-    printf("%d int %d\n", code->addr, code->integer.value);
+    printf("%d: int %d\n", code->addr, code->integer.value);
 }
 
 void bytecode_print_id_local(bytecode * code)
 {
-    printf("%d id local %d %d\n", code->addr, code->id_local.stack_level, code->id_local.index);
+    printf("%d: id local %d %d\n", code->addr, code->id_local.stack_level, code->id_local.index);
 }
 
 void bytecode_print_id_global(bytecode * code)
 {
-    printf("%d id global %d\n", code->addr, code->id_global.index);
+    printf("%d: id global %d\n", code->addr, code->id_global.index);
 }
 
 void bytecode_print_id_func_func(bytecode * code)
 {
-    printf("%d id func func %d\n", code->addr, code->id_func.func_value->addr);
+    printf("%d: id func func %d\n", code->addr, code->id_func.func_value->addr);
 }
 
 void bytecode_print_id_func_addr(bytecode * code)
 {
-    printf("%d id func addr %d\n", code->addr, code->id_func.func_addr);
+    printf("%d: id func addr %d\n", code->addr, code->id_func.func_addr);
 }
 
 void bytecode_print_jumpz(bytecode * code)
 {
-    printf("%d jumpz %d\n", code->addr, code->jump.offset);
+    printf("%d: jumpz %d (%d)\n", code->addr, code->jump.offset, code->addr + code->jump.offset);
 }
 
 void bytecode_print_jump(bytecode * code)
 {
-    printf("%d jump %d\n", code->addr, code->jump.offset);
+    printf("%d: jump %d (%d)\n", code->addr, code->jump.offset, code->addr + code->jump.offset);
 }
 
 void bytecode_print_label(bytecode * code)
 {
-    printf("%d label\n", code->addr);
+    printf("%d: label\n", code->addr);
 }
 
 void bytecode_print_op_neg(bytecode * code)
 {
-    printf("%d op neg\n", code->addr);
+    printf("%d: op neg\n", code->addr);
 }
 
 void bytecode_print_op_add(bytecode * code)
 {
-    printf("%d op add\n", code->addr);
+    printf("%d: op add\n", code->addr);
 }
 
 void bytecode_print_op_sub(bytecode * code)
 {
-    printf("%d op sub\n", code->addr);
+    printf("%d: op sub\n", code->addr);
 }
 
 void bytecode_print_op_mul(bytecode * code)
 {
-    printf("%d op mul\n", code->addr);
+    printf("%d: op mul\n", code->addr);
 }
 
 void bytecode_print_op_div(bytecode * code)
 {
-    printf("%d op div\n", code->addr);
+    printf("%d: op div\n", code->addr);
 }
 
 void bytecode_print_op_lt(bytecode * code)
 {
-    printf("%d op lt\n", code->addr);
+    printf("%d: op lt\n", code->addr);
 }
 
 void bytecode_print_op_gt(bytecode * code)
 {
-    printf("%d op gt\n", code->addr);
+    printf("%d: op gt\n", code->addr);
 }
 
 void bytecode_print_op_lte(bytecode * code)
 {
-    printf("%d op lte\n", code->addr);
+    printf("%d: op lte\n", code->addr);
 }
 
 void bytecode_print_op_gte(bytecode * code)
 {
-    printf("%d op gte\n", code->addr);
+    printf("%d: op gte\n", code->addr);
 }
 
 void bytecode_print_op_eq(bytecode * code)
 {
-    printf("%d op eq\n", code->addr);
+    printf("%d: op eq\n", code->addr);
 }
 
 void bytecode_print_func_def(bytecode * code)
 {
-    printf("%d func def\n", code->addr);
+    printf("\n%d: func def\n", code->addr);
 }
 
 void bytecode_print_global_vec(bytecode * code)
 {
-    printf("%d global vec %d\n", code->addr, code->global_vec.count);
+    printf("%d: global vec %d\n", code->addr, code->global_vec.count);
 }
 
 void bytecode_print_mark(bytecode * code)
 {
-    printf("%d mark\n", code->addr);
+    printf("%d: mark\n", code->addr);
 }
 
 void bytecode_print_call(bytecode * code)
 {
-    printf("%d call\n", code->addr);
+    printf("%d: call\n", code->addr);
 }
 
 void bytecode_print_ret(bytecode * code)
 {
-    printf("%d ret %d\n", code->addr, code->ret.count);
+    printf("%d: ret %d\n", code->addr, code->ret.count);
 }
 
 bytecode_list_node * bytecode_list_node_new(bytecode * value)

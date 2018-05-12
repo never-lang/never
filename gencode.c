@@ -427,28 +427,27 @@ int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * 
 
 int expr_id_func_freevar_list_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
-    int e = 0;
+    int count = 0;
     bytecode bc = { 0 };
-    freevar_list_node * node;
     
-    if (func_value->freevars == NULL)
+    if (func_value != NULL && func_value->freevars != NULL)
     {
-        return 0;
-    }
-    
-    node = func_value->freevars->tail;
-    while (node != NULL)
-    {
-        freevar * value = node->value;
-        if (value != NULL)
+        int e = 0;
+        count = func_value->freevars->count;
+        freevar_list_node * node = func_value->freevars->tail;
+        while (node != NULL)
         {
-            expr_id_func_freevar_emit(value, stack_level + e++, code, result);
+            freevar * value = node->value;
+            if (value != NULL)
+            {
+                expr_id_func_freevar_emit(value, stack_level + e++, code, result);
+            }
+            node = node->next;
         }
-        node = node->next;
     }
     
     bc.type = BYTECODE_GLOBAL_VEC;
-    bc.global_vec.count = func_value->freevars->count;
+    bc.global_vec.count = count;
     bytecode_add(code, &bc);
 
     return 0;
@@ -459,14 +458,12 @@ int expr_id_func_emit(expr * value, int stack_level, bytecode_list * code, int *
     bytecode bc = { 0 };
     func * func_value = value->id_func_value;
 
+    expr_id_func_freevar_list_emit(func_value, stack_level, code, result);
+
     bc.type = BYTECODE_ID_FUNC_FUNC;
     bc.id_func.func_value = func_value;
     bytecode_add(code, &bc);
-    
-    if (func_value)
-    {
-        expr_id_func_freevar_list_emit(func_value, stack_level, code, result);
-    }
+
     return 0;
 }
  
@@ -682,6 +679,20 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code, int * re
     bc.type = BYTECODE_FUNC_DEF;
     bytecode_add(code, &bc);
 
+    if (func_value->body && func_value->body->funcs)
+    {
+        bytecode * jump, * label;
+
+        bc.type = BYTECODE_JUMP;
+        jump = bytecode_add(code, &bc);
+
+        func_list_emit(func_value->body->funcs, stack_level, code, result);
+
+        bc.type = BYTECODE_LABEL;
+        label = bytecode_add(code, &bc);
+        jump->jump.offset = label->addr - jump->addr;
+    }
+
     if (func_value->body && func_value->body->ret)
     {
         int vars = 0;
@@ -695,10 +706,6 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code, int * re
         bc.type = BYTECODE_RET;
         bc.ret.count = vars;
         bytecode_add(code, &bc);
-    }
-    if (func_value->body && func_value->body->funcs)
-    {
-        func_list_emit(func_value->body->funcs, stack_level, code, result);
     }
         
     return 0;
@@ -727,6 +734,10 @@ int func_main_emit(never * nev, int stack_level, bytecode_list * code, int * res
     {
         bytecode bc = { 0 };
         
+        bc.type = BYTECODE_GLOBAL_VEC;
+        bc.global_vec.count = 0;
+        bytecode_add(code, &bc);
+       
         bc.type = BYTECODE_ID_FUNC_FUNC;
         bc.id_func.func_value = entry->var_func_value;
         bytecode_add(code, &bc);

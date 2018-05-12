@@ -14,7 +14,7 @@ func counter(int from, int to, int by) -> (int, int) -> (int, int, int) -> int
     {
         func inc(int x, int y) -> int
         {
-            return x * y * b * from * from;
+            return 1900 + x * y * b * from * from;
         }
     
         return func increase_sub(int n_a, int n_b, int n_c) -> int
