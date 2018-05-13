@@ -726,13 +726,13 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code, int * re
         {
             vars = func_value->vars->count;
         }
-
-        bc.type = BYTECODE_RET;
-        bc.ret.count = vars;
-        bytecode_add(code, &bc);
         
         bc.type = BYTECODE_LINE;
         bc.line.no = func_value->body->ret->line_no;
+        bytecode_add(code, &bc);
+
+        bc.type = BYTECODE_RET;
+        bc.ret.count = vars;
         bytecode_add(code, &bc);
     }
         

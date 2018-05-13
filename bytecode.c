@@ -32,9 +32,9 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_LINE, bytecode_print_line }
 };
 
-static void bytecode_test_bytecode_op()
+static void bytecode_op_test()
 {
-    int i = 0;
+    unsigned int i = 0;
     for (i = 0; i < BYTECODE_END; i++)
     {
         assert(i == bytecode_op[i].type);
@@ -190,7 +190,7 @@ bytecode_list * bytecode_new()
     list->head = NULL;
     list->tail = NULL;
     
-    bytecode_test_bytecode_op();
+    bytecode_op_test();
     
     return list;
 }
