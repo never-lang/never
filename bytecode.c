@@ -29,7 +29,8 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_MARK, bytecode_print_mark },
     { BYTECODE_CALL, bytecode_print_call },
     { BYTECODE_RET, bytecode_print_ret },
-    { BYTECODE_LINE, bytecode_print_line }
+    { BYTECODE_LINE, bytecode_print_line },
+    { BYTECODE_HALT, bytecode_print_halt }
 };
 
 static void bytecode_op_test()
@@ -148,7 +149,7 @@ void bytecode_print_global_vec(bytecode * code)
 
 void bytecode_print_mark(bytecode * code)
 {
-    printf("%d: mark\n", code->addr);
+    printf("%d: mark %u\n", code->addr, code->mark.addr);
 }
 
 void bytecode_print_call(bytecode * code)
@@ -164,6 +165,11 @@ void bytecode_print_ret(bytecode * code)
 void bytecode_print_line(bytecode * code)
 {
     printf("%d: line %u\n", code->addr, code->line.no);
+}
+
+void bytecode_print_halt(bytecode * code)
+{
+    printf("%d: halt\n", code->addr);
 }
 
 bytecode_list_node * bytecode_list_node_new(bytecode * value)
@@ -302,4 +308,17 @@ void bytecode_print(bytecode_list * code)
     printf("---- bytecode end ---\n");
 }
 
+void bytecode_print_array(bytecode * code_arr, unsigned int size)
+{
+    unsigned int i;
+
+    printf("---- bytecode array beg ---\n");
+
+    for (i = 0; i < size; i++)
+    {
+        bytecode_op[code_arr[i].type].print(code_arr + i);
+    }
+
+    printf("---- bytecode array end ---\n");
+}
 

@@ -28,13 +28,14 @@ typedef enum bytecode_type
     BYTECODE_CALL,
     BYTECODE_RET,
     BYTECODE_LINE,
+    BYTECODE_HALT,
     BYTECODE_END
 } bytecode_type;
 
 typedef struct bytecode
 {
     bytecode_type type;
-    int addr;
+    unsigned int addr;
     union
     {
         struct
@@ -61,11 +62,15 @@ typedef struct bytecode
         } jump;
         struct             /* BYTECODE_GLOBAL_VEC */
         {
-            int count;
+            unsigned int count;
         } global_vec;
+        struct             /* BYTECODE_MARK */
+        {
+            unsigned int addr;
+        } mark;
         struct             /* BYTECODE_RET */
         {
-            int count;
+            unsigned int count;
         } ret;
         struct             /* BYTECODE_LINE */
         {
@@ -119,6 +124,7 @@ void bytecode_print_mark(bytecode * code);
 void bytecode_print_call(bytecode * code);
 void bytecode_print_ret(bytecode * code);
 void bytecode_print_line(bytecode * code);
+void bytecode_print_halt(bytecode * code);
  
 bytecode_list_node * bytecode_list_node_new(bytecode * value);
 void bytecode_list_node_delete(bytecode_list_node * node);
@@ -131,6 +137,7 @@ void bytecode_func_addr(bytecode_list * code);
 void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, unsigned int * size);
 
 void bytecode_print(bytecode_list * code);
+void bytecode_print_array(bytecode * code_arr, unsigned int size);
 
 #endif /* __BYTECODE_H__ */
 

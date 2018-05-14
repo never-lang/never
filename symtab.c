@@ -190,7 +190,7 @@ symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested)
 
 void symtab_set_syn_level(symtab * tab, unsigned int syn_level)
 {
-    int i;
+    unsigned int i;
     
     for (i = 0; i < tab->size; i++)
     {
@@ -203,7 +203,7 @@ void symtab_set_syn_level(symtab * tab, unsigned int syn_level)
 
 void symtab_print(symtab * tab)
 {
-    int i;
+    unsigned int i;
     
     printf("[%p, %p]\n", tab, tab->parent);
         

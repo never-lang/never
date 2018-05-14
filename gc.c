@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "gc.h"
 
 gc * gc_new(unsigned int mem_size)
@@ -125,7 +126,7 @@ void gc_run(gc * collector, unsigned int * omfalos, unsigned int size)
     gc_sweep_all(collector);
 }
 
-unsigned int gc_alloc_int(gc * collector, int value)
+unsigned int gc_alloc_any(gc * collector, object * value)
 {
     unsigned int loc = collector->free;
 
@@ -135,43 +136,91 @@ unsigned int gc_alloc_int(gc * collector, int value)
         exit(1);
     }
 
-    collector->mem[loc].object_value = object_new_int(value);
+    collector->mem[loc].object_value = value;
     collector->free = collector->mem[loc].next;
 
     return loc;
+}
+
+unsigned int gc_alloc_int(gc * collector, int value)
+{
+    return gc_alloc_any(collector, object_new_int(value));
 }
 
 unsigned int gc_alloc_vec(gc * collector, unsigned int size)
 {
-    unsigned int loc = collector->free;
-
-    if (loc >= collector->mem_size)
-    {
-        printf("out of memory\n");
-        exit(1);
-    }
-
-    collector->mem[loc].object_value = object_new_vec(size);
-    collector->free = collector->mem[loc].next;
-
-    return loc;
+    return gc_alloc_any(collector, object_new_vec(size));
 }
 
 unsigned int gc_alloc_func(gc * collector, unsigned int vec, unsigned int addr)
 {
-    unsigned int loc = collector->free;
-
-    if (loc >= collector->mem_size)
-    {
-        printf("out of memory\n");
-        exit(1);
-    }
-
-    collector->mem[loc].object_value = object_new_func(vec, addr);
-    collector->free = collector->mem[loc].next;
-
-    return loc;
+    return gc_alloc_any(collector, object_new_func(vec, addr));
 }
 
+int gc_get_int(gc * collector, unsigned int index)
+{
+    assert(collector->mem_size >= index);
+    assert(collector->mem[index].object_value->type == OBJECT_INT);    
+
+    return collector->mem[index].object_value->int_value;
+}
+
+void gc_set_int(gc * collector, unsigned int index, int value)
+{
+    assert(collector->mem_size >= index);
+    assert(collector->mem[index].object_value->type == OBJECT_INT);    
+
+    collector->mem[index].object_value->int_value = value;
+}
+
+unsigned int gc_get_vec(gc * collector, unsigned int index, unsigned int vec_index)
+{
+    assert(collector->mem_size >= index);
+    assert(collector->mem[index].object_value->type == OBJECT_VEC);
+    assert(collector->mem[index].object_value->vec_value->size >= vec_index);
+
+    return collector->mem[index].object_value->vec_value->value[vec_index];
+}
+
+void gc_set_vec(gc * collector, unsigned int index, unsigned int vec_index, unsigned int value)
+{
+    assert(collector->mem_size >= index);
+    assert(collector->mem[index].object_value->type == OBJECT_VEC);
+    assert(collector->mem[index].object_value->vec_value->size >= vec_index);
+
+    collector->mem[index].object_value->vec_value->value[vec_index] = value;
+}
+
+unsigned int gc_get_func_addr(gc * collector, unsigned int index)
+{
+    assert(collector->mem_size >= index);
+    assert(collector->mem[index].object_value->type == OBJECT_FUNC);    
+
+    return collector->mem[index].object_value->func_value->addr;
+}
+
+unsigned int gc_get_func_vec(gc * collector, unsigned int index)
+{
+    assert(collector->mem_size >= index);
+    assert(collector->mem[index].object_value->type == OBJECT_FUNC);    
+
+    return collector->mem[index].object_value->func_value->vec;
+}
+
+void gc_set_func_addr(gc * collector, unsigned int index, unsigned int addr)
+{
+    assert(collector->mem_size >= index);
+    assert(collector->mem[index].object_value->type == OBJECT_FUNC);    
+
+    collector->mem[index].object_value->func_value->addr = addr;
+}
+
+void gc_set_func_vec(gc * collector, unsigned int index, unsigned int vec)
+{
+    assert(collector->mem_size >= index);
+    assert(collector->mem[index].object_value->type == OBJECT_FUNC);    
+
+    collector->mem[index].object_value->func_value->vec = vec;
+}
 
 

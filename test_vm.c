@@ -3,7 +3,7 @@
 
 void test_one()
 {
-    vm * never = vm_new();
+    vm * never = vm_new(20, 200);
     
     vm_delete(never);
 }

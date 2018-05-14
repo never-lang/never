@@ -5,17 +5,21 @@
 
 typedef struct vm
 {
-    int gp;
-    int fp;
     int sp;
-    int ip;
+    int fp;
+    unsigned int gp;
+    unsigned int ip;
     unsigned int line_no;
+    int stack_size;
+    unsigned int * stack;
+    struct gc * collector;
+    char running;
 } vm;
 
 typedef struct vm_execute_str
 {
     bytecode_type type;
-    void (*execute)(vm * machine, bytecode * code);
+    void (* execute)(vm * machine, bytecode * code);
 } vm_execute_str;
 
 void vm_execute_unknown(vm * machine, bytecode * code);
@@ -43,11 +47,15 @@ void vm_execute_mark(vm * machine, bytecode * code);
 void vm_execute_call(vm * machine, bytecode * code);
 void vm_execute_ret(vm * machine, bytecode * code);
 void vm_execute_line(vm * machine, bytecode * code);
+void vm_execute_halt(vm * machine, bytecode * code);
 
-void vm_execute(bytecode * code, unsigned int size);
+void vm_check_stack(vm * machine);
+void vm_execute(vm * machine, bytecode * code, unsigned int size);
 
-vm * vm_new();
+vm * vm_new(unsigned int stack_size, unsigned int mem_size);
 void vm_delete(vm * machine);
+
+void vm_print(vm * machine);
 
 #endif /* __VM_H__ */
 

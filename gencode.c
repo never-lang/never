@@ -538,9 +538,10 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
 {
     int v = 0;
     bytecode bc = { 0 };
+    bytecode * mark, * label;
 
     bc.type = BYTECODE_MARK;
-    bytecode_add(code, &bc);
+    mark = bytecode_add(code, &bc);
     
     if (value->vars)
     {
@@ -551,6 +552,10 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
 
     bc.type = BYTECODE_CALL;
     bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    label = bytecode_add(code, &bc);
+    mark->mark.addr = label->addr;
 
     return 0;
 }
@@ -614,6 +619,10 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         case EXPR_DIV:
             expr_emit(value->right, stack_level, code, result);
             expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_LINE;
+            bc.line.no = value->line_no;
+            bytecode_add(code, &bc);
 
             bc.type = BYTECODE_OP_DIV;
             bytecode_add(code, &bc);
