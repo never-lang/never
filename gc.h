@@ -41,7 +41,6 @@ unsigned int gc_get_func_vec(gc * collector, unsigned int index);
 void gc_set_func_addr(gc * collector, unsigned int index, unsigned int addr);
 void gc_set_func_vec(gc * collector, unsigned int index, unsigned int vec);
 
-
 #endif /* __GC_H__ */
 
 

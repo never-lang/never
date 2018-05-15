@@ -57,7 +57,7 @@ void gc_sweep_all(gc * collector)
     
     for (i = 0; i < collector->mem_size; i++)
     {
-        if (collector->mem[i].mark == 0)
+        if (collector->mem[i].mark == 0 && collector->mem[i].object_value != NULL)
         {
             object_delete(collector->mem[i].object_value);
             collector->mem[i].object_value = NULL;
@@ -80,7 +80,7 @@ void gc_mark_vec(gc * collector, unsigned int index)
 
     collector->mem[index].mark = 1;
 
-    vec = (object_vec *)collector->mem[index].object_value;
+    vec = collector->mem[index].object_value->vec_value;
     for (i = 0; i < vec->size; i++)
     {
         gc_mark(collector, vec->value[i]);
