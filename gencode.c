@@ -4,6 +4,9 @@
 #include "symtab.h"
 #include "freevar.h"
 
+ /* GP old, FP old, IP old */
+#define NUM_FRAME_PTRS 3
+
 /**
  * free variables
  */
@@ -152,7 +155,7 @@ int func_enum_vars(func * func_value)
         var * value = node->value;
         if (value != NULL)
         {
-            value->index = index++;
+            value->index = -(index++);
         }
         node = node->next;
     }
@@ -433,8 +436,8 @@ int expr_id_func_freevar_list_emit(func * func_value, int stack_level, bytecode_
     if (func_value != NULL && func_value->freevars != NULL)
     {
         int e = 0;
-        count = func_value->freevars->count;
         freevar_list_node * node = func_value->freevars->tail;
+        count = func_value->freevars->count;
         while (node != NULL)
         {
             freevar * value = node->value;
@@ -450,18 +453,16 @@ int expr_id_func_freevar_list_emit(func * func_value, int stack_level, bytecode_
     bc.global_vec.count = count;
     bytecode_add(code, &bc);
 
+    bc.type = BYTECODE_ID_FUNC_FUNC;
+    bc.id_func.func_value = func_value;
+    bytecode_add(code, &bc);
+
     return 0;
 }
 
 int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
-    bytecode bc = { 0 };
-
     expr_id_func_freevar_list_emit(func_value, stack_level, code, result);
-
-    bc.type = BYTECODE_ID_FUNC_FUNC;
-    bc.id_func.func_value = func_value;
-    bytecode_add(code, &bc);
 
     return 0;
 }
@@ -536,7 +537,7 @@ int expr_cond_emit(expr * value, int stack_level, bytecode_list * code, int * re
 
 int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
-    int v = 0;
+    int v = 3;
     bytecode bc = { 0 };
     bytecode * mark, * label;
 
@@ -545,8 +546,8 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
     
     if (value->vars)
     {
-         v = value->vars->count;
-         expr_list_emit(value->vars, stack_level, code, result);
+         expr_list_emit(value->vars, stack_level + v, code, result);
+         v += value->vars->count;
     }
     expr_emit(value->func_expr, stack_level + v, code, result);
 
@@ -568,7 +569,7 @@ int expr_func_emit(func * func_value, int stack_level, bytecode_list * code, int
     bc.type = BYTECODE_JUMP;
     jump = bytecode_add(code, &bc);
             
-    func_emit(func_value, stack_level, code, result);
+    func_emit(func_value, 0, code, result);
                 
     bc.type = BYTECODE_LABEL;
     label = bytecode_add(code, &bc);
@@ -756,7 +757,7 @@ int func_list_emit(func_list * list, int stack_level, bytecode_list * code, int 
         func * func_value = node->value;
         if (func_value != NULL)
         {
-            func_emit(func_value, stack_level, code, result);
+            func_emit(func_value, 0, code, result);
         }
         node = node->next;
     }
@@ -770,7 +771,11 @@ int func_main_emit(never * nev, int stack_level, bytecode_list * code, int * res
     if (entry != NULL && entry->var_func_value)
     {
         bytecode bc = { 0 };
-        
+        bytecode * mark, * label;
+
+        bc.type = BYTECODE_MARK;
+        mark = bytecode_add(code, &bc);
+
         bc.type = BYTECODE_GLOBAL_VEC;
         bc.global_vec.count = 0;
         bytecode_add(code, &bc);
@@ -781,6 +786,14 @@ int func_main_emit(never * nev, int stack_level, bytecode_list * code, int * res
 
         bc.type = BYTECODE_CALL;
         bytecode_add(code, &bc);
+
+        bc.type = BYTECODE_LABEL;
+        label = bytecode_add(code, &bc);
+        mark->mark.addr = label->addr;
+        
+        bc.type = BYTECODE_HALT;
+        label = bytecode_add(code, &bc);
+        mark->mark.addr = label->addr;
     }
     else
     {

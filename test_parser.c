@@ -5,14 +5,16 @@
 #include "typecheck.h"
 #include "gencode.h"
 #include "bytecode.h"
+#include "vm.h"
 
 extern FILE * yyin;
 extern int parse_result;
 
 int main(int argc, char * argv[])
 {
-    int ret = 0;
     never * nev = NULL;
+    unsigned int code_size = 0;
+    bytecode * code_arr = NULL;
     
     if (argc < 2)
     {
@@ -26,7 +28,7 @@ int main(int argc, char * argv[])
     yyparse(&nev);
     if (parse_result == 0)
     {
-        ret = never_sem_check(nev);
+        int ret = never_sem_check(nev);
         if (ret == 0)
         {
             bytecode_list * code;
@@ -40,7 +42,10 @@ int main(int argc, char * argv[])
             never_emit(nev, code);
             
             bytecode_func_addr(code);
-            bytecode_print(code);
+            /* bytecode_print(code); */
+            
+            bytecode_to_array(code, &code_arr, &code_size);
+            
             bytecode_delete(code);
         }
     }
@@ -48,6 +53,22 @@ int main(int argc, char * argv[])
     if (nev != NULL)
     {
         never_delete(nev);
+    }
+
+    if (code_arr != NULL)
+    {
+        int ret = 0;
+        vm * machine = NULL;
+        
+        bytecode_array_print(code_arr, code_size);
+
+        machine = vm_new(100, 1000);
+        
+        ret = vm_execute(machine, code_arr, code_size);
+        printf("result is %d\n", ret);
+
+        vm_delete(machine);
+        bytecode_array_delete(code_arr);
     }
 
     fclose(yyin);

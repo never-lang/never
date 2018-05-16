@@ -3,6 +3,6 @@
  */
 func main() -> int
 {
-    return func min(int a, int b) -> int { return (a < b) ? a : b; }(10, 20);
+    return func min(int a, int b) -> int { return (a < b) ? a : b; }(100, 20);
 }
 

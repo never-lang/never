@@ -27,7 +27,7 @@ object * object_new_vec(unsigned int size)
     vec_value->size = size;
     if (vec_value->size == 0)
     {
-        vec_value = NULL;
+        vec_value->value = NULL;
     }
     else
     {
@@ -62,11 +62,14 @@ void object_delete(object * obj)
         case OBJECT_INT:
         break;
         case OBJECT_VEC:
-            if (obj->vec_value->value != NULL)
+            if (obj->vec_value != NULL && obj->vec_value->value != NULL)
             {
                 free(obj->vec_value->value);
             }
-            free(obj->vec_value);
+            if (obj->vec_value != NULL)
+            {
+                free(obj->vec_value);
+            }
         break;
         case OBJECT_FUNC:
             free(obj->func_value);
@@ -75,5 +78,19 @@ void object_delete(object * obj)
     free(obj);
 }
 
-
+void object_print(object * obj)
+{
+    switch (obj->type)
+    {
+        case OBJECT_INT:
+            printf("object_int\n");
+        break;
+        case OBJECT_VEC:
+            printf("object_vec\n");
+        break;
+        case OBJECT_FUNC:
+            printf("object_func\n");
+        break;
+    }
+}
 

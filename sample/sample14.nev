@@ -21,6 +21,6 @@ func fun0(int a0, int b0) -> int
 
 func main() -> int
 {
-    return 2 * 3;
+    return fun0(2, 3);
 }
 

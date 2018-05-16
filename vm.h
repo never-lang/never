@@ -50,12 +50,13 @@ void vm_execute_line(vm * machine, bytecode * code);
 void vm_execute_halt(vm * machine, bytecode * code);
 
 void vm_check_stack(vm * machine);
-void vm_execute(vm * machine, bytecode * code, unsigned int size);
+int vm_execute(vm * machine, bytecode * code, unsigned int size);
 
 vm * vm_new(unsigned int stack_size, unsigned int mem_size);
 void vm_delete(vm * machine);
 
 void vm_print(vm * machine);
+void vm_stack_print(vm * machine);
 
 #endif /* __VM_H__ */
 

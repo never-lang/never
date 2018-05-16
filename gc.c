@@ -223,4 +223,10 @@ void gc_set_func_vec(gc * collector, unsigned int index, unsigned int vec)
     collector->mem[index].object_value->func_value->vec = vec;
 }
 
+void gc_print(gc * collector, unsigned int index)
+{
+    assert(collector->mem_size >= index);
+    
+    object_print(collector->mem[index].object_value);
+}
 

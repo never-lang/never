@@ -64,22 +64,24 @@ void vm_execute_int(vm * machine, bytecode * code)
     
     machine->sp++;
     vm_check_stack(machine);
-    
+
     machine->stack[machine->sp] = addr;
 
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_id_local(vm * machine, bytecode * code)
 {
-    unsigned int addr = machine->stack[machine->sp - (code->id_local.stack_level + code->id_local.index)];
+    unsigned int addr = machine->stack[machine->sp - (code->id_local.stack_level - code->id_local.index)];
     
     machine->sp++;
     vm_check_stack(machine);
     
     machine->stack[machine->sp] = addr;
     
-    printf("%s\n", __func__);
+    printf("%d:%s sp=%d sl=%d ind=%d\n", code->addr, __func__,
+                                         machine->sp, code->id_local.stack_level,
+                                         code->id_local.index);
 }
 
 void vm_execute_id_global(vm * machine, bytecode * code)
@@ -91,7 +93,7 @@ void vm_execute_id_global(vm * machine, bytecode * code)
     
     machine->stack[machine->sp] = addr;
 
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_id_func_func(vm * machine, bytecode * code)
@@ -107,33 +109,33 @@ void vm_execute_id_func_addr(vm * machine, bytecode * code)
 
     machine->stack[machine->sp] = addr;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_jumpz(vm * machine, bytecode * code)
 {
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
 
-    machine->sp--;
     if (a == 0)
     {
          machine->ip = machine->ip + code->jump.offset;
     }
+    machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s a=%d\n", code->addr, __func__, a);
 }
 
 void vm_execute_jump(vm * machine, bytecode * code)
 {
     machine->ip = machine->ip + code->jump.offset;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_label(vm * machine, bytecode * code)
 {
     /* no op */
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 /* a op b
@@ -144,9 +146,9 @@ void vm_execute_op_neg(vm * machine, bytecode * code)
 {
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp], -a);
+    machine->stack[machine->sp] = gc_alloc_int(machine->collector, -a);
 
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_add(vm * machine, bytecode * code)
@@ -154,10 +156,10 @@ void vm_execute_op_add(vm * machine, bytecode * code)
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a + b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a + b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_sub(vm * machine, bytecode * code)
@@ -165,10 +167,10 @@ void vm_execute_op_sub(vm * machine, bytecode * code)
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a - b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a - b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_mul(vm * machine, bytecode * code)
@@ -176,10 +178,10 @@ void vm_execute_op_mul(vm * machine, bytecode * code)
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a * b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a * b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_div(vm * machine, bytecode * code)
@@ -194,10 +196,10 @@ void vm_execute_op_div(vm * machine, bytecode * code)
         exit(1);
     }
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a / b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a / b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_lt(vm * machine, bytecode * code)
@@ -205,10 +207,10 @@ void vm_execute_op_lt(vm * machine, bytecode * code)
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a < b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a < b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_gt(vm * machine, bytecode * code)
@@ -216,10 +218,10 @@ void vm_execute_op_gt(vm * machine, bytecode * code)
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a > b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a > b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_lte(vm * machine, bytecode * code)
@@ -227,10 +229,10 @@ void vm_execute_op_lte(vm * machine, bytecode * code)
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a >= b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a >= b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_gte(vm * machine, bytecode * code)
@@ -238,10 +240,10 @@ void vm_execute_op_gte(vm * machine, bytecode * code)
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a <= b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a <= b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_op_eq(vm * machine, bytecode * code)
@@ -249,23 +251,24 @@ void vm_execute_op_eq(vm * machine, bytecode * code)
     int a = gc_get_int(machine->collector, machine->stack[machine->sp]);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1]);
 
-    gc_set_int(machine->collector, machine->stack[machine->sp - 1], a <= b);
+    machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a == b);
     machine->sp--;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_func_def(vm * machine, bytecode * code)
 {
     /* no op */
+    printf("%d:%s\n", code->addr, __func__);    
 }
 
 void vm_execute_global_vec(vm * machine, bytecode * code)
 {
-    unsigned int c;
+    int c;
     unsigned int addr = gc_alloc_vec(machine->collector, code->global_vec.count);
     
-    for (c = 0; c < code->global_vec.count; c++)
+    for (c = code->global_vec.count - 1; c >= 0; c--)
     {
         gc_set_vec(machine->collector, addr, c, machine->stack[machine->sp--]);
     }
@@ -275,7 +278,7 @@ void vm_execute_global_vec(vm * machine, bytecode * code)
     
     machine->stack[machine->sp] = addr;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_mark(vm * machine, bytecode * code)
@@ -287,7 +290,7 @@ void vm_execute_mark(vm * machine, bytecode * code)
     machine->fp = machine->sp = machine->sp + 3;
     vm_check_stack(machine);
 
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_call(vm * machine, bytecode * code)
@@ -297,8 +300,9 @@ void vm_execute_call(vm * machine, bytecode * code)
 
     machine->gp = gp;
     machine->ip = ip;
+    machine->sp--;
 
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_ret(vm * machine, bytecode * code)
@@ -309,24 +313,24 @@ void vm_execute_ret(vm * machine, bytecode * code)
     machine->sp = machine->fp - 2;
     machine->fp = machine->stack[machine->fp - 1];
 
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_line(vm * machine, bytecode * code)
 {
     machine->line_no = code->line.no;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
 void vm_execute_halt(vm * machine, bytecode * code)
 {
     machine->running = 0;
     
-    printf("%s\n", __func__);
+    printf("%d:%s\n", code->addr, __func__);
 }
 
-void vm_execute(vm * machine, bytecode * code, unsigned int size)
+int vm_execute(vm * machine, bytecode * code, unsigned int size)
 {
     bytecode * bc = NULL;
     
@@ -337,6 +341,8 @@ void vm_execute(vm * machine, bytecode * code, unsigned int size)
         machine->ip++;
         vm_execute_op[bc->type].execute(machine, bc);
     }
+    
+    return gc_get_int(machine->collector, machine->stack[machine->sp]);
 }
 
 vm * vm_new(unsigned int stack_size, unsigned int mem_size)
@@ -382,4 +388,14 @@ void vm_print(vm * machine)
     printf("\trunning: %d\n", machine->running);
 }
 
+void vm_stack_print(vm * machine)
+{
+    int i = 0;
+    
+    for (i = 0; i <= machine->sp; i++)
+    {
+        printf("stack %d=%d\n", i, machine->stack[i]);
+         /* gc_print(machine->collector, machine->stack[i]); */
+    }
+}
 

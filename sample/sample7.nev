@@ -1,25 +1,21 @@
 /**
  * Passing function and calling returned function.
  */
-func min(int a, int b) -> int
-{
-    return a < b ? a : b;
-}
-
-func twice(int coeff, single_func(int, int) -> int) -> (int, int) -> int
+func twice(int c1, int c2) -> (int, int) -> int
 {
     func mult() -> int
     {
-        return -1122 * coeff;
+        return c1 + c2;
     }
 
     func twice_func(int a, int b) -> int
     {
-        func twice_func_nest(int a, int b) ->int
+        /*func twice_func_nest(int a, int b) -> int
         {
-            return min(11, 12) * mult() * single_func(a, b);
+            return mult() * single_func(a, b);
         }
-        return twice_func_nest(a, b);
+        return twice_func_nest(a, b); */
+        return mult();
     }
     
     return twice_func;
@@ -27,7 +23,7 @@ func twice(int coeff, single_func(int, int) -> int) -> (int, int) -> int
 
 func main() -> int
 {
-    return twice(200, min)(10, 20);
+    return twice(2, 3)(10, 20);
 }
 
 

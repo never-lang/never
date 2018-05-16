@@ -8,6 +8,10 @@ func execute(int a, int b, f1(int, int) -> int) -> int
  
 func main() -> int
 {
-    return execute(10, 20, func min(int a, int b) -> int { return a < b ? a : b; });
+    return execute(10, 20, 
+                   func min(int a, int b) -> int 
+                   { 
+                       return a < b ? a : b; 
+                   });
 }
 

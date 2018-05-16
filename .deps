@@ -16,7 +16,7 @@ test_freevar.o: test_freevar.c freevar.h var.h
 test_gc.o: test_gc.c gc.h object.h
 test_object.o: test_object.c object.h
 test_parser.o: test_parser.c scanner.h types.h expr.h freevar.h var.h \
- func.h symtab.h never.h parser.h typecheck.h gencode.h bytecode.h
+ func.h symtab.h never.h parser.h typecheck.h gencode.h bytecode.h vm.h
 test_scanner.o: test_scanner.c types.h expr.h freevar.h var.h func.h \
  symtab.h never.h scanner.h
 test_symtab.o: test_symtab.c symtab.h var.h func.h expr.h freevar.h

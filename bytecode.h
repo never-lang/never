@@ -134,10 +134,11 @@ void bytecode_delete(bytecode_list * code);
 
 bytecode * bytecode_add(bytecode_list * code, bytecode * value);
 void bytecode_func_addr(bytecode_list * code);
-void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, unsigned int * size);
-
 void bytecode_print(bytecode_list * code);
-void bytecode_print_array(bytecode * code_arr, unsigned int size);
+
+void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, unsigned int * code_size);
+void bytecode_array_delete(bytecode * code_arr);
+void bytecode_array_print(bytecode * code_arr, unsigned int size);
 
 #endif /* __BYTECODE_H__ */
 

@@ -37,6 +37,8 @@ object * object_new_func(unsigned int vec, unsigned int addr);
 
 void object_delete(object * obj);
 
+void object_print(object * obj);
+
 #endif /* __OBJECT_H__ */
 
 

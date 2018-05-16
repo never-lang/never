@@ -14,9 +14,9 @@ func select(int a) -> (int, int) -> int
     return a < 100 ? min : max;
 }
 
-func main() -> (int, int) -> int
+func main() -> int
 {
-    return select(10);
+    return select(110)(40, 20);
 }
 
 

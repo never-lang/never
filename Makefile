@@ -9,7 +9,7 @@ test_object: object.o
 
 test_scanner: scanner.o
 
-test_parser: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o typecheck.o gencode.o utils.o bytecode.o
+test_parser: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o typecheck.o gencode.o utils.o bytecode.o vm.o gc.o object.o
 
 test_symtab: symtab.o var.o freevar.o func.o expr.o
 

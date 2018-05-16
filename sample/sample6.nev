@@ -19,7 +19,7 @@ func counter(int from, int to, int by) -> (int, int) -> (int, int, int) -> int
     
         return func increase_sub(int n_a, int n_b, int n_c) -> int
         {
-            return inc(n_a + n_b * n_c * to, 2);
+            return dec() + n_a + n_b * n_c;
         };
     };
 }

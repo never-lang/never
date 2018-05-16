@@ -13,7 +13,7 @@ func max(int a, int b) -> int
 
 func main() -> int
 {
-    return ((10 < 100) ? min : max)(10, 20);
+    return ((110 < 100) ? min : max)(10, 20);
 }
 
 
