@@ -67,7 +67,7 @@ void vm_execute_int(vm * machine, bytecode * code)
 
     machine->stack[machine->sp] = addr;
 
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_id_local(vm * machine, bytecode * code)
@@ -79,9 +79,9 @@ void vm_execute_id_local(vm * machine, bytecode * code)
     
     machine->stack[machine->sp] = addr;
     
-    printf("%d:%s sp=%d sl=%d ind=%d\n", code->addr, __func__,
+    /* printf("%d:%s sp=%d sl=%d ind=%d\n", code->addr, __func__,
                                          machine->sp, code->id_local.stack_level,
-                                         code->id_local.index);
+                                         code->id_local.index); */
 }
 
 void vm_execute_id_global(vm * machine, bytecode * code)
@@ -93,7 +93,7 @@ void vm_execute_id_global(vm * machine, bytecode * code)
     
     machine->stack[machine->sp] = addr;
 
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_id_func_func(vm * machine, bytecode * code)
@@ -109,7 +109,7 @@ void vm_execute_id_func_addr(vm * machine, bytecode * code)
 
     machine->stack[machine->sp] = addr;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_jumpz(vm * machine, bytecode * code)
@@ -122,20 +122,20 @@ void vm_execute_jumpz(vm * machine, bytecode * code)
     }
     machine->sp--;
     
-    printf("%d:%s a=%d\n", code->addr, __func__, a);
+    /* printf("%d:%s a=%d\n", code->addr, __func__, a); */
 }
 
 void vm_execute_jump(vm * machine, bytecode * code)
 {
     machine->ip = machine->ip + code->jump.offset;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_label(vm * machine, bytecode * code)
 {
     /* no op */
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 /* a op b
@@ -148,7 +148,7 @@ void vm_execute_op_neg(vm * machine, bytecode * code)
 
     machine->stack[machine->sp] = gc_alloc_int(machine->collector, -a);
 
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_add(vm * machine, bytecode * code)
@@ -159,7 +159,7 @@ void vm_execute_op_add(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a + b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_sub(vm * machine, bytecode * code)
@@ -170,7 +170,7 @@ void vm_execute_op_sub(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a - b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_mul(vm * machine, bytecode * code)
@@ -181,7 +181,7 @@ void vm_execute_op_mul(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a * b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_div(vm * machine, bytecode * code)
@@ -199,7 +199,7 @@ void vm_execute_op_div(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a / b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_lt(vm * machine, bytecode * code)
@@ -210,7 +210,7 @@ void vm_execute_op_lt(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a < b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_gt(vm * machine, bytecode * code)
@@ -221,7 +221,7 @@ void vm_execute_op_gt(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a > b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_lte(vm * machine, bytecode * code)
@@ -232,7 +232,7 @@ void vm_execute_op_lte(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a >= b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_gte(vm * machine, bytecode * code)
@@ -243,7 +243,7 @@ void vm_execute_op_gte(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a <= b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_op_eq(vm * machine, bytecode * code)
@@ -254,13 +254,13 @@ void vm_execute_op_eq(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = gc_alloc_int(machine->collector, a == b);
     machine->sp--;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_func_def(vm * machine, bytecode * code)
 {
     /* no op */
-    printf("%d:%s\n", code->addr, __func__);    
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_global_vec(vm * machine, bytecode * code)
@@ -278,7 +278,7 @@ void vm_execute_global_vec(vm * machine, bytecode * code)
     
     machine->stack[machine->sp] = addr;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_mark(vm * machine, bytecode * code)
@@ -290,7 +290,7 @@ void vm_execute_mark(vm * machine, bytecode * code)
     machine->fp = machine->sp = machine->sp + 3;
     vm_check_stack(machine);
 
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_call(vm * machine, bytecode * code)
@@ -302,7 +302,7 @@ void vm_execute_call(vm * machine, bytecode * code)
     machine->ip = ip;
     machine->sp--;
 
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_ret(vm * machine, bytecode * code)
@@ -313,21 +313,21 @@ void vm_execute_ret(vm * machine, bytecode * code)
     machine->sp = machine->fp - 2;
     machine->fp = machine->stack[machine->fp - 1];
 
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_line(vm * machine, bytecode * code)
 {
     machine->line_no = code->line.no;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 void vm_execute_halt(vm * machine, bytecode * code)
 {
     machine->running = 0;
     
-    printf("%d:%s\n", code->addr, __func__);
+    /* printf("%d:%s\n", code->addr, __func__); */
 }
 
 int vm_execute(vm * machine, bytecode * code, unsigned int size)
@@ -395,7 +395,6 @@ void vm_stack_print(vm * machine)
     for (i = 0; i <= machine->sp; i++)
     {
         printf("stack %d=%d\n", i, machine->stack[i]);
-         /* gc_print(machine->collector, machine->stack[i]); */
     }
 }
 

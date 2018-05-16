@@ -20,7 +20,11 @@ typedef struct symtab_entry
 {
     int type;
     const char * id;
-    void * var_func_value;
+    union
+    {
+        var * var_value;
+        func * func_value;
+    };
     unsigned int syn_level;
 } symtab_entry;
 

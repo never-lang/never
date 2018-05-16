@@ -28,7 +28,7 @@ int never_gencode(never * nev);
 
 int expr_int_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result);
-int expr_id_func_freevar_list_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
+int expr_id_func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_list * code, int * result);
 int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
 int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result);

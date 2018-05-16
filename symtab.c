@@ -49,7 +49,7 @@ void symtab_entry_add_var_func(symtab_entry * entries, unsigned int size,
     }
     entries[index].type = type;
     entries[index].id = id;
-    entries[index].var_func_value = var_func_value;
+    entries[index].var_value = var_func_value;
 }
 
 symtab_entry * symtab_entry_lookup_var_func(symtab_entry * entries, unsigned int size, const char * id)
@@ -81,7 +81,8 @@ void symtab_entry_resize(symtab_entry * entries, int size, symtab_entry * entrie
     for (i = 0; i < size; i++)
     {
         symtab_entry_add_var_func(entries_new, size_new,
-                                  entries[i].type, entries[i].id, entries[i].var_func_value);
+                                  entries[i].type, entries[i].id,
+                                  entries[i].var_value);
     }
 }
 
@@ -89,7 +90,7 @@ void symtab_entry_print(symtab_entry * entry)
 {
     if (entry->type == SYMTAB_VAR)
     {
-        var * var_value = (var *)entry->var_func_value;            
+        var * var_value = entry->var_value;            
         if (var_value)
         {
             if (var_value->type == VAR_INT)

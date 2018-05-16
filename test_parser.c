@@ -35,7 +35,7 @@ int main(int argc, char * argv[])
         
             never_gencode(nev);
             
-            print_functions(nev);
+            /* print_functions(nev); */
             
             code = bytecode_new();
             
@@ -60,7 +60,7 @@ int main(int argc, char * argv[])
         int ret = 0;
         vm * machine = NULL;
         
-        bytecode_array_print(code_arr, code_size);
+        /* bytecode_array_print(code_arr, code_size); */
 
         machine = vm_new(100, 1000);
         

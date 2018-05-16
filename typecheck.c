@@ -167,19 +167,19 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     symtab_entry * entry = NULL;
 
     entry = symtab_lookup(tab, value->id, SYMTAB_NESTED);
-    if (entry != NULL && entry->var_func_value)
+    if (entry != NULL)
     {
-        if (entry->type == SYMTAB_FUNC)
+        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
-            func * func_value = (func *)entry->var_func_value;
+            func * func_value = entry->func_value;
             
             value->comb = COMB_TYPE_FUNC;
             value->comb_vars = func_value->vars;
             value->comb_ret = func_value->ret;
         }
-        else if (entry->type == SYMTAB_VAR)
+        else if (entry->type == SYMTAB_VAR && entry->var_value != NULL)
         {
-            var * var_value = (var *)entry->var_func_value;
+            var * var_value = entry->var_value;
             if (var_value->type == VAR_INT)
             {
                  value->comb = COMB_TYPE_INT;
@@ -493,13 +493,13 @@ int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result)
                 *result = TYPECHECK_FAIL;
                 if (entry->type == SYMTAB_FUNC)
                 {
-                    func * al_func = (func *)entry->var_func_value;
+                    func * al_func = entry->func_value;
                     printf("function %s already defined at line %u\n",
                             entry->id, al_func->line_no);
                 }
                 else if (entry->type == SYMTAB_VAR)
                 {
-                    var * al_var = (var *)entry->var_func_value;
+                    var * al_var = entry->var_value;
                     printf("parameter %s already defined at line %u\n",
                             entry->id, al_var->line_no);
                 }
@@ -528,13 +528,13 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result)
                 *result = TYPECHECK_FAIL;
                 if (entry->type == SYMTAB_FUNC)
                 {
-                    func * al_func = (func *)entry->var_func_value;
+                    func * al_func = entry->func_value;
                     printf("function %s already defined at line %u\n",
                             entry->id, al_func->line_no);
                 }
                 else if (entry->type == SYMTAB_VAR)
                 {
-                    var * al_var = (var *)entry->var_func_value;
+                    var * al_var = entry->var_value;
                     printf("parameter %s already defined at line %u\n",
                            entry->id, al_var->line_no);
                 }
@@ -787,11 +787,11 @@ int func_main_check_type(symtab * tab, int * result)
     symtab_entry * entry = NULL;
 
     entry = symtab_lookup(tab, "main", SYMTAB_FLAT);
-    if (entry != NULL && entry->var_func_value)
+    if (entry != NULL)
     {
-        if (entry->type == SYMTAB_FUNC)
+        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
-            func * func_value = (func *)entry->var_func_value;
+            func * func_value = entry->func_value;
             if (func_value->vars != NULL)
             {
                 if (func_value->vars->count > 0)
@@ -835,13 +835,13 @@ int never_sem_check(never * nev)
 {
     int typecheck_res = TYPECHECK_SUCC;
     
-    printf("---- add symbol table entries ---\n");
+    /* printf("---- add symbol table entries ---\n"); */
     symtab_add_entry_never(nev, &typecheck_res);
     
-    printf("---- check types ---\n");
+    /* printf("---- check types ---\n"); */
     never_check_type(nev, &typecheck_res);
 
-    printf("---- check function main\n");
+    /* printf("---- check function main\n"); */
     func_main_check_type(nev->stab, &typecheck_res);
 
     return typecheck_res;

@@ -5,17 +5,16 @@ func twice(int c1, int c2) -> (int, int) -> int
 {
     func mult() -> int
     {
-        return c1 + c2;
+        return c2 == 0 ? 0 : c1 / c2;
     }
 
     func twice_func(int a, int b) -> int
     {
-        /*func twice_func_nest(int a, int b) -> int
+        func twice_func_nest(int a, int b) -> int
         {
-            return mult() * single_func(a, b);
+            return mult();
         }
-        return twice_func_nest(a, b); */
-        return mult();
+        return twice_func_nest(a, b);
     }
     
     return twice_func;
@@ -23,7 +22,7 @@ func twice(int c1, int c2) -> (int, int) -> int
 
 func main() -> int
 {
-    return twice(2, 3)(10, 20);
+    return twice(12, 3)(10, 20);
 }
 
 
