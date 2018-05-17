@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "object.h"
 
 object * object_new()
@@ -31,7 +32,7 @@ object * object_new_vec(unsigned int size)
     }
     else
     {
-        vec_value->value = (unsigned int *)malloc(size * sizeof(unsigned int));
+        vec_value->value = (mem_ptr *)malloc(size * sizeof(mem_ptr));
     }
 
 
@@ -41,7 +42,7 @@ object * object_new_vec(unsigned int size)
     return obj;
 }
 
-object * object_new_func(unsigned int vec, unsigned int addr)
+object * object_new_func(mem_ptr vec, ip_ptr addr)
 {
     object * obj = (object *)malloc(sizeof(object));
     object_func * func_value = (object_func *)malloc(sizeof(object_func));
@@ -59,6 +60,9 @@ void object_delete(object * obj)
 {
     switch (obj->type)
     {
+        case OBJECT_UNKNOWN:
+            assert(0);
+        break;
         case OBJECT_INT:
         break;
         case OBJECT_VEC:
@@ -82,6 +86,9 @@ void object_print(object * obj)
 {
     switch (obj->type)
     {
+        case OBJECT_UNKNOWN:
+            printf("object_unknown\n");
+        break;
         case OBJECT_INT:
             printf("object_int\n");
         break;

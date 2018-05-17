@@ -62,7 +62,7 @@ int main(int argc, char * argv[])
         
         /* bytecode_array_print(code_arr, code_size); */
 
-        machine = vm_new(100, 1000);
+        machine = vm_new(1000, 100);
         
         ret = vm_execute(machine, code_arr, code_size);
         printf("result is %d\n", ret);

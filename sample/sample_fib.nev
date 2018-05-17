@@ -1,0 +1,10 @@
+func fib(int n) -> int
+{
+    return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
+}
+
+func main() -> int
+{
+    return fib(7);
+}
+

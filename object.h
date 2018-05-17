@@ -1,8 +1,13 @@
 #ifndef __OBJECT_H__
 #define __OBJECT_H__
 
+typedef unsigned int ip_ptr;
+typedef int mem_ptr;
+typedef int stack_ptr;
+
 typedef enum object_type
 {
+    OBJECT_UNKNOWN = 0,
     OBJECT_INT = 1,
     OBJECT_VEC = 2,
     OBJECT_FUNC = 3
@@ -11,13 +16,13 @@ typedef enum object_type
 typedef struct object_vec
 {
     unsigned int size;
-    unsigned int * value;
+    mem_ptr * value;
 } object_vec;
 
 typedef struct object_func
 {
-    unsigned int vec;
-    unsigned int addr;
+    mem_ptr vec;
+    ip_ptr addr;
 } object_func;
 
 typedef struct object
@@ -33,7 +38,7 @@ typedef struct object
 
 object * object_new_int(int value);
 object * object_new_vec(unsigned int size);
-object * object_new_func(unsigned int vec, unsigned int addr);
+object * object_new_func(mem_ptr vec, ip_ptr addr);
 
 void object_delete(object * obj);
 

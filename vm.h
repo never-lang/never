@@ -1,17 +1,16 @@
 #ifndef __VM_H__
 #define __VM_H__
 
+#include "object.h"
 #include "bytecode.h"
 
 typedef struct vm
 {
-    int sp;
-    int fp;
-    unsigned int gp;
-    unsigned int ip;
+    stack_ptr sp;
+    stack_ptr fp;
+    mem_ptr gp;
+    ip_ptr ip;
     unsigned int line_no;
-    int stack_size;
-    unsigned int * stack;
     struct gc * collector;
     char running;
 } vm;
@@ -52,7 +51,7 @@ void vm_execute_halt(vm * machine, bytecode * code);
 void vm_check_stack(vm * machine);
 int vm_execute(vm * machine, bytecode * code, unsigned int size);
 
-vm * vm_new(unsigned int stack_size, unsigned int mem_size);
+vm * vm_new(unsigned int mem_size, unsigned int stack_size);
 void vm_delete(vm * machine);
 
 void vm_print(vm * machine);

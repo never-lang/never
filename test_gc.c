@@ -4,16 +4,16 @@
 
 void test_one()
 {
-    gc * collector = gc_new(100);    
+    gc * collector = gc_new(1000, 100);
     gc_delete(collector);
 }
 
 void test_two()
 {
-    unsigned int int1;
-    unsigned int int2;
-    unsigned int vec1;
-    gc * collector = gc_new(100);
+    mem_ptr int1;
+    mem_ptr int2;
+    mem_ptr vec1;
+    gc * collector = gc_new(100, 10);
     
     int1 = gc_alloc_int(collector, -1);
     int2 = gc_alloc_int(collector, -2);
@@ -35,10 +35,10 @@ void test_two()
 
 void test_three()
 {
-    unsigned int func1;
-    unsigned int func2;
-    unsigned int vec1;
-    gc * collector = gc_new(100);
+    mem_ptr func1;
+    mem_ptr func2;
+    mem_ptr vec1;
+    gc * collector = gc_new(100, 10);
     
     func1 = gc_alloc_func(collector, -12, -13);
     func2 = gc_alloc_func(collector, -14, -15);
@@ -64,13 +64,13 @@ void test_three()
 
 void test_four()
 {
-    unsigned int int1;
-    unsigned int int2;
-    unsigned int int3;
-    unsigned int int4;
-    unsigned int vec1;
-    unsigned int omfalos[2];
-    gc * collector = gc_new(100);
+    mem_ptr int1;
+    mem_ptr int2;
+    mem_ptr int3;
+    mem_ptr int4;
+    mem_ptr vec1;
+    gc_stack omfalos[2];
+    gc * collector = gc_new(100, 10);
     
     int1 = gc_alloc_int(collector, 12);
     int2 = gc_alloc_int(collector, 14);
@@ -84,10 +84,12 @@ void test_four()
     gc_set_vec(collector, vec1, 0, int1);
     gc_set_vec(collector, vec1, 1, int2);
 
-    omfalos[0] = vec1;
-    omfalos[1] = int1;
+    omfalos[0].type = GC_MEM_ADDR;
+    omfalos[0].addr = vec1;
+    omfalos[1].type = GC_MEM_ADDR;
+    omfalos[1].addr = int1;
     
-    gc_run(collector, omfalos, 2);
+    gc_run_omfalos(collector, omfalos, 2);
 
     assert(gc_get_int(collector, int1) == 12);
     assert(gc_get_int(collector, int2) == 14);
@@ -102,19 +104,20 @@ void test_five()
     static const unsigned int val_size = 90;
     static const unsigned int mem_size = 100;
     unsigned int i, j;
-    unsigned int ints[val_size];
-    gc * collector = gc_new(mem_size);
+    gc_stack ints[val_size];
+    gc * collector = gc_new(mem_size, 10);
     
     for (i = 0; i < mem_size; i++)
     {
         for (j = 0; j < val_size; j++)
         {
-            ints[j] = gc_alloc_int(collector, -1);
+            ints[j].type = GC_MEM_ADDR;
+            ints[j].addr = gc_alloc_int(collector, -1);
             
-            gc_set_int(collector, ints[j], (int)(i * mem_size + j));
-            assert(gc_get_int(collector, ints[j]) == (int)(i * mem_size + j));
+            gc_set_int(collector, ints[j].addr, (int)(i * mem_size + j));
+            assert(gc_get_int(collector, ints[j].addr) == (int)(i * mem_size + j));
         }
-        gc_run(collector, NULL, 0);
+        gc_run_omfalos(collector, NULL, 0);
     }
 
     gc_delete(collector);
