@@ -118,9 +118,9 @@ int {
 
 {DIGIT}+ {
     int result;
+    tokp->line_no = line_no;
     sscanf(yytext, "%i", &result);
     tokp->val.int_value = result;
-    tokp->line_no = line_no;
     scanner_printf("number %d\n", result);
     return TOK_NUM;
 }
@@ -128,7 +128,6 @@ int {
 {ID} {
     tokp->line_no = line_no;
     tokp->val.str_value = strdup(yytext);
-    tokp->line_no = line_no;
     scanner_printf("id %s\n", yytext);
     return TOK_ID;
 }

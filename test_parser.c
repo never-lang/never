@@ -10,6 +10,29 @@
 extern FILE * yyin;
 extern int parse_result;
 
+int execute(bytecode * code_arr, unsigned int code_size)
+{
+    int ret = 0;
+    vm * machine = NULL;
+
+    if (code_arr == NULL)
+    {
+        return 0;
+    }
+        
+    /* bytecode_array_print(code_arr, code_size); */
+
+    machine = vm_new(1000, 100);
+        
+    ret = vm_execute(machine, code_arr, code_size);
+    printf("result is %d\n", ret);
+
+    vm_delete(machine);
+    bytecode_array_delete(code_arr);
+
+    return ret;
+}
+
 int main(int argc, char * argv[])
 {
     never * nev = NULL;
@@ -55,24 +78,10 @@ int main(int argc, char * argv[])
         never_delete(nev);
     }
 
-    if (code_arr != NULL)
-    {
-        int ret = 0;
-        vm * machine = NULL;
-        
-        /* bytecode_array_print(code_arr, code_size); */
-
-        machine = vm_new(1000, 100);
-        
-        ret = vm_execute(machine, code_arr, code_size);
-        printf("result is %d\n", ret);
-
-        vm_delete(machine);
-        bytecode_array_delete(code_arr);
-    }
-
     fclose(yyin);
     yylex_destroy();
+
+    execute(code_arr, code_size);
 
     return 0;
 }

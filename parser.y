@@ -150,7 +150,6 @@ expr: expr '?' expr ':' expr
 expr: func
 {
     $$ = expr_new_func($1);
-    $$->line_no = $1->line_no;
 };
 
 expr: expr '(' ')'
