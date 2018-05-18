@@ -32,13 +32,11 @@ typedef struct gc_stack
 typedef struct gc
 {
     mem_ptr free;
-    int mem_size;
-    int stack_size;
+    unsigned int mem_size;
     gc_mem * mem;
-    gc_stack * stack;
 } gc;
 
-gc * gc_new(int mem_size, int stack_size);
+gc * gc_new(unsigned int mem_size);
 void gc_delete(gc * collector);
 
 void gc_mark_all(gc * collector);
@@ -48,7 +46,7 @@ void gc_mark(gc * collector, mem_ptr addr);
 void gc_mark_access(gc * collector, gc_stack * omfalos, int stack_size);
 void gc_run_omfalos(gc * collector, gc_stack * omfalos, int stack_size);
 
-void gc_run(gc * collector, int stack_size, mem_ptr global_vec);
+void gc_run(gc * collector, gc_stack * omfalos, int stack_size, mem_ptr global_vec);
 
 mem_ptr gc_alloc_any(gc * collector, object * value);
 mem_ptr gc_alloc_int(gc * collector, int value);
@@ -66,7 +64,9 @@ mem_ptr gc_get_func_vec(gc * collector, mem_ptr func_addr);
 void gc_set_func_addr(gc * collector, mem_ptr func_addr, ip_ptr addr);
 void gc_set_func_vec(gc * collector, mem_ptr func_addr, mem_ptr vec);
 
-void gc_stack_print(gc * collector, int sp);
+gc_stack * gc_stack_new(int stack_size);
+void gc_stack_delete(gc_stack * stack);
+void gc_stack_print(gc_stack * stack, int stack_size);
 
 #endif /* __GC_H__ */
 

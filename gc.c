@@ -3,32 +3,33 @@
 #include <assert.h>
 #include "gc.h"
 
-gc * gc_new(int mem_size, int stack_size)
+gc * gc_new(unsigned int mem_size)
 {
-    int i;
+    unsigned int i;
 
     gc * collector = (gc *)malloc(sizeof(gc));
     gc_mem * mem = (gc_mem *)malloc(mem_size * sizeof(gc_mem));
-    gc_stack * stack = (gc_stack *)malloc(stack_size * sizeof(gc_stack));
     
-    for (i = 0; i < mem_size; i++)
+    mem[0].object_value = NULL;
+    mem[0].next = 0;
+    for (i = 1; i < mem_size; i++)
     {
         mem[i].object_value = NULL;
         mem[i].next = i + 1;
     }
-    
-    collector->free = 0;
+    mem[mem_size - 1].object_value = NULL;
+    mem[mem_size - 1].next = 0;
+        
+    collector->free = 1;
     collector->mem_size = mem_size;
-    collector->stack_size = stack_size;
     collector->mem = mem;
-    collector->stack = stack;
     
     return collector;
 }
 
 void gc_delete(gc * collector)
 {
-    int i;
+    unsigned int i;
     
     for (i = 0; i < collector->mem_size; i++)
     {
@@ -41,16 +42,12 @@ void gc_delete(gc * collector)
     {
         free(collector->mem);
     }
-    if (collector->stack != NULL)
-    {
-        free(collector->stack);
-    }
     free(collector);
 }
 
 void gc_mark_all(gc * collector)
 {
-    int i;
+    unsigned int i;
     
     for (i = 0; i < collector->mem_size; i++)
     {
@@ -60,7 +57,7 @@ void gc_mark_all(gc * collector)
 
 void gc_sweep_all(gc * collector)
 {
-    int i;
+    unsigned int i;
     
     for (i = 0; i < collector->mem_size; i++)
     {
@@ -124,7 +121,7 @@ void gc_mark_access(gc * collector, gc_stack * omfalos, int stack_size)
     for (i = 0; i < stack_size; i++)
     {
         if (omfalos[i].type == GC_MEM_ADDR &&
-            omfalos[i].addr >= 0 && 
+            omfalos[i].addr > 0 && 
             collector->mem[omfalos[i].addr].mark == 0)
         {
             gc_mark(collector, omfalos[i].addr);
@@ -139,11 +136,11 @@ void gc_run_omfalos(gc * collector, gc_stack * omfalos, int stack_size)
     gc_sweep_all(collector);
 }
 
-void gc_run(gc * collector, int stack_size, mem_ptr global_vec)
+void gc_run(gc * collector, gc_stack * stack, int stack_size, mem_ptr global_vec)
 {
     gc_mark_all(collector);
-    gc_mark_access(collector, collector->stack, stack_size);
-    if (global_vec >= 0)
+    gc_mark_access(collector, stack, stack_size);
+    if (global_vec > 0)
     {
         gc_mark_vec(collector, global_vec);
     }
@@ -154,7 +151,7 @@ mem_ptr gc_alloc_any(gc * collector, object * value)
 {
     mem_ptr loc = collector->free;
 
-    if (loc >= collector->mem_size)
+    if (loc == 0)
     {
         printf("out of memory\n");
         exit(1);
@@ -247,28 +244,40 @@ void gc_set_func_vec(gc * collector, mem_ptr func_addr, mem_ptr vec)
     collector->mem[func_addr].object_value->func_value->vec = vec;
 }
 
-void gc_stack_print(gc * collector, int sp)
+gc_stack * gc_stack_new(int stack_size)
 {
-    assert(collector->stack_size >= sp);
-    
-    switch (collector->stack[sp].type)
+    gc_stack * stack = (gc_stack *)malloc(stack_size * sizeof(gc_stack));
+
+    return stack;
+}
+
+void gc_stack_delete(gc_stack * stack)
+{
+    free(stack);
+}
+
+void gc_stack_print(gc_stack * stack, int stack_size)
+{
+    int sp = 0;
+    assert(stack_size >= sp);
+
+    for (sp = 0; sp <= stack_size; sp++)
     {
-        case GC_MEM_UNKNOWN:
-            assert(0);
-        break;
-        case GC_MEM_IP:
-            printf("ip: %u\n", collector->stack[sp].ip);
-        break;
-        case GC_MEM_ADDR:
-            printf("addr: %d", collector->stack[sp].addr);
-            if (collector->stack[sp].addr >= 0)
-            {
-                object_print(collector->mem[collector->stack[sp].addr].object_value);
-            }
-        break;
-        case GC_MEM_STACK:
-            printf("sp: %d\n", collector->stack[sp].sp);
-        break;
+        switch (stack[sp].type)
+        {
+            case GC_MEM_UNKNOWN:
+                assert(0);
+            break;
+            case GC_MEM_IP:
+                printf("ip: %u\n", stack[sp].ip);
+            break;
+            case GC_MEM_ADDR:
+                printf("addr: %d", stack[sp].addr);
+            break;
+            case GC_MEM_STACK:
+                printf("sp: %d\n", stack[sp].sp);
+            break;
+        }
     }    
 }
 

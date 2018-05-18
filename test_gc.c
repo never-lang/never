@@ -4,7 +4,7 @@
 
 void test_one()
 {
-    gc * collector = gc_new(1000, 100);
+    gc * collector = gc_new(1000);
     gc_delete(collector);
 }
 
@@ -13,7 +13,7 @@ void test_two()
     mem_ptr int1;
     mem_ptr int2;
     mem_ptr vec1;
-    gc * collector = gc_new(100, 10);
+    gc * collector = gc_new(100);
     
     int1 = gc_alloc_int(collector, -1);
     int2 = gc_alloc_int(collector, -2);
@@ -38,7 +38,7 @@ void test_three()
     mem_ptr func1;
     mem_ptr func2;
     mem_ptr vec1;
-    gc * collector = gc_new(100, 10);
+    gc * collector = gc_new(100);
     
     func1 = gc_alloc_func(collector, -12, -13);
     func2 = gc_alloc_func(collector, -14, -15);
@@ -70,7 +70,7 @@ void test_four()
     mem_ptr int4;
     mem_ptr vec1;
     gc_stack omfalos[2];
-    gc * collector = gc_new(100, 10);
+    gc * collector = gc_new(100);
     
     int1 = gc_alloc_int(collector, 12);
     int2 = gc_alloc_int(collector, 14);
@@ -105,7 +105,7 @@ void test_five()
     static const unsigned int mem_size = 100;
     unsigned int i, j;
     gc_stack ints[val_size];
-    gc * collector = gc_new(mem_size, 10);
+    gc * collector = gc_new(mem_size);
     
     for (i = 0; i < mem_size; i++)
     {

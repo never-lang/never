@@ -2,7 +2,7 @@
 #define __OBJECT_H__
 
 typedef unsigned int ip_ptr;
-typedef int mem_ptr;
+typedef unsigned int mem_ptr;
 typedef int stack_ptr;
 
 typedef enum object_type

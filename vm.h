@@ -10,8 +10,12 @@ typedef struct vm
     stack_ptr fp;
     mem_ptr gp;
     ip_ptr ip;
-    unsigned int line_no;
+
+    int stack_size;
+    struct gc_stack * stack;
     struct gc * collector;
+
+    unsigned int line_no;
     char running;
 } vm;
 
@@ -55,7 +59,6 @@ vm * vm_new(unsigned int mem_size, unsigned int stack_size);
 void vm_delete(vm * machine);
 
 void vm_print(vm * machine);
-void vm_stack_print(vm * machine);
 
 #endif /* __VM_H__ */
 

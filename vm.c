@@ -44,7 +44,7 @@ static void vm_execute_op_test()
 
 void vm_check_stack(vm * machine)
 {
-    if (machine->sp >= machine->collector->stack_size)
+    if (machine->sp >= machine->stack_size)
     {
         printf("stack too large\n");
         vm_print(machine);
@@ -69,13 +69,13 @@ void vm_execute_int(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp] = entry;
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_id_local(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = machine->collector->stack[machine->sp - (code->id_local.stack_level - code->id_local.index)].addr;
+    mem_ptr addr = machine->stack[machine->sp - (code->id_local.stack_level - code->id_local.index)].addr;
     
     machine->sp++;
     vm_check_stack(machine);
@@ -83,7 +83,7 @@ void vm_execute_id_local(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
     
-    machine->collector->stack[machine->sp] = entry;
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_id_global(vm * machine, bytecode * code)
@@ -97,7 +97,7 @@ void vm_execute_id_global(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
     
-    machine->collector->stack[machine->sp] = entry;
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_id_func_func(vm * machine, bytecode * code)
@@ -109,18 +109,18 @@ void vm_execute_id_func_func(vm * machine, bytecode * code)
 void vm_execute_id_func_addr(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr vec = machine->collector->stack[machine->sp].addr;
+    mem_ptr vec = machine->stack[machine->sp].addr;
     mem_ptr addr = gc_alloc_func(machine->collector, vec, code->id_func.func_addr);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp] = entry;
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_jumpz(vm * machine, bytecode * code)
 {
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
 
     if (a == 0)
     {
@@ -146,62 +146,62 @@ void vm_execute_label(vm * machine, bytecode * code)
 void vm_execute_op_neg(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, -a);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp] = entry; 
+    machine->stack[machine->sp] = entry; 
 }
 
 void vm_execute_op_add(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a + b);
     
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry;
+    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
 
 void vm_execute_op_sub(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a - b);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry; 
+    machine->stack[machine->sp - 1] = entry; 
     machine->sp--;
 }
 
 void vm_execute_op_mul(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a * b);
     
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry;
+    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
 
 void vm_execute_op_div(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = 0;
 
     if (b == 0)
@@ -216,77 +216,77 @@ void vm_execute_op_div(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry;
+    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
 
 void vm_execute_op_lt(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a < b);
     
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry;
+    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
 
 void vm_execute_op_gt(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a > b);
     
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry;
+    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
 
 void vm_execute_op_lte(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a >= b);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry;
+    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
 
 void vm_execute_op_gte(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a <= b);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry;
+    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
 
 void vm_execute_op_eq(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->collector->stack[machine->sp - 1].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a == b);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
-    machine->collector->stack[machine->sp - 1] = entry;
+    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
 
@@ -303,7 +303,7 @@ void vm_execute_global_vec(vm * machine, bytecode * code)
     
     for (c = code->global_vec.count - 1; c >= 0; c--)
     {
-        gc_set_vec(machine->collector, addr, c, machine->collector->stack[machine->sp--].addr);
+        gc_set_vec(machine->collector, addr, c, machine->stack[machine->sp--].addr);
     }
     
     machine->sp++;
@@ -312,7 +312,7 @@ void vm_execute_global_vec(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
     
-    machine->collector->stack[machine->sp] = entry;
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_mark(vm * machine, bytecode * code)
@@ -330,9 +330,9 @@ void vm_execute_mark(vm * machine, bytecode * code)
     entry3.type = GC_MEM_IP;
     entry3.ip = code->mark.addr;
 
-    machine->collector->stack[machine->sp + 1] = entry1;
-    machine->collector->stack[machine->sp + 2] = entry2;
-    machine->collector->stack[machine->sp + 3] = entry3;
+    machine->stack[machine->sp + 1] = entry1;
+    machine->stack[machine->sp + 2] = entry2;
+    machine->stack[machine->sp + 3] = entry3;
     
     machine->fp = machine->sp = machine->sp + 3;
     vm_check_stack(machine);
@@ -340,8 +340,8 @@ void vm_execute_mark(vm * machine, bytecode * code)
 
 void vm_execute_call(vm * machine, bytecode * code)
 {
-    mem_ptr gp = gc_get_func_vec(machine->collector, machine->collector->stack[machine->sp].addr);
-    ip_ptr ip = gc_get_func_addr(machine->collector, machine->collector->stack[machine->sp].addr);
+    mem_ptr gp = gc_get_func_vec(machine->collector, machine->stack[machine->sp].addr);
+    ip_ptr ip = gc_get_func_addr(machine->collector, machine->stack[machine->sp].addr);
 
     machine->gp = gp;
     machine->ip = ip;
@@ -350,13 +350,13 @@ void vm_execute_call(vm * machine, bytecode * code)
 
 void vm_execute_ret(vm * machine, bytecode * code)
 {
-    machine->gp = machine->collector->stack[machine->fp - 2].addr;
-    machine->ip = machine->collector->stack[machine->fp].ip;
-    machine->collector->stack[machine->fp - 2] = machine->collector->stack[machine->sp];
+    machine->gp = machine->stack[machine->fp - 2].addr;
+    machine->ip = machine->stack[machine->fp].ip;
+    machine->stack[machine->fp - 2] = machine->stack[machine->sp];
     machine->sp = machine->fp - 2;
-    machine->fp = machine->collector->stack[machine->fp - 1].sp;
+    machine->fp = machine->stack[machine->fp - 1].sp;
 
-    gc_run(machine->collector, machine->sp + 1, machine->gp);
+    gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp);
 }
 
 void vm_execute_line(vm * machine, bytecode * code)
@@ -381,18 +381,21 @@ int vm_execute(vm * machine, bytecode * code, unsigned int size)
         vm_execute_op[bc->type].execute(machine, bc);
     }
     
-    return gc_get_int(machine->collector, machine->collector->stack[machine->sp].addr);
+    return gc_get_int(machine->collector, machine->stack[machine->sp].addr);
 }
 
 vm * vm_new(unsigned int mem_size, unsigned int stack_size)
 {
     vm * machine = (vm *)malloc(sizeof(vm));
 
-    machine->gp = -1;
-    machine->fp = -1;
     machine->sp = -1;
+    machine->fp = -1;
+    machine->gp = 0;
     machine->ip = 0;
-    machine->collector = gc_new(mem_size, stack_size);
+
+    machine->stack_size = stack_size;
+    machine->stack = gc_stack_new(stack_size);
+    machine->collector = gc_new(mem_size);
 
     vm_execute_op_test();
         
@@ -401,6 +404,10 @@ vm * vm_new(unsigned int mem_size, unsigned int stack_size)
 
 void vm_delete(vm * machine)
 {
+    if (machine->stack != NULL)
+    {
+        gc_stack_delete(machine->stack);
+    }
     if (machine->collector != NULL)
     {
         gc_delete(machine->collector);
@@ -416,20 +423,11 @@ void vm_print(vm * machine)
     printf("\tgp: %u\n", machine->gp);
     printf("\tip: %u\n", machine->ip);
     printf("\tline_no: %u\n", machine->line_no);
-    printf("\tstack_size: %u\n", machine->collector->stack_size);
+    printf("\tstack_size: %u\n", machine->stack_size);
     printf("\tmem_size: %u\n", machine->collector->mem_size);
     printf("\trunning: %d\n", machine->running);
     printf("\n");
-    vm_stack_print(machine);
+    gc_stack_print(machine->stack, machine->sp);
 }
 
-void vm_stack_print(vm * machine)
-{
-    int i = 0;
-
-    for (i = 0; i <= machine->sp; i++)
-    {
-        gc_stack_print(machine->collector, i);
-    }
-}
 
