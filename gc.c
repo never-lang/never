@@ -100,7 +100,7 @@ void gc_mark(gc * collector, mem_ptr addr)
             case OBJECT_UNKNOWN:
                 assert(0);
             break;
-            case OBJECT_INT:
+            case OBJECT_FLOAT:
                 collector->mem[addr].mark = 1;
             break;
             case OBJECT_VEC:
@@ -153,7 +153,7 @@ mem_ptr gc_alloc_any(gc * collector, object * value)
 
     if (loc == 0)
     {
-        printf("out of memory\n");
+        fprintf(stderr, "out of memory\n");
         exit(1);
     }
 
@@ -163,9 +163,9 @@ mem_ptr gc_alloc_any(gc * collector, object * value)
     return loc;
 }
 
-mem_ptr gc_alloc_int(gc * collector, int value)
+mem_ptr gc_alloc_float(gc * collector, float value)
 {
-    return gc_alloc_any(collector, object_new_int(value));
+    return gc_alloc_any(collector, object_new_float(value));
 }
 
 mem_ptr gc_alloc_vec(gc * collector, unsigned int size)
@@ -178,20 +178,20 @@ mem_ptr gc_alloc_func(gc * collector, mem_ptr vec, ip_ptr addr)
     return gc_alloc_any(collector, object_new_func(vec, addr));
 }
 
-int gc_get_int(gc * collector, mem_ptr addr)
+float gc_get_float(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
-    assert(collector->mem[addr].object_value->type == OBJECT_INT);    
+    assert(collector->mem[addr].object_value->type == OBJECT_FLOAT);    
 
-    return collector->mem[addr].object_value->int_value;
+    return collector->mem[addr].object_value->float_value;
 }
 
-void gc_set_int(gc * collector, mem_ptr addr, int value)
+void gc_set_float(gc * collector, mem_ptr addr, float value)
 {
     assert(collector->mem_size >= addr);
-    assert(collector->mem[addr].object_value->type == OBJECT_INT);    
+    assert(collector->mem[addr].object_value->type == OBJECT_FLOAT);    
 
-    collector->mem[addr].object_value->int_value = value;
+    collector->mem[addr].object_value->float_value = value;
 }
 
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index)
@@ -272,7 +272,7 @@ void gc_stack_print(gc_stack * stack, int stack_size)
                 printf("ip: %u\n", stack[sp].ip);
             break;
             case GC_MEM_ADDR:
-                printf("addr: %d", stack[sp].addr);
+                printf("addr: %d\n", stack[sp].addr);
             break;
             case GC_MEM_STACK:
                 printf("sp: %d\n", stack[sp].sp);

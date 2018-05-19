@@ -123,7 +123,7 @@ extern int yydebug;
   {
     TOK_ID = 258,
     TOK_NUM = 259,
-    TOK_INT = 260,
+    TOK_FLOAT = 260,
     TOK_FUNC = 261,
     TOK_RET = 262,
     TOK_RETURN = 263,
@@ -454,7 +454,7 @@ static const yytype_uint16 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "TOK_ID", "TOK_NUM", "TOK_INT",
+  "$end", "error", "$undefined", "TOK_ID", "TOK_NUM", "TOK_FLOAT",
   "TOK_FUNC", "TOK_RET", "TOK_RETURN", "'?'", "':'", "'<'", "'>'",
   "TOK_LTE", "TOK_GTE", "TOK_EQ", "'+'", "'-'", "'*'", "'/'", "NEG", "'('",
   "')'", "','", "'{'", "';'", "'}'", "$accept", "expr", "expr_list", "var",
@@ -1352,7 +1352,7 @@ yyreduce:
   case 3:
 #line 73 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.expr_value) = expr_new_int((yyvsp[0].val.int_value));
+    (yyval.val.expr_value) = expr_new_float((yyvsp[0].val.float_value));
     (yyval.val.expr_value)->line_no = (yyvsp[0].line_no);
 }
 #line 1359 "parser.c" /* yacc.c:1646  */
@@ -1513,7 +1513,7 @@ yyreduce:
   case 21:
 #line 180 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.var_value) = var_new_int(NULL);
+    (yyval.val.var_value) = var_new_float(NULL);
     (yyval.val.var_value)->line_no = (yyvsp[0].line_no);
 }
 #line 1520 "parser.c" /* yacc.c:1646  */
@@ -1522,7 +1522,7 @@ yyreduce:
   case 22:
 #line 186 "parser.y" /* yacc.c:1646  */
     {
-    (yyval.val.var_value) = var_new_int((yyvsp[0].val.str_value));
+    (yyval.val.var_value) = var_new_float((yyvsp[0].val.str_value));
     (yyval.val.var_value)->line_no = (yyvsp[0].line_no);
 }
 #line 1529 "parser.c" /* yacc.c:1646  */

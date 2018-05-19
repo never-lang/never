@@ -4,7 +4,7 @@
 
 void test_one()
 {
-    object * obj1 = object_new_int(100);
+    object * obj1 = object_new_float(100.0);
         
     object_delete(obj1);
 }

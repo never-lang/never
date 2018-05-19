@@ -1,13 +1,13 @@
 
 
-func min(int a, int b) -> int
+func min(float a, float b) -> float
 {
     return (a < b) ? a : b;
 }
 
-func main() -> int
+func main() -> float
 {
-    return min(10, 20);
+    return min(30, 2 + 2 * 2);
 }
 
 

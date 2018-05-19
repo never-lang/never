@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "typecheck.h"
 #include "symtab.h"
+#include "utils.h"
 
 int expr_set_return_type(expr * value, var * ret)
 {
@@ -8,9 +9,9 @@ int expr_set_return_type(expr * value, var * ret)
     {
         value->comb = COMB_TYPE_VOID;
     }
-    else if (ret->type == VAR_INT)
+    else if (ret->type == VAR_FLOAT)
     {
-        value->comb = COMB_TYPE_INT;
+        value->comb = COMB_TYPE_FLOAT;
     }
     else if (ret->type == VAR_FUNC)
     {
@@ -38,7 +39,7 @@ int var_cmp(var * var_one, var * var_two)
     {
         return TYPECHECK_FAIL;
     }
-    if (var_one->type == VAR_INT && var_two->type == VAR_INT)
+    if (var_one->type == VAR_FLOAT && var_two->type == VAR_FLOAT)
     {
         return TYPECHECK_SUCC;
     }
@@ -113,7 +114,7 @@ int var_expr_cmp(var * var_value, expr * expr_value)
         return TYPECHECK_FAIL;
     }
 
-    if (var_value->type == VAR_INT && expr_value->comb == COMB_TYPE_INT)
+    if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_FLOAT)
     {
         return TYPECHECK_SUCC;
     }
@@ -180,9 +181,9 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         else if (entry->type == SYMTAB_VAR && entry->var_value != NULL)
         {
             var * var_value = entry->var_value;
-            if (var_value->type == VAR_INT)
+            if (var_value->type == VAR_FLOAT)
             {
-                 value->comb = COMB_TYPE_INT;
+                 value->comb = COMB_TYPE_FLOAT;
             }
             else if (var_value->type == VAR_FUNC)
             {
@@ -195,7 +196,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     else
     {                    
         *result = TYPECHECK_FAIL;
-        printf("cannot find variable %s\n", value->id);
+        print_error_msg(value->line_no, "cannot find variable %s\n", value->id);
     }
     return 0;
 }
@@ -206,7 +207,7 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
     expr_check_type(tab, value->middle, result);
     expr_check_type(tab, value->right, result);
             
-    if (value->left->comb == COMB_TYPE_INT ||
+    if (value->left->comb == COMB_TYPE_FLOAT ||
         value->left->comb == COMB_TYPE_BOOL)
     {
         if (value->middle->comb == value->right->comb)
@@ -223,9 +224,9 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
                  else
                  {
                      *result = TYPECHECK_FAIL;
-                      printf("functions are different %s:%u %s:%u\n",
-                             value->middle->id, value->middle->line_no, 
-                             value->right->id, value->right->line_no); 
+                      print_error_msg(value->line_no, "functions are different %s:%u %s:%u\n",
+                                      value->middle->id, value->middle->line_no, 
+                                      value->right->id, value->right->line_no); 
                  }
              }
              else
@@ -235,19 +236,18 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
          }
          else
          {
-             printf("types on conditional expression at line %u do not match %s %s\n",
-                     value->line_no,
-                     comb_type_str(value->middle->comb),
-                     comb_type_str(value->right->comb));
+             print_error_msg(value->line_no,
+                             "types on conditional expression do not match %s %s\n",
+                             comb_type_str(value->middle->comb),
+                             comb_type_str(value->right->comb));
          }
     }
     else
     {
          *result = TYPECHECK_FAIL;
          value->comb = COMB_TYPE_ERR;
-         printf("cannot execute conditional at line %u operator on %s\n",
-                 value->line_no,
-                 comb_type_str(value->left->comb));
+         print_error_msg(value->line_no, "cannot execute conditional operator on %s\n",
+                         comb_type_str(value->left->comb));
     }
     return 0;
 }
@@ -270,17 +270,16 @@ int expr_call_check_type(symtab * tab, expr * value, int * result)
             else
             {
                 *result = TYPECHECK_FAIL;
-                printf("function call type mismatch at line %u\n", value->line_no);
+                print_error_msg(value->line_no, "function call type mismatch\n");
             }
         break;
-        case COMB_TYPE_INT:
+        case COMB_TYPE_FLOAT:
         case COMB_TYPE_UNKNOWN:
         case COMB_TYPE_ERR:
         case COMB_TYPE_VOID:
         case COMB_TYPE_BOOL:
-            printf("cannot execute function at line %u on type %s\n", 
-                   value->line_no,
-                   comb_type_str(value->comb));
+            print_error_msg(value->line_no, "cannot execute function on type %s\n", 
+                            comb_type_str(value->comb));
         break;
     }
 
@@ -291,8 +290,8 @@ int expr_check_type(symtab * tab, expr * value, int * result)
 {
     switch (value->type)
     {
-        case EXPR_INT:
-            value->comb = COMB_TYPE_INT;
+        case EXPR_FLOAT:
+            value->comb = COMB_TYPE_FLOAT;
         break;
         case EXPR_ID:
             expr_id_check_type(tab, value, result);
@@ -300,17 +299,18 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         case EXPR_NEG:
         {
             expr_check_type(tab, value->left, result);
-            if (value->left->comb == COMB_TYPE_INT)
+            if (value->left->comb == COMB_TYPE_FLOAT)
             {
-                value->comb = COMB_TYPE_INT;
+                value->comb = COMB_TYPE_FLOAT;
             }
             else
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
-                printf("cannot negate at line %u type %s\n",
-                        value->line_no,  
-                        comb_type_str(value->left->comb));
+                print_error_msg(value->line_no,
+                                "cannot negate type %s\n",
+                                value->line_no,  
+                                comb_type_str(value->left->comb));
             }
         }
         break;
@@ -321,19 +321,19 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         {
             expr_check_type(tab, value->left, result);
             expr_check_type(tab, value->right, result);
-            if (value->left->comb == COMB_TYPE_INT &&
-                value->right->comb == COMB_TYPE_INT)
+            if (value->left->comb == COMB_TYPE_FLOAT &&
+                value->right->comb == COMB_TYPE_FLOAT)
             {
-                value->comb = COMB_TYPE_INT;
+                value->comb = COMB_TYPE_FLOAT;
             }
             else
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
-                printf("cannot exec arithmetic operation at line %u on types %s %s\n",
-                       value->line_no,
-                       comb_type_str(value->left->comb),
-                       comb_type_str(value->right->comb));
+                print_error_msg(value->line_no,
+                                "cannot exec arithmetic operation on types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
             }
         }
         break;
@@ -344,8 +344,8 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         {
             expr_check_type(tab, value->left, result);
             expr_check_type(tab, value->right, result);
-            if (value->left->comb == COMB_TYPE_INT &&
-                value->left->comb == COMB_TYPE_INT)
+            if (value->left->comb == COMB_TYPE_FLOAT &&
+                value->left->comb == COMB_TYPE_FLOAT)
             {
                 value->comb = COMB_TYPE_BOOL;
             }
@@ -353,18 +353,17 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
-                printf("cannot compare at line %u not integers %d %d\n",
-                       value->line_no,
-                       value->left->comb,
-                       value->right->comb);
+                print_error_msg(value->line_no, "cannot compare not float %d %d\n",
+                                value->left->comb,
+                                value->right->comb);
             }
         }
         break;
         case EXPR_EQ:
             expr_check_type(tab, value->left, result);
             expr_check_type(tab, value->right, result);
-            if (value->left->comb == COMB_TYPE_INT &&
-                value->right->comb == COMB_TYPE_INT)
+            if (value->left->comb == COMB_TYPE_FLOAT &&
+                value->right->comb == COMB_TYPE_FLOAT)
             {
                 value->comb = COMB_TYPE_BOOL;
             }
@@ -377,10 +376,11 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
-                printf("cannot equal at line %u types %s %s\n",
-                       value->line_no,
-                       comb_type_str(value->left->comb),
-                       comb_type_str(value->right->comb));
+                print_error_msg(value->line_no,
+                                "cannot equal types %s %s\n",
+                                 value->line_no,
+                                 comb_type_str(value->left->comb),
+                                 comb_type_str(value->right->comb));
             }
         break;
         case EXPR_SUP:
@@ -441,8 +441,9 @@ int func_check_type(symtab * tab, func * func_value, int * result)
         if (var_expr_cmp(func_value->ret, func_value->body->ret) == TYPECHECK_FAIL)
         {
             *result = TYPECHECK_FAIL;
-            printf("incorrect return type in function %s:%u\n",
-                   func_value->id, func_value->line_no);
+            print_error_msg(func_value->line_no,
+                            "incorrect return type in function %s\n",
+                            func_value->id);
         }
     }
 
@@ -494,14 +495,16 @@ int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result)
                 if (entry->type == SYMTAB_FUNC)
                 {
                     func * al_func = entry->func_value;
-                    printf("function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
+                    print_error_msg(var_value->line_no, 
+                                    "function %s already defined at line %u\n",
+                                    entry->id, al_func->line_no);
                 }
                 else if (entry->type == SYMTAB_VAR)
                 {
                     var * al_var = entry->var_value;
-                    printf("parameter %s already defined at line %u\n",
-                            entry->id, al_var->line_no);
+                    print_error_msg(var_value->line_no,
+                                    "parameter %s already defined at line %u\n",
+                                    entry->id, al_var->line_no);
                 }
             }
         }
@@ -529,14 +532,16 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result)
                 if (entry->type == SYMTAB_FUNC)
                 {
                     func * al_func = entry->func_value;
-                    printf("function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
+                    print_error_msg(func_value->line_no,
+                                    "function %s already defined at line %u\n",
+                                    entry->id, al_func->line_no);
                 }
                 else if (entry->type == SYMTAB_VAR)
                 {
                     var * al_var = entry->var_value;
-                    printf("parameter %s already defined at line %u\n",
-                           entry->id, al_var->line_no);
+                    print_error_msg(func_value->line_no,
+                                    "parameter %s already defined at line %u\n",
+                                    entry->id, al_var->line_no);
                 }
             }
         }
@@ -549,7 +554,7 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
 {
     switch (value->type)
     {
-        case EXPR_INT:
+        case EXPR_FLOAT:
         break;
         case EXPR_ID:
         break;
@@ -670,7 +675,7 @@ int print_func_expr(expr * value, int depth)
 {
     switch (value->type)
     {
-        case EXPR_INT:
+        case EXPR_FLOAT:
             /* no symtabs possible */
         break;
         case EXPR_ID:
@@ -796,35 +801,35 @@ int func_main_check_type(symtab * tab, int * result)
             {
                 if (func_value->vars->count > 0)
                 {
-                    printf("too many variables (%d) in function main:%u, expected 0\n",
-                           func_value->vars->count,
-                           func_value->line_no);
+                    print_error_msg(func_value->line_no,
+                                    "too many variables (%d) in function main, expected 0\n",
+                                    func_value->vars->count);
                     *result = TYPECHECK_FAIL;
                 }
             }
             if (func_value->ret == NULL)
             {
-                printf("incorrect function main:%u return type\n", func_value->line_no);
+                print_error_msg(func_value->line_no, "incorrect function main return type\n");
                 *result = TYPECHECK_FAIL;
             }
             else
             {
-                if (func_value->ret->type != VAR_INT)
+                if (func_value->ret->type != VAR_FLOAT)
                 {
-                    printf("incorrect function main:%u return type\n", func_value->line_no);
+                    print_error_msg(func_value->line_no, "incorrect function main return type\n");
                     *result = TYPECHECK_FAIL;
                 }
             }
         }
         else
         {
-            printf("incorrect function main, expected function\n");
+            print_error_msg(0, "incorrect function main, expected function\n");
             *result = TYPECHECK_FAIL;
         }
     }
     else
     {
-        printf("function main is not defined\n");
+        print_error_msg(0, "function main is not defined\n");
         *result = TYPECHECK_FAIL;
     }
 

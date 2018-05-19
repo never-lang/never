@@ -1,14 +1,14 @@
-func min(int a, int b) -> int 
+func min(float a, float b) -> float 
 { 
     return a < b ? a + a : b + b; 
 }
 
-func execute(int a, int b, f1(int, int) -> int) -> int
+func execute(float a, float b, f1(float, float) -> float) -> float
 {
     return f1(a, b);
 } 
  
-func main() -> int
+func main() -> float
 {
     return execute(10, 20, min);
 }

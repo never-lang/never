@@ -1,20 +1,20 @@
 
-func min(int a, int b) -> int
+func min(float a, float b) -> float
 {
     return (a < b) ? a : b;
 }
 
-func max(int a, int b) -> int
+func max(float a, float b) -> float
 {
     return (a > b) ? a : b;
 }
 
-func select(int a) -> (int, int) -> int
+func select(float a) -> (float, float) -> float
 {
     return a < 100 ? min : max;
 }
 
-func main() -> int
+func main() -> float
 {
     return select(110)(40, 20);
 }

@@ -4,14 +4,14 @@
  * first class functions
  * call by value
  */
-func min(int a, int b, int c) -> int
+func min(float a, float b, float c) -> float
 {
     return a < b ? a : b * c;
 }
 
-func minCoeff(int p1, int p2, int coeff) -> int
+func minCoeff(float p1, float p2, float coeff) -> float
 {
-    func min(int n_a, int n_b) -> int
+    func min(float n_a, float n_b) -> float
     {
         return coeff * (n_a < n_b ? coeff * n_a : coeff * n_b);
     }
@@ -19,28 +19,28 @@ func minCoeff(int p1, int p2, int coeff) -> int
     return min(10 * 20, 30 * 60);
 }
 
-func crazy(int a, int, () -> int, funcZ(int, int) -> (int) -> () -> int) -> int
+func crazy(float a, float, () -> float, funcZ(float, float) -> (float) -> () -> float) -> float
 {
     return 0;
 }
 
-func print(void_func(int, int, int) -> int) -> int
+func prfloat(void_func(float, float, float) -> float) -> float
 {
     return minCoeff(10, 20, 30);
 }
 
-func my_func(int a, int b, int c) -> int
+func my_func(float a, float b, float c) -> float
 {
     return 2 * minCoeff(2, a, b);
 }
 
-func void_func() -> int
+func void_func() -> float
 {
     return 0 < 0 ? 0 : 10;
 }
 
-func main() -> int
+func main() -> float
 {
-    return print(my_func);
+    return prfloat(my_func);
 }
 

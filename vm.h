@@ -4,6 +4,13 @@
 #include "object.h"
 #include "bytecode.h"
 
+typedef enum vm_state
+{
+    VM_HALT = 0,
+    VM_RUNNING = 1,
+    VM_ERROR = 2
+} vm_state;
+
 typedef struct vm
 {
     stack_ptr sp;
@@ -16,7 +23,7 @@ typedef struct vm
     struct gc * collector;
 
     unsigned int line_no;
-    char running;
+    vm_state running;
 } vm;
 
 typedef struct vm_execute_str
@@ -26,7 +33,7 @@ typedef struct vm_execute_str
 } vm_execute_str;
 
 void vm_execute_unknown(vm * machine, bytecode * code);
-void vm_execute_int(vm * machine, bytecode * code);
+void vm_execute_float(vm * machine, bytecode * code);
 void vm_execute_id_local(vm * machine, bytecode * code);
 void vm_execute_id_global(vm * machine, bytecode * code);
 void vm_execute_id_func_func(vm * machine, bytecode * code);
@@ -53,7 +60,7 @@ void vm_execute_line(vm * machine, bytecode * code);
 void vm_execute_halt(vm * machine, bytecode * code);
 
 void vm_check_stack(vm * machine);
-int vm_execute(vm * machine, bytecode * code, unsigned int size);
+int vm_execute(vm * machine, bytecode * code, unsigned int size, float * ret);
 
 vm * vm_new(unsigned int mem_size, unsigned int stack_size);
 void vm_delete(vm * machine);

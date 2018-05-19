@@ -3,13 +3,13 @@
 #include "expr.h"
 #include "func.h"
 
-expr * expr_new_int(int int_value)
+expr * expr_new_float(float float_value)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
-    ret->type = EXPR_INT;
-    ret->int_value = int_value;
-    ret->comb = COMB_TYPE_INT;
+    ret->type = EXPR_FLOAT;
+    ret->float_value = float_value;
+    ret->comb = COMB_TYPE_FLOAT;
     ret->line_no = 0;
     
     return ret;
@@ -98,7 +98,7 @@ void expr_delete(expr * value)
 {
     switch (value->type)
     {
-        case EXPR_INT:
+        case EXPR_FLOAT:
         break;
         case EXPR_ID:
             free(value->id);
@@ -233,7 +233,7 @@ const char * comb_type_str(comb_type type)
         case COMB_TYPE_ERR: return "error";
         case COMB_TYPE_VOID: return "void";
         case COMB_TYPE_BOOL: return "bool";
-        case COMB_TYPE_INT: return "int";
+        case COMB_TYPE_FLOAT: return "float";
         case COMB_TYPE_FUNC: return "func";
     }
     return "unknown comb type!";

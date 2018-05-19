@@ -47,7 +47,7 @@ extern int yydebug;
   {
     TOK_ID = 258,
     TOK_NUM = 259,
-    TOK_INT = 260,
+    TOK_FLOAT = 260,
     TOK_FUNC = 261,
     TOK_RET = 262,
     TOK_RETURN = 263,

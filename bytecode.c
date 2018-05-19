@@ -6,7 +6,7 @@
 
 bytecode_op_str bytecode_op[] = {
     { BYTECODE_UNKNOWN, bytecode_print_unknown },
-    { BYTECODE_INT, bytecode_print_int },
+    { BYTECODE_FLOAT, bytecode_print_float },
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
     { BYTECODE_ID_GLOBAL, bytecode_print_id_global },
     { BYTECODE_ID_FUNC_FUNC, bytecode_print_id_func_func },
@@ -47,9 +47,9 @@ void bytecode_print_unknown(bytecode * code)
     printf("%d: unknown\n", code->addr);
 }
 
-void bytecode_print_int(bytecode * code)
+void bytecode_print_float(bytecode * code)
 {
-    printf("%d: int %d\n", code->addr, code->integer.value);
+    printf("%d: float %f\n", code->addr, code->real.value);
 }
 
 void bytecode_print_id_local(bytecode * code)
@@ -284,12 +284,12 @@ void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, unsigned int 
     {
         if (node->value.addr != addr)
         {
-            printf("incorrectly generated code\n");
+            fprintf(stderr, "incorrectly generated code\n");
             assert(0);
         }
         if (node->value.type == BYTECODE_ID_FUNC_FUNC)
         {
-            printf("cannot generate bytecode array with function pointers, use bytecode_func_addr\n");
+            fprintf(stderr, "cannot generate bytecode array with function pointers, use bytecode_func_addr\n");
             assert(0);
         }
         

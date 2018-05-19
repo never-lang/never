@@ -1,24 +1,24 @@
 
-func min(int a, int b) -> int
+func min(float a, float b) -> float
 {
     return (a < b) ? a : b;
 }
 
-func funGen(int a, int b, f1(int a, int b) -> int) -> int
+func funGen(float a, float b, f1(float a, float b) -> float) -> float
 {
     return 2 * f1(a, b);
 }
 
-func funGen2(f1(int a, int b) -> int) -> (int a, int b) -> int
+func funGen2(f1(float a, float b) -> float) -> (float a, float b) -> float
 {
-    func twice(int a, int b) -> int
+    func twice(float a, float b) -> float
     {
         return 2 * f1(a, b);
     }
     return twice;
 }
 
-func main() -> int
+func main() -> float
 {
     return funGen2(min)(10, 20);
 }

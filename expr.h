@@ -5,7 +5,7 @@
 
 typedef enum expr_type
 {
-    EXPR_INT = 1,
+    EXPR_FLOAT = 1,
     EXPR_ID  = 2,
     EXPR_NEG = 3,
     EXPR_ADD = 4,
@@ -29,7 +29,7 @@ typedef enum comb_type
     COMB_TYPE_ERR  = 1,
     COMB_TYPE_VOID = 2,
     COMB_TYPE_BOOL = 3,
-    COMB_TYPE_INT  = 4,
+    COMB_TYPE_FLOAT  = 4,
     COMB_TYPE_FUNC = 5
 } comb_type;
 
@@ -53,7 +53,7 @@ typedef struct expr
     unsigned int line_no;
     union
     {
-        int int_value; /* EXPR_INT */
+        float float_value; /* EXPR_FLOAT */
         struct /* EXPR_ID */
         {
             char * id;
@@ -97,7 +97,7 @@ typedef struct expr_list
     expr_list_node * tail;
 } expr_list;
 
-expr * expr_new_int(int int_value);
+expr * expr_new_float(float float_value);
 expr * expr_new_id(char * id);
 expr * expr_new_one(int type, expr * expr_left);
 expr * expr_new_two(int type, expr * expr_left, expr * expr_right);

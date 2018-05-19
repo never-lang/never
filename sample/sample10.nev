@@ -1,12 +1,12 @@
 
-func mul(int a, int b) -> int
+func mul(float a, float b) -> float
 {
     return a * b;
 }
 
-func funGen1(int a, int b) -> int
+func funGen1(float a, float b) -> float
 {
-    func funInt(int a, int b) -> int
+    func funInt(float a, float b) -> float
     {
         return a * b;
     }
@@ -14,12 +14,12 @@ func funGen1(int a, int b) -> int
     return funInt(a, b + 2);
 }
 
-func funGen2(int a, int b) -> int
+func funGen2(float a, float b) -> float
 {
     return mul(a, b + 2);
 }
 
-func main() -> int
+func main() -> float
 {
     return funGen2(10, 20);
 }

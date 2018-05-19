@@ -93,9 +93,9 @@ void symtab_entry_print(symtab_entry * entry)
         var * var_value = entry->var_value;            
         if (var_value)
         {
-            if (var_value->type == VAR_INT)
+            if (var_value->type == VAR_FLOAT)
             {
-                printf("[I][%s][%d]\n", var_value->id, entry->syn_level);
+                printf("[R][%s][%d]\n", var_value->id, entry->syn_level);
             }
             else if (var_value->type == VAR_FUNC)
             {

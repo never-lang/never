@@ -1,16 +1,16 @@
 /**
  * Passing function and calling returned function.
  */
-func twice(int c1, int c2) -> (int, int) -> int
+func twice(float c1, float c2) -> (float, float) -> float
 {
-    func mult() -> int
+    func mult() -> float
     {
         return c2 == 0 ? 0 : c1 / c2;
     }
 
-    func twice_func(int a, int b) -> int
+    func twice_func(float a, float b) -> float
     {
-        func twice_func_nest(int a, int b) -> int
+        func twice_func_nest(float a, float b) -> float
         {
             return mult();
         }
@@ -20,7 +20,7 @@ func twice(int c1, int c2) -> (int, int) -> int
     return twice_func;
 }
 
-func main() -> int
+func main() -> float
 {
     return twice(12, 3)(10, 20);
 }

@@ -3,28 +3,28 @@
  */
  
  /* this is crazy */ 
-func counter(int from, int to, int by) -> (int, int) -> (int, int, int) -> int
+func counter(float from, float to, float by) -> (float, float) -> (float, float, float) -> float
 {
-    func dec() -> int
+    func dec() -> float
     {
         return by * from - to;
     }
 
-    return func increase(int a, int b) -> (int, int, int) -> int
+    return func increase(float a, float b) -> (float, float, float) -> float
     {
-        func inc(int x, int y) -> int
+        func inc(float x, float y) -> float
         {
             return 1900 + x * y * b * from * from;
         }
     
-        return func increase_sub(int n_a, int n_b, int n_c) -> int
+        return func increase_sub(float n_a, float n_b, float n_c) -> float
         {
             return dec() + n_a + n_b * n_c;
         };
     };
 }
 
-func main() -> int
+func main() -> float
 {
     return counter(100, 10, 20)(11, 12)(1, 2, 3);
 }

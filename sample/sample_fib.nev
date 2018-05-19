@@ -1,9 +1,9 @@
-func fib(int n) -> int
+func fib(float n) -> float
 {
     return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
 }
 
-func main() -> int
+func main() -> float
 {
     return fib(7);
 }

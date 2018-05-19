@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include "var.h"
 
-var * var_new_int(char * id)
+var * var_new_float(char * id)
 {
     var * value = (var *)malloc(sizeof(var));
     
-    value->type = VAR_INT;
+    value->type = VAR_FLOAT;
     value->index = -1;
     value->id = id;
     value->vars = NULL;
@@ -149,7 +149,7 @@ char * var_type_str(int type)
 {
     switch (type)
     {
-        case VAR_INT: return "VAR_INT";
+        case VAR_FLOAT: return "VAR_FLOAT";
         case VAR_FUNC: return "VAR_FUNC";
     }
     return "VAR_???";

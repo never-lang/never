@@ -4,7 +4,7 @@
 typedef enum bytecode_type
 {
     BYTECODE_UNKNOWN = 0,
-    BYTECODE_INT,
+    BYTECODE_FLOAT,
     BYTECODE_ID_LOCAL,
     BYTECODE_ID_GLOBAL,
     BYTECODE_ID_FUNC_FUNC,
@@ -40,8 +40,8 @@ typedef struct bytecode
     {
         struct
         {
-            int value;     /* BYTECODE_INT */
-        } integer;
+            float value;     /* BYTECODE_FLOAT */
+        } real;
         struct             /* BYTECODE_ID_LOCAL */
         {
             int stack_level;
@@ -100,7 +100,7 @@ typedef struct bytecode_op_str
 } bytecode_op_str;
 
 void bytecode_print_unknown(bytecode * code);
-void bytecode_print_int(bytecode * code);
+void bytecode_print_float(bytecode * code);
 void bytecode_print_id_local(bytecode * code);
 void bytecode_print_id_global(bytecode * code);
 void bytecode_print_id_func_func(bytecode * code);

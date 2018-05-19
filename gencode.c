@@ -3,6 +3,7 @@
 #include "gencode.h"
 #include "symtab.h"
 #include "freevar.h"
+#include "utils.h"
 
  /* GP old, FP old, IP old */
 #define NUM_FRAME_PTRS 3
@@ -45,7 +46,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
         else if (entry->type == SYMTAB_VAR && entry->var_value != NULL)
         {
             var * var_value = entry->var_value;
-            if (var_value->type == VAR_INT || var_value->type == VAR_FUNC)
+            if (var_value->type == VAR_FLOAT || var_value->type == VAR_FUNC)
             {
                 if (syn_level == entry->syn_level)
                 {
@@ -71,7 +72,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
     else
     {                    
         *result = 1;
-        printf("cannot find variable %s, at this stage it is very bad\n", value->id);
+        print_error_msg(value->line_no, "cannot find variable %s, at this stage it is very bad\n", value->id);
         assert(0);
     }
     
@@ -82,8 +83,8 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
 {
     switch (value->type)
     {
-        case EXPR_INT:
-            /* printf("gencode EXPR_INT %d\n", value->int_value); */
+        case EXPR_FLOAT:
+            /* printf("gencode EXPR_FLOAT %f\n", value->float_value); */
         break;
         case EXPR_ID:
             expr_id_gencode(syn_level, func_value, value, result);
@@ -207,7 +208,7 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
 {
     switch (value->type)
     {
-        case EXPR_INT:
+        case EXPR_FLOAT:
             /* not possible */
         break;
         case EXPR_ID:
@@ -382,12 +383,12 @@ int never_gencode(never * nev)
 /**
  * emit code
  */
-int expr_int_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+int expr_float_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
     
-    bc.type = BYTECODE_INT;
-    bc.integer.value = value->int_value;
+    bc.type = BYTECODE_FLOAT;
+    bc.real.value = value->float_value;
 
     bytecode_add(code, &bc);
 
@@ -401,7 +402,7 @@ int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * 
     switch (value->type)
     {
         case FREEVAR_UNKNOWN:
-            printf("unknown freevar during emit\n");
+            print_error_msg(0, "unknown freevar during emit\n");
             assert(0);
         break;
         case FREEVAR_LOCAL:
@@ -472,7 +473,7 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * resu
     switch (value->id_type_value)
     {
         case ID_TYPE_UNKNOWN:
-            printf("not recognized id, at this stage it is very bad\n");
+            print_error_msg(value->line_no, "not recognized id, at this stage it is very bad\n");
             assert(0);
         break;
         case ID_TYPE_LOCAL:
@@ -584,8 +585,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 
     switch (value->type)
     {
-        case EXPR_INT:
-            expr_int_emit(value, stack_level, code, result); 
+        case EXPR_FLOAT:
+            expr_float_emit(value, stack_level, code, result); 
         break;
         case EXPR_ID:
             expr_id_emit(value, stack_level, code, result);
@@ -798,7 +799,7 @@ int func_main_emit(never * nev, int stack_level, bytecode_list * code, int * res
     else
     {
         *result = GENCODE_FAIL;
-        printf("no main function defined\n");
+        print_error_msg(0, "no main function defined\n");
     }
     return 0;
 }
