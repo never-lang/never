@@ -15,7 +15,7 @@ test_symtab: symtab.o var.o freevar.o func.o expr.o
 
 test_freevar: symtab.o var.o freevar.o func.o expr.o
 
-test_vm: vm.o gc.o object.o
+test_vm: vm.o gc.o object.o utils.o
 
 test_gc: gc.o object.o
 
