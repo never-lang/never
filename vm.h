@@ -72,6 +72,7 @@ void vm_execute_op_gt(vm * machine, bytecode * code);
 void vm_execute_op_lte(vm * machine, bytecode * code);
 void vm_execute_op_gte(vm * machine, bytecode * code);
 void vm_execute_op_eq(vm * machine, bytecode * code);
+void vm_execute_op_neq(vm * machine, bytecode * code);
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_global_vec(vm * machine, bytecode * code);
 void vm_execute_mark(vm * machine, bytecode * code);

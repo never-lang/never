@@ -45,6 +45,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_LTE, bytecode_print_op_lte },
     { BYTECODE_OP_GTE, bytecode_print_op_gte },
     { BYTECODE_OP_EQ, bytecode_print_op_eq },
+    { BYTECODE_OP_NEQ, bytecode_print_op_neq },
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
     { BYTECODE_MARK, bytecode_print_mark },
@@ -156,6 +157,11 @@ void bytecode_print_op_gte(bytecode * code)
 void bytecode_print_op_eq(bytecode * code)
 {
     printf("%d: op eq\n", code->addr);
+}
+
+void bytecode_print_op_neq(bytecode * code)
+{
+    printf("%d: op neq\n", code->addr);
 }
 
 void bytecode_print_func_def(bytecode * code)

@@ -13,7 +13,7 @@ func max(float a, float b) -> float
 
 func main() -> float
 {
-    return ((110 < 100) ? min : max)(10, 20);
+    return ((110 == 110) ? min : max)(10, 20);
 }
 
 

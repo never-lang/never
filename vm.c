@@ -46,6 +46,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_LTE, vm_execute_op_lte },
     { BYTECODE_OP_GTE, vm_execute_op_gte },
     { BYTECODE_OP_EQ, vm_execute_op_eq },
+    { BYTECODE_OP_NEQ, vm_execute_op_neq },
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
     { BYTECODE_MARK, vm_execute_mark },
@@ -304,6 +305,20 @@ void vm_execute_op_eq(vm * machine, bytecode * code)
     float a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     float b = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = gc_alloc_float(machine->collector, a == b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_neq(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    float a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float b = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr addr = gc_alloc_float(machine->collector, a != b);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;

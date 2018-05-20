@@ -381,6 +381,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         }
         break;
         case EXPR_EQ:
+        case EXPR_NEQ:
             expr_check_type(tab, value->left, result);
             expr_check_type(tab, value->right, result);
             if (value->left->comb == COMB_TYPE_FLOAT &&
@@ -591,6 +592,7 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
         case EXPR_LTE:
         case EXPR_GTE:
         case EXPR_EQ:
+        case EXPR_NEQ:
             symtab_add_entry_expr(stab, value->left, result);
             symtab_add_entry_expr(stab, value->right, result);
         break;
@@ -714,6 +716,7 @@ int print_func_expr(expr * value, int depth)
         case EXPR_LTE:
         case EXPR_GTE:
         case EXPR_EQ:
+        case EXPR_NEQ:
             print_func_expr(value->left, depth);
             print_func_expr(value->right, depth);
         break;

@@ -43,6 +43,7 @@ typedef enum bytecode_type
     BYTECODE_OP_LTE,
     BYTECODE_OP_GTE,
     BYTECODE_OP_EQ,
+    BYTECODE_OP_NEQ,
     BYTECODE_FUNC_DEF,
     BYTECODE_GLOBAL_VEC,
     BYTECODE_MARK,
@@ -139,6 +140,7 @@ void bytecode_print_op_gt(bytecode * code);
 void bytecode_print_op_lte(bytecode * code);
 void bytecode_print_op_gte(bytecode * code);
 void bytecode_print_op_eq(bytecode * code);
+void bytecode_print_op_neq(bytecode * code);
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);
 void bytecode_print_mark(bytecode * code);

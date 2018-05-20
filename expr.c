@@ -136,6 +136,7 @@ void expr_delete(expr * value)
         case EXPR_LTE:
         case EXPR_GTE:
         case EXPR_EQ:
+        case EXPR_NEQ:
             expr_delete(value->left);
             expr_delete(value->right);
         break;

@@ -38,10 +38,11 @@ typedef enum expr_type
     EXPR_LTE = 10,
     EXPR_GTE = 11,
     EXPR_EQ  = 12,
-    EXPR_SUP = 13, /* ( expr ) */
-    EXPR_COND = 14, /* expr ? expr : expr */
-    EXPR_CALL = 15, /* ID ( expr_list) */
-    EXPR_FUNC = 16  /* func ID ( ... ) */
+    EXPR_NEQ = 13,
+    EXPR_SUP = 14, /* ( expr ) */
+    EXPR_COND = 15, /* expr ? expr : expr */
+    EXPR_CALL = 16, /* ID ( expr_list) */
+    EXPR_FUNC = 17  /* func ID ( ... ) */
 } expr_type;
 
 typedef enum comb_type

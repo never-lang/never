@@ -122,6 +122,7 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
         case EXPR_LTE:
         case EXPR_GTE:
         case EXPR_EQ:
+        case EXPR_NEQ:
             expr_gencode(syn_level, func_value, value->left, result);
             expr_gencode(syn_level, func_value, value->right, result);
         break;
@@ -247,6 +248,7 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
         case EXPR_LTE:
         case EXPR_GTE:
         case EXPR_EQ:
+        case EXPR_NEQ:
             func_gencode_freevars_expr(func_value, value->left, result);
             func_gencode_freevars_expr(func_value, value->right, result);
         break;
@@ -685,6 +687,12 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             bc.type = BYTECODE_OP_EQ;
             bytecode_add(code, &bc);
         break;
+        case EXPR_NEQ:
+            expr_emit(value->right, stack_level, code, result);
+            expr_emit(value->left, stack_level + 1, code, result);
+
+            bc.type = BYTECODE_OP_NEQ;
+            bytecode_add(code, &bc);
         break;
         case EXPR_SUP:
             expr_emit(value->left, stack_level, code, result);

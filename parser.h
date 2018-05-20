@@ -54,7 +54,8 @@ extern int yydebug;
     TOK_LTE = 264,
     TOK_GTE = 265,
     TOK_EQ = 266,
-    NEG = 267
+    TOK_NEQ = 267,
+    NEG = 268
   };
 #endif
 
