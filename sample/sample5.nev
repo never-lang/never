@@ -1,13 +1,13 @@
 
 
-func min(float a, float b) -> float
+func cos(float d) -> float
 {
-    return (a < b) ? a : b;
+    return 2 * d;
 }
 
 func main() -> float
 {
-    return min(30, 2 + 2 * 2);
+    return cos(45);
 }
 
 

@@ -50,7 +50,7 @@ int execute(bytecode * code_arr, unsigned int code_size)
         return 0;
     }
         
-    /* bytecode_array_print(code_arr, code_size); */
+    bytecode_array_print(code_arr, code_size);
 
     machine = vm_new(VM_MEM_SIZE, VM_STACK_SIZE);
         
