@@ -115,6 +115,19 @@ expr * expr_new_call(expr * func_expr, expr_list * vars)
     return ret;
 }
 
+expr * expr_new_build_in(unsigned int func_build_in_id, expr * func_build_in_param)
+{
+    expr * ret = (expr *) malloc(sizeof(expr));
+    
+    ret->type = EXPR_BUILD_IN;
+    ret->line_no = 0;
+    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->func_build_in_id = func_build_in_id;
+    ret->func_build_in_param = func_build_in_param;
+    
+    return ret;
+}
+
 void expr_delete(expr * value)
 {
     switch (value->type)
@@ -162,6 +175,12 @@ void expr_delete(expr * value)
             if (value->func_value)
             {
                 func_delete(value->func_value);
+            }
+        break;
+        case EXPR_BUILD_IN:
+            if (value->func_build_in_param != NULL)
+            {
+                expr_delete(value->func_build_in_param);
             }
         break;
     }

@@ -79,6 +79,7 @@ void vm_execute_mark(vm * machine, bytecode * code);
 void vm_execute_call(vm * machine, bytecode * code);
 void vm_execute_ret(vm * machine, bytecode * code);
 void vm_execute_line(vm * machine, bytecode * code);
+void vm_execute_build_in(vm * machine, bytecode * code);
 void vm_execute_halt(vm * machine, bytecode * code);
 
 void vm_check_stack(vm * machine);

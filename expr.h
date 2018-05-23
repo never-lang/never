@@ -24,6 +24,8 @@
 
 #include "freevar.h"
 
+typedef float func_float_float(float x);
+
 typedef enum expr_type
 {
     EXPR_FLOAT = 1,
@@ -42,7 +44,8 @@ typedef enum expr_type
     EXPR_SUP = 14, /* ( expr ) */
     EXPR_COND = 15, /* expr ? expr : expr */
     EXPR_CALL = 16, /* ID ( expr_list) */
-    EXPR_FUNC = 17  /* func ID ( ... ) */
+    EXPR_FUNC = 17,  /* func ID ( ... ) */
+    EXPR_BUILD_IN = 18
 } expr_type;
 
 typedef enum comb_type
@@ -102,6 +105,11 @@ typedef struct expr
             struct expr * func_expr; /* EXPR_CALL */
             struct expr_list * vars;
         };
+        struct
+        {
+            unsigned int func_build_in_id; /* EXPR_BLD_FUNC_FUNC */
+            struct expr * func_build_in_param;
+        };
     };
 } expr;
 
@@ -126,6 +134,7 @@ expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * expr_right);
 expr * expr_new_func(func * value); 
 expr * expr_new_call(expr * func_expr, expr_list * vars);
+expr * expr_new_build_in(unsigned int func_build_in_id, expr * func_build_in_param);
 
 void expr_delete(expr * value);
 

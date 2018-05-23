@@ -52,6 +52,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_CALL, bytecode_print_call },
     { BYTECODE_RET, bytecode_print_ret },
     { BYTECODE_LINE, bytecode_print_line },
+    { BYTECODE_BUILD_IN, bytecode_print_build_in },
     { BYTECODE_HALT, bytecode_print_halt }
 };
 
@@ -192,6 +193,11 @@ void bytecode_print_ret(bytecode * code)
 void bytecode_print_line(bytecode * code)
 {
     printf("%d: line %u\n", code->addr, code->line.no);
+}
+
+void bytecode_print_build_in(bytecode * code)
+{
+    printf("%d: build in id %u\n", code->addr, code->build_in.id);
 }
 
 void bytecode_print_halt(bytecode * code)

@@ -31,6 +31,7 @@
 #include "bytecode.h"
 #include "vm.h"
 #include "utils.h"
+#include "libmath.h"
 
 #define VM_MEM_SIZE 5000
 #define VM_STACK_SIZE 200
@@ -50,7 +51,7 @@ int execute(bytecode * code_arr, unsigned int code_size)
         return 0;
     }
         
-    bytecode_array_print(code_arr, code_size);
+    /* bytecode_array_print(code_arr, code_size); */
 
     machine = vm_new(VM_MEM_SIZE, VM_STACK_SIZE);
         
@@ -86,7 +87,11 @@ int parse_and_exec(char * file_name)
     yyparse(&nev);
     if (parse_result == 0)
     {
-        int ret = never_sem_check(nev);
+        int ret;
+        
+        libmath_add_funcs(nev->funcs);
+        
+        ret = never_sem_check(nev);
         if (ret == 0)
         {
             bytecode_list * code;

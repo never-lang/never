@@ -430,6 +430,13 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             }
         }
         break;
+        case EXPR_BUILD_IN:
+            expr_check_type(tab, value->func_build_in_param, result);
+            if (value->func_build_in_param->comb == COMB_TYPE_FLOAT)
+            {
+                value->comb = COMB_TYPE_FLOAT;
+            }
+        break;
     }
     return 0;
 }
@@ -617,6 +624,9 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
                 symtab_add_entry_func(stab, value->func_value, result);
             }
         break;
+        case EXPR_BUILD_IN:
+            symtab_add_entry_expr(stab, value->func_build_in_param, result);
+        break;
     }
     return 0;
 }
@@ -740,6 +750,9 @@ int print_func_expr(expr * value, int depth)
             {
                 print_func(value->func_value, depth + 1);
             }
+        break;
+        case EXPR_BUILD_IN:
+            print_func_expr(value->func_build_in_param, depth + 1);
         break;
     }
     return 0;

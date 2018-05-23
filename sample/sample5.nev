@@ -1,13 +1,12 @@
 
-
-func cos(float d) -> float
+func calculate(float d) -> float
 {
-    return 2 * d;
+    return sin(d);
 }
 
 func main() -> float
 {
-    return cos(45);
+    return calculate(3.14159265359 / 4);
 }
 
 

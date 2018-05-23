@@ -148,6 +148,9 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
                 func_gencode(syn_level + 1, value->func_value, result);
             }
         break;
+        case EXPR_BUILD_IN:
+            expr_gencode(syn_level, func_value, value->func_build_in_param, result);
+        break;
     }
     return 0;
 }
@@ -273,6 +276,9 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
             {
                 func_gencode_freevars_func(func_value, value->func_value, result);
             }
+        break;
+        case EXPR_BUILD_IN:
+            func_gencode_freevars_expr(func_value, value->func_build_in_param, result);
         break;
     }
 
@@ -710,6 +716,13 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
                 expr_id_func_emit(value->func_value, stack_level, code, result);
             }
         break;
+        case EXPR_BUILD_IN:
+            expr_emit(value->func_build_in_param, stack_level, code, result);
+            
+            bc.type = BYTECODE_BUILD_IN;
+            bc.build_in.id = value->func_build_in_id;
+            bytecode_add(code, &bc);
+        break;
     }
     return 0;
 }
@@ -739,9 +752,12 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code, int * re
     bc.type = BYTECODE_FUNC_DEF;
     bytecode_add(code, &bc);
 
-    bc.type = BYTECODE_LINE;
-    bc.line.no = func_value->line_no;
-    bytecode_add(code, &bc);
+    if (func_value->line_no > 0)
+    {
+        bc.type = BYTECODE_LINE;
+        bc.line.no = func_value->line_no;
+        bytecode_add(code, &bc);
+    }
     
     if (func_value->body && func_value->body->funcs)
     {
@@ -767,9 +783,12 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code, int * re
             vars = func_value->vars->count;
         }
         
-        bc.type = BYTECODE_LINE;
-        bc.line.no = func_value->body->ret->line_no;
-        bytecode_add(code, &bc);
+        if (bc.line.no > 0)
+        {
+            bc.type = BYTECODE_LINE;
+            bc.line.no = func_value->body->ret->line_no;
+            bytecode_add(code, &bc);
+        }
 
         bc.type = BYTECODE_RET;
         bc.ret.count = vars;
