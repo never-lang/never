@@ -41,7 +41,7 @@ expr * expr_new_id(char * id)
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = EXPR_ID;
-    ret->id = id;
+    ret->id.id = id;
     ret->comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
     
@@ -115,15 +115,15 @@ expr * expr_new_call(expr * func_expr, expr_list * vars)
     return ret;
 }
 
-expr * expr_new_build_in(unsigned int func_build_in_id, expr * func_build_in_param)
+expr * expr_new_build_in(unsigned int id, expr * param)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
     ret->type = EXPR_BUILD_IN;
     ret->line_no = 0;
     ret->comb = COMB_TYPE_UNKNOWN;
-    ret->func_build_in_id = func_build_in_id;
-    ret->func_build_in_param = func_build_in_param;
+    ret->func_build_in.id = id;
+    ret->func_build_in.param = param;
     
     return ret;
 }
@@ -135,7 +135,7 @@ void expr_delete(expr * value)
         case EXPR_FLOAT:
         break;
         case EXPR_ID:
-            free(value->id);
+            free(value->id.id);
         break;
         case EXPR_NEG:
             expr_delete(value->left);
@@ -178,9 +178,9 @@ void expr_delete(expr * value)
             }
         break;
         case EXPR_BUILD_IN:
-            if (value->func_build_in_param != NULL)
+            if (value->func_build_in.param != NULL)
             {
-                expr_delete(value->func_build_in_param);
+                expr_delete(value->func_build_in.param);
             }
         break;
     }

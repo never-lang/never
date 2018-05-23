@@ -36,7 +36,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
 {
     symtab_entry * entry = NULL;
     
-    entry = symtab_lookup(func_value->stab, value->id, SYMTAB_NESTED);
+    entry = symtab_lookup(func_value->stab, value->id.id, SYMTAB_NESTED);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
@@ -46,8 +46,8 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             {
                 if (syn_level == entry->syn_level || entry->syn_level == 0)
                 {
-                    value->id_type_value = ID_TYPE_FUNC;
-                    value->id_func_value = sup_func_value;
+                    value->id.id_type_value = ID_TYPE_FUNC;
+                    value->id.id_func_value = sup_func_value;
                 }
                 else
                 {
@@ -57,10 +57,10 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
                         func_value->freevars = freevar_list_new();
                     }
                     
-                    freevar_value = freevar_list_add(func_value->freevars, value->id);
+                    freevar_value = freevar_list_add(func_value->freevars, value->id.id);
                 
-                    value->id_type_value = ID_TYPE_GLOBAL;
-                    value->id_freevar_value = freevar_value;
+                    value->id.id_type_value = ID_TYPE_GLOBAL;
+                    value->id.id_freevar_value = freevar_value;
                 }
             }
         }
@@ -71,8 +71,8 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             {
                 if (syn_level == entry->syn_level)
                 {
-                    value->id_type_value = ID_TYPE_LOCAL;
-                    value->id_var_value = var_value;
+                    value->id.id_type_value = ID_TYPE_LOCAL;
+                    value->id.id_var_value = var_value;
                 }
                 else
                 {
@@ -82,10 +82,10 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
                         func_value->freevars = freevar_list_new();
                     }
                     
-                    freevar_value = freevar_list_add(func_value->freevars, value->id);
+                    freevar_value = freevar_list_add(func_value->freevars, value->id.id);
                 
-                    value->id_type_value = ID_TYPE_GLOBAL;
-                    value->id_freevar_value = freevar_value;
+                    value->id.id_type_value = ID_TYPE_GLOBAL;
+                    value->id.id_freevar_value = freevar_value;
                 }
             }
         }
@@ -149,7 +149,7 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
             }
         break;
         case EXPR_BUILD_IN:
-            expr_gencode(syn_level, func_value, value->func_build_in_param, result);
+            expr_gencode(syn_level, func_value, value->func_build_in.param, result);
         break;
     }
     return 0;
@@ -278,7 +278,7 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
             }
         break;
         case EXPR_BUILD_IN:
-            func_gencode_freevars_expr(func_value, value->func_build_in_param, result);
+            func_gencode_freevars_expr(func_value, value->func_build_in.param, result);
         break;
     }
 
@@ -499,7 +499,7 @@ int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, 
  
 int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
-    switch (value->id_type_value)
+    switch (value->id.id_type_value)
     {
         case ID_TYPE_UNKNOWN:
             print_error_msg(value->line_no, "not recognized id, at this stage it is very bad\n");
@@ -511,7 +511,7 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * resu
             
             bc.type = BYTECODE_ID_LOCAL;
             bc.id_local.stack_level = stack_level;
-            bc.id_local.index = value->id_var_value->index;
+            bc.id_local.index = value->id.id_var_value->index;
         
             bytecode_add(code, &bc);
         }
@@ -521,15 +521,15 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * resu
             bytecode bc = { 0 };
             
             bc.type = BYTECODE_ID_GLOBAL;
-            bc.id_global.index = value->id_freevar_value->index;
+            bc.id_global.index = value->id.id_freevar_value->index;
 
             bytecode_add(code, &bc);        
         }
         break;
         case ID_TYPE_FUNC:
-            if (value->id_func_value != NULL)
+            if (value->id.id_func_value != NULL)
             {
-                expr_id_func_emit(value->id_func_value, stack_level, code, result);
+                expr_id_func_emit(value->id.id_func_value, stack_level, code, result);
             }
         break;
     }
@@ -717,10 +717,10 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             }
         break;
         case EXPR_BUILD_IN:
-            expr_emit(value->func_build_in_param, stack_level, code, result);
+            expr_emit(value->func_build_in.param, stack_level, code, result);
             
             bc.type = BYTECODE_BUILD_IN;
-            bc.build_in.id = value->func_build_in_id;
+            bc.build_in.id = value->func_build_in.id;
             bytecode_add(code, &bc);
         break;
     }

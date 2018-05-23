@@ -188,7 +188,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(tab, value->id, SYMTAB_NESTED);
+    entry = symtab_lookup(tab, value->id.id, SYMTAB_NESTED);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
@@ -431,8 +431,8 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         }
         break;
         case EXPR_BUILD_IN:
-            expr_check_type(tab, value->func_build_in_param, result);
-            if (value->func_build_in_param->comb == COMB_TYPE_FLOAT)
+            expr_check_type(tab, value->func_build_in.param, result);
+            if (value->func_build_in.param->comb == COMB_TYPE_FLOAT)
             {
                 value->comb = COMB_TYPE_FLOAT;
             }
@@ -625,7 +625,7 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
             }
         break;
         case EXPR_BUILD_IN:
-            symtab_add_entry_expr(stab, value->func_build_in_param, result);
+            symtab_add_entry_expr(stab, value->func_build_in.param, result);
         break;
     }
     return 0;
@@ -752,7 +752,7 @@ int print_func_expr(expr * value, int depth)
             }
         break;
         case EXPR_BUILD_IN:
-            print_func_expr(value->func_build_in_param, depth + 1);
+            print_func_expr(value->func_build_in.param, depth + 1);
         break;
     }
     return 0;
