@@ -188,6 +188,7 @@ To make Never useful for any purpose it supports a few built in matematical func
 sin, cos, tan, exp, log, sqrt and pow. These functions are also first class, so you may pass them in between functions
 as any other.
 
-
+## Contact
+If you find it useful for any purpose, I will be glad to hear from you.
 
 
