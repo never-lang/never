@@ -448,7 +448,9 @@ void vm_execute_build_in(vm * machine, bytecode * code)
 
     if (fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW))
     {
-        print_error_msg(machine->line_no, "an error occurred in the mathematical function\n");
+        print_error_msg(machine->line_no,
+                        "an error occurred in build in function %s\n",
+                        libmath_func_to_str(code->build_in.id));
         machine->running = VM_ERROR;
         return;        
     }

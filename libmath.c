@@ -120,4 +120,20 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_pow_new());
 }
 
+const char * libmath_func_to_str(libmath_func math_id)
+{
+    switch (math_id)
+    {
+        case LIB_MATH_UNKNOWN: return "unknown";
+        case LIB_MATH_SIN: return "sin";
+        case LIB_MATH_COS: return "cos";
+        case LIB_MATH_TAN: return "tan";
+        case LIB_MATH_EXP: return "exp";
+        case LIB_MATH_LOG: return "log";
+        case LIB_MATH_SQRT: return "sqrt";
+        case LIB_MATH_POW: return "pow";
+    }
+    return "unknown";
+}
+
 

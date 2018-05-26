@@ -34,5 +34,7 @@ func * libmath_func_sqrt_new();
 
 void libmath_add_funcs(func_list * funcs);
 
+const char * libmath_func_to_str(libmath_func math_id);
+
 #endif /* __LIBMATH_H__ */
 

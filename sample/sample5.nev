@@ -4,14 +4,14 @@ func deg2rad(float deg) -> float
     return deg * 3.14159265359 / 180;
 }
 
-func trig() -> (float) -> float
+func get_func() -> (float) -> float
 {
     return cos;
 }
 
 func main() -> float
 {
-    return trig()(deg2rad(30));
+    return get_func()(deg2rad(60));
 }
 
 
