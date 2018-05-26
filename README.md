@@ -64,14 +64,14 @@ func cel2fah(float c) -> float
     return c * 1.8 + 32;
 }
 
-func dirDeg(float d) -> (float) -> float
+func dir_deg(float d) -> (float) -> float
 {
     return d == 0 ? fah2cel : cel2fah;
 }
 
 func main() -> float
 {
-    return dirDeg(1)(100);
+    return dir_deg(1)(100);
 }
 ```
 
@@ -182,6 +182,11 @@ func main() -> float
 }
 
 ```
+
+## Mathematical functions
+To make Never useful for any purpose it supports a few built in matematical functions -
+sin, cos, tan, exp, log, sqrt and pow. These functions are also first class, so you may pass them in between functions
+as any other.
 
 
 
