@@ -1,0 +1,12 @@
+
+func dir_deg(float d) -> (float) -> float
+{
+    return d == 0 ? func fah2cel(float f) -> float { return (f - 32) / 1.8; }
+                  : func cel2fah(float c) -> float { return c * 1.8 + 32; };
+}
+
+func main() -> float
+{
+    return dir_deg(0)(100);
+}
+
