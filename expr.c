@@ -115,7 +115,7 @@ expr * expr_new_call(expr * func_expr, expr_list * vars)
     return ret;
 }
 
-expr * expr_new_build_in(unsigned int id, expr * param)
+expr * expr_new_build_in(unsigned int id, expr_list * params)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
@@ -123,7 +123,7 @@ expr * expr_new_build_in(unsigned int id, expr * param)
     ret->line_no = 0;
     ret->comb = COMB_TYPE_UNKNOWN;
     ret->func_build_in.id = id;
-    ret->func_build_in.param = param;
+    ret->func_build_in.param = params;
     
     return ret;
 }
@@ -180,7 +180,7 @@ void expr_delete(expr * value)
         case EXPR_BUILD_IN:
             if (value->func_build_in.param != NULL)
             {
-                expr_delete(value->func_build_in.param);
+                expr_list_delete(value->func_build_in.param);
             }
         break;
     }

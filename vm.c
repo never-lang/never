@@ -437,6 +437,13 @@ void vm_execute_build_in(vm * machine, bytecode * code)
         case LIB_MATH_SQRT:
             value = sqrtf(x);
         break;
+        case LIB_MATH_POW:
+        {
+            float y = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+            value = powf(x, y);
+            machine->sp--;
+        }
+        break;
     }
 
     if (fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW))

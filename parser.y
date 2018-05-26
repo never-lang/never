@@ -17,7 +17,7 @@ int yylex(token * tokp)
 int yyerror(never ** nev, char * str)
 {
     parse_result = 1;
-    print_error_msg(line_no, str);
+    print_error_msg(line_no, "%s\n", str);
     
     return 1;
 }
@@ -244,7 +244,7 @@ func: TOK_FUNC TOK_ID '(' var_list ')' TOK_RET var func_body
 
 func: TOK_FUNC TOK_ID error
 {
-    print_error_msg(line_no, "error in function %s defined at %d", $2, $<line_no>2);
+    print_error_msg(line_no, "error in function %s defined at %d\n", $2, $<line_no>2);
     free($2);
     
     yyclearin;

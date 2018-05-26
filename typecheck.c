@@ -125,7 +125,6 @@ int func_cmp(var_list * var_list_one, var * ret_one,
 
 int var_expr_cmp(var * var_value, expr * expr_value)
 {
-
     if (var_value == NULL && expr_value == NULL)
     {
         return TYPECHECK_SUCC;
@@ -217,7 +216,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     else
     {                    
         *result = TYPECHECK_FAIL;
-        print_error_msg(value->line_no, "cannot find variable %s\n", value->id);
+        print_error_msg(value->line_no, "cannot find variable %s\n", value->id.id);
     }
     return 0;
 }
@@ -431,11 +430,8 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         }
         break;
         case EXPR_BUILD_IN:
-            expr_check_type(tab, value->func_build_in.param, result);
-            if (value->func_build_in.param->comb == COMB_TYPE_FLOAT)
-            {
-                value->comb = COMB_TYPE_FLOAT;
-            }
+            expr_list_check_type(tab, value->func_build_in.param, result);
+            value->comb = COMB_TYPE_FLOAT;
         break;
     }
     return 0;
@@ -625,7 +621,7 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
             }
         break;
         case EXPR_BUILD_IN:
-            symtab_add_entry_expr(stab, value->func_build_in.param, result);
+             symtab_add_entry_expr_list(stab, value->func_build_in.param, result);
         break;
     }
     return 0;
@@ -752,7 +748,7 @@ int print_func_expr(expr * value, int depth)
             }
         break;
         case EXPR_BUILD_IN:
-            print_func_expr(value->func_build_in.param, depth + 1);
+            print_func_expr_list(value->func_build_in.param, depth + 1);
         break;
     }
     return 0;

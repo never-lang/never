@@ -1,12 +1,17 @@
 
-func calculate(float d) -> float
+func deg2rad(float deg) -> float
 {
-    return sin(d);
+    return deg * 3.14159265359 / 180;
+}
+
+func trig() -> (float) -> float
+{
+    return cos;
 }
 
 func main() -> float
 {
-    return calculate(3.14159265359 / 4);
+    return trig()(deg2rad(30));
 }
 
 

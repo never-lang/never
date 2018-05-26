@@ -149,7 +149,7 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
             }
         break;
         case EXPR_BUILD_IN:
-            expr_gencode(syn_level, func_value, value->func_build_in.param, result);
+            expr_list_gencode(syn_level, func_value, value->func_build_in.param, result);
         break;
     }
     return 0;
@@ -278,7 +278,7 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
             }
         break;
         case EXPR_BUILD_IN:
-            func_gencode_freevars_expr(func_value, value->func_build_in.param, result);
+            func_gencode_freevars_expr_list(func_value, value->func_build_in.param, result);
         break;
     }
 
@@ -717,7 +717,7 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             }
         break;
         case EXPR_BUILD_IN:
-            expr_emit(value->func_build_in.param, stack_level, code, result);
+            expr_list_emit(value->func_build_in.param, stack_level, code, result);
             
             bc.type = BYTECODE_BUILD_IN;
             bc.build_in.id = value->func_build_in.id;

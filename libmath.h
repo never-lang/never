@@ -6,15 +6,24 @@
 typedef enum libmath_func
 {
     LIB_MATH_UNKNOWN = 0,
-    LIB_MATH_SIN = 1,
-    LIB_MATH_COS = 2,
-    LIB_MATH_TAN = 3,
-    LIB_MATH_EXP = 4,
-    LIB_MATH_LOG = 5,
-    LIB_MATH_SQRT = 6
+    LIB_MATH_SIN,
+    LIB_MATH_COS,
+    LIB_MATH_TAN,
+    LIB_MATH_EXP,
+    LIB_MATH_LOG,
+    LIB_MATH_SQRT,
+    LIB_MATH_POW,
 } libmath_func;
 
-func * libmath_func_any_new(const char * name, libmath_func id);
+var_list * vars_x();
+var_list * vars_x_y();
+expr_list * params_x();
+expr_list * params_x_y();
+
+func * lib_math_func_any_new(const char * name, libmath_func math_id,
+                             var_list * vars, expr_list * params);
+func * libmath_func_x_new(const char * name, libmath_func id);
+func * libmath_func_x_y_new(const char * name, libmath_func id);
 
 func * libmath_func_sin_new();
 func * libmath_func_cos_new();

@@ -81,7 +81,7 @@ int yylex(token * tokp)
 int yyerror(never ** nev, char * str)
 {
     parse_result = 1;
-    print_error_msg(line_no, str);
+    print_error_msg(line_no, "%s\n", str);
     
     return 1;
 }
@@ -1619,7 +1619,7 @@ yyreduce:
   case 32:
 #line 246 "parser.y" /* yacc.c:1646  */
     {
-    print_error_msg(line_no, "error in function %s defined at %d", (yyvsp[-1].val.str_value), (yyvsp[-1].line_no));
+    print_error_msg(line_no, "error in function %s defined at %d\n", (yyvsp[-1].val.str_value), (yyvsp[-1].line_no));
     free((yyvsp[-1].val.str_value));
     
     yyclearin;
