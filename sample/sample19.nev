@@ -1,0 +1,9 @@
+func main() -> float
+{
+     func fib(float n) -> float
+     {
+         return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
+     }
+     return fib(7);
+}
+

@@ -44,7 +44,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             func * sup_func_value = entry->func_value;
             if (sup_func_value)
             {
-                if (syn_level == entry->syn_level || entry->syn_level == 0)
+                if (syn_level == entry->syn_level ||
+                    syn_level == entry->syn_level + 1 ||
+                    entry->syn_level == 0)
                 {
                     value->id.id_type_value = ID_TYPE_FUNC;
                     value->id.id_func_value = sup_func_value;
@@ -364,7 +366,7 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
 
     if (func_value->body && func_value->body->funcs)
     {
-        func_list_gencode(syn_level + 1, func_value->body->funcs, result);
+        func_list_gencode(syn_level, func_value->body->funcs, result);
     }
     if (func_value->body && func_value->body->ret)
     {
@@ -385,7 +387,7 @@ int func_list_gencode(unsigned int syn_level, func_list * list, int * result)
         func * func_value = node->value;
         if (func_value)
         {
-            func_gencode(syn_level, func_value, result);
+            func_gencode(syn_level + 1, func_value, result);
         }
         node = node->next;
     }
@@ -403,7 +405,7 @@ int never_gencode(never * nev)
         {
             symtab_set_syn_level(nev->stab, syn_level);
         }
-        func_list_gencode(syn_level + 1, nev->funcs, &gencode_res);
+        func_list_gencode(syn_level, nev->funcs, &gencode_res);
     }
     
     return gencode_res;
@@ -431,7 +433,7 @@ int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * 
     switch (value->type)
     {
         case FREEVAR_UNKNOWN:
-            print_error_msg(0, "unknown freevar during emit\n");
+            print_error_msg(0, "unknown freevar %s during emit\n", value->id);
             assert(0);
         break;
         case FREEVAR_LOCAL:
