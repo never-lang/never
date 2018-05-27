@@ -1,0 +1,15 @@
+func calc(float coeff, float n) -> float
+{
+     func fib(float n) -> float
+     {
+         return ((n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)) * coeff;
+     }
+     
+     return fib(n);
+}
+
+func main() -> float
+{
+     return calc(2, 7);
+}
+
