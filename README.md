@@ -201,6 +201,19 @@ Réaumur degrees to Celsius degrees.
 
 The idea of in-lining functions may be taken into extreme...
 ```
+func calc() -> (float) -> float
+{
+    return func fah2cel(float f) -> float { return (f - 32) / 1.8; };
+}
+
+func main() -> float
+{
+    return calc()(212.0);
+}
+```
+... and a little step further.
+
+```
 func dir_deg(float d) -> (float) -> float
 {
     return d == 0 ? func fah2cel(float f) -> float { return (f - 32) / 1.8; }
@@ -210,20 +223,6 @@ func dir_deg(float d) -> (float) -> float
 func main() -> float
 {
     return dir_deg(0)(100);
-}
-```
-... and a little step further.
-
-```
-func dir_deg(float d, float degree) -> float
-{
-    return (d == 0 ? func fah2cel(float f) -> float { return (f - 32) / 1.8; }
-                   : func cel2fah(float c) -> float { return c * 1.8 + 32; })(degree);
-}
-
-func main() -> float
-{
-    return dir_deg(0, 100);
 }
 
 ```
