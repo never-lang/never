@@ -67,6 +67,7 @@ void vm_execute_op_add(vm * machine, bytecode * code);
 void vm_execute_op_sub(vm * machine, bytecode * code);
 void vm_execute_op_mul(vm * machine, bytecode * code);
 void vm_execute_op_div(vm * machine, bytecode * code);
+void vm_execute_op_mod(vm * machine, bytecode * code);
 void vm_execute_op_lt(vm * machine, bytecode * code);
 void vm_execute_op_gt(vm * machine, bytecode * code);
 void vm_execute_op_lte(vm * machine, bytecode * code);

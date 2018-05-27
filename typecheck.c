@@ -338,6 +338,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         case EXPR_SUB:
         case EXPR_MUL:
         case EXPR_DIV:
+        case EXPR_MOD:
         {
             expr_check_type(tab, value->left, result);
             expr_check_type(tab, value->right, result);
@@ -590,6 +591,7 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
         case EXPR_SUB:
         case EXPR_MUL:
         case EXPR_DIV:
+        case EXPR_MOD:
         case EXPR_LT:
         case EXPR_GT:
         case EXPR_LTE:
@@ -717,6 +719,7 @@ int print_func_expr(expr * value, int depth)
         case EXPR_SUB:
         case EXPR_MUL:
         case EXPR_DIV:
+        case EXPR_MOD:
         case EXPR_LT:
         case EXPR_GT:
         case EXPR_LTE:

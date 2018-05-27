@@ -44,6 +44,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_SUB, vm_execute_op_sub },
     { BYTECODE_OP_MUL, vm_execute_op_mul },
     { BYTECODE_OP_DIV, vm_execute_op_div },
+    { BYTECODE_OP_MOD, vm_execute_op_mod },
     { BYTECODE_OP_LT, vm_execute_op_lt },
     { BYTECODE_OP_GT, vm_execute_op_gt },
     { BYTECODE_OP_LTE, vm_execute_op_lte },
@@ -239,6 +240,29 @@ void vm_execute_op_div(vm * machine, bytecode * code)
     }
 
     addr = gc_alloc_float(machine->collector, a / b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_mod(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    float a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float b = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr addr = 0;
+
+    if (b == 0)
+    {
+        print_error_msg(machine->line_no, "cannot divide by zero\n");
+        machine->running = VM_ERROR;
+        return;
+    }
+
+    addr = gc_alloc_float(machine->collector, a % b);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;

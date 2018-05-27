@@ -38,6 +38,7 @@ typedef enum bytecode_type
     BYTECODE_OP_SUB,
     BYTECODE_OP_MUL,
     BYTECODE_OP_DIV,
+    BYTECODE_OP_MOD,
     BYTECODE_OP_LT,
     BYTECODE_OP_GT,
     BYTECODE_OP_LTE,
@@ -140,6 +141,7 @@ void bytecode_print_op_add(bytecode * code);
 void bytecode_print_op_sub(bytecode * code);
 void bytecode_print_op_mul(bytecode * code);
 void bytecode_print_op_div(bytecode * code);
+void bytecode_print_op_mod(bytecode * code);
 void bytecode_print_op_lt(bytecode * code);
 void bytecode_print_op_gt(bytecode * code);
 void bytecode_print_op_lte(bytecode * code);

@@ -35,17 +35,18 @@ typedef enum expr_type
     EXPR_SUB = 5,
     EXPR_MUL = 6,
     EXPR_DIV = 7,
-    EXPR_LT  = 8,
-    EXPR_GT  = 9,
-    EXPR_LTE = 10,
-    EXPR_GTE = 11,
-    EXPR_EQ  = 12,
-    EXPR_NEQ = 13,
-    EXPR_SUP = 14, /* ( expr ) */
-    EXPR_COND = 15, /* expr ? expr : expr */
-    EXPR_CALL = 16, /* ID ( expr_list) */
-    EXPR_FUNC = 17,  /* func ID ( ... ) */
-    EXPR_BUILD_IN = 18
+    EXPR_MOD = 8,
+    EXPR_LT  = 9,
+    EXPR_GT  = 10,
+    EXPR_LTE = 11,
+    EXPR_GTE = 12,
+    EXPR_EQ  = 13,
+    EXPR_NEQ = 14,
+    EXPR_SUP = 15, /* ( expr ) */
+    EXPR_COND = 16, /* expr ? expr : expr */
+    EXPR_CALL = 17, /* ID ( expr_list) */
+    EXPR_FUNC = 18,  /* func ID ( ... ) */
+    EXPR_BUILD_IN = 19
 } expr_type;
 
 typedef enum comb_type
