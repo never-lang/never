@@ -34,3 +34,4 @@ include .deps
 .PHONY: clean
 clean:
 	@rm -f $(OBJ) nev
+

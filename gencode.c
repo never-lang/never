@@ -44,9 +44,6 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             func * sup_func_value = entry->func_value;
             if (sup_func_value)
             {
-                /* printf("%s %s %u %u\n", func_value->id, value->id.id, syn_level, entry->syn_level); */
-                /* printf("%p %p %d\n", func_value, sup_func_value, func_value == sup_func_value ? 1 : 0); */
-            
                 if (syn_level == entry->syn_level || entry->syn_level == 0)
                 {
                     value->id.id_type_value = ID_TYPE_FUNC;
