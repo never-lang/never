@@ -1,2 +1,7 @@
 *~
 *.o
+
+# generated
+nev
+nev.dSYM/
+scanner.c

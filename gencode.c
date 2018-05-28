@@ -44,12 +44,15 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             func * sup_func_value = entry->func_value;
             if (sup_func_value)
             {
+                /* printf("%s %s %u %u\n", func_value->id, value->id.id, syn_level, entry->syn_level); */
+                /* printf("%p %p %d\n", func_value, sup_func_value, func_value == sup_func_value ? 1 : 0); */
+            
                 if (syn_level == entry->syn_level || entry->syn_level == 0)
                 {
                     value->id.id_type_value = ID_TYPE_FUNC;
                     value->id.id_func_value = sup_func_value;
                 }
-                else if (syn_level == entry->syn_level + 1)
+                else if (func_value == sup_func_value) /* recursive call */
                 {
                     value->id.id_type_value = ID_TYPE_FUNC_NEST;
                     value->id.id_func_value = sup_func_value;
@@ -486,10 +489,10 @@ int expr_id_func_nest_freevar_emit(freevar * value, int stack_level, bytecode_li
             bytecode_add(code, &bc);
         break;
         case FREEVAR_FUNC:
-            if (value != NULL)
-            {
-                expr_id_func_nest_emit(value->func_value, stack_level, code, result);
-            }
+            bc.type = BYTECODE_ID_GLOBAL;
+            bc.id_global.index = value->index;
+
+            bytecode_add(code, &bc);
         break;
     }
 
