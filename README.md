@@ -172,7 +172,7 @@ func main() -> float
 
 The above listing demonstrates how parameter ```coeff``` is accessed from
 within functions ```fah2cel``` or ```cel2fah```. After ```dir_def```
-is called in ```main``` parameter ```coeff`` is bound to ```dir_deg```
+is called in ```main``` parameter ```coeff``` is bound to ```dir_deg```
 environment. This way ```coeff``` can be used in functions which convert
 temperature after ```dir_deg``` returns.
 
