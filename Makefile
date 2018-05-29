@@ -9,6 +9,16 @@ OBJ=$(SRC:.c=.o)
 
 nev: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o typecheck.o gencode.o utils.o bytecode.o vm.o gc.o object.o nev.o libmath.o
 
+tests: test_object test_scanner test_symtab test_freevar test_vm test_gc test_libmath
+
+run_tests:
+	./test_object
+	./test_symtab
+	./test_freevar
+	./test_vm
+	./test_gc
+	./test_libmath
+
 test_object: object.o
 
 test_scanner: scanner.o
@@ -17,7 +27,7 @@ test_symtab: symtab.o var.o freevar.o func.o expr.o
 
 test_freevar: symtab.o var.o freevar.o func.o expr.o
 
-test_vm: vm.o gc.o object.o utils.o
+test_vm: vm.o gc.o object.o utils.o libmath.o expr.o var.o freevar.o func.o symtab.o
 
 test_gc: gc.o object.o
 

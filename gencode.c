@@ -25,7 +25,6 @@
 #include "symtab.h"
 #include "freevar.h"
 #include "utils.h"
-#include "typecheck.h"
 
  /* GP old, FP old, IP old */
 #define NUM_FRAME_PTRS 3

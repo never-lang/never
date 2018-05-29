@@ -4,7 +4,7 @@ freevar.o: freevar.c freevar.h var.h func.h expr.h symtab.h
 func.o: func.c func.h expr.h freevar.h var.h symtab.h
 gc.o: gc.c gc.h object.h
 gencode.o: gencode.c gencode.h never.h func.h expr.h freevar.h var.h \
- symtab.h bytecode.h utils.h typecheck.h
+ symtab.h bytecode.h utils.h
 libmath.o: libmath.c libmath.h func.h expr.h freevar.h var.h symtab.h
 nev.o: nev.c scanner.h types.h expr.h freevar.h var.h func.h symtab.h \
  never.h parser.h typecheck.h gencode.h bytecode.h vm.h object.h utils.h \
