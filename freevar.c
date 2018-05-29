@@ -32,6 +32,7 @@ freevar * freevar_new(char * id, int index)
     value->type = FREEVAR_UNKNOWN;
     value->id = id;
     value->index = index;
+    value->mark = 0;
     value->local_value = NULL;
     value->global_value = NULL;
     
@@ -139,6 +140,20 @@ void freevar_list_add_end(freevar_list * list, freevar * value)
         list->head->next = node;
         node->prev = list->head;
         list->head = node;
+    }
+}
+
+void freevar_list_zero_mark(freevar_list * list)
+{
+    freevar_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        freevar * value = node->value;
+        if (value != NULL)
+        {
+            value->mark = 0;
+        }
+        node = node->next;
     }
 }
 

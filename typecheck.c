@@ -769,7 +769,7 @@ int print_func_expr_list(expr_list * list, int depth)
     return 0;
 }
  
- int print_func(func * value, int depth)
+int print_func(func * value, int depth)
 {
     if (value->id != NULL)
     {

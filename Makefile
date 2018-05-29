@@ -7,7 +7,7 @@ BFLAGS=--report=solved --defines
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
 
-nev: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o typecheck.o gencode.o utils.o bytecode.o vm.o gc.o object.o nev.c libmath.o
+nev: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o typecheck.o gencode.o utils.o bytecode.o vm.o gc.o object.o nev.o libmath.o
 
 test_object: object.o
 

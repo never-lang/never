@@ -64,6 +64,7 @@ typedef struct func_list
 func * func_new(char * id, var_list * vars, var * ret, func_body * body);
 void func_delete(func * value);
 
+void func_freevar_zero_mark(func * value);
 void func_print(func * value);
 
 func_body * func_body_new(func_list * funcs, expr * ret);

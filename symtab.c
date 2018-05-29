@@ -223,6 +223,24 @@ void symtab_set_syn_level(symtab * tab, unsigned int syn_level)
     }
 }
 
+void symtab_func_mark_zero(symtab * tab)
+{
+    unsigned int i;
+    
+    for (i = 0; i < tab->size; i++)
+    {
+        if (tab->entries[i].type == SYMTAB_FUNC)
+        {
+            func_freevar_zero_mark(tab->entries[i].func_value);
+        }
+    }
+    
+    if (tab->parent != NULL)
+    {
+        symtab_func_mark_zero(tab->parent);
+    }
+}
+
 void symtab_print(symtab * tab)
 {
     unsigned int i;

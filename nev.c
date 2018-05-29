@@ -69,6 +69,7 @@ int execute(bytecode * code_arr, unsigned int code_size)
 
 int parse_and_exec(char * file_name)
 {
+    int ret = 0;
     never * nev = NULL;
     unsigned int code_size = 0;
     bytecode * code_arr = NULL;
@@ -85,30 +86,31 @@ int parse_and_exec(char * file_name)
     parse_result = 0;
 
     yyparse(&nev);
-    if (parse_result == 0)
+    if ((ret = parse_result) == 0)
     {
-        int ret;
-        
         libmath_add_funcs(nev->funcs);
         
         ret = never_sem_check(nev);
         if (ret == 0)
         {
-            bytecode_list * code;
-        
-            never_gencode(nev);
-            /* print_functions(nev); */
+            ret = never_gencode(nev);
+            if (ret == 0)
+            {
+                bytecode_list * code;
+
+                /* print_functions(nev); */
             
-            code = bytecode_new();
+                code = bytecode_new();
             
-            never_emit(nev, code);
+                never_emit(nev, code);
             
-            bytecode_func_addr(code);
-            /* bytecode_print(code); */
+                bytecode_func_addr(code);
+                /* bytecode_print(code); */
             
-            bytecode_to_array(code, &code_arr, &code_size);
+                bytecode_to_array(code, &code_arr, &code_size);
             
-            bytecode_delete(code);
+                bytecode_delete(code);
+            }
         }
     }
     
@@ -122,19 +124,21 @@ int parse_and_exec(char * file_name)
 
     execute(code_arr, code_size);
 
-    return 0;
+    return ret;
 }
 
 int main(int argc, char * argv[])
 {
+    int ret = 0;
+
     if (argc < 2)
     {
         printf("%s: no input files\n", argv[0]);
         return 1;
     }
     
-    parse_and_exec(argv[1]);
+    ret = parse_and_exec(argv[1]);
 
-    return 0;
+    return ret;
 }
 

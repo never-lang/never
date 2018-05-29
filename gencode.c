@@ -25,6 +25,7 @@
 #include "symtab.h"
 #include "freevar.h"
 #include "utils.h"
+#include "typecheck.h"
 
  /* GP old, FP old, IP old */
 #define NUM_FRAME_PTRS 3
@@ -49,7 +50,8 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
                     value->id.id_type_value = ID_TYPE_FUNC;
                     value->id.id_func_value = sup_func_value;
                 }
-                else if (func_value == sup_func_value) /* recursive call */
+                else if (syn_level == entry->syn_level + 1 &&
+                         func_value == sup_func_value) /* recursive call */
                 {
                     value->id.id_type_value = ID_TYPE_FUNC_NEST;
                     value->id.id_func_value = sup_func_value;
@@ -63,6 +65,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
                     }
                     
                     freevar_value = freevar_list_add(func_value->freevars, value->id.id);
+                
+                    freevar_value->type = FREEVAR_FUNC;
+                    freevar_value->func_value = sup_func_value;
                 
                     value->id.id_type_value = ID_TYPE_GLOBAL;
                     value->id.id_freevar_value = freevar_value;
@@ -356,6 +361,74 @@ int func_gencode_freevars(func * func_value, int * result)
     return 0;
 }
 
+/**
+ * check freevars
+ */
+int func_check_freevar(freevar * value, int * result)
+{
+    switch (value->type)
+    {
+        case FREEVAR_UNKNOWN:
+        case FREEVAR_LOCAL:
+        case FREEVAR_GLOBAL:
+        break;
+        case FREEVAR_FUNC:
+            if (value->mark == 1)
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->func_value->line_no,
+                                "found cyclic dependency in function %s\n",
+                                value->func_value->id);
+                return 0;
+            }
+            value->mark = 1;            
+            func_check_freevar_func(value->func_value, result);
+        break;
+    }
+    return 0;
+} 
+ 
+int func_check_freevar_list(freevar_list * list, int * result)
+{
+    freevar_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        freevar * value = node->value;
+        if (value != NULL)
+        {
+            func_check_freevar(value, result);
+        }
+        node = node->next;
+    }
+    return 0;
+} 
+ 
+int func_check_freevar_func(func * func_value, int * result)
+{
+    if (func_value->freevars != NULL)
+    {
+        func_check_freevar_list(func_value->freevars, result);
+    }
+
+    return 0;
+}
+
+int func_check_freevars(func * func_value, int * result)
+{
+    if (func_value->stab != NULL)
+    {
+        symtab_func_mark_zero(func_value->stab);
+    }
+    
+    func_check_freevar_func(func_value, result);
+
+    return 0;
+}
+
+/**
+ * end check freevars
+ */
+ 
 int func_gencode(unsigned int syn_level, func * func_value, int * result)
 {
     if (func_value->stab != NULL)
@@ -378,6 +451,10 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
     
     /** set subfunction local/global indexes **/
     func_gencode_freevars(func_value, result);
+    func_check_freevars(func_value, result);
+
+    /* printf("%s", func_value->id); */
+    /* print_func(func_value, -1); */
         
     return 0;
 }
@@ -399,7 +476,7 @@ int func_list_gencode(unsigned int syn_level, func_list * list, int * result)
 
 int never_gencode(never * nev)
 {
-    int gencode_res = 0;
+    int gencode_res = GENCODE_SUCC;
     unsigned int syn_level = 0;
 
     if (nev->funcs)

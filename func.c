@@ -69,6 +69,14 @@ void func_delete(func * value)
     free(value);
 }
 
+void func_freevar_zero_mark(func * value)
+{
+    if (value->freevars != NULL)
+    {
+        freevar_list_zero_mark(value->freevars);
+    }
+}
+
 void func_print(func * value)
 {
     printf("func %s@%u\n", value->id, value->addr);

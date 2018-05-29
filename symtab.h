@@ -75,6 +75,7 @@ void symtab_add_func(symtab * tab, func * func_value);
 symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested);
 
 void symtab_set_syn_level(symtab * tab, unsigned int syn_level);
+void symtab_func_mark_zero(symtab * tab);
 
 void symtab_resize(symtab * tab);
 
