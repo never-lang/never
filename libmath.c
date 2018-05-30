@@ -52,15 +52,15 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
     expr * func_expr = NULL;
     func_body * body =  NULL;
     func * func_value = NULL;
-    
+
     var_ret = var_new_float(NULL);
-        
+
     func_expr = expr_new_build_in(math_id, params);
     body = func_body_new(NULL, func_expr);
-        
+
     func_id = strdup(name);
     func_value = func_new(func_id, vars, var_ret, body);
-    
+
     return func_value;
 }
 
@@ -109,6 +109,11 @@ func * libmath_func_pow_new()
     return libmath_func_x_y_new("pow", LIB_MATH_POW);
 }
 
+func * libmath_func_println_new()
+{
+    return libmath_func_x_new("println", LIB_MATH_PRINTLN);
+}
+
 void libmath_add_funcs(func_list * funcs)
 {
     func_list_add_end(funcs, libmath_func_sin_new());
@@ -118,6 +123,7 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_log_new());
     func_list_add_end(funcs, libmath_func_sqrt_new());
     func_list_add_end(funcs, libmath_func_pow_new());
+    func_list_add_end(funcs, libmath_func_println_new());
 }
 
 const char * libmath_func_to_str(libmath_func math_id)
@@ -132,6 +138,7 @@ const char * libmath_func_to_str(libmath_func math_id)
         case LIB_MATH_LOG: return "log";
         case LIB_MATH_SQRT: return "sqrt";
         case LIB_MATH_POW: return "pow";
+        case LIB_MATH_PRINTLN: return "println";
     }
     return "unknown";
 }
