@@ -41,7 +41,6 @@ func void_func() -> float
 
 func main() -> float
 {
-    prfloat(my_func);
-    return 0;
+    return prfloat(my_func);
 }
 

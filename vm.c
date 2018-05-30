@@ -445,7 +445,8 @@ void vm_execute_build_in(vm * machine, bytecode * code)
         }
         break;
         case LIB_MATH_PRINTLN:
-            value = printf("%.9g\n", x);
+            printf("%.2f\n", x);
+            value = x;
         break;
     }
 

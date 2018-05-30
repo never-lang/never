@@ -5,7 +5,6 @@ func fib(float n) -> float
 
 func main() -> float
 {
-    println(fib(7));
-    return 0;
+    return println(fib(7));
 }
 
