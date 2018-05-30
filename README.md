@@ -253,10 +253,11 @@ func main() -> float
 ## Println (write to stdout) function
 Never implements a simple `println(x)` function. The function writes a float
 parameter `x` (with a new line character) to standard output
-and returns the number of characters printed.
-So far, `println` by default uses `"%.9g\n"` formatting.
+and returns passed value.
+So far, `println` by default uses `"%.2f\n"` formatting.
 ```
-func main() -> float {
+func main() -> float
+{
 	return println(123.456);
 }
 ```
