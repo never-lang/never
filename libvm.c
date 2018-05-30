@@ -42,13 +42,35 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         case LIB_MATH_POW:
         {
             float y = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-            value = powf(x, y);
             machine->sp--;
+            value = powf(x, y);
         }
         break;
         case LIB_MATH_PRINTLN:
             printf("%.2f\n", x);
             value = x;
+        break;
+        case LIB_MATH_ASSERT:
+            value = x;
+            if (x == 0)
+            {
+                print_error_msg(machine->line_no, "assert failed\n");
+                machine->running = VM_ERROR;
+                return;
+            }
+        break;
+        case LIB_MATH_ASSERTF:
+        {
+            float delta = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+            machine->sp--;
+            value = x;
+            if (-delta < x && x < delta)
+            {
+                print_error_msg(machine->line_no, "assert failed\n");
+                machine->running = VM_ERROR;
+                return;
+            }
+        }
         break;
     }
 

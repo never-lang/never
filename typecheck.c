@@ -138,6 +138,10 @@ int var_expr_cmp(var * var_value, expr * expr_value)
     {
         return TYPECHECK_SUCC;
     }
+    else if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_BOOL)
+    {
+        return TYPECHECK_SUCC;
+    }
     else if (var_value->type == VAR_FUNC && expr_value->comb == COMB_TYPE_FUNC)
     {
         return func_cmp(var_value->vars, var_value->ret,

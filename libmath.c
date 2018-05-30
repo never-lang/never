@@ -114,6 +114,16 @@ func * libmath_func_println_new()
     return libmath_func_x_new("println", LIB_MATH_PRINTLN);
 }
 
+func * libmath_func_assert_new()
+{
+    return libmath_func_x_new("assert", LIB_MATH_ASSERT);
+}
+
+func * libmath_func_assertf_new()
+{
+    return libmath_func_x_y_new("assertf", LIB_MATH_ASSERTF);
+}
+
 void libmath_add_funcs(func_list * funcs)
 {
     func_list_add_end(funcs, libmath_func_sin_new());
@@ -124,6 +134,8 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_sqrt_new());
     func_list_add_end(funcs, libmath_func_pow_new());
     func_list_add_end(funcs, libmath_func_println_new());
+    func_list_add_end(funcs, libmath_func_assert_new());
+    func_list_add_end(funcs, libmath_func_assertf_new());
 }
 
 const char * libmath_func_to_str(libmath_func math_id)
@@ -139,6 +151,8 @@ const char * libmath_func_to_str(libmath_func math_id)
         case LIB_MATH_SQRT: return "sqrt";
         case LIB_MATH_POW: return "pow";
         case LIB_MATH_PRINTLN: return "println";
+        case LIB_MATH_ASSERT: return "assert";
+        case LIB_MATH_ASSERTF: return "assertf";
     }
     return "unknown";
 }

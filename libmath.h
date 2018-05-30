@@ -14,6 +14,8 @@ typedef enum libmath_func
     LIB_MATH_SQRT,
     LIB_MATH_POW,
     LIB_MATH_PRINTLN,
+    LIB_MATH_ASSERT,
+    LIB_MATH_ASSERTF
 } libmath_func;
 
 var_list * vars_x();
