@@ -1,7 +1,7 @@
 # Never - Functional Programming Language
 
-Never is a simple functional programming language. Technically it may be 
-classified as syntactically scoped, strongly typed, call by value, pure 
+Never is a simple functional programming language. Technically it may be
+classified as syntactically scoped, strongly typed, call by value, pure
 functional programming language.
 
 In practise Never offers first order functions and some mathematical functions
@@ -52,7 +52,7 @@ func main() -> float
 ```
 
 Result of a function is calculated recursively. The above listing also
-demonstrates conditional expression. Conditional expression takes the form 
+demonstrates conditional expression. Conditional expression takes the form
 of ```condition ? expr true : expr false```. That is when condition is true,
 value after ```?``` is returned. When the condition is false, value after
 ```:``` is returned.
@@ -112,7 +112,7 @@ func main() -> float
 }
 ```
 
-In the above example function ```degrees``` takes conversion function which 
+In the above example function ```degrees``` takes conversion function which
 then is given passed parameter. Next function value is returned. Also its
 parameter ```conv``` is strongly typed with function type.
 
@@ -155,7 +155,7 @@ func dir_deg(float d, float coeff) -> (float) -> float
     {
         return coeff * ((f - 32) / 1.8);
     }
-    
+
     func cel2fah(float c) -> float
     {
         return coeff * (c * 1.8 + 32);
@@ -247,6 +247,17 @@ func get_func() -> (float) -> float
 func main() -> float
 {
     return get_func()(deg2rad(60));
+}
+```
+
+## Println (write to stdout) function
+Never implements a simple `println(x)` function. The function writes a float
+parameter `x` (with a new line character) to standard output
+and returns the number of characters printed.
+So far, `println` by default uses `"%.9g\n"` formatting.
+```
+func main() -> float {
+	return println(123.456);
 }
 ```
 

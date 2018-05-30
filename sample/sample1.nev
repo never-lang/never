@@ -26,7 +26,7 @@ func crazy(float a, float, () -> float, funcZ(float, float) -> (float) -> () -> 
 
 func prfloat(void_func(float, float, float) -> float) -> float
 {
-    return minCoeff(10, 20, 30);
+    return println(minCoeff(10, 20, 30));
 }
 
 func my_func(float a, float b, float c) -> float
@@ -41,6 +41,7 @@ func void_func() -> float
 
 func main() -> float
 {
-    return prfloat(my_func);
+    prfloat(my_func);
+    return 0;
 }
 
