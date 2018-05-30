@@ -13,6 +13,7 @@ typedef enum libmath_func
     LIB_MATH_LOG,
     LIB_MATH_SQRT,
     LIB_MATH_POW,
+    LIB_MATH_PRINTLN,
 } libmath_func;
 
 var_list * vars_x();
@@ -31,10 +32,10 @@ func * libmath_func_tan_new();
 func * libmath_func_exp_new();
 func * libmath_func_log_new();
 func * libmath_func_sqrt_new();
+func * libmath_func_println_new();
 
 void libmath_add_funcs(func_list * funcs);
 
 const char * libmath_func_to_str(libmath_func math_id);
 
 #endif /* __LIBMATH_H__ */
-
