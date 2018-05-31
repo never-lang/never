@@ -51,6 +51,7 @@ typedef enum bytecode_type
     BYTECODE_RET,
     BYTECODE_LINE,
     BYTECODE_BUILD_IN,
+    BYTECODE_COPYGLOB,
     BYTECODE_HALT,
     BYTECODE_END
 } bytecode_type;
@@ -153,6 +154,7 @@ void bytecode_print_call(bytecode * code);
 void bytecode_print_ret(bytecode * code);
 void bytecode_print_line(bytecode * code);
 void bytecode_print_build_in(bytecode * code);
+void bytecode_print_copyglob(bytecode * code);
 void bytecode_print_halt(bytecode * code);
  
 bytecode_list_node * bytecode_list_node_new(bytecode * value);

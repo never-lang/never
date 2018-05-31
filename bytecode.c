@@ -53,6 +53,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_RET, bytecode_print_ret },
     { BYTECODE_LINE, bytecode_print_line },
     { BYTECODE_BUILD_IN, bytecode_print_build_in },
+    { BYTECODE_COPYGLOB, bytecode_print_copyglob },
     { BYTECODE_HALT, bytecode_print_halt }
 };
 
@@ -198,6 +199,11 @@ void bytecode_print_line(bytecode * code)
 void bytecode_print_build_in(bytecode * code)
 {
     printf("%d: build in id %u\n", code->addr, code->build_in.id);
+}
+
+void bytecode_print_copyglob(bytecode * code)
+{
+    printf("%d: copyglob\n", code->addr);
 }
 
 void bytecode_print_halt(bytecode * code)

@@ -163,7 +163,7 @@ void gc_run(gc * collector, gc_stack * stack, int stack_size, mem_ptr global_vec
     gc_mark_access(collector, stack, stack_size);
     if (global_vec > 0)
     {
-        gc_mark_vec(collector, global_vec);
+        gc_mark(collector, global_vec);
     }
     gc_sweep_all(collector);
 }

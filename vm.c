@@ -56,6 +56,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_RET, vm_execute_ret },
     { BYTECODE_LINE, vm_execute_line },
     { BYTECODE_BUILD_IN, vm_execute_build_in },
+    { BYTECODE_COPYGLOB, vm_execute_copyglob },
     { BYTECODE_HALT, vm_execute_halt }
 };
 
@@ -396,7 +397,7 @@ void vm_execute_ret(vm * machine, bytecode * code)
     machine->sp = machine->fp - 2;
     machine->fp = machine->stack[machine->fp - 1].sp;
 
-    gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp);
+    /* gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp); */
 }
 
 void vm_execute_line(vm * machine, bytecode * code)
@@ -407,6 +408,19 @@ void vm_execute_line(vm * machine, bytecode * code)
 void vm_execute_build_in(vm * machine, bytecode * code)
 {
     libvm_execute_build_in(machine, code);
+}
+
+void vm_execute_copyglob(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+
+    machine->sp++;
+    vm_check_stack(machine);
+    
+    entry.type = GC_MEM_ADDR;
+    entry.addr = machine->gp;
+
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_halt(vm * machine, bytecode * code)

@@ -539,39 +539,6 @@ int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * 
     return 0;
 }
 
-int expr_id_func_nest_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result)
-{
-    bytecode bc = { 0 };
-
-    switch (value->type)
-    {
-        case FREEVAR_UNKNOWN:
-            print_error_msg(0, "unknown freevar %s during emit\n", value->id);
-            assert(0);
-        break;
-        case FREEVAR_LOCAL:
-            bc.type = BYTECODE_ID_GLOBAL;
-            bc.id_global.index = value->index;
-
-            bytecode_add(code, &bc);
-        break;
-        case FREEVAR_GLOBAL:
-            bc.type = BYTECODE_ID_GLOBAL;
-            bc.id_global.index = value->global_value->index;
-
-            bytecode_add(code, &bc);
-        break;
-        case FREEVAR_FUNC:
-            bc.type = BYTECODE_ID_GLOBAL;
-            bc.id_global.index = value->index;
-
-            bytecode_add(code, &bc);
-        break;
-    }
-
-    return 0;
-}
-
 int expr_id_func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_list * code, int * result)
 {
     int e = 0;
@@ -582,23 +549,6 @@ int expr_id_func_freevar_list_emit(freevar_list * freevars, int stack_level, byt
         if (value != NULL)
         {
             expr_id_func_freevar_emit(value, stack_level + e++, code, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int expr_id_func_nest_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_list * code, int * result)
-{
-    int e = 0;
-    freevar_list_node * node = freevars->tail;
-    while (node != NULL)
-    {
-        freevar * value = node->value;
-        if (value != NULL)
-        {
-            expr_id_func_nest_freevar_emit(value, stack_level + e++, code, result);
         }
         node = node->next;
     }
@@ -630,17 +580,9 @@ int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, 
 
 int expr_id_func_nest_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
-    int count = 0;
     bytecode bc = { 0 };
-    
-    if (func_value->freevars != NULL)
-    {
-        expr_id_func_nest_freevar_list_emit(func_value->freevars, stack_level, code, result);
-        count = func_value->freevars->count;
-    }
-    
-    bc.type = BYTECODE_GLOBAL_VEC;
-    bc.global_vec.count = count;
+
+    bc.type = BYTECODE_COPYGLOB;
     bytecode_add(code, &bc);
 
     bc.type = BYTECODE_ID_FUNC_FUNC;
