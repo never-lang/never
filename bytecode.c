@@ -54,6 +54,8 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_LINE, bytecode_print_line },
     { BYTECODE_BUILD_IN, bytecode_print_build_in },
     { BYTECODE_COPYGLOB, bytecode_print_copyglob },
+    { BYTECODE_ALLOC, bytecode_print_alloc },
+    { BYTECODE_REWRITE, bytecode_print_rewrite },
     { BYTECODE_HALT, bytecode_print_halt }
 };
 
@@ -204,6 +206,16 @@ void bytecode_print_build_in(bytecode * code)
 void bytecode_print_copyglob(bytecode * code)
 {
     printf("%d: copyglob\n", code->addr);
+}
+
+void bytecode_print_alloc(bytecode * code)
+{
+    printf("%d: alloc %u\n", code->addr, code->alloc.n);
+}
+
+void bytecode_print_rewrite(bytecode * code)
+{
+    printf("%d: rewrite %u\n", code->addr, code->rewrite.j);
 }
 
 void bytecode_print_halt(bytecode * code)

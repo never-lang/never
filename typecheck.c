@@ -777,7 +777,7 @@ int print_func(func * value, int depth)
 {
     if (value->id != NULL)
     {
-        printf("\nfunction (%d): %s\n", depth, value->id);
+        printf("\nfunction (%d): %d %s@%u\n", depth, value->index, value->id, value->addr);
     }
     if (value->stab)
     {

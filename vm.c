@@ -57,6 +57,8 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_LINE, vm_execute_line },
     { BYTECODE_BUILD_IN, vm_execute_build_in },
     { BYTECODE_COPYGLOB, vm_execute_copyglob },
+    { BYTECODE_ALLOC, vm_execute_alloc },
+    { BYTECODE_REWRITE, vm_execute_rewrite },
     { BYTECODE_HALT, vm_execute_halt }
 };
 
@@ -421,6 +423,39 @@ void vm_execute_copyglob(vm * machine, bytecode * code)
     entry.addr = machine->gp;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_alloc(vm * machine, bytecode * code)
+{
+    unsigned int i;
+    
+    for (i = 0; i < code->alloc.n; i++)
+    {
+        gc_stack entry = { 0 };
+        mem_ptr addr = gc_alloc_func(machine->collector, 0, 0);
+    
+        entry.type = GC_MEM_ADDR;
+        entry.addr = addr;
+
+        machine->sp++;
+        machine->stack[machine->sp] = entry;
+    }
+    
+    vm_check_stack(machine);
+}
+
+void vm_execute_rewrite(vm * machine, bytecode * code)
+{
+    unsigned int j = code->rewrite.j;
+
+    mem_ptr gp = gc_get_func_vec(machine->collector, machine->stack[machine->sp].addr);
+    ip_ptr ip = gc_get_func_addr(machine->collector, machine->stack[machine->sp].addr);
+    
+    gc_set_func_vec(machine->collector, machine->stack[machine->sp - j].addr, gp);
+    gc_set_func_addr(machine->collector, machine->stack[machine->sp - j].addr, ip);
+    
+    machine->sp--;
+    vm_check_stack(machine);
 }
 
 void vm_execute_halt(vm * machine, bytecode * code)

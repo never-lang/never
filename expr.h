@@ -63,8 +63,9 @@ typedef enum id_type
     ID_TYPE_UNKNOWN = 0,
     ID_TYPE_LOCAL = 1,
     ID_TYPE_GLOBAL = 2,
-    ID_TYPE_FUNC = 3,
-    ID_TYPE_FUNC_NEST = 4
+    ID_TYPE_FUNC_TOP =  3,
+    ID_TYPE_FUNC = 4,
+    ID_TYPE_FUNC_NEST = 5
 } id_type;
 
 typedef struct func func;

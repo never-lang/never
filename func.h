@@ -33,6 +33,7 @@ struct func_list;
 typedef struct func
 {
     char * id;
+    int index;
     var_list * vars;
     var * ret;
     struct func_body * body;
@@ -57,6 +58,7 @@ typedef struct func_list_node
 
 typedef struct func_list
 {
+    unsigned int count;
     func_list_node * head;
     func_list_node * tail;
 } func_list;
@@ -64,7 +66,6 @@ typedef struct func_list
 func * func_new(char * id, var_list * vars, var * ret, func_body * body);
 void func_delete(func * value);
 
-void func_freevar_zero_mark(func * value);
 void func_print(func * value);
 
 func_body * func_body_new(func_list * funcs, expr * ret);

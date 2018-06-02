@@ -52,6 +52,8 @@ typedef enum bytecode_type
     BYTECODE_LINE,
     BYTECODE_BUILD_IN,
     BYTECODE_COPYGLOB,
+    BYTECODE_ALLOC,
+    BYTECODE_REWRITE,
     BYTECODE_HALT,
     BYTECODE_END
 } bytecode_type;
@@ -104,6 +106,16 @@ typedef struct bytecode
         {
             unsigned int id;
         } build_in;
+        struct
+        {
+            unsigned int n;
+        }
+        alloc;
+        struct
+        {
+            unsigned int j;
+        }
+        rewrite;
     };
 } bytecode;
 
@@ -155,6 +167,8 @@ void bytecode_print_ret(bytecode * code);
 void bytecode_print_line(bytecode * code);
 void bytecode_print_build_in(bytecode * code);
 void bytecode_print_copyglob(bytecode * code);
+void bytecode_print_alloc(bytecode * code);
+void bytecode_print_rewrite(bytecode * code);
 void bytecode_print_halt(bytecode * code);
  
 bytecode_list_node * bytecode_list_node_new(bytecode * value);

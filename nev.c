@@ -98,14 +98,14 @@ int parse_and_exec(char * file_name)
             {
                 bytecode_list * code;
 
-                /* print_functions(nev); */
-            
                 code = bytecode_new();
             
                 never_emit(nev, code);
             
                 bytecode_func_addr(code);
-                /* bytecode_print(code); */
+
+                /*print_functions(nev);
+                bytecode_print(code);*/
             
                 bytecode_to_array(code, &code_arr, &code_size);
             

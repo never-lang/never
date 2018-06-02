@@ -31,6 +31,9 @@ enum
     GENCODE_FAIL = 1
 };
 
+int func_enum_vars(func * func_value);
+int func_enum_funcs(func * func_value);
+
 int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int * result);
 int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * result);
 int expr_list_gencode(unsigned int syn_level, func * func_value, expr_list * list, int * result);
@@ -49,14 +52,10 @@ int never_gencode(never * nev);
 
 int expr_float_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 
-int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result);
-int expr_id_func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_list * code, int * result);
+int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result);
+int func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_list * code, int * result);
 
-int func_check_freevar(freevar * value, int * result);
-int func_check_freevar_list(freevar_list * list, int * result);
-int func_check_freevar_func(func * func_value, int * result);
-int func_check_freevars(func * func_value, int * result);
-
+int expr_id_func_top_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
 int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
 int expr_id_func_nest_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
 

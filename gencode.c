@@ -29,6 +29,47 @@
  /* GP old, FP old, IP old */
 #define NUM_FRAME_PTRS 3
 
+int func_enum_vars(func * func_value)
+{
+    int index = 0;
+    var_list_node * node = NULL;
+    
+    node = func_value->vars->tail;
+    while (node != NULL)
+    {
+        var * value = node->value;
+        if (value != NULL)
+        {
+            value->index = -(index++);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+int func_enum_funcs(func * func_value)
+{
+    int index = 1;
+    func_list * list = NULL;
+    
+    list = func_value->body->funcs;
+    if (list != NULL)
+    {
+        func_list_node * node = list->tail;
+        while (node != NULL)
+        {
+            func * value = node->value;
+            if (value != NULL)
+            {
+                value->index = index++;
+            }
+            node = node->next;
+        }
+    }
+
+    return 0; 
+}
+
 /**
  * free variables
  */
@@ -44,7 +85,12 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             func * sup_func_value = entry->func_value;
             if (sup_func_value)
             {
-                if (syn_level == entry->syn_level || entry->syn_level == 0)
+                if (entry->syn_level == 0)
+                {
+                    value->id.id_type_value = ID_TYPE_FUNC_TOP;
+                    value->id.id_func_value = sup_func_value;
+                }
+                else if (syn_level == entry->syn_level)
                 {
                     value->id.id_type_value = ID_TYPE_FUNC;
                     value->id.id_func_value = sup_func_value;
@@ -173,24 +219,6 @@ int expr_list_gencode(unsigned int syn_level, func * func_value, expr_list * lis
         if (value)
         {
             expr_gencode(syn_level, func_value, value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int func_enum_vars(func * func_value)
-{
-    int index = 0;
-    var_list_node * node = NULL;
-    
-    node = func_value->vars->tail;
-    while (node != NULL)
-    {
-        var * value = node->value;
-        if (value != NULL)
-        {
-            value->index = -(index++);
         }
         node = node->next;
     }
@@ -359,74 +387,6 @@ int func_gencode_freevars(func * func_value, int * result)
 
     return 0;
 }
-
-/**
- * check freevars
- */
-int func_check_freevar(freevar * value, int * result)
-{
-    switch (value->type)
-    {
-        case FREEVAR_UNKNOWN:
-        case FREEVAR_LOCAL:
-        case FREEVAR_GLOBAL:
-        break;
-        case FREEVAR_FUNC:
-            if (value->mark == 1)
-            {
-                *result = GENCODE_FAIL;
-                print_error_msg(value->func_value->line_no,
-                                "found cyclic dependency in function %s\n",
-                                value->func_value->id);
-                return 0;
-            }
-            value->mark = 1;            
-            func_check_freevar_func(value->func_value, result);
-        break;
-    }
-    return 0;
-} 
- 
-int func_check_freevar_list(freevar_list * list, int * result)
-{
-    freevar_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        freevar * value = node->value;
-        if (value != NULL)
-        {
-            func_check_freevar(value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-} 
- 
-int func_check_freevar_func(func * func_value, int * result)
-{
-    if (func_value->freevars != NULL)
-    {
-        func_check_freevar_list(func_value->freevars, result);
-    }
-
-    return 0;
-}
-
-int func_check_freevars(func * func_value, int * result)
-{
-    if (func_value->stab != NULL)
-    {
-        symtab_func_mark_zero(func_value->stab);
-    }
-    
-    func_check_freevar_func(func_value, result);
-
-    return 0;
-}
-
-/**
- * end check freevars
- */
  
 int func_gencode(unsigned int syn_level, func * func_value, int * result)
 {
@@ -437,6 +397,10 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
     if (func_value->vars != NULL)
     {
         func_enum_vars(func_value);
+    }
+    if (func_value->body != NULL)
+    {
+        func_enum_funcs(func_value);
     }
 
     if (func_value->body && func_value->body->funcs)
@@ -450,11 +414,7 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
     
     /** set subfunction local/global indexes **/
     func_gencode_freevars(func_value, result);
-    func_check_freevars(func_value, result);
 
-    /* printf("%s", func_value->id); */
-    /* print_func(func_value, -1); */
-        
     return 0;
 }
 
@@ -505,7 +465,7 @@ int expr_float_emit(expr * value, int stack_level, bytecode_list * code, int * r
     return 0;
 } 
 
-int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result)
+int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
 
@@ -529,17 +489,18 @@ int expr_id_func_freevar_emit(freevar * value, int stack_level, bytecode_list * 
             bytecode_add(code, &bc);
         break;
         case FREEVAR_FUNC:
-            if (value != NULL)
-            {
-                expr_id_func_emit(value->func_value, stack_level, code, result);
-            }
+            bc.type = BYTECODE_ID_LOCAL;
+            bc.id_local.stack_level = stack_level;
+            bc.id_local.index = value->func_value->index;
+            
+            bytecode_add(code, &bc);
         break;
     }
 
     return 0;
 }
 
-int expr_id_func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_list * code, int * result)
+int func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_list * code, int * result)
 {
     int e = 0;
     freevar_list_node * node = freevars->tail;
@@ -548,7 +509,7 @@ int expr_id_func_freevar_list_emit(freevar_list * freevars, int stack_level, byt
         freevar * value = node->value;
         if (value != NULL)
         {
-            expr_id_func_freevar_emit(value, stack_level + e++, code, result);
+            func_freevar_emit(value, stack_level + e++, code, result);
         }
         node = node->next;
     }
@@ -556,23 +517,29 @@ int expr_id_func_freevar_list_emit(freevar_list * freevars, int stack_level, byt
     return 0;
 }
 
-int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
+int expr_id_func_top_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
-    int count = 0;
     bytecode bc = { 0 };
-    
-    if (func_value->freevars != NULL)
-    {
-        expr_id_func_freevar_list_emit(func_value->freevars, stack_level, code, result);
-        count = func_value->freevars->count;
-    }
-    
+
     bc.type = BYTECODE_GLOBAL_VEC;
-    bc.global_vec.count = count;
+    bc.global_vec.count = 0;
     bytecode_add(code, &bc);
 
     bc.type = BYTECODE_ID_FUNC_FUNC;
     bc.id_func.func_value = func_value;
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
+int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level;
+    bc.id_local.index = func_value->index;
+
     bytecode_add(code, &bc);
 
     return 0;
@@ -621,11 +588,17 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * resu
             bytecode_add(code, &bc);        
         }
         break;
+        case ID_TYPE_FUNC_TOP:
+            if (value->id.id_func_value != NULL)
+            {
+                expr_id_func_top_emit(value->id.id_func_value, stack_level, code, result);
+            }
+        break;
         case ID_TYPE_FUNC:
             if (value->id.id_func_value != NULL)
             {
                 expr_id_func_emit(value->id.id_func_value, stack_level, code, result);
-            }
+            }        
         break;
         case ID_TYPE_FUNC_NEST:
             if (value->id.id_func_value != NULL)
@@ -668,7 +641,7 @@ int expr_cond_emit(expr * value, int stack_level, bytecode_list * code, int * re
 
 int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
-    int v = 3;
+    int v = NUM_FRAME_PTRS;
     bytecode bc = { 0 };
     bytecode * mark, * label;
 
@@ -694,17 +667,7 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
 
 int expr_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
-    bytecode bc = { 0 };
-    bytecode * jump, * label;
-                
-    bc.type = BYTECODE_JUMP;
-    jump = bytecode_add(code, &bc);
-            
     func_emit(func_value, 0, code, result);
-                
-    bc.type = BYTECODE_LABEL;
-    label = bytecode_add(code, &bc);
-    jump->jump.offset = label->addr - jump->addr;
 
     return 0;
 }
@@ -814,7 +777,6 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             if (value->func_value)
             {
                 expr_func_emit(value->func_value, stack_level, code, result);
-                expr_id_func_emit(value->func_value, stack_level, code, result);
             }
         break;
         case EXPR_BUILD_IN:
@@ -847,9 +809,12 @@ int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code, int 
 
 int func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
+    int var_count = 0;
+    int freevar_count = 0;
+    int func_count = 0;
     bytecode bc = { 0 };
+    bytecode * jump, * labelA, * labelB;
 
-    func_value->addr = code->addr;
     bc.type = BYTECODE_FUNC_DEF;
     bytecode_add(code, &bc);
 
@@ -859,58 +824,59 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code, int * re
         bc.line.no = func_value->line_no;
         bytecode_add(code, &bc);
     }
+        
+    if (func_value->freevars != NULL)
+    {
+        func_freevar_list_emit(func_value->freevars, stack_level, code, result);
+        freevar_count = func_value->freevars->count;
+    }
     
+    bc.type = BYTECODE_GLOBAL_VEC;
+    bc.global_vec.count = freevar_count;
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_ID_FUNC_FUNC;
+    bc.id_func.func_value = func_value;
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_JUMP;
+    jump = bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelA = bytecode_add(code, &bc);
+    func_value->addr = labelA->addr;
+
     if (func_value->body && func_value->body->funcs)
     {
-        bytecode * jump, * label;
-
-        bc.type = BYTECODE_JUMP;
-        jump = bytecode_add(code, &bc);
-
-        func_list_emit(func_value->body->funcs, stack_level, code, result);
-
-        bc.type = BYTECODE_LABEL;
-        label = bytecode_add(code, &bc);
-        jump->jump.offset = label->addr - jump->addr;
+        func_list_emit(func_value->body->funcs, 0, code, result);
+        func_count = func_value->body->funcs->count;
     }
 
     if (func_value->body && func_value->body->ret)
     {
-        int vars = 0;
-        expr_emit(func_value->body->ret, stack_level, code, result);
-
-        if (func_value->vars != NULL)
-        {
-            vars = func_value->vars->count;
-        }
+        expr_emit(func_value->body->ret, func_count, code, result);
+    }
         
-        if (bc.line.no > 0)
-        {
-            bc.type = BYTECODE_LINE;
-            bc.line.no = func_value->body->ret->line_no;
-            bytecode_add(code, &bc);
-        }
-
-        bc.type = BYTECODE_RET;
-        bc.ret.count = vars;
+    if (bc.line.no > 0)
+    {
+        bc.type = BYTECODE_LINE;
+        bc.line.no = func_value->body->ret->line_no;
         bytecode_add(code, &bc);
     }
-        
-    return 0;
-}
 
-int func_list_emit(func_list * list, int stack_level, bytecode_list * code, int * result)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
+    if (func_value->vars != NULL)
     {
-        func * func_value = node->value;
-        if (func_value != NULL)
-        {
-            func_emit(func_value, 0, code, result);
-        }
-        node = node->next;
+        var_count = func_value->vars->count;
     }
+    
+    bc.type = BYTECODE_RET;
+    bc.ret.count = var_count;
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelB = bytecode_add(code, &bc);
+    jump->jump.offset = labelB->addr - jump->addr;
+            
     return 0;
 }
 
@@ -953,6 +919,32 @@ int func_main_emit(never * nev, int stack_level, bytecode_list * code, int * res
     return 0;
 }
 
+int func_list_emit(func_list * list, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    unsigned int n = list->count;
+
+    bc.type = BYTECODE_ALLOC;
+    bc.alloc.n = n;
+    bytecode_add(code, &bc);
+
+    func_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        func * func_value = node->value;
+        if (func_value != NULL)
+        {
+            func_emit(func_value, list->count, code, result);
+            
+            bc.type = BYTECODE_REWRITE;
+            bc.rewrite.j = n--;
+            bytecode_add(code, &bc);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
 int never_emit(never * nev, bytecode_list * code)
 {
     int stack_level = 0;
@@ -960,8 +952,8 @@ int never_emit(never * nev, bytecode_list * code)
 
     if (nev->funcs)
     {
-        func_main_emit(nev, stack_level, code, &gencode_res);
         func_list_emit(nev->funcs, stack_level, code, &gencode_res);
+        func_main_emit(nev, stack_level, code, &gencode_res);
     }
     
     return gencode_res;

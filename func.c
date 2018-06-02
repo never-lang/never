@@ -28,6 +28,7 @@ func * func_new(char * id, var_list * vars, var * ret, func_body * body)
     func * value = (func *)malloc(sizeof(func));
     
     value->id = id;
+    value->index = 0;
     value->vars = vars;
     value->ret = ret;
     value->body = body;
@@ -69,17 +70,9 @@ void func_delete(func * value)
     free(value);
 }
 
-void func_freevar_zero_mark(func * value)
-{
-    if (value->freevars != NULL)
-    {
-        freevar_list_zero_mark(value->freevars);
-    }
-}
-
 void func_print(func * value)
 {
-    printf("func %s@%u\n", value->id, value->addr);
+    printf("func %d %s@%u\n", value->index, value->id, value->addr);
 }
 
 func_body * func_body_new(func_list * funcs, expr * ret)
@@ -129,6 +122,7 @@ func_list * func_list_new()
 {
     func_list * list = (func_list *)malloc(sizeof(func_list));
     
+    list->count = 0;
     list->head = NULL;
     list->tail = NULL;
     
@@ -152,6 +146,7 @@ void func_list_add_beg(func_list * list, func * value)
 {
     func_list_node * node = func_list_node_new(value);
     
+    list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
         list->head = list->tail = node;
@@ -168,6 +163,7 @@ void func_list_add_end(func_list * list, func * value)
 {
     func_list_node * node = func_list_node_new(value);
     
+    list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
         list->head = list->tail = node;

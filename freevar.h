@@ -37,7 +37,6 @@ typedef struct freevar
     int type;
     char * id;
     int index;
-    int mark; /* to check if functions depend on each other */
     union
     {
         struct var * local_value;
@@ -74,7 +73,6 @@ freevar * freevar_list_add(freevar_list * list, char * id);
 void freevar_list_add_beg(freevar_list * list, freevar * value);
 void freevar_list_add_end(freevar_list * list, freevar * value);
 
-void freevar_list_zero_mark(freevar_list * list);
 void freevar_print(freevar * value);
 void freevar_list_print(freevar_list * list);
 
