@@ -399,7 +399,7 @@ void vm_execute_ret(vm * machine, bytecode * code)
     machine->sp = machine->fp - 2;
     machine->fp = machine->stack[machine->fp - 1].sp;
 
-    /* gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp); */
+    gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp);
 }
 
 void vm_execute_line(vm * machine, bytecode * code)

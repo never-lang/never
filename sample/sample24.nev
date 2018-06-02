@@ -15,11 +15,11 @@ func mutrec(float n) -> float
         return A(n);
     }
     
-    return C(1);
+    return C(n);
 }
 
 func main() -> float
 {
-    return mutrec(12);
+    return assert(mutrec(1) == 99);
 }
 

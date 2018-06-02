@@ -8,10 +8,10 @@ func execute(float a, float b, f1(float, float) -> float) -> float
  
 func main() -> float
 {
-    return execute(10, 20, 
-                   func min(float a, float b) -> float 
-                   { 
+    return assert(execute(10, 20, 
+                  func min(float a, float b) -> float 
+                  { 
                        return a < b ? a : b; 
-                   });
+                  }) == 10);
 }
 

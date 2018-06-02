@@ -11,6 +11,6 @@ func get_func(float glob1) -> (float, float) -> float
 
 func main() -> float
 {
-    return get_func(20)(15, 30);
+    return assert(get_func(20)(15, 30) == 300);
 }
 

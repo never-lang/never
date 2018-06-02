@@ -21,6 +21,6 @@ func fun0(float a0, float b0) -> float
 
 func main() -> float
 {
-    return fun0(2, 3);
+    return assert(fun0(2, 3) == 20);
 }
 

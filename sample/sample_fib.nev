@@ -5,6 +5,6 @@ func fib(float n) -> float
 
 func main() -> float
 {
-    return println(fib(7));
+    return assert(fib(7) == 21);
 }
 

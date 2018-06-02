@@ -10,6 +10,6 @@ func execute(float a, float b, f1(float, float) -> float) -> float
  
 func main() -> float
 {
-    return execute(10, 20, min);
+    return assert(execute(15, 20, min) == 30);
 }
 

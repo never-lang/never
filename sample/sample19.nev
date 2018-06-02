@@ -4,6 +4,6 @@ func main() -> float
      {
          return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
      }
-     return fib(7);
+     return assert(fib(7) == 21);
 }
 

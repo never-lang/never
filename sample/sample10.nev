@@ -21,6 +21,6 @@ func funGen2(float a, float b) -> float
 
 func main() -> float
 {
-    return funGen2(10, 20);
+    return assert(funGen2(10, 20) == 220);
 }
 

@@ -20,7 +20,7 @@ func funGen2(f1(float a, float b) -> float) -> (float a, float b) -> float
 
 func main() -> float
 {
-    return funGen2(min)(10, 20);
+    return assert(funGen2(min)(15, 20) == 30);
 }
 
 

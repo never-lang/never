@@ -16,7 +16,7 @@ func select(float a) -> (float, float) -> float
 
 func main() -> float
 {
-    return select(110)(40, 20);
+    return assert(select(110)(40, 20) == 40);
 }
 
 

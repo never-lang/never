@@ -13,6 +13,6 @@ func max(float a, float b) -> float
 
 func main() -> float
 {
-    return (1 < 2 ? min : max)(10, 20);
+    return assert((1 < 2 ? min : max)(10, 20) == 10);
 }
 

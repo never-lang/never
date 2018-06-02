@@ -102,14 +102,14 @@ void gc_mark_vec(gc * collector, mem_ptr addr)
     {
         return;
     }
+    
+    collector->mem[addr].mark = 1;
 
     vec = collector->mem[addr].object_value->vec_value;
     for (i = 0; i < vec->size; i++)
     {
         gc_mark(collector, vec->value[i]);
     }
-
-    collector->mem[addr].mark = 1;
 }
 
 void gc_mark(gc * collector, mem_ptr addr)
@@ -128,8 +128,8 @@ void gc_mark(gc * collector, mem_ptr addr)
                 gc_mark_vec(collector, addr);
             break;
             case OBJECT_FUNC:
-                gc_mark_vec(collector, collector->mem[addr].object_value->func_value->vec);
                 collector->mem[addr].mark = 1;
+                gc_mark_vec(collector, collector->mem[addr].object_value->func_value->vec);
             break;
         }
     }

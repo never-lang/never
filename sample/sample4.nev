@@ -7,6 +7,6 @@ func min(float a, float b) -> float
 
 func main() -> float
 {
-    return min(min(10, 8), min(20, 30));
+    return assert(min(min(10, 8), min(20, 30)) == 8);
 }
 

@@ -1,0 +1,18 @@
+
+func one(float a, float b, float c) -> float
+{
+    return a + b + c;
+}
+
+func two() -> float
+{
+    return 10 + 20 + 100;
+}
+
+func main() -> float
+{
+    return two() + one(10, 0, 0) + two() + one(1, 2, 3);
+}
+
+
+

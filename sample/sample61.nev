@@ -10,18 +10,22 @@ func counter(float from, float to, float by) -> (float, float) -> (float, float,
         return println(by + from + to);
     }
 
-    return func increase(float a, float b) -> (float, float, float) -> float
+    func increase(float a, float b) -> (float, float, float) -> float
     {
         func inc(float x, float y) -> float
         {
             return println(x + y);
         }
     
-        return func increase_sub(float n_a, float n_b, float n_c) -> float
+        func increase_sub(float n_a, float n_b, float n_c) -> float
         {
-            return dec() + inc(n_c, n_b) + n_a;
-        };
-    };
+            return /*dec() + n_a + n_b + n_c*/ dec() + inc(1, 2) + inc(4, 4);
+        }
+        
+        return increase_sub;
+    }
+    
+    return increase;
 }
 
 func main() -> float

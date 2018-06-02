@@ -667,7 +667,7 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
 
 int expr_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
 {
-    func_emit(func_value, 0, code, result);
+    func_emit(func_value, stack_level, code, result);
 
     return 0;
 }
@@ -776,7 +776,7 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         case EXPR_FUNC:
             if (value->func_value)
             {
-                expr_func_emit(value->func_value, stack_level, code, result);
+                expr_func_emit(value->func_value, 1, code, result);
             }
         break;
         case EXPR_BUILD_IN:
@@ -934,7 +934,7 @@ int func_list_emit(func_list * list, int stack_level, bytecode_list * code, int 
         func * func_value = node->value;
         if (func_value != NULL)
         {
-            func_emit(func_value, list->count, code, result);
+            func_emit(func_value, stack_level + list->count, code, result);
             
             bc.type = BYTECODE_REWRITE;
             bc.rewrite.j = n--;

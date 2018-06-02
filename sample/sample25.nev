@@ -15,6 +15,6 @@ func C(float n) -> float
     
 func main() -> float
 {
-    return C(1);
+    return assert(C(1) == 40);
 }
 

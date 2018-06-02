@@ -6,17 +6,17 @@
  */
 func min(float a, float b, float c) -> float
 {
-    return a < b ? a : b * c;
+    return a < b ? a * c : b * c;
 }
 
 func minCoeff(float p1, float p2, float coeff) -> float
 {
     func min(float n_a, float n_b) -> float
     {
-        return coeff * (n_a < n_b ? coeff * n_a : coeff * n_b);
+        return coeff * (n_a < n_b ? n_a : n_b);
     }
 
-    return min(10 * 20, 30 * 60);
+    return min(p2, p1);
 }
 
 func crazy(float a, float, () -> float, funcZ(float, float) -> (float) -> () -> float) -> float
@@ -26,12 +26,12 @@ func crazy(float a, float, () -> float, funcZ(float, float) -> (float) -> () -> 
 
 func prfloat(void_func(float, float, float) -> float) -> float
 {
-    return println(minCoeff(10, 20, 30));
+    return println(void_func(10, 20, 30));
 }
 
 func my_func(float a, float b, float c) -> float
 {
-    return 2 * minCoeff(2, a, b);
+    return 2 * minCoeff(a, b, c);
 }
 
 func void_func() -> float
@@ -41,6 +41,6 @@ func void_func() -> float
 
 func main() -> float
 {
-    return prfloat(my_func);
+    return assert(prfloat(my_func) == 600);
 }
 

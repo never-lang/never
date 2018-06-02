@@ -14,7 +14,7 @@ func get(float c) -> (float, float) -> float
 
 func main() -> float
 {
-    return get(0)(10, 20);
+    return assert(get(0)(10, 20) == 20);
 }
 
 

@@ -64,7 +64,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
             float delta = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
             machine->sp--;
             value = x;
-            if (-delta < x && x < delta)
+            if (-delta > x || x > delta)
             {
                 print_error_msg(machine->line_no, "assert failed\n");
                 machine->running = VM_ERROR;
