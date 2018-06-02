@@ -1,0 +1,10 @@
+func fib(float n, float a, float b) -> float
+{
+    return (n == 0) ? a : fib(n - 1, b, a + b);
+}
+
+func main() -> float
+{
+    return println(fib(7, 1, 1));
+}
+
