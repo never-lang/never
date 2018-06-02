@@ -691,29 +691,29 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             bytecode_add(code, &bc);
         break;
         case EXPR_ADD:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_ADD;
             bytecode_add(code, &bc);
         break;
         case EXPR_SUB:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_SUB;
             bytecode_add(code, &bc);
         break;
         case EXPR_MUL:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_MUL;
             bytecode_add(code, &bc);
         break;
         case EXPR_DIV:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_LINE;
             bc.line.no = value->line_no;
@@ -723,43 +723,43 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             bytecode_add(code, &bc);
         break;
         case EXPR_LT:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_LT;
             bytecode_add(code, &bc);
         break;
         case EXPR_GT:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_GT;
             bytecode_add(code, &bc);
         break;
         case EXPR_LTE:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_LTE;
             bytecode_add(code, &bc);
         break;
         case EXPR_GTE:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_GTE;
             bytecode_add(code, &bc);
         break;
         case EXPR_EQ:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_EQ;
             bytecode_add(code, &bc);
         break;
         case EXPR_NEQ:
-            expr_emit(value->right, stack_level, code, result);
-            expr_emit(value->left, stack_level + 1, code, result);
+            expr_emit(value->left, stack_level, code, result);
+            expr_emit(value->right, stack_level + 1, code, result);
 
             bc.type = BYTECODE_OP_NEQ;
             bytecode_add(code, &bc);

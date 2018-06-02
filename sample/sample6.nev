@@ -19,7 +19,7 @@ func counter(float from, float to, float by) -> (float, float) -> (float, float,
     
         return func increase_sub(float n_a, float n_b, float n_c) -> float
         {
-            return dec() + inc(n_c, n_b) + n_a;
+            return dec() + inc(n_c, n_b) + inc(n_a, 10);
         };
     };
 }
