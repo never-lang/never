@@ -31,6 +31,16 @@ object * object_new()
     return obj;
 }
 
+object * object_new_int(int value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+
+    obj->type = OBJECT_INT;
+    obj->int_value = value;
+    
+    return obj;
+}
+
 object * object_new_float(float value)
 {
     object * obj = (object *)malloc(sizeof(object));
@@ -84,6 +94,7 @@ void object_delete(object * obj)
         case OBJECT_UNKNOWN:
             assert(0);
         break;
+        case OBJECT_INT:
         case OBJECT_FLOAT:
         break;
         case OBJECT_VEC:
@@ -109,6 +120,9 @@ void object_print(object * obj)
     {
         case OBJECT_UNKNOWN:
             printf("object_unknown\n");
+        break;
+        case OBJECT_INT:
+            printf("object_int\n");
         break;
         case OBJECT_FLOAT:
             printf("object_float\n");

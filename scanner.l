@@ -50,6 +50,12 @@ return {
     return TOK_RETURN;    
 }
 
+int {
+    tokp->line_no = line_no;
+    scanner_printf("int\n");
+    return TOK_INT;
+}
+
 float {
     tokp->line_no = line_no;    
     scanner_printf("float\n");
@@ -122,13 +128,22 @@ float {
     return yytext[0];
 }
 
-{DIGIT}+|{DIGIT}+"."{DIGIT}+ {
+{DIGIT}+ {
+    int result;
+    tokp->line_no = line_no;
+    sscanf(yytext, "%d", &result);
+    tokp->val.int_value = result;
+    scanner_printf("num_int %d\n", result);
+    return TOK_NUM_INT;
+}
+
+{DIGIT}+"."{DIGIT}+ {
     float result;
     tokp->line_no = line_no;
     sscanf(yytext, "%f", &result);
     tokp->val.float_value = result;
-    scanner_printf("number %f\n", result);
-    return TOK_NUM;
+    scanner_printf("num_float %f\n", result);
+    return TOK_NUM_FLOAT;
 }
 
 {ID} {

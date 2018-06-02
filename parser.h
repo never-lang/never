@@ -46,16 +46,18 @@ extern int yydebug;
   enum yytokentype
   {
     TOK_ID = 258,
-    TOK_NUM = 259,
-    TOK_FLOAT = 260,
-    TOK_FUNC = 261,
-    TOK_RET = 262,
-    TOK_RETURN = 263,
-    TOK_LTE = 264,
-    TOK_GTE = 265,
-    TOK_EQ = 266,
-    TOK_NEQ = 267,
-    NEG = 268
+    TOK_NUM_FLOAT = 259,
+    TOK_NUM_INT = 260,
+    TOK_FLOAT = 261,
+    TOK_INT = 262,
+    TOK_FUNC = 263,
+    TOK_RET = 264,
+    TOK_RETURN = 265,
+    TOK_LTE = 266,
+    TOK_GTE = 267,
+    TOK_EQ = 268,
+    TOK_NEQ = 269,
+    NEG = 270
   };
 #endif
 

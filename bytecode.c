@@ -27,25 +27,48 @@
 
 bytecode_op_str bytecode_op[] = {
     { BYTECODE_UNKNOWN, bytecode_print_unknown },
+
+    { BYTECODE_INT, bytecode_print_int },
     { BYTECODE_FLOAT, bytecode_print_float },
+    
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
     { BYTECODE_ID_GLOBAL, bytecode_print_id_global },
     { BYTECODE_ID_FUNC_FUNC, bytecode_print_id_func_func },
     { BYTECODE_ID_FUNC_ADDR, bytecode_print_id_func_addr },
+
+    { BYTECODE_OP_NEG_INT, bytecode_print_op_neg_int },
+    { BYTECODE_OP_ADD_INT, bytecode_print_op_add_int },
+    { BYTECODE_OP_SUB_INT, bytecode_print_op_sub_int },
+    { BYTECODE_OP_MUL_INT, bytecode_print_op_mul_int },
+    { BYTECODE_OP_DIV_INT, bytecode_print_op_div_int },
+
+    { BYTECODE_OP_NEG_FLOAT, bytecode_print_op_neg_float },
+    { BYTECODE_OP_ADD_FLOAT, bytecode_print_op_add_float },
+    { BYTECODE_OP_SUB_FLOAT, bytecode_print_op_sub_float },
+    { BYTECODE_OP_MUL_FLOAT, bytecode_print_op_mul_float },
+    { BYTECODE_OP_DIV_FLOAT, bytecode_print_op_div_float },
+
+    { BYTECODE_OP_LT_INT, bytecode_print_op_lt_int },
+    { BYTECODE_OP_GT_INT, bytecode_print_op_gt_int },
+    { BYTECODE_OP_LTE_INT, bytecode_print_op_lte_int },
+    { BYTECODE_OP_GTE_INT, bytecode_print_op_gte_int },
+    { BYTECODE_OP_EQ_INT, bytecode_print_op_eq_int },
+    { BYTECODE_OP_NEQ_INT, bytecode_print_op_neq_int },
+
+    { BYTECODE_OP_LT_FLOAT, bytecode_print_op_lt_float },
+    { BYTECODE_OP_GT_FLOAT, bytecode_print_op_gt_float },
+    { BYTECODE_OP_LTE_FLOAT, bytecode_print_op_lte_float },
+    { BYTECODE_OP_GTE_FLOAT, bytecode_print_op_gte_float },
+    { BYTECODE_OP_EQ_FLOAT, bytecode_print_op_eq_float },
+    { BYTECODE_OP_NEQ_FLOAT, bytecode_print_op_neq_float },
+
+    { BYTECODE_INT_TO_FLOAT, bytecode_print_int_to_float },
+    { BYTECODE_FLOAT_TO_INT, bytecode_print_float_to_int },
+
     { BYTECODE_JUMPZ, bytecode_print_jumpz },
     { BYTECODE_JUMP, bytecode_print_jump },
     { BYTECODE_LABEL, bytecode_print_label },
-    { BYTECODE_OP_NEG, bytecode_print_op_neg },
-    { BYTECODE_OP_ADD, bytecode_print_op_add },
-    { BYTECODE_OP_SUB, bytecode_print_op_sub },
-    { BYTECODE_OP_MUL, bytecode_print_op_mul },
-    { BYTECODE_OP_DIV, bytecode_print_op_div },
-    { BYTECODE_OP_LT, bytecode_print_op_lt },
-    { BYTECODE_OP_GT, bytecode_print_op_gt },
-    { BYTECODE_OP_LTE, bytecode_print_op_lte },
-    { BYTECODE_OP_GTE, bytecode_print_op_gte },
-    { BYTECODE_OP_EQ, bytecode_print_op_eq },
-    { BYTECODE_OP_NEQ, bytecode_print_op_neq },
+
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
     { BYTECODE_MARK, bytecode_print_mark },
@@ -56,6 +79,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_COPYGLOB, bytecode_print_copyglob },
     { BYTECODE_ALLOC, bytecode_print_alloc },
     { BYTECODE_REWRITE, bytecode_print_rewrite },
+   
     { BYTECODE_HALT, bytecode_print_halt }
 };
 
@@ -71,6 +95,11 @@ static void bytecode_op_test()
 void bytecode_print_unknown(bytecode * code)
 {
     printf("%d: unknown\n", code->addr);
+}
+
+void bytecode_print_int(bytecode * code)
+{
+    printf("%d: int %d\n", code->addr, code->integer.value);
 }
 
 void bytecode_print_float(bytecode * code)
@@ -98,6 +127,126 @@ void bytecode_print_id_func_addr(bytecode * code)
     printf("%d: id func addr %d\n", code->addr, code->id_func.func_addr);
 }
 
+void bytecode_print_op_neg_int(bytecode * code)
+{
+    printf("%d: op neg int\n", code->addr);
+}
+
+void bytecode_print_op_add_int(bytecode * code)
+{
+    printf("%d: op add int\n", code->addr);
+}
+
+void bytecode_print_op_sub_int(bytecode * code)
+{
+    printf("%d: op sub int\n", code->addr);
+}
+
+void bytecode_print_op_mul_int(bytecode * code)
+{
+    printf("%d: op mul int\n", code->addr);
+}
+
+void bytecode_print_op_div_int(bytecode * code)
+{
+    printf("%d: op div int\n", code->addr);
+}
+
+void bytecode_print_op_neg_float(bytecode * code)
+{
+    printf("%d: op neg float\n", code->addr);
+}
+
+void bytecode_print_op_add_float(bytecode * code)
+{
+    printf("%d: op add float\n", code->addr);
+}
+
+void bytecode_print_op_sub_float(bytecode * code)
+{
+    printf("%d: op sub float\n", code->addr);
+}
+
+void bytecode_print_op_mul_float(bytecode * code)
+{
+    printf("%d: op mul float\n", code->addr);
+}
+
+void bytecode_print_op_div_float(bytecode * code)
+{
+    printf("%d: op div float\n", code->addr);
+}
+
+void bytecode_print_op_lt_int(bytecode * code)
+{
+    printf("%d: op lt int\n", code->addr);
+}
+
+void bytecode_print_op_gt_int(bytecode * code)
+{
+    printf("%d: op gt int\n", code->addr);
+}
+
+void bytecode_print_op_lte_int(bytecode * code)
+{
+    printf("%d: op lte int\n", code->addr);
+}
+
+void bytecode_print_op_gte_int(bytecode * code)
+{
+    printf("%d: op gte int\n", code->addr);
+}
+
+void bytecode_print_op_eq_int(bytecode * code)
+{
+    printf("%d: op eq int\n", code->addr);
+}
+
+void bytecode_print_op_neq_int(bytecode * code)
+{
+    printf("%d: op neq int\n", code->addr);
+}
+
+void bytecode_print_op_lt_float(bytecode * code)
+{
+    printf("%d: op lt float\n", code->addr);
+}
+
+void bytecode_print_op_gt_float(bytecode * code)
+{
+    printf("%d: op gt float\n", code->addr);
+}
+
+void bytecode_print_op_lte_float(bytecode * code)
+{
+    printf("%d: op lte float\n", code->addr);
+}
+
+void bytecode_print_op_gte_float(bytecode * code)
+{
+    printf("%d: op gte float\n", code->addr);
+}
+
+void bytecode_print_op_eq_float(bytecode * code)
+{
+    printf("%d: op eq float\n", code->addr);
+}
+
+void bytecode_print_op_neq_float(bytecode * code)
+{
+    printf("%d: op neq_float\n", code->addr);
+}
+
+void bytecode_print_int_to_float(bytecode * code)
+{
+    printf("%d: int to float\n", code->addr);
+}
+
+void bytecode_print_float_to_int(bytecode * code)
+{
+    printf("%d: float to int\n", code->addr);
+}
+
 void bytecode_print_jumpz(bytecode * code)
 {
     printf("%d: jumpz %d (%d)\n", code->addr, code->jump.offset, code->addr + code->jump.offset);
@@ -111,61 +260,6 @@ void bytecode_print_jump(bytecode * code)
 void bytecode_print_label(bytecode * code)
 {
     printf("%d: label\n", code->addr);
-}
-
-void bytecode_print_op_neg(bytecode * code)
-{
-    printf("%d: op neg\n", code->addr);
-}
-
-void bytecode_print_op_add(bytecode * code)
-{
-    printf("%d: op add\n", code->addr);
-}
-
-void bytecode_print_op_sub(bytecode * code)
-{
-    printf("%d: op sub\n", code->addr);
-}
-
-void bytecode_print_op_mul(bytecode * code)
-{
-    printf("%d: op mul\n", code->addr);
-}
-
-void bytecode_print_op_div(bytecode * code)
-{
-    printf("%d: op div\n", code->addr);
-}
-
-void bytecode_print_op_lt(bytecode * code)
-{
-    printf("%d: op lt\n", code->addr);
-}
-
-void bytecode_print_op_gt(bytecode * code)
-{
-    printf("%d: op gt\n", code->addr);
-}
-
-void bytecode_print_op_lte(bytecode * code)
-{
-    printf("%d: op lte\n", code->addr);
-}
-
-void bytecode_print_op_gte(bytecode * code)
-{
-    printf("%d: op gte\n", code->addr);
-}
-
-void bytecode_print_op_eq(bytecode * code)
-{
-    printf("%d: op eq\n", code->addr);
-}
-
-void bytecode_print_op_neq(bytecode * code)
-{
-    printf("%d: op neq\n", code->addr);
 }
 
 void bytecode_print_func_def(bytecode * code)

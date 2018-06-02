@@ -21,8 +21,21 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "expr.h"
 #include "func.h"
+
+expr * expr_new_int(int int_value)
+{
+    expr * ret = (expr *) malloc(sizeof(expr));
+    
+    ret->type = EXPR_INT;
+    ret->int_value = int_value;
+    ret->comb = COMB_TYPE_INT;
+    ret->line_no = 0;
+    
+    return ret;
+}
 
 expr * expr_new_float(float float_value)
 {
@@ -128,10 +141,26 @@ expr * expr_new_build_in(unsigned int id, expr_list * params)
     return ret;
 }
 
+expr * expr_new_conv(expr * expr_value, expr_type conv)
+{
+    expr * ret = (expr *) malloc(sizeof(expr));
+
+    assert (conv == EXPR_INT_TO_FLOAT || conv == EXPR_FLOAT_TO_INT);
+    
+    *ret = *expr_value;
+    
+    ret->type = conv;
+    ret->line_no = 0;
+    ret->comb = (conv == EXPR_INT_TO_FLOAT) ? COMB_TYPE_FLOAT : COMB_TYPE_INT;
+    
+    return ret;
+}
+
 void expr_delete(expr * value)
 {
     switch (value->type)
     {
+        case EXPR_INT:
         case EXPR_FLOAT:
         break;
         case EXPR_ID:
@@ -182,6 +211,10 @@ void expr_delete(expr * value)
             {
                 expr_list_delete(value->func_build_in.param);
             }
+        break;
+        case EXPR_INT_TO_FLOAT:
+        case EXPR_FLOAT_TO_INT:
+            expr_delete(value->left);        
         break;
     }
 
@@ -274,6 +307,7 @@ const char * comb_type_str(comb_type type)
         case COMB_TYPE_ERR: return "error";
         case COMB_TYPE_VOID: return "void";
         case COMB_TYPE_BOOL: return "bool";
+        case COMB_TYPE_INT: return "int";
         case COMB_TYPE_FLOAT: return "float";
         case COMB_TYPE_FUNC: return "func";
     }
