@@ -141,7 +141,7 @@ expr * expr_new_build_in(unsigned int id, expr_list * params)
     return ret;
 }
 
-expr * expr_new_conv(expr * expr_value, expr_type conv)
+expr * expr_conv(expr * expr_value, expr_type conv)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
 

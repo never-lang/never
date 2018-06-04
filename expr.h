@@ -143,7 +143,8 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * exp
 expr * expr_new_func(func * value); 
 expr * expr_new_call(expr * func_expr, expr_list * vars);
 expr * expr_new_build_in(unsigned int id, expr_list * params);
-expr * expr_new_conv(expr * expr_value, expr_type conv);
+
+expr * expr_conv(expr * expr_value, expr_type conv);
 
 void expr_delete(expr * value);
 
