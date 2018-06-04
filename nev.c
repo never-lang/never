@@ -104,8 +104,8 @@ int parse_and_exec(char * file_name)
             
                 bytecode_func_addr(code);
 
-                /*print_functions(nev);
-                bytecode_print(code);*/
+                print_functions(nev);
+                bytecode_print(code);
             
                 bytecode_to_array(code, &code_arr, &code_size);
             

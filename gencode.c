@@ -122,7 +122,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
         else if (entry->type == SYMTAB_VAR && entry->var_value != NULL)
         {
             var * var_value = entry->var_value;
-            if (var_value->type == VAR_FLOAT || var_value->type == VAR_FUNC)
+            if (var_value->type == VAR_INT ||
+                var_value->type == VAR_FLOAT ||
+                var_value->type == VAR_FUNC)
             {
                 if (syn_level == entry->syn_level)
                 {
@@ -159,6 +161,8 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
 {
     switch (value->type)
     {
+        case EXPR_INT:
+        break;
         case EXPR_FLOAT:
             /* printf("gencode EXPR_FLOAT %f\n", value->float_value); */
         break;
@@ -206,6 +210,10 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
         break;
         case EXPR_BUILD_IN:
             expr_list_gencode(syn_level, func_value, value->func_build_in.param, result);
+        break;
+        case EXPR_INT_TO_FLOAT:
+        case EXPR_FLOAT_TO_INT:
+            expr_gencode(syn_level, func_value, value->left, result);
         break;
     }
     return 0;
@@ -271,6 +279,9 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
 {
     switch (value->type)
     {
+        case EXPR_INT:
+            /* not possible */
+        break;
         case EXPR_FLOAT:
             /* not possible */
         break;
@@ -318,6 +329,10 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
         break;
         case EXPR_BUILD_IN:
             func_gencode_freevars_expr_list(func_value, value->func_build_in.param, result);
+        break;
+        case EXPR_INT_TO_FLOAT:
+        case EXPR_FLOAT_TO_INT:
+            func_gencode_freevars_expr(func_value, value->left, result);
         break;
     }
 
@@ -455,6 +470,18 @@ int never_gencode(never * nev)
 /**
  * emit code
  */
+int expr_int_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    
+    bc.type = BYTECODE_INT;
+    bc.integer.value = value->int_value;
+
+    bytecode_add(code, &bc);
+
+    return 0;
+} 
+ 
 int expr_float_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
@@ -680,6 +707,9 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 
     switch (value->type)
     {
+        case EXPR_INT:
+            expr_int_emit(value, stack_level, code, result);
+        break;
         case EXPR_FLOAT:
             expr_float_emit(value, stack_level, code, result); 
         break;
@@ -688,30 +718,90 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         break;
         case EXPR_NEG:
             expr_emit(value->left, stack_level, code, result);
-
-            bc.type = BYTECODE_OP_NEG;
-            bytecode_add(code, &bc);
+            
+            if (value->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_NEG_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_NEG_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot neg type %s\n",
+                                comb_type_str(value->comb));
+            }
         break;
         case EXPR_ADD:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_ADD;
-            bytecode_add(code, &bc);
+            if (value->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_ADD_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_ADD_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot add type %s\n",
+                                comb_type_str(value->comb));
+            }
         break;
         case EXPR_SUB:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_SUB;
-            bytecode_add(code, &bc);
+            if (value->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_SUB_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_SUB_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot sub type %s\n",
+                                comb_type_str(value->comb));
+            }
         break;
         case EXPR_MUL:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_MUL;
-            bytecode_add(code, &bc);
+            if (value->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_MUL_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_MUL_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot mul type %s\n",
+                                comb_type_str(value->comb));
+            }
         break;
         case EXPR_DIV:
             expr_emit(value->left, stack_level, code, result);
@@ -721,8 +811,23 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             bc.line.no = value->line_no;
             bytecode_add(code, &bc);
 
-            bc.type = BYTECODE_OP_DIV;
-            bytecode_add(code, &bc);
+            if (value->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_DIV_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_DIV_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot div type %s\n",
+                                comb_type_str(value->comb));
+            }
         break;
         case EXPR_MOD:
             expr_emit(value->right, stack_level, code, result);
@@ -732,50 +837,171 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             bc.line.no = value->line_no;
             bytecode_add(code, &bc);
 
-            bc.type = BYTECODE_OP_MOD;
-            bytecode_add(code, &bc);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_MOD_INT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot mod type %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
         break;
         case EXPR_LT:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_LT;
-            bytecode_add(code, &bc);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_LT_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_LT_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot lt different types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
         break;
         case EXPR_GT:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_GT;
-            bytecode_add(code, &bc);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_GT_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_GT_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot gt different types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
         break;
         case EXPR_LTE:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_LTE;
-            bytecode_add(code, &bc);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_LTE_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_LTE_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot lte different types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
         break;
         case EXPR_GTE:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_GTE;
-            bytecode_add(code, &bc);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_GTE_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_GTE_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot gte different types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
         break;
         case EXPR_EQ:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_EQ;
-            bytecode_add(code, &bc);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_EQ_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_EQ_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot eq different types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
         break;
         case EXPR_NEQ:
             expr_emit(value->left, stack_level, code, result);
             expr_emit(value->right, stack_level + 1, code, result);
 
-            bc.type = BYTECODE_OP_NEQ;
-            bytecode_add(code, &bc);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_OP_NEQ_INT;
+                bytecode_add(code, &bc);
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_OP_NEQ_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot neq different types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
+
         break;
         case EXPR_SUP:
             expr_emit(value->left, stack_level, code, result);
@@ -798,6 +1024,39 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             bc.type = BYTECODE_BUILD_IN;
             bc.build_in.id = value->func_build_in.id;
             bytecode_add(code, &bc);
+        break;
+        case EXPR_INT_TO_FLOAT:
+            expr_emit(value->left, stack_level, code, result);
+
+            if (value->left->comb == COMB_TYPE_INT)
+            {
+                bc.type = BYTECODE_INT_TO_FLOAT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot convert type %s to float\n",
+                                comb_type_str(value->left->comb));
+            }
+
+        break;
+        case EXPR_FLOAT_TO_INT:
+            expr_emit(value->left, stack_level, code, result);
+
+            if (value->left->comb == COMB_TYPE_FLOAT)
+            {
+                bc.type = BYTECODE_FLOAT_TO_INT;
+                bytecode_add(code, &bc);
+            }
+            else
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot convert type %s to int\n",
+                                comb_type_str(value->left->comb));
+            }
         break;
     }
     return 0;

@@ -24,8 +24,9 @@
 
 enum
 {
-    VAR_FLOAT = 1,
-    VAR_FUNC = 2
+    VAR_INT = 1,
+    VAR_FLOAT = 2,
+    VAR_FUNC = 3
 };
 
 typedef struct var
@@ -52,6 +53,7 @@ typedef struct var_list
     var_list_node * tail;
 } var_list;
 
+var * var_new_int(char * id);
 var * var_new_float(char * id);
 var * var_new_func(char * id, var_list * vars, var * ret);
 void var_delete(var * value);

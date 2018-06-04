@@ -23,6 +23,20 @@
 #include <stdio.h>
 #include "var.h"
 
+var * var_new_int(char * id)
+{
+    var * value = (var *)malloc(sizeof(var));
+    
+    value->type = VAR_INT;
+    value->index = -1;
+    value->id = id;
+    value->vars = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+    
+    return value;
+}
+
 var * var_new_float(char * id)
 {
     var * value = (var *)malloc(sizeof(var));

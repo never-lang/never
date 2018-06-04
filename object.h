@@ -29,9 +29,10 @@ typedef int stack_ptr;
 typedef enum object_type
 {
     OBJECT_UNKNOWN = 0,
-    OBJECT_FLOAT = 1,
-    OBJECT_VEC = 2,
-    OBJECT_FUNC = 3
+    OBJECT_INT = 1,
+    OBJECT_FLOAT = 2,
+    OBJECT_VEC = 3,
+    OBJECT_FUNC = 4
 } object_type;
 
 typedef struct object_vec
@@ -51,12 +52,14 @@ typedef struct object
     object_type type;
     union
     {
+        int int_value; /* OBJECT_INT */
         float float_value; /* OBJECT_FLOAT */
         object_vec * vec_value; /* OBJECT_VEC */
         object_func * func_value; /* OBJECT_FUNC */
     };
 } object;
 
+object * object_new_int(int value);
 object * object_new_float(float value);
 object * object_new_vec(unsigned int size);
 object * object_new_func(mem_ptr vec, ip_ptr addr);

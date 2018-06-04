@@ -121,6 +121,9 @@ void gc_mark(gc * collector, mem_ptr addr)
             case OBJECT_UNKNOWN:
                 assert(0);
             break;
+            case OBJECT_INT:
+                collector->mem[addr].mark = 1;
+            break;
             case OBJECT_FLOAT:
                 collector->mem[addr].mark = 1;
             break;
@@ -184,6 +187,11 @@ mem_ptr gc_alloc_any(gc * collector, object * value)
     return loc;
 }
 
+mem_ptr gc_alloc_int(gc * collector, int value)
+{
+    return gc_alloc_any(collector, object_new_int(value));
+}
+
 mem_ptr gc_alloc_float(gc * collector, float value)
 {
     return gc_alloc_any(collector, object_new_float(value));
@@ -197,6 +205,22 @@ mem_ptr gc_alloc_vec(gc * collector, unsigned int size)
 mem_ptr gc_alloc_func(gc * collector, mem_ptr vec, ip_ptr addr)
 {
     return gc_alloc_any(collector, object_new_func(vec, addr));
+}
+
+int gc_get_int(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_INT);
+
+    return collector->mem[addr].object_value->int_value;
+}
+
+void gc_set_int(gc * collector, mem_ptr addr, int value)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_INT);    
+
+    collector->mem[addr].object_value->int_value = value;
 }
 
 float gc_get_float(gc * collector, mem_ptr addr)

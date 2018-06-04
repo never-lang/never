@@ -30,6 +30,10 @@ int expr_set_return_type(expr * value, var * ret)
     {
         value->comb = COMB_TYPE_VOID;
     }
+    else if (ret->type == VAR_INT)
+    {
+        value->comb = COMB_TYPE_INT;
+    }
     else if (ret->type == VAR_FLOAT)
     {
         value->comb = COMB_TYPE_FLOAT;
@@ -60,7 +64,11 @@ int var_cmp(var * var_one, var * var_two)
     {
         return TYPECHECK_FAIL;
     }
-    if (var_one->type == VAR_FLOAT && var_two->type == VAR_FLOAT)
+    if (var_one->type == VAR_INT && var_two->type == VAR_INT)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (var_one->type == VAR_FLOAT && var_two->type == VAR_FLOAT)
     {
         return TYPECHECK_SUCC;
     }
@@ -134,11 +142,25 @@ int var_expr_cmp(var * var_value, expr * expr_value)
         return TYPECHECK_FAIL;
     }
 
-    if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_FLOAT)
+    if (var_value->type == VAR_INT && expr_value->comb == COMB_TYPE_INT)
     {
         return TYPECHECK_SUCC;
     }
-    else if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_BOOL)
+    else if (var_value->type == VAR_INT && expr_value->comb == COMB_TYPE_FLOAT)
+    {
+        expr_conv(expr_value, EXPR_FLOAT_TO_INT);
+
+        print_warning_msg(expr_value->line_no, "converted float to int\n");
+        return TYPECHECK_SUCC;
+    }
+    else if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_INT)
+    {
+        expr_conv(expr_value, EXPR_INT_TO_FLOAT);
+
+        print_warning_msg(expr_value->line_no, "converted int to float\n");
+        return TYPECHECK_SUCC;
+    }
+    else if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_FLOAT)
     {
         return TYPECHECK_SUCC;
     }
@@ -205,7 +227,11 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         else if (entry->type == SYMTAB_VAR && entry->var_value != NULL)
         {
             var * var_value = entry->var_value;
-            if (var_value->type == VAR_FLOAT)
+            if (var_value->type == VAR_INT)
+            {
+                 value->comb = COMB_TYPE_INT;
+            }
+            else if (var_value->type == VAR_FLOAT)
             {
                  value->comb = COMB_TYPE_FLOAT;
             }
@@ -231,8 +257,8 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
     expr_check_type(tab, value->middle, result);
     expr_check_type(tab, value->right, result);
             
-    if (value->left->comb == COMB_TYPE_FLOAT ||
-        value->left->comb == COMB_TYPE_BOOL)
+    if (value->left->comb == COMB_TYPE_INT ||
+        value->left->comb == COMB_TYPE_FLOAT)
     {
         if (value->middle->comb == value->right->comb)
         {
@@ -297,11 +323,12 @@ int expr_call_check_type(symtab * tab, expr * value, int * result)
                 print_error_msg(value->line_no, "function call type mismatch\n");
             }
         break;
+        case COMB_TYPE_INT:
         case COMB_TYPE_FLOAT:
+        case COMB_TYPE_BOOL:
         case COMB_TYPE_UNKNOWN:
         case COMB_TYPE_ERR:
         case COMB_TYPE_VOID:
-        case COMB_TYPE_BOOL:
             print_error_msg(value->line_no, "cannot execute function on type %s\n", 
                             comb_type_str(value->comb));
         break;
@@ -314,6 +341,9 @@ int expr_check_type(symtab * tab, expr * value, int * result)
 {
     switch (value->type)
     {
+        case EXPR_INT:
+            value->comb = COMB_TYPE_INT;
+        break;
         case EXPR_FLOAT:
             value->comb = COMB_TYPE_FLOAT;
         break;
@@ -323,7 +353,11 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         case EXPR_NEG:
         {
             expr_check_type(tab, value->left, result);
-            if (value->left->comb == COMB_TYPE_FLOAT)
+            if (value->left->comb == COMB_TYPE_INT)
+            {
+                value->comb = COMB_TYPE_INT;
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT)
             {
                 value->comb = COMB_TYPE_FLOAT;
             }
@@ -342,12 +376,32 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         case EXPR_SUB:
         case EXPR_MUL:
         case EXPR_DIV:
-        case EXPR_MOD:
         {
             expr_check_type(tab, value->left, result);
             expr_check_type(tab, value->right, result);
-            if (value->left->comb == COMB_TYPE_FLOAT &&
-                value->right->comb == COMB_TYPE_FLOAT)
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                value->comb = COMB_TYPE_INT;
+            }
+            else if (value->left->comb == COMB_TYPE_INT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
+            {
+                expr_conv(value->left, EXPR_INT_TO_FLOAT);                
+                value->comb = COMB_TYPE_FLOAT;
+                
+                print_warning_msg(value->line_no, "converted int to float\n");
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_INT)
+            {
+                expr_conv(value->right, EXPR_INT_TO_FLOAT);                
+                value->comb = COMB_TYPE_FLOAT;
+                
+                print_warning_msg(value->line_no, "converted float to int\n");
+            }
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
             {
                 value->comb = COMB_TYPE_FLOAT;
             }
@@ -362,6 +416,24 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             }
         }
         break;
+        case EXPR_MOD:
+            expr_check_type(tab, value->left, result);
+            expr_check_type(tab, value->right, result);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                value->comb = COMB_TYPE_INT;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "cannot exec mod operation on types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
+        break;
         case EXPR_LT:
         case EXPR_GT:
         case EXPR_LTE:
@@ -369,18 +441,23 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         {
             expr_check_type(tab, value->left, result);
             expr_check_type(tab, value->right, result);
-            if (value->left->comb == COMB_TYPE_FLOAT &&
-                value->left->comb == COMB_TYPE_FLOAT)
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
             {
-                value->comb = COMB_TYPE_BOOL;
+                value->comb = COMB_TYPE_INT;
+            }
+            if (value->left->comb == COMB_TYPE_FLOAT &&
+                value->right->comb == COMB_TYPE_FLOAT)
+            {
+                value->comb = COMB_TYPE_INT;
             }
             else
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no, "cannot compare not float %d %d\n",
-                                value->left->comb,
-                                value->right->comb);
+                print_error_msg(value->line_no, "cannot compare types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
             }
         }
         break;
@@ -388,22 +465,22 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         case EXPR_NEQ:
             expr_check_type(tab, value->left, result);
             expr_check_type(tab, value->right, result);
-            if (value->left->comb == COMB_TYPE_FLOAT &&
-                value->right->comb == COMB_TYPE_FLOAT)
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
             {
-                value->comb = COMB_TYPE_BOOL;
+                value->comb = COMB_TYPE_INT;
             }
-            else if (value->left->comb == COMB_TYPE_BOOL &&
-                     value->right->comb == COMB_TYPE_BOOL)
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
+                     value->right->comb == COMB_TYPE_FLOAT)
             {
-                value->comb = COMB_TYPE_BOOL;
+                value->comb = COMB_TYPE_INT;
             }
             else
             {
                 *result = TYPECHECK_FAIL;
                 value->comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no,
-                                "cannot equal types %s %s\n",
+                                "cannot compare types %s %s\n",
                                  value->line_no,
                                  comb_type_str(value->left->comb),
                                  comb_type_str(value->right->comb));
@@ -437,6 +514,38 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         case EXPR_BUILD_IN:
             expr_list_check_type(tab, value->func_build_in.param, result);
             value->comb = COMB_TYPE_FLOAT;
+        break;
+        case EXPR_INT_TO_FLOAT:
+            expr_check_type(tab, value->left, result);
+            if (value->left->comb == COMB_TYPE_INT)
+            {
+                value->comb = COMB_TYPE_FLOAT;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "cannot convert type %s to float\n",
+                                value->line_no,  
+                                comb_type_str(value->left->comb));
+            }            
+        break;
+        case EXPR_FLOAT_TO_INT:
+            expr_check_type(tab, value->left, result);
+            if (value->left->comb == COMB_TYPE_FLOAT)
+            {
+                value->comb = COMB_TYPE_INT;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "cannot convert type %s to int\n",
+                                value->line_no,  
+                                comb_type_str(value->left->comb));
+            }
         break;
     }
     return 0;
@@ -584,6 +693,7 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
 {
     switch (value->type)
     {
+        case EXPR_INT:
         case EXPR_FLOAT:
         break;
         case EXPR_ID:
@@ -628,6 +738,10 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
         break;
         case EXPR_BUILD_IN:
              symtab_add_entry_expr_list(stab, value->func_build_in.param, result);
+        break;
+        case EXPR_INT_TO_FLOAT:
+        case EXPR_FLOAT_TO_INT:
+             symtab_add_entry_expr(stab, value->left, result);
         break;
     }
     return 0;
@@ -710,6 +824,7 @@ int print_func_expr(expr * value, int depth)
 {
     switch (value->type)
     {
+        case EXPR_INT:
         case EXPR_FLOAT:
             /* no symtabs possible */
         break;
@@ -756,6 +871,10 @@ int print_func_expr(expr * value, int depth)
         break;
         case EXPR_BUILD_IN:
             print_func_expr_list(value->func_build_in.param, depth + 1);
+        break;
+        case EXPR_INT_TO_FLOAT:
+        case EXPR_FLOAT_TO_INT:
+            print_func_expr(value->left, depth);
         break;
     }
     return 0;

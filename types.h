@@ -29,7 +29,7 @@
 
 typedef union token_value
 {
-    char char_value;
+    int int_value;
     float float_value;
     char * str_value;
     expr * expr_value;

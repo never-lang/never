@@ -28,25 +28,28 @@ typedef float func_float_float(float x);
 
 typedef enum expr_type
 {
-    EXPR_FLOAT = 1,
-    EXPR_ID  = 2,
-    EXPR_NEG = 3,
-    EXPR_ADD = 4,
-    EXPR_SUB = 5,
-    EXPR_MUL = 6,
-    EXPR_DIV = 7,
-    EXPR_MOD = 8,
-    EXPR_LT  = 9,
-    EXPR_GT  = 10,
-    EXPR_LTE = 11,
-    EXPR_GTE = 12,
-    EXPR_EQ  = 13,
-    EXPR_NEQ = 14,
-    EXPR_SUP = 15, /* ( expr ) */
-    EXPR_COND = 16, /* expr ? expr : expr */
-    EXPR_CALL = 17, /* ID ( expr_list) */
-    EXPR_FUNC = 18,  /* func ID ( ... ) */
-    EXPR_BUILD_IN = 19
+    EXPR_INT = 1,
+    EXPR_FLOAT = 2,
+    EXPR_ID  = 3,
+    EXPR_NEG = 4,
+    EXPR_ADD = 5,
+    EXPR_SUB = 6,
+    EXPR_MUL = 7,
+    EXPR_DIV = 8,
+    EXPR_MOD = 9,
+    EXPR_LT  = 10,
+    EXPR_GT  = 11,
+    EXPR_LTE = 12,
+    EXPR_GTE = 13,
+    EXPR_EQ  = 14,
+    EXPR_NEQ = 15,
+    EXPR_SUP = 16, /* ( expr ) */
+    EXPR_COND = 17, /* expr ? expr : expr */
+    EXPR_CALL = 18, /* ID ( expr_list) */
+    EXPR_FUNC = 19,  /* func ID ( ... ) */
+    EXPR_BUILD_IN = 20,
+    EXPR_INT_TO_FLOAT = 21,
+    EXPR_FLOAT_TO_INT = 22  
 } expr_type;
 
 typedef enum comb_type
@@ -55,8 +58,9 @@ typedef enum comb_type
     COMB_TYPE_ERR  = 1,
     COMB_TYPE_VOID = 2,
     COMB_TYPE_BOOL = 3,
-    COMB_TYPE_FLOAT  = 4,
-    COMB_TYPE_FUNC = 5
+    COMB_TYPE_INT  = 4,
+    COMB_TYPE_FLOAT  = 5,
+    COMB_TYPE_FUNC = 6
 } comb_type;
 
 typedef enum id_type
@@ -81,6 +85,7 @@ typedef struct expr
     unsigned int line_no;
     union
     {
+        int int_value; /* EXPR_INT */
         float float_value; /* EXPR_FLOAT */
         struct /* EXPR_ID */
         {
@@ -130,6 +135,7 @@ typedef struct expr_list
     expr_list_node * tail;
 } expr_list;
 
+expr * expr_new_int(int int_value);
 expr * expr_new_float(float float_value);
 expr * expr_new_id(char * id);
 expr * expr_new_one(int type, expr * expr_left);
@@ -138,6 +144,8 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * exp
 expr * expr_new_func(func * value); 
 expr * expr_new_call(expr * func_expr, expr_list * vars);
 expr * expr_new_build_in(unsigned int id, expr_list * params);
+
+expr * expr_conv(expr * expr_value, expr_type conv);
 
 void expr_delete(expr * value);
 

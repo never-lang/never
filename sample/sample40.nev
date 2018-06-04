@@ -1,0 +1,21 @@
+
+func sub(int a, int b) -> int
+{
+    return a - b;
+}
+
+func add(int a, int b) -> int
+{
+    return a + b;
+}
+
+func execute(f(int, int) -> int, int a, int b) -> int
+{
+    return f(a, b);
+}
+
+func main() -> float
+{
+    return execute(add, 12, 10);
+}
+
