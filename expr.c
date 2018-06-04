@@ -149,9 +149,9 @@ expr * expr_conv(expr * expr_value, expr_type conv)
     
     *ret = *expr_value;
     
-    ret->type = conv;
-    ret->line_no = 0;
-    ret->comb = (conv == EXPR_INT_TO_FLOAT) ? COMB_TYPE_FLOAT : COMB_TYPE_INT;
+    expr_value->type = conv;
+    expr_value->comb = (conv == EXPR_INT_TO_FLOAT) ? COMB_TYPE_FLOAT : COMB_TYPE_INT;
+    expr_value->left = ret;
     
     return ret;
 }

@@ -1,0 +1,7 @@
+
+
+func main() -> float
+{
+    return 8 / 2;
+}
+

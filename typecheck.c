@@ -388,7 +388,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
                      value->right->comb == COMB_TYPE_FLOAT)
             {
                 expr_conv(value->left, EXPR_INT_TO_FLOAT);                
-                value->comb = COMB_TYPE_INT;
+                value->comb = COMB_TYPE_FLOAT;
                 
                 print_warning_msg(value->line_no, "converted int to float\n");
             }
@@ -396,7 +396,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
                      value->right->comb == COMB_TYPE_INT)
             {
                 expr_conv(value->left, EXPR_FLOAT_TO_INT);                
-                value->comb = COMB_TYPE_INT;
+                value->comb = COMB_TYPE_FLOAT;
                 
                 print_warning_msg(value->line_no, "converted float to int\n");
             }
