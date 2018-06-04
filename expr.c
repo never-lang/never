@@ -144,6 +144,7 @@ void expr_delete(expr * value)
         case EXPR_SUB:
         case EXPR_MUL:
         case EXPR_DIV:
+        case EXPR_MOD:
         case EXPR_LT:
         case EXPR_GT:
         case EXPR_LTE:

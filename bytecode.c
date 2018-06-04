@@ -40,6 +40,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_SUB, bytecode_print_op_sub },
     { BYTECODE_OP_MUL, bytecode_print_op_mul },
     { BYTECODE_OP_DIV, bytecode_print_op_div },
+    { BYTECODE_OP_MOD, bytecode_print_op_mod },
     { BYTECODE_OP_LT, bytecode_print_op_lt },
     { BYTECODE_OP_GT, bytecode_print_op_gt },
     { BYTECODE_OP_LTE, bytecode_print_op_lte },
@@ -136,6 +137,11 @@ void bytecode_print_op_mul(bytecode * code)
 void bytecode_print_op_div(bytecode * code)
 {
     printf("%d: op div\n", code->addr);
+}
+
+void bytecode_print_op_mod(bytecode * code)
+{
+    printf("%d: op mod\n", code->addr);
 }
 
 void bytecode_print_op_lt(bytecode * code)

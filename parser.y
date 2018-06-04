@@ -42,7 +42,7 @@ int yyerror(never ** nev, char * str)
 %right <val.str_value> '?' ':'
 %left <val.str_value> '<' '>' TOK_LTE TOK_GTE TOK_EQ TOK_NEQ
 %left <val.str_value> '+' '-'
-%left <val.str_value> '*' '/'
+%left <val.str_value> '*' '/' '%'
 %precedence NEG
 %left <val.str_value> '(' ')'
 
@@ -104,6 +104,12 @@ expr: expr '/' expr
     $$ = expr_new_two(EXPR_DIV, $1, $3);
     $$->line_no = $<line_no>2;
 };
+
+expr: expr '%' expr
+{
+    $$ = expr_new_two(EXPR_MOD, $1, $3);
+    $$->line_no = $<line_no>2;
+}
 
 expr: expr '<' expr
 {

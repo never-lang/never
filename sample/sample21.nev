@@ -38,4 +38,3 @@ func main() -> float
     return twice(200, min)(10, 20);
 }
 
-

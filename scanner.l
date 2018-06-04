@@ -56,7 +56,7 @@ float {
     return TOK_FLOAT;
 }
 
-"+"|"-"|"/"|"*" {
+"+"|"-"|"/"|"*"|"%" {
     tokp->line_no = line_no;
     scanner_printf("operator %s\n", yytext);
     return yytext[0];
