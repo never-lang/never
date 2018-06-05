@@ -1,0 +1,6 @@
+
+func main() -> int
+{
+    return sin(3.141);
+}
+

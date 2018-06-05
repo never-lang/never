@@ -11,16 +11,16 @@ func funGen1(float a, float b) -> float
         return a * b;
     }
     
-    return funInt(a, b + 2);
+    return funInt(a, b + 2.0);
 }
 
 func funGen2(float a, float b) -> float
 {
-    return mul(a, b + 2);
+    return mul(a, b + 2.0);
 }
 
-func main() -> float
+func main() -> int 
 {
-    return assert(funGen2(10, 20) == 220);
+    return assert(funGen2(10.0, 20.0) == 220.0);
 }
 

@@ -1,11 +1,11 @@
 
 func cel2fah(float c) -> float
 {
-    return c * 1.8 + 32;
+    return c * 1.8 + 32.0;
 }
 
-func main() -> float
+func main() -> int 
 {
-    return cel2fah(100);
+    return cel2fah(100.0);
 }
 

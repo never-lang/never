@@ -8,8 +8,8 @@ func execute(float a, float b, f1(float, float) -> float) -> float
     return f1(a, b);
 } 
  
-func main() -> float
+func main() -> int
 {
-    return assert(execute(15, 20, min) == 30);
+    return assert(execute(15.0, 20.0, min) == 30.0);
 }
 

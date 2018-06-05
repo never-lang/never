@@ -14,7 +14,7 @@ func execute(f(int, int) -> int, int a, int b) -> int
     return f(a, b);
 }
 
-func main() -> float
+func main() -> int 
 {
     return execute(add, 12, 10);
 }

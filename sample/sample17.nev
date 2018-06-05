@@ -1,5 +1,5 @@
 
-func get(float c) -> (float, float) -> float
+func get(int c) -> (float, float) -> float
 {
     return c ? func min(float a, float b) -> float
                {
@@ -12,9 +12,9 @@ func get(float c) -> (float, float) -> float
                
 }
 
-func main() -> float
+func main() -> int 
 {
-    return assert(get(0)(10, 20) == 20);
+    return assert(get(0)(10.0, 20.0) == 20.0);
 }
 
 

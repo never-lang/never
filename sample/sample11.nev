@@ -1,9 +1,9 @@
 /**
  * Crazy level max
  */
-func main() -> float
+func main() -> int 
 {
     return assert((2 < 1 ? func min(float a, float b) -> float { return a < b ? a : b; }
-                         : func max(float a, float b) -> float { return a > b ? a : b; })(10, 20) == 20);
+                         : func max(float a, float b) -> float { return a > b ? a : b; })(10.0, 20.0) == 20.0);
 }
 

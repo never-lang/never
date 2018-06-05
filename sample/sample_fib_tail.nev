@@ -1,9 +1,9 @@
-func fib(float n, float a, float b) -> float
+func fib(int n, int a, int b) -> int 
 {
     return (n == 0) ? a : fib(n - 1, b, a + b);
 }
 
-func main() -> float
+func main() -> int
 {
     return assert(fib(7, 1, 1) == 21);
 }

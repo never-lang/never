@@ -1,21 +1,21 @@
 
 func fah2cel(float f) -> float
 {
-    return (f - 32) / 1.8;
+    return (f - 32.0) / 1.8;
 }
 
 func cel2fah(float c) -> float
 {
-    return c * 1.8 + 32;
+    return c * 1.8 + 32.0;
 }
 
-func dir_deg(float d) -> (float) -> float
+func dir_deg(int d) -> (float) -> float
 {
     return d == 0 ? fah2cel : cel2fah;
 }
 
-func main() -> float
+func main() -> int 
 {
-    return dir_deg(1)(100);
+    return dir_deg(1)(100.0);
 }
 

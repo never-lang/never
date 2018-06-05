@@ -10,7 +10,7 @@ func twice(float coeff, single_func(float, float) -> float) -> (float, float) ->
 {
     func top() -> float
     {
-        return 800;
+        return 80.0;
     }
 
     func one() -> (float, float) -> float
@@ -24,7 +24,7 @@ func twice(float coeff, single_func(float, float) -> float) -> (float, float) ->
         {
             func twice_func_nest(float a, float b) ->float
             {
-                return min(11, 12) * mult(100) * single_func(a, b);
+                return min(11.0, 12.0) * mult(10.0) * single_func(a, b);
             }
             return twice_func_nest(a, b);
         }
@@ -33,9 +33,9 @@ func twice(float coeff, single_func(float, float) -> float) -> (float, float) ->
     return one();
 }
 
-func main() -> float
+func main() -> int 
 {
-    return twice(200, min)(10, 20);
+    return twice(20.0, min)(10.0, 20.0);
 }
 
 

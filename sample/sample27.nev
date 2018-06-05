@@ -1,18 +1,18 @@
 func g_no(float n) -> float
 {
-    return -2 * n;
+    return -2.0 * n;
 }
 
 func mutrec(float n) -> float
 {
     func A(no(float) -> float, float n) -> float
     {
-        return (n == 1) ? B(1, no) : no(n);
+        return (n == 1.0) ? B(1.0, no) : no(n);
     }
     
     func B(float n, no(float) -> float) -> float
     {
-        return (n == 1) ? A(no, 10) : 12;
+        return (n == 1.0) ? A(no, 10.0) : 12.0;
     }
     
     func C(float n) -> float
@@ -23,8 +23,8 @@ func mutrec(float n) -> float
     return C(n);
 }
 
-func main() -> float
+func main() -> int 
 {
-    return assert(mutrec(1) == -20);
+    return assert(mutrec(1.0) == -20.0);
 }
 

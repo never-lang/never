@@ -18,9 +18,8 @@ func fun0(float a0, float b0) -> float
     return fun1(a0, b0);
 }
 
-
-func main() -> float
+func main() -> int
 {
-    return assert(fun0(2, 3) == 20);
+    return assert(fun0(2.0, 3.0) == 20.0);
 }
 

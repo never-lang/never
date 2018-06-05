@@ -1,15 +1,15 @@
 /**
  * level expert
  */
-func execute(float a, float b, f1(float, float) -> float) -> float
+func execute(int a, int b, f1(int, int) -> int) -> int
 {
     return f1(a, b);
 } 
  
-func main() -> float
+func main() -> int
 {
     return assert(execute(10, 20, 
-                  func min(float a, float b) -> float 
+                  func min(int a, int b) -> int
                   { 
                        return a < b ? a : b; 
                   }) == 10);

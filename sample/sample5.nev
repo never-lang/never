@@ -1,7 +1,7 @@
 
 func deg2rad(float deg) -> float
 {
-    return deg * 3.14159265359 / 180;
+    return deg * 3.14159265359 / 180.0;
 }
 
 func get_func() -> (float) -> float
@@ -9,9 +9,9 @@ func get_func() -> (float) -> float
     return cos;
 }
 
-func main() -> float
+func main() -> int 
 {
-    return assertf(get_func()(deg2rad(60)) - 0.5, 0.00001);
+    return assertf(get_func()(deg2rad(60.0)) - 0.5, 0.0001);
 }
 
 

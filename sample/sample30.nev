@@ -6,12 +6,12 @@ func one(float a, float b, float c) -> float
 
 func two() -> float
 {
-    return 10 + 20 + 100;
+    return 10.0 + 20.0 + 100.0;
 }
 
-func main() -> float
+func main() -> int
 {
-    return two() + one(10, 0, 0) + two() + one(1, 2, 3);
+    return two() + one(10.0, 0.0, 0.0) + two() + one(1.0, 2.0, 3.0);
 }
 
 

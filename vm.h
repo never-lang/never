@@ -111,7 +111,7 @@ void vm_execute_rewrite(vm * machine, bytecode * code);
 void vm_execute_halt(vm * machine, bytecode * code);
 
 void vm_check_stack(vm * machine);
-int vm_execute(vm * machine, bytecode * code, unsigned int size, float * ret);
+int vm_execute(vm * machine, bytecode * code, unsigned int size, int * ret);
 
 vm * vm_new(unsigned int mem_size, unsigned int stack_size);
 void vm_delete(vm * machine);

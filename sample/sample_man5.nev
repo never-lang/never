@@ -1,12 +1,12 @@
 
 func fah2cel(float f) -> float
 {
-    return (f - 32) / 1.8;
+    return (f - 32.0) / 1.8;
 }
 
 func cel2fah(float c) -> float
 {
-    return c * 1.8 + 32;
+    return c * 1.8 + 32.0;
 }
 
 func degrees(conv(float) -> float, float degree) -> float
@@ -14,8 +14,8 @@ func degrees(conv(float) -> float, float degree) -> float
     return conv(degree);
 }
 
-func main() -> float
+func main() -> int
 {
-    return degrees(cel2fah, 100);
+    return degrees(cel2fah, 100.0);
 }
 

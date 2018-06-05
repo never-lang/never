@@ -257,8 +257,7 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
     expr_check_type(tab, value->middle, result);
     expr_check_type(tab, value->right, result);
             
-    if (value->left->comb == COMB_TYPE_INT ||
-        value->left->comb == COMB_TYPE_FLOAT)
+    if (value->left->comb == COMB_TYPE_INT)
     {
         if (value->middle->comb == value->right->comb)
         {
@@ -398,7 +397,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
                 expr_conv(value->right, EXPR_INT_TO_FLOAT);                
                 value->comb = COMB_TYPE_FLOAT;
                 
-                print_warning_msg(value->line_no, "converted float to int\n");
+                print_warning_msg(value->line_no, "converted int to float\n");
             }
             else if (value->left->comb == COMB_TYPE_FLOAT &&
                      value->right->comb == COMB_TYPE_FLOAT)
@@ -446,7 +445,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             {
                 value->comb = COMB_TYPE_INT;
             }
-            if (value->left->comb == COMB_TYPE_FLOAT &&
+            else if (value->left->comb == COMB_TYPE_FLOAT &&
                 value->right->comb == COMB_TYPE_FLOAT)
             {
                 value->comb = COMB_TYPE_INT;
@@ -481,7 +480,6 @@ int expr_check_type(symtab * tab, expr * value, int * result)
                 value->comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no,
                                 "cannot compare types %s %s\n",
-                                 value->line_no,
                                  comb_type_str(value->left->comb),
                                  comb_type_str(value->right->comb));
             }
@@ -513,7 +511,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         break;
         case EXPR_BUILD_IN:
             expr_list_check_type(tab, value->func_build_in.param, result);
-            value->comb = COMB_TYPE_FLOAT;
+            expr_set_return_type(value, value->func_build_in.ret);
         break;
         case EXPR_INT_TO_FLOAT:
             expr_check_type(tab, value->left, result);
@@ -973,7 +971,7 @@ int func_main_check_type(symtab * tab, int * result)
             }
             else
             {
-                if (func_value->ret->type != VAR_FLOAT)
+                if (func_value->ret->type != VAR_INT)
                 {
                     print_error_msg(func_value->line_no, "incorrect function main return type\n");
                     *result = TYPECHECK_FAIL;

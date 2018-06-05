@@ -561,7 +561,7 @@ void vm_execute_float_to_int(vm * machine, bytecode * code)
 
 void vm_execute_jumpz(vm * machine, bytecode * code)
 {
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
 
     if (a == 0)
     {
@@ -710,7 +710,7 @@ void vm_execute_halt(vm * machine, bytecode * code)
     machine->running = VM_HALT;
 }
 
-int vm_execute(vm * machine, bytecode * code, unsigned int size, float * ret)
+int vm_execute(vm * machine, bytecode * code, unsigned int size, int * ret)
 {
     bytecode * bc = NULL;
 
@@ -724,7 +724,7 @@ int vm_execute(vm * machine, bytecode * code, unsigned int size, float * ret)
 
     if (machine->running == VM_HALT)
     {
-        *ret = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+        *ret = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
         return 0;
     }
 

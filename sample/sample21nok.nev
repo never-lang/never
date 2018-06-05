@@ -1,6 +1,6 @@
-func calc(float n, float coeff) -> float
+func calc(int n, int coeff) -> int
 {
-     func fib(float n) -> float
+     func fib(int n) -> int
      {
          return ((n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)) * coeff;
      }
@@ -8,7 +8,7 @@ func calc(float n, float coeff) -> float
      return fib(n);
 }
 
-func main() -> float
+func main() -> int 
 {
      return calc(7, 2);
 }

@@ -42,8 +42,8 @@ char * utils_file_name;
 
 int execute(bytecode * code_arr, unsigned int code_size)
 {
-    int res = 0;
-    float ret = 0;
+    int ret = 0;
+    int result = 0;
     vm * machine = NULL;
 
     if (code_arr == NULL)
@@ -55,10 +55,10 @@ int execute(bytecode * code_arr, unsigned int code_size)
 
     machine = vm_new(VM_MEM_SIZE, VM_STACK_SIZE);
         
-    res = vm_execute(machine, code_arr, code_size, &ret);
-    if (res == 0)
+    ret = vm_execute(machine, code_arr, code_size, &result);
+    if (ret == 0)
     {
-        printf("result is %.2f\n", ret);
+        printf("result is %d\n", result);
     }
 
     vm_delete(machine);
@@ -104,8 +104,8 @@ int parse_and_exec(char * file_name)
             
                 bytecode_func_addr(code);
 
-                print_functions(nev);
-                bytecode_print(code);
+                /*print_functions(nev);
+                bytecode_print(code);*/
             
                 bytecode_to_array(code, &code_arr, &code_size);
             

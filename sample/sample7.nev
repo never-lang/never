@@ -5,7 +5,7 @@ func twice(float c1, float c2) -> (float, float) -> float
 {
     func mult() -> float
     {
-        return c2 == 0 ? 0 : c1 / c2;
+        return c2 == 0.0 ? 0.0 : c1 / c2;
     }
 
     func twice_func(float a, float b) -> float
@@ -20,9 +20,9 @@ func twice(float c1, float c2) -> (float, float) -> float
     return twice_func;
 }
 
-func main() -> float
+func main() -> int 
 {
-    return twice(12, 3)(10, 20);
+    return twice(12.0, 3.0)(10.0, 20.0);
 }
 
 

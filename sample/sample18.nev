@@ -4,9 +4,9 @@ func get(f(float, float) -> float) -> (float, float) -> float
     return f;              
 }
 
-func main() -> float
+func main() -> int
 {
-    return assert(get(func min(float a, float b) -> float { return a < b ? a : b; })(130, 20 - -80) == 100);
+    return assert(get(func min(float a, float b) -> float { return a < b ? a : b; })(130.0, 20.0 - -80.0) == 100.0);
 }
 
 

@@ -117,6 +117,7 @@ typedef struct expr
         {
             unsigned int id; /* EXPR_BUILD_IN */
             struct expr_list * param;
+            struct var * ret;
         } func_build_in;
     };
 } expr;
@@ -143,7 +144,7 @@ expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * expr_right);
 expr * expr_new_func(func * value); 
 expr * expr_new_call(expr * func_expr, expr_list * vars);
-expr * expr_new_build_in(unsigned int id, expr_list * params);
+expr * expr_new_build_in(unsigned int id, expr_list * params, var * var_ret);
 
 expr * expr_conv(expr * expr_value, expr_type conv);
 

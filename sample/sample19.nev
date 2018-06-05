@@ -1,6 +1,6 @@
-func main() -> float
+func main() -> int
 {
-     func fib(float n) -> float
+     func fib(int n) -> int 
      {
          return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
      }

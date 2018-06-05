@@ -4,11 +4,11 @@ func degrees(conv(float) -> float, float degree) -> float
     return conv(degree);
 }
 
-func main() -> float
+func main() -> int
 {
     return degrees(func rea2cel(float d) -> float
                    {
-                        return d * 4 / 5;
-                   }, 100);
+                        return d * 4.0 / 5.0;
+                   }, 100.0);
 }
 

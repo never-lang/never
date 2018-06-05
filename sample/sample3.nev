@@ -9,14 +9,14 @@ func max(float a, float b) -> float
     return (a > b) ? a : b;
 }
 
-func select(float a) -> (float, float) -> float
+func select(int a) -> (float, float) -> float
 {
     return a < 100 ? min : max;
 }
 
-func main() -> float
+func main() -> int 
 {
-    return assert(select(110)(40, 20) == 40);
+    return assert(select(110)(40.0, 20.0) == 40.0);
 }
 
 
