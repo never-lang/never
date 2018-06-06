@@ -186,6 +186,13 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
             expr_gencode(syn_level, func_value, value->left, result);
             expr_gencode(syn_level, func_value, value->right, result);
         break;
+        case EXPR_AND:
+        case EXPR_OR:
+            expr_gencode(syn_level, func_value, value->left, result);
+            expr_gencode(syn_level, func_value, value->right, result);
+        break;
+        case EXPR_NOT:
+            expr_gencode(syn_level, func_value, value->left, result);
         break;
         case EXPR_SUP:
             expr_gencode(syn_level, func_value, value->left, result);
@@ -305,6 +312,13 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
             func_gencode_freevars_expr(func_value, value->left, result);
             func_gencode_freevars_expr(func_value, value->right, result);
         break;
+        case EXPR_AND:
+        case EXPR_OR:
+            func_gencode_freevars_expr(func_value, value->left, result);
+            func_gencode_freevars_expr(func_value, value->right, result);
+        break;
+        case EXPR_NOT:
+            func_gencode_freevars_expr(func_value, value->left, result);
         break;
         case EXPR_SUP:
             func_gencode_freevars_expr(func_value, value->left, result);
@@ -638,6 +652,115 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * resu
     }
     return 0;
 } 
+
+int expr_and_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode * condzA, * condzB, * jumpE;
+    bytecode * labelEF, * labelE;
+
+    expr_emit(value->left, stack_level, code, result);
+
+    bc.type = BYTECODE_JUMPZ;
+    condzA = bytecode_add(code, &bc);
+
+    expr_emit(value->right, stack_level, code, result);
+
+    bc.type = BYTECODE_JUMPZ;
+    condzB = bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 1;
+    bytecode_add(code, &bc);
+    
+    bc.type = BYTECODE_JUMP;
+    jumpE = bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelEF = bytecode_add(code, &bc);    
+    condzA->jump.offset = labelEF->addr - condzA->addr;
+    condzB->jump.offset = labelEF->addr - condzB->addr;
+
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 0;
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(code, &bc);
+    jumpE->jump.offset = labelE->addr - jumpE->addr;
+
+    return 0;
+}
+
+int expr_or_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode * condzA, * condzB, * jumpET, * jumpE;
+    bytecode * labelB, * labelET, * labelEF, * labelE;
+
+    expr_emit(value->left, stack_level, code, result);
+
+    bc.type = BYTECODE_JUMPZ;
+    condzA = bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_JUMP;
+    jumpET = bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelB = bytecode_add(code, &bc);    
+    condzA->jump.offset = labelB->addr - condzA->addr;
+
+    expr_emit(value->right, stack_level, code, result);
+
+    bc.type = BYTECODE_JUMPZ;
+    condzB = bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelET = bytecode_add(code, &bc);    
+    jumpET->jump.offset = labelET->addr - jumpET->addr;
+
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 1;
+    bytecode_add(code, &bc);
+    
+    bc.type = BYTECODE_JUMP;
+    jumpE = bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelEF = bytecode_add(code, &bc);
+    condzB->jump.offset = labelEF->addr - condzB->addr;
+
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 0;
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(code, &bc);
+    jumpE->jump.offset = labelE->addr - jumpE->addr;
+
+    return 0;
+}
+
+int expr_not_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    expr_emit(value->left, stack_level, code, result);
+            
+    if (value->comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_NOT_INT;
+        bytecode_add(code, &bc);
+    }
+    else
+    {
+        *result = GENCODE_FAIL;
+        print_error_msg(value->line_no,
+                        "cannot not type %s\n",
+                        comb_type_str(value->comb));
+    }
+
+    return 0;
+}
 
 int expr_cond_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
@@ -1002,6 +1125,15 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
                                 comb_type_str(value->right->comb));
             }
 
+        break;
+        case EXPR_AND:
+            expr_and_emit(value, stack_level, code, result);
+        break;
+        case EXPR_OR:
+            expr_or_emit(value, stack_level, code, result);
+        break;
+        case EXPR_NOT:
+            expr_not_emit(value, stack_level, code, result);
         break;
         case EXPR_SUP:
             expr_emit(value->left, stack_level, code, result);

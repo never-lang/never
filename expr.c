@@ -168,6 +168,7 @@ void expr_delete(expr * value)
             free(value->id.id);
         break;
         case EXPR_NEG:
+        case EXPR_NOT:
             expr_delete(value->left);
         break;
         case EXPR_ADD:
@@ -181,6 +182,8 @@ void expr_delete(expr * value)
         case EXPR_GTE:
         case EXPR_EQ:
         case EXPR_NEQ:
+        case EXPR_AND:
+        case EXPR_OR:
             expr_delete(value->left);
             expr_delete(value->right);
         break;

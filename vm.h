@@ -90,6 +90,8 @@ void vm_execute_op_gte_float(vm * machine, bytecode * code);
 void vm_execute_op_eq_float(vm * machine, bytecode * code);
 void vm_execute_op_neq_float(vm * machine, bytecode * code);
 
+void vm_execute_op_not_int(vm * machine, bytecode * code);
+
 void vm_execute_int_to_float(vm * machine, bytecode * code);
 void vm_execute_float_to_int(vm * machine, bytecode * code);
 

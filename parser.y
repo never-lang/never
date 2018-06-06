@@ -42,10 +42,13 @@ int yyerror(never ** nev, char * str)
 %type <val.never_value> never
 
 %right <val.str_value> '?' ':'
-%left <val.str_value> '<' '>' TOK_LTE TOK_GTE TOK_EQ TOK_NEQ
+%left TOK_OR
+%left TOK_AND
+%left TOK_EQ TOK_NEQ
+%left <val.str_value> '<' '>' TOK_LTE TOK_GTE
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
-%precedence NEG
+%right TOK_NOT /* %precedence NEG */
 %left <val.str_value> '(' ')'
 
 %start never
@@ -83,7 +86,7 @@ expr: TOK_NUM_FLOAT
     $$->line_no = $<line_no>1;
 };
 
-expr: '-' expr %prec NEG
+expr: '-' expr %prec TOK_NOT
 {
     $$ = expr_new_one(EXPR_NEG, $2);
     $$->line_no = $<line_no>1;
@@ -153,6 +156,24 @@ expr: expr TOK_NEQ expr
 {
     $$ = expr_new_two(EXPR_NEQ, $1, $3);
     $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_AND expr
+{
+    $$ = expr_new_two(EXPR_AND, $1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_OR expr
+{
+    $$ = expr_new_two(EXPR_OR, $1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+expr: TOK_NOT expr
+{
+    $$ = expr_new_one(EXPR_NOT, $2);
+    $$->line_no = $<line_no>1;
 };
 
 expr: '(' expr ')'

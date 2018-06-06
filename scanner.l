@@ -110,6 +110,24 @@ float {
     return TOK_RET;
 }
 
+"&&" {
+    tokp->line_no = line_no;
+    scanner_printf("&&\n", yytext);
+    return TOK_AND;
+}
+
+"||" {
+    tokp->line_no = line_no;
+    scanner_printf("||\n", yytext);
+    return TOK_OR;
+}
+
+"!" {
+    tokp->line_no = line_no;
+    scanner_printf("!\n", yytext);
+    return TOK_NOT;
+}
+
 "("|")" {
     tokp->line_no = line_no;
     scanner_printf("open|close paren\n");

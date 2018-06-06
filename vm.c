@@ -66,6 +66,8 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_EQ_FLOAT, vm_execute_op_eq_float },
     { BYTECODE_OP_NEQ_FLOAT, vm_execute_op_neq_float },
 
+    { BYTECODE_OP_NOT_INT, vm_execute_op_not_int },
+
     { BYTECODE_INT_TO_FLOAT, vm_execute_int_to_float },
     { BYTECODE_FLOAT_TO_INT, vm_execute_float_to_int },
  
@@ -533,6 +535,18 @@ void vm_execute_op_neq_float(vm * machine, bytecode * code)
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
+}
+
+void vm_execute_op_not_int(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, !a);
+    
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_int_to_float(vm * machine, bytecode * code)

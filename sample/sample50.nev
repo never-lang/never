@@ -1,0 +1,15 @@
+func one() -> int
+{
+    return print(0);
+}
+
+func two() -> int
+{
+    return print(20);
+}
+
+func main() -> int
+{
+    return assert(one() || two() ? 1 : 0);
+}
+

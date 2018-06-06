@@ -1,0 +1,11 @@
+
+func gcd(int x, int y) -> int
+{
+    return (y == 0) ? x : gcd(y, x % y);
+}
+
+func main() -> int
+{
+    return gcd(56, 12);
+}
+

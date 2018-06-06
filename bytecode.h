@@ -60,6 +60,8 @@ typedef enum bytecode_type
     BYTECODE_OP_GTE_FLOAT,
     BYTECODE_OP_EQ_FLOAT,
     BYTECODE_OP_NEQ_FLOAT,
+    
+    BYTECODE_OP_NOT_INT,
 
     BYTECODE_INT_TO_FLOAT,
     BYTECODE_FLOAT_TO_INT,
@@ -204,6 +206,8 @@ void bytecode_print_op_lte_float(bytecode * code);
 void bytecode_print_op_gte_float(bytecode * code);
 void bytecode_print_op_eq_float(bytecode * code);
 void bytecode_print_op_neq_float(bytecode * code);
+
+void bytecode_print_op_not_int(bytecode * code);
 
 void bytecode_print_int_to_float(bytecode * code);
 void bytecode_print_float_to_int(bytecode * code);

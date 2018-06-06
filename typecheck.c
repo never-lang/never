@@ -484,6 +484,40 @@ int expr_check_type(symtab * tab, expr * value, int * result)
                                  comb_type_str(value->right->comb));
             }
         break;
+        case EXPR_AND:
+        case EXPR_OR:
+            expr_check_type(tab, value->left, result);
+            expr_check_type(tab, value->right, result);
+            if (value->left->comb == COMB_TYPE_INT &&
+                value->right->comb == COMB_TYPE_INT)
+            {
+                value->comb = COMB_TYPE_INT;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "cannot compare types %s %s\n",
+                                comb_type_str(value->left->comb),
+                                comb_type_str(value->right->comb));
+            }
+        break;
+        case EXPR_NOT:
+            expr_check_type(tab, value->left, result);
+            if (value->left->comb == COMB_TYPE_INT)
+            {
+                value->comb = COMB_TYPE_INT;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "cannot ne types %s\n",
+                                comb_type_str(value->left->comb));
+            }
+        break;
         case EXPR_SUP:
             expr_check_type(tab, value->left, result);
             
@@ -713,6 +747,14 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
             symtab_add_entry_expr(stab, value->left, result);
             symtab_add_entry_expr(stab, value->right, result);
         break;
+        case EXPR_AND:
+        case EXPR_OR:
+            symtab_add_entry_expr(stab, value->left, result);
+            symtab_add_entry_expr(stab, value->right, result);
+        break;
+        case EXPR_NOT:
+            symtab_add_entry_expr(stab, value->left, result);
+        break;
         case EXPR_SUP:
             symtab_add_entry_expr(stab, value->left, result);
         break;
@@ -845,6 +887,14 @@ int print_func_expr(expr * value, int depth)
         case EXPR_NEQ:
             print_func_expr(value->left, depth);
             print_func_expr(value->right, depth);
+        break;
+        case EXPR_AND:
+        case EXPR_OR:
+            print_func_expr(value->left, depth);
+            print_func_expr(value->right, depth);
+        break;
+        case EXPR_NOT:
+            print_func_expr(value->left, depth);
         break;
         case EXPR_SUP:
             print_func_expr(value->left, depth);

@@ -11,9 +11,9 @@ other functions.
 
 ## Introduction
 ```
-func main() -> float
+func main() -> int
 {
-    return 100 * 1.8 + 32;
+    return 100.0 * 1.8 + 32.0;
 }
 ```
 A program written in Never language starts in function ```main```. ```Main```
@@ -22,14 +22,14 @@ only return value of one expression. In the above example temperature
 of boiling water given in Celsius degrees is converted to Fahrenheit degrees.
 
 ```
-func cel2fah(float c) -> float
+func cel2fah(float c) -> int
 {
-    return c * 1.8 + 32;
+    return c * 1.8 + 32.0;
 }
 
 func main() -> float
 {
-    return cel2fah(100);
+    return cel2fah(100.0);
 }
 ```
 
@@ -40,14 +40,28 @@ In particular, Functions may invoke themselves. The Fibonacci function is
 a classic example:
 
 ```
-func fib(float n) -> float
+func fib(int n) -> int
 {
     return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
 }
 
-func main() -> float
+func main() -> int
 {
     return fib(7);
+}
+```
+
+or greatest common divisor:
+
+```
+func gcd(int x, int y) -> int
+{
+    return (y == 0) ? x : gcd(y, x % y);
+}
+
+func main() -> int
+{
+    return gcd(56, 12);
 }
 ```
 
@@ -65,22 +79,22 @@ feature.
 ```
 func fah2cel(float f) -> float
 {
-    return (f - 32) / 1.8;
+    return (f - 32.0) / 1.8;
 }
 
 func cel2fah(float c) -> float
 {
-    return c * 1.8 + 32;
+    return c * 1.8 + 32.0;
 }
 
-func dir_deg(float d) -> (float) -> float
+func dir_deg(int d) -> (float) -> float
 {
     return d == 0 ? fah2cel : cel2fah;
 }
 
-func main() -> float
+func main() -> int
 {
-    return dir_deg(1)(100);
+    return dir_deg(1)(100.0);
 }
 ```
 
@@ -93,12 +107,12 @@ Functions may also take other functions as arguments.
 ```
 func fah2cel(float f) -> float
 {
-    return (f - 32) / 1.8;
+    return (f - 32.0) / 1.8;
 }
 
 func cel2fah(float c) -> float
 {
-    return c * 1.8 + 32;
+    return c * 1.8 + 32.0;
 }
 
 func degrees(conv(float) -> float, float degree) -> float
@@ -106,9 +120,9 @@ func degrees(conv(float) -> float, float degree) -> float
     return conv(degree);
 }
 
-func main() -> float
+func main() -> int
 {
-    return degrees(cel2fah, 100);
+    return degrees(cel2fah, 100.0);
 }
 ```
 
@@ -121,7 +135,7 @@ Never supports any degree of function nesting. As result it is not needed to
 define all functions in programs top level.
 
 ```
-func dir_deg(float d) -> (float) -> float
+func dir_deg(int d) -> (float) -> float
 {
     func fah2cel(float f) -> float
     {
@@ -136,9 +150,9 @@ func dir_deg(float d) -> (float) -> float
     return d == 0 ? fah2cel : cel2fah;
 }
 
-func main() -> float
+func main() -> int
 {
-    return dir_deg(0)(100);
+    return dir_deg(0)(100.0);
 }
 ```
 
@@ -149,24 +163,24 @@ which are defined above or at the same level in the structure of a program
 can be used.
 
 ```
-func dir_deg(float d, float coeff) -> (float) -> float
+func dir_deg(int d, float coeff) -> (float) -> float
 {
     func fah2cel(float f) -> float
     {
-        return coeff * ((f - 32) / 1.8);
+        return coeff * ((f - 32.0) / 1.8);
     }
 
     func cel2fah(float c) -> float
     {
-        return coeff * (c * 1.8 + 32);
+        return coeff * (c * 1.8 + 32.0);
     }
 
     return d == 0 ? cel2fah : fah2cel;
 }
 
-func main() -> float
+func main() -> int
 {
-    return dir_deg(0, 100)(100);
+    return dir_deg(0, 100.0)(100.0);
 }
 ```
 
@@ -186,12 +200,12 @@ func degrees(conv(float) -> float, float degree) -> float
     return conv(degree);
 }
 
-func main() -> float
+func main() -> int
 {
     return degrees(func rea2cel(float d) -> float
                    {
-                        return d * 4 / 5;
-                   }, 100);
+                        return d * 4.0 / 5.0;
+                   }, 100.0);
 }
 ```
 
@@ -203,10 +217,10 @@ The idea of in-lining functions may be taken into extreme...
 ```
 func calc() -> (float) -> float
 {
-    return func fah2cel(float f) -> float { return (f - 32) / 1.8; };
+    return func fah2cel(float f) -> float { return (f - 32.0) / 1.8; };
 }
 
-func main() -> float
+func main() -> int
 {
     return calc()(212.0);
 }
@@ -214,15 +228,15 @@ func main() -> float
 ... and a little step further.
 
 ```
-func dir_deg(float d) -> (float) -> float
+func dir_deg(int d) -> (float) -> float
 {
-    return d == 0 ? func fah2cel(float f) -> float { return (f - 32) / 1.8; }
-                  : func cel2fah(float c) -> float { return c * 1.8 + 32; };
+    return d == 0 ? func fah2cel(float f) -> float { return (f - 32.0) / 1.8; }
+                  : func cel2fah(float c) -> float { return c * 1.8 + 32.0; };
 }
 
-func main() -> float
+func main() -> int
 {
-    return dir_deg(0)(100);
+    return dir_deg(0)(100.0);
 }
 
 ```
@@ -244,21 +258,21 @@ func get_func() -> (float) -> float
     return cos;
 }
 
-func main() -> float
+func main() -> int
 {
-    return get_func()(deg2rad(60));
+    return get_func()(deg2rad(60.0));
 }
 ```
 
-## Println (write to stdout) function
-Never implements a simple `println(x)` function. The function writes a float
-parameter `x` (with a new line character) to standard output
-and returns passed value.
-So far, `println` by default uses `"%.2f\n"` formatting.
+## Write to stdout functions - print and printf
+Never implements a simple `print(int x) -> int` and `printf(float x) -> float` function.
+The function writes an integer or float parameter `x` (with a new line character)
+to standard output and returns passed value.
+So far, `printf` by default uses `"%.2f\n"` formatting.
 ```
-func main() -> float
+func main() -> int
 {
-	return println(123.456);
+	return printf(123.456);
 }
 ```
 

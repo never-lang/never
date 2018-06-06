@@ -53,11 +53,13 @@ extern int yydebug;
     TOK_FUNC = 263,
     TOK_RET = 264,
     TOK_RETURN = 265,
-    TOK_LTE = 266,
-    TOK_GTE = 267,
+    TOK_OR = 266,
+    TOK_AND = 267,
     TOK_EQ = 268,
     TOK_NEQ = 269,
-    NEG = 270
+    TOK_LTE = 270,
+    TOK_GTE = 271,
+    TOK_NOT = 272
   };
 #endif
 

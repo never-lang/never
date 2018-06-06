@@ -63,6 +63,8 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_EQ_FLOAT, bytecode_print_op_eq_float },
     { BYTECODE_OP_NEQ_FLOAT, bytecode_print_op_neq_float },
 
+    { BYTECODE_OP_NOT_INT, bytecode_print_op_not_int },
+
     { BYTECODE_INT_TO_FLOAT, bytecode_print_int_to_float },
     { BYTECODE_FLOAT_TO_INT, bytecode_print_float_to_int },
 
@@ -241,6 +243,11 @@ void bytecode_print_op_eq_float(bytecode * code)
 void bytecode_print_op_neq_float(bytecode * code)
 {
     printf("%d: op neq_float\n", code->addr);
+}
+
+void bytecode_print_op_not_int(bytecode * code)
+{
+    printf("%d: op not\n", code->addr);
 }
 
 void bytecode_print_int_to_float(bytecode * code)

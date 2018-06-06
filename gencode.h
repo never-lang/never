@@ -60,6 +60,10 @@ int expr_id_func_emit(func * func_value, int stack_level, bytecode_list * code, 
 int expr_id_func_nest_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
 
 int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * result);
+int expr_and_emit(expr * value, int stack_level, bytecode_list * code, int * result);
+int expr_or_emit(expr * value, int stack_level, bytecode_list * code, int * result);
+int expr_not_emit(expr * value, int stack_level, bytecode_list * code, int * result);
+int expr_cond_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code, int * result);
 int func_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
