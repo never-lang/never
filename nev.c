@@ -27,6 +27,7 @@
 #include "parser.h"
 #include "never.h"
 #include "typecheck.h"
+#include "constred.h"
 #include "gencode.h"
 #include "bytecode.h"
 #include "vm.h"
@@ -93,23 +94,27 @@ int parse_and_exec(char * file_name)
         ret = never_sem_check(nev);
         if (ret == 0)
         {
-            ret = never_gencode(nev);
+            ret = never_constred(nev);
             if (ret == 0)
             {
-                bytecode_list * code;
+                ret = never_gencode(nev);
+                if (ret == 0)
+                {
+                    bytecode_list * code;
 
-                code = bytecode_new();
+                    code = bytecode_new();
             
-                never_emit(nev, code);
+                    never_emit(nev, code);
             
-                bytecode_func_addr(code);
+                    bytecode_func_addr(code);
 
-                /*print_functions(nev);
-                bytecode_print(code);*/
+                    /* print_functions(nev); */
+                    /* bytecode_print(code); */
             
-                bytecode_to_array(code, &code_arr, &code_size);
+                    bytecode_to_array(code, &code_arr, &code_size);
             
-                bytecode_delete(code);
+                    bytecode_delete(code);
+                }
             }
         }
     }

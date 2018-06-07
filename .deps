@@ -1,4 +1,6 @@
 bytecode.o: bytecode.c bytecode.h func.h expr.h freevar.h var.h symtab.h
+constred.o: constred.c constred.h never.h func.h expr.h freevar.h var.h \
+ symtab.h utils.h
 expr.o: expr.c expr.h freevar.h var.h func.h symtab.h
 freevar.o: freevar.c freevar.h var.h func.h expr.h symtab.h
 func.o: func.c func.h expr.h freevar.h var.h symtab.h
@@ -9,8 +11,8 @@ libmath.o: libmath.c libmath.h func.h expr.h freevar.h var.h symtab.h
 libvm.o: libvm.c libvm.h vm.h object.h bytecode.h libmath.h func.h expr.h \
  freevar.h var.h symtab.h gc.h utils.h
 nev.o: nev.c scanner.h types.h expr.h freevar.h var.h func.h symtab.h \
- never.h parser.h typecheck.h gencode.h bytecode.h vm.h object.h utils.h \
- libmath.h
+ never.h parser.h typecheck.h constred.h gencode.h bytecode.h vm.h \
+ object.h utils.h libmath.h
 never.o: never.c never.h func.h expr.h freevar.h var.h symtab.h
 object.o: object.c object.h
 parser.o: parser.c utils.h types.h expr.h freevar.h var.h func.h symtab.h \
@@ -34,6 +36,7 @@ var.o: var.c var.h
 vm.o: vm.c vm.h object.h bytecode.h gc.h libmath.h func.h expr.h \
  freevar.h var.h symtab.h libvm.h utils.h
 bytecode.o: bytecode.h
+constred.o: constred.h never.h func.h expr.h freevar.h var.h symtab.h
 expr.o: expr.h freevar.h var.h
 freevar.o: freevar.h var.h
 func.o: func.h expr.h freevar.h var.h symtab.h func.h

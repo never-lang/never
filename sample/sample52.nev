@@ -1,0 +1,6 @@
+/* this example shows that condition expression will be eliminated */
+func main() -> int
+{
+    return print( 0 ? 10 : func L(int a) -> int { return a; }(20 * 2) );
+}
+
