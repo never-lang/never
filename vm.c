@@ -79,6 +79,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
     { BYTECODE_MARK, vm_execute_mark },
     { BYTECODE_CALL, vm_execute_call },
+    { BYTECODE_SLIDE, vm_execute_slide },
     { BYTECODE_RET, vm_execute_ret },
     { BYTECODE_LINE, vm_execute_line },
     { BYTECODE_BUILD_IN, vm_execute_build_in },
@@ -650,6 +651,30 @@ void vm_execute_call(vm * machine, bytecode * code)
     machine->gp = gp;
     machine->ip = ip;
     machine->sp--;
+}
+
+void vm_execute_slide(vm * machine, bytecode * code)
+{
+    if (code->slide.q == 0)
+    {
+        return;
+    }
+    
+    if (code->slide.m == 0)
+    {
+        machine->sp = machine->sp - code->slide.q;
+    }
+    else
+    {
+        unsigned int i;
+        machine->sp = machine->sp - code->slide.q - code->slide.m;
+        
+        for (i = 0; i < code->slide.m; i++)
+        {
+            machine->sp++;
+            machine->stack[machine->sp] = machine->stack[machine->sp + code->slide.q];
+        } 
+    }
 }
 
 void vm_execute_ret(vm * machine, bytecode * code)

@@ -4,14 +4,18 @@ LDLIBS=-lm
 LEX=flex
 BISON=bison
 BFLAGS=--report=solved --defines
+AR=ar
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
 
-nev: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o \
-     typecheck.o gencode.o utils.o bytecode.o vm.o gc.o object.o nev.o \
-     constred.o libmath.o libvm.o
+nev: libnev.a
 
-tests: test_object test_scanner test_symtab test_freevar test_vm test_gc test_libmath
+libnev.a: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o \
+          typecheck.o gencode.o utils.o bytecode.o vm.o gc.o object.o nev.o \
+          constred.o tailrec.o optimize.o libmath.o libvm.o
+
+tests: test_object test_scanner test_symtab \
+       test_freevar test_vm test_gc test_libmath
 
 run_tests:
 	./test_object
@@ -35,8 +39,11 @@ test_gc: gc.o object.o
 
 test_libmath: test_libmath.o libmath.o libvm.o func.o expr.o var.o object.o freevar.o gc.o symtab.o utils.o
 
+lib%.a: %.o
+	$(AR) r $@ $?
+
 %.c : %.y
-	${BISON} ${BFLAGS} -o $@ $<
+	$(BISON) $(BFLAGS) -o $@ $<
 
 deps:
 	$(CC) -MM *.c *.h > .deps
@@ -45,5 +52,5 @@ include .deps
 
 .PHONY: clean
 clean:
-	@rm -f $(OBJ) nev
+	@rm -f $(OBJ) libnev.a nev
 

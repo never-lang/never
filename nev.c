@@ -27,7 +27,8 @@
 #include "parser.h"
 #include "never.h"
 #include "typecheck.h"
-#include "constred.h"
+#include "optimize.h"
+#include "tailrec.h"
 #include "gencode.h"
 #include "bytecode.h"
 #include "vm.h"
@@ -39,7 +40,6 @@
 
 extern FILE * yyin;
 extern int parse_result;
-char * utils_file_name;
 
 int execute(bytecode * code_arr, unsigned int code_size)
 {
@@ -94,10 +94,11 @@ int parse_and_exec(char * file_name)
         ret = never_sem_check(nev);
         if (ret == 0)
         {
-            ret = never_constred(nev);
+            ret = never_optimize(nev);
             if (ret == 0)
             {
                 ret = never_gencode(nev);
+                never_tailrec(nev);
                 if (ret == 0)
                 {
                     bytecode_list * code;
@@ -108,8 +109,8 @@ int parse_and_exec(char * file_name)
             
                     bytecode_func_addr(code);
 
-                    /* print_functions(nev); */
-                    /* bytecode_print(code); */
+                    /*print_functions(nev);
+                    bytecode_print(code);*/
             
                     bytecode_to_array(code, &code_arr, &code_size);
             

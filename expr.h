@@ -49,10 +49,11 @@ typedef enum expr_type
     EXPR_SUP = 19, /* ( expr ) */
     EXPR_COND = 20, /* expr ? expr : expr */
     EXPR_CALL = 21, /* ID ( expr_list) */
-    EXPR_FUNC = 22,  /* func ID ( ... ) */
-    EXPR_BUILD_IN = 23,
-    EXPR_INT_TO_FLOAT = 24,
-    EXPR_FLOAT_TO_INT = 25  
+    EXPR_LAST_CALL = 22, /* ID (expr_list */
+    EXPR_FUNC = 23,  /* func ID ( ... ) */
+    EXPR_BUILD_IN = 24,
+    EXPR_INT_TO_FLOAT = 25,
+    EXPR_FLOAT_TO_INT = 26  
 } expr_type;
 
 typedef enum comb_type
@@ -113,9 +114,9 @@ typedef struct expr
         };
         struct
         {
-            struct expr * func_expr; /* EXPR_CALL */
+            struct expr * func_expr; /* EXPR_CALL, EXPR_LAST_CALL */
             struct expr_list * vars;
-        };
+        } call;
         struct
         {
             unsigned int id; /* EXPR_BUILD_IN */

@@ -5,6 +5,6 @@ func fib(int n) -> int
 
 func main() -> int 
 {
-    return assert(fib(7) == 21);
+    return fib(20);
 }
 

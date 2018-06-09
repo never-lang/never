@@ -74,6 +74,7 @@ typedef enum bytecode_type
     BYTECODE_GLOBAL_VEC,
     BYTECODE_MARK,
     BYTECODE_CALL,
+    BYTECODE_SLIDE,
     BYTECODE_RET,
     BYTECODE_LINE,
     BYTECODE_BUILD_IN,
@@ -125,6 +126,11 @@ typedef struct bytecode
         {
             unsigned int addr;
         } mark;
+        struct             /* BYTECODE_SLIDE */
+        {
+            unsigned int q;
+            unsigned int m;
+        } slide;
         struct             /* BYTECODE_RET */
         {
             unsigned int count;
@@ -220,6 +226,7 @@ void bytecode_print_func_def(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);
 void bytecode_print_mark(bytecode * code);
 void bytecode_print_call(bytecode * code);
+void bytecode_print_slide(bytecode * code);
 void bytecode_print_ret(bytecode * code);
 void bytecode_print_line(bytecode * code);
 void bytecode_print_build_in(bytecode * code);

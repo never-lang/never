@@ -45,6 +45,7 @@ int func_list_check_type(symtab * tab, func_list * list, int * result);
 int never_check_type(never * nev, int * result);
 
 int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result);
+int symtab_add_func_from_func(symtab * tab, func * func_value, int * result);
 int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result);
 int symtab_add_entry_expr(symtab * stab, expr * value, int * result);
 int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list, int * result);

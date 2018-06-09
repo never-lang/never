@@ -103,6 +103,7 @@ void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_global_vec(vm * machine, bytecode * code);
 void vm_execute_mark(vm * machine, bytecode * code);
 void vm_execute_call(vm * machine, bytecode * code);
+void vm_execute_slide(vm * machine, bytecode * code);
 void vm_execute_ret(vm * machine, bytecode * code);
 void vm_execute_line(vm * machine, bytecode * code);
 void vm_execute_build_in(vm * machine, bytecode * code);
