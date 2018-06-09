@@ -4,10 +4,10 @@ Never is a simple functional programming language. Technically it may be
 classified as syntactically scoped, strongly typed, call by value, pure
 functional programming language.
 
-In practise Never offers first order functions and some mathematical functions
-to make it useful to calculate expressions. Also it demonstrates how
-functions can be compiled, invoked and passed as parameters or results between
-other functions.
+In practise Never offers basic data types, first order functions and some 
+mathematical functions to make it useful to calculate expressions. Also it
+demonstrates how functions can be compiled, invoked and passed as parameters
+or results between other functions.
 
 ## Introduction
 ```
@@ -17,17 +17,17 @@ func main() -> int
 }
 ```
 A program written in Never language starts in function ```main```. ```Main```
-function always takes no parameters and returns float value. The function may
+function always takes no parameters and returns ```int``` value. The function may
 only return value of one expression. In the above example temperature
 of boiling water given in Celsius degrees is converted to Fahrenheit degrees.
 
 ```
-func cel2fah(float c) -> int
+func cel2fah(float c) -> float
 {
     return c * 1.8 + 32.0;
 }
 
-func main() -> float
+func main() -> int
 {
     return cel2fah(100.0);
 }
@@ -127,8 +127,8 @@ func main() -> int
 ```
 
 In the above example function ```degrees``` takes conversion function which
-then is given passed parameter. Next function value is returned. Also its
-parameter ```conv``` is strongly typed with function type.
+then is given passed parameter. In the next step function value is returned.
+Also its parameter ```conv``` is strongly typed with function type.
 
 ## Syntax level
 Never supports any degree of function nesting. As result it is not needed to
@@ -267,8 +267,7 @@ func main() -> int
 ## Write to stdout functions - print and printf
 Never implements a simple `print(int x) -> int` and `printf(float x) -> float` function.
 The function writes an integer or float parameter `x` (with a new line character)
-to standard output and returns passed value.
-So far, `printf` by default uses `"%.2f\n"` formatting.
+to standard output and returns passed value.  By default `printf` uses `"%.2f\n"` formatting.
 ```
 func main() -> int
 {
@@ -279,4 +278,5 @@ func main() -> int
 ## Contact
 If you find it useful for any purpose I will be glad to hear from you.
 
+If you need help to develop a progamming or domain specific language please contact me.
 
