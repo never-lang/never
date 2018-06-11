@@ -11,15 +11,19 @@ libmath.o: libmath.c libmath.h func.h expr.h freevar.h var.h symtab.h
 libvm.o: libvm.c libvm.h vm.h object.h bytecode.h libmath.h func.h expr.h \
  freevar.h var.h symtab.h gc.h utils.h
 nev.o: nev.c scanner.h types.h expr.h freevar.h var.h func.h symtab.h \
- never.h parser.h typecheck.h constred.h gencode.h bytecode.h vm.h \
- object.h utils.h libmath.h
+ never.h parser.h typecheck.h optimize.h tailrec.h gencode.h bytecode.h \
+ vm.h object.h utils.h libmath.h
 never.o: never.c never.h func.h expr.h freevar.h var.h symtab.h
 object.o: object.c object.h
+optimize.o: optimize.c optimize.h never.h func.h expr.h freevar.h var.h \
+ symtab.h constred.h
 parser.o: parser.c utils.h types.h expr.h freevar.h var.h func.h symtab.h \
  never.h scanner.h
 scanner.o: scanner.c types.h expr.h freevar.h var.h func.h symtab.h \
  never.h parser.h
 symtab.o: symtab.c symtab.h var.h func.h expr.h freevar.h
+tailrec.o: tailrec.c tailrec.h never.h func.h expr.h freevar.h var.h \
+ symtab.h
 test_freevar.o: test_freevar.c freevar.h var.h
 test_gc.o: test_gc.c gc.h object.h
 test_libmath.o: test_libmath.c libmath.h func.h expr.h freevar.h var.h \
@@ -30,7 +34,7 @@ test_scanner.o: test_scanner.c types.h expr.h freevar.h var.h func.h \
 test_symtab.o: test_symtab.c symtab.h var.h func.h expr.h freevar.h
 test_vm.o: test_vm.c vm.h object.h bytecode.h
 typecheck.o: typecheck.c typecheck.h never.h func.h expr.h freevar.h \
- var.h symtab.h utils.h
+ var.h symtab.h utils.h tailrec.h
 utils.o: utils.c utils.h
 var.o: var.c var.h
 vm.o: vm.c vm.h object.h bytecode.h gc.h libmath.h func.h expr.h \
@@ -47,10 +51,12 @@ libmath.o: libmath.h func.h expr.h freevar.h var.h symtab.h
 libvm.o: libvm.h vm.h object.h bytecode.h
 never.o: never.h func.h expr.h freevar.h var.h symtab.h
 object.o: object.h
+optimize.o: optimize.h never.h func.h expr.h freevar.h var.h symtab.h
 parser.o: parser.h
 scanner.o: scanner.h types.h expr.h freevar.h var.h func.h symtab.h \
  never.h
 symtab.o: symtab.h var.h func.h expr.h freevar.h symtab.h
+tailrec.o: tailrec.h never.h func.h expr.h freevar.h var.h symtab.h
 typecheck.o: typecheck.h never.h func.h expr.h freevar.h var.h symtab.h
 types.o: types.h expr.h freevar.h var.h func.h symtab.h never.h
 utils.o: utils.h

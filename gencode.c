@@ -90,15 +90,15 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
                     value->id.id_type_value = ID_TYPE_FUNC_TOP;
                     value->id.id_func_value = sup_func_value;
                 }
-                else if (syn_level == entry->syn_level)
-                {
-                    value->id.id_type_value = ID_TYPE_FUNC;
-                    value->id.id_func_value = sup_func_value;
-                }
-                else if (syn_level == entry->syn_level + 1 &&
+                else if (syn_level == entry->syn_level &&
                          func_value == sup_func_value) /* recursive call */
                 {
                     value->id.id_type_value = ID_TYPE_FUNC_NEST;
+                    value->id.id_func_value = sup_func_value;
+                }
+                else if (syn_level == entry->syn_level)
+                {
+                    value->id.id_type_value = ID_TYPE_FUNC;
                     value->id.id_func_value = sup_func_value;
                 }
                 else
@@ -203,10 +203,11 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
             expr_gencode(syn_level, func_value, value->right, result);
         break;
         case EXPR_CALL:
-            expr_gencode(syn_level, func_value, value->func_expr, result);
-            if (value->vars)
+        case EXPR_LAST_CALL:
+            expr_gencode(syn_level, func_value, value->call.func_expr, result);
+            if (value->call.vars)
             {
-                expr_list_gencode(syn_level, func_value, value->vars, result);
+                expr_list_gencode(syn_level, func_value, value->call.vars, result);
             }
         break;
         case EXPR_FUNC:
@@ -329,10 +330,11 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
             func_gencode_freevars_expr(func_value, value->right, result);
         break;
         case EXPR_CALL:
-            func_gencode_freevars_expr(func_value, value->func_expr, result);
-            if (value->vars)
+        case EXPR_LAST_CALL:
+            func_gencode_freevars_expr(func_value, value->call.func_expr, result);
+            if (value->call.vars)
             {
-                func_gencode_freevars_expr_list(func_value, value->vars, result);
+                func_gencode_freevars_expr_list(func_value, value->call.vars, result);
             }
         break;
         case EXPR_FUNC:
@@ -800,12 +802,12 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
     bc.type = BYTECODE_MARK;
     mark = bytecode_add(code, &bc);
     
-    if (value->vars)
+    if (value->call.vars)
     {
-         expr_list_emit(value->vars, stack_level + v, code, result);
-         v += value->vars->count;
+         expr_list_emit(value->call.vars, stack_level + v, code, result);
+         v += value->call.vars->count;
     }
-    expr_emit(value->func_expr, stack_level + v, code, result);
+    expr_emit(value->call.func_expr, stack_level + v, code, result);
 
     bc.type = BYTECODE_CALL;
     bytecode_add(code, &bc);
@@ -813,6 +815,29 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
     bc.type = BYTECODE_LABEL;
     label = bytecode_add(code, &bc);
     mark->mark.addr = label->addr;
+
+    return 0;
+}
+
+int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    int v = 0;
+    bytecode bc = { 0 };
+
+    if (value->call.vars)
+    {
+         expr_list_emit(value->call.vars, stack_level + v, code, result);
+         v += value->call.vars->count;
+    }
+    expr_emit(value->call.func_expr, stack_level + v, code, result);
+
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.q = stack_level + v;
+    bc.slide.m = v + 1;
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_CALL;
+    bytecode_add(code, &bc);
 
     return 0;
 }
@@ -1143,6 +1168,9 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         break;
         case EXPR_CALL:
             expr_call_emit(value, stack_level, code, result);
+        break;
+        case EXPR_LAST_CALL:
+            expr_last_call_emit(value, stack_level, code, result);
         break;
         case EXPR_FUNC:
             if (value->func_value)

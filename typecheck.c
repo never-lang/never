@@ -23,6 +23,7 @@
 #include "typecheck.h"
 #include "symtab.h"
 #include "utils.h"
+#include "tailrec.h"
 
 int expr_set_return_type(expr * value, var * ret)
 {
@@ -303,18 +304,18 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
 
 int expr_call_check_type(symtab * tab, expr * value, int * result)
 {
-    expr_check_type(tab, value->func_expr, result);
-    if (value->vars != NULL)
+    expr_check_type(tab, value->call.func_expr, result);
+    if (value->call.vars != NULL)
     {
-        expr_list_check_type(tab, value->vars, result);
+        expr_list_check_type(tab, value->call.vars, result);
     }
 
-    switch (value->func_expr->comb)
+    switch (value->call.func_expr->comb)
     {
         case COMB_TYPE_FUNC:
-            if (var_expr_list_cmp(value->func_expr->comb_vars, value->vars) == TYPECHECK_SUCC)
+            if (var_expr_list_cmp(value->call.func_expr->comb_vars, value->call.vars) == TYPECHECK_SUCC)
             {
-                expr_set_return_type(value, value->func_expr->comb_ret);
+                expr_set_return_type(value, value->call.func_expr->comb_ret);
             }
             else
             {
@@ -529,6 +530,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             expr_cond_check_type(tab, value, result);
         break;
         case EXPR_CALL:
+        case EXPR_LAST_CALL:
             expr_call_check_type(tab, value, result);
         break;
         case EXPR_FUNC:
@@ -684,6 +686,35 @@ int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result)
     return 0;
 }
 
+int symtab_add_func_from_func(symtab * tab, func * func_value, int * result)
+{
+    symtab_entry * entry = symtab_lookup(tab, func_value->id, SYMTAB_FLAT);
+    if (entry == NULL)
+    {
+         symtab_add_func(tab, func_value);
+    }
+    else
+    {
+         *result = TYPECHECK_FAIL;
+         if (entry->type == SYMTAB_FUNC)
+         {
+             func * al_func = entry->func_value;
+             print_error_msg(func_value->line_no,
+                             "function %s already defined at line %u\n",
+                             entry->id, al_func->line_no);
+         }
+         else if (entry->type == SYMTAB_VAR)
+         {
+              var * al_var = entry->var_value;
+              print_error_msg(func_value->line_no,
+                              "parameter %s already defined at line %u\n",
+                              entry->id, al_var->line_no);
+         }
+    }
+
+    return 0;
+}
+
 int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result)
 {
     func_list_node * node = list->tail;
@@ -692,29 +723,7 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result)
         func * func_value = node->value;
         if (func_value && func_value->id)
         {
-            symtab_entry * entry = symtab_lookup(tab, func_value->id, SYMTAB_FLAT);
-            if (entry == NULL)
-            {
-                symtab_add_func(tab, func_value);
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                if (entry->type == SYMTAB_FUNC)
-                {
-                    func * al_func = entry->func_value;
-                    print_error_msg(func_value->line_no,
-                                    "function %s already defined at line %u\n",
-                                    entry->id, al_func->line_no);
-                }
-                else if (entry->type == SYMTAB_VAR)
-                {
-                    var * al_var = entry->var_value;
-                    print_error_msg(func_value->line_no,
-                                    "parameter %s already defined at line %u\n",
-                                    entry->id, al_var->line_no);
-                }
-            }
+            symtab_add_func_from_func(tab, func_value, result);
         }
         node = node->next;
     }
@@ -764,10 +773,11 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
             symtab_add_entry_expr(stab, value->right, result);
         break;
         case EXPR_CALL:
-            symtab_add_entry_expr(stab, value->func_expr, result);
-            if (value->vars != NULL)
+        case EXPR_LAST_CALL:
+            symtab_add_entry_expr(stab, value->call.func_expr, result);
+            if (value->call.vars != NULL)
             {
-                symtab_add_entry_expr_list(stab, value->vars, result);
+                symtab_add_entry_expr_list(stab, value->call.vars, result);
             }
         break;
         case EXPR_FUNC:
@@ -807,6 +817,10 @@ int symtab_add_entry_func(symtab * stab_parent, func * func_value, int * result)
     if (func_value->stab == NULL)
     {
         func_value->stab = symtab_new(32, stab_parent);
+    }
+    if (func_value->id)
+    {
+        symtab_add_func_from_func(func_value->stab, func_value, result);
     }
     if (func_value->vars)
     {
@@ -905,10 +919,11 @@ int print_func_expr(expr * value, int depth)
             print_func_expr(value->right, depth);
         break;
         case EXPR_CALL:
-            print_func_expr(value->func_expr, depth);
-            if (value->vars != NULL)
+        case EXPR_LAST_CALL:
+            print_func_expr(value->call.func_expr, depth);
+            if (value->call.vars != NULL)
             {
-                print_func_expr_list(value->vars, depth);
+                print_func_expr_list(value->call.vars, depth);
             }
         break;
         case EXPR_FUNC:

@@ -122,8 +122,8 @@ expr * expr_new_call(expr * func_expr, expr_list * vars)
     ret->type = EXPR_CALL;
     ret->line_no = 0;
     ret->comb = COMB_TYPE_UNKNOWN;
-    ret->func_expr = func_expr;
-    ret->vars = vars;
+    ret->call.func_expr = func_expr;
+    ret->call.vars = vars;
     
     return ret;
 }
@@ -196,13 +196,14 @@ void expr_delete(expr * value)
             expr_delete(value->right);
         break;
         case EXPR_CALL:
-            if (value->func_expr != NULL)
+        case EXPR_LAST_CALL:
+            if (value->call.func_expr != NULL)
             {
-                expr_delete(value->func_expr);
+                expr_delete(value->call.func_expr);
             }
-            if (value->vars != NULL)
+            if (value->call.vars != NULL)
             {
-                expr_list_delete(value->vars);
+                expr_list_delete(value->call.vars);
             }
         break;
         case EXPR_FUNC:

@@ -1,0 +1,14 @@
+func get_fib() -> (int, int, int) -> int
+{
+    func fib(int n, int a, int b) -> int
+    {
+        return (n == 0) ? a : (n == 1) ? b : fib(n - 1, b, a + b);
+    }
+    return fib;
+}
+
+func main() -> int
+{
+    return get_fib()(20, 1, 1);
+}
+

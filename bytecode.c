@@ -76,6 +76,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
     { BYTECODE_MARK, bytecode_print_mark },
     { BYTECODE_CALL, bytecode_print_call },
+    { BYTECODE_SLIDE, bytecode_print_slide },
     { BYTECODE_RET, bytecode_print_ret },
     { BYTECODE_LINE, bytecode_print_line },
     { BYTECODE_BUILD_IN, bytecode_print_build_in },
@@ -293,6 +294,11 @@ void bytecode_print_mark(bytecode * code)
 void bytecode_print_call(bytecode * code)
 {
     printf("%d: call\n", code->addr);
+}
+
+void bytecode_print_slide(bytecode * code)
+{
+    printf("%d: last call %u %u\n", code->addr, code->slide.q, code->slide.m);
 }
 
 void bytecode_print_ret(bytecode * code)

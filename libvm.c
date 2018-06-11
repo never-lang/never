@@ -10,7 +10,7 @@
 void libvm_execute_build_in(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr;
+    mem_ptr addr = 0;
 
     feclearexcept(FE_ALL_EXCEPT);
 
