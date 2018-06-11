@@ -19,7 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+#include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <string.h>
 #include "never.h"
 
 never * never_new(func_list * funcs)
@@ -28,7 +32,7 @@ never * never_new(func_list * funcs)
 
     n->stab = NULL;
     n->funcs = funcs;
-    
+
     return n;
 }
 
@@ -44,6 +48,5 @@ void never_delete(never * nev)
     }
     free(nev);
 }
-
 
 

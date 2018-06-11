@@ -19,16 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __SCANNER_H__
-#define __SCANNER_H__ 1
+#ifndef __NEV_H__
+#define __NEV_H__
 
-#include "types.h"
+int parse_file_and_exec(const char * file_name);
+int parse_and_exec(const char * src);
 
-int yylex_destroy();
+#endif /* __NEV_H__ */
 
-int lex_scan(token *tokp);
-
-void scan_string(const char *src);
-
-#endif
 

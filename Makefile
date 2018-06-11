@@ -7,15 +7,15 @@ BFLAGS=--report=solved --defines
 AR=ar
 SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
+TESTS=test_object test_scanner test_symtab test_freevar test_vm test_gc test_libmath
 
 nev: libnev.a
 
 libnev.a: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o \
           typecheck.o gencode.o utils.o bytecode.o vm.o gc.o object.o nev.o \
-          constred.o tailrec.o optimize.o libmath.o libvm.o
+          constred.o tailrec.o optimize.o libmath.o libvm.o main.o
 
-tests: test_object test_scanner test_symtab \
-       test_freevar test_vm test_gc test_libmath
+tests: $(TESTS)
 
 run_tests:
 	./test_object
@@ -52,5 +52,5 @@ include .deps
 
 .PHONY: clean
 clean:
-	@rm -f $(OBJ) libnev.a nev
+	@rm -f $(OBJ) $(TESTS) libnev.a nev
 

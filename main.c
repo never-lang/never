@@ -19,16 +19,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __SCANNER_H__
-#define __SCANNER_H__ 1
+#include <stdio.h>
+#include <string.h>
+#include "nev.h"
 
-#include "types.h"
+const char * usage = "usage: %s <file name | -e \"one line of program\">\n";
 
-int yylex_destroy();
+int main(int argc, char * argv[])
+{
+    switch (argc)
+    {
+        case 2:
+            return parse_file_and_exec(argv[1]);
+        break;
+        case 3:
+            if (strncmp("-e", argv[1], 2) == 0)
+            {
+                return parse_and_exec(argv[2]);
+            }
+    }
 
-int lex_scan(token *tokp);
+    if (argc < 2)
+    {
+        printf("%s: no input files\n", argv[0]);
+    }
 
-void scan_string(const char *src);
+    printf(usage, argv[0]);
 
-#endif
+    return 1;
+}
+
 

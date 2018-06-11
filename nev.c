@@ -19,13 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "never.h"
 #include "scanner.h"
 #include "parser.h"
-#include "never.h"
 #include "typecheck.h"
 #include "optimize.h"
 #include "tailrec.h"
@@ -41,56 +41,17 @@
 extern FILE * yyin;
 extern int parse_result;
 
-int execute(bytecode * code_arr, unsigned int code_size)
-{
-    int ret = 0;
-    int result = 0;
-    vm * machine = NULL;
-
-    if (code_arr == NULL)
-    {
-        return 0;
-    }
-        
-    /* bytecode_array_print(code_arr, code_size); */
-
-    machine = vm_new(VM_MEM_SIZE, VM_STACK_SIZE);
-        
-    ret = vm_execute(machine, code_arr, code_size, &result);
-    if (ret == 0)
-    {
-        printf("result is %d\n", result);
-    }
-
-    vm_delete(machine);
-    bytecode_array_delete(code_arr);
-
-    return 0;
-}
-
-int parse_and_exec(char * file_name)
+int parse(bytecode ** code_arr, unsigned int * code_size)
 {
     int ret = 0;
     never * nev = NULL;
-    unsigned int code_size = 0;
-    bytecode * code_arr = NULL;
 
-    set_utils_file_name(file_name);
-
-    yyin = fopen(file_name, "r");
-    if (yyin == NULL)
-    {
-        fprintf(stderr, "cannot open %s. %s\n", file_name, strerror(errno));
-        exit(1); 
-    }
-    
     parse_result = 0;
-
     yyparse(&nev);
     if ((ret = parse_result) == 0)
     {
         libmath_add_funcs(nev->funcs);
-        
+
         ret = never_sem_check(nev);
         if (ret == 0)
         {
@@ -104,46 +65,99 @@ int parse_and_exec(char * file_name)
                     bytecode_list * code;
 
                     code = bytecode_new();
-            
+
                     never_emit(nev, code);
-            
+
                     bytecode_func_addr(code);
 
-                    /*print_functions(nev);
-                    bytecode_print(code);*/
-            
-                    bytecode_to_array(code, &code_arr, &code_size);
-            
+                    /* print_functions(nev); */
+                    /* bytecode_print(code); */
+
+                    bytecode_to_array(code, code_arr, code_size);
+
                     bytecode_delete(code);
                 }
             }
         }
     }
-    
+
     if (nev != NULL)
     {
         never_delete(nev);
     }
 
+    return ret;
+}
+
+int execute(bytecode * code_arr, unsigned int code_size)
+{
+    int ret = 0;
+    int result = 0;
+    vm * machine = NULL;
+
+    if (code_arr == NULL)
+    {
+        return 0;
+    }
+
+    /* bytecode_array_print(code_arr, code_size); */
+
+    machine = vm_new(VM_MEM_SIZE, VM_STACK_SIZE);
+
+    ret = vm_execute(machine, code_arr, code_size, &result);
+    if (ret == 0)
+    {
+        printf("result is %d\n", result);
+    }
+
+    vm_delete(machine);
+    bytecode_array_delete(code_arr);
+
+    return 0;
+}
+
+int parse_file_and_exec(const char * file_name)
+{
+    int ret = 0;
+    bytecode * code_arr = NULL;
+    unsigned int code_size = 0;
+
+    set_utils_file_name(file_name);
+    
+    yyin = fopen(file_name, "r");
+    if (yyin == NULL)
+    {
+        fprintf(stderr, "cannot open %s. %s\n", file_name, strerror(errno));
+        exit(1);
+    }
+
+    ret = parse(&code_arr, &code_size);
+    if (ret == 0)
+    {
+        ret = execute(code_arr, code_size);
+    }
+
     fclose(yyin);
     yylex_destroy();
-
-    execute(code_arr, code_size);
 
     return ret;
 }
 
-int main(int argc, char * argv[])
+int parse_and_exec(const char * src)
 {
     int ret = 0;
+    unsigned int code_size = 0;
+    bytecode * code_arr = NULL;
 
-    if (argc < 2)
+    scan_string(src);
+
+    ret = parse(&code_arr, &code_size);
+    if (ret == 0)
     {
-        printf("%s: no input files\n", argv[0]);
-        return 1;
+        ret = execute(code_arr, code_size);
     }
-    
-    ret = parse_and_exec(argv[1]);
+
+    yylex_destroy();
 
     return ret;
 }

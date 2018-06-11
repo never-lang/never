@@ -10,8 +10,9 @@ gencode.o: gencode.c gencode.h never.h func.h expr.h freevar.h var.h \
 libmath.o: libmath.c libmath.h func.h expr.h freevar.h var.h symtab.h
 libvm.o: libvm.c libvm.h vm.h object.h bytecode.h libmath.h func.h expr.h \
  freevar.h var.h symtab.h gc.h utils.h
-nev.o: nev.c scanner.h types.h expr.h freevar.h var.h func.h symtab.h \
- never.h parser.h typecheck.h optimize.h tailrec.h gencode.h bytecode.h \
+main.o: main.c nev.h
+nev.o: nev.c never.h func.h expr.h freevar.h var.h symtab.h scanner.h \
+ types.h parser.h typecheck.h optimize.h tailrec.h gencode.h bytecode.h \
  vm.h object.h utils.h libmath.h
 never.o: never.c never.h func.h expr.h freevar.h var.h symtab.h
 object.o: object.c object.h
@@ -49,6 +50,7 @@ gencode.o: gencode.h never.h func.h expr.h freevar.h var.h symtab.h \
  bytecode.h
 libmath.o: libmath.h func.h expr.h freevar.h var.h symtab.h
 libvm.o: libvm.h vm.h object.h bytecode.h
+nev.o: nev.h
 never.o: never.h func.h expr.h freevar.h var.h symtab.h
 object.o: object.h
 optimize.o: optimize.h never.h func.h expr.h freevar.h var.h symtab.h
