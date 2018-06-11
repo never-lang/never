@@ -45,9 +45,9 @@ func {
 }
 
 return {
-    tokp->line_no = line_no;    
+    tokp->line_no = line_no;
     scanner_printf("return\n");
-    return TOK_RETURN;    
+    return TOK_RETURN;
 }
 
 int {
@@ -57,7 +57,7 @@ int {
 }
 
 float {
-    tokp->line_no = line_no;    
+    tokp->line_no = line_no;
     scanner_printf("float\n");
     return TOK_FLOAT;
 }
@@ -183,3 +183,7 @@ float {
 
 %%
 
+
+void scan_string(const char *src) {
+    yy_switch_to_buffer(yy_scan_string(src));
+}

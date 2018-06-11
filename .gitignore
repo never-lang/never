@@ -5,3 +5,10 @@
 nev
 nev.dSYM/
 scanner.c
+test_freevar
+test_gc
+test_libmath
+test_object
+test_scanner
+test_symtab
+test_vm

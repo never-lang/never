@@ -25,6 +25,9 @@
 #include "func.h"
 #include "symtab.h"
 
+#define VM_MEM_SIZE 5000
+#define VM_STACK_SIZE 200
+
 typedef struct never
 {
     symtab * stab;
@@ -33,6 +36,9 @@ typedef struct never
 
 never * never_new(func_list * funcs);
 void never_delete(never * nev);
+
+int parse_file_and_exec(const char * file_name);
+int parse_and_exec(const char * src);
 
 #endif /* __NEVER_H__ */
 
