@@ -25,28 +25,52 @@
 
 const char * usage = "usage: %s <file name | -e \"one line of program\">\n";
 
+void display(object * result)
+{
+    if (result->type == OBJECT_INT)
+    {
+         printf("result is %d\n", result->int_value);
+    }
+    else if (result->type == OBJECT_FLOAT)
+    {
+        printf("result is %.2f\n", result->float_value);
+    }
+    else
+    {
+        printf("unknown result type\n");
+    }
+}
+
 int main(int argc, char * argv[])
 {
-    switch (argc)
-    {
-        case 2:
-            return parse_file_and_exec(argv[1]);
-        break;
-        case 3:
-            if (strncmp("-e", argv[1], 2) == 0)
-            {
-                return parse_and_exec(argv[2]);
-            }
-    }
+    int ret = -1;
+    object result = { 0 };
 
     if (argc < 2)
     {
         printf("%s: no input files\n", argv[0]);
+        printf(usage, argv[0]);
+        return 0;
     }
 
-    printf(usage, argv[0]);
+    switch (argc)
+    {
+        case 2:
+            ret = parse_file_and_exec(argv[1], &result);
+        break;
+        case 3:
+            if (strncmp("-e", argv[1], 2) == 0)
+            {
+                ret = parse_and_exec(argv[2], &result);
+            }
+    }
 
-    return 1;
+    if (ret == 0)
+    {
+        display(&result);
+    }
+
+    return ret;
 }
 
 

@@ -23,8 +23,8 @@ func mutrec(float n) -> float
     return C(n);
 }
 
-func main() -> int 
+func main() -> int
 {
-    return assert(mutrec(1) == -33.0);
+    return assert(mutrec(1.0) == -33.0);
 }
 

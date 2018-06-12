@@ -9,11 +9,11 @@ SRC=$(wildcard *.c)
 OBJ=$(SRC:.c=.o)
 TESTS=test_object test_scanner test_symtab test_freevar test_vm test_gc test_libmath
 
-nev: libnev.a
+nev: libnev.a main.o
 
 libnev.a: scanner.o parser.o expr.o var.o freevar.o func.o never.o symtab.o \
           typecheck.o gencode.o utils.o bytecode.o vm.o gc.o object.o nev.o \
-          constred.o tailrec.o optimize.o libmath.o libvm.o main.o
+          constred.o tailrec.o optimize.o libmath.o libvm.o
 
 tests: $(TESTS)
 

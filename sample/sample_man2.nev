@@ -4,7 +4,7 @@ func cel2fah(float c) -> float
     return c * 1.8 + 32.0;
 }
 
-func main() -> int 
+func main() -> float 
 {
     return cel2fah(100.0);
 }

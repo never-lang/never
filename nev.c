@@ -89,10 +89,9 @@ int parse(bytecode ** code_arr, unsigned int * code_size)
     return ret;
 }
 
-int execute(bytecode * code_arr, unsigned int code_size)
+int execute(bytecode * code_arr, unsigned int code_size, object * result)
 {
     int ret = 0;
-    int result = 0;
     vm * machine = NULL;
 
     if (code_arr == NULL)
@@ -104,19 +103,15 @@ int execute(bytecode * code_arr, unsigned int code_size)
 
     machine = vm_new(VM_MEM_SIZE, VM_STACK_SIZE);
 
-    ret = vm_execute(machine, code_arr, code_size, &result);
-    if (ret == 0)
-    {
-        printf("result is %d\n", result);
-    }
+    ret = vm_execute(machine, code_arr, code_size, result);
 
     vm_delete(machine);
     bytecode_array_delete(code_arr);
 
-    return 0;
+    return ret;
 }
 
-int parse_file_and_exec(const char * file_name)
+int parse_file_and_exec(const char * file_name, object * result)
 {
     int ret = 0;
     bytecode * code_arr = NULL;
@@ -134,7 +129,7 @@ int parse_file_and_exec(const char * file_name)
     ret = parse(&code_arr, &code_size);
     if (ret == 0)
     {
-        ret = execute(code_arr, code_size);
+        ret = execute(code_arr, code_size, result);
     }
 
     fclose(yyin);
@@ -143,7 +138,7 @@ int parse_file_and_exec(const char * file_name)
     return ret;
 }
 
-int parse_and_exec(const char * src)
+int parse_and_exec(const char * src, object * result)
 {
     int ret = 0;
     unsigned int code_size = 0;
@@ -154,7 +149,7 @@ int parse_and_exec(const char * src)
     ret = parse(&code_arr, &code_size);
     if (ret == 0)
     {
-        ret = execute(code_arr, code_size);
+        ret = execute(code_arr, code_size, result);
     }
 
     yylex_destroy();

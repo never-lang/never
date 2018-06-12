@@ -11,14 +11,14 @@ or results between other functions.
 
 ## Introduction
 ```
-func main() -> int
+func main() -> float
 {
     return 100.0 * 1.8 + 32.0;
 }
 ```
 A program written in Never language starts in function ```main```. ```Main```
-function always takes no parameters and returns ```int``` value. The function may
-only return value of one expression. In the above example temperature
+function always takes no parameters and returns ```int``` or ```float``` value.
+The function may only return value of one expression. In the above example temperature
 of boiling water given in Celsius degrees is converted to Fahrenheit degrees.
 
 ```
@@ -27,7 +27,7 @@ func cel2fah(float c) -> float
     return c * 1.8 + 32.0;
 }
 
-func main() -> int
+func main() -> float
 {
     return cel2fah(100.0);
 }
@@ -92,7 +92,7 @@ func dir_deg(int d) -> (float) -> float
     return d == 0 ? fah2cel : cel2fah;
 }
 
-func main() -> int
+func main() -> float
 {
     return dir_deg(1)(100.0);
 }
@@ -120,7 +120,7 @@ func degrees(conv(float) -> float, float degree) -> float
     return conv(degree);
 }
 
-func main() -> int
+func main() -> float
 {
     return degrees(cel2fah, 100.0);
 }
@@ -150,7 +150,7 @@ func dir_deg(int d) -> (float) -> float
     return d == 0 ? fah2cel : cel2fah;
 }
 
-func main() -> int
+func main() -> float
 {
     return dir_deg(0)(100.0);
 }
@@ -178,7 +178,7 @@ func dir_deg(int d, float coeff) -> (float) -> float
     return d == 0 ? cel2fah : fah2cel;
 }
 
-func main() -> int
+func main() -> float
 {
     return dir_deg(0, 100.0)(100.0);
 }
@@ -200,7 +200,7 @@ func degrees(conv(float) -> float, float degree) -> float
     return conv(degree);
 }
 
-func main() -> int
+func main() -> float
 {
     return degrees(func rea2cel(float d) -> float
                    {
@@ -220,7 +220,7 @@ func calc() -> (float) -> float
     return func fah2cel(float f) -> float { return (f - 32.0) / 1.8; };
 }
 
-func main() -> int
+func main() -> float
 {
     return calc()(212.0);
 }
@@ -234,7 +234,7 @@ func dir_deg(int d) -> (float) -> float
                   : func cel2fah(float c) -> float { return c * 1.8 + 32.0; };
 }
 
-func main() -> int
+func main() -> float
 {
     return dir_deg(0)(100.0);
 }
@@ -258,7 +258,7 @@ func get_func() -> (float) -> float
     return cos;
 }
 
-func main() -> int
+func main() -> float
 {
     return get_func()(deg2rad(60.0));
 }
@@ -268,8 +268,9 @@ func main() -> int
 Never implements a simple `print(int x) -> int` and `printf(float x) -> float` function.
 The function writes an integer or float parameter `x` (with a new line character)
 to standard output and returns passed value.  By default `printf` uses `"%.2f\n"` formatting.
+
 ```
-func main() -> int
+func main() -> float
 {
 	return printf(123.456);
 }
@@ -278,5 +279,5 @@ func main() -> int
 ## Contact
 If you find it useful for any purpose I will be glad to hear from you.
 
-If you need help to develop a progamming or domain specific language please contact me.
+If you need help to develop a programming or domain specific language please contact me.
 

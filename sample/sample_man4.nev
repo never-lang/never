@@ -15,7 +15,7 @@ func dir_deg(int d) -> (float) -> float
     return d == 0 ? fah2cel : cel2fah;
 }
 
-func main() -> int
+func main() -> float
 {
     return dir_deg(0)(100.0);
 }

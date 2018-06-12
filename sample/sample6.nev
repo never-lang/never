@@ -24,7 +24,7 @@ func counter(float from, float to, float by) -> (float, float) -> (float, float,
     };
 }
 
-func main() -> int 
+func main() -> float 
 {
     return counter(100.0, 10.0, 20.0)(11.0, 12.0)(1.0, 2.0, 3.0);
 }

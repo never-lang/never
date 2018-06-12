@@ -20,7 +20,7 @@ func twice(float c1, float c2) -> (float, float) -> float
     return twice_func;
 }
 
-func main() -> int 
+func main() -> float 
 {
     return twice(12.0, 3.0)(10.0, 20.0);
 }

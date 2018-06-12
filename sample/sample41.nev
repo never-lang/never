@@ -1,5 +1,5 @@
 
-func main() -> int
+func main() -> float
 {
     return 1 != 1 ? 12.0 : 40.0;
 }

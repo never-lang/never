@@ -5,7 +5,7 @@ func dir_deg(int d) -> (float) -> float
                   : func cel2fah(float c) -> float { return c * 1.8 + 32.0; };
 }
 
-func main() -> int
+func main() -> float
 {
     return dir_deg(0)(100.0);
 }

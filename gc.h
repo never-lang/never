@@ -89,6 +89,8 @@ mem_ptr gc_get_func_vec(gc * collector, mem_ptr func_addr);
 void gc_set_func_addr(gc * collector, mem_ptr func_addr, ip_ptr addr);
 void gc_set_func_vec(gc * collector, mem_ptr func_addr, mem_ptr vec);
 
+object gc_get_object(gc * collector, mem_ptr addr);
+
 gc_stack * gc_stack_new(int stack_size);
 void gc_stack_delete(gc_stack * stack);
 void gc_stack_print(gc_stack * stack, int stack_size);

@@ -1,5 +1,5 @@
 
-func main() -> int
+func main() -> float
 {
     return sin(3.141);
 }

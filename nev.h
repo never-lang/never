@@ -22,8 +22,10 @@
 #ifndef __NEV_H__
 #define __NEV_H__
 
-int parse_file_and_exec(const char * file_name);
-int parse_and_exec(const char * src);
+#include "object.h"
+
+int parse_file_and_exec(const char * file_name, object * result);
+int parse_and_exec(const char * src, object * result);
 
 #endif /* __NEV_H__ */
 

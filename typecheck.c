@@ -1036,7 +1036,8 @@ int func_main_check_type(symtab * tab, int * result)
             }
             else
             {
-                if (func_value->ret->type != VAR_INT)
+                if (func_value->ret->type != VAR_INT &&
+                    func_value->ret->type != VAR_FLOAT)
                 {
                     print_error_msg(func_value->line_no, "incorrect function main return type\n");
                     *result = TYPECHECK_FAIL;

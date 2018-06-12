@@ -33,7 +33,7 @@ func twice(float coeff, single_func(float, float) -> float) -> (float, float) ->
     return one();
 }
 
-func main() -> int 
+func main() -> float 
 {
     return twice(20.0, min)(10.0, 20.0);
 }

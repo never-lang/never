@@ -14,7 +14,7 @@ func degrees(conv(float) -> float, float degree) -> float
     return conv(degree);
 }
 
-func main() -> int
+func main() -> float
 {
     return degrees(cel2fah, 100.0);
 }

@@ -749,7 +749,7 @@ void vm_execute_halt(vm * machine, bytecode * code)
     machine->running = VM_HALT;
 }
 
-int vm_execute(vm * machine, bytecode * code, unsigned int size, int * ret)
+int vm_execute(vm * machine, bytecode * code, unsigned int size, object * result)
 {
     bytecode * bc = NULL;
 
@@ -763,7 +763,7 @@ int vm_execute(vm * machine, bytecode * code, unsigned int size, int * ret)
 
     if (machine->running == VM_HALT)
     {
-        *ret = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+        *result = gc_get_object(machine->collector, machine->stack[machine->sp].addr);
         return 0;
     }
 
