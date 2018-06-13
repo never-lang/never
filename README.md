@@ -276,6 +276,19 @@ func main() -> float
 }
 ```
 
+## Embedded Never
+Never language can be embedded in Unix shell and C code.
+
+### Shell
+After adding ```#!/usr/bin/nev``` to the script first line and setting script
+as executableit is possible to run a program without specifying interpreter name.
+
+Also nev can be executed with ```-e``` parameter followed by program.
+
+### C language
+Please check ```test_exec``` example to check how to embedded Never language
+withing C or C++ code.
+
 ## Contact
 If you find it useful for any purpose I will be glad to hear from you.
 

@@ -1315,6 +1315,7 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code, int * re
 int func_main_emit(never * nev, int stack_level, bytecode_list * code, int * result)
 {
     symtab_entry * entry = NULL;
+
     entry = symtab_lookup(nev->stab, "main", SYMTAB_FLAT);
     if (entry != NULL && entry->type == SYMTAB_FUNC)
     {
@@ -1323,6 +1324,9 @@ int func_main_emit(never * nev, int stack_level, bytecode_list * code, int * res
 
         bc.type = BYTECODE_MARK;
         mark = bytecode_add(code, &bc);
+
+        bc.type = BYTECODE_PUSH_PARAM;
+        bytecode_add(code, &bc);
 
         bc.type = BYTECODE_GLOBAL_VEC;
         bc.global_vec.count = 0;

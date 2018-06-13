@@ -1009,6 +1009,21 @@ int print_functions(never * nev)
     return 0;
 }
 
+int func_main_check_num_vars(var_list * vars)
+{
+    var_list_node * node = vars->tail;
+    while (node != NULL)
+    {
+        var * value = node->value;
+        if (value->type != VAR_INT && value->type != VAR_FLOAT)
+        {
+            return 0;
+        }
+        node = node->next;
+    }
+    return 1;
+}
+
 int func_main_check_type(symtab * tab, int * result)
 {
     symtab_entry * entry = NULL;
@@ -1019,15 +1034,12 @@ int func_main_check_type(symtab * tab, int * result)
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
             func * func_value = entry->func_value;
-            if (func_value->vars != NULL)
+            if (func_value->vars != NULL && func_main_check_num_vars(func_value->vars) == 0)
             {
-                if (func_value->vars->count > 0)
-                {
                     print_error_msg(func_value->line_no,
-                                    "too many variables (%d) in function main, expected 0\n",
+                                    "function main can take only numerical parameters\n",
                                     func_value->vars->count);
                     *result = TYPECHECK_FAIL;
-                }
             }
             if (func_value->ret == NULL)
             {

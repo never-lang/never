@@ -25,7 +25,7 @@
 
 const char * usage = "usage: %s <file name | -e \"one line of program\">\n";
 
-void display(object * result)
+static void print_result(object * result)
 {
     if (result->type == OBJECT_INT)
     {
@@ -53,21 +53,18 @@ int main(int argc, char * argv[])
         return 0;
     }
 
-    switch (argc)
+    if (strncmp("-e", argv[1], 2) == 0)
     {
-        case 2:
-            ret = parse_file_and_exec(argv[1], &result);
-        break;
-        case 3:
-            if (strncmp("-e", argv[1], 2) == 0)
-            {
-                ret = parse_and_exec(argv[2], &result);
-            }
+        ret = parse_and_exec(argv[2], argc - 3, argv + 3, &result);
+    }
+    else
+    {
+        ret = parse_file_and_exec(argv[1], argc - 2, argv + 2, &result);
     }
 
     if (ret == 0)
     {
-        display(&result);
+        print_result(&result);
     }
 
     return ret;

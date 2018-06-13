@@ -83,6 +83,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_COPYGLOB, bytecode_print_copyglob },
     { BYTECODE_ALLOC, bytecode_print_alloc },
     { BYTECODE_REWRITE, bytecode_print_rewrite },
+    { BYTECODE_PUSH_PARAM, bytecode_print_push_param },
    
     { BYTECODE_HALT, bytecode_print_halt }
 };
@@ -329,6 +330,11 @@ void bytecode_print_alloc(bytecode * code)
 void bytecode_print_rewrite(bytecode * code)
 {
     printf("%d: rewrite %u\n", code->addr, code->rewrite.j);
+}
+
+void bytecode_print_push_param(bytecode * code)
+{
+    printf("%d: push param\n", code->addr);
 }
 
 void bytecode_print_halt(bytecode * code)

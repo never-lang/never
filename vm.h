@@ -22,8 +22,7 @@
 #ifndef __VM_H__
 #define __VM_H__
 
-#include "object.h"
-#include "bytecode.h"
+#include "program.h"
 
 typedef enum vm_state
 {
@@ -45,6 +44,8 @@ typedef struct vm
 
     unsigned int line_no;
     vm_state running;
+    
+    program * prog;
 } vm;
 
 typedef struct vm_execute_str
@@ -110,11 +111,12 @@ void vm_execute_build_in(vm * machine, bytecode * code);
 void vm_execute_copyglob(vm * machine, bytecode * code);
 void vm_execute_alloc(vm * machine, bytecode * code);
 void vm_execute_rewrite(vm * machine, bytecode * code);
+void vm_execute_push_param(vm * machine, bytecode * code);
 
 void vm_execute_halt(vm * machine, bytecode * code);
 
 void vm_check_stack(vm * machine);
-int vm_execute(vm * machine, bytecode * code, unsigned int size, object * result);
+int vm_execute(vm * machine, program * prog, object * result);
 
 vm * vm_new(unsigned int mem_size, unsigned int stack_size);
 void vm_delete(vm * machine);

@@ -81,6 +81,7 @@ typedef enum bytecode_type
     BYTECODE_COPYGLOB,
     BYTECODE_ALLOC,
     BYTECODE_REWRITE,
+    BYTECODE_PUSH_PARAM,
 
     BYTECODE_HALT,
     BYTECODE_END
@@ -233,6 +234,7 @@ void bytecode_print_build_in(bytecode * code);
 void bytecode_print_copyglob(bytecode * code);
 void bytecode_print_alloc(bytecode * code);
 void bytecode_print_rewrite(bytecode * code);
+void bytecode_print_push_param(bytecode * code);
 
 void bytecode_print_halt(bytecode * code);
  

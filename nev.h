@@ -23,9 +23,13 @@
 #define __NEV_H__
 
 #include "object.h"
+#include "program.h"
 
-int parse_file_and_exec(const char * file_name, object * result);
-int parse_and_exec(const char * src, object * result);
+int parse(program * prog);
+int execute(program * prog, object * result);
+
+int parse_file_and_exec(const char * file_name, unsigned int argc, char * argv[], object * result);
+int parse_and_exec(const char * src, unsigned int argc, char * argv[], object * result);
 
 #endif /* __NEV_H__ */
 

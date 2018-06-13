@@ -86,6 +86,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_COPYGLOB, vm_execute_copyglob },
     { BYTECODE_ALLOC, vm_execute_alloc },
     { BYTECODE_REWRITE, vm_execute_rewrite },
+    { BYTECODE_PUSH_PARAM, vm_execute_push_param },
    
     { BYTECODE_HALT, vm_execute_halt }
 };
@@ -744,19 +745,52 @@ void vm_execute_rewrite(vm * machine, bytecode * code)
     vm_check_stack(machine);
 }
 
+void vm_execute_push_param(vm * machine, bytecode * code)
+{
+    mem_ptr addr;
+    gc_stack entry = { 0 };
+    unsigned int i;
+
+    for (i = machine->prog->param_count; i > 0; i--)
+    {
+        if (machine->prog->params[i - 1].type == OBJECT_INT)
+        {
+            addr = gc_alloc_int(machine->collector, machine->prog->params[i - 1].int_value);
+        }
+        else if (machine->prog->params[i - 1].type == OBJECT_FLOAT)
+        {
+            addr = gc_alloc_float(machine->collector, machine->prog->params[i - 1].float_value);
+        }
+        else
+        {
+            printf("unsupported type\n");
+            assert(0);
+        }
+
+        machine->sp++;
+        vm_check_stack(machine);
+
+        entry.type = GC_MEM_ADDR;
+        entry.addr = addr;
+
+        machine->stack[machine->sp] = entry;
+    }
+}
+
 void vm_execute_halt(vm * machine, bytecode * code)
 {
     machine->running = VM_HALT;
 }
 
-int vm_execute(vm * machine, bytecode * code, unsigned int size, object * result)
+int vm_execute(vm * machine, program * prog, object * result)
 {
     bytecode * bc = NULL;
 
+    machine->prog = prog;
     machine->running = VM_RUNNING;
     while (machine->running == VM_RUNNING)
     {
-        bc = code + machine->ip;
+        bc = prog->code_arr + machine->ip;
         machine->ip++;
         vm_execute_op[bc->type].execute(machine, bc);
     }

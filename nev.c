@@ -31,6 +31,7 @@
 #include "tailrec.h"
 #include "gencode.h"
 #include "bytecode.h"
+#include "program.h"
 #include "vm.h"
 #include "utils.h"
 #include "libmath.h"
@@ -41,7 +42,46 @@
 extern FILE * yyin;
 extern int parse_result;
 
-int parse(bytecode ** code_arr, unsigned int * code_size)
+int never_func_main_params(never * nev, object ** params, unsigned int * param_count)
+{
+    object * param = NULL;
+    symtab_entry * entry = NULL;
+
+    *param_count = 0;
+    *params = NULL;
+
+    entry = symtab_lookup(nev->stab, "main", SYMTAB_FLAT);
+    if (entry != NULL && entry->type == SYMTAB_FUNC && entry->func_value != NULL)
+    {
+        func * func_value = entry->func_value;
+        if (func_value->vars != NULL)
+        {
+            *param_count = func_value->vars->count;
+            *params = param = malloc(sizeof(object) * (*param_count));
+            memset(*params, 0, sizeof(object) * (*param_count));
+            
+            var_list_node * node = func_value->vars->tail;
+            while (node != NULL)
+            {
+                var * value = node->value;
+                if (value->type == VAR_INT)
+                {
+                    param->type = OBJECT_INT; 
+                }
+                else if (value->type == VAR_FLOAT)
+                {
+                    param->type = OBJECT_FLOAT;
+                }
+                param++;
+                node = node->next;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+int parse(program * prog)
 {
     int ret = 0;
     never * nev = NULL;
@@ -67,13 +107,13 @@ int parse(bytecode ** code_arr, unsigned int * code_size)
                     code = bytecode_new();
 
                     never_emit(nev, code);
-
                     bytecode_func_addr(code);
 
                     /* print_functions(nev); */
                     /* bytecode_print(code); */
 
-                    bytecode_to_array(code, code_arr, code_size);
+                    never_func_main_params(nev, &prog->params, &prog->param_count);
+                    bytecode_to_array(code, &prog->code_arr, &prog->code_size);
 
                     bytecode_delete(code);
                 }
@@ -89,12 +129,12 @@ int parse(bytecode ** code_arr, unsigned int * code_size)
     return ret;
 }
 
-int execute(bytecode * code_arr, unsigned int code_size, object * result)
+int execute(program * prog, object * result)
 {
     int ret = 0;
     vm * machine = NULL;
 
-    if (code_arr == NULL)
+    if (prog->code_arr == NULL)
     {
         return 0;
     }
@@ -103,19 +143,42 @@ int execute(bytecode * code_arr, unsigned int code_size, object * result)
 
     machine = vm_new(VM_MEM_SIZE, VM_STACK_SIZE);
 
-    ret = vm_execute(machine, code_arr, code_size, result);
+    ret = vm_execute(machine, prog, result);
 
     vm_delete(machine);
-    bytecode_array_delete(code_arr);
 
     return ret;
 }
 
-int parse_file_and_exec(const char * file_name, object * result)
+int argc_to_program(program * prog, unsigned int argc, char * argv[])
+{
+    unsigned int i;
+   
+    if (prog->param_count > argc)
+    {
+        fprintf(stderr, "too few parameters, expected %d got %d\n", prog->param_count, argc);
+        return 1;
+    }
+    
+    for (i = 0; i < prog->param_count; i++)
+    {
+        if (prog->params[i].type == OBJECT_INT)
+        {
+            prog->params[i].int_value = atoi(argv[i]);
+        }
+        else if (prog->params[i].type == OBJECT_FLOAT)
+        {
+            prog->params[i].float_value = atof(argv[i]);
+        }
+    }
+    
+    return 0;
+}
+
+int parse_file_and_exec(const char * file_name, int argc, char * argv[], object * result)
 {
     int ret = 0;
-    bytecode * code_arr = NULL;
-    unsigned int code_size = 0;
+    program * prog = NULL;
 
     set_utils_file_name(file_name);
     
@@ -126,11 +189,19 @@ int parse_file_and_exec(const char * file_name, object * result)
         exit(1);
     }
 
-    ret = parse(&code_arr, &code_size);
+    prog = program_new(); 
+
+    ret = parse(prog);
     if (ret == 0)
     {
-        ret = execute(code_arr, code_size, result);
+        ret = argc_to_program(prog, argc, argv);
+        if (ret == 0)
+        {
+            ret = execute(prog, result);
+        }
     }
+
+    program_delete(prog);
 
     fclose(yyin);
     yylex_destroy();
@@ -138,19 +209,26 @@ int parse_file_and_exec(const char * file_name, object * result)
     return ret;
 }
 
-int parse_and_exec(const char * src, object * result)
+int parse_and_exec(const char * src, unsigned int argc, char * argv[], object * result)
 {
     int ret = 0;
-    unsigned int code_size = 0;
-    bytecode * code_arr = NULL;
+    program * prog = NULL;
 
     scan_string(src);
 
-    ret = parse(&code_arr, &code_size);
+    prog = program_new();
+
+    ret = parse(prog);
     if (ret == 0)
     {
-        ret = execute(code_arr, code_size, result);
+        ret = argc_to_program(prog, argc, argv);
+        if (ret == 0)
+        {
+            ret = execute(prog, result);
+        }
     }
+
+    program_delete(prog);
 
     yylex_destroy();
 

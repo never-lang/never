@@ -38,6 +38,10 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
 	line_no++;
 }
 
+"#".* {
+     /* DO NOTHING */
+}
+
 func {
     tokp->line_no = line_no;
     scanner_printf("func\n");
@@ -183,7 +187,8 @@ float {
 
 %%
 
-
-void scan_string(const char *src) {
+void scan_string(const char *src)
+{
     yy_switch_to_buffer(yy_scan_string(src));
 }
+
