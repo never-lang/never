@@ -1,5 +1,5 @@
-#include "program.h"
 #include <stdlib.h>
+#include "program.h"
 
 program * program_new(object * params, unsigned int param_count, bytecode * code_arr, unsigned int code_size)
 {
