@@ -19,15 +19,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
+VPATH=.:include:front:back
 CC=gcc
-CFLAGS=-Wall -Wextra -Wno-missing-field-initializers -Wno-missing-braces -Wno-unused-function -Wno-unneeded-internal-declaration -Wno-unused-parameter -g
+CFLAGS=-I./include -I./front -I./back -Wall -Wextra \
+       -Wno-missing-field-initializers -Wno-missing-braces \
+       -Wno-unused-function -Wno-unneeded-internal-declaration \
+       -Wno-unused-parameter -g
 LDLIBS=-lm
 LEX=flex
 BISON=bison
 BFLAGS=--report=solved --defines
 AR=ar
-SRC=$(wildcard *.c)
-OBJ=$(SRC:.c=.o)
 TESTS=test_object test_scanner test_symtab test_freevar \
       test_vm test_gc test_libmath test_exec
 
@@ -71,11 +73,11 @@ lib%.a: %.o
 	$(BISON) $(BFLAGS) -o $@ $<
 
 deps:
-	$(CC) -MM *.c *.h > .deps
+	$(CC) -I./include -I./front -I./back -MM include/*.h front/*.c front/*.h back/*.h back/*.c > .deps
 
 include .deps
 
 .PHONY: clean
 clean:
-	@rm -f $(OBJ) $(TESTS) libnev.a nev
+	@rm -f *.o $(TESTS) libnev.a nev
 

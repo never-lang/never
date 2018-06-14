@@ -1,69 +1,85 @@
-bytecode.o: bytecode.c bytecode.h func.h expr.h freevar.h var.h symtab.h
-constred.o: constred.c constred.h never.h func.h expr.h freevar.h var.h \
- symtab.h utils.h
-expr.o: expr.c expr.h freevar.h var.h func.h symtab.h
-freevar.o: freevar.c freevar.h var.h func.h expr.h symtab.h
-func.o: func.c func.h expr.h freevar.h var.h symtab.h
-gc.o: gc.c gc.h object.h
-gencode.o: gencode.c gencode.h never.h func.h expr.h freevar.h var.h \
- symtab.h bytecode.h utils.h
-libmath.o: libmath.c libmath.h func.h expr.h freevar.h var.h symtab.h
-libvm.o: libvm.c libvm.h vm.h program.h object.h bytecode.h libmath.h \
- func.h expr.h freevar.h var.h symtab.h gc.h utils.h
-main.o: main.c nev.h object.h program.h bytecode.h
-nev.o: nev.c never.h func.h expr.h freevar.h var.h symtab.h scanner.h \
- types.h parser.h typecheck.h optimize.h tailrec.h gencode.h bytecode.h \
- program.h object.h vm.h utils.h libmath.h
-never.o: never.c never.h func.h expr.h freevar.h var.h symtab.h
-object.o: object.c object.h
-optimize.o: optimize.c optimize.h never.h func.h expr.h freevar.h var.h \
- symtab.h constred.h
-parser.o: parser.c utils.h types.h expr.h freevar.h var.h func.h symtab.h \
- never.h scanner.h
-program.o: program.c program.h object.h bytecode.h
-scanner.o: scanner.c types.h expr.h freevar.h var.h func.h symtab.h \
- never.h parser.h
-symtab.o: symtab.c symtab.h var.h func.h expr.h freevar.h
-tailrec.o: tailrec.c tailrec.h never.h func.h expr.h freevar.h var.h \
- symtab.h
-test_exec.o: test_exec.c nev.h object.h program.h bytecode.h
-test_freevar.o: test_freevar.c freevar.h var.h
-test_gc.o: test_gc.c gc.h object.h
-test_libmath.o: test_libmath.c libmath.h func.h expr.h freevar.h var.h \
- symtab.h
-test_object.o: test_object.c object.h
-test_scanner.o: test_scanner.c types.h expr.h freevar.h var.h func.h \
- symtab.h never.h scanner.h
-test_symtab.o: test_symtab.c symtab.h var.h func.h expr.h freevar.h
-test_vm.o: test_vm.c vm.h program.h object.h bytecode.h
-typecheck.o: typecheck.c typecheck.h never.h func.h expr.h freevar.h \
- var.h symtab.h utils.h tailrec.h
-utils.o: utils.c utils.h
-var.o: var.c var.h
-vm.o: vm.c vm.h program.h object.h bytecode.h gc.h libmath.h func.h \
- expr.h freevar.h var.h symtab.h libvm.h utils.h
-bytecode.o: bytecode.h
-constred.o: constred.h never.h func.h expr.h freevar.h var.h symtab.h
-expr.o: expr.h freevar.h var.h
-freevar.o: freevar.h var.h
-func.o: func.h expr.h freevar.h var.h symtab.h func.h
-gc.o: gc.h object.h
-gencode.o: gencode.h never.h func.h expr.h freevar.h var.h symtab.h \
- bytecode.h
-libmath.o: libmath.h func.h expr.h freevar.h var.h symtab.h
-libvm.o: libvm.h vm.h program.h object.h bytecode.h
-nev.o: nev.h object.h program.h bytecode.h
-never.o: never.h func.h expr.h freevar.h var.h symtab.h
-object.o: object.h
-optimize.o: optimize.h never.h func.h expr.h freevar.h var.h symtab.h
-parser.o: parser.h
-program.o: program.h object.h bytecode.h
-scanner.o: scanner.h types.h expr.h freevar.h var.h func.h symtab.h \
- never.h
-symtab.o: symtab.h var.h func.h expr.h freevar.h symtab.h
-tailrec.o: tailrec.h never.h func.h expr.h freevar.h var.h symtab.h
-typecheck.o: typecheck.h never.h func.h expr.h freevar.h var.h symtab.h
-types.o: types.h expr.h freevar.h var.h func.h symtab.h never.h
-utils.o: utils.h
-var.o: var.h
-vm.o: vm.h program.h object.h bytecode.h
+nev.o: include/nev.h include/object.h include/program.h back/bytecode.h
+object.o: include/object.h
+program.o: include/program.h include/object.h back/bytecode.h
+constred.o: front/constred.c front/constred.h front/never.h front/func.h \
+ front/expr.h front/freevar.h front/var.h front/symtab.h back/utils.h
+expr.o: front/expr.c front/expr.h front/freevar.h front/var.h \
+ front/func.h front/symtab.h
+freevar.o: front/freevar.c front/freevar.h front/var.h front/func.h \
+ front/expr.h front/symtab.h
+func.o: front/func.c front/func.h front/expr.h front/freevar.h \
+ front/var.h front/symtab.h
+never.o: front/never.c front/never.h front/func.h front/expr.h \
+ front/freevar.h front/var.h front/symtab.h
+optimize.o: front/optimize.c front/optimize.h front/never.h front/func.h \
+ front/expr.h front/freevar.h front/var.h front/symtab.h front/constred.h
+parser.o: front/parser.c back/utils.h front/types.h front/expr.h \
+ front/freevar.h front/var.h front/func.h front/symtab.h front/never.h \
+ front/scanner.h
+scanner.o: front/scanner.c front/types.h front/expr.h front/freevar.h \
+ front/var.h front/func.h front/symtab.h front/never.h front/parser.h
+symtab.o: front/symtab.c front/symtab.h front/var.h front/func.h \
+ front/expr.h front/freevar.h
+tailrec.o: front/tailrec.c front/tailrec.h front/never.h front/func.h \
+ front/expr.h front/freevar.h front/var.h front/symtab.h
+typecheck.o: front/typecheck.c front/typecheck.h front/never.h \
+ front/func.h front/expr.h front/freevar.h front/var.h front/symtab.h \
+ back/utils.h front/tailrec.h
+var.o: front/var.c front/var.h
+constred.o: front/constred.h front/never.h front/func.h front/expr.h \
+ front/freevar.h front/var.h front/symtab.h
+expr.o: front/expr.h front/freevar.h front/var.h
+freevar.o: front/freevar.h front/var.h
+func.o: front/func.h front/expr.h front/freevar.h front/var.h \
+ front/symtab.h front/func.h
+never.o: front/never.h front/func.h front/expr.h front/freevar.h \
+ front/var.h front/symtab.h
+optimize.o: front/optimize.h front/never.h front/func.h front/expr.h \
+ front/freevar.h front/var.h front/symtab.h
+parser.o: front/parser.h
+scanner.o: front/scanner.h front/types.h front/expr.h front/freevar.h \
+ front/var.h front/func.h front/symtab.h front/never.h
+symtab.o: front/symtab.h front/var.h front/func.h front/expr.h \
+ front/freevar.h front/symtab.h
+tailrec.o: front/tailrec.h front/never.h front/func.h front/expr.h \
+ front/freevar.h front/var.h front/symtab.h
+typecheck.o: front/typecheck.h front/never.h front/func.h front/expr.h \
+ front/freevar.h front/var.h front/symtab.h
+types.o: front/types.h front/expr.h front/freevar.h front/var.h \
+ front/func.h front/symtab.h front/never.h
+var.o: front/var.h
+bytecode.o: back/bytecode.h
+gc.o: back/gc.h include/object.h
+gencode.o: back/gencode.h front/never.h front/func.h front/expr.h \
+ front/freevar.h front/var.h front/symtab.h back/bytecode.h
+libmath.o: back/libmath.h front/func.h front/expr.h front/freevar.h \
+ front/var.h front/symtab.h front/func.h
+libvm.o: back/libvm.h back/vm.h include/program.h include/object.h \
+ back/bytecode.h back/bytecode.h
+utils.o: back/utils.h
+vm.o: back/vm.h include/program.h include/object.h back/bytecode.h
+bytecode.o: back/bytecode.c back/bytecode.h front/func.h front/expr.h \
+ front/freevar.h front/var.h front/symtab.h front/func.h
+gc.o: back/gc.c back/gc.h include/object.h
+gencode.o: back/gencode.c back/gencode.h front/never.h front/func.h \
+ front/expr.h front/freevar.h front/var.h front/symtab.h back/bytecode.h \
+ front/symtab.h front/freevar.h back/utils.h
+libmath.o: back/libmath.c back/libmath.h front/func.h front/expr.h \
+ front/freevar.h front/var.h front/symtab.h front/func.h
+libvm.o: back/libvm.c back/libvm.h back/vm.h include/program.h \
+ include/object.h back/bytecode.h back/bytecode.h back/libmath.h \
+ front/func.h front/expr.h front/freevar.h front/var.h front/symtab.h \
+ front/func.h back/gc.h include/object.h back/utils.h
+nev.o: back/nev.c front/never.h front/func.h front/expr.h front/freevar.h \
+ front/var.h front/symtab.h front/scanner.h front/types.h front/never.h \
+ front/parser.h front/typecheck.h front/optimize.h front/tailrec.h \
+ back/gencode.h back/bytecode.h include/program.h include/object.h \
+ back/bytecode.h back/vm.h back/utils.h back/libmath.h front/func.h
+object.o: back/object.c include/object.h
+program.o: back/program.c include/program.h include/object.h \
+ back/bytecode.h
+utils.o: back/utils.c back/utils.h
+vm.o: back/vm.c back/vm.h include/program.h include/object.h \
+ back/bytecode.h back/gc.h include/object.h back/libmath.h front/func.h \
+ front/expr.h front/freevar.h front/var.h front/symtab.h front/func.h \
+ back/libvm.h back/bytecode.h back/utils.h
