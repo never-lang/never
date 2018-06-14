@@ -1,21 +1,15 @@
 #include <stdio.h>
 #include <assert.h>
 #include "nev.h"
-#include "scanner.h"
-#include "parser.h"
 
 void test_one()
 {
     int ret = 0;
-    program * prog = NULL;
     object result = { 0 };
+    program * prog = program_new();
     const char * prog_str = "func main(int a, int b) -> int { return 10 * (a + b); }";
 
-    scan_string(prog_str);
-
-    prog = program_new();
-
-    ret = parse(prog);
+    ret = parse_str(prog_str, prog);
     if (ret == 0)
     {
         prog->params[0].int_value = 2;
@@ -38,7 +32,6 @@ void test_one()
     }
 
     program_delete(prog);
-    yylex_destroy();
 }
 
 int main(int argc, char * argv[])

@@ -39,6 +39,9 @@
 #define VM_MEM_SIZE 5000
 #define VM_STACK_SIZE 200
 
+#define PARSE_STR 1
+#define PARSE_FILE 2
+
 extern FILE * yyin;
 extern int parse_result;
 
@@ -81,7 +84,7 @@ int never_func_main_params(never * nev, object ** params, unsigned int * param_c
     return 0;
 }
 
-int parse(program * prog)
+int parse_prog(program * prog)
 {
     int ret = 0;
     never * nev = NULL;
@@ -125,8 +128,50 @@ int parse(program * prog)
     {
         never_delete(nev);
     }
+    
+    return ret;
+}
+
+int parse(const char * input, program * prog, int type)
+{
+    int ret;
+
+    if (type == PARSE_STR)
+    {
+        scan_string(input);
+    }
+    else if (type == PARSE_FILE)
+    {
+        set_utils_file_name(input);
+    
+        yyin = fopen(input, "r");
+        if (yyin == NULL)
+        {
+            fprintf(stderr, "cannot open %s. %s\n", input, strerror(errno));
+            exit(1);
+        }
+    }
+
+    ret = parse_prog(prog);
+
+    if (type == PARSE_FILE)
+    {
+        fclose(yyin);
+    }
+
+    yylex_destroy();
 
     return ret;
+}
+
+int parse_str(const char * str, program * prog)
+{
+    return parse(str, prog, PARSE_STR);
+}
+
+int parse_file(const char * file_name, program * prog)
+{
+    return parse(file_name, prog, PARSE_FILE);
 }
 
 int execute(program * prog, object * result)
@@ -175,23 +220,12 @@ int argc_to_program(program * prog, unsigned int argc, char * argv[])
     return 0;
 }
 
-int parse_file_and_exec(const char * file_name, int argc, char * argv[], object * result)
+int parse_and_exec(const char * input, int argc, char * argv[], object * result, int type)
 {
     int ret = 0;
-    program * prog = NULL;
+    program * prog = program_new(); 
 
-    set_utils_file_name(file_name);
-    
-    yyin = fopen(file_name, "r");
-    if (yyin == NULL)
-    {
-        fprintf(stderr, "cannot open %s. %s\n", file_name, strerror(errno));
-        exit(1);
-    }
-
-    prog = program_new(); 
-
-    ret = parse(prog);
+    ret = parse(input, prog, type);
     if (ret == 0)
     {
         ret = argc_to_program(prog, argc, argv);
@@ -202,36 +236,17 @@ int parse_file_and_exec(const char * file_name, int argc, char * argv[], object 
     }
 
     program_delete(prog);
-
-    fclose(yyin);
-    yylex_destroy();
 
     return ret;
 }
 
-int parse_and_exec(const char * src, unsigned int argc, char * argv[], object * result)
+int parse_file_and_exec(const char * file_name, int argc, char * argv[], object * result)
 {
-    int ret = 0;
-    program * prog = NULL;
+    return parse_and_exec(file_name, argc, argv, result, PARSE_FILE);
+}
 
-    scan_string(src);
-
-    prog = program_new();
-
-    ret = parse(prog);
-    if (ret == 0)
-    {
-        ret = argc_to_program(prog, argc, argv);
-        if (ret == 0)
-        {
-            ret = execute(prog, result);
-        }
-    }
-
-    program_delete(prog);
-
-    yylex_destroy();
-
-    return ret;
+int parse_str_and_exec(const char * src, unsigned int argc, char * argv[], object * result)
+{
+    return parse_and_exec(src, argc, argv, result, PARSE_STR);
 }
 

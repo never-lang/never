@@ -25,11 +25,12 @@
 #include "object.h"
 #include "program.h"
 
-int parse(program * prog);
+int parse_str(const char * str, program * prog);
+int parse_file(const char * file_name, program * prog);
 int execute(program * prog, object * result);
 
 int parse_file_and_exec(const char * file_name, unsigned int argc, char * argv[], object * result);
-int parse_and_exec(const char * src, unsigned int argc, char * argv[], object * result);
+int parse_str_and_exec(const char * src, unsigned int argc, char * argv[], object * result);
 
 #endif /* __NEV_H__ */
 

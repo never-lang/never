@@ -55,7 +55,7 @@ int main(int argc, char * argv[])
 
     if (strncmp("-e", argv[1], 2) == 0)
     {
-        ret = parse_and_exec(argv[2], argc - 3, argv + 3, &result);
+        ret = parse_str_and_exec(argv[2], argc - 3, argv + 3, &result);
     }
     else
     {

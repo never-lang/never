@@ -26,8 +26,7 @@ scanner.o: scanner.c types.h expr.h freevar.h var.h func.h symtab.h \
 symtab.o: symtab.c symtab.h var.h func.h expr.h freevar.h
 tailrec.o: tailrec.c tailrec.h never.h func.h expr.h freevar.h var.h \
  symtab.h
-test_exec.o: test_exec.c nev.h object.h program.h bytecode.h scanner.h \
- types.h expr.h freevar.h var.h func.h symtab.h never.h parser.h
+test_exec.o: test_exec.c nev.h object.h program.h bytecode.h
 test_freevar.o: test_freevar.c freevar.h var.h
 test_gc.o: test_gc.c gc.h object.h
 test_libmath.o: test_libmath.c libmath.h func.h expr.h freevar.h var.h \
