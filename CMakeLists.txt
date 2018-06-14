@@ -26,11 +26,14 @@ add_executable(${CMAKE_PROJECT_NAME}
 	${FLEX_scanner_OUTPUTS}
 	${SRC}
 )
+target_link_libraries(nev m)
+
 add_library(nev
 	${BISON_parser_OUTPUTS}
 	${FLEX_scanner_OUTPUTS}
 	${SRC}
 )
+target_link_libraries(nev m)
 
 # test
 enable_testing()
