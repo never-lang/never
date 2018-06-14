@@ -14,7 +14,7 @@ add_executable(test_vm test_vm.c)
 
 add_test(NAME test_vm COMMAND test_vm)
 add_test(NAME test_symtab COMMAND test_symtab)
-add_test(NAME test_scanner COMMAND test_scanner ../sample/sample1.nev)
+# add_test(NAME test_scanner COMMAND test_scanner)
 add_test(NAME test_object COMMAND test_object)
 add_test(NAME test_libmath COMMAND test_libmath)
 add_test(NAME test_gc COMMAND test_gc)
