@@ -12,3 +12,6 @@ test_object
 test_scanner
 test_symtab
 test_vm
+
+# build
+build/
