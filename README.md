@@ -1,4 +1,5 @@
 # Never - Functional Programming Language
+[![Build Status](https://travis-ci.org/never-lang/never.svg?branch=master)](https://travis-ci.org/never-lang/never)
 
 Never is a simple functional programming language. Technically it may be
 classified as syntactically scoped, strongly typed, call by value, pure
