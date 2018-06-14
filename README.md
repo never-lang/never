@@ -281,14 +281,76 @@ func main() -> float
 Never language can be embedded in Unix shell and C code.
 
 ### Shell
+```
+#!/usr/bin/nev
+
+func add(int a, int b, int c) -> int
+{
+    return a + b + c;
+}
+
+func main(int a, int b) -> int
+{
+    return add(a, b, 1);
+}
+
+```
+
 After adding ```#!/usr/bin/nev``` to the script first line and setting script
-as executableit is possible to run a program without specifying interpreter name.
+as executable it is possible to run a program without specifying interpreter name.
+Then a script is executed from command line with additional parameters.
+```
+$ ./sample81.nevs 10 20
+result is 31
+```
+
 
 Also nev can be executed with ```-e``` parameter followed by program.
 
 ### C language
-Please check ```test_exec``` example to check how to embedded Never language
-withing C or C++ code.
+```C
+#include <stdio.h>
+#include <assert.h>
+#include "nev.h"
+
+void test_one()
+{
+    int ret = 0;
+    object result = { 0 };
+    program * prog = program_new();
+    const char * prog_str = "func main(int a, int b) -> int { return 10 * (a + b); }";
+
+    ret = parse_str(prog_str, prog);
+    if (ret == 0)
+    {
+        prog->params[0].int_value = 2;
+        prog->params[1].int_value = 3;
+
+        ret = execute(prog, &result);
+        if (ret == 0)
+        {
+            assert(result.type == OBJECT_INT && result.int_value == 50);
+        }
+        
+        prog->params[0].int_value = 9;
+        prog->params[1].int_value = 1;
+
+        ret = execute(prog, &result);
+        if (ret == 0)
+        {
+            assert(result.type == OBJECT_INT && result.int_value == 100);
+        }
+    }
+
+    program_delete(prog);
+}
+```
+The above code present how Never can be embedded into C code. First ```nev.h```
+header is included. Then a new program ```prog``` is created and parsed with
+```parse_str``` function. In the next step, parameters are set to values. Please
+note that the program can be executed with different input parameters many times.
+Return value is set in ```result`` object which then can be used. In this
+example ```assert``` function assures that calculations are as expected.
 
 ## Contact
 If you find it useful for any purpose I will be glad to hear from you.
