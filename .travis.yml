@@ -1,0 +1,9 @@
+language: c
+# Compiler selection
+compiler:
+  - clang
+  - gcc
+# Build steps
+script:
+  - make
+  - make tests
