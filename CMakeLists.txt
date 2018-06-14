@@ -26,7 +26,7 @@ add_executable(${CMAKE_PROJECT_NAME}
 	${FLEX_scanner_OUTPUTS}
 	${SRC}
 )
-target_link_libraries(nev m)
+target_link_libraries(${CMAKE_PROJECT_NAME} m)
 
 add_library(nev
 	${BISON_parser_OUTPUTS}
