@@ -23,13 +23,12 @@
 #define __PROGRAM_H__
 
 #include "object.h"
-#include "bytecode.h"
 
 typedef struct program
 {
     object * params;
     unsigned int param_count;
-    bytecode * code_arr;
+    struct bytecode * code_arr;
     unsigned int code_size;
 } program;
 

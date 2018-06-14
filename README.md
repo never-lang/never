@@ -349,7 +349,7 @@ The above code present how Never can be embedded into C code. First ```nev.h```
 header is included. Then a new program ```prog``` is created and parsed with
 ```parse_str``` function. In the next step, parameters are set to values. Please
 note that the program can be executed with different input parameters many times.
-Return value is set in ```result`` object which then can be used. In this
+Return value is set in ```result``` object which then can be used. In this
 example ```assert``` function assures that calculations are as expected.
 
 ## Contact

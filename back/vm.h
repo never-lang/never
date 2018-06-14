@@ -23,6 +23,7 @@
 #define __VM_H__
 
 #include "program.h"
+#include "bytecode.h"
 
 typedef enum vm_state
 {

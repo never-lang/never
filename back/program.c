@@ -21,6 +21,7 @@
  */
 #include <stdlib.h>
 #include "program.h"
+#include "bytecode.h"
 
 program * program_new(object * params, unsigned int param_count, bytecode * code_arr, unsigned int code_size)
 {
