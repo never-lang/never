@@ -55,11 +55,11 @@ int main(int argc, char * argv[])
 
     if (strncmp("-e", argv[1], 2) == 0)
     {
-        ret = parse_str_and_exec(argv[2], argc - 3, argv + 3, &result);
+        ret = nev_compile_str_and_exec(argv[2], argc - 3, argv + 3, &result);
     }
     else
     {
-        ret = parse_file_and_exec(argv[1], argc - 2, argv + 2, &result);
+        ret = nev_compile_file_and_exec(argv[1], argc - 2, argv + 2, &result);
     }
 
     if (ret == 0)

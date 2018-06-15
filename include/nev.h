@@ -25,12 +25,12 @@
 #include "object.h"
 #include "program.h"
 
-int parse_str(const char * str, program * prog);
-int parse_file(const char * file_name, program * prog);
-int execute(program * prog, object * result);
+int nev_compile_str(const char * str, program * prog);
+int nev_compile_file(const char * file_name, program * prog);
+int nev_execute(program * prog, object * result);
 
-int parse_file_and_exec(const char * file_name, unsigned int argc, char * argv[], object * result);
-int parse_str_and_exec(const char * src, unsigned int argc, char * argv[], object * result);
+int nev_compile_file_and_exec(const char * file_name, unsigned int argc, char * argv[], object * result);
+int nev_compile_str_and_exec(const char * src, unsigned int argc, char * argv[], object * result);
 
 #endif /* __NEV_H__ */
 

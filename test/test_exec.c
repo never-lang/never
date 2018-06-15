@@ -30,13 +30,13 @@ void test_one()
     program * prog = program_new();
     const char * prog_str = "func main(int a, int b) -> int { return 10 * (a + b); }";
 
-    ret = parse_str(prog_str, prog);
+    ret = nev_compile_str(prog_str, prog);
     if (ret == 0)
     {
         prog->params[0].int_value = 2;
         prog->params[1].int_value = 3;
 
-        ret = execute(prog, &result);
+        ret = nev_execute(prog, &result);
         if (ret == 0)
         {
             assert(result.type == OBJECT_INT && result.int_value == 50);
@@ -45,7 +45,7 @@ void test_one()
         prog->params[0].int_value = 9;
         prog->params[1].int_value = 1;
 
-        ret = execute(prog, &result);
+        ret = nev_execute(prog, &result);
         if (ret == 0)
         {
             assert(result.type == OBJECT_INT && result.int_value == 100);

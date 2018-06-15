@@ -84,7 +84,7 @@ int never_func_main_params(never * nev, object ** params, unsigned int * param_c
     return 0;
 }
 
-int parse_prog(program * prog)
+int nev_compile_prog(program * prog)
 {
     int ret = 0;
     never * nev = NULL;
@@ -132,7 +132,7 @@ int parse_prog(program * prog)
     return ret;
 }
 
-int parse(const char * input, program * prog, int type)
+int nev_compile(const char * input, program * prog, int type)
 {
     int ret;
 
@@ -152,7 +152,7 @@ int parse(const char * input, program * prog, int type)
         }
     }
 
-    ret = parse_prog(prog);
+    ret = nev_compile_prog(prog);
 
     if (type == PARSE_FILE)
     {
@@ -164,17 +164,17 @@ int parse(const char * input, program * prog, int type)
     return ret;
 }
 
-int parse_str(const char * str, program * prog)
+int nev_compile_str(const char * str, program * prog)
 {
-    return parse(str, prog, PARSE_STR);
+    return nev_compile(str, prog, PARSE_STR);
 }
 
-int parse_file(const char * file_name, program * prog)
+int nev_compile_file(const char * file_name, program * prog)
 {
-    return parse(file_name, prog, PARSE_FILE);
+    return nev_compile(file_name, prog, PARSE_FILE);
 }
 
-int execute(program * prog, object * result)
+int nev_execute(program * prog, object * result)
 {
     int ret = 0;
     vm * machine = NULL;
@@ -220,18 +220,18 @@ int argc_to_program(program * prog, unsigned int argc, char * argv[])
     return 0;
 }
 
-int parse_and_exec(const char * input, int argc, char * argv[], object * result, int type)
+int nev_compile_and_exec(const char * input, int argc, char * argv[], object * result, int type)
 {
     int ret = 0;
     program * prog = program_new(); 
 
-    ret = parse(input, prog, type);
+    ret = nev_compile(input, prog, type);
     if (ret == 0)
     {
         ret = argc_to_program(prog, argc, argv);
         if (ret == 0)
         {
-            ret = execute(prog, result);
+            ret = nev_execute(prog, result);
         }
     }
 
@@ -240,13 +240,13 @@ int parse_and_exec(const char * input, int argc, char * argv[], object * result,
     return ret;
 }
 
-int parse_file_and_exec(const char * file_name, int argc, char * argv[], object * result)
+int nev_compile_file_and_exec(const char * file_name, int argc, char * argv[], object * result)
 {
-    return parse_and_exec(file_name, argc, argv, result, PARSE_FILE);
+    return nev_compile_and_exec(file_name, argc, argv, result, PARSE_FILE);
 }
 
-int parse_str_and_exec(const char * src, unsigned int argc, char * argv[], object * result)
+int nev_compile_str_and_exec(const char * src, unsigned int argc, char * argv[], object * result)
 {
-    return parse_and_exec(src, argc, argv, result, PARSE_STR);
+    return nev_compile_and_exec(src, argc, argv, result, PARSE_STR);
 }
 
