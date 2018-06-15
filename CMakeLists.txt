@@ -15,25 +15,21 @@ if (MSVC)
 endif (MSVC)
 
 file(GLOB SRC
-	"*.c"
 	"back/*.c"
 	"front/*.c"
 )
 
 include_directories("include" "front" "back")
-add_executable(${CMAKE_PROJECT_NAME}
-	${BISON_parser_OUTPUTS}
-	${FLEX_scanner_OUTPUTS}
-	${SRC}
-)
-target_link_libraries(${CMAKE_PROJECT_NAME} m)
 
-add_library(nev
+add_library(nev STATIC
 	${BISON_parser_OUTPUTS}
 	${FLEX_scanner_OUTPUTS}
 	${SRC}
 )
 target_link_libraries(nev m)
+
+add_executable(${CMAKE_PROJECT_NAME} main.c)
+target_link_libraries(${CMAKE_PROJECT_NAME} nev)
 
 # test
 enable_testing()
