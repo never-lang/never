@@ -28,6 +28,7 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
 %option pointer
 %option noyylineno
 %option noyywrap
+%option nounistd
 
 %x C_COMMENT
 

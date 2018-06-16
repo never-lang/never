@@ -9,6 +9,6 @@ build_script:
     - mkdir build
     - cd build
 
-    - cmake -G"Visual Studio 14" -DYY_NO_UNISTD_H -DCMAKE_BUILD_TYPE=Debug -DFLEX_EXECUTABLE:FILEPATH=c:/win_flex.exe -DBISON_EXECUTABLE:FILEPATH=c:/win_bison.exe ..
+    - cmake -G"Visual Studio 14" -DCMAKE_BUILD_TYPE=Debug -DFLEX_EXECUTABLE:FILEPATH=c:/win_flex.exe -DBISON_EXECUTABLE:FILEPATH=c:/win_bison.exe ..
     - cmake --build . --config %CMAKE_BUILD_TYPE%
     - ctest --verbose -C "Debug"
