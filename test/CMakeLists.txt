@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
+enable_language(C)
+
+if (MSVC)
+  # Statically links against the standard library
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
+endif (MSVC)
+
 
 # test
 include_directories(".." "../include" "../front" "../back")
@@ -21,11 +28,11 @@ add_test(NAME test_gc COMMAND test_gc)
 add_test(NAME test_freevar COMMAND test_freevar)
 add_test(NAME test_exec COMMAND test_exec)
 
-target_link_libraries(test_vm nev)
-target_link_libraries(test_scanner nev)
-target_link_libraries(test_symtab nev)
-target_link_libraries(test_object nev)
-target_link_libraries(test_libmath nev)
-target_link_libraries(test_gc nev)
-target_link_libraries(test_freevar nev)
-target_link_libraries(test_exec nev)
+target_link_libraries(test_vm nev m)
+target_link_libraries(test_scanner nev m)
+target_link_libraries(test_symtab nev m)
+target_link_libraries(test_object nev m)
+target_link_libraries(test_libmath nev m)
+target_link_libraries(test_gc nev m)
+target_link_libraries(test_freevar nev m)
+target_link_libraries(test_exec nev m)
