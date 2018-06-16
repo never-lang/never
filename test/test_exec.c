@@ -23,32 +23,37 @@
 #include <assert.h>
 #include "nev.h"
 
+void run(int param1, int param2, program * prog)
+{
+    int ret;
+    object result = { 0 };
+
+    prog->params[0].int_value = param1;
+    prog->params[1].int_value = param2;
+
+    ret = nev_execute(prog, &result);
+    if (ret == 0)
+    {
+        assert(result.type == OBJECT_INT && result.int_value == 10 * (param1 + param2));
+    }
+}
+
 void test_one()
 {
     int ret = 0;
-    object result = { 0 };
     program * prog = program_new();
     const char * prog_str = "func main(int a, int b) -> int { return 10 * (a + b); }";
 
     ret = nev_compile_str(prog_str, prog);
     if (ret == 0)
     {
-        prog->params[0].int_value = 2;
-        prog->params[1].int_value = 3;
+        int param1 = 1;
+        int param2 = 1;
 
-        ret = nev_execute(prog, &result);
-        if (ret == 0)
+        for (param1 = 1; param1 < 10; param1++)
+        for (param2 = 1; param2 < 10; param2++)
         {
-            assert(result.type == OBJECT_INT && result.int_value == 50);
-        }
-        
-        prog->params[0].int_value = 9;
-        prog->params[1].int_value = 1;
-
-        ret = nev_execute(prog, &result);
-        if (ret == 0)
-        {
-            assert(result.type == OBJECT_INT && result.int_value == 100);
+             run(param1, param2, prog);
         }
     }
 

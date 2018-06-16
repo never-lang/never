@@ -29,11 +29,11 @@ static void print_result(object * result)
 {
     if (result->type == OBJECT_INT)
     {
-         printf("result is %d\n", result->int_value);
+         printf("%d\n", result->int_value);
     }
     else if (result->type == OBJECT_FLOAT)
     {
-        printf("result is %.2f\n", result->float_value);
+        printf("%.2f\n", result->float_value);
     }
     else
     {
