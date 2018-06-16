@@ -9,6 +9,9 @@ FLEX_TARGET(scanner ${CMAKE_CURRENT_SOURCE_DIR}/front/scanner.l  ${CMAKE_CURRENT
 ADD_FLEX_BISON_DEPENDENCY(scanner parser)
 
 if (MSVC)
+  # Statically links against the standard library
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
+
   # Use secure functions by defaualt and suppress warnings about "deprecated" functions
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES_COUNT=1")
