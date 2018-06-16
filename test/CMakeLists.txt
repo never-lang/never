@@ -1,4 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
+enable_language(C)
+
+if (MSVC)
+  # Statically links against the standard library
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
+endif (MSVC)
+
 
 # test
 include_directories(".." "../include" "../front" "../back")
