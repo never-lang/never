@@ -1,0 +1,26 @@
+
+func call(tab[row] -> [D] -> int) -> int
+{
+    return tab[row - 1][0];
+}
+
+func f1(a -> int) -> int
+{
+    /* return call( {[ a, a ]} -> int ); */
+
+    /* return call( {{ a, 2, 3 },
+                  { 4, a, 6 },
+                  { 9, 8, a }} -> int); */
+
+    /* return call( { {[10, 10]} -> int,
+                   {[20, 20]} -> int } -> [D, D] -> int ); */
+            
+    return call({ { 1, 2, 3, 4, 5 } -> int,
+                  { 1, 2, 3 } -> int        } -> [_] -> int);
+}
+
+func main() -> int
+{
+    return 10 * 10;
+}
+

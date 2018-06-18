@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "var.h"
+#include "dim.h"
 
 var * var_new_int(char * id)
 {
@@ -56,11 +57,26 @@ var * var_new_func(char * id, var_list * vars, var * ret)
     var * value = (var *)malloc(sizeof(var));
     
     value->type = VAR_FUNC;
+    value->index = -1;
     value->id = id;
     value->vars = vars;
     value->ret = ret;
     value->line_no = 0;
     
+    return value;
+}
+
+var * var_new_array(char * id, var_list * dims, var * ret)
+{
+    var * value = (var *)malloc(sizeof(var));
+    
+    value->type = VAR_ARRAY;
+    value->index = -1;
+    value->id = id;
+    value->dims = dims;
+    value->ret = ret;
+    value->line_no = 0;
+
     return value;
 }
 
@@ -162,7 +178,10 @@ void var_list_add_end(var_list * list, var * value)
 
 void var_print(var * value)
 {
+    if (value == NULL) return;
+
     printf("var %s %d %s\n", var_type_str(value->type), value->index, value->id);
+    var_print(value->ret);
 }
 
 void var_list_print(var_list * list)
@@ -184,8 +203,10 @@ char * var_type_str(int type)
 {
     switch (type)
     {
+        case VAR_INT: return "VAR_INT";
         case VAR_FLOAT: return "VAR_FLOAT";
         case VAR_FUNC: return "VAR_FUNC";
+        case VAR_ARRAY: return "VAR_ARRAY";
     }
     return "VAR_???";
 }

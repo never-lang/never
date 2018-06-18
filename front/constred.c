@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include <stdio.h>
+#include <assert.h>
 #include "constred.h"
 #include "utils.h"
 
@@ -510,6 +511,10 @@ int expr_constred(expr * value, int * result)
                     expr_delete(middle_value);
                 }
             }
+        break;
+        case EXPR_ARRAY:
+        case EXPR_ARRAY_REF:
+            assert(0);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:

@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "expr.h"
+#include "array.h"
 #include "func.h"
 
 expr * expr_new_int(int int_value)
@@ -99,6 +100,33 @@ expr * expr_new_three(int type, expr * left, expr * middle, expr * right)
     ret->left = left;
     ret->middle = middle;
     ret->right = right;
+    
+    return ret;
+}
+
+expr * expr_new_array(array * value)
+{
+    expr * ret = (expr *) malloc(sizeof(expr));
+    
+    ret->type = EXPR_ARRAY;
+    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb_vars = NULL;
+    ret->comb_ret = NULL;
+    ret->line_no = 0;
+    ret->array.array_value = value;
+    
+    return ret;
+}
+
+expr * expr_new_arrayref(expr * array_expr, expr_list * ref)
+{
+    expr * ret = (expr *) malloc(sizeof(expr));
+    
+    ret->type = EXPR_ARRAY_REF;
+    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->line_no = 0;
+    ret->array_ref.array_expr = array_expr;
+    ret->array_ref.ref = ref;
     
     return ret;
 }
@@ -194,6 +222,16 @@ void expr_delete(expr * value)
             expr_delete(value->left);
             expr_delete(value->middle);
             expr_delete(value->right);
+        break;
+        case EXPR_ARRAY:
+            if (value->array.array_value)
+            {
+                array_delete(value->array.array_value);
+            }
+        break;
+        case EXPR_ARRAY_REF:
+            expr_delete(value->array_ref.array_expr);
+            expr_list_delete(value->array_ref.ref);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
@@ -309,6 +347,19 @@ void expr_list_add_end(expr_list * list, expr * value)
     }
 }
 
+const char * expr_type_str(expr_type type)
+{
+    switch (type)
+    {
+        case EXPR_INT: return "int";
+        case EXPR_FLOAT: return "float";
+        case EXPR_ID: return "id";
+        case EXPR_ARRAY: return "array";
+        case EXPR_FUNC: return "func";
+        default: return "expr_type to add";
+    }
+}
+
 const char * comb_type_str(comb_type type)
 {
     switch (type)
@@ -319,6 +370,7 @@ const char * comb_type_str(comb_type type)
         case COMB_TYPE_BOOL: return "bool";
         case COMB_TYPE_INT: return "int";
         case COMB_TYPE_FLOAT: return "float";
+        case COMB_TYPE_ARRAY: return "array";
         case COMB_TYPE_FUNC: return "func";
     }
     return "unknown comb type!";

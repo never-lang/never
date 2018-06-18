@@ -24,7 +24,9 @@
 
 #include "expr.h"
 #include "var.h"
+#include "array.h"
 #include "func.h"
+#include "dim.h"
 #include "never.h"
 
 typedef union token_value
@@ -36,6 +38,9 @@ typedef union token_value
     expr_list * expr_list_value;
     var * var_value;
     var_list * var_list_value;
+    dim * dim_value;
+    dim_list * dim_list_value;
+    array * array_value;
     func * func_value;
     func_list * func_list_value;
     func_body * func_body_value;

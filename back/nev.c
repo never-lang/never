@@ -98,6 +98,7 @@ int nev_compile_prog(program * prog)
         ret = never_sem_check(nev);
         if (ret == 0)
         {
+#if 0
             ret = never_optimize(nev);
             if (ret == 0)
             {
@@ -121,6 +122,7 @@ int nev_compile_prog(program * prog)
                     bytecode_delete(code);
                 }
             }
+#endif
         }
     }
 

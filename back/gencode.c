@@ -202,6 +202,12 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
             expr_gencode(syn_level, func_value, value->middle, result);
             expr_gencode(syn_level, func_value, value->right, result);
         break;
+        case EXPR_ARRAY:
+            assert(0);
+        break;
+        case EXPR_ARRAY_REF:
+            assert(0);
+        break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
             expr_gencode(syn_level, func_value, value->call.func_expr, result);
@@ -328,6 +334,12 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
             func_gencode_freevars_expr(func_value, value->left, result);
             func_gencode_freevars_expr(func_value, value->middle, result);
             func_gencode_freevars_expr(func_value, value->right, result);
+        break;
+        case EXPR_ARRAY:
+            assert(0);
+        break;
+        case EXPR_ARRAY_REF:
+            assert(0);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
@@ -1165,6 +1177,10 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         break;
         case EXPR_COND:
             expr_cond_emit(value, stack_level, code, result);
+        break;
+        case EXPR_ARRAY:
+        case EXPR_ARRAY_REF:
+            assert(0);
         break;
         case EXPR_CALL:
             expr_call_emit(value, stack_level, code, result);

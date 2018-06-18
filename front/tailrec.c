@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include <stdio.h>
+#include <assert.h>
 #include "tailrec.h"
 #include "symtab.h"
 
@@ -166,6 +167,10 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value, tailrec_op 
                 rec = TAILREC_NOT_FOUND;
             }
         }
+        break;
+        case EXPR_ARRAY:
+        case EXPR_ARRAY_REF:
+            assert(0);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:

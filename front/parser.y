@@ -34,8 +34,11 @@ int yyerror(never ** nev, char * str)
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
+%type <val.var_value> dim
+%type <val.var_list_value> dim_list
 %type <val.var_value> var
 %type <val.var_list_value> var_list
+%type <val.array_value> array;
 %type <val.func_value> func
 %type <val.func_list_value> func_list
 %type <val.func_body_value> func_body
@@ -49,15 +52,18 @@ int yyerror(never ** nev, char * str)
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
 %right TOK_NOT /* %precedence NEG */
-%left <val.str_value> '(' ')'
+%left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END
 
 %start never
 
 %destructor { free($$); } TOK_ID
-%destructor { expr_delete($$); } expr
-%destructor { expr_list_delete($$); } expr_list
+%destructor { var_delete($$); } dim
+%destructor { var_list_delete($$); } dim_list
 %destructor { var_delete($$); } var
 %destructor { var_list_delete($$); } var_list
+%destructor { expr_delete($$); } expr
+%destructor { expr_list_delete($$); } expr_list
+%destructor { array_delete($$); } array
 %destructor { func_delete($$); } func
 %destructor { func_list_delete($$); } func_list
 %destructor { func_body_delete($$); } func_body
@@ -120,7 +126,7 @@ expr: expr '%' expr
 {
     $$ = expr_new_two(EXPR_MOD, $1, $3);
     $$->line_no = $<line_no>2;
-}
+};
 
 expr: expr '<' expr
 {
@@ -188,6 +194,36 @@ expr: expr '?' expr ':' expr
     $$->line_no = $<line_no>2;
 };
 
+expr: array
+{
+    $$ = expr_new_array($1);
+    $$->line_no = $1->line_no;
+};
+
+expr: expr '[' expr_list ']' /* array dereference */
+{
+    $$ = expr_new_arrayref($1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+array: ARR_DIM_BEG expr_list ARR_DIM_END TOK_RET var
+{
+    $$ = array_new_dims($2, $5);
+    $$->line_no = $<line_no>1;
+};
+
+array: '{' expr_list '}' TOK_RET var
+{
+    $$ = array_new($2, $5);
+    $$->line_no = $<line_no>1;
+};
+
+array: '{' expr_list '}'
+{
+    $$ = array_new_sub($2);
+    $$->line_no = $<line_no>1;
+};
+
 expr: func
 {
     $$ = expr_new_func($1);
@@ -223,9 +259,9 @@ var: TOK_INT
     $$->line_no = $<line_no>1;
 };
 
-var: TOK_INT TOK_ID
+var: TOK_ID TOK_RET TOK_INT
 {
-    $$ = var_new_int($2);
+    $$ = var_new_int($1);
     $$->line_no = $<line_no>2;
 };
 
@@ -235,10 +271,22 @@ var: TOK_FLOAT
     $$->line_no = $<line_no>1;
 };
 
-var: TOK_FLOAT TOK_ID
+var: TOK_ID TOK_RET TOK_FLOAT 
 {
-    $$ = var_new_float($2);
+    $$ = var_new_float($1);
     $$->line_no = $<line_no>2;
+};
+
+var: '[' dim_list ']' TOK_RET var
+{
+    $$ = var_new_array(NULL, $2, $5);
+    $$->line_no = $<line_no>1;
+};
+
+var: TOK_ID '[' dim_list ']' TOK_RET var
+{
+    $$ = var_new_array($1, $3, $6);
+    $$->line_no = $<line_no>1;
 };
 
 var: '(' ')' TOK_RET var
@@ -263,6 +311,24 @@ var: TOK_ID '(' var_list ')' TOK_RET var
 {
     $$ = var_new_func($1, $3, $6);
     $$->line_no = $<line_no>6;
+};
+
+dim: TOK_ID
+{
+    $$ = var_new_int($1);
+    $$->line_no = $<line_no>1;
+};
+
+dim_list: dim
+{
+    $$ = var_list_new();
+    var_list_add_end($$, $1);
+};
+
+dim_list: dim_list ',' dim
+{
+    var_list_add_end($1, $3);
+    $$ = $1;
 };
 
 var_list: var
