@@ -23,9 +23,9 @@
 #define __FUNC_H__
 
 #include "expr.h"
-#include "var.h"
 #include "freevar.h"
 #include "symtab.h"
+#include "var.h"
 
 struct func_body;
 struct func_list;
@@ -46,7 +46,7 @@ typedef struct func
 typedef struct func_body
 {
     struct func_list * funcs;
-    struct expr * ret;   
+    struct expr * ret;
 } func_body;
 
 typedef struct func_list_node
@@ -81,4 +81,3 @@ void func_list_add_beg(func_list * list, func * value);
 void func_list_add_end(func_list * list, func * value);
 
 #endif /* __FUNC_H__ */
-

@@ -19,13 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdio.h>
 #include "vm.h"
+#include <stdio.h>
 
 void test_one()
 {
     vm * never = vm_new(20, 200);
-    
+
     vm_delete(never);
 }
 
@@ -35,4 +35,3 @@ int main(int argc, char * argv[])
 
     return 0;
 }
-

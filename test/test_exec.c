@@ -19,16 +19,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdio.h>
-#include <assert.h>
 #include "nev.h"
+#include <assert.h>
+#include <stdio.h>
 
 void test_one()
 {
     int ret = 0;
     object result = { 0 };
     program * prog = program_new();
-    const char * prog_str = "func main(int a, int b) -> int { return 10 * (a + b); }";
+    const char * prog_str =
+        "func main(int a, int b) -> int { return 10 * (a + b); }";
 
     ret = nev_compile_str(prog_str, prog);
     if (ret == 0)
@@ -41,7 +42,7 @@ void test_one()
         {
             assert(result.type == OBJECT_INT && result.int_value == 50);
         }
-        
+
         prog->params[0].int_value = 9;
         prog->params[1].int_value = 1;
 
@@ -61,4 +62,3 @@ int main(int argc, char * argv[])
 
     return 0;
 }
-

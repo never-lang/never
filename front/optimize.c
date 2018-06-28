@@ -27,8 +27,6 @@ int never_optimize(never * nev)
     int ret;
 
     ret = never_constred(nev);
-    
+
     return ret;
 }
-
-

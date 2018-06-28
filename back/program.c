@@ -19,19 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdlib.h>
 #include "program.h"
 #include "bytecode.h"
+#include <stdlib.h>
 
-program * program_new(object * params, unsigned int param_count, bytecode * code_arr, unsigned int code_size)
+program * program_new(object * params, unsigned int param_count,
+                      bytecode * code_arr, unsigned int code_size)
 {
     program * value = malloc(sizeof(program));
 
     value->params = NULL;
-    value->param_count = 0;    
+    value->param_count = 0;
     value->code_arr = NULL;
     value->code_size = 0;
-    
+
     return value;
 }
 

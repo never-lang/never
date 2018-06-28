@@ -72,4 +72,3 @@ void var_list_print(var_list * list);
 char * var_type_str(int type);
 
 #endif /* __VAR_H__ */
-

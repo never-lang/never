@@ -37,4 +37,3 @@ int func_list_constred(func_list * list, int * result);
 int never_constred(never * nev);
 
 #endif /* __CONSTRED_H__ */
-

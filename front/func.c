@@ -19,14 +19,14 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdlib.h>
-#include <stdio.h>
 #include "func.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 func * func_new(char * id, var_list * vars, var * ret, func_body * body)
 {
     func * value = (func *)malloc(sizeof(func));
-    
+
     value->id = id;
     value->index = 0;
     value->vars = vars;
@@ -36,7 +36,7 @@ func * func_new(char * id, var_list * vars, var * ret, func_body * body)
     value->stab = NULL;
     value->addr = 0;
     value->line_no = 0;
-    
+
     return value;
 }
 
@@ -66,7 +66,7 @@ void func_delete(func * value)
     {
         symtab_delete(value->stab);
     }
-    
+
     free(value);
 }
 
@@ -78,10 +78,10 @@ void func_print(func * value)
 func_body * func_body_new(func_list * funcs, expr * ret)
 {
     func_body * body = (func_body *)malloc(sizeof(func_body));
-    
+
     body->funcs = funcs;
     body->ret = ret;
-    
+
     return body;
 }
 
@@ -101,11 +101,11 @@ void func_body_delete(func_body * body)
 func_list_node * func_list_node_new(func * value)
 {
     func_list_node * node = (func_list_node *)malloc(sizeof(func_list_node));
-    
+
     node->value = value;
     node->prev = NULL;
     node->next = NULL;
-    
+
     return node;
 }
 
@@ -121,31 +121,31 @@ void func_list_node_delete(func_list_node * node)
 func_list * func_list_new()
 {
     func_list * list = (func_list *)malloc(sizeof(func_list));
-    
+
     list->count = 0;
     list->head = NULL;
     list->tail = NULL;
-    
+
     return list;
 }
 
 void func_list_delete(func_list * list)
 {
     func_list_node * node = list->tail;
-    
+
     while (node != NULL)
     {
         func_list_node * tmp = node->next;
         func_list_node_delete(node);
         node = tmp;
     }
-    free(list);    
+    free(list);
 }
 
 void func_list_add_beg(func_list * list, func * value)
 {
     func_list_node * node = func_list_node_new(value);
-    
+
     list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
@@ -162,7 +162,7 @@ void func_list_add_beg(func_list * list, func * value)
 void func_list_add_end(func_list * list, func * value)
 {
     func_list_node * node = func_list_node_new(value);
-    
+
     list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
@@ -175,5 +175,3 @@ void func_list_add_end(func_list * list, func * value)
         list->head = node;
     }
 }
-
-

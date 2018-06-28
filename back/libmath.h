@@ -47,11 +47,14 @@ expr_list * params_x();
 expr_list * params_x_y();
 
 func * lib_math_func_any_new(const char * name, libmath_func math_id,
-                             var_list * vars, expr_list * params, var * var_ret);
+                             var_list * vars, expr_list * params,
+                             var * var_ret);
 func * libmath_func_int_x_new(const char * name, libmath_func math_id);
 func * libmath_func_float_x_new(const char * name, libmath_func math_id);
-func * libmath_func_float_x_float_y_new(const char * name, libmath_func math_id);
-func * libmath_func_float_x_float_y_int_new(const char * name, libmath_func math_id);
+func * libmath_func_float_x_float_y_new(const char * name,
+                                        libmath_func math_id);
+func * libmath_func_float_x_float_y_int_new(const char * name,
+                                            libmath_func math_id);
 
 func * libmath_func_sin_new();
 func * libmath_func_cos_new();
