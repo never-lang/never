@@ -19,17 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include "getopt.h"
+#include "nev.h"
 #include <stdio.h>
 #include <string.h>
-#include "nev.h"
 
-const char * usage = "usage: %s <file name | -e \"one line of program\">\n";
+static void usage(const char * exe)
+{
+    printf("usage: %s -f file name | -e \"one line of program\"\n", exe);
+}
 
 static void print_result(object * result)
 {
     if (result->type == OBJECT_INT)
     {
-         printf("result is %d\n", result->int_value);
+        printf("result is %d\n", result->int_value);
     }
     else if (result->type == OBJECT_FLOAT)
     {
@@ -43,31 +47,51 @@ static void print_result(object * result)
 
 int main(int argc, char * argv[])
 {
+    char ch;
     int ret = -1;
     object result = { 0 };
 
-    if (argc < 2)
+    const char * exe = argv[0];
+    const char * arg = NULL;
+    int fflag = 0, eflag = 0;
+    while ((ch = getopt(argc, argv, "f:e:")) != -1)
     {
-        printf("%s: no input files\n", argv[0]);
-        printf(usage, argv[0]);
-        return 0;
-    }
+        switch (ch)
+        {
+        case 'f':
+            arg = optarg;
+            fflag = 1;
+            break;
+        case 'e':
+            eflag = 1;
+            arg = optarg;
+            break;
 
-    if (strncmp("-e", argv[1], 2) == 0)
-    {
-        ret = nev_compile_str_and_exec(argv[2], argc - 3, argv + 3, &result);
+        case '?':
+        default:
+            usage(exe);
+            return -1;
+        }
     }
-    else
-    {
-        ret = nev_compile_file_and_exec(argv[1], argc - 2, argv + 2, &result);
-    }
+    argc -= optind;
+    argv += optind;
 
-    if (ret == 0)
+    if (eflag)
     {
+        ret = nev_compile_str_and_exec(arg, argc, argv, &result);
         print_result(&result);
+        return ret;
     }
 
-    return ret;
+    if (fflag)
+    {
+
+        ret = nev_compile_file_and_exec(arg, argc, argv, &result);
+        print_result(&result);
+        return ret;
+    }
+
+    printf("%s: no input files\n", exe);
+    usage(exe);
+    return 0;
 }
-
-

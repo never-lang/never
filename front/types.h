@@ -23,12 +23,11 @@
 #define __TYPES_H__
 
 #include "expr.h"
-#include "var.h"
 #include "func.h"
 #include "never.h"
+#include "var.h"
 
-typedef union token_value
-{
+typedef union token_value {
     int int_value;
     float float_value;
     char * str_value;
@@ -51,4 +50,3 @@ typedef struct token
 #define YYSTYPE token
 
 #endif /* __TYPES_H__ */
-

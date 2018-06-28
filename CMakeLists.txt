@@ -23,7 +23,7 @@ file(GLOB SRC
 	"front/*.c"
 )
 
-include_directories("include" "front" "back")
+include_directories("include" "front" "back" ".")
 
 add_library(nev STATIC
 	${BISON_parser_OUTPUTS}
@@ -32,8 +32,8 @@ add_library(nev STATIC
 )
 target_link_libraries(nev m)
 
-add_executable(${CMAKE_PROJECT_NAME} main.c)
-target_link_libraries(${CMAKE_PROJECT_NAME} nev m)
+add_executable(${CMAKE_PROJECT_NAME} main.c getopt.c)
+target_link_libraries(${CMAKE_PROJECT_NAME} nev)
 
 # test
 enable_testing()

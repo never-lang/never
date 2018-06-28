@@ -15,3 +15,5 @@ test_vm
 
 # build
 build/
+front/parser.h
+front/parser.c

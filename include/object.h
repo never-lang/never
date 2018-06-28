@@ -50,11 +50,10 @@ typedef struct object_func
 typedef struct object
 {
     object_type type;
-    union
-    {
-        int int_value; /* OBJECT_INT */
-        float float_value; /* OBJECT_FLOAT */
-        object_vec * vec_value; /* OBJECT_VEC */
+    union {
+        int int_value;            /* OBJECT_INT */
+        float float_value;        /* OBJECT_FLOAT */
+        object_vec * vec_value;   /* OBJECT_VEC */
         object_func * func_value; /* OBJECT_FUNC */
     };
 } object;
@@ -69,5 +68,3 @@ void object_delete(object * obj);
 void object_print(object * obj);
 
 #endif /* __OBJECT_H__ */
-
-

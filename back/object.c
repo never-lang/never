@@ -19,15 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
 #include "object.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 object * object_new()
 {
     object * obj = (object *)malloc(sizeof(object));
-    
+
     return obj;
 }
 
@@ -37,7 +37,7 @@ object * object_new_int(int value)
 
     obj->type = OBJECT_INT;
     obj->int_value = value;
-    
+
     return obj;
 }
 
@@ -47,7 +47,7 @@ object * object_new_float(float value)
 
     obj->type = OBJECT_FLOAT;
     obj->float_value = value;
-    
+
     return obj;
 }
 
@@ -66,10 +66,9 @@ object * object_new_vec(unsigned int size)
         vec_value->value = (mem_ptr *)malloc(size * sizeof(mem_ptr));
     }
 
-
     obj->type = OBJECT_VEC;
     obj->vec_value = vec_value;
-    
+
     return obj;
 }
 
@@ -91,24 +90,24 @@ void object_delete(object * obj)
 {
     switch (obj->type)
     {
-        case OBJECT_UNKNOWN:
-            assert(0);
+    case OBJECT_UNKNOWN:
+        assert(0);
         break;
-        case OBJECT_INT:
-        case OBJECT_FLOAT:
+    case OBJECT_INT:
+    case OBJECT_FLOAT:
         break;
-        case OBJECT_VEC:
-            if (obj->vec_value != NULL && obj->vec_value->value != NULL)
-            {
-                free(obj->vec_value->value);
-            }
-            if (obj->vec_value != NULL)
-            {
-                free(obj->vec_value);
-            }
+    case OBJECT_VEC:
+        if (obj->vec_value != NULL && obj->vec_value->value != NULL)
+        {
+            free(obj->vec_value->value);
+        }
+        if (obj->vec_value != NULL)
+        {
+            free(obj->vec_value);
+        }
         break;
-        case OBJECT_FUNC:
-            free(obj->func_value);
+    case OBJECT_FUNC:
+        free(obj->func_value);
         break;
     }
     free(obj);
@@ -118,21 +117,20 @@ void object_print(object * obj)
 {
     switch (obj->type)
     {
-        case OBJECT_UNKNOWN:
-            printf("object_unknown\n");
+    case OBJECT_UNKNOWN:
+        printf("object_unknown\n");
         break;
-        case OBJECT_INT:
-            printf("object_int\n");
+    case OBJECT_INT:
+        printf("object_int\n");
         break;
-        case OBJECT_FLOAT:
-            printf("object_float\n");
+    case OBJECT_FLOAT:
+        printf("object_float\n");
         break;
-        case OBJECT_VEC:
-            printf("object_vec\n");
+    case OBJECT_VEC:
+        printf("object_vec\n");
         break;
-        case OBJECT_FUNC:
-            printf("object_func\n");
+    case OBJECT_FUNC:
+        printf("object_func\n");
         break;
     }
 }
-

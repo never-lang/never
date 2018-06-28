@@ -20,11 +20,11 @@
  * THE SOFTWARE.
  */
 
+#include "never.h"
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
-#include "never.h"
 
 never * never_new(func_list * funcs)
 {
@@ -48,5 +48,3 @@ void never_delete(never * nev)
     }
     free(nev);
 }
-
-
