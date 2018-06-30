@@ -1,5 +1,5 @@
 
-func f1(a -> int, tab[row, col] -> int) -> [D, D] -> int
+func f1(a -> int, tab[row, col] -> int) -> [D, D, D] -> int
 {
     /* return tab; */
 
@@ -14,12 +14,15 @@ func f1(a -> int, tab[row, col] -> int) -> [D, D] -> int
 
     /* return { 1, 2, 3, 4 } -> int; */
 
-    return {{ 1, 2, 3 },
-            { 3, 4, 5 },
-            { 8, 1, 7 },
-            { 7, 6, 3 },
-            { 1, 1, 1 },
-            { 3, 3, 3 }} -> int;
+    return { {{ 1, 2, 3 },
+              { 3, 4, 5 },
+              { 3, 8, 9 },
+              { 6, 7, 8 }},
+              
+             {{ 7, 8, 9 },
+              { 6, 3, 1 },
+              { 2, 4, 2 },
+              { 1, 0, 4 }}} -> int;
 
     /* return { tab, tab, tab } -> [D, D] -> int;*/
 

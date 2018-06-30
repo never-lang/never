@@ -1296,12 +1296,19 @@ int array_emit(array * array_value, int stack_level, bytecode_list * code, int *
     if (array_value->type == ARRAY_INIT)
     {
         bytecode bc = { 0 };
+
+        expr_list_emit(array_value->elements, stack_level, code, result);
+
         expr_list_emit(array_value->dims, stack_level, code, result);
 
         bc.type = BYTECODE_MK_ARRAY;
         bc.mk_array.dims = array_value->dims->count;
         
         bytecode_add(code, &bc);                
+    }
+    else if (array_value->type == ARRAY_SUB)
+    {
+        expr_list_emit(array_value->elements, stack_level, code, result);
     }
     else if (array_value->type == ARRAY_DIMS)
     {
