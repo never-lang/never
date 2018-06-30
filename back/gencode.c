@@ -124,6 +124,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             var * var_value = entry->var_value;
             if (var_value->type == VAR_INT ||
                 var_value->type == VAR_FLOAT ||
+                var_value->type == VAR_ARRAY ||
                 var_value->type == VAR_FUNC)
             {
                 if (syn_level == entry->syn_level)
@@ -144,6 +145,11 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
                     value->id.id_type_value = ID_TYPE_GLOBAL;
                     value->id.id_freevar_value = freevar_value;
                 }
+            }
+            else
+            {
+                printf("unknown var type %d\n", var_value->type);
+                assert(0);
             }
         }
     }
@@ -203,21 +209,28 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
             expr_gencode(syn_level, func_value, value->right, result);
         break;
         case EXPR_ARRAY:
-            assert(0);
+            if (value->array.array_value)
+            {
+                array_gencode(syn_level, func_value, value->array.array_value, result);
+            }
         break;
         case EXPR_ARRAY_REF:
-            assert(0);
+            expr_gencode(syn_level, func_value, value->array_ref.array_expr, result);
+            if (value->array_ref.ref != NULL)
+            {
+                expr_list_gencode(syn_level, func_value, value->array_ref.ref, result);
+            }
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
             expr_gencode(syn_level, func_value, value->call.func_expr, result);
-            if (value->call.vars)
+            if (value->call.vars != NULL)
             {
                 expr_list_gencode(syn_level, func_value, value->call.vars, result);
             }
         break;
         case EXPR_FUNC:
-            if (value->func_value)
+            if (value->func_value != NULL)
             {
                 func_gencode(syn_level + 1, value->func_value, result);
             }
@@ -245,6 +258,20 @@ int expr_list_gencode(unsigned int syn_level, func * func_value, expr_list * lis
         }
         node = node->next;
     }
+    return 0;
+}
+
+int array_gencode(unsigned int syn_level, func * func_value, array * array_value, int * result)
+{
+    if (array_value->type == ARRAY_INIT || array_value->type == ARRAY_SUB)
+    {
+        expr_list_gencode(syn_level, func_value, array_value->elements, result);
+    }
+    else if (array_value->type == ARRAY_DIMS)
+    {
+        expr_list_gencode(syn_level, func_value, array_value->dims, result);
+    }
+
     return 0;
 }
 
@@ -336,10 +363,21 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
             func_gencode_freevars_expr(func_value, value->right, result);
         break;
         case EXPR_ARRAY:
-            assert(0);
+            if (value->array.array_value->dims)
+            {
+                func_gencode_freevars_expr_list(func_value, value->array.array_value->dims, result);
+            }
+            if (value->array.array_value->elements)
+            {
+                func_gencode_freevars_expr_list(func_value, value->array.array_value->elements, result);
+            }
         break;
         case EXPR_ARRAY_REF:
-            assert(0);
+            func_gencode_freevars_expr(func_value, value->array_ref.array_expr, result);
+            if (value->array_ref.ref != NULL)
+            {
+                func_gencode_freevars_expr_list(func_value, value->array_ref.ref, result);
+            }
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
@@ -854,13 +892,6 @@ int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code, int
     return 0;
 }
 
-int expr_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
-{
-    func_emit(func_value, stack_level, code, result);
-
-    return 0;
-}
- 
 int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
@@ -1179,8 +1210,13 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
             expr_cond_emit(value, stack_level, code, result);
         break;
         case EXPR_ARRAY:
+            if (value->array.array_value)
+            {
+                array_emit(value->array.array_value, stack_level, code, result);
+            }
+        break;
         case EXPR_ARRAY_REF:
-            assert(0);
+            expr_array_ref_emit(value, stack_level, code, result);
         break;
         case EXPR_CALL:
             expr_call_emit(value, stack_level, code, result);
@@ -1191,7 +1227,7 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         case EXPR_FUNC:
             if (value->func_value)
             {
-                expr_func_emit(value->func_value, 1, code, result);
+                func_emit(value->func_value, stack_level, code, result);
             }
         break;
         case EXPR_BUILD_IN:
@@ -1251,6 +1287,47 @@ int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code, int 
         }
         node = node->prev;
     }
+
+    return 0;
+}
+
+int array_emit(array * array_value, int stack_level, bytecode_list * code, int * result)
+{
+    if (array_value->type == ARRAY_INIT)
+    {
+        bytecode bc = { 0 };
+        expr_list_emit(array_value->dims, stack_level, code, result);
+
+        bc.type = BYTECODE_MK_ARRAY;
+        bc.mk_array.dims = array_value->dims->count;
+        
+        bytecode_add(code, &bc);                
+    }
+    else if (array_value->type == ARRAY_DIMS)
+    {
+        bytecode bc = { 0 };
+        expr_list_emit(array_value->dims, stack_level, code, result);
+
+        bc.type = BYTECODE_MK_ARRAY;
+        bc.mk_array.dims = array_value->dims->count;
+        
+        bytecode_add(code, &bc);                
+    }
+
+    return 0;
+}
+
+int expr_array_ref_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->array_ref.array_expr, stack_level, code, result);
+    expr_list_emit(value->array_ref.ref, stack_level + 1, code, result);
+
+    bc.type = BYTECODE_ARRAY_REF;
+    bc.array_ref.dims = value->array_ref.ref->count;
+    
+    bytecode_add(code, &bc);
 
     return 0;
 }

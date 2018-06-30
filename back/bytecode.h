@@ -70,6 +70,9 @@ typedef enum bytecode_type
     BYTECODE_JUMP,
     BYTECODE_LABEL,
 
+    BYTECODE_MK_ARRAY,
+    BYTECODE_ARRAY_REF,
+
     BYTECODE_FUNC_DEF,
     BYTECODE_GLOBAL_VEC,
     BYTECODE_MARK,
@@ -154,6 +157,16 @@ typedef struct bytecode
             unsigned int j;
         }
         rewrite;
+        struct
+        {
+            unsigned int dims;
+        }
+        mk_array;
+        struct
+        {
+            unsigned int dims;
+        }
+        array_ref;
     };
 } bytecode;
 
@@ -222,6 +235,9 @@ void bytecode_print_float_to_int(bytecode * code);
 void bytecode_print_jumpz(bytecode * code);
 void bytecode_print_jump(bytecode * code);
 void bytecode_print_label(bytecode * code);
+
+void bytecode_print_mk_array(bytecode * code);
+void bytecode_print_array_ref(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);

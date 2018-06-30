@@ -75,6 +75,9 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_JUMP, vm_execute_jump },
     { BYTECODE_LABEL, vm_execute_label },
     
+    { BYTECODE_MK_ARRAY, vm_execute_mk_array },
+    { BYTECODE_ARRAY_REF, vm_execute_array_ref },
+    
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
     { BYTECODE_MARK, vm_execute_mark },
@@ -594,6 +597,16 @@ void vm_execute_jump(vm * machine, bytecode * code)
 void vm_execute_label(vm * machine, bytecode * code)
 {
     /* no op */
+}
+
+void vm_execute_mk_array(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_array_ref(vm * machine, bytecode * code)
+{
+    assert(0);
 }
 
 void vm_execute_func_def(vm * machine, bytecode * code)

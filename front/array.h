@@ -3,7 +3,6 @@
 
 #include "expr.h"
 #include "var.h"
-#include "dim.h"
 
 typedef enum array_type
 {
@@ -16,9 +15,8 @@ typedef enum array_type
 typedef struct array
 {
     array_type type;
-    char * id;
-    int dims_count;
     expr_list * elements;
+    expr_list * dims;
     var * ret;
     unsigned int line_no;
 } array;

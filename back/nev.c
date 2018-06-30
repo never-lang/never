@@ -93,12 +93,11 @@ int nev_compile_prog(program * prog)
     yyparse(&nev);
     if ((ret = parse_result) == 0)
     {
-        libmath_add_funcs(nev->funcs);
+        /* libmath_add_funcs(nev->funcs); */
 
         ret = never_sem_check(nev);
         if (ret == 0)
         {
-#if 0
             ret = never_optimize(nev);
             if (ret == 0)
             {
@@ -114,7 +113,7 @@ int nev_compile_prog(program * prog)
                     bytecode_func_addr(code);
 
                     /* print_functions(nev); */
-                    /* bytecode_print(code); */
+                    bytecode_print(code);
 
                     never_func_main_params(nev, &prog->params, &prog->param_count);
                     bytecode_to_array(code, &prog->code_arr, &prog->code_size);
@@ -122,7 +121,6 @@ int nev_compile_prog(program * prog)
                     bytecode_delete(code);
                 }
             }
-#endif
         }
     }
 

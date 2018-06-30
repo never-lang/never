@@ -72,8 +72,12 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_JUMP, bytecode_print_jump },
     { BYTECODE_LABEL, bytecode_print_label },
 
+    { BYTECODE_MK_ARRAY, bytecode_print_mk_array },
+    { BYTECODE_ARRAY_REF, bytecode_print_array_ref },
+    
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
+    
     { BYTECODE_MARK, bytecode_print_mark },
     { BYTECODE_CALL, bytecode_print_call },
     { BYTECODE_SLIDE, bytecode_print_slide },
@@ -275,6 +279,16 @@ void bytecode_print_jump(bytecode * code)
 void bytecode_print_label(bytecode * code)
 {
     printf("%d: label\n", code->addr);
+}
+
+void bytecode_print_mk_array(bytecode * code)
+{
+    printf("%d: mk array %d\n", code->addr, code->mk_array.dims);
+}
+
+void bytecode_print_array_ref(bytecode * code)
+{
+    printf("%d: array ref %d\n", code->addr, code->array_ref.dims);
 }
 
 void bytecode_print_func_def(bytecode * code)

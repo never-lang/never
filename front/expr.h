@@ -130,11 +130,11 @@ typedef struct expr
         } func_build_in;
         struct
         {
-            struct array * array_value;
+            struct array * array_value; /* EXPR_ARRAY */
         } array;
         struct
         {
-            struct expr * array_expr;
+            struct expr * array_expr; /* EXPR_ARRAY_REF */
             struct expr_list * ref;
         } array_ref;
     };
