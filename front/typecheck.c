@@ -1073,7 +1073,10 @@ int print_func_expr(expr * value, int depth)
             print_func_expr(value->right, depth);
         break;
         case EXPR_ARRAY:
-            assert(0);
+            if (value->array.array_value != NULL)
+            {
+                print_func_array(value->array.array_value, depth);
+            }
         break;
         case EXPR_ARRAY_REF:
             print_func_expr(value->array_ref.array_expr, depth);
@@ -1116,6 +1119,20 @@ int print_func_expr_list(expr_list * list, int depth)
         }
         node = node->next;
     }
+    return 0;
+}
+
+int print_func_array(array * value, int depth)
+{
+    if (value->elements != NULL)
+    {
+        print_func_expr_list(value->elements, depth);
+    }
+    if (value->dims != NULL)
+    {
+        print_func_expr_list(value->dims, depth);
+    }
+
     return 0;
 }
  

@@ -63,6 +63,7 @@ int symtab_add_entry_func(symtab * stab_parent, func * func_value, int * result)
 int symtab_add_entry_func_list(symtab * stab_parent, func_list * list, int * result);
 int symtab_add_entry_never(never * nev, int * result);
 
+int print_func_array(array * value, int depth);
 int print_func_expr(expr * value, int depth);
 int print_func_expr_list(expr_list * list, int depth);
 int print_func(func * value, int depth);

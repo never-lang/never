@@ -71,6 +71,7 @@ typedef enum bytecode_type
     BYTECODE_LABEL,
 
     BYTECODE_MK_ARRAY,
+    BYTECODE_MK_INIT_ARRAY,
     BYTECODE_ARRAY_REF,
 
     BYTECODE_FUNC_DEF,
@@ -161,7 +162,7 @@ typedef struct bytecode
         {
             unsigned int dims;
         }
-        mk_array;
+        mk_array; /* BYTECODE_MK_ARRAY, BYTECODE_MK_INIT_ARRAY */
         struct
         {
             unsigned int dims;
@@ -237,6 +238,7 @@ void bytecode_print_jump(bytecode * code);
 void bytecode_print_label(bytecode * code);
 
 void bytecode_print_mk_array(bytecode * code);
+void bytecode_print_mk_init_array(bytecode * code);
 void bytecode_print_array_ref(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
