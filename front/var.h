@@ -25,9 +25,10 @@
 enum
 {
     VAR_INT = 1,
-    VAR_FLOAT = 2,
-    VAR_FUNC = 3,
-    VAR_ARRAY = 4
+    VAR_FLOAT,
+    VAR_DIM,
+    VAR_ARRAY,
+    VAR_FUNC
 };
 
 typedef struct var
@@ -37,6 +38,7 @@ typedef struct var
     char * id;
     union
     {
+        struct var * array;
         struct var_list * vars;
         struct var_list * dims;
     };
@@ -60,8 +62,9 @@ typedef struct var_list
 
 var * var_new_int(char * id);
 var * var_new_float(char * id);
-var * var_new_func(char * id, var_list * vars, var * ret);
+var * var_new_dim(char * id);
 var * var_new_array(char * id, var_list * dims, var * ret);
+var * var_new_func(char * id, var_list * vars, var * ret);
 void var_delete(var * value);
 
 var_list_node * var_list_node_new(var * value);
@@ -73,9 +76,12 @@ void var_list_delete(var_list * list);
 void var_list_add_beg(var_list * list, var * value);
 void var_list_add_end(var_list * list, var * value);
 
+void var_dim_set_array(var_list * dims, var * array);
+
 void var_print(var * value);
 void var_list_print(var_list * list);
 char * var_type_str(int type);
+
 
 #endif /* __VAR_H__ */
 

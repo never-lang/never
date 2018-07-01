@@ -41,6 +41,10 @@ int expr_set_return_type(expr * value, var * ret)
     {
         value->comb = COMB_TYPE_FLOAT;
     }
+    else if (ret->type == VAR_DIM)
+    {
+        value->comb = COMB_TYPE_INT;
+    }
     else if (ret->type == VAR_ARRAY)
     {
         value->comb = COMB_TYPE_ARRAY;
@@ -187,6 +191,17 @@ int var_expr_cmp(var * var_value, expr * expr_value)
     {
         return TYPECHECK_SUCC;
     }
+    else if (var_value->type == VAR_DIM && expr_value->comb == COMB_TYPE_INT)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (var_value->type == VAR_DIM && expr_value->comb == COMB_TYPE_FLOAT)
+    {
+        expr_conv(expr_value, EXPR_FLOAT_TO_INT);
+
+        print_warning_msg(expr_value->line_no, "converted float to int\n");
+        return TYPECHECK_SUCC;
+    }
     else if (var_value->type == VAR_ARRAY && expr_value->comb == COMB_TYPE_ARRAY)
     {
         return var_expr_array_cmp(var_value, expr_value);
@@ -261,6 +276,10 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             else if (var_value->type == VAR_FLOAT)
             {
                  value->comb = COMB_TYPE_FLOAT;
+            }
+            else if (var_value->type == VAR_DIM)
+            {
+                 value->comb = COMB_TYPE_INT;
             }
             else if (var_value->type == VAR_ARRAY)
             {

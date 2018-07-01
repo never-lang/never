@@ -315,7 +315,7 @@ var: TOK_ID '(' var_list ')' TOK_RET var
 
 dim: TOK_ID
 {
-    $$ = var_new_int($1);
+    $$ = var_new_dim($1);
     $$->line_no = $<line_no>1;
 };
 

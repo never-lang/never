@@ -124,6 +124,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             var * var_value = entry->var_value;
             if (var_value->type == VAR_INT ||
                 var_value->type == VAR_FLOAT ||
+                var_value->type == VAR_DIM ||
                 var_value->type == VAR_ARRAY ||
                 var_value->type == VAR_FUNC)
             {
@@ -571,9 +572,19 @@ int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, in
             assert(0);
         break;
         case FREEVAR_LOCAL:
-            bc.type = BYTECODE_ID_LOCAL;
-            bc.id_local.stack_level = stack_level;
-            bc.id_local.index = value->local_value->index;
+            if (value->local_value->type == VAR_DIM)
+            {
+                bc.type = BYTECODE_ID_DIM_LOCAL;
+                bc.id_dim_local.stack_level = stack_level;
+                bc.id_dim_local.index = value->local_value->array->index;
+                bc.id_dim_local.dim_index = value->local_value->index;
+            }
+            else
+            {
+                bc.type = BYTECODE_ID_LOCAL;
+                bc.id_local.stack_level = stack_level;
+                bc.id_local.index = value->local_value->index;
+            }
 
             bytecode_add(code, &bc);
         break;
@@ -608,6 +619,41 @@ int func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_li
         }
         node = node->next;
     }
+
+    return 0;
+}
+
+int expr_id_local_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+
+    if (value->id.id_var_value->type == VAR_DIM)
+    {
+        bc.type = BYTECODE_ID_DIM_LOCAL;
+        bc.id_dim_local.stack_level = stack_level;
+        bc.id_dim_local.index = value->id.id_var_value->array->index;
+        bc.id_dim_local.dim_index = value->id.id_var_value->index;
+    }
+    else
+    {
+        bc.type = BYTECODE_ID_LOCAL;
+        bc.id_local.stack_level = stack_level;
+        bc.id_local.index = value->id.id_var_value->index;
+    }
+        
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
+int expr_id_global_emit(expr * value, int stack_value, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    
+    bc.type = BYTECODE_ID_GLOBAL;
+    bc.id_global.index = value->id.id_freevar_value->index;
+
+    bytecode_add(code, &bc);        
 
     return 0;
 }
@@ -663,25 +709,10 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * resu
             assert(0);
         break;
         case ID_TYPE_LOCAL:
-        {
-            bytecode bc = { 0 };
-            
-            bc.type = BYTECODE_ID_LOCAL;
-            bc.id_local.stack_level = stack_level;
-            bc.id_local.index = value->id.id_var_value->index;
-        
-            bytecode_add(code, &bc);
-        }
+            expr_id_local_emit(value, stack_level, code, result);
         break;
         case ID_TYPE_GLOBAL:
-        {
-            bytecode bc = { 0 };
-            
-            bc.type = BYTECODE_ID_GLOBAL;
-            bc.id_global.index = value->id.id_freevar_value->index;
-
-            bytecode_add(code, &bc);        
-        }
+            expr_id_global_emit(value, stack_level, code, result);
         break;
         case ID_TYPE_FUNC_TOP:
             if (value->id.id_func_value != NULL)

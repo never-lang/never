@@ -35,6 +35,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_FLOAT, vm_execute_float },
     
     { BYTECODE_ID_LOCAL, vm_execute_id_local },
+    { BYTECODE_ID_DIM_LOCAL, vm_execute_id_dim_local },
     { BYTECODE_ID_GLOBAL, vm_execute_id_global },
     { BYTECODE_ID_FUNC_FUNC, vm_execute_id_func_func },
     { BYTECODE_ID_FUNC_ADDR, vm_execute_id_func_addr },
@@ -160,6 +161,11 @@ void vm_execute_id_local(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_id_dim_local(vm * machine, bytecode * code)
+{
+    assert(0);
 }
 
 void vm_execute_id_global(vm * machine, bytecode * code)

@@ -52,15 +52,15 @@ var * var_new_float(char * id)
     return value;
 }
 
-var * var_new_func(char * id, var_list * vars, var * ret)
+var * var_new_dim(char * id)
 {
     var * value = (var *)malloc(sizeof(var));
     
-    value->type = VAR_FUNC;
+    value->type = VAR_DIM;
     value->index = -1;
     value->id = id;
-    value->vars = vars;
-    value->ret = ret;
+    value->array = NULL;
+    value->ret = NULL;
     value->line_no = 0;
     
     return value;
@@ -77,6 +77,25 @@ var * var_new_array(char * id, var_list * dims, var * ret)
     value->ret = ret;
     value->line_no = 0;
 
+    if (dims != NULL)
+    {
+        var_dim_set_array(dims, value);
+    }
+
+    return value;
+}
+
+var * var_new_func(char * id, var_list * vars, var * ret)
+{
+    var * value = (var *)malloc(sizeof(var));
+    
+    value->type = VAR_FUNC;
+    value->index = -1;
+    value->id = id;
+    value->vars = vars;
+    value->ret = ret;
+    value->line_no = 0;
+    
     return value;
 }
 
@@ -86,10 +105,16 @@ void var_delete(var * value)
     {
         free(value->id);
     }
-    if (value->vars)
+    
+    if (value->type == VAR_FUNC && value->vars != NULL)
     {
         var_list_delete(value->vars);
     }
+    else if (value->type == VAR_ARRAY && value->dims != NULL)
+    {
+        var_list_delete(value->dims);
+    }
+    
     if (value->ret)
     {
         var_delete(value->ret);
@@ -176,6 +201,22 @@ void var_list_add_end(var_list * list, var * value)
     }
 }
 
+void var_dim_set_array(var_list * dims, var * array)
+{
+    int index = 0;
+    var_list_node * node = dims->tail;
+    while (node != NULL)
+    {
+        var * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+            value->array = array;
+        }
+        node = node->next;
+    }
+}
+
 void var_print(var * value)
 {
     if (value == NULL) return;
@@ -205,8 +246,9 @@ char * var_type_str(int type)
     {
         case VAR_INT: return "VAR_INT";
         case VAR_FLOAT: return "VAR_FLOAT";
-        case VAR_FUNC: return "VAR_FUNC";
+        case VAR_DIM: return "VAR_DIM";
         case VAR_ARRAY: return "VAR_ARRAY";
+        case VAR_FUNC: return "VAR_FUNC";
     }
     return "VAR_???";
 }
