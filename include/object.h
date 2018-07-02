@@ -52,9 +52,9 @@ typedef struct object
     object_type type;
     union
     {
-        int int_value; /* OBJECT_INT */
-        float float_value; /* OBJECT_FLOAT */
-        object_vec * vec_value; /* OBJECT_VEC */
+        int int_value;            /* OBJECT_INT */
+        float float_value;        /* OBJECT_FLOAT */
+        object_vec * vec_value;   /* OBJECT_VEC */
         object_func * func_value; /* OBJECT_FUNC */
     };
 } object;

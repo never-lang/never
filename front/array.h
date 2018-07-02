@@ -2,6 +2,7 @@
 #define __ARRAY_H__
 
 #include "expr.h"
+#include "weakexpr.h"
 #include "var.h"
 
 typedef enum array_type
@@ -26,6 +27,9 @@ array * array_new_sub(expr_list * elements);
 array * array_new_dims(expr_list * dims, var * ret);
 
 void array_delete(array * value);
+
+int elements_to_depth_list(expr * value, expr_list_weak * bfs_list, int distance);
+int array_to_depth_list(expr * value, expr_list_weak * depth_list);
 
 #endif /* __ARRAY_H__ */
 

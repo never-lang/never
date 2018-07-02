@@ -54,6 +54,7 @@ int never_gencode(never * nev);
 
 int expr_float_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 
+int func_freevar_id_local_emit(freevar * value, int stack_level, bytecode_list * code, int * result);
 int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result);
 int func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_list * code, int * result);
 
@@ -72,8 +73,13 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code, int * re
 int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code, int * result);
-int array_emit(array * array_value, int stack_level, bytecode_list * code, int * result);
+
+int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count, int stack_level, bytecode_list * code, int * result);
+int array_init_emit(expr * value, int stack_level, bytecode_list * code, int * result);
+int array_dims_emit(array * array_value, int stack_level, bytecode_list * code, int * result);
+int expr_array_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 int expr_array_ref_emit(expr * value, int stack_level, bytecode_list * code, int * result);
+
 int func_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
 int func_list_emit(func_list * list, int stack_level, bytecode_list * code, int * result);
 int never_emit(never * nev, bytecode_list * code);

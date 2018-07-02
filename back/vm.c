@@ -608,16 +608,19 @@ void vm_execute_label(vm * machine, bytecode * code)
 
 void vm_execute_mk_array(vm * machine, bytecode * code)
 {
+    printf("%s %d\n", __func__, code->mk_array.dims);
     assert(0);
 }
 
 void vm_execute_mk_init_array(vm * machine, bytecode * code)
 {
+    printf("%s %d\n", __func__, code->mk_array.dims);
     assert(0);
 }
 
 void vm_execute_array_ref(vm * machine, bytecode * code)
 {
+    printf("%s %d\n", __func__, code->array_ref.dims);
     assert(0);
 }
 

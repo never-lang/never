@@ -1,5 +1,5 @@
 
-func f1(a -> int, tab[row, col] -> int) -> [D, D, D] -> int
+func f1(a -> int, b -> int, tab[row, col] -> int) -> [D,D] -> int
 {
     /* return tab; */
 
@@ -7,14 +7,14 @@ func f1(a -> int, tab[row, col] -> int) -> [D, D, D] -> int
 
     /* return {[ 5, 3 ]} -> int; */
 
-    /* return {
+    /*return {
              func f1() -> int { return 10; },
              func f2() -> int { return 20; }  
            } -> () -> int; */
 
-    /* return { 1, 2, 3, 4 } -> int; */
+    /* return { a, b, a, b } -> int; */
 
-    return { {{ 1, 2, 3 },
+    /* return { {{ 1, 2, 3 },
               { 3, 4, 5 },
               { 3, 8, 9 },
               { 6, 7, 8 }},
@@ -22,20 +22,20 @@ func f1(a -> int, tab[row, col] -> int) -> [D, D, D] -> int
              {{ 7, 8, 9 },
               { 6, 3, 1 },
               { 2, 4, 2 },
-              { 1, 0, 4 }}} -> int;
+              { 1, 0, 4 }}} -> int; */
 
     /* return { tab, tab, tab } -> [D, D] -> int;*/
 
     /* return { {[10, 10]} -> int,
              {[20, 20]} -> int } -> [D, D] -> int; */
 
-    /*return {{ a, 0, 0, 0 },
-            { 0, a, 0, 0 },
-            { 0, 0, a, 0 },
-            { 0, 0, 0, a }} -> int; */
+    return {{ a, 1, 2, 3 },
+            { 4, a, 6, 7 },
+            { 8, 9, a, 1 },
+            { 2, 3, 4, a }} -> int;
             
     /*return { { 1, 2, 3, 4, 5 } -> int,
-             { 1, 2, 3 } -> int } -> [D] -> int; */
+             { 1, 2, 9, 9, 9, 9, 8, 7 } -> int } -> [D] -> int; */
 }
 
 func main() -> int

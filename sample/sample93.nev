@@ -5,7 +5,7 @@ func f1(a -> int, tab[row, col] -> int) -> int
 
     /* return {[ row, col ]} -> int; */
 
-    return tab[a, a];
+    /* return tab[a, a]; */
 
     /* return tab[row - 1, col - 1]; */
 
