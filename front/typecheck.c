@@ -982,6 +982,10 @@ int symtab_add_entry_array(symtab * stab_parent, array * array_value, int * resu
     {
         symtab_add_entry_expr_list(stab_parent, array_value->dims, result);
     }
+    if (array_value->elements != NULL)
+    {
+        symtab_add_entry_expr_list(stab_parent, array_value->elements, result);
+    }
     return 0;
 }
 
