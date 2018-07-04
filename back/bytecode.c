@@ -75,7 +75,7 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_MK_ARRAY, bytecode_print_mk_array },
     { BYTECODE_MK_INIT_ARRAY, bytecode_print_mk_init_array },
-    { BYTECODE_ARRAY_REF, bytecode_print_array_ref },
+    { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
     
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
@@ -301,9 +301,9 @@ void bytecode_print_mk_init_array(bytecode * code)
     printf("%d: mk init array %d\n", code->addr, code->mk_array.dims);
 }
 
-void bytecode_print_array_ref(bytecode * code)
+void bytecode_print_array_deref(bytecode * code)
 {
-    printf("%d: array ref %d\n", code->addr, code->array_ref.dims);
+    printf("%d: array ref %d\n", code->addr, code->array_deref.dims);
 }
 
 void bytecode_print_func_def(bytecode * code)

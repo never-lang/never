@@ -517,9 +517,9 @@ int expr_constred(expr * value, int * result)
                 array_constread(value->array.array_value, result);
             }
         break;
-        case EXPR_ARRAY_REF:
-            expr_constred(value->array_ref.array_expr, result);
-            expr_list_constred(value->array_ref.ref, result);
+        case EXPR_ARRAY_DEREF:
+            expr_constred(value->array_deref.array_expr, result);
+            expr_list_constred(value->array_deref.ref, result);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:

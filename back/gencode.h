@@ -78,7 +78,7 @@ int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count, 
 int array_init_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 int array_dims_emit(array * array_value, int stack_level, bytecode_list * code, int * result);
 int expr_array_emit(expr * value, int stack_level, bytecode_list * code, int * result);
-int expr_array_ref_emit(expr * value, int stack_level, bytecode_list * code, int * result);
+int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code, int * result);
 
 int func_emit(func * func_value, int stack_level, bytecode_list * code, int * result);
 int func_list_emit(func_list * list, int stack_level, bytecode_list * code, int * result);

@@ -215,11 +215,11 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
                 array_gencode(syn_level, func_value, value->array.array_value, result);
             }
         break;
-        case EXPR_ARRAY_REF:
-            expr_gencode(syn_level, func_value, value->array_ref.array_expr, result);
-            if (value->array_ref.ref != NULL)
+        case EXPR_ARRAY_DEREF:
+            expr_gencode(syn_level, func_value, value->array_deref.array_expr, result);
+            if (value->array_deref.ref != NULL)
             {
-                expr_list_gencode(syn_level, func_value, value->array_ref.ref, result);
+                expr_list_gencode(syn_level, func_value, value->array_deref.ref, result);
             }
         break;
         case EXPR_CALL:
@@ -373,11 +373,11 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
                 func_gencode_freevars_expr_list(func_value, value->array.array_value->elements, result);
             }
         break;
-        case EXPR_ARRAY_REF:
-            func_gencode_freevars_expr(func_value, value->array_ref.array_expr, result);
-            if (value->array_ref.ref != NULL)
+        case EXPR_ARRAY_DEREF:
+            func_gencode_freevars_expr(func_value, value->array_deref.array_expr, result);
+            if (value->array_deref.ref != NULL)
             {
-                func_gencode_freevars_expr_list(func_value, value->array_ref.ref, result);
+                func_gencode_freevars_expr_list(func_value, value->array_deref.ref, result);
             }
         break;
         case EXPR_CALL:
@@ -1255,8 +1255,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
                 expr_array_emit(value, stack_level, code, result);
             }
         break;
-        case EXPR_ARRAY_REF:
-            expr_array_ref_emit(value, stack_level, code, result);
+        case EXPR_ARRAY_DEREF:
+            expr_array_deref_emit(value, stack_level, code, result);
         break;
         case EXPR_CALL:
             expr_call_emit(value, stack_level, code, result);
@@ -1411,15 +1411,15 @@ int expr_array_emit(expr * value, int stack_level, bytecode_list * code, int * r
     return 0;
 }
 
-int expr_array_ref_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
 
-    expr_emit(value->array_ref.array_expr, stack_level, code, result);
-    expr_list_emit(value->array_ref.ref, stack_level + 1, code, result);
+    expr_emit(value->array_deref.array_expr, stack_level, code, result);
+    expr_list_emit(value->array_deref.ref, stack_level + 1, code, result);
 
-    bc.type = BYTECODE_ARRAY_REF;
-    bc.array_ref.dims = value->array_ref.ref->count;
+    bc.type = BYTECODE_ARRAY_DEREF;
+    bc.array_deref.dims = value->array_deref.ref->count;
     
     bytecode_add(code, &bc);
 

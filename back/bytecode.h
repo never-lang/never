@@ -73,7 +73,7 @@ typedef enum bytecode_type
 
     BYTECODE_MK_ARRAY,
     BYTECODE_MK_INIT_ARRAY,
-    BYTECODE_ARRAY_REF,
+    BYTECODE_ARRAY_DEREF,
 
     BYTECODE_FUNC_DEF,
     BYTECODE_GLOBAL_VEC,
@@ -179,7 +179,7 @@ typedef struct bytecode
         {
             unsigned int dims;
         }
-        array_ref;
+        array_deref;
     };
 } bytecode;
 
@@ -252,7 +252,7 @@ void bytecode_print_label(bytecode * code);
 
 void bytecode_print_mk_array(bytecode * code);
 void bytecode_print_mk_init_array(bytecode * code);
-void bytecode_print_array_ref(bytecode * code);
+void bytecode_print_array_deref(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);

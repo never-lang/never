@@ -31,8 +31,9 @@ typedef enum object_type
     OBJECT_UNKNOWN = 0,
     OBJECT_INT = 1,
     OBJECT_FLOAT = 2,
-    OBJECT_VEC = 3,
-    OBJECT_FUNC = 4
+    OBJECT_ARRAY = 3,
+    OBJECT_VEC = 4,
+    OBJECT_FUNC = 5
 } object_type;
 
 typedef struct object_vec
@@ -40,6 +41,20 @@ typedef struct object_vec
     unsigned int size;
     mem_ptr * value;
 } object_vec;
+
+typedef struct object_arr_dim
+{
+    unsigned int elems;
+    unsigned int mult;
+} object_arr_dim;
+
+typedef struct object_arr
+{
+    unsigned int dims;
+    unsigned int elems;
+    object_arr_dim * dv;
+    mem_ptr * value;
+} object_arr;
 
 typedef struct object_func
 {
@@ -55,13 +70,21 @@ typedef struct object
         int int_value;            /* OBJECT_INT */
         float float_value;        /* OBJECT_FLOAT */
         object_vec * vec_value;   /* OBJECT_VEC */
+        object_arr * arr_value;   /* OBJECT_ARR */
         object_func * func_value; /* OBJECT_FUNC */
     };
 } object;
 
+object_arr_dim * object_arr_dim_new(unsigned int dims);
+void object_arr_dim_delete(object_arr_dim * dv);
+
+void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv, unsigned int * elems);
+unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv, object_arr_dim * addr, int * oobounds);
+
 object * object_new_int(int value);
 object * object_new_float(float value);
 object * object_new_vec(unsigned int size);
+object * object_new_arr(unsigned int dims, object_arr_dim * dv);
 object * object_new_func(mem_ptr vec, ip_ptr addr);
 
 void object_delete(object * obj);

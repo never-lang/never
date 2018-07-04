@@ -38,6 +38,6 @@ add_executable(${CMAKE_PROJECT_NAME} main.c)
 target_link_libraries(${CMAKE_PROJECT_NAME} nev m)
 
 # test
-# enable_testing()
-# add_subdirectory(test)
+enable_testing()
+add_subdirectory(test)
 

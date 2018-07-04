@@ -174,18 +174,18 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value, tailrec_op 
                 rec = array_tailrec(syn_level, func_value, op, value->array.array_value);
             }
         break;
-        case EXPR_ARRAY_REF:
+        case EXPR_ARRAY_DEREF:
         {
             tailrec_type rec_array_expr = TAILREC_NOT_FOUND;
             tailrec_type rec_array_ref = TAILREC_NOT_FOUND;
             
-            if (value->array_ref.array_expr != NULL)
+            if (value->array_deref.array_expr != NULL)
             {
-                rec_array_expr = expr_tailrec(syn_level, func_value, op, value->array_ref.array_expr);
+                rec_array_expr = expr_tailrec(syn_level, func_value, op, value->array_deref.array_expr);
             }
-            if (value->array_ref.ref != NULL)
+            if (value->array_deref.ref != NULL)
             {
-                rec_array_ref  = expr_list_tailrec(syn_level, func_value, op, value->array_ref.ref);
+                rec_array_ref  = expr_list_tailrec(syn_level, func_value, op, value->array_deref.ref);
             }
             
             if (rec_array_expr == TAILREC_NOT_FOUND && rec_array_ref == TAILREC_NOT_FOUND)

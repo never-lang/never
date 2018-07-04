@@ -118,15 +118,15 @@ expr * expr_new_array(array * value)
     return ret;
 }
 
-expr * expr_new_arrayref(expr * array_expr, expr_list * ref)
+expr * expr_new_array_deref(expr * array_expr, expr_list * ref)
 {
     expr * ret = (expr *) malloc(sizeof(expr));
     
-    ret->type = EXPR_ARRAY_REF;
+    ret->type = EXPR_ARRAY_DEREF;
     ret->comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
-    ret->array_ref.array_expr = array_expr;
-    ret->array_ref.ref = ref;
+    ret->array_deref.array_expr = array_expr;
+    ret->array_deref.ref = ref;
     
     return ret;
 }
@@ -229,9 +229,9 @@ void expr_delete(expr * value)
                 array_delete(value->array.array_value);
             }
         break;
-        case EXPR_ARRAY_REF:
-            expr_delete(value->array_ref.array_expr);
-            expr_list_delete(value->array_ref.ref);
+        case EXPR_ARRAY_DEREF:
+            expr_delete(value->array_deref.array_expr);
+            expr_list_delete(value->array_deref.ref);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:

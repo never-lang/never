@@ -44,11 +44,26 @@ void test_three()
     object_delete(obj1);
 }
 
+void test_four()
+{
+    object_arr_dim * dv = NULL;
+    object * obj1 = NULL;
+    
+    dv = object_arr_dim_new(2);
+    dv[0].elems = 10;
+    dv[1].elems = 20;
+
+    obj1 = object_new_arr(2, dv);
+    
+    object_delete(obj1);
+}
+
 int main(int argc, char * argv[])
 {
     test_one();
     test_two();
     test_three();
+    test_four();
     
     return 0;
 }

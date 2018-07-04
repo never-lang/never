@@ -104,7 +104,7 @@ void vm_execute_label(vm * machine, bytecode * code);
 
 void vm_execute_mk_array(vm * machine, bytecode * code);
 void vm_execute_mk_init_array(vm * machine, bytecode * code);
-void vm_execute_array_ref(vm * machine, bytecode * code);
+void vm_execute_array_deref(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_global_vec(vm * machine, bytecode * code);

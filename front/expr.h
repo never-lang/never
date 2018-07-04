@@ -49,7 +49,7 @@ typedef enum expr_type
     EXPR_SUP = 19,          /* ( expr ) */
     EXPR_COND = 20,         /* expr ? expr : expr */
     EXPR_ARRAY = 21,        /* [ expr_list ] */
-    EXPR_ARRAY_REF = 22,    /* expr [ expr_list ] */
+    EXPR_ARRAY_DEREF = 22,    /* expr [ expr_list ] */
     EXPR_CALL = 23,         /* ID ( expr_list) */
     EXPR_LAST_CALL = 24,    /* ID (expr_list */
     EXPR_FUNC = 25,         /* func ID ( ... ) */
@@ -134,9 +134,9 @@ typedef struct expr
         } array;
         struct
         {
-            struct expr * array_expr; /* EXPR_ARRAY_REF */
+            struct expr * array_expr; /* EXPR_ARRAY_DEREF */
             struct expr_list * ref;
-        } array_ref;
+        } array_deref;
     };
 } expr;
 
@@ -161,7 +161,7 @@ expr * expr_new_one(int type, expr * expr_left);
 expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * expr_right);
 expr * expr_new_array(array * value);
-expr * expr_new_arrayref(expr * array_expr, expr_list * ref);
+expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
 expr * expr_new_func(func * value); 
 expr * expr_new_call(expr * func_expr, expr_list * vars);
 expr * expr_new_build_in(unsigned int id, expr_list * params, var * var_ret);

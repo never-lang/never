@@ -388,17 +388,17 @@ int array_dims_check_type_expr_list(symtab * tab, expr_list * list, int * result
     return TYPECHECK_SUCC;
 }
 
-int expr_array_ref_check_type(symtab * tab, expr * value, int * result)
+int expr_array_deref_check_type(symtab * tab, expr * value, int * result)
 {
-    expr_check_type(tab, value->array_ref.array_expr, result);
-    if (value->array_ref.ref != NULL)
+    expr_check_type(tab, value->array_deref.array_expr, result);
+    if (value->array_deref.ref != NULL)
     {
-        expr_list_check_type(tab, value->array_ref.ref, result);
+        expr_list_check_type(tab, value->array_deref.ref, result);
     }
     
-    if (value->array_ref.array_expr->comb == COMB_TYPE_ARRAY)
+    if (value->array_deref.array_expr->comb == COMB_TYPE_ARRAY)
     {
-        if (value->array_ref.array_expr->comb_dims != value->array_ref.ref->count)
+        if (value->array_deref.array_expr->comb_dims != value->array_deref.ref->count)
         {   
             *result = TYPECHECK_FAIL;
             value->comb = COMB_TYPE_ERR;
@@ -406,7 +406,7 @@ int expr_array_ref_check_type(symtab * tab, expr * value, int * result)
         }
         else
         {
-            array_dims_check_type_expr_list(tab, value->array_ref.ref, result);
+            array_dims_check_type_expr_list(tab, value->array_deref.ref, result);
             if (*result == TYPECHECK_FAIL)
             {
                 value->comb = COMB_TYPE_ERR;
@@ -414,7 +414,7 @@ int expr_array_ref_check_type(symtab * tab, expr * value, int * result)
             }
             else
             {
-                expr_set_return_type(value, value->array_ref.array_expr->comb_ret);
+                expr_set_return_type(value, value->array_deref.array_expr->comb_ret);
             }
         }
     }
@@ -424,7 +424,7 @@ int expr_array_ref_check_type(symtab * tab, expr * value, int * result)
         value->comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no, 
                         "cannot deref %s\n",
-                        comb_type_str(value->array_ref.array_expr->comb));
+                        comb_type_str(value->array_deref.array_expr->comb));
     }
     
     
@@ -663,8 +663,8 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         case EXPR_ARRAY:
             expr_array_check_type(tab, value, result);
         break;
-        case EXPR_ARRAY_REF:
-            expr_array_ref_check_type(tab, value, result);
+        case EXPR_ARRAY_DEREF:
+            expr_array_deref_check_type(tab, value, result);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
@@ -932,9 +932,9 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
         case EXPR_ARRAY:
             symtab_add_entry_array(stab, value->array.array_value, result);
         break;
-        case EXPR_ARRAY_REF:
-            symtab_add_entry_expr(stab, value->array_ref.array_expr, result);
-            symtab_add_entry_expr_list(stab, value->array_ref.ref, result);
+        case EXPR_ARRAY_DEREF:
+            symtab_add_entry_expr(stab, value->array_deref.array_expr, result);
+            symtab_add_entry_expr_list(stab, value->array_deref.ref, result);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
@@ -1097,9 +1097,9 @@ int print_func_expr(expr * value, int depth)
                 print_func_array(value->array.array_value, depth);
             }
         break;
-        case EXPR_ARRAY_REF:
-            print_func_expr(value->array_ref.array_expr, depth);
-            print_func_expr_list(value->array_ref.ref, depth);
+        case EXPR_ARRAY_DEREF:
+            print_func_expr(value->array_deref.array_expr, depth);
+            print_func_expr_list(value->array_deref.ref, depth);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:

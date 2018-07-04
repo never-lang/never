@@ -202,7 +202,7 @@ expr: array
 
 expr: expr '[' expr_list ']' /* array dereference */
 {
-    $$ = expr_new_arrayref($1, $3);
+    $$ = expr_new_array_deref($1, $3);
     $$->line_no = $<line_no>2;
 };
 
