@@ -35,6 +35,6 @@ func f1(a -> int, tab[row, col] -> int) -> int
 
 func main() -> int
 {
-    return 10 * 10;
+    return f1(10 * 10, {{ 10, 20 }, { 30, 40 }} -> int);
 }
 

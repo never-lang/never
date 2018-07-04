@@ -1,15 +1,15 @@
 
-func fah2cel(float f) -> float
+func fah2cel(f -> float) -> float
 {
     return (f - 32.0) / 1.8;
 }
 
-func cel2fah(float c) -> float
+func cel2fah(c -> float) -> float
 {
     return c * 1.8 + 32.0;
 }
 
-func degrees(conv(float) -> float, float degree) -> float
+func degrees(conv(float) -> float, degree -> float) -> float
 {
     return conv(degree);
 }

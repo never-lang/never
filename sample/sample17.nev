@@ -1,11 +1,11 @@
 
-func get(int c) -> (float, float) -> float
+func get(c -> int) -> (float, float) -> float
 {
-    return c ? func min(float a, float b) -> float
+    return c ? func min(a -> float, b -> float) -> float
                {
                    return a < b ? a : b;
                }
-             : func max(float a, float b) -> float
+             : func max(a -> float, b -> float) -> float
                {
                    return a > b ? a : b;
                };

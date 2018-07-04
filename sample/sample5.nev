@@ -1,5 +1,5 @@
 
-func deg2rad(float deg) -> float
+func deg2rad(deg -> float) -> float
 {
     return deg * 3.14159265359 / 180.0;
 }

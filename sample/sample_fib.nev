@@ -1,4 +1,4 @@
-func fib(int n) -> int 
+func fib(n -> int) -> int 
 {
     return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
 }

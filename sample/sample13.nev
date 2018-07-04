@@ -1,7 +1,7 @@
 
-func get_func(float glob1) -> (float, float) -> float
+func get_func(glob1 -> float) -> (float, float) -> float
 {
-    func min(float a, float b) -> float
+    func min(a -> float, b -> float) -> float
     {
         return a < b ? glob1 * a : glob1 * b;
     }

@@ -15,12 +15,12 @@ func f1(a -> int) -> int
     /* return call( { {[10, 10]} -> int,
                    {[20, 20]} -> int } -> [D, D] -> int ); */
             
-    return call({ { 1, 2, 3, 4, 5 } -> int,
-                  { 1, 2, 3 } -> int        } -> [_] -> int);
+    return call({ { 9, 8, 7, 6, 5 } -> int,
+                  { 9, 7, 5 } -> int        } -> [_] -> int);
 }
 
 func main() -> int
 {
-    return 10 * 10;
+    return f1(10);
 }
 

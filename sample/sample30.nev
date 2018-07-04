@@ -1,5 +1,5 @@
 
-func one(float a, float b, float c) -> float
+func one(a -> float, b -> float, c -> float) -> float
 {
     return a + b + c;
 }

@@ -1,5 +1,5 @@
 
-func gcd(int x, int y) -> int
+func gcd(x -> int, y -> int) -> int
 {
     return (y == 0) ? x : gcd(y, x % y);
 }

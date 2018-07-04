@@ -23,7 +23,7 @@ The function may only return value of one expression. In the above example tempe
 of boiling water given in Celsius degrees is converted to Fahrenheit degrees.
 
 ```
-func cel2fah(float c) -> float
+func cel2fah(c -> float) -> float
 {
     return c * 1.8 + 32.0;
 }
@@ -41,7 +41,7 @@ In particular, Functions may invoke themselves. The Fibonacci function is
 a classic example:
 
 ```
-func fib(int n) -> int
+func fib(n -> int) -> int
 {
     return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
 }
@@ -55,7 +55,7 @@ func main() -> int
 or greatest common divisor:
 
 ```
-func gcd(int x, int y) -> int
+func gcd(x -> int, y -> int) -> int
 {
     return (y == 0) ? x : gcd(y, x % y);
 }
@@ -78,17 +78,17 @@ ability to accept and return functions. The following code demonstrates this
 feature.
 
 ```
-func fah2cel(float f) -> float
+func fah2cel(f -> float) -> float
 {
     return (f - 32.0) / 1.8;
 }
 
-func cel2fah(float c) -> float
+func cel2fah(c -> float) -> float
 {
     return c * 1.8 + 32.0;
 }
 
-func dir_deg(int d) -> (float) -> float
+func dir_deg(d -> int) -> (float) -> float
 {
     return d == 0 ? fah2cel : cel2fah;
 }
@@ -106,17 +106,17 @@ degrees. As Never is strongly typed the function specifies its return type as
 
 Functions may also take other functions as arguments.
 ```
-func fah2cel(float f) -> float
+func fah2cel(f -> float) -> float
 {
     return (f - 32.0) / 1.8;
 }
 
-func cel2fah(float c) -> float
+func cel2fah(c -> float) -> float
 {
     return c * 1.8 + 32.0;
 }
 
-func degrees(conv(float) -> float, float degree) -> float
+func degrees(conv(float) -> float, degree -> float) -> float
 {
     return conv(degree);
 }
@@ -136,14 +136,14 @@ Never supports any degree of function nesting. As result it is not needed to
 define all functions in programs top level.
 
 ```
-func dir_deg(int d) -> (float) -> float
+func dir_deg(d -> int) -> (float) -> float
 {
-    func fah2cel(float f) -> float
+    func fah2cel(f -> float) -> float
     {
         return (f - 32) / 1.8;
     }
 
-    func cel2fah(float c) -> float
+    func cel2fah(c -> float) -> float
     {
         return c * 1.8 + 32;
     }
@@ -164,14 +164,14 @@ which are defined above or at the same level in the structure of a program
 can be used.
 
 ```
-func dir_deg(int d, float coeff) -> (float) -> float
+func dir_deg(d -> float, coeff -> float) -> (float) -> float
 {
-    func fah2cel(float f) -> float
+    func fah2cel(f -> float) -> float
     {
         return coeff * ((f - 32.0) / 1.8);
     }
 
-    func cel2fah(float c) -> float
+    func cel2fah(c -> float) -> float
     {
         return coeff * (c * 1.8 + 32.0);
     }
@@ -196,14 +196,14 @@ Functions in functional programming languages are also expressions.
 This leads to very interesting syntax which is supported by Never.
 
 ```
-func degrees(conv(float) -> float, float degree) -> float
+func degrees(conv(float) -> float, degree -> float) -> float
 {
     return conv(degree);
 }
 
 func main() -> float
 {
-    return degrees(func rea2cel(float d) -> float
+    return degrees(func rea2cel(d -> float) -> float
                    {
                         return d * 4.0 / 5.0;
                    }, 100.0);
@@ -229,10 +229,10 @@ func main() -> float
 ... and a little step further.
 
 ```
-func dir_deg(int d) -> (float) -> float
+func dir_deg(d -> int) -> (float) -> float
 {
-    return d == 0 ? func fah2cel(float f) -> float { return (f - 32.0) / 1.8; }
-                  : func cel2fah(float c) -> float { return c * 1.8 + 32.0; };
+    return d == 0 ? func fah2cel(f -> float) -> float { return (f - 32.0) / 1.8; }
+                  : func cel2fah(c -> float) -> float { return c * 1.8 + 32.0; };
 }
 
 func main() -> float
@@ -249,7 +249,7 @@ and ```pow(x,y)```. These functions are also first class so they may be passed
 in between functions as any other function.
 
 ```
-func deg2rad(float deg) -> float
+func deg2rad(deg -> float) -> float
 {
     return deg * 3.14159265359 / 180;
 }
@@ -284,12 +284,12 @@ Never language can be embedded in Unix shell and C code.
 ```
 #!/usr/bin/nev
 
-func add(int a, int b, int c) -> int
+func add(a -> int, b -> int, c -> int) -> int
 {
     return a + b + c;
 }
 
-func main(int a, int b) -> int
+func main(a -> int, b -> int) -> int
 {
     return add(a, b, 1);
 }
@@ -318,7 +318,7 @@ void test_one()
     int ret = 0;
     object result = { 0 };
     program * prog = program_new();
-    const char * prog_str = "func main(int a, int b) -> int { return 10 * (a + b); }";
+    const char * prog_str = "func main(a -> int, b -> int) -> int { return 10 * (a + b); }";
 
     ret = nev_compile_str(prog_str, prog);
     if (ret == 0)

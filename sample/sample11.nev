@@ -3,7 +3,7 @@
  */
 func main() -> int 
 {
-    return assert((2 < 1 ? func min(float a, float b) -> float { return a < b ? a : b; }
-                         : func max(float a, float b) -> float { return a > b ? a : b; })(10.0, 20.0) == 20.0);
+    return assert((2 < 1 ? func min(a -> float, b -> float) -> float { return a < b ? a : b; }
+                         : func max(a -> float, b -> float) -> float { return a > b ? a : b; })(10.0, 20.0) == 20.0);
 }
 
