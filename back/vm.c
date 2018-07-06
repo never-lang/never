@@ -631,7 +631,15 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
     dv = object_arr_dim_new(dims);
     for (d = 0; d < dims; d++)
     {
-        dv[d].elems = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        int e = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        if (e <= 0)
+        {
+            object_arr_dim_delete(dv);
+            print_error_msg(machine->line_no, "array index %d out of bounds\n", d);
+            machine->running = VM_ERROR;
+            return;
+        }
+        dv[d].elems = e;
     }
 
     elem = gc_alloc_int(machine->collector, 10);
@@ -701,7 +709,15 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     addr = object_arr_dim_new(dims);
     for (d = 0; d < dims; d++)
     {
-        addr[d].mult = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        int e = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        if (e < 0)
+        {
+            object_arr_dim_delete(addr);
+            print_error_msg(machine->line_no, "array index %d out of bounds\n", d);
+            machine->running = VM_ERROR;
+            return;
+        }
+        addr[d].mult = e;
     }
     
     array = machine->stack[machine->sp--].addr;
