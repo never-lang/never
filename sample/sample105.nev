@@ -1,0 +1,25 @@
+
+func printTab( tab[dim] -> int ) -> int
+{
+    func __printTab( val -> int, i -> int, tab[dim] -> int ) -> int
+    {
+        return i < dim ? __printTab( print(tab[i]), i + 1, tab) : i;
+    }
+    return __printTab(0, 0, tab);
+}
+
+func print2Tab( tab[dim] -> [D] -> int ) -> int
+{
+    func __print2Tab( val -> int, i -> int, tab[dim] -> [D] -> int ) -> int
+    {
+        return i < dim ? __print2Tab( printTab(tab[i]), i + 1, tab ) : i;
+    }
+    return __print2Tab(0, 0, tab);
+}
+
+func main() -> int
+{
+    return print2Tab( { { 1, 2, 3, 4, 5, 6 } -> int,
+                        { 16, 17, 18 } -> int } -> [D] -> int );
+}
+

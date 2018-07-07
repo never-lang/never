@@ -1,40 +1,14 @@
 
-func f1(a -> int, tab[row, col] -> int) -> int
+func f1(a -> int) -> [D, D] -> int
 {
-    /* return tab[row - 1, col - 1]; */
-
-    return row * col;
-
-    /* return ({[ 10, 20 ]} -> int)[1, 2]; */
-
-    /*return {
-             func f1() -> int { return 10; },
-             func f2() -> int { return 20; }  
-           } -> () -> int[0](); */
-
-    /* return ({ 1, 2, 3, 4 } -> int)[1]; */
-
-    /*return ({{ 1, 2, 3 },
-             { 3, 4, 5 },
-             { 8, 1, 7 },
-             { 7, 6, 6 }} -> int)[a, a + 10]; */
-
-    /* return ({ tab, tab, tab } -> [D, D] -> int)[2][a, a]; */
-
-    /* return { {[10, 10]} -> int,
-             {[20, 20]} -> int } -> [D, D] -> int; */
-
-    /*return {{ a, 0, 0, 0 },
+    return {{ a, 0, 0, 0 },
             { 0, a, 0, 0 },
             { 0, 0, a, 0 },
-            { 0, 0, 0, a }} -> int; */
-            
-    /*return ({ { 1, 2, 3, 4, 5 } -> int,
-              { 1, 2, 3 } -> int } -> [_] -> int)[0]; */
+            { 0, 0, 0, a }} -> int;
 }
 
 func main() -> int
 {
-    return f1(10 * 10, {{ 10, 20 }, { 30, 40 }} -> int);
+    return assert(f1(11)[0, 0] == 11);
 }
 
