@@ -5,7 +5,7 @@ Never is a simple functional programming language. Technically it may be
 classified as syntactically scoped, strongly typed, call by value, pure
 functional programming language.
 
-In practise Never offers basic data types, array, first order functions and some 
+In practise Never offers basic data types, arrays, first order functions and some 
 mathematical functions to make it useful to calculate expressions. Also it
 demonstrates how functions can be compiled, invoked and passed as parameters
 or results between other functions.
@@ -316,11 +316,11 @@ func f1(tab[row, col] -> int) -> int
 
 func main() -> int
 {
-    return assert(f1({ {10, 20, 30}, {30, 40, 50} } -> int) == 6);
+    return f1( { {10, 20, 30}, {30, 40, 50} } -> int );
 }
 ```
 
-Conformat arrays lets to iterate over array elements. The following listing
+Conformat arrays let to iterate over array elements. The following listing
 demonstrates how conformant arrays and tail recursion are used to determine
 lowest element in an array.
 ```
@@ -339,8 +339,8 @@ func main() -> int
 }
 ```
 
-The following example lets to pass any function which is executed over
-all elements of an array. This listing uses arrays, first class functions
+The following example presents how to pass any function which is executed over
+all elements of an array. This program uses arrays, first class functions
 and tail recursion.
 ```
 func add_five(e -> int) -> int
