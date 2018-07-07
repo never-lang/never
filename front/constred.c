@@ -511,6 +511,16 @@ int expr_constred(expr * value, int * result)
                 }
             }
         break;
+        case EXPR_ARRAY:
+            if (value->array.array_value != NULL)
+            {
+                array_constread(value->array.array_value, result);
+            }
+        break;
+        case EXPR_ARRAY_DEREF:
+            expr_constred(value->array_deref.array_expr, result);
+            expr_list_constred(value->array_deref.ref, result);
+        break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
             expr_constred(value->call.func_expr, result);
@@ -570,6 +580,20 @@ int expr_list_constred(expr_list * list, int * result)
         }
         node = node->next;
     }
+    return 0;
+}
+
+int array_constread(array * value, int * result)
+{
+    if (value->elements != NULL)
+    {
+        expr_list_constred(value->elements, result);
+    }
+    if (value->dims != NULL)
+    {
+        expr_list_constred(value->dims, result);
+    }
+
     return 0;
 }
  

@@ -3,21 +3,21 @@
  */
  
  /* this is crazy */ 
-func counter(float from, float to, float by) -> (float, float) -> (float, float, float) -> float
+func counter(from -> float, to -> float, by -> float) -> (float, float) -> (float, float, float) -> float
 {
     func dec() -> float
     {
         return printf(by + from + to);
     }
 
-    func increase(float a, float b) -> (float, float, float) -> float
+    func increase(a -> float, b -> float) -> (float, float, float) -> float
     {
-        func inc(float x, float y) -> float
+        func inc(x -> float, y -> float) -> float
         {
             return printf(x + y);
         }
     
-        func increase_sub(float n_a, float n_b, float n_c) -> float
+        func increase_sub(n_a -> float, n_b -> float, n_c -> float) -> float
         {
             return dec() + inc(1.0, 2.0) + inc(4.0, 4.0);
         }

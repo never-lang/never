@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include <stdio.h>
+#include <assert.h>
 #include "tailrec.h"
 #include "symtab.h"
 
@@ -167,6 +168,36 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value, tailrec_op 
             }
         }
         break;
+        case EXPR_ARRAY:
+            if (value->array.array_value != NULL)
+            {
+                rec = array_tailrec(syn_level, func_value, op, value->array.array_value);
+            }
+        break;
+        case EXPR_ARRAY_DEREF:
+        {
+            tailrec_type rec_array_expr = TAILREC_NOT_FOUND;
+            tailrec_type rec_array_ref = TAILREC_NOT_FOUND;
+            
+            if (value->array_deref.array_expr != NULL)
+            {
+                rec_array_expr = expr_tailrec(syn_level, func_value, op, value->array_deref.array_expr);
+            }
+            if (value->array_deref.ref != NULL)
+            {
+                rec_array_ref  = expr_list_tailrec(syn_level, func_value, op, value->array_deref.ref);
+            }
+            
+            if (rec_array_expr == TAILREC_NOT_FOUND && rec_array_ref == TAILREC_NOT_FOUND)
+            {
+                rec = TAILREC_NOT_FOUND;
+            }
+            else
+            {
+                rec = TAILREC_NOT_POSSIBLE;
+            }
+        }
+        break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
         {
@@ -241,6 +272,38 @@ tailrec_type expr_list_tailrec(unsigned int syn_level, func * func_value, tailre
         node = node->next;
     }
 
+    return rec;
+}
+
+tailrec_type array_tailrec(unsigned int syn_level, func * func_value, tailrec_op op , array * value)
+{
+    tailrec_type rec = TAILREC_NOT_FOUND;
+    tailrec_type rec_array_expr = TAILREC_NOT_FOUND;
+    
+    if (value->type == ARRAY_INIT || value->type == ARRAY_SUB)
+    {
+        if (value->elements != NULL)
+        {
+            rec_array_expr = expr_list_tailrec(syn_level, func_value, op, value->elements);
+        }
+    }
+    else if (value->type == ARRAY_DIMS)
+    {
+        if (value->dims != NULL)
+        {
+            rec_array_expr = expr_list_tailrec(syn_level, func_value, op, value->dims);
+        }
+    }
+            
+    if (rec_array_expr == TAILREC_NOT_FOUND)
+    {
+        rec = TAILREC_NOT_FOUND;
+    }
+    else
+    {
+        rec = TAILREC_NOT_POSSIBLE;
+    }
+    
     return rec;
 }
  

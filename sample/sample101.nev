@@ -1,0 +1,17 @@
+
+func tsum( t[elems] -> int) -> int
+{
+	func __tsum( sum -> int, i -> int, t[elems] -> int ) -> int
+	{
+		return i < elems ? __tsum( sum + t[i], i + 1, t ) : sum;
+	}
+	return __tsum(0, 0, t);
+}
+
+
+func main() -> int
+{
+	return tsum( { 10, 20, 30, 40, 50 } -> int );
+}
+
+

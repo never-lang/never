@@ -1,0 +1,16 @@
+
+func tprint(v -> int, o -> int) -> int
+{
+    return print(v);
+}
+
+func enumtab(i -> int, t[dim] -> int) -> int
+{
+    return i < dim ? tprint(t[i], enumtab(i + 1, t)) : 0 ;
+}
+
+func main() -> int
+{
+    return enumtab(0, { 10, 20, 30, 40, 50, 60 } -> int);
+}
+

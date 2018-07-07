@@ -1,0 +1,11 @@
+
+func f1(tab[row, col] -> int) -> int
+{
+    return row * col;
+}
+
+func main() -> int
+{
+    return assert(f1({ {10, 20, 30}, {30, 40, 50} } -> int) == 6);
+}
+

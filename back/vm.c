@@ -35,6 +35,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_FLOAT, vm_execute_float },
     
     { BYTECODE_ID_LOCAL, vm_execute_id_local },
+    { BYTECODE_ID_DIM_LOCAL, vm_execute_id_dim_local },
     { BYTECODE_ID_GLOBAL, vm_execute_id_global },
     { BYTECODE_ID_FUNC_FUNC, vm_execute_id_func_func },
     { BYTECODE_ID_FUNC_ADDR, vm_execute_id_func_addr },
@@ -74,6 +75,10 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_JUMPZ, vm_execute_jumpz },
     { BYTECODE_JUMP, vm_execute_jump },
     { BYTECODE_LABEL, vm_execute_label },
+    
+    { BYTECODE_MK_ARRAY, vm_execute_mk_array },
+    { BYTECODE_MK_INIT_ARRAY, vm_execute_mk_init_array },
+    { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
     
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
@@ -154,6 +159,22 @@ void vm_execute_id_local(vm * machine, bytecode * code)
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_id_dim_local(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr addr = machine->stack[machine->sp - (code->id_dim_local.stack_level - code->id_dim_local.index)].addr;
+    unsigned int dim_elems = gc_get_arr_dim_elems(machine->collector, addr, code->id_dim_local.dim_index);
+    mem_ptr elems = gc_alloc_int(machine->collector, dim_elems);
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = elems;
 
     machine->stack[machine->sp] = entry;
 }
@@ -594,6 +615,134 @@ void vm_execute_jump(vm * machine, bytecode * code)
 void vm_execute_label(vm * machine, bytecode * code)
 {
     /* no op */
+}
+
+void vm_execute_mk_array(vm * machine, bytecode * code)
+{
+    unsigned int d = 0;
+    unsigned int dims = 0;
+    unsigned int elems = 0;
+    object_arr_dim * dv = NULL;
+    gc_stack entry = { 0 };
+    mem_ptr array = { 0 };
+    mem_ptr elem = { 0 };
+    
+    dims = code->mk_array.dims;
+    dv = object_arr_dim_new(dims);
+    for (d = 0; d < dims; d++)
+    {
+        int e = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        if (e <= 0)
+        {
+            object_arr_dim_delete(dv);
+            print_error_msg(machine->line_no, "array index %d out of bounds\n", d);
+            machine->running = VM_ERROR;
+            return;
+        }
+        dv[d].elems = e;
+    }
+
+    elem = gc_alloc_int(machine->collector, 10);
+
+    array = gc_alloc_arr(machine->collector, dims, dv);
+    elems = gc_get_arr_elems(machine->collector, array);
+    for (d = 0; d < elems; d++)
+    {
+        gc_set_arr(machine->collector, array, d, elem);
+    }
+    
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = array;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_mk_init_array(vm * machine, bytecode * code)
+{
+    unsigned int d = 0;
+    unsigned int dims = 0;
+    unsigned int elems = 0;
+    object_arr_dim * dv = NULL;
+    gc_stack entry = { 0 };
+    mem_ptr array = { 0 };
+    
+    dims = code->mk_array.dims;
+    dv = object_arr_dim_new(dims);
+    
+    for (d = 0; d < dims; d++)
+    {
+        dv[d].elems = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+    }
+    array = gc_alloc_arr(machine->collector, dims, dv);
+
+    elems = gc_get_arr_elems(machine->collector, array);
+    for (d = 0; d < elems; d++)
+    {
+        gc_set_arr(machine->collector, array, d, machine->stack[machine->sp--].addr);
+    }
+    
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = array;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_array_deref(vm * machine, bytecode * code)
+{
+    int oobounds;
+    unsigned int d = 0;
+    unsigned int dims = 0;
+    unsigned int elem_index = 0;
+    gc_stack entry = { 0 };
+    mem_ptr array = { 0 };
+    mem_ptr elem = { 0 };
+    object_arr_dim * dv = NULL;
+    object_arr_dim * addr = NULL;
+
+    dims = code->array_deref.dims;
+    addr = object_arr_dim_new(dims);
+    for (d = 0; d < dims; d++)
+    {
+        int e = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        if (e < 0)
+        {
+            object_arr_dim_delete(addr);
+            print_error_msg(machine->line_no, "array index %d out of bounds\n", d);
+            machine->running = VM_ERROR;
+            return;
+        }
+        addr[d].mult = e;
+    }
+    
+    array = machine->stack[machine->sp--].addr;
+    assert(gc_get_arr_dims(machine->collector, array) == dims);
+    
+    dv = gc_get_arr_dv(machine->collector, array);
+    elem_index = object_arr_dim_addr(dims, dv, addr, &oobounds);    
+    object_arr_dim_delete(addr);
+
+    if (oobounds >= 0)
+    {
+        print_error_msg(machine->line_no, "array index %d out of bounds\n", oobounds);
+        machine->running = VM_ERROR;
+        return;
+    }
+
+    elem = gc_get_arr(machine->collector, array, elem_index);    
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = elem;
+
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_func_def(vm * machine, bytecode * code)

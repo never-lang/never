@@ -46,14 +46,16 @@ typedef enum expr_type
     EXPR_AND = 16,
     EXPR_OR  = 17,
     EXPR_NOT = 18,
-    EXPR_SUP = 19, /* ( expr ) */
-    EXPR_COND = 20, /* expr ? expr : expr */
-    EXPR_CALL = 21, /* ID ( expr_list) */
-    EXPR_LAST_CALL = 22, /* ID (expr_list */
-    EXPR_FUNC = 23,  /* func ID ( ... ) */
-    EXPR_BUILD_IN = 24,
-    EXPR_INT_TO_FLOAT = 25,
-    EXPR_FLOAT_TO_INT = 26  
+    EXPR_SUP = 19,          /* ( expr ) */
+    EXPR_COND = 20,         /* expr ? expr : expr */
+    EXPR_ARRAY = 21,        /* [ expr_list ] */
+    EXPR_ARRAY_DEREF = 22,    /* expr [ expr_list ] */
+    EXPR_CALL = 23,         /* ID ( expr_list) */
+    EXPR_LAST_CALL = 24,    /* ID (expr_list */
+    EXPR_FUNC = 25,         /* func ID ( ... ) */
+    EXPR_BUILD_IN = 26,
+    EXPR_INT_TO_FLOAT = 27,
+    EXPR_FLOAT_TO_INT = 28  
 } expr_type;
 
 typedef enum comb_type
@@ -63,8 +65,9 @@ typedef enum comb_type
     COMB_TYPE_VOID = 2,
     COMB_TYPE_BOOL = 3,
     COMB_TYPE_INT  = 4,
-    COMB_TYPE_FLOAT  = 5,
-    COMB_TYPE_FUNC = 6
+    COMB_TYPE_FLOAT = 5,
+    COMB_TYPE_ARRAY = 6,
+    COMB_TYPE_FUNC = 7
 } comb_type;
 
 typedef enum id_type
@@ -77,6 +80,7 @@ typedef enum id_type
     ID_TYPE_FUNC_NEST = 5
 } id_type;
 
+typedef struct array array;
 typedef struct func func;
 typedef struct expr_list expr_list;
 
@@ -85,7 +89,8 @@ typedef struct expr
     expr_type type;
     comb_type comb;
     struct var_list * comb_vars; /* function arguments */
-    struct var * comb_ret; /* function ret */
+    struct var * comb_ret;  /* function ret */
+    int comb_dims; /* array dimensions */
     unsigned int line_no;
     union
     {
@@ -123,6 +128,15 @@ typedef struct expr
             struct expr_list * param;
             struct var * ret;
         } func_build_in;
+        struct
+        {
+            struct array * array_value; /* EXPR_ARRAY */
+        } array;
+        struct
+        {
+            struct expr * array_expr; /* EXPR_ARRAY_DEREF */
+            struct expr_list * ref;
+        } array_deref;
     };
 } expr;
 
@@ -146,6 +160,8 @@ expr * expr_new_id(char * id);
 expr * expr_new_one(int type, expr * expr_left);
 expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle, expr * expr_right);
+expr * expr_new_array(array * value);
+expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
 expr * expr_new_func(func * value); 
 expr * expr_new_call(expr * func_expr, expr_list * vars);
 expr * expr_new_build_in(unsigned int id, expr_list * params, var * var_ret);
@@ -163,6 +179,7 @@ void expr_list_delete(expr_list * list);
 void expr_list_add_beg(expr_list * list, expr * value);
 void expr_list_add_end(expr_list * list, expr * value);
 
+const char * expr_type_str(expr_type type);
 const char * comb_type_str(comb_type type);
 
 #endif /* __EXPR_H__ */

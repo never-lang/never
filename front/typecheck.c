@@ -20,7 +20,9 @@
  * THE SOFTWARE.
  */
 #include <stdio.h>
+#include <assert.h>
 #include "typecheck.h"
+#include "tcheckarr.h"
 #include "symtab.h"
 #include "utils.h"
 #include "tailrec.h"
@@ -38,6 +40,16 @@ int expr_set_return_type(expr * value, var * ret)
     else if (ret->type == VAR_FLOAT)
     {
         value->comb = COMB_TYPE_FLOAT;
+    }
+    else if (ret->type == VAR_DIM)
+    {
+        value->comb = COMB_TYPE_INT;
+    }
+    else if (ret->type == VAR_ARRAY)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = ret->dims->count;
+        value->comb_ret = ret->ret;
     }
     else if (ret->type == VAR_FUNC)
     {
@@ -72,6 +84,11 @@ int var_cmp(var * var_one, var * var_two)
     else if (var_one->type == VAR_FLOAT && var_two->type == VAR_FLOAT)
     {
         return TYPECHECK_SUCC;
+    }
+    else if (var_one->type == VAR_ARRAY && var_two->type == VAR_ARRAY)
+    {
+        return (var_one->dims->count == var_two->dims->count &&
+                var_cmp(var_one->ret, var_two->ret));
     }
     else if (var_one->type == VAR_FUNC && var_two->type == VAR_FUNC)
     {
@@ -132,6 +149,15 @@ int func_cmp(var_list * var_list_one, var * ret_one,
     }
 }
 
+int var_expr_array_cmp(var * var_value, expr * expr_value)
+{
+    if (var_value->dims->count != expr_value->comb_dims)
+    {
+        return TYPECHECK_FAIL;
+    }
+    return var_cmp(var_value->ret, expr_value->comb_ret);
+}
+
 int var_expr_cmp(var * var_value, expr * expr_value)
 {
     if (var_value == NULL && expr_value == NULL)
@@ -157,13 +183,28 @@ int var_expr_cmp(var * var_value, expr * expr_value)
     else if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_INT)
     {
         expr_conv(expr_value, EXPR_INT_TO_FLOAT);
-
+        
         print_warning_msg(expr_value->line_no, "converted int to float\n");
         return TYPECHECK_SUCC;
     }
     else if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_FLOAT)
     {
         return TYPECHECK_SUCC;
+    }
+    else if (var_value->type == VAR_DIM && expr_value->comb == COMB_TYPE_INT)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (var_value->type == VAR_DIM && expr_value->comb == COMB_TYPE_FLOAT)
+    {
+        expr_conv(expr_value, EXPR_FLOAT_TO_INT);
+
+        print_warning_msg(expr_value->line_no, "converted float to int\n");
+        return TYPECHECK_SUCC;
+    }
+    else if (var_value->type == VAR_ARRAY && expr_value->comb == COMB_TYPE_ARRAY)
+    {
+        return var_expr_array_cmp(var_value, expr_value);
     }
     else if (var_value->type == VAR_FUNC && expr_value->comb == COMB_TYPE_FUNC)
     {
@@ -236,6 +277,16 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             {
                  value->comb = COMB_TYPE_FLOAT;
             }
+            else if (var_value->type == VAR_DIM)
+            {
+                 value->comb = COMB_TYPE_INT;
+            }
+            else if (var_value->type == VAR_ARRAY)
+            {
+                 value->comb = COMB_TYPE_ARRAY;
+                 value->comb_dims = var_value->dims->count;
+                 value->comb_ret = var_value->ret;
+            }
             else if (var_value->type == VAR_FUNC)
             {
                  value->comb = COMB_TYPE_FUNC;
@@ -302,6 +353,84 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
     return 0;
 }
 
+int array_dims_check_type_expr(symtab * tab, expr * value, int * result)
+{
+    expr_check_type(tab, value, result);
+
+    if (value->comb == COMB_TYPE_FLOAT)
+    {
+        expr_conv(value, EXPR_FLOAT_TO_INT);
+        print_warning_msg(value->line_no, "converted float to int\n");
+    }
+    else if (value->comb != COMB_TYPE_INT)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no,
+                        "incorrect types %s passed to deref array\n",
+                        comb_type_str(value->comb));
+    }
+    return 0;
+}
+
+int array_dims_check_type_expr_list(symtab * tab, expr_list * list, int * result)
+{
+    expr_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        expr * value = node->value;
+        if (value != NULL)
+        {
+            array_dims_check_type_expr(tab, value, result);
+        }
+        node = node->next;
+    }
+
+    return TYPECHECK_SUCC;
+}
+
+int expr_array_deref_check_type(symtab * tab, expr * value, int * result)
+{
+    expr_check_type(tab, value->array_deref.array_expr, result);
+    if (value->array_deref.ref != NULL)
+    {
+        expr_list_check_type(tab, value->array_deref.ref, result);
+    }
+    
+    if (value->array_deref.array_expr->comb == COMB_TYPE_ARRAY)
+    {
+        if (value->array_deref.array_expr->comb_dims != value->array_deref.ref->count)
+        {   
+            *result = TYPECHECK_FAIL;
+            value->comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "incorrect number of dimesions passed to deref array\n");
+        }
+        else
+        {
+            array_dims_check_type_expr_list(tab, value->array_deref.ref, result);
+            if (*result == TYPECHECK_FAIL)
+            {
+                value->comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no, "incorrect types of arguments passed to deref array\n");
+            }
+            else
+            {
+                expr_set_return_type(value, value->array_deref.array_expr->comb_ret);
+            }
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, 
+                        "cannot deref %s\n",
+                        comb_type_str(value->array_deref.array_expr->comb));
+    }
+    
+    
+    return 0;
+}
+
 int expr_call_check_type(symtab * tab, expr * value, int * result)
 {
     expr_check_type(tab, value->call.func_expr, result);
@@ -325,12 +454,13 @@ int expr_call_check_type(symtab * tab, expr * value, int * result)
         break;
         case COMB_TYPE_INT:
         case COMB_TYPE_FLOAT:
+        case COMB_TYPE_ARRAY:
         case COMB_TYPE_BOOL:
         case COMB_TYPE_UNKNOWN:
         case COMB_TYPE_ERR:
         case COMB_TYPE_VOID:
             print_error_msg(value->line_no, "cannot execute function on type %s\n", 
-                            comb_type_str(value->comb));
+                            comb_type_str(value->call.func_expr->comb));
         break;
     }
 
@@ -525,9 +655,16 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             value->comb = value->left->comb;
             value->comb_vars = value->left->comb_vars;
             value->comb_ret = value->left->comb_ret;
+            value->comb_dims = value->left->comb_dims;
         break;
         case EXPR_COND:
             expr_cond_check_type(tab, value, result);
+        break;
+        case EXPR_ARRAY:
+            expr_array_check_type(tab, value, result);
+        break;
+        case EXPR_ARRAY_DEREF:
+            expr_array_deref_check_type(tab, value, result);
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
@@ -649,6 +786,48 @@ int never_check_type(never * nev, int * result)
 /*
  * Add symbols to symtab
  */
+int symtab_add_var_from_basic_var(symtab * tab, var * var_value, int * result)
+{
+    symtab_entry * entry = symtab_lookup(tab, var_value->id, SYMTAB_FLAT);
+    if (entry == NULL)
+    {
+        symtab_add_var(tab, var_value);
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        if (entry->type == SYMTAB_FUNC)
+        {
+            func * al_func = entry->func_value;
+            print_error_msg(var_value->line_no, 
+                            "function %s already defined at line %u\n",
+                             entry->id, al_func->line_no);
+        }
+        else if (entry->type == SYMTAB_VAR)
+        {
+            var * al_var = entry->var_value;
+            print_error_msg(var_value->line_no,
+                            "parameter %s already defined at line %u\n",
+                            entry->id, al_var->line_no);
+        }
+    }
+    return 0;
+}
+
+int symtab_add_var_from_var(symtab * tab, var * var_value, int * result)
+{
+    if (var_value->type == VAR_ARRAY)
+    {
+        symtab_add_var_from_basic_var(tab, var_value, result);
+        symtab_add_var_from_var_list(tab, var_value->dims, result);
+    }
+    else
+    {
+        symtab_add_var_from_basic_var(tab, var_value, result);
+    }
+    return 0;
+} 
+ 
 int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result)
 {
     var_list_node * node = list->tail;
@@ -657,29 +836,7 @@ int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result)
         var * var_value = node->value;
         if (var_value && var_value->id)
         {
-            symtab_entry * entry = symtab_lookup(tab, var_value->id, SYMTAB_FLAT);
-            if (entry == NULL)
-            {
-                symtab_add_var(tab, var_value);
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                if (entry->type == SYMTAB_FUNC)
-                {
-                    func * al_func = entry->func_value;
-                    print_error_msg(var_value->line_no, 
-                                    "function %s already defined at line %u\n",
-                                    entry->id, al_func->line_no);
-                }
-                else if (entry->type == SYMTAB_VAR)
-                {
-                    var * al_var = entry->var_value;
-                    print_error_msg(var_value->line_no,
-                                    "parameter %s already defined at line %u\n",
-                                    entry->id, al_var->line_no);
-                }
-            }
+            symtab_add_var_from_var(tab, var_value, result);
         }
         node = node->next;
     }
@@ -698,8 +855,8 @@ int symtab_add_func_from_func(symtab * tab, func * func_value, int * result)
          *result = TYPECHECK_FAIL;
          if (entry->type == SYMTAB_FUNC)
          {
-             func * al_func = entry->func_value;
-             print_error_msg(func_value->line_no,
+              func * al_func = entry->func_value;
+              print_error_msg(func_value->line_no,
                              "function %s already defined at line %u\n",
                              entry->id, al_func->line_no);
          }
@@ -772,6 +929,13 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
             symtab_add_entry_expr(stab, value->middle, result);
             symtab_add_entry_expr(stab, value->right, result);
         break;
+        case EXPR_ARRAY:
+            symtab_add_entry_array(stab, value->array.array_value, result);
+        break;
+        case EXPR_ARRAY_DEREF:
+            symtab_add_entry_expr(stab, value->array_deref.array_expr, result);
+            symtab_add_entry_expr_list(stab, value->array_deref.ref, result);
+        break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
             symtab_add_entry_expr(stab, value->call.func_expr, result);
@@ -808,6 +972,19 @@ int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list, int * res
             symtab_add_entry_expr(stab_parent, value, result);
         }
         node = node->next;
+    }
+    return 0;
+}
+
+int symtab_add_entry_array(symtab * stab_parent, array * array_value, int * result)
+{
+    if (array_value->dims != NULL)
+    {
+        symtab_add_entry_expr_list(stab_parent, array_value->dims, result);
+    }
+    if (array_value->elements != NULL)
+    {
+        symtab_add_entry_expr_list(stab_parent, array_value->elements, result);
     }
     return 0;
 }
@@ -918,6 +1095,16 @@ int print_func_expr(expr * value, int depth)
             print_func_expr(value->middle, depth);
             print_func_expr(value->right, depth);
         break;
+        case EXPR_ARRAY:
+            if (value->array.array_value != NULL)
+            {
+                print_func_array(value->array.array_value, depth);
+            }
+        break;
+        case EXPR_ARRAY_DEREF:
+            print_func_expr(value->array_deref.array_expr, depth);
+            print_func_expr_list(value->array_deref.ref, depth);
+        break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
             print_func_expr(value->call.func_expr, depth);
@@ -955,6 +1142,20 @@ int print_func_expr_list(expr_list * list, int depth)
         }
         node = node->next;
     }
+    return 0;
+}
+
+int print_func_array(array * value, int depth)
+{
+    if (value->elements != NULL)
+    {
+        print_func_expr_list(value->elements, depth);
+    }
+    if (value->dims != NULL)
+    {
+        print_func_expr_list(value->dims, depth);
+    }
+
     return 0;
 }
  

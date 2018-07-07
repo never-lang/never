@@ -30,6 +30,7 @@ typedef enum bytecode_type
     BYTECODE_FLOAT,
     
     BYTECODE_ID_LOCAL,
+    BYTECODE_ID_DIM_LOCAL,
     BYTECODE_ID_GLOBAL,
     BYTECODE_ID_FUNC_FUNC,
     BYTECODE_ID_FUNC_ADDR,
@@ -69,6 +70,10 @@ typedef enum bytecode_type
     BYTECODE_JUMPZ,
     BYTECODE_JUMP,
     BYTECODE_LABEL,
+
+    BYTECODE_MK_ARRAY,
+    BYTECODE_MK_INIT_ARRAY,
+    BYTECODE_ARRAY_DEREF,
 
     BYTECODE_FUNC_DEF,
     BYTECODE_GLOBAL_VEC,
@@ -110,6 +115,17 @@ typedef struct bytecode
         {
             int index;
         } id_global;
+        struct
+        {
+            int stack_level;
+            int index;
+            int dim_index;
+        } id_dim_local;
+        struct
+        {
+            int index;
+            int dim_index;
+        } id_dim_global;
         union              /* BYTECODE_ID_FUNC_FUNC BYTECODE_ID_FUNC_ADDR */
         {
             struct func * func_value;
@@ -154,6 +170,16 @@ typedef struct bytecode
             unsigned int j;
         }
         rewrite;
+        struct
+        {
+            unsigned int dims;
+        }
+        mk_array; /* BYTECODE_MK_ARRAY, BYTECODE_MK_INIT_ARRAY */
+        struct
+        {
+            unsigned int dims;
+        }
+        array_deref;
     };
 } bytecode;
 
@@ -183,6 +209,7 @@ void bytecode_print_int(bytecode * code);
 void bytecode_print_float(bytecode * code);
 
 void bytecode_print_id_local(bytecode * code);
+void bytecode_print_id_dim_local(bytecode * code);
 void bytecode_print_id_global(bytecode * code);
 void bytecode_print_id_func_func(bytecode * code);
 void bytecode_print_id_func_addr(bytecode * code);
@@ -222,6 +249,10 @@ void bytecode_print_float_to_int(bytecode * code);
 void bytecode_print_jumpz(bytecode * code);
 void bytecode_print_jump(bytecode * code);
 void bytecode_print_label(bytecode * code);
+
+void bytecode_print_mk_array(bytecode * code);
+void bytecode_print_mk_init_array(bytecode * code);
+void bytecode_print_array_deref(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);

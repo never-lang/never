@@ -1,12 +1,12 @@
 
-func min(float a, float b) -> float
+func min(a -> float, b -> float) -> float
 {
     return (a < b) ? a : b;
 }
 
 func twice(single_func(float, float) -> float) -> (float, float) -> float
 {
-    func twice_func(float a, float b) -> float
+    func twice_func(a -> float, b -> float) -> float
     {
         func one_more() -> float
         {

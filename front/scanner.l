@@ -133,6 +133,18 @@ float {
     return TOK_NOT;
 }
 
+"{[" {
+    tokp->line_no = line_no;
+    scanner_printf("beg array dims\n");
+    return ARR_DIM_BEG;
+}
+
+"]}" {
+    tokp->line_no = line_no;
+    scanner_printf("end array dims\n");
+    return ARR_DIM_END;
+}
+
 "("|")" {
     tokp->line_no = line_no;
     scanner_printf("open|close paren\n");
@@ -142,6 +154,12 @@ float {
 "{"|"}" {
     tokp->line_no = line_no;
     scanner_printf("open|close bracket\n");
+    return yytext[0];
+}
+
+"["|"]" {
+    tokp->line_no = line_no;
+    scanner_printf("open|close quare backet\n");
     return yytext[0];
 }
 

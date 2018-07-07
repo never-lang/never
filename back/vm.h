@@ -61,6 +61,7 @@ void vm_execute_int(vm * machine, bytecode * code);
 void vm_execute_float(vm * machine, bytecode * code);
 
 void vm_execute_id_local(vm * machine, bytecode * code);
+void vm_execute_id_dim_local(vm * machine, bytecode * code);
 void vm_execute_id_global(vm * machine, bytecode * code);
 void vm_execute_id_func_func(vm * machine, bytecode * code);
 void vm_execute_id_func_addr(vm * machine, bytecode * code);
@@ -100,6 +101,10 @@ void vm_execute_float_to_int(vm * machine, bytecode * code);
 void vm_execute_jumpz(vm * machine, bytecode * code);
 void vm_execute_jump(vm * machine, bytecode * code);
 void vm_execute_label(vm * machine, bytecode * code);
+
+void vm_execute_mk_array(vm * machine, bytecode * code);
+void vm_execute_mk_init_array(vm * machine, bytecode * code);
+void vm_execute_array_deref(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_global_vec(vm * machine, bytecode * code);

@@ -1,9 +1,9 @@
-func min(float a, float b) -> float 
+func min(a -> float, b -> float) -> float 
 { 
     return a < b ? a + a : b + b; 
 }
 
-func execute(float a, float b, f1(float, float) -> float) -> float
+func execute(a -> float, b -> float, f1(float, float) -> float) -> float
 {
     return f1(a, b);
 } 

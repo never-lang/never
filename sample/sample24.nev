@@ -1,16 +1,16 @@
-func mutrec(float n) -> float
+func mutrec(n -> float) -> float
 {
-    func A(float n) -> float
+    func A(n -> float) -> float
     {
         return (n == 1.0) ? B(1.0) : 99.0;
     }
     
-    func B(float n) -> float
+    func B(n -> float) -> float
     {
         return (n == 1.0) ? A(10.0) : 12.0;
     }
     
-    func C(float n) -> float
+    func C(n -> float) -> float
     {
         return A(n);
     }

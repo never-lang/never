@@ -1,0 +1,14 @@
+
+func f1(a -> int, b -> int, c -> int) -> [D] -> () -> int
+{
+    return {
+             func f1() -> int { return a + b + c; },
+             func f2() -> int { return a + b - c; }  
+           } -> () -> int;
+}
+
+func main() -> int
+{
+    return assert(f1(80, 90, 100)[1]() == 70);
+}
+

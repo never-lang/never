@@ -1,0 +1,16 @@
+
+func call(tab[row, col] -> int) -> int
+{
+    return tab[row - 1, col - 1];
+}
+
+func f1(a -> int) -> int
+{
+    return call( {[ a, a ]} -> int );
+}
+
+func main() -> int
+{
+    return assert(f1(3) == 10);
+}
+

@@ -63,6 +63,7 @@ void gc_delete(gc * collector);
 void gc_mark_all(gc * collector);
 void gc_sweep_all(gc * collector);
 void gc_mark_vec(gc * collector, mem_ptr addr);
+void gc_mark_arr(gc * collector, mem_ptr addr);
 void gc_mark(gc * collector, mem_ptr addr);
 void gc_mark_access(gc * collector, gc_stack * omfalos, int stack_size);
 void gc_run_omfalos(gc * collector, gc_stack * omfalos, int stack_size);
@@ -73,6 +74,7 @@ mem_ptr gc_alloc_any(gc * collector, object * value);
 mem_ptr gc_alloc_int(gc * collector, int value);
 mem_ptr gc_alloc_float(gc * collector, float value);
 mem_ptr gc_alloc_vec(gc * collector, unsigned int size);
+mem_ptr gc_alloc_arr(gc * collector, unsigned int dims, object_arr_dim * dv);
 mem_ptr gc_alloc_func(gc * collector, mem_ptr vec, ip_ptr addr);
 
 int gc_get_int(gc * collector, mem_ptr addr);
@@ -83,6 +85,13 @@ void gc_set_float(gc * collector, mem_ptr addr, float value);
 
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
 void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index, mem_ptr value);
+
+unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr, unsigned int dim);
+unsigned int gc_get_arr_dims(gc * collector, mem_ptr addr);
+unsigned int gc_get_arr_elems(gc * collector, mem_ptr addr);
+object_arr_dim * gc_get_arr_dv(gc * collector, mem_ptr addr);
+mem_ptr gc_get_arr(gc * collector, mem_ptr addr, unsigned int elem_index);
+void gc_set_arr(gc * collector, mem_ptr addr, unsigned int elem_index, mem_ptr value);
 
 ip_ptr gc_get_func_addr(gc * collector, mem_ptr func_addr);
 mem_ptr gc_get_func_vec(gc * collector, mem_ptr func_addr);

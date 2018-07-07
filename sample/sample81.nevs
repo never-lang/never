@@ -1,11 +1,11 @@
 #!../nev
 
-func add(int a, int b, int c) -> int
+func add(a -> int, b -> int, c -> int) -> int
 {
     return a + b + c;
 }
 
-func main(int a, int b) -> int
+func main(a -> int, b -> int) -> int
 {
     return add(a, b, 1);
 }

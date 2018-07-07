@@ -53,8 +53,8 @@ void symtab_entry_delete(symtab_entry * entries)
     free(entries);
 }
 
-void symtab_entry_add_var_func(symtab_entry * entries, unsigned int size,
-                               int type, const char * id, void * var_func_value)
+void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
+                             int type, const char * id, void * object_value)
 {
     unsigned int times = 0;
     unsigned int index = hash(id) % size;
@@ -70,10 +70,10 @@ void symtab_entry_add_var_func(symtab_entry * entries, unsigned int size,
     }
     entries[index].type = type;
     entries[index].id = id;
-    entries[index].var_value = var_func_value;
+    entries[index].var_value = object_value;
 }
 
-symtab_entry * symtab_entry_lookup_var_func(symtab_entry * entries, unsigned int size, const char * id)
+symtab_entry * symtab_entry_lookup_object(symtab_entry * entries, unsigned int size, const char * id)
 {
     unsigned int times = 0;
     unsigned int index = hash(id) % size;
@@ -101,9 +101,9 @@ void symtab_entry_resize(symtab_entry * entries, int size, symtab_entry * entrie
     
     for (i = 0; i < size; i++)
     {
-        symtab_entry_add_var_func(entries_new, size_new,
-                                  entries[i].type, entries[i].id,
-                                  entries[i].var_value);
+        symtab_entry_add_object(entries_new, size_new,
+                                entries[i].type, entries[i].id,
+                                entries[i].var_value);
     }
 }
 
@@ -182,7 +182,7 @@ void symtab_add_var(symtab * tab, var * var_value)
         return;
     }
 
-    symtab_entry_add_var_func(tab->entries, tab->size, SYMTAB_VAR, var_value->id, var_value);
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_VAR, var_value->id, var_value);
     tab->count++;
     symtab_resize(tab);    
 }
@@ -194,7 +194,7 @@ void symtab_add_func(symtab * tab, func * func_value)
         return;
     }
 
-    symtab_entry_add_var_func(tab->entries, tab->size, SYMTAB_FUNC, func_value->id, func_value);
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_FUNC, func_value->id, func_value);
     tab->count++;
     symtab_resize(tab);
 }
@@ -203,7 +203,7 @@ symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_entry_lookup_var_func(tab->entries, tab->size, id);
+    entry = symtab_entry_lookup_object(tab->entries, tab->size, id);
     if (nested && entry == NULL && tab->parent != NULL)
     {
         return symtab_lookup(tab->parent, id, nested);

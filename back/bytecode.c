@@ -32,6 +32,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_FLOAT, bytecode_print_float },
     
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
+    { BYTECODE_ID_DIM_LOCAL, bytecode_print_id_dim_local },
     { BYTECODE_ID_GLOBAL, bytecode_print_id_global },
     { BYTECODE_ID_FUNC_FUNC, bytecode_print_id_func_func },
     { BYTECODE_ID_FUNC_ADDR, bytecode_print_id_func_addr },
@@ -72,8 +73,13 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_JUMP, bytecode_print_jump },
     { BYTECODE_LABEL, bytecode_print_label },
 
+    { BYTECODE_MK_ARRAY, bytecode_print_mk_array },
+    { BYTECODE_MK_INIT_ARRAY, bytecode_print_mk_init_array },
+    { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
+    
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
+    
     { BYTECODE_MARK, bytecode_print_mark },
     { BYTECODE_CALL, bytecode_print_call },
     { BYTECODE_SLIDE, bytecode_print_slide },
@@ -115,6 +121,14 @@ void bytecode_print_float(bytecode * code)
 void bytecode_print_id_local(bytecode * code)
 {
     printf("%d: id local %d %d\n", code->addr, code->id_local.stack_level, code->id_local.index);
+}
+
+void bytecode_print_id_dim_local(bytecode * code)
+{
+    printf("%d: id dim local %d %d %d\n", code->addr,
+                                          code->id_dim_local.stack_level,
+                                          code->id_dim_local.index,
+                                          code->id_dim_local.dim_index);
 }
 
 void bytecode_print_id_global(bytecode * code)
@@ -275,6 +289,21 @@ void bytecode_print_jump(bytecode * code)
 void bytecode_print_label(bytecode * code)
 {
     printf("%d: label\n", code->addr);
+}
+
+void bytecode_print_mk_array(bytecode * code)
+{
+    printf("%d: mk array %d\n", code->addr, code->mk_array.dims);
+}
+
+void bytecode_print_mk_init_array(bytecode * code)
+{
+    printf("%d: mk init array %d\n", code->addr, code->mk_array.dims);
+}
+
+void bytecode_print_array_deref(bytecode * code)
+{
+    printf("%d: array ref %d\n", code->addr, code->array_deref.dims);
 }
 
 void bytecode_print_func_def(bytecode * code)

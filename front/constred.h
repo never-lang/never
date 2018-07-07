@@ -32,6 +32,7 @@ enum
 
 int expr_constred(expr * value, int * result);
 int expr_list_constred(expr_list * list, int * result);
+int array_constread(array * value, int * result);
 int func_constred(func * value, int * result);
 int func_list_constred(func_list * list, int * result);
 int never_constred(never * nev);

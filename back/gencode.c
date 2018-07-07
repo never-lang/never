@@ -124,6 +124,8 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
             var * var_value = entry->var_value;
             if (var_value->type == VAR_INT ||
                 var_value->type == VAR_FLOAT ||
+                var_value->type == VAR_DIM ||
+                var_value->type == VAR_ARRAY ||
                 var_value->type == VAR_FUNC)
             {
                 if (syn_level == entry->syn_level)
@@ -144,6 +146,11 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value, int
                     value->id.id_type_value = ID_TYPE_GLOBAL;
                     value->id.id_freevar_value = freevar_value;
                 }
+            }
+            else
+            {
+                printf("unknown var type %d\n", var_value->type);
+                assert(0);
             }
         }
     }
@@ -202,16 +209,29 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value, int * 
             expr_gencode(syn_level, func_value, value->middle, result);
             expr_gencode(syn_level, func_value, value->right, result);
         break;
+        case EXPR_ARRAY:
+            if (value->array.array_value)
+            {
+                array_gencode(syn_level, func_value, value->array.array_value, result);
+            }
+        break;
+        case EXPR_ARRAY_DEREF:
+            expr_gencode(syn_level, func_value, value->array_deref.array_expr, result);
+            if (value->array_deref.ref != NULL)
+            {
+                expr_list_gencode(syn_level, func_value, value->array_deref.ref, result);
+            }
+        break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
             expr_gencode(syn_level, func_value, value->call.func_expr, result);
-            if (value->call.vars)
+            if (value->call.vars != NULL)
             {
                 expr_list_gencode(syn_level, func_value, value->call.vars, result);
             }
         break;
         case EXPR_FUNC:
-            if (value->func_value)
+            if (value->func_value != NULL)
             {
                 func_gencode(syn_level + 1, value->func_value, result);
             }
@@ -239,6 +259,20 @@ int expr_list_gencode(unsigned int syn_level, func * func_value, expr_list * lis
         }
         node = node->next;
     }
+    return 0;
+}
+
+int array_gencode(unsigned int syn_level, func * func_value, array * array_value, int * result)
+{
+    if (array_value->type == ARRAY_INIT || array_value->type == ARRAY_SUB)
+    {
+        expr_list_gencode(syn_level, func_value, array_value->elements, result);
+    }
+    else if (array_value->type == ARRAY_DIMS)
+    {
+        expr_list_gencode(syn_level, func_value, array_value->dims, result);
+    }
+
     return 0;
 }
 
@@ -328,6 +362,23 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
             func_gencode_freevars_expr(func_value, value->left, result);
             func_gencode_freevars_expr(func_value, value->middle, result);
             func_gencode_freevars_expr(func_value, value->right, result);
+        break;
+        case EXPR_ARRAY:
+            if (value->array.array_value->dims)
+            {
+                func_gencode_freevars_expr_list(func_value, value->array.array_value->dims, result);
+            }
+            if (value->array.array_value->elements)
+            {
+                func_gencode_freevars_expr_list(func_value, value->array.array_value->elements, result);
+            }
+        break;
+        case EXPR_ARRAY_DEREF:
+            func_gencode_freevars_expr(func_value, value->array_deref.array_expr, result);
+            if (value->array_deref.ref != NULL)
+            {
+                func_gencode_freevars_expr_list(func_value, value->array_deref.ref, result);
+            }
         break;
         case EXPR_CALL:
         case EXPR_LAST_CALL:
@@ -510,6 +561,29 @@ int expr_float_emit(expr * value, int stack_level, bytecode_list * code, int * r
     return 0;
 } 
 
+int func_freevar_id_local_emit(freevar * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+
+    if (value->local_value->type == VAR_DIM)
+    {
+        bc.type = BYTECODE_ID_DIM_LOCAL;
+        bc.id_dim_local.stack_level = stack_level;
+        bc.id_dim_local.index = value->local_value->array->index;
+        bc.id_dim_local.dim_index = value->local_value->index;
+    }
+    else
+    {
+        bc.type = BYTECODE_ID_LOCAL;
+        bc.id_local.stack_level = stack_level;
+        bc.id_local.index = value->local_value->index;
+    }
+
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
 int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
@@ -521,11 +595,7 @@ int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code, in
             assert(0);
         break;
         case FREEVAR_LOCAL:
-            bc.type = BYTECODE_ID_LOCAL;
-            bc.id_local.stack_level = stack_level;
-            bc.id_local.index = value->local_value->index;
-
-            bytecode_add(code, &bc);
+            func_freevar_id_local_emit(value, stack_level, code, result);
         break;
         case FREEVAR_GLOBAL:
             bc.type = BYTECODE_ID_GLOBAL;
@@ -558,6 +628,41 @@ int func_freevar_list_emit(freevar_list * freevars, int stack_level, bytecode_li
         }
         node = node->next;
     }
+
+    return 0;
+}
+
+int expr_id_local_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+
+    if (value->id.id_var_value->type == VAR_DIM)
+    {
+        bc.type = BYTECODE_ID_DIM_LOCAL;
+        bc.id_dim_local.stack_level = stack_level;
+        bc.id_dim_local.index = value->id.id_var_value->array->index;
+        bc.id_dim_local.dim_index = value->id.id_var_value->index;
+    }
+    else
+    {
+        bc.type = BYTECODE_ID_LOCAL;
+        bc.id_local.stack_level = stack_level;
+        bc.id_local.index = value->id.id_var_value->index;
+    }
+        
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
+int expr_id_global_emit(expr * value, int stack_value, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    
+    bc.type = BYTECODE_ID_GLOBAL;
+    bc.id_global.index = value->id.id_freevar_value->index;
+
+    bytecode_add(code, &bc);        
 
     return 0;
 }
@@ -613,25 +718,10 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code, int * resu
             assert(0);
         break;
         case ID_TYPE_LOCAL:
-        {
-            bytecode bc = { 0 };
-            
-            bc.type = BYTECODE_ID_LOCAL;
-            bc.id_local.stack_level = stack_level;
-            bc.id_local.index = value->id.id_var_value->index;
-        
-            bytecode_add(code, &bc);
-        }
+            expr_id_local_emit(value, stack_level, code, result);
         break;
         case ID_TYPE_GLOBAL:
-        {
-            bytecode bc = { 0 };
-            
-            bc.type = BYTECODE_ID_GLOBAL;
-            bc.id_global.index = value->id.id_freevar_value->index;
-
-            bytecode_add(code, &bc);        
-        }
+            expr_id_global_emit(value, stack_level, code, result);
         break;
         case ID_TYPE_FUNC_TOP:
             if (value->id.id_func_value != NULL)
@@ -842,13 +932,6 @@ int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code, int
     return 0;
 }
 
-int expr_func_emit(func * func_value, int stack_level, bytecode_list * code, int * result)
-{
-    func_emit(func_value, stack_level, code, result);
-
-    return 0;
-}
- 
 int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 {
     bytecode bc = { 0 };
@@ -1166,6 +1249,15 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         case EXPR_COND:
             expr_cond_emit(value, stack_level, code, result);
         break;
+        case EXPR_ARRAY:
+            if (value->array.array_value != NULL)
+            {
+                expr_array_emit(value, stack_level, code, result);
+            }
+        break;
+        case EXPR_ARRAY_DEREF:
+            expr_array_deref_emit(value, stack_level, code, result);
+        break;
         case EXPR_CALL:
             expr_call_emit(value, stack_level, code, result);
         break;
@@ -1175,7 +1267,7 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         case EXPR_FUNC:
             if (value->func_value)
             {
-                expr_func_emit(value->func_value, 1, code, result);
+                func_emit(value->func_value, stack_level, code, result);
             }
         break;
         case EXPR_BUILD_IN:
@@ -1235,6 +1327,101 @@ int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code, int 
         }
         node = node->prev;
     }
+
+    return 0;
+}
+
+int array_dims_emit(array * array_value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    expr_list_emit(array_value->dims, stack_level, code, result);
+
+    bc.type = BYTECODE_MK_ARRAY;
+    bc.mk_array.dims = array_value->dims->count;
+        
+    bytecode_add(code, &bc);                
+
+    return 0;
+}
+
+int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count, int stack_level, bytecode_list * code, int * result)
+{
+    int elem_dist = -1;
+    *elements_count = 0;
+    
+    expr_list_weak_node * node = depth_list->tail;
+    elem_dist = node->distance;
+
+    while (node != NULL)
+    {
+        expr * value = node->value;
+        if (value != NULL && node->distance == elem_dist)
+        {
+            expr_emit(value, stack_level + (*elements_count)++, code, result); 
+        }
+        else
+        {
+            break;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int array_init_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+    int elements_count = 0;
+    array * array_value = value->array.array_value;
+    
+    expr_list_weak * depth_list = expr_list_weak_new();
+    array_to_depth_list(value, depth_list);
+        
+    array_init_elements_emit(depth_list, &elements_count, stack_level, code, result);
+    expr_list_weak_delete(depth_list);
+
+    expr_list_emit(array_value->dims, stack_level + elements_count, code, result);
+
+    bc.type = BYTECODE_MK_INIT_ARRAY;
+    bc.mk_array.dims = array_value->dims->count;
+        
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
+int expr_array_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    array * array_value = value->array.array_value;
+
+    if (array_value->type == ARRAY_INIT)
+    {
+        array_init_emit(value, stack_level, code, result);
+    }
+    else if (array_value->type == ARRAY_SUB)
+    {
+        assert(0);
+    }
+    else if (array_value->type == ARRAY_DIMS)
+    {
+        array_dims_emit(array_value, stack_level, code, result);
+    }
+
+    return 0;
+}
+
+int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->array_deref.array_expr, stack_level, code, result);
+    expr_list_emit(value->array_deref.ref, stack_level + 1, code, result);
+
+    bc.type = BYTECODE_ARRAY_DEREF;
+    bc.array_deref.dims = value->array_deref.ref->count;
+    
+    bytecode_add(code, &bc);
 
     return 0;
 }
