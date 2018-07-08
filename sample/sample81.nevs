@@ -1,4 +1,4 @@
-#!../nev
+#!../debug/never -f
 
 func add(a -> int, b -> int, c -> int) -> int
 {
