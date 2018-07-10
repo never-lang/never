@@ -1,3 +1,0 @@
-# Never - Functional Programming Language
-
-
