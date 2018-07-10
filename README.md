@@ -257,10 +257,10 @@ value of its element.
 ```
 func f1(a -> int) -> [D, D] -> int
 {
-    return {{ a, 0, 0, 0 },
-            { 0, a, 0, 0 },
-            { 0, 0, a, 0 },
-            { 0, 0, 0, a }} -> int;
+    return { { a, 0, 0, 0 },
+             { 0, a, 0, 0 },
+             { 0, 0, a, 0 },
+             { 0, 0, 0, a } } -> int;
 }
 
 func main() -> int
