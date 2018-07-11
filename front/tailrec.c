@@ -215,8 +215,6 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value, tailrec_op 
                 if (op == TAILREC_MARK)
                 {
                     /* mark call as last call */
-                    printf("last call %s\n", func_value->id);
-                    
                     value->type = EXPR_LAST_CALL;
                 }
                 rec = TAILREC_FOUND;
