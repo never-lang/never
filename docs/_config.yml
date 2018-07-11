@@ -1,0 +1,11 @@
+theme: jekyll-theme-cayman
+title: never-lang
+description: Functional Programming Language
+
+#defaults:
+#  - 
+#    scope:
+#      path: "README.md"
+#    values:
+#      permalink: "index.html"
+

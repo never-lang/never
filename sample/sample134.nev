@@ -1,0 +1,25 @@
+
+func odd( e -> int ) -> int
+{
+    return e % 2;
+}
+func do( e -> int ) -> int
+{
+    return print(e + 1);
+}
+
+func filter( t[elems] -> int, odd( int ) -> int, do( int ) -> int ) -> int
+{
+	func __filter( val -> int, i -> int, t[elems] -> int, odd( e -> int) -> int, do( e -> int ) -> int ) -> int
+	{
+		return i < elems ? __filter( odd(t[i]) ? do(t[i]) : 0,  i + 1, t, odd, do ) : 0;
+	}
+	return __filter( 0, 0, t, odd, do );
+}
+func main() -> int
+{
+	return filter( { 61, 22, 11, 34, 58, 41, 83, 92, 101 } -> int,
+	               odd, do );
+}
+
+

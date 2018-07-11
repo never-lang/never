@@ -11,7 +11,7 @@ func tsum( t[elems] -> int) -> int
 
 func main() -> int
 {
-	return tsum( { 10, 20, 30, 40, 50 } -> int );
+	return tsum( { 10, 20, 30, 40, 50, 60 } -> int );
 }
 
 
