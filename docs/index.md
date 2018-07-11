@@ -1,3 +1,6 @@
+---
+---
+
 # Never - Functional Programming Language
 [![Build Status](https://travis-ci.org/never-lang/never.svg?branch=master)](https://travis-ci.org/never-lang/never)
 
