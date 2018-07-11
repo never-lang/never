@@ -34,7 +34,7 @@ tailrec_type expr_id_tailrec(unsigned int syn_level, func * func_value, expr * v
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
             func * sup_func_value = entry->func_value;
-            if (syn_level == entry->syn_level + 1 &&
+            if (syn_level == entry->syn_level &&
                 func_value == sup_func_value)
             {
                 return TAILREC_FOUND;
@@ -215,6 +215,8 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value, tailrec_op 
                 if (op == TAILREC_MARK)
                 {
                     /* mark call as last call */
+                    printf("last call %s\n", func_value->id);
+                    
                     value->type = EXPR_LAST_CALL;
                 }
                 rec = TAILREC_FOUND;

@@ -1,0 +1,21 @@
+
+func sum_mapi(i -> int, e -> int) -> int
+{
+	return print(i + e);
+}
+
+func tforeach( t[elems] -> int, mapi(i -> int, e -> int) -> int) -> int
+{
+	func __tforeach( val -> int, i -> int, t[elems] -> int ) -> int
+	{
+		return i < elems ? __tforeach( mapi(i, t[i]), i + 1, t ) : 0;
+	}
+	return __tforeach(t[0], 0, t);
+}
+
+func main() -> int
+{
+	return tforeach( { 10, 20, 50, 30, 40 } -> int, sum_mapi );
+}
+
+

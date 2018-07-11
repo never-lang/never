@@ -1,0 +1,16 @@
+
+func factorial(n -> int) -> int
+{
+    func factrec(n -> int, val -> int) -> int
+    {
+        return n == 0 ? val : factrec(n - 1, n * val);
+    }
+
+    return factrec(n, 1);
+}
+
+func main() -> int
+{
+    return factorial(3);
+}
+
