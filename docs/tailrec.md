@@ -6,7 +6,7 @@ title: Tail Recursion
 
 *To understand recursion one needs to understand recursion*
 
-![alt text][uroboros]
+![alt text][uroboros =200x200]
 
 ## Introduction
 Many problems are expressed using themselves as subproblems. This leads to an interesting observation, that to solve a problem one needs to solve the same problem again. Of course such loop needs to be broken somewhere. Usually subproblems are of smaller size than the original. In mathematics a classical example of such a function is Fibonnaci function which is defined as ```fib(1) = 1, fib(2) = 1, fib(n) == fib(n - 1) + fib(n - 2)```. Computer scientists also noticed that value of such functions can be automatically calculated by a computer. Unfortunatelly computers are electrical devices which have their limitations. One of them is speed of execution which is finitive and thus larger problems take longer to execute. The other one is memory size which also influences size of problems which can be solved. Computers also execute instructions and they must be programmed to reuse same results again. Otherwise they will blindly recalulate same problems again and again. For example, simple implementation of the Fibonacci function for each ```n``` would solve the same subproblems twice. In recursion of course! Which leads to expotentian number of instructions invoked. Despite those limitations it is tempting to use recursion to express problems. They become easier to express and later understand. In many cases, when subproblem is divided by two, for example, in many practical problems this leads to very few levels of recursion which can be handled by physical computers. For problems with 1 milion elements such division results only in 20 levels of recursion calls. Also it is easy to use memory and store results of already calculated functions. Such a technique, known as memoizations, signifiantly speeds to calculations. Another technique, which is described in this article, is known as tail recursion.
@@ -62,39 +62,9 @@ func power(a -> int, n -> int, val -> int) -> int
 Next two functions define factorial and power functions.
 
 ## Computer Science Function
-Tail recursive functions can also be used to create programs. A special class of programming languages to which Never belongs can only use functions. There is no other way to run a program than to execute functions. Without tail recursion such programs would also suffer from speed and memory limitations.
+Tail recursive functions can also be used to create programs. When evaluating mathematical functions we were not interested how their value is calculated. However, when creating programs, we may use the fact that tail recursive function is executed in a loop. Now we are less interested in results as such. The program benefits from repeated calls made when recursive function is invoked.
 
-The following listings present how tail recursions can be used to execute code over array elements.
-
-```
-func tsum( t[elems] -> int) -> int
-{
-	func __tsum( sum -> int, i -> int, t[elems] -> int ) -> int
-	{
-		return i < elems ? __tsum( sum + t[i], i + 1, t ) : sum;
-	}
-	return __tsum(0, 0, t);
-}
-func main() -> int
-{
-	return tsum( { 10, 20, 30, 40, 50, 60 } -> int );
-}
-```
-
-```
-func tmin( t[elems] -> int ) -> int
-{
-	func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
-	{
-		return i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min;
-	}
-	return __tmin(t[0], 0, t);
-}
-func main() -> int
-{
-	return tmin( { 60, 20, 10, 30, 50, 40, 80, 90, 100 } -> int );
-}
-```
+To ilustrate this technique lets have a look at the following examples. Different functions are executed over elements of an array. [Never][never-lang] language declares an array of four integers as ```{ 1, 2, 3, 4 } -> int``` and gets value of its elements using ```t[i]``` syntax. When an array is passed to a function its size is given in ```t[elems] -> int``` parameter.
 
 ```
 func tprint( t[elems] -> int ) -> int
@@ -112,6 +82,40 @@ func main() -> int
 }
 ```
 
+The above function ```__tprint``` when is invoked for every element of the array. Each element of an array is printed using ```print(t[i])``` function. Next the ```__tprint``` is invoked again to print next value. To make program more readable function ```__tprint``` is defined within function ```tprint``` which takes an array as its parameter. This technique will recurr in following examples.
+
+```
+func tsum( t[elems] -> int) -> int
+{
+	func __tsum( sum -> int, i -> int, t[elems] -> int ) -> int
+	{
+		return i < elems ? __tsum( sum + t[i], i + 1, t ) : sum;
+	}
+	return __tsum(0, 0, t);
+}
+func main() -> int
+{
+	return tsum( { 10, 20, 30, 40, 50, 60 } -> int );
+}
+```
+To calculate sum of elements we in each recursive call sum is increased by each element value. Finally sum of all elements is returned.
+
+```
+func tmin( t[elems] -> int ) -> int
+{
+	func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
+	{
+		return i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min;
+	}
+	return __tmin(t[0], 0, t);
+}
+func main() -> int
+{
+	return tmin( { 60, 20, 10, 30, 50, 40, 80, 90, 100 } -> int );
+}
+```
+Similar idea can be used to determine the lowest value within an array...
+
 ```
 func exists( e -> int, t[elems] -> int ) -> int
 {
@@ -121,12 +125,12 @@ func exists( e -> int, t[elems] -> int ) -> int
 	}
 	return __exists( 0, e, t );
 }
-
 func main() -> int
 {
 	return exists( 100, { 60, 20, 10, 30, 50, 40, 80, 90, 100 } -> int );
 }
 ```
+...or used to determine if given value exists with an array. What is interesting that recursive calls stop when sought after value is found.
 
 ```
 func add_five(e -> int) -> int
@@ -147,6 +151,7 @@ func main() -> int
 	return tforeach( { 10, 20, 50, 30, 40 } -> int, add_five );
 }
 ```
+[Never][never-lang] supports first-call functions which can be passed to other functions. This property can be used to execute arbitrary function over all elements. In the above example function ```add_five``` is passed to ```tforeach``` function.
 
 ```
 func sum_mapi(i -> int, e -> int) -> int
@@ -167,6 +172,7 @@ func main() -> int
 	return tmapi( { 10, 20, 50, 30, 40 } -> int, sum_mapi );
 }
 ```
+The above listing presents ```mapi``` function which is invoked with element index and its value.
 
 ```
 func odd( e -> int ) -> int
@@ -178,13 +184,13 @@ func do( e -> int ) -> int
     return print(e + 1);
 }
 
-func filter( t[elems] -> int, odd( int ) -> int, do( int ) -> int ) -> int
+func filter( t[elems] -> int, if( int ) -> int, do( int ) -> int ) -> int
 {
-	func __filter( val -> int, i -> int, t[elems] -> int, odd( e -> int) -> int, do( e -> int ) -> int ) -> int
+	func __filter( val -> int, i -> int, t[elems] -> int, if( e -> int) -> int, do( e -> int ) -> int ) -> int
 	{
-		return i < elems ? __filter( odd(t[i]) ? do(t[i]) : 0,  i + 1, t, odd, do ) : 0;
+		return i < elems ? __filter( if(t[i]) ? do(t[i]) : 0,  i + 1, t, if, do ) : 0;
 	}
-	return __filter( 0, 0, t, odd, do );
+	return __filter( 0, 0, t, if, do );
 }
 func main() -> int
 {
@@ -192,8 +198,10 @@ func main() -> int
 	               odd, do );
 }
 ```
+The idea to pass first-class functions can be extended. The above listing presents ```filter``` function which is executed over all elements of an array. When ```if``` function return value other than zero then function ```do``` is invoked.
 
 ## Summary
+Examples presented in this article show how tail recursion can be used in practise. Both to calculate values of functions or used to execute code over elements of an array.
 
 [uroboros]: https://never-lang.github.io/never/Serpiente_alquimica.jpg  "Uroboros"
 [never-lang]: https://never-lang.github.io/never
