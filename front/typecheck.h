@@ -52,21 +52,26 @@ int func_check_type(symtab * tab, func * func_value, int * result);
 int func_list_check_type(symtab * tab, func_list * list, int * result);
 int never_check_type(never * nev, int * result);
 
-int symtab_add_var_from_basic_var(symtab * tab, var * var_value, int * result);
-int symtab_add_var_from_var(symtab * tab, var * var_value, int * result);
-int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result);
-int symtab_add_func_from_func(symtab * tab, func * func_value, int * result);
+int symtab_add_var_from_basic_var(symtab * tab, var * var_value,
+                                  unsigned int syn_level, int * result);
+int symtab_add_var_from_var(symtab * tab, var * var_value,
+                            unsigned int syn_level, int * result);
+int symtab_add_var_from_var_list(symtab * tab, var_list * list,
+                                 unsigned int syn_level, int * result);
+int symtab_add_func_from_func(symtab * tab, func * func_value,
+                              unsigned int syn_level, int * result);
 int symtab_add_func_from_func_list(symtab * tab, func_list * list,
-                                   int * result);
-int symtab_add_entry_expr(symtab * stab, expr * value, int * result);
-int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list,
-                               int * result);
-int symtab_add_entry_array(symtab * stab_parent, array * array_value,
-                           int * result);
-int symtab_add_entry_func(symtab * stab_parent, func * func_value,
+                                   unsigned int syn_level, int * result);
+int symtab_add_entry_expr(symtab * stab, expr * value, unsigned int syn_level,
                           int * result);
+int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list,
+                               unsigned int syn_level, int * result);
+int symtab_add_entry_array(symtab * stab_parent, array * array_value,
+                           unsigned int syn_level, int * result);
+int symtab_add_entry_func(symtab * stab_parent, func * func_value,
+                          unsigned int syn_level, int * result);
 int symtab_add_entry_func_list(symtab * stab_parent, func_list * list,
-                               int * result);
+                               unsigned int syn_level, int * result);
 int symtab_add_entry_never(never * nev, int * result);
 
 int print_func_array(array * value, int depth);

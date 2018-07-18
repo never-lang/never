@@ -52,7 +52,8 @@ symtab_entry * symtab_entry_new(unsigned int size)
 void symtab_entry_delete(symtab_entry * entries) { free(entries); }
 
 void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
-                             int type, const char * id, void * object_value)
+                             int type, const char * id, void * object_value,
+                             unsigned int syn_level)
 {
     unsigned int times = 0;
     unsigned int index = hash(id) % size;
@@ -69,6 +70,7 @@ void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
     entries[index].type = type;
     entries[index].id = id;
     entries[index].var_value = object_value;
+    entries[index].syn_level = syn_level;
 }
 
 symtab_entry * symtab_entry_lookup_object(symtab_entry * entries,
@@ -102,7 +104,8 @@ void symtab_entry_resize(symtab_entry * entries, int size,
     for (i = 0; i < size; i++)
     {
         symtab_entry_add_object(entries_new, size_new, entries[i].type,
-                                entries[i].id, entries[i].var_value);
+                                entries[i].id, entries[i].var_value,
+                                entries[i].syn_level);
     }
 }
 
@@ -174,7 +177,7 @@ void symtab_resize(symtab * tab)
     }
 }
 
-void symtab_add_var(symtab * tab, var * var_value)
+void symtab_add_var(symtab * tab, var * var_value, unsigned int syn_level)
 {
     if (var_value->id == NULL)
     {
@@ -182,12 +185,12 @@ void symtab_add_var(symtab * tab, var * var_value)
     }
 
     symtab_entry_add_object(tab->entries, tab->size, SYMTAB_VAR, var_value->id,
-                            var_value);
+                            var_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }
 
-void symtab_add_func(symtab * tab, func * func_value)
+void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level)
 {
     if (func_value->id == NULL)
     {
@@ -195,7 +198,7 @@ void symtab_add_func(symtab * tab, func * func_value)
     }
 
     symtab_entry_add_object(tab->entries, tab->size, SYMTAB_FUNC,
-                            func_value->id, func_value);
+                            func_value->id, func_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }
@@ -212,19 +215,6 @@ symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested)
     else
     {
         return entry;
-    }
-}
-
-void symtab_set_syn_level(symtab * tab, unsigned int syn_level)
-{
-    unsigned int i;
-
-    for (i = 0; i < tab->size; i++)
-    {
-        if (tab->entries[i].type != 0)
-        {
-            tab->entries[i].syn_level = syn_level;
-        }
     }
 }
 

@@ -38,8 +38,8 @@ void test_two()
     func * func_one = func_new(strdup("func_one"), NULL, NULL, NULL);
     func * func_three = func_new(strdup("func_three"), NULL, NULL, NULL);
 
-    symtab_add_func(tab, func_one);
-    symtab_add_func(tab, func_three);
+    symtab_add_func(tab, func_one, 0);
+    symtab_add_func(tab, func_three, 0);
 
     entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);
     assert(entry->func_value == func_one);
@@ -64,10 +64,10 @@ void test_three()
     func * func_three = func_new(strdup("func_three"), NULL, NULL, NULL);
     func * func_four = func_new(strdup("func_four"), NULL, NULL, NULL);
 
-    symtab_add_func(tab, func_one);
-    symtab_add_func(tab, func_two);
-    symtab_add_func(tab, func_three);
-    symtab_add_func(tab, func_four);
+    symtab_add_func(tab, func_one, 0);
+    symtab_add_func(tab, func_two, 0);
+    symtab_add_func(tab, func_three, 0);
+    symtab_add_func(tab, func_four, 0);
 
     entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);
     assert(entry->func_value == func_one);
@@ -99,12 +99,12 @@ void test_four()
     func * func_five = func_new(strdup("func_five"), NULL, NULL, NULL);
     func * func_six = func_new(strdup("func_six"), NULL, NULL, NULL);
 
-    symtab_add_func(tab_one, func_one);
-    symtab_add_func(tab_one, func_two);
-    symtab_add_func(tab_two, func_three);
-    symtab_add_func(tab_two, func_four);
-    symtab_add_func(tab_two, func_five);
-    symtab_add_func(tab_two, func_six);
+    symtab_add_func(tab_one, func_one, 0);
+    symtab_add_func(tab_one, func_two, 0);
+    symtab_add_func(tab_two, func_three, 0);
+    symtab_add_func(tab_two, func_four, 0);
+    symtab_add_func(tab_two, func_five, 0);
+    symtab_add_func(tab_two, func_six, 0);
 
     entry = symtab_lookup(tab_two, "func_one", SYMTAB_NESTED);
     assert(entry->func_value == func_one);

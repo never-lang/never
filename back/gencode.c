@@ -86,12 +86,14 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
             func * sup_func_value = entry->func_value;
             if (sup_func_value)
             {
+                /* printf("func_value %s %d %d\n", value->id.id, entry->syn_level, syn_level); */
+
                 if (entry->syn_level == 0)
                 {
                     value->id.id_type_value = ID_TYPE_FUNC_TOP;
                     value->id.id_func_value = sup_func_value;
                 }
-                else if (syn_level == entry->syn_level &&
+                else if (syn_level - 1 == entry->syn_level &&
                          func_value == sup_func_value) /* recursive call */
                 {
                     value->id.id_type_value = ID_TYPE_FUNC_NEST;
@@ -128,6 +130,8 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                 var_value->type == VAR_DIM || var_value->type == VAR_ARRAY ||
                 var_value->type == VAR_FUNC)
             {
+                /* printf("var_value %s %d %d\n", value->id.id, entry->syn_level, syn_level); */
+                
                 if (syn_level == entry->syn_level)
                 {
                     value->id.id_type_value = ID_TYPE_LOCAL;
@@ -241,7 +245,7 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
     case EXPR_FUNC:
         if (value->func_value != NULL)
         {
-            func_gencode(syn_level + 1, value->func_value, result);
+            func_gencode(syn_level + 2, value->func_value, result);
         }
         break;
     case EXPR_BUILD_IN:
@@ -498,10 +502,6 @@ int func_gencode_freevars(func * func_value, int * result)
 
 int func_gencode(unsigned int syn_level, func * func_value, int * result)
 {
-    if (func_value->stab != NULL)
-    {
-        symtab_set_syn_level(func_value->stab, syn_level);
-    }
     if (func_value->vars != NULL)
     {
         func_enum_vars(func_value);
@@ -548,10 +548,6 @@ int never_gencode(never * nev)
 
     if (nev->funcs)
     {
-        if (nev->stab != NULL)
-        {
-            symtab_set_syn_level(nev->stab, syn_level);
-        }
         func_list_gencode(syn_level, nev->funcs, &gencode_res);
     }
 

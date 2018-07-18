@@ -35,7 +35,7 @@ tailrec_type expr_id_tailrec(unsigned int syn_level, func * func_value,
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
             func * sup_func_value = entry->func_value;
-            if (syn_level == entry->syn_level && func_value == sup_func_value)
+            if (syn_level - 1 == entry->syn_level && func_value == sup_func_value)
             {
                 return TAILREC_FOUND;
             }
@@ -240,10 +240,10 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
     case EXPR_FUNC:
         if (value->func_value)
         {
-            rec = func_tailrec(syn_level + 1, TAILREC_CHECK, value->func_value);
+            rec = func_tailrec(syn_level + 2, TAILREC_CHECK, value->func_value);
             if (rec == TAILREC_FOUND)
             {
-                rec = func_tailrec(syn_level + 1, TAILREC_MARK,
+                rec = func_tailrec(syn_level + 2, TAILREC_MARK,
                                    value->func_value);
             }
         }

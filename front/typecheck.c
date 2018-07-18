@@ -796,12 +796,13 @@ int never_check_type(never * nev, int * result)
 /*
  * Add symbols to symtab
  */
-int symtab_add_var_from_basic_var(symtab * tab, var * var_value, int * result)
+int symtab_add_var_from_basic_var(symtab * tab, var * var_value,
+                                  unsigned int syn_level, int * result)
 {
     symtab_entry * entry = symtab_lookup(tab, var_value->id, SYMTAB_FLAT);
     if (entry == NULL)
     {
-        symtab_add_var(tab, var_value);
+        symtab_add_var(tab, var_value, syn_level);
     }
     else
     {
@@ -824,21 +825,23 @@ int symtab_add_var_from_basic_var(symtab * tab, var * var_value, int * result)
     return 0;
 }
 
-int symtab_add_var_from_var(symtab * tab, var * var_value, int * result)
+int symtab_add_var_from_var(symtab * tab, var * var_value,
+                            unsigned int syn_level, int * result)
 {
     if (var_value->type == VAR_ARRAY)
     {
-        symtab_add_var_from_basic_var(tab, var_value, result);
-        symtab_add_var_from_var_list(tab, var_value->dims, result);
+        symtab_add_var_from_basic_var(tab, var_value, syn_level, result);
+        symtab_add_var_from_var_list(tab, var_value->dims, syn_level, result);
     }
     else
     {
-        symtab_add_var_from_basic_var(tab, var_value, result);
+        symtab_add_var_from_basic_var(tab, var_value, syn_level, result);
     }
     return 0;
 }
 
-int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result)
+int symtab_add_var_from_var_list(symtab * tab, var_list * list,
+                                 unsigned int syn_level, int * result)
 {
     var_list_node * node = list->tail;
     while (node != NULL)
@@ -846,19 +849,20 @@ int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result)
         var * var_value = node->value;
         if (var_value && var_value->id)
         {
-            symtab_add_var_from_var(tab, var_value, result);
+            symtab_add_var_from_var(tab, var_value, syn_level, result);
         }
         node = node->next;
     }
     return 0;
 }
 
-int symtab_add_func_from_func(symtab * tab, func * func_value, int * result)
+int symtab_add_func_from_func(symtab * tab, func * func_value,
+                              unsigned int syn_level, int * result)
 {
     symtab_entry * entry = symtab_lookup(tab, func_value->id, SYMTAB_FLAT);
     if (entry == NULL)
     {
-        symtab_add_func(tab, func_value);
+        symtab_add_func(tab, func_value, syn_level);
     }
     else
     {
@@ -882,7 +886,8 @@ int symtab_add_func_from_func(symtab * tab, func * func_value, int * result)
     return 0;
 }
 
-int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result)
+int symtab_add_func_from_func_list(symtab * tab, func_list * list,
+                                   unsigned int syn_level, int * result)
 {
     func_list_node * node = list->tail;
     while (node != NULL)
@@ -890,14 +895,15 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result)
         func * func_value = node->value;
         if (func_value && func_value->id)
         {
-            symtab_add_func_from_func(tab, func_value, result);
+            symtab_add_func_from_func(tab, func_value, syn_level, result);
         }
         node = node->next;
     }
     return 0;
 }
 
-int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
+int symtab_add_entry_expr(symtab * stab, expr * value, unsigned int syn_level,
+                          int * result)
 {
     switch (value->type)
     {
@@ -907,7 +913,7 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
     case EXPR_ID:
         break;
     case EXPR_NEG:
-        symtab_add_entry_expr(stab, value->left, result);
+        symtab_add_entry_expr(stab, value->left, syn_level, result);
         break;
     case EXPR_ADD:
     case EXPR_SUB:
@@ -920,59 +926,59 @@ int symtab_add_entry_expr(symtab * stab, expr * value, int * result)
     case EXPR_GTE:
     case EXPR_EQ:
     case EXPR_NEQ:
-        symtab_add_entry_expr(stab, value->left, result);
-        symtab_add_entry_expr(stab, value->right, result);
+        symtab_add_entry_expr(stab, value->left, syn_level, result);
+        symtab_add_entry_expr(stab, value->right, syn_level, result);
         break;
     case EXPR_AND:
     case EXPR_OR:
-        symtab_add_entry_expr(stab, value->left, result);
-        symtab_add_entry_expr(stab, value->right, result);
+        symtab_add_entry_expr(stab, value->left, syn_level, result);
+        symtab_add_entry_expr(stab, value->right, syn_level, result);
         break;
     case EXPR_NOT:
-        symtab_add_entry_expr(stab, value->left, result);
+        symtab_add_entry_expr(stab, value->left, syn_level, result);
         break;
     case EXPR_SUP:
-        symtab_add_entry_expr(stab, value->left, result);
+        symtab_add_entry_expr(stab, value->left, syn_level, result);
         break;
     case EXPR_COND:
-        symtab_add_entry_expr(stab, value->left, result);
-        symtab_add_entry_expr(stab, value->middle, result);
-        symtab_add_entry_expr(stab, value->right, result);
+        symtab_add_entry_expr(stab, value->left, syn_level, result);
+        symtab_add_entry_expr(stab, value->middle, syn_level, result);
+        symtab_add_entry_expr(stab, value->right, syn_level, result);
         break;
     case EXPR_ARRAY:
-        symtab_add_entry_array(stab, value->array.array_value, result);
+        symtab_add_entry_array(stab, value->array.array_value, syn_level, result);
         break;
     case EXPR_ARRAY_DEREF:
-        symtab_add_entry_expr(stab, value->array_deref.array_expr, result);
-        symtab_add_entry_expr_list(stab, value->array_deref.ref, result);
+        symtab_add_entry_expr(stab, value->array_deref.array_expr, syn_level, result);
+        symtab_add_entry_expr_list(stab, value->array_deref.ref, syn_level, result);
         break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
-        symtab_add_entry_expr(stab, value->call.func_expr, result);
+        symtab_add_entry_expr(stab, value->call.func_expr, syn_level, result);
         if (value->call.vars != NULL)
         {
-            symtab_add_entry_expr_list(stab, value->call.vars, result);
+            symtab_add_entry_expr_list(stab, value->call.vars, syn_level, result);
         }
         break;
     case EXPR_FUNC:
         if (value->func_value)
         {
-            symtab_add_entry_func(stab, value->func_value, result);
+            symtab_add_entry_func(stab, value->func_value, syn_level + 2, result);
         }
         break;
     case EXPR_BUILD_IN:
-        symtab_add_entry_expr_list(stab, value->func_build_in.param, result);
+        symtab_add_entry_expr_list(stab, value->func_build_in.param, syn_level, result);
         break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
-        symtab_add_entry_expr(stab, value->left, result);
+        symtab_add_entry_expr(stab, value->left, syn_level, result);
         break;
     }
     return 0;
 }
 
 int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list,
-                               int * result)
+                               unsigned int syn_level, int * result)
 {
     expr_list_node * node = list->tail;
     while (node != NULL)
@@ -980,7 +986,7 @@ int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list,
         expr * value = node->value;
         if (value)
         {
-            symtab_add_entry_expr(stab_parent, value, result);
+            symtab_add_entry_expr(stab_parent, value, syn_level, result);
         }
         node = node->next;
     }
@@ -988,20 +994,23 @@ int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list,
 }
 
 int symtab_add_entry_array(symtab * stab_parent, array * array_value,
-                           int * result)
+                           unsigned int syn_level, int * result)
 {
     if (array_value->dims != NULL)
     {
-        symtab_add_entry_expr_list(stab_parent, array_value->dims, result);
+        symtab_add_entry_expr_list(stab_parent, array_value->dims,
+                                   syn_level, result);
     }
     if (array_value->elements != NULL)
     {
-        symtab_add_entry_expr_list(stab_parent, array_value->elements, result);
+        symtab_add_entry_expr_list(stab_parent, array_value->elements,
+                                   syn_level, result);
     }
     return 0;
 }
 
-int symtab_add_entry_func(symtab * stab_parent, func * func_value, int * result)
+int symtab_add_entry_func(symtab * stab_parent, func * func_value,
+                          unsigned int syn_level, int * result)
 {
     if (func_value->stab == NULL)
     {
@@ -1009,33 +1018,36 @@ int symtab_add_entry_func(symtab * stab_parent, func * func_value, int * result)
     }
     if (func_value->id)
     {
-        symtab_add_func_from_func(func_value->stab, func_value, result);
+        symtab_add_func_from_func(func_value->stab, func_value, syn_level - 1,
+                                  result);
     }
     if (func_value->vars)
     {
         symtab_add_var_from_var_list(func_value->stab, func_value->vars,
-                                     result);
+                                     syn_level, result);
     }
     if (func_value->body && func_value->body->funcs)
     {
         symtab_add_func_from_func_list(func_value->stab,
-                                       func_value->body->funcs, result);
+                                       func_value->body->funcs, syn_level,
+                                       result);
     }
     if (func_value->body && func_value->body->funcs)
     {
         symtab_add_entry_func_list(func_value->stab, func_value->body->funcs,
-                                   result);
+                                   syn_level, result);
     }
     if (func_value->body && func_value->body->ret)
     {
-        symtab_add_entry_expr(func_value->stab, func_value->body->ret, result);
+        symtab_add_entry_expr(func_value->stab, func_value->body->ret,
+                              syn_level, result);
     }
 
     return 0;
 }
 
 int symtab_add_entry_func_list(symtab * stab_parent, func_list * list,
-                               int * result)
+                               unsigned int syn_level, int * result)
 {
     func_list_node * node = list->tail;
     while (node != NULL)
@@ -1043,7 +1055,8 @@ int symtab_add_entry_func_list(symtab * stab_parent, func_list * list,
         func * func_value = node->value;
         if (func_value)
         {
-            symtab_add_entry_func(stab_parent, func_value, result);
+            symtab_add_entry_func(stab_parent, func_value,
+                                  syn_level + 1, result);
         }
         node = node->next;
     }
@@ -1053,13 +1066,15 @@ int symtab_add_entry_func_list(symtab * stab_parent, func_list * list,
 
 int symtab_add_entry_never(never * nev, int * result)
 {
+    unsigned int syn_level = 0;
+    
     if (nev->stab == NULL)
     {
         nev->stab = symtab_new(32, NULL);
     }
 
-    symtab_add_func_from_func_list(nev->stab, nev->funcs, result);
-    symtab_add_entry_func_list(nev->stab, nev->funcs, result);
+    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
+    symtab_add_entry_func_list(nev->stab, nev->funcs, syn_level, result);
 
     return 0;
 }
