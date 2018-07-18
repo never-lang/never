@@ -27,14 +27,16 @@
 
 static void usage(const char * exe)
 {
-    printf("usage: %s -f file name | -e \"one line of program\"\n", exe);
+    printf("usage: %s [-m memory size (default: %u)] [-s stack size (default: "
+           "%u)] -f file name | -e \"one line of program\"\n",
+           exe, DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
 }
 
 static void print_result(object * result)
 {
     if (result->type == OBJECT_INT)
     {
-         printf("%d\n", result->int_value);
+        printf("%d\n", result->int_value);
     }
     else if (result->type == OBJECT_FLOAT)
     {
@@ -54,7 +56,8 @@ int main(int argc, char * argv[])
     const char * exe = argv[0];
     const char * arg = NULL;
     int fflag = 0, eflag = 0;
-    while (getopt(argc, argv, "f:e:") != -1)
+    unsigned int vm_mem_size = 0, vm_stack_size = 0;
+    while (getopt(argc, argv, "f:e:m:s:") != -1)
     {
         switch (optopt)
         {
@@ -66,7 +69,12 @@ int main(int argc, char * argv[])
             arg = optarg;
             eflag = 1;
             break;
-
+        case 'm':
+            sscanf(optarg, "%u", &vm_mem_size);
+            break;
+        case 's':
+            sscanf(optarg, "%u", &vm_stack_size);
+            break;
         case '?':
         default:
             usage(exe);
@@ -76,9 +84,20 @@ int main(int argc, char * argv[])
     argc -= optind;
     argv += optind;
 
+    if (vm_mem_size < 1)
+    {
+        vm_mem_size = DEFAULT_VM_MEM_SIZE;
+    }
+
+    if (vm_stack_size < 1)
+    {
+        vm_stack_size = DEFAULT_VM_STACK_SIZE;
+    }
+
     if (eflag)
     {
-        ret = nev_compile_str_and_exec(arg, argc, argv, &result);
+        ret = nev_compile_str_and_exec(arg, argc, argv, &result, vm_mem_size,
+                                       vm_stack_size);
         print_result(&result);
         return ret;
     }
@@ -86,7 +105,8 @@ int main(int argc, char * argv[])
     if (fflag)
     {
 
-        ret = nev_compile_file_and_exec(arg, argc, argv, &result);
+        ret = nev_compile_file_and_exec(arg, argc, argv, &result, vm_mem_size,
+                                        vm_stack_size);
         print_result(&result);
         return ret;
     }
@@ -95,5 +115,3 @@ int main(int argc, char * argv[])
     usage(exe);
     return 0;
 }
-
-
