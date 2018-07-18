@@ -4,15 +4,15 @@ title: Tail Recursion
 
 # Recursion
 
-*To understand recursion one needs to understand recursion*
+*To Understand Recursion, You Must First Understand Recursion.*
 
-![alt text][uroboros]
+![Uroboros; Public Domain reproduced by Carlos Adanero][uroboros]
 
 ## Introduction
-Many problems are expressed using themselves as subproblems. This leads to an interesting observation, that to solve a problem one needs to solve the same problem again. Of course such loop needs to be broken somewhere. Usually subproblems are of smaller size than the original. In mathematics a classical example of such a function is Fibonnaci function which is defined as ```fib(1) = 1, fib(2) = 1, fib(n) == fib(n - 1) + fib(n - 2)```. Computer scientists also noticed that value of such functions can be automatically calculated by a computer. Unfortunatelly computers are electrical devices which have their limitations. One of them is speed of execution which is finitive and thus larger problems take longer to execute. The other one is memory size which also influences size of problems which can be solved. Computers also execute instructions and they must be programmed to reuse same results again. Otherwise they will blindly recalulate same problems again and again. For example, simple implementation of the Fibonacci function for each ```n``` would solve the same subproblems twice. In recursion of course! Which leads to expotentian number of instructions invoked. Despite those limitations it is tempting to use recursion to express problems. They become easier to express and later understand. In many cases, when subproblem is divided by two, for example, in many practical problems this leads to very few levels of recursion which can be handled by physical computers. For problems with 1 milion elements such division results only in 20 levels of recursion calls. Also it is easy to use memory and store results of already calculated functions. Such a technique, known as memoizations, signifiantly speeds to calculations. Another technique, which is described in this article, is known as tail recursion.
+Many problems are expressed using themselves as subproblems. This leads to an interesting observation, that to solve a problem one needs to solve the same problem again. Of course such loop needs to be broken somewhere. Usually subproblems are of smaller size than the original. In mathematics a classical example of such a function is Fibonacci function which is defined as ```fib(1) = 1, fib(2) = 1, fib(n) == fib(n - 1) + fib(n - 2)```. Programmers also noticed that value of such functions can be automatically calculated by a computer. Unfortunately computers are electrical devices which have their limitations. One of them is speed of execution which is finite and thus larger problems take longer to execute. The other one is memory size which also influences size of problems which can be solved. In many functions the same subproblem is calculated repeatadely. As computers execute instructions they must be programmed to reuse previously calculated values. Otherwise they will blindly recalculate same problems again and again. For example, simple implementation of the Fibonacci function for each ```n``` would solve the same subproblems twice. In recursion of course! Which leads to exponential number of instructions invoked. Despite those limitations it is tempting to use recursion to express problems. They become easier to express and later understand. In many cases, when subproblem is divided by two, for example, in many practical problems this leads to very few levels of recursion which can be handled by physical computers. For problems with 1 million elements such division results only in 20 levels of recursion calls. Also it is easy to use memory and store results of already calculated functions. Such a technique, known as memoizations, significantly speeds to calculations. Another technique, which is described in this article, is known as tail recursion.
 
 ## Tail Recursion
-The following code listing presents Fibonacci function expressed in [Never][never-lang] language. It is expressed almost in the same way as its mathematical defintion. To calculate ```fib(20)``` function ```fib``` is called 21891 times. When executed on a typical laptop it takes approximately 0.6s to execute.
+The following code listing presents Fibonacci function expressed in [Never][never-lang] language. It is expressed almost in the same way as its mathematical definition. To calculate ```fib(20)``` function ```fib``` is called 21891 times. When executed on a typical laptop it takes approximately 0.6s to execute (unsing Never language).
 
 ```
 func fib(n -> int) -> int 
@@ -21,7 +21,7 @@ func fib(n -> int) -> int
 }
 ```
 
-Mathematicians and computer scientists begain to think how this situation could be improved. Mathematicians noticed that when the recursion call is the last one results are evaluated differenlty. Function result is calculated as result of on immediate subproblem. Thus, there are much fewer subproblems which are calculated. Computer scientists realized that the call can be optimized and avoided completely. Such recursive last calls turn into a loop which is executed again and again. In the above example the last function called is addition. How can it be turned into tail recursion?
+Mathematicians and computer scientists began to think how this situation could be improved. Mathematicians noticed that when the recursion call is the last one results are evaluated differently. Function result is calculated as result of immediate subproblem. Thus, there are much fewer subproblems which are calculated. Computer scientists realized that the call can be optimized and avoided completely. Such recursive last calls turn into a loop which is executed again and again. In the above example the last function called is addition. How can it be turned into tail recursion?
 
 First, it needs to be the last call. Second, it needs parameter ```n```. Also we may notice that result is a sum of two previous values, lets name them ```a``` and ```b```.
 
@@ -32,10 +32,10 @@ func fib(n -> int, a -> int, b -> int) -> int
 }
 ```
 
-The above listing presents tail recursive definition of the Fibnonacci function. During each call its value is calculated by adding two previous values. What is most important there will be just 20 recursive calls. Now it takes only 0.004s to execute. 150 times faster and 1094 fewer function calls!
+The above listing presents tail recursive definition of the Fibonacci function. During each call its value is calculated by adding two previous values. What is most important there will be just 20 recursive calls. Now it takes only 0.004s to execute. 150 times faster and 1094 fewer function calls!
 
-## Mathematical Function
-Other functions can be turned into tail recursive.
+## Function Evaluation
+Other functions can be turned into tail recursive as well.
 
 ```
 func gcd(x -> int, y -> int) -> int
@@ -61,10 +61,10 @@ func power(a -> int, n -> int, val -> int) -> int
 
 Next two functions define factorial and power functions.
 
-## Computer Science Function
-Tail recursive functions can also be used to create programs. When evaluating mathematical functions we were not interested how their value is calculated. However, when creating programs, we may use the fact that tail recursive function is executed in a loop. Now we are less interested in results as such. The program benefits from repeated calls made when recursive function is invoked.
+## Programming
+Tail recursive functions can be used to create programs. When evaluating mathematical functions we were not interested how their value is calculated. However, when creating programs, we may use the fact that tail recursive function is executed in a loop. Now we are less interested in results as such. The program benefits from repeated calls made when recursive function is invoked.
 
-To ilustrate this technique lets have a look at the following examples. Different functions are executed over elements of an array. [Never][never-lang] language declares an array of four integers as ```{ 1, 2, 3, 4 } -> int``` and gets value of its elements using ```t[i]``` syntax. When an array is passed to a function its size is given in ```t[elems] -> int``` parameter.
+To illustrate this technique lets have a look at the following examples. Different functions are executed over elements of an array. [Never][never-lang] language declares an array of four integers as ```{ 1, 2, 3, 4 } -> int``` and gets value of its elements using ```t[i]``` syntax. When an array is passed to a function its size is given in ```t[elems] -> int``` parameter.
 
 ```
 func tprint( t[elems] -> int ) -> int
@@ -82,7 +82,7 @@ func main() -> int
 }
 ```
 
-The above function ```__tprint``` when is invoked for every element of the array. Each element of an array is printed using ```print(t[i])``` function. Next the ```__tprint``` is invoked again to print next value. To make program more readable function ```__tprint``` is defined within function ```tprint``` which takes an array as its parameter. This technique will recurr in following examples.
+The above function ```__tprint``` is invoked for every element of an array. Each element of the array is printed using ```print(t[i])``` function. Next the ```__tprint``` is invoked again to print the next value. To make program more readable function ```__tprint``` is defined within function ```tprint``` which takes the array as its parameter. This technique will recur in following examples.
 
 ```
 func tsum( t[elems] -> int) -> int
@@ -98,7 +98,7 @@ func main() -> int
 	return tsum( { 10, 20, 30, 40, 50, 60 } -> int );
 }
 ```
-To calculate sum of elements we in each recursive call sum is increased by each element value. Finally sum of all elements is returned.
+To calculate sum of array elements in each recursive call sum is increased. Finally sum of all elements is returned.
 
 ```
 func tmin( t[elems] -> int ) -> int
@@ -130,7 +130,7 @@ func main() -> int
 	return exists( 100, { 60, 20, 10, 30, 50, 40, 80, 90, 100 } -> int );
 }
 ```
-...or used to determine if given value exists with an array. What is interesting that recursive calls stop when sought after value is found.
+...or used to determine if given value exists with an array. Recursive calls stop when sought after value is found.
 
 ```
 func add_five(e -> int) -> int
@@ -201,7 +201,8 @@ func main() -> int
 The idea to pass first-class functions can be extended. The above listing presents ```filter``` function which is executed over all elements of an array. When ```if``` function return value other than zero then function ```do``` is invoked.
 
 ## Summary
-Examples presented in this article show how tail recursion can be used in practise. Both to calculate values of functions or used to execute code over elements of an array.
+Examples presented in this article show how tail recursion can be used in practise. Both to calculate values of functions or used to execute code over elements of an array. Using tail
+recursive functions lets to increase program execution speed and reduce memory size.
 
 [uroboros]: https://never-lang.github.io/never/Serpiente_alquimica.jpg  "Uroboros"
 [never-lang]: https://never-lang.github.io/never
