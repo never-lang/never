@@ -39,13 +39,16 @@ int getopt(int argc, char * const argv[], const char * optstring)
          * if the user didn't specify '-' as an option,
          * assume it means -1.
          */
-        if (optopt == (int)'-') {
+        if (optopt == (int)'-')
+        {
             return (-1);
         }
-        if (!*place) {
+        if (!*place)
+        {
             ++optind;
         }
-        if (opterr && *optstring != ':') {
+        if (opterr && *optstring != ':')
+        {
             (void)printf("illegal option -- %c\n", optopt);
         }
         return (BADCH);

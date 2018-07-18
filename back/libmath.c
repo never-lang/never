@@ -19,10 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include "libmath.h"
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
-#include "libmath.h"
 
 var_list * vars_int_x()
 {
@@ -81,7 +81,7 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
 {
     char * func_id = NULL;
     expr * func_expr = NULL;
-    func_body * body =  NULL;
+    func_body * body = NULL;
     func * func_value = NULL;
 
     if (var_ret->type == VAR_INT)
@@ -107,22 +107,27 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
 
 func * libmath_func_int_x_new(const char * name, libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, vars_int_x(), params_x(), var_new_int(NULL));
+    return lib_math_func_any_new(name, math_id, vars_int_x(), params_x(),
+                                 var_new_int(NULL));
 }
 
 func * libmath_func_float_x_new(const char * name, libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, vars_float_x(), params_x(), var_new_float(NULL));
+    return lib_math_func_any_new(name, math_id, vars_float_x(), params_x(),
+                                 var_new_float(NULL));
 }
 
 func * libmath_func_float_x_float_y_new(const char * name, libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, vars_float_x_float_y(), params_x_y(), var_new_float(NULL));
+    return lib_math_func_any_new(name, math_id, vars_float_x_float_y(),
+                                 params_x_y(), var_new_float(NULL));
 }
 
-func * libmath_func_float_x_float_y_int_new(const char * name, libmath_func math_id)
+func * libmath_func_float_x_float_y_int_new(const char * name,
+                                            libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, vars_float_x_float_y(), params_x_y(), var_new_int(NULL));
+    return lib_math_func_any_new(name, math_id, vars_float_x_float_y(),
+                                 params_x_y(), var_new_int(NULL));
 }
 
 func * libmath_func_sin_new()
@@ -199,20 +204,30 @@ const char * libmath_func_to_str(libmath_func math_id)
 {
     switch (math_id)
     {
-        case LIB_MATH_UNKNOWN: return "unknown";
-        case LIB_MATH_SIN: return "sin";
-        case LIB_MATH_COS: return "cos";
-        case LIB_MATH_TAN: return "tan";
-        case LIB_MATH_EXP: return "exp";
-        case LIB_MATH_LOG: return "log";
-        case LIB_MATH_SQRT: return "sqrt";
-        case LIB_MATH_POW: return "pow";
-        case LIB_MATH_PRINT: return "print";
-        case LIB_MATH_PRINTF: return "printf";
-        case LIB_MATH_ASSERT: return "assert";
-        case LIB_MATH_ASSERTF: return "assertf";
+    case LIB_MATH_UNKNOWN:
+        return "unknown";
+    case LIB_MATH_SIN:
+        return "sin";
+    case LIB_MATH_COS:
+        return "cos";
+    case LIB_MATH_TAN:
+        return "tan";
+    case LIB_MATH_EXP:
+        return "exp";
+    case LIB_MATH_LOG:
+        return "log";
+    case LIB_MATH_SQRT:
+        return "sqrt";
+    case LIB_MATH_POW:
+        return "pow";
+    case LIB_MATH_PRINT:
+        return "print";
+    case LIB_MATH_PRINTF:
+        return "printf";
+    case LIB_MATH_ASSERT:
+        return "assert";
+    case LIB_MATH_ASSERTF:
+        return "assertf";
     }
     return "unknown";
 }
-
-

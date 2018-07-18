@@ -31,15 +31,16 @@ int expr_set_return_type(expr * value, var * ret);
 
 int var_cmp(var * var_one, var * var_two);
 int var_list_cmp(var_list * var_one, var_list * var_two);
-int func_cmp(var_list * var_list_one, var * ret_one,
-             var_list * var_list_two, var * ret_two);
+int func_cmp(var_list * var_list_one, var * ret_one, var_list * var_list_two,
+             var * ret_two);
 
 int var_expr_array_cmp(var * var_value, expr * expr_value);
 int var_expr_cmp(var * var_value, expr * expr_value);
 int var_expr_list_cmp(var_list * vars, expr_list * list);
 
 int array_dims_check_type_expr(symtab * tab, expr * value, int * result);
-int array_dims_check_type_expr_list(symtab * tab, expr_list * list, int * result);
+int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
+                                    int * result);
 
 int expr_id_check_type(symtab * tab, expr * value, int * result);
 int expr_array_deref_check_type(symtab * tab, expr * value, int * result);
@@ -55,12 +56,17 @@ int symtab_add_var_from_basic_var(symtab * tab, var * var_value, int * result);
 int symtab_add_var_from_var(symtab * tab, var * var_value, int * result);
 int symtab_add_var_from_var_list(symtab * tab, var_list * list, int * result);
 int symtab_add_func_from_func(symtab * tab, func * func_value, int * result);
-int symtab_add_func_from_func_list(symtab * tab, func_list * list, int * result);
+int symtab_add_func_from_func_list(symtab * tab, func_list * list,
+                                   int * result);
 int symtab_add_entry_expr(symtab * stab, expr * value, int * result);
-int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list, int * result);
-int symtab_add_entry_array(symtab * stab_parent, array * array_value, int * result);
-int symtab_add_entry_func(symtab * stab_parent, func * func_value, int * result);
-int symtab_add_entry_func_list(symtab * stab_parent, func_list * list, int * result);
+int symtab_add_entry_expr_list(symtab * stab_parent, expr_list * list,
+                               int * result);
+int symtab_add_entry_array(symtab * stab_parent, array * array_value,
+                           int * result);
+int symtab_add_entry_func(symtab * stab_parent, func * func_value,
+                          int * result);
+int symtab_add_entry_func_list(symtab * stab_parent, func_list * list,
+                               int * result);
 int symtab_add_entry_never(never * nev, int * result);
 
 int print_func_array(array * value, int depth);
@@ -76,4 +82,3 @@ int func_main_check_type(symtab * tab, int * result);
 int never_sem_check(never * nev);
 
 #endif /* __TYPECHECK_H__ */
-

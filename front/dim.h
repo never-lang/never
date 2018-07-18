@@ -34,4 +34,3 @@ void dim_list_add_beg(dim_list * list, dim * value);
 void dim_list_add_end(dim_list * list, dim * value);
 
 #endif /* __DIM_H__ */
-

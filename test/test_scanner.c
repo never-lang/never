@@ -19,9 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdio.h>
-#include "types.h"
 #include "scanner.h"
+#include "types.h"
+#include <stdio.h>
 
 extern FILE * yyin;
 
@@ -44,7 +44,6 @@ int main(int argc, char * argv[])
     lex_scan(&tokp);
 
     fclose(yyin);
-    
+
     return 0;
 }
-

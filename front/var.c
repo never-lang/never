@@ -19,57 +19,57 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdlib.h>
-#include <stdio.h>
 #include "var.h"
 #include "dim.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 var * var_new_int(char * id)
 {
     var * value = (var *)malloc(sizeof(var));
-    
+
     value->type = VAR_INT;
     value->index = -1;
     value->id = id;
     value->vars = NULL;
     value->ret = NULL;
     value->line_no = 0;
-    
+
     return value;
 }
 
 var * var_new_float(char * id)
 {
     var * value = (var *)malloc(sizeof(var));
-    
+
     value->type = VAR_FLOAT;
     value->index = -1;
     value->id = id;
     value->vars = NULL;
     value->ret = NULL;
     value->line_no = 0;
-    
+
     return value;
 }
 
 var * var_new_dim(char * id)
 {
     var * value = (var *)malloc(sizeof(var));
-    
+
     value->type = VAR_DIM;
     value->index = -1;
     value->id = id;
     value->array = NULL;
     value->ret = NULL;
     value->line_no = 0;
-    
+
     return value;
 }
 
 var * var_new_array(char * id, var_list * dims, var * ret)
 {
     var * value = (var *)malloc(sizeof(var));
-    
+
     value->type = VAR_ARRAY;
     value->index = -1;
     value->id = id;
@@ -88,14 +88,14 @@ var * var_new_array(char * id, var_list * dims, var * ret)
 var * var_new_func(char * id, var_list * vars, var * ret)
 {
     var * value = (var *)malloc(sizeof(var));
-    
+
     value->type = VAR_FUNC;
     value->index = -1;
     value->id = id;
     value->vars = vars;
     value->ret = ret;
     value->line_no = 0;
-    
+
     return value;
 }
 
@@ -105,7 +105,7 @@ void var_delete(var * value)
     {
         free(value->id);
     }
-    
+
     if (value->type == VAR_FUNC && value->vars != NULL)
     {
         var_list_delete(value->vars);
@@ -114,7 +114,7 @@ void var_delete(var * value)
     {
         var_list_delete(value->dims);
     }
-    
+
     if (value->ret)
     {
         var_delete(value->ret);
@@ -126,11 +126,11 @@ void var_delete(var * value)
 var_list_node * var_list_node_new(var * value)
 {
     var_list_node * node = (var_list_node *)malloc(sizeof(var_list_node));
-    
+
     node->value = value;
     node->prev = NULL;
     node->next = NULL;
-    
+
     return node;
 }
 
@@ -146,31 +146,31 @@ void var_list_node_delete(var_list_node * node)
 var_list * var_list_new()
 {
     var_list * list = (var_list *)malloc(sizeof(var_list));
-    
+
     list->count = 0;
     list->head = NULL;
     list->tail = NULL;
-    
+
     return list;
 }
 
 void var_list_delete(var_list * list)
 {
     var_list_node * node = list->tail;
-    
+
     while (node != NULL)
     {
         var_list_node * tmp = node->next;
         var_list_node_delete(node);
         node = tmp;
     }
-    free(list);    
+    free(list);
 }
 
 void var_list_add_beg(var_list * list, var * value)
 {
     var_list_node * node = var_list_node_new(value);
-    
+
     list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
@@ -187,7 +187,7 @@ void var_list_add_beg(var_list * list, var * value)
 void var_list_add_end(var_list * list, var * value)
 {
     var_list_node * node = var_list_node_new(value);
-    
+
     list->count++;
     if (list->head == NULL && list->tail == NULL)
     {
@@ -219,9 +219,11 @@ void var_dim_set_array(var_list * dims, var * array)
 
 void var_print(var * value)
 {
-    if (value == NULL) return;
+    if (value == NULL)
+        return;
 
-    printf("var %s %d %s\n", var_type_str(value->type), value->index, value->id);
+    printf("var %s %d %s\n", var_type_str(value->type), value->index,
+           value->id);
     var_print(value->ret);
 }
 
@@ -235,7 +237,7 @@ void var_list_print(var_list * list)
         {
             var_print(value);
         }
-    
+
         node = node->next;
     }
 }
@@ -244,14 +246,16 @@ char * var_type_str(int type)
 {
     switch (type)
     {
-        case VAR_INT: return "VAR_INT";
-        case VAR_FLOAT: return "VAR_FLOAT";
-        case VAR_DIM: return "VAR_DIM";
-        case VAR_ARRAY: return "VAR_ARRAY";
-        case VAR_FUNC: return "VAR_FUNC";
+    case VAR_INT:
+        return "VAR_INT";
+    case VAR_FLOAT:
+        return "VAR_FLOAT";
+    case VAR_DIM:
+        return "VAR_DIM";
+    case VAR_ARRAY:
+        return "VAR_ARRAY";
+    case VAR_FUNC:
+        return "VAR_FUNC";
     }
     return "VAR_???";
 }
-
-
-

@@ -42,11 +42,10 @@ typedef struct gc_mem
 typedef struct gc_stack
 {
     gc_mem_type type;
-    union
-    {
+    union {
         ip_ptr ip;
         mem_ptr addr;
-        stack_ptr sp; 
+        stack_ptr sp;
     };
 } gc_stack;
 
@@ -68,7 +67,8 @@ void gc_mark(gc * collector, mem_ptr addr);
 void gc_mark_access(gc * collector, gc_stack * omfalos, int stack_size);
 void gc_run_omfalos(gc * collector, gc_stack * omfalos, int stack_size);
 
-void gc_run(gc * collector, gc_stack * omfalos, int stack_size, mem_ptr global_vec);
+void gc_run(gc * collector, gc_stack * omfalos, int stack_size,
+            mem_ptr global_vec);
 
 mem_ptr gc_alloc_any(gc * collector, object * value);
 mem_ptr gc_alloc_int(gc * collector, int value);
@@ -84,14 +84,17 @@ float gc_get_float(gc * collector, mem_ptr addr);
 void gc_set_float(gc * collector, mem_ptr addr, float value);
 
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
-void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index, mem_ptr value);
+void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
+                mem_ptr value);
 
-unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr, unsigned int dim);
+unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr,
+                                  unsigned int dim);
 unsigned int gc_get_arr_dims(gc * collector, mem_ptr addr);
 unsigned int gc_get_arr_elems(gc * collector, mem_ptr addr);
 object_arr_dim * gc_get_arr_dv(gc * collector, mem_ptr addr);
 mem_ptr gc_get_arr(gc * collector, mem_ptr addr, unsigned int elem_index);
-void gc_set_arr(gc * collector, mem_ptr addr, unsigned int elem_index, mem_ptr value);
+void gc_set_arr(gc * collector, mem_ptr addr, unsigned int elem_index,
+                mem_ptr value);
 
 ip_ptr gc_get_func_addr(gc * collector, mem_ptr func_addr);
 mem_ptr gc_get_func_vec(gc * collector, mem_ptr func_addr);
@@ -105,5 +108,3 @@ void gc_stack_delete(gc_stack * stack);
 void gc_stack_print(gc_stack * stack, int stack_size);
 
 #endif /* __GC_H__ */
-
-

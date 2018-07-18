@@ -27,6 +27,4 @@ void expr_list_weak_delete(expr_list_weak * list);
 void expr_list_weak_add(expr_list_weak * list, expr * value, int distance);
 expr_list_weak_node * expr_list_weak_pop(expr_list_weak * list);
 
-
 #endif /* __WEAKEXPR_H__ */
-

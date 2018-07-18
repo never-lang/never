@@ -22,9 +22,9 @@
 #ifndef __SYMTAB_H__
 #define __SYMTAB_H__
 
-#include "var.h"
-#include "func.h"
 #include "array.h"
+#include "func.h"
+#include "var.h"
 
 enum
 {
@@ -42,8 +42,7 @@ typedef struct symtab_entry
 {
     int type;
     const char * id;
-    union
-    {
+    union {
         var * var_value;
         func * func_value;
     };
@@ -62,8 +61,10 @@ symtab_entry * symtab_entry_new(unsigned int size);
 void symtab_entry_delete(symtab_entry * entries);
 void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
                              int type, const char * id, void * var_func_value);
-symtab_entry * symtab_entry_lookup_object(symtab_entry * entries, unsigned int size, const char * id);
-void symtab_entry_resize(symtab_entry * entries, int size, symtab_entry * entries_new, int size_new);
+symtab_entry * symtab_entry_lookup_object(symtab_entry * entries,
+                                          unsigned int size, const char * id);
+void symtab_entry_resize(symtab_entry * entries, int size,
+                         symtab_entry * entries_new, int size_new);
 
 void symtab_entry_print(symtab_entry * entry);
 
@@ -82,6 +83,3 @@ void symtab_resize(symtab * tab);
 void symtab_print(symtab * tab);
 
 #endif /* __SYMTAB_H__ */
-
-
-

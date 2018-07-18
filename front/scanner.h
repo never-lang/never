@@ -26,9 +26,8 @@
 
 int yylex_destroy();
 
-int lex_scan(token *tokp);
+int lex_scan(token * tokp);
 
-void scan_string(const char *src);
+void scan_string(const char * src);
 
 #endif
-

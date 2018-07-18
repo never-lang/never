@@ -19,18 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
 #include "bytecode.h"
 #include "func.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 bytecode_op_str bytecode_op[] = {
     { BYTECODE_UNKNOWN, bytecode_print_unknown },
 
     { BYTECODE_INT, bytecode_print_int },
     { BYTECODE_FLOAT, bytecode_print_float },
-    
+
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
     { BYTECODE_ID_DIM_LOCAL, bytecode_print_id_dim_local },
     { BYTECODE_ID_GLOBAL, bytecode_print_id_global },
@@ -76,10 +76,10 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_MK_ARRAY, bytecode_print_mk_array },
     { BYTECODE_MK_INIT_ARRAY, bytecode_print_mk_init_array },
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
-    
+
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
-    
+
     { BYTECODE_MARK, bytecode_print_mark },
     { BYTECODE_CALL, bytecode_print_call },
     { BYTECODE_SLIDE, bytecode_print_slide },
@@ -90,7 +90,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_ALLOC, bytecode_print_alloc },
     { BYTECODE_REWRITE, bytecode_print_rewrite },
     { BYTECODE_PUSH_PARAM, bytecode_print_push_param },
-   
+
     { BYTECODE_HALT, bytecode_print_halt }
 };
 
@@ -120,15 +120,15 @@ void bytecode_print_float(bytecode * code)
 
 void bytecode_print_id_local(bytecode * code)
 {
-    printf("%d: id local %d %d\n", code->addr, code->id_local.stack_level, code->id_local.index);
+    printf("%d: id local %d %d\n", code->addr, code->id_local.stack_level,
+           code->id_local.index);
 }
 
 void bytecode_print_id_dim_local(bytecode * code)
 {
     printf("%d: id dim local %d %d %d\n", code->addr,
-                                          code->id_dim_local.stack_level,
-                                          code->id_dim_local.index,
-                                          code->id_dim_local.dim_index);
+           code->id_dim_local.stack_level, code->id_dim_local.index,
+           code->id_dim_local.dim_index);
 }
 
 void bytecode_print_id_global(bytecode * code)
@@ -278,12 +278,14 @@ void bytecode_print_float_to_int(bytecode * code)
 
 void bytecode_print_jumpz(bytecode * code)
 {
-    printf("%d: jumpz %d (%d)\n", code->addr, code->jump.offset, code->addr + code->jump.offset);
+    printf("%d: jumpz %d (%d)\n", code->addr, code->jump.offset,
+           code->addr + code->jump.offset);
 }
 
 void bytecode_print_jump(bytecode * code)
 {
-    printf("%d: jump %d (%d)\n", code->addr, code->jump.offset, code->addr + code->jump.offset);
+    printf("%d: jump %d (%d)\n", code->addr, code->jump.offset,
+           code->addr + code->jump.offset);
 }
 
 void bytecode_print_label(bytecode * code)
@@ -321,10 +323,7 @@ void bytecode_print_mark(bytecode * code)
     printf("%d: mark %u\n", code->addr, code->mark.addr);
 }
 
-void bytecode_print_call(bytecode * code)
-{
-    printf("%d: call\n", code->addr);
-}
+void bytecode_print_call(bytecode * code) { printf("%d: call\n", code->addr); }
 
 void bytecode_print_slide(bytecode * code)
 {
@@ -366,37 +365,32 @@ void bytecode_print_push_param(bytecode * code)
     printf("%d: push param\n", code->addr);
 }
 
-void bytecode_print_halt(bytecode * code)
-{
-    printf("%d: halt\n", code->addr);
-}
+void bytecode_print_halt(bytecode * code) { printf("%d: halt\n", code->addr); }
 
 bytecode_list_node * bytecode_list_node_new(bytecode * value)
 {
-    bytecode_list_node * node = (bytecode_list_node *)malloc(sizeof(bytecode_list_node));
-    
+    bytecode_list_node * node =
+        (bytecode_list_node *)malloc(sizeof(bytecode_list_node));
+
     node->value = *value;
     node->prev = NULL;
     node->next = NULL;
-    
+
     return node;
 }
 
-void bytecode_list_node_delete(bytecode_list_node * node)
-{
-    free(node);
-}
+void bytecode_list_node_delete(bytecode_list_node * node) { free(node); }
 
 bytecode_list * bytecode_new()
 {
     bytecode_list * list = (bytecode_list *)malloc(sizeof(bytecode_list));
-    
+
     list->addr = 0;
     list->head = NULL;
     list->tail = NULL;
-    
+
     bytecode_op_test();
-    
+
     return list;
 }
 
@@ -429,7 +423,7 @@ bytecode * bytecode_add(bytecode_list * code, bytecode * value)
         node->prev = code->head;
         code->head = node;
     }
-    
+
     return &node->value;
 }
 
@@ -446,7 +440,7 @@ void bytecode_func_addr(bytecode_list * code)
                 code->type = BYTECODE_ID_FUNC_ADDR;
                 code->id_func.func_addr = code->id_func.func_value->addr;
             }
-        }    
+        }
         node = node->next;
     }
 }
@@ -470,14 +464,15 @@ void bytecode_print(bytecode_list * code)
     printf("---- bytecode end ---\n");
 }
 
-void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, unsigned int * code_size)
+void bytecode_to_array(bytecode_list * code, bytecode ** code_arr,
+                       unsigned int * code_size)
 {
     unsigned int addr = 0;
     bytecode_list_node * node = NULL;
-    
+
     *code_size = code->addr;
     *code_arr = (bytecode *)malloc(code->addr * sizeof(bytecode));
-    
+
     node = code->tail;
     while (node != NULL)
     {
@@ -488,20 +483,18 @@ void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, unsigned int 
         }
         if (node->value.type == BYTECODE_ID_FUNC_FUNC)
         {
-            fprintf(stderr, "cannot generate bytecode array with function pointers, use bytecode_func_addr\n");
+            fprintf(stderr, "cannot generate bytecode array with function "
+                            "pointers, use bytecode_func_addr\n");
             assert(0);
         }
-        
+
         (*code_arr)[addr++] = node->value;
 
         node = node->next;
     }
 }
 
-void bytecode_array_delete(bytecode * code_arr)
-{
-    free(code_arr);
-}
+void bytecode_array_delete(bytecode * code_arr) { free(code_arr); }
 
 void bytecode_array_print(bytecode * code_arr, unsigned int size)
 {
@@ -516,4 +509,3 @@ void bytecode_array_print(bytecode * code_arr, unsigned int size)
 
     printf("---- bytecode array end ---\n");
 }
-

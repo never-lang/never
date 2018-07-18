@@ -19,9 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include "utils.h"
 #include <stdarg.h>
 #include <stdio.h>
-#include "utils.h"
 
 const char * utils_file_name = NULL;
 
@@ -32,25 +32,24 @@ void set_utils_file_name(const char * file_name)
 
 void print_error_msg(int line_no, const char * format, ...)
 {
-   va_list args;
+    va_list args;
 
-   va_start(args, format);
+    va_start(args, format);
 
-   printf("%s:%d: error: ", utils_file_name, line_no);
-   vprintf(format, args);
+    printf("%s:%d: error: ", utils_file_name, line_no);
+    vprintf(format, args);
 
-   va_end(args);
+    va_end(args);
 }
 
 void print_warning_msg(int line_no, const char * format, ...)
 {
-   va_list args;
+    va_list args;
 
-   va_start(args, format);
+    va_start(args, format);
 
-   printf("%s:%d: warning: ", utils_file_name, line_no);
-   vprintf(format, args);
+    printf("%s:%d: warning: ", utils_file_name, line_no);
+    vprintf(format, args);
 
-   va_end(args);
+    va_end(args);
 }
-

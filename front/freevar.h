@@ -37,8 +37,7 @@ typedef struct freevar
     int type;
     char * id;
     int index;
-    union
-    {
+    union {
         struct var * local_value;
         struct freevar * global_value;
         struct func * func_value;
@@ -79,5 +78,3 @@ void freevar_list_print(freevar_list * list);
 char * freevar_type_str(int type);
 
 #endif /* __FREEVAR_H__ */
-
-

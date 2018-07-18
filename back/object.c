@@ -19,26 +19,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
 #include "object.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 object_arr_dim * object_arr_dim_new(unsigned int dims)
 {
-    object_arr_dim * dv = (object_arr_dim *)malloc(dims * sizeof(object_arr_dim));    
+    object_arr_dim * dv =
+        (object_arr_dim *)malloc(dims * sizeof(object_arr_dim));
     return dv;
 }
 
-void object_arr_dim_delete(object_arr_dim * dv)
-{
-    free(dv);
-}
+void object_arr_dim_delete(object_arr_dim * dv) { free(dv); }
 
 object * object_new()
 {
     object * obj = (object *)malloc(sizeof(object));
-    
+
     return obj;
 }
 
@@ -48,7 +46,7 @@ object * object_new_int(int value)
 
     obj->type = OBJECT_INT;
     obj->int_value = value;
-    
+
     return obj;
 }
 
@@ -58,7 +56,7 @@ object * object_new_float(float value)
 
     obj->type = OBJECT_FLOAT;
     obj->float_value = value;
-    
+
     return obj;
 }
 
@@ -79,15 +77,16 @@ object * object_new_vec(unsigned int size)
 
     obj->type = OBJECT_VEC;
     obj->vec_value = vec_value;
-    
+
     return obj;
 }
 
-void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv, unsigned int * elems)
+void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv,
+                         unsigned int * elems)
 {
     unsigned int d = 0;
     unsigned int e = 1;
-    
+
     for (d = 0; d < dims; d++)
     {
         e *= dv[d].elems;
@@ -100,11 +99,12 @@ void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv, unsigned int * 
     }
 }
 
-unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv, object_arr_dim * addr, int * oobounds)
+unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv,
+                                 object_arr_dim * addr, int * oobounds)
 {
     unsigned int m;
     unsigned int addr_int = 0;
-    
+
     for (m = 0; m < dims; m++)
     {
         if (dv[m].elems <= addr[m].mult)
@@ -114,7 +114,7 @@ unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv, object_
         }
         addr_int += dv[m].mult * addr[m].mult;
     }
-    
+
     *oobounds = -1;
     return addr_int;
 }
@@ -123,14 +123,15 @@ object * object_new_arr(unsigned int dims, object_arr_dim * dv)
 {
     object * obj = (object *)malloc(sizeof(object));
     object_arr * arr_value = (object_arr *)malloc(sizeof(object_arr));
-    
+
     arr_value->dims = dims;
     arr_value->dv = dv;
     object_arr_dim_mult(dims, arr_value->dv, &arr_value->elems);
-    
+
     if (arr_value->elems != 0)
     {
-        arr_value->value = (mem_ptr *)malloc(arr_value->elems * sizeof(mem_ptr));
+        arr_value->value =
+            (mem_ptr *)malloc(arr_value->elems * sizeof(mem_ptr));
     }
     else
     {
@@ -139,7 +140,7 @@ object * object_new_arr(unsigned int dims, object_arr_dim * dv)
 
     obj->type = OBJECT_ARRAY;
     obj->arr_value = arr_value;
-    
+
     return obj;
 }
 
@@ -161,38 +162,38 @@ void object_delete(object * obj)
 {
     switch (obj->type)
     {
-        case OBJECT_UNKNOWN:
-            assert(0);
+    case OBJECT_UNKNOWN:
+        assert(0);
         break;
-        case OBJECT_INT:
-        case OBJECT_FLOAT:
+    case OBJECT_INT:
+    case OBJECT_FLOAT:
         break;
-        case OBJECT_VEC:
-            if (obj->vec_value != NULL && obj->vec_value->value != NULL)
+    case OBJECT_VEC:
+        if (obj->vec_value != NULL && obj->vec_value->value != NULL)
+        {
+            free(obj->vec_value->value);
+        }
+        if (obj->vec_value != NULL)
+        {
+            free(obj->vec_value);
+        }
+        break;
+    case OBJECT_ARRAY:
+        if (obj->arr_value != NULL)
+        {
+            if (obj->arr_value->value != NULL)
             {
-                free(obj->vec_value->value);
+                free(obj->arr_value->value);
             }
-            if (obj->vec_value != NULL)
+            if (obj->arr_value->dv != NULL)
             {
-                free(obj->vec_value);
+                object_arr_dim_delete(obj->arr_value->dv);
             }
+            free(obj->arr_value);
+        }
         break;
-        case OBJECT_ARRAY:
-            if (obj->arr_value != NULL)
-            {
-                if (obj->arr_value->value != NULL)
-                {
-                    free(obj->arr_value->value);
-                }
-                if (obj->arr_value->dv != NULL)
-                {
-                    object_arr_dim_delete(obj->arr_value->dv);
-                }
-                free(obj->arr_value);
-            }
-        break;
-        case OBJECT_FUNC:
-            free(obj->func_value);
+    case OBJECT_FUNC:
+        free(obj->func_value);
         break;
     }
     free(obj);
@@ -202,24 +203,23 @@ void object_print(object * obj)
 {
     switch (obj->type)
     {
-        case OBJECT_UNKNOWN:
-            printf("object_unknown\n");
+    case OBJECT_UNKNOWN:
+        printf("object_unknown\n");
         break;
-        case OBJECT_INT:
-            printf("object_int\n");
+    case OBJECT_INT:
+        printf("object_int\n");
         break;
-        case OBJECT_FLOAT:
-            printf("object_float\n");
+    case OBJECT_FLOAT:
+        printf("object_float\n");
         break;
-        case OBJECT_VEC:
-            printf("object_vec\n");
+    case OBJECT_VEC:
+        printf("object_vec\n");
         break;
-        case OBJECT_ARRAY:
-            printf("object_array\n");
+    case OBJECT_ARRAY:
+        printf("object_array\n");
         break;
-        case OBJECT_FUNC:
-            printf("object_func\n");
+    case OBJECT_FUNC:
+        printf("object_func\n");
         break;
     }
 }
-

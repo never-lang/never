@@ -19,15 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include "symtab.h"
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
-#include "symtab.h"
 
 void test_one()
 {
     symtab * tab = symtab_new(32, NULL);
-    
+
     symtab_delete(tab);
 }
 
@@ -37,19 +37,19 @@ void test_two()
     symtab * tab = symtab_new(32, NULL);
     func * func_one = func_new(strdup("func_one"), NULL, NULL, NULL);
     func * func_three = func_new(strdup("func_three"), NULL, NULL, NULL);
-        
+
     symtab_add_func(tab, func_one);
     symtab_add_func(tab, func_three);
-    
+
     entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);
-    assert(entry->func_value == func_one); 
-    
+    assert(entry->func_value == func_one);
+
     entry = symtab_lookup(tab, "func_two", SYMTAB_FLAT);
     assert(entry == NULL);
-    
+
     entry = symtab_lookup(tab, "func_three", SYMTAB_FLAT);
-    assert(entry->func_value == func_three); 
-        
+    assert(entry->func_value == func_three);
+
     func_delete(func_one);
     func_delete(func_three);
     symtab_delete(tab);
@@ -63,26 +63,26 @@ void test_three()
     func * func_two = func_new(strdup("func_two"), NULL, NULL, NULL);
     func * func_three = func_new(strdup("func_three"), NULL, NULL, NULL);
     func * func_four = func_new(strdup("func_four"), NULL, NULL, NULL);
-        
+
     symtab_add_func(tab, func_one);
     symtab_add_func(tab, func_two);
     symtab_add_func(tab, func_three);
     symtab_add_func(tab, func_four);
 
-    entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);     
-    assert(entry->func_value == func_one); 
-    
-    entry = symtab_lookup(tab, "func_two", SYMTAB_FLAT); 
+    entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);
+    assert(entry->func_value == func_one);
+
+    entry = symtab_lookup(tab, "func_two", SYMTAB_FLAT);
     assert(entry->func_value == func_two);
-    
-    entry = symtab_lookup(tab, "func_three", SYMTAB_FLAT); 
-    assert(entry->func_value == func_three); 
-        
+
+    entry = symtab_lookup(tab, "func_three", SYMTAB_FLAT);
+    assert(entry->func_value == func_three);
+
     func_delete(func_one);
     func_delete(func_two);
     func_delete(func_three);
     func_delete(func_four);
-    
+
     symtab_delete(tab);
 }
 
@@ -98,42 +98,42 @@ void test_four()
     func * func_four = func_new(strdup("func_four"), NULL, NULL, NULL);
     func * func_five = func_new(strdup("func_five"), NULL, NULL, NULL);
     func * func_six = func_new(strdup("func_six"), NULL, NULL, NULL);
-        
+
     symtab_add_func(tab_one, func_one);
     symtab_add_func(tab_one, func_two);
     symtab_add_func(tab_two, func_three);
     symtab_add_func(tab_two, func_four);
     symtab_add_func(tab_two, func_five);
     symtab_add_func(tab_two, func_six);
-    
-    entry = symtab_lookup(tab_two, "func_one", SYMTAB_NESTED); 
-    assert(entry->func_value == func_one); 
-    
-    entry = symtab_lookup(tab_two, "func_two", SYMTAB_NESTED); 
+
+    entry = symtab_lookup(tab_two, "func_one", SYMTAB_NESTED);
+    assert(entry->func_value == func_one);
+
+    entry = symtab_lookup(tab_two, "func_two", SYMTAB_NESTED);
     assert(entry->func_value == func_two);
-    
+
     entry = symtab_lookup(tab_two, "func_three", SYMTAB_NESTED);
-    assert(entry->func_value == func_three); 
-    
-    entry = symtab_lookup(tab_two, "func_four", SYMTAB_NESTED); 
+    assert(entry->func_value == func_three);
+
+    entry = symtab_lookup(tab_two, "func_four", SYMTAB_NESTED);
     assert(entry->func_value == func_four);
-    
-    entry = symtab_lookup(tab_two, "func_five", SYMTAB_NESTED); 
+
+    entry = symtab_lookup(tab_two, "func_five", SYMTAB_NESTED);
     assert(entry->func_value == func_five);
-    
-    entry = symtab_lookup(tab_two, "func_six", SYMTAB_NESTED); 
+
+    entry = symtab_lookup(tab_two, "func_six", SYMTAB_NESTED);
     assert(entry->func_value == func_six);
-    
-    entry = symtab_lookup(tab_two, "func_seven", SYMTAB_NESTED); 
-    assert(entry == NULL);    
-        
+
+    entry = symtab_lookup(tab_two, "func_seven", SYMTAB_NESTED);
+    assert(entry == NULL);
+
     func_delete(func_one);
     func_delete(func_two);
     func_delete(func_three);
     func_delete(func_four);
     func_delete(func_five);
     func_delete(func_six);
-    
+
     symtab_delete(tab_one);
     symtab_delete(tab_two);
 }
@@ -147,4 +147,3 @@ int main(int argc, char * argv[])
 
     return 0;
 }
-

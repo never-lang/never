@@ -19,28 +19,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdio.h>
-#include <assert.h>
 #include "object.h"
+#include <assert.h>
+#include <stdio.h>
 
 void test_one()
 {
     object * obj1 = object_new_float(100.0);
-        
+
     object_delete(obj1);
 }
 
 void test_two()
 {
     object * obj1 = object_new_vec(20);
-    
+
     object_delete(obj1);
 }
 
 void test_three()
 {
     object * obj1 = object_new_func(10, 30);
-    
+
     object_delete(obj1);
 }
 
@@ -48,13 +48,13 @@ void test_four()
 {
     object_arr_dim * dv = NULL;
     object * obj1 = NULL;
-    
+
     dv = object_arr_dim_new(2);
     dv[0].elems = 10;
     dv[1].elems = 20;
 
     obj1 = object_new_arr(2, dv);
-    
+
     object_delete(obj1);
 }
 
@@ -64,8 +64,6 @@ int main(int argc, char * argv[])
     test_two();
     test_three();
     test_four();
-    
+
     return 0;
 }
-
-

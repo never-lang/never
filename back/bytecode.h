@@ -25,16 +25,16 @@
 typedef enum bytecode_type
 {
     BYTECODE_UNKNOWN = 0,
-    
+
     BYTECODE_INT,
     BYTECODE_FLOAT,
-    
+
     BYTECODE_ID_LOCAL,
     BYTECODE_ID_DIM_LOCAL,
     BYTECODE_ID_GLOBAL,
     BYTECODE_ID_FUNC_FUNC,
     BYTECODE_ID_FUNC_ADDR,
-    
+
     BYTECODE_OP_NEG_INT,
     BYTECODE_OP_ADD_INT,
     BYTECODE_OP_SUB_INT,
@@ -61,7 +61,7 @@ typedef enum bytecode_type
     BYTECODE_OP_GTE_FLOAT,
     BYTECODE_OP_EQ_FLOAT,
     BYTECODE_OP_NEQ_FLOAT,
-    
+
     BYTECODE_OP_NOT_INT,
 
     BYTECODE_INT_TO_FLOAT,
@@ -96,22 +96,21 @@ typedef struct bytecode
 {
     bytecode_type type;
     unsigned int addr;
-    union
-    {
+    union {
         struct
         {
-            int value;     /* BYTECODE_INT */
+            int value; /* BYTECODE_INT */
         } integer;
         struct
         {
-            float value;   /* BYTECODE_FLOAT */
+            float value; /* BYTECODE_FLOAT */
         } real;
-        struct             /* BYTECODE_ID_LOCAL */
+        struct /* BYTECODE_ID_LOCAL */
         {
             int stack_level;
-            int index;            
+            int index;
         } id_local;
-        struct             /* BYTECODE_ID_GLOBAL */ 
+        struct /* BYTECODE_ID_GLOBAL */
         {
             int index;
         } id_global;
@@ -126,33 +125,33 @@ typedef struct bytecode
             int index;
             int dim_index;
         } id_dim_global;
-        union              /* BYTECODE_ID_FUNC_FUNC BYTECODE_ID_FUNC_ADDR */
+        union /* BYTECODE_ID_FUNC_FUNC BYTECODE_ID_FUNC_ADDR */
         {
             struct func * func_value;
             unsigned int func_addr;
         } id_func;
-        struct             /* BYTECODE_JUMPZ BYTECODE_JUMP */
+        struct /* BYTECODE_JUMPZ BYTECODE_JUMP */
         {
             int offset;
         } jump;
-        struct             /* BYTECODE_GLOBAL_VEC */
+        struct /* BYTECODE_GLOBAL_VEC */
         {
             unsigned int count;
         } global_vec;
-        struct             /* BYTECODE_MARK */
+        struct /* BYTECODE_MARK */
         {
             unsigned int addr;
         } mark;
-        struct             /* BYTECODE_SLIDE */
+        struct /* BYTECODE_SLIDE */
         {
             unsigned int q;
             unsigned int m;
         } slide;
-        struct             /* BYTECODE_RET */
+        struct /* BYTECODE_RET */
         {
             unsigned int count;
         } ret;
-        struct             /* BYTECODE_LINE */
+        struct /* BYTECODE_LINE */
         {
             unsigned int no;
         } line;
@@ -163,23 +162,19 @@ typedef struct bytecode
         struct
         {
             unsigned int n;
-        }
-        alloc;
+        } alloc;
         struct
         {
             unsigned int j;
-        }
-        rewrite;
+        } rewrite;
         struct
         {
             unsigned int dims;
-        }
-        mk_array; /* BYTECODE_MK_ARRAY, BYTECODE_MK_INIT_ARRAY */
+        } mk_array; /* BYTECODE_MK_ARRAY, BYTECODE_MK_INIT_ARRAY */
         struct
         {
             unsigned int dims;
-        }
-        array_deref;
+        } array_deref;
     };
 } bytecode;
 
@@ -268,7 +263,7 @@ void bytecode_print_rewrite(bytecode * code);
 void bytecode_print_push_param(bytecode * code);
 
 void bytecode_print_halt(bytecode * code);
- 
+
 bytecode_list_node * bytecode_list_node_new(bytecode * value);
 void bytecode_list_node_delete(bytecode_list_node * node);
 
@@ -279,9 +274,9 @@ bytecode * bytecode_add(bytecode_list * code, bytecode * value);
 void bytecode_func_addr(bytecode_list * code);
 void bytecode_print(bytecode_list * code);
 
-void bytecode_to_array(bytecode_list * code, bytecode ** code_arr, unsigned int * code_size);
+void bytecode_to_array(bytecode_list * code, bytecode ** code_arr,
+                       unsigned int * code_size);
 void bytecode_array_delete(bytecode * code_arr);
 void bytecode_array_print(bytecode * code_arr, unsigned int size);
 
 #endif /* __BYTECODE_H__ */
-

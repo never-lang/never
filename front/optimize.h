@@ -27,4 +27,3 @@
 int never_optimize(never * nev);
 
 #endif /* __OPTIMIZE_H__ */
-

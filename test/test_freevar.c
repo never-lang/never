@@ -19,15 +19,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
 #include "freevar.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 void test_one()
 {
     freevar_list * list = freevar_list_new();
-    
+
     freevar_list_delete(list);
 }
 
@@ -37,4 +37,3 @@ int main(int argc, char * argv[])
 
     return 0;
 }
-

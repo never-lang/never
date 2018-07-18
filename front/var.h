@@ -36,8 +36,7 @@ typedef struct var
     int type;
     int index;
     char * id;
-    union
-    {
+    union {
         struct var * array;
         struct var_list * vars;
         struct var_list * dims;
@@ -82,6 +81,4 @@ void var_print(var * value);
 void var_list_print(var_list * list);
 char * var_type_str(int type);
 
-
 #endif /* __VAR_H__ */
-

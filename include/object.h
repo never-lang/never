@@ -65,8 +65,7 @@ typedef struct object_func
 typedef struct object
 {
     object_type type;
-    union
-    {
+    union {
         int int_value;            /* OBJECT_INT */
         float float_value;        /* OBJECT_FLOAT */
         object_vec * vec_value;   /* OBJECT_VEC */
@@ -78,8 +77,10 @@ typedef struct object
 object_arr_dim * object_arr_dim_new(unsigned int dims);
 void object_arr_dim_delete(object_arr_dim * dv);
 
-void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv, unsigned int * elems);
-unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv, object_arr_dim * addr, int * oobounds);
+void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv,
+                         unsigned int * elems);
+unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv,
+                                 object_arr_dim * addr, int * oobounds);
 
 object * object_new_int(int value);
 object * object_new_float(float value);
@@ -92,5 +93,3 @@ void object_delete(object * obj);
 void object_print(object * obj);
 
 #endif /* __OBJECT_H__ */
-
-

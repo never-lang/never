@@ -22,8 +22,8 @@
 #ifndef __VM_H__
 #define __VM_H__
 
-#include "program.h"
 #include "bytecode.h"
+#include "program.h"
 
 typedef enum vm_state
 {
@@ -45,14 +45,14 @@ typedef struct vm
 
     unsigned int line_no;
     vm_state running;
-    
+
     program * prog;
 } vm;
 
 typedef struct vm_execute_str
 {
     bytecode_type type;
-    void (* execute)(vm * machine, bytecode * code);
+    void (*execute)(vm * machine, bytecode * code);
 } vm_execute_str;
 
 void vm_execute_unknown(vm * machine, bytecode * code);
@@ -130,4 +130,3 @@ void vm_delete(vm * machine);
 void vm_print(vm * machine);
 
 #endif /* __VM_H__ */
-
