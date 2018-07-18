@@ -22,16 +22,22 @@
 #ifndef __NEV_H__
 #define __NEV_H__
 
+#define DEFAULT_VM_MEM_SIZE 5000
+#define DEFAULT_VM_STACK_SIZE 200
+
 #include "object.h"
 #include "program.h"
 
 int nev_compile_str(const char * str, program * prog);
 int nev_compile_file(const char * file_name, program * prog);
-int nev_execute(program * prog, object * result);
+int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
+                unsigned int vm_stack_size);
 
-int nev_compile_file_and_exec(const char * file_name, unsigned int argc, char * argv[], object * result);
-int nev_compile_str_and_exec(const char * src, unsigned int argc, char * argv[], object * result);
+int nev_compile_file_and_exec(const char * file_name, unsigned int argc,
+                              char * argv[], object * result,
+                              unsigned int mem_size, unsigned int stack_size);
+int nev_compile_str_and_exec(const char * src, unsigned int argc, char * argv[],
+                             object * result, unsigned int mem_size,
+                             unsigned int stack_size);
 
 #endif /* __NEV_H__ */
-
-

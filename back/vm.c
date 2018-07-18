@@ -19,27 +19,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
 #include "vm.h"
 #include "gc.h"
 #include "libmath.h"
 #include "libvm.h"
 #include "utils.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 vm_execute_str vm_execute_op[] = {
     { BYTECODE_UNKNOWN, vm_execute_unknown },
-    
+
     { BYTECODE_INT, vm_execute_int },
     { BYTECODE_FLOAT, vm_execute_float },
-    
+
     { BYTECODE_ID_LOCAL, vm_execute_id_local },
     { BYTECODE_ID_DIM_LOCAL, vm_execute_id_dim_local },
     { BYTECODE_ID_GLOBAL, vm_execute_id_global },
     { BYTECODE_ID_FUNC_FUNC, vm_execute_id_func_func },
     { BYTECODE_ID_FUNC_ADDR, vm_execute_id_func_addr },
-   
+
     { BYTECODE_OP_NEG_INT, vm_execute_op_neg_int },
     { BYTECODE_OP_ADD_INT, vm_execute_op_add_int },
     { BYTECODE_OP_SUB_INT, vm_execute_op_sub_int },
@@ -52,7 +52,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_SUB_FLOAT, vm_execute_op_sub_float },
     { BYTECODE_OP_MUL_FLOAT, vm_execute_op_mul_float },
     { BYTECODE_OP_DIV_FLOAT, vm_execute_op_div_float },
-    
+
     { BYTECODE_OP_LT_INT, vm_execute_op_lt_int },
     { BYTECODE_OP_GT_INT, vm_execute_op_gt_int },
     { BYTECODE_OP_LTE_INT, vm_execute_op_lte_int },
@@ -71,15 +71,15 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_INT_TO_FLOAT, vm_execute_int_to_float },
     { BYTECODE_FLOAT_TO_INT, vm_execute_float_to_int },
- 
+
     { BYTECODE_JUMPZ, vm_execute_jumpz },
     { BYTECODE_JUMP, vm_execute_jump },
     { BYTECODE_LABEL, vm_execute_label },
-    
+
     { BYTECODE_MK_ARRAY, vm_execute_mk_array },
     { BYTECODE_MK_INIT_ARRAY, vm_execute_mk_init_array },
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
-    
+
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
     { BYTECODE_MARK, vm_execute_mark },
@@ -92,7 +92,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_ALLOC, vm_execute_alloc },
     { BYTECODE_REWRITE, vm_execute_rewrite },
     { BYTECODE_PUSH_PARAM, vm_execute_push_param },
-   
+
     { BYTECODE_HALT, vm_execute_halt }
 };
 
@@ -152,7 +152,10 @@ void vm_execute_float(vm * machine, bytecode * code)
 void vm_execute_id_local(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = machine->stack[machine->sp - (code->id_local.stack_level - code->id_local.index)].addr;
+    mem_ptr addr = machine
+                       ->stack[machine->sp - (code->id_local.stack_level -
+                                              code->id_local.index)]
+                       .addr;
 
     machine->sp++;
     vm_check_stack(machine);
@@ -166,8 +169,12 @@ void vm_execute_id_local(vm * machine, bytecode * code)
 void vm_execute_id_dim_local(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = machine->stack[machine->sp - (code->id_dim_local.stack_level - code->id_dim_local.index)].addr;
-    unsigned int dim_elems = gc_get_arr_dim_elems(machine->collector, addr, code->id_dim_local.dim_index);
+    mem_ptr addr = machine
+                       ->stack[machine->sp - (code->id_dim_local.stack_level -
+                                              code->id_dim_local.index)]
+                       .addr;
+    unsigned int dim_elems = gc_get_arr_dim_elems(machine->collector, addr,
+                                                  code->id_dim_local.dim_index);
     mem_ptr elems = gc_alloc_int(machine->collector, dim_elems);
 
     machine->sp++;
@@ -182,7 +189,8 @@ void vm_execute_id_dim_local(vm * machine, bytecode * code)
 void vm_execute_id_global(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_get_vec(machine->collector, machine->gp, code->id_global.index);
+    mem_ptr addr =
+        gc_get_vec(machine->collector, machine->gp, code->id_global.index);
 
     machine->sp++;
     vm_check_stack(machine);
@@ -195,7 +203,8 @@ void vm_execute_id_global(vm * machine, bytecode * code)
 
 void vm_execute_id_func_func(vm * machine, bytecode * code)
 {
-    fprintf(stderr, "at this stage id_func_func should be set to id_func_addr with bytecode_func_addr\n");
+    fprintf(stderr, "at this stage id_func_func should be set to id_func_addr "
+                    "with bytecode_func_addr\n");
     assert(0);
 }
 
@@ -203,7 +212,8 @@ void vm_execute_id_func_addr(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     mem_ptr vec = machine->stack[machine->sp].addr;
-    mem_ptr addr = gc_alloc_func(machine->collector, vec, code->id_func.func_addr);
+    mem_ptr addr =
+        gc_alloc_func(machine->collector, vec, code->id_func.func_addr);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
@@ -230,7 +240,8 @@ void vm_execute_op_neg_int(vm * machine, bytecode * code)
 void vm_execute_op_add_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a + b);
 
@@ -244,7 +255,8 @@ void vm_execute_op_add_int(vm * machine, bytecode * code)
 void vm_execute_op_sub_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a - b);
 
@@ -258,7 +270,8 @@ void vm_execute_op_sub_int(vm * machine, bytecode * code)
 void vm_execute_op_mul_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a * b);
 
@@ -272,7 +285,8 @@ void vm_execute_op_mul_int(vm * machine, bytecode * code)
 void vm_execute_op_div_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = 0;
 
@@ -296,7 +310,8 @@ void vm_execute_op_mod_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    int b = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int b =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr addr = 0;
 
     if (b == 0)
@@ -318,7 +333,8 @@ void vm_execute_op_mod_int(vm * machine, bytecode * code)
 void vm_execute_op_neg_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_float(machine->collector, -a);
 
     entry.type = GC_MEM_ADDR;
@@ -330,8 +346,10 @@ void vm_execute_op_neg_float(vm * machine, bytecode * code)
 void vm_execute_op_add_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_float(machine->collector, a + b);
 
     entry.type = GC_MEM_ADDR;
@@ -344,8 +362,10 @@ void vm_execute_op_add_float(vm * machine, bytecode * code)
 void vm_execute_op_sub_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_float(machine->collector, a - b);
 
     entry.type = GC_MEM_ADDR;
@@ -358,8 +378,10 @@ void vm_execute_op_sub_float(vm * machine, bytecode * code)
 void vm_execute_op_mul_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_float(machine->collector, a * b);
 
     entry.type = GC_MEM_ADDR;
@@ -372,8 +394,10 @@ void vm_execute_op_mul_float(vm * machine, bytecode * code)
 void vm_execute_op_div_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = 0;
 
     if (b == 0)
@@ -395,7 +419,8 @@ void vm_execute_op_div_float(vm * machine, bytecode * code)
 void vm_execute_op_lt_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a < b);
 
@@ -409,7 +434,8 @@ void vm_execute_op_lt_int(vm * machine, bytecode * code)
 void vm_execute_op_gt_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a > b);
 
@@ -423,7 +449,8 @@ void vm_execute_op_gt_int(vm * machine, bytecode * code)
 void vm_execute_op_lte_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a >= b);
 
@@ -437,7 +464,8 @@ void vm_execute_op_lte_int(vm * machine, bytecode * code)
 void vm_execute_op_gte_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a <= b);
 
@@ -451,7 +479,8 @@ void vm_execute_op_gte_int(vm * machine, bytecode * code)
 void vm_execute_op_eq_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a == b);
 
@@ -465,7 +494,8 @@ void vm_execute_op_eq_int(vm * machine, bytecode * code)
 void vm_execute_op_neq_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int a =
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a != b);
 
@@ -479,8 +509,10 @@ void vm_execute_op_neq_int(vm * machine, bytecode * code)
 void vm_execute_op_lt_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a < b);
 
     entry.type = GC_MEM_ADDR;
@@ -493,8 +525,10 @@ void vm_execute_op_lt_float(vm * machine, bytecode * code)
 void vm_execute_op_gt_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a > b);
 
     entry.type = GC_MEM_ADDR;
@@ -507,8 +541,10 @@ void vm_execute_op_gt_float(vm * machine, bytecode * code)
 void vm_execute_op_lte_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a >= b);
 
     entry.type = GC_MEM_ADDR;
@@ -521,8 +557,10 @@ void vm_execute_op_lte_float(vm * machine, bytecode * code)
 void vm_execute_op_gte_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a <= b);
 
     entry.type = GC_MEM_ADDR;
@@ -535,8 +573,10 @@ void vm_execute_op_gte_float(vm * machine, bytecode * code)
 void vm_execute_op_eq_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a == b);
 
     entry.type = GC_MEM_ADDR;
@@ -549,8 +589,10 @@ void vm_execute_op_eq_float(vm * machine, bytecode * code)
 void vm_execute_op_neq_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    float a =
+        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
+    float b =
+        gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a != b);
 
     entry.type = GC_MEM_ADDR;
@@ -565,7 +607,7 @@ void vm_execute_op_not_int(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, !a);
-    
+
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
@@ -576,7 +618,7 @@ void vm_execute_int_to_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_float(machine->collector, (float) a);
+    mem_ptr addr = gc_alloc_float(machine->collector, (float)a);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
@@ -588,7 +630,7 @@ void vm_execute_float_to_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     int a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, (int) a);
+    mem_ptr addr = gc_alloc_int(machine->collector, (int)a);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
@@ -602,7 +644,7 @@ void vm_execute_jumpz(vm * machine, bytecode * code)
 
     if (a == 0)
     {
-         machine->ip = machine->ip + code->jump.offset;
+        machine->ip = machine->ip + code->jump.offset;
     }
     machine->sp--;
 }
@@ -612,10 +654,7 @@ void vm_execute_jump(vm * machine, bytecode * code)
     machine->ip = machine->ip + code->jump.offset;
 }
 
-void vm_execute_label(vm * machine, bytecode * code)
-{
-    /* no op */
-}
+void vm_execute_label(vm * machine, bytecode * code) { /* no op */ }
 
 void vm_execute_mk_array(vm * machine, bytecode * code)
 {
@@ -626,16 +665,18 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     mem_ptr array = { 0 };
     mem_ptr elem = { 0 };
-    
+
     dims = code->mk_array.dims;
     dv = object_arr_dim_new(dims);
     for (d = 0; d < dims; d++)
     {
-        int e = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        int e =
+            gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
         if (e <= 0)
         {
             object_arr_dim_delete(dv);
-            print_error_msg(machine->line_no, "array index %d out of bounds\n", d);
+            print_error_msg(machine->line_no, "array index %d out of bounds\n",
+                            d);
             machine->running = VM_ERROR;
             return;
         }
@@ -650,7 +691,7 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
     {
         gc_set_arr(machine->collector, array, d, elem);
     }
-    
+
     machine->sp++;
     vm_check_stack(machine);
 
@@ -668,22 +709,24 @@ void vm_execute_mk_init_array(vm * machine, bytecode * code)
     object_arr_dim * dv = NULL;
     gc_stack entry = { 0 };
     mem_ptr array = { 0 };
-    
+
     dims = code->mk_array.dims;
     dv = object_arr_dim_new(dims);
-    
+
     for (d = 0; d < dims; d++)
     {
-        dv[d].elems = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        dv[d].elems =
+            gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
     }
     array = gc_alloc_arr(machine->collector, dims, dv);
 
     elems = gc_get_arr_elems(machine->collector, array);
     for (d = 0; d < elems; d++)
     {
-        gc_set_arr(machine->collector, array, d, machine->stack[machine->sp--].addr);
+        gc_set_arr(machine->collector, array, d,
+                   machine->stack[machine->sp--].addr);
     }
-    
+
     machine->sp++;
     vm_check_stack(machine);
 
@@ -709,32 +752,35 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     addr = object_arr_dim_new(dims);
     for (d = 0; d < dims; d++)
     {
-        int e = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+        int e =
+            gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
         if (e < 0)
         {
             object_arr_dim_delete(addr);
-            print_error_msg(machine->line_no, "array index %d out of bounds\n", d);
+            print_error_msg(machine->line_no, "array index %d out of bounds\n",
+                            d);
             machine->running = VM_ERROR;
             return;
         }
         addr[d].mult = e;
     }
-    
+
     array = machine->stack[machine->sp--].addr;
     assert(gc_get_arr_dims(machine->collector, array) == dims);
-    
+
     dv = gc_get_arr_dv(machine->collector, array);
-    elem_index = object_arr_dim_addr(dims, dv, addr, &oobounds);    
+    elem_index = object_arr_dim_addr(dims, dv, addr, &oobounds);
     object_arr_dim_delete(addr);
 
     if (oobounds >= 0)
     {
-        print_error_msg(machine->line_no, "array index %d out of bounds\n", oobounds);
+        print_error_msg(machine->line_no, "array index %d out of bounds\n",
+                        oobounds);
         machine->running = VM_ERROR;
         return;
     }
 
-    elem = gc_get_arr(machine->collector, array, elem_index);    
+    elem = gc_get_arr(machine->collector, array, elem_index);
 
     machine->sp++;
     vm_check_stack(machine);
@@ -745,10 +791,7 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
-void vm_execute_func_def(vm * machine, bytecode * code)
-{
-    /* no op */
-}
+void vm_execute_func_def(vm * machine, bytecode * code) { /* no op */ }
 
 void vm_execute_global_vec(vm * machine, bytecode * code)
 {
@@ -758,7 +801,8 @@ void vm_execute_global_vec(vm * machine, bytecode * code)
 
     for (c = code->global_vec.count - 1; c >= 0; c--)
     {
-        gc_set_vec(machine->collector, addr, c, machine->stack[machine->sp--].addr);
+        gc_set_vec(machine->collector, addr, c,
+                   machine->stack[machine->sp--].addr);
     }
 
     machine->sp++;
@@ -795,8 +839,10 @@ void vm_execute_mark(vm * machine, bytecode * code)
 
 void vm_execute_call(vm * machine, bytecode * code)
 {
-    mem_ptr gp = gc_get_func_vec(machine->collector, machine->stack[machine->sp].addr);
-    ip_ptr ip = gc_get_func_addr(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr gp =
+        gc_get_func_vec(machine->collector, machine->stack[machine->sp].addr);
+    ip_ptr ip =
+        gc_get_func_addr(machine->collector, machine->stack[machine->sp].addr);
 
     machine->gp = gp;
     machine->ip = ip;
@@ -809,7 +855,7 @@ void vm_execute_slide(vm * machine, bytecode * code)
     {
         return;
     }
-    
+
     if (code->slide.m == 0)
     {
         machine->sp = machine->sp - code->slide.q;
@@ -818,12 +864,13 @@ void vm_execute_slide(vm * machine, bytecode * code)
     {
         unsigned int i;
         machine->sp = machine->sp - code->slide.q - code->slide.m;
-        
+
         for (i = 0; i < code->slide.m; i++)
         {
             machine->sp++;
-            machine->stack[machine->sp] = machine->stack[machine->sp + code->slide.q];
-        } 
+            machine->stack[machine->sp] =
+                machine->stack[machine->sp + code->slide.q];
+        }
     }
 }
 
@@ -854,7 +901,7 @@ void vm_execute_copyglob(vm * machine, bytecode * code)
 
     machine->sp++;
     vm_check_stack(machine);
-    
+
     entry.type = GC_MEM_ADDR;
     entry.addr = machine->gp;
 
@@ -864,19 +911,19 @@ void vm_execute_copyglob(vm * machine, bytecode * code)
 void vm_execute_alloc(vm * machine, bytecode * code)
 {
     unsigned int i;
-    
+
     for (i = 0; i < code->alloc.n; i++)
     {
         gc_stack entry = { 0 };
         mem_ptr addr = gc_alloc_func(machine->collector, 0, 0);
-    
+
         entry.type = GC_MEM_ADDR;
         entry.addr = addr;
 
         machine->sp++;
         machine->stack[machine->sp] = entry;
     }
-    
+
     vm_check_stack(machine);
 }
 
@@ -884,12 +931,16 @@ void vm_execute_rewrite(vm * machine, bytecode * code)
 {
     unsigned int j = code->rewrite.j;
 
-    mem_ptr gp = gc_get_func_vec(machine->collector, machine->stack[machine->sp].addr);
-    ip_ptr ip = gc_get_func_addr(machine->collector, machine->stack[machine->sp].addr);
-    
-    gc_set_func_vec(machine->collector, machine->stack[machine->sp - j].addr, gp);
-    gc_set_func_addr(machine->collector, machine->stack[machine->sp - j].addr, ip);
-    
+    mem_ptr gp =
+        gc_get_func_vec(machine->collector, machine->stack[machine->sp].addr);
+    ip_ptr ip =
+        gc_get_func_addr(machine->collector, machine->stack[machine->sp].addr);
+
+    gc_set_func_vec(machine->collector, machine->stack[machine->sp - j].addr,
+                    gp);
+    gc_set_func_addr(machine->collector, machine->stack[machine->sp - j].addr,
+                     ip);
+
     machine->sp--;
     vm_check_stack(machine);
 }
@@ -904,11 +955,13 @@ void vm_execute_push_param(vm * machine, bytecode * code)
     {
         if (machine->prog->params[i - 1].type == OBJECT_INT)
         {
-            addr = gc_alloc_int(machine->collector, machine->prog->params[i - 1].int_value);
+            addr = gc_alloc_int(machine->collector,
+                                machine->prog->params[i - 1].int_value);
         }
         else if (machine->prog->params[i - 1].type == OBJECT_FLOAT)
         {
-            addr = gc_alloc_float(machine->collector, machine->prog->params[i - 1].float_value);
+            addr = gc_alloc_float(machine->collector,
+                                  machine->prog->params[i - 1].float_value);
         }
         else
         {
@@ -946,7 +999,8 @@ int vm_execute(vm * machine, program * prog, object * result)
 
     if (machine->running == VM_HALT)
     {
-        *result = gc_get_object(machine->collector, machine->stack[machine->sp].addr);
+        *result =
+            gc_get_object(machine->collector, machine->stack[machine->sp].addr);
         return 0;
     }
 
@@ -997,5 +1051,3 @@ void vm_print(vm * machine)
     printf("\trunning: %d\n", machine->running);
     printf("\n");
 }
-
-
