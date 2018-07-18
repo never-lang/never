@@ -30,7 +30,8 @@
 
 int nev_compile_str(const char * str, program * prog);
 int nev_compile_file(const char * file_name, program * prog);
-int nev_execute(program * prog, object * result);
+int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
+                unsigned int vm_stack_size);
 
 int nev_compile_file_and_exec(const char * file_name, unsigned int argc,
                               char * argv[], object * result,

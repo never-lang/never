@@ -70,9 +70,11 @@ int main(int argc, char * argv[])
             eflag = 1;
             break;
         case 'm':
+            arg = optarg;
             sscanf(optarg, "%u", &vm_mem_size);
             break;
         case 's':
+            arg = optarg;
             sscanf(optarg, "%u", &vm_stack_size);
             break;
         case '?':

@@ -19,9 +19,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <stdio.h>
-#include <assert.h>
 #include "nev.h"
+#include <assert.h>
+#include <stdio.h>
 
 void run(int param1, int param2, program * prog)
 {
@@ -31,10 +31,12 @@ void run(int param1, int param2, program * prog)
     prog->params[0].int_value = param1;
     prog->params[1].int_value = param2;
 
-    ret = nev_execute(prog, &result);
+    ret =
+        nev_execute(prog, &result, DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
     if (ret == 0)
     {
-        assert(result.type == OBJECT_INT && result.int_value == 10 * (param1 + param2));
+        assert(result.type == OBJECT_INT &&
+               result.int_value == 10 * (param1 + param2));
     }
 }
 
@@ -42,7 +44,8 @@ void test_one()
 {
     int ret = 0;
     program * prog = program_new();
-    const char * prog_str = "func main(a -> int, b -> int) -> int { return 10 * (a + b); }";
+    const char * prog_str =
+        "func main(a -> int, b -> int) -> int { return 10 * (a + b); }";
 
     ret = nev_compile_str(prog_str, prog);
     if (ret == 0)
@@ -51,10 +54,10 @@ void test_one()
         int param2 = 1;
 
         for (param1 = 1; param1 < 10; param1++)
-        for (param2 = 1; param2 < 10; param2++)
-        {
-             run(param1, param2, prog);
-        }
+            for (param2 = 1; param2 < 10; param2++)
+            {
+                run(param1, param2, prog);
+            }
     }
 
     program_delete(prog);
@@ -66,4 +69,3 @@ int main(int argc, char * argv[])
 
     return 0;
 }
-
