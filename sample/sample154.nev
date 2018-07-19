@@ -1,0 +1,11 @@
+
+func sum( tab[n] -> float ) -> int
+{
+    return 10;
+}
+
+func main() -> int
+{
+    return sum( { 1.0, 2.0 } -> float + { 3.0, 4.0, 7.0 } -> float );
+}
+

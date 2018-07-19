@@ -87,13 +87,15 @@ mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
 void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
                 mem_ptr value);
 
+object_arr * gc_get_arr(gc * collector, mem_ptr addr);
 unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr,
                                   unsigned int dim);
 unsigned int gc_get_arr_dims(gc * collector, mem_ptr addr);
 unsigned int gc_get_arr_elems(gc * collector, mem_ptr addr);
 object_arr_dim * gc_get_arr_dv(gc * collector, mem_ptr addr);
-mem_ptr gc_get_arr(gc * collector, mem_ptr addr, unsigned int elem_index);
-void gc_set_arr(gc * collector, mem_ptr addr, unsigned int elem_index,
+
+mem_ptr gc_get_arr_elem(gc * collector, mem_ptr addr, unsigned int elem_index);
+void gc_set_arr_elem(gc * collector, mem_ptr addr, unsigned int elem_index,
                 mem_ptr value);
 
 ip_ptr gc_get_func_addr(gc * collector, mem_ptr func_addr);

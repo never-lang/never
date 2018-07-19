@@ -310,6 +310,42 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     return 0;
 }
 
+int expr_neg_check_type(symtab * tab, expr * value, int * result)
+{
+    expr_check_type(tab, value->left, result);
+    if (value->left->comb == COMB_TYPE_INT)
+    {
+        value->comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT)
+    {
+        value->comb = COMB_TYPE_FLOAT;
+    }
+    else if (value->left->comb == COMB_TYPE_ARRAY &&
+             value->left->comb_ret->type == VAR_INT)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->left->comb_dims;
+        value->comb_ret = value->left->comb_ret;
+    }
+    else if (value->left->comb == COMB_TYPE_ARRAY &&
+             value->left->comb_ret->type == VAR_FLOAT)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->left->comb_dims;
+        value->comb_ret = value->left->comb_ret;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot negate type %s\n",
+                        comb_type_str(value->left->comb));
+    }
+    
+    return 0;
+}
+
 int expr_add_sub_check_type(symtab * tab, expr * value, int * result)
 {
     expr_check_type(tab, value->left, result);
@@ -710,24 +746,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         expr_id_check_type(tab, value, result);
         break;
     case EXPR_NEG:
-    {
-        expr_check_type(tab, value->left, result);
-        if (value->left->comb == COMB_TYPE_INT)
-        {
-            value->comb = COMB_TYPE_INT;
-        }
-        else if (value->left->comb == COMB_TYPE_FLOAT)
-        {
-            value->comb = COMB_TYPE_FLOAT;
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "cannot negate type %s\n",
-                            value->line_no, comb_type_str(value->left->comb));
-        }
-    }
+        expr_neg_check_type(tab, value, result);
     break;
     case EXPR_ADD:
     case EXPR_SUB:

@@ -83,6 +83,15 @@ int expr_id_func_nest_emit(func * func_value, int stack_level,
 
 int expr_id_emit(expr * value, int stack_level, bytecode_list * code,
                  int * result);
+int expr_neg_emit(expr * value, int stack_level, bytecode_list * code,
+                  int * result);
+int expr_add_emit(expr * value, int stack_level, bytecode_list * code,
+                  int * result);
+int expr_sub_emit(expr * value, int stack_level, bytecode_list * code,
+                  int * result);
+int expr_mul_emit(expr * value, int stack_level, bytecode_list * code,
+                  int * result);
+
 int expr_and_emit(expr * value, int stack_level, bytecode_list * code,
                   int * result);
 int expr_or_emit(expr * value, int stack_level, bytecode_list * code,

@@ -199,6 +199,21 @@ void object_delete(object * obj)
     free(obj);
 }
 
+void object_arr_print(object_arr * value)
+{
+    unsigned int d;
+
+    printf("object_array\n");
+
+    printf("arr->dims %d\n", value->dims);
+    printf("arr->elems %d\n", value->elems);
+    for (d = 0; d < value->dims; d++)
+    {
+        printf("arr->dv[%d].elems %d\n", d, value->dv[d].elems);
+        printf("arr->dv[%d].mult %d\n", d, value->dv[d].mult);
+    }
+}
+
 void object_print(object * obj)
 {
     switch (obj->type)
@@ -216,7 +231,7 @@ void object_print(object * obj)
         printf("object_vec\n");
         break;
     case OBJECT_ARRAY:
-        printf("object_array\n");
+        object_arr_print(obj->arr_value);
         break;
     case OBJECT_FUNC:
         printf("object_func\n");

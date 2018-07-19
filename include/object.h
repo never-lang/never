@@ -90,6 +90,7 @@ object * object_new_func(mem_ptr vec, ip_ptr addr);
 
 void object_delete(object * obj);
 
+void object_arr_print(object_arr * value);
 void object_print(object * obj);
 
 #endif /* __OBJECT_H__ */

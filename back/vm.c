@@ -651,52 +651,126 @@ void vm_execute_float_to_int(vm * machine, bytecode * code)
 
 void vm_execute_op_neg_arr_int(vm * machine, bytecode * code)
 {
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    object_arr_print(m1);
+
     assert(0);
 }
 
 void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
 {
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    object_arr_print(m1);
+
     assert(0);
 }
 
 void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
 {
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp - 1].addr);
+    object_arr * m2 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    object_arr_print(m1);
+    object_arr_print(m2);
+
     assert(0);
 }
 
 void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
 {
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp - 1].addr);
+    object_arr * m2 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    object_arr_print(m1);
+    object_arr_print(m2);
+
     assert(0);
 }
 
 void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
 {
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp - 1].addr);
+    object_arr * m2 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    object_arr_print(m1);
+    object_arr_print(m2);
+
     assert(0);
 }
 
 void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
 {
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp - 1].addr);
+    object_arr * m2 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    object_arr_print(m1);
+    object_arr_print(m2);
+
     assert(0);
 }
 
 void vm_execute_op_mul_arr_int(vm * machine, bytecode * code)
 {
+    int a = gc_get_int(machine->collector,
+                       machine->stack[machine->sp - 1].addr);
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    printf("%d\n", a);
+    object_arr_print(m1);
+
     assert(0);
 }
 
 void vm_execute_op_mul_arr_float(vm * machine, bytecode * code)
 {
+    float a = gc_get_float(machine->collector,
+                           machine->stack[machine->sp - 1].addr);
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    printf("%f\n", a);
+    object_arr_print(m1);
+
     assert(0);
 }
 
 void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code)
 {
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp - 1].addr);
+    object_arr * m2 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    object_arr_print(m1);
+    object_arr_print(m2);
+
     assert(0);
 }
 
 void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
 {
-    assert(0);
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp - 1].addr);
+    object_arr * m2 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp].addr);
+
+    object_arr_print(m1);
+    object_arr_print(m2);
+                                   
+    assert(0);    
 }
 
 void vm_execute_jumpz(vm * machine, bytecode * code)
@@ -750,7 +824,7 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
     elems = gc_get_arr_elems(machine->collector, array);
     for (d = 0; d < elems; d++)
     {
-        gc_set_arr(machine->collector, array, d, elem);
+        gc_set_arr_elem(machine->collector, array, d, elem);
     }
 
     machine->sp++;
@@ -784,8 +858,8 @@ void vm_execute_mk_init_array(vm * machine, bytecode * code)
     elems = gc_get_arr_elems(machine->collector, array);
     for (d = 0; d < elems; d++)
     {
-        gc_set_arr(machine->collector, array, d,
-                   machine->stack[machine->sp--].addr);
+        gc_set_arr_elem(machine->collector, array, d,
+                        machine->stack[machine->sp--].addr);
     }
 
     machine->sp++;
@@ -841,7 +915,7 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
         return;
     }
 
-    elem = gc_get_arr(machine->collector, array, elem_index);
+    elem = gc_get_arr_elem(machine->collector, array, elem_index);
 
     machine->sp++;
     vm_check_stack(machine);
