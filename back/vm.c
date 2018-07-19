@@ -654,9 +654,7 @@ void vm_execute_jump(vm * machine, bytecode * code)
     machine->ip = machine->ip + code->jump.offset;
 }
 
-void vm_execute_label(vm * machine, bytecode * code)
-{ /* no op */
-}
+void vm_execute_label(vm * machine, bytecode * code) { /* no op */ }
 
 void vm_execute_mk_array(vm * machine, bytecode * code)
 {
@@ -793,9 +791,7 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
-void vm_execute_func_def(vm * machine, bytecode * code)
-{ /* no op */
-}
+void vm_execute_func_def(vm * machine, bytecode * code) { /* no op */ }
 
 void vm_execute_global_vec(vm * machine, bytecode * code)
 {
