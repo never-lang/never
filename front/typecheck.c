@@ -946,28 +946,34 @@ int symtab_add_entry_expr(symtab * stab, expr * value, unsigned int syn_level,
         symtab_add_entry_expr(stab, value->right, syn_level, result);
         break;
     case EXPR_ARRAY:
-        symtab_add_entry_array(stab, value->array.array_value, syn_level, result);
+        symtab_add_entry_array(stab, value->array.array_value, syn_level,
+                               result);
         break;
     case EXPR_ARRAY_DEREF:
-        symtab_add_entry_expr(stab, value->array_deref.array_expr, syn_level, result);
-        symtab_add_entry_expr_list(stab, value->array_deref.ref, syn_level, result);
+        symtab_add_entry_expr(stab, value->array_deref.array_expr, syn_level,
+                              result);
+        symtab_add_entry_expr_list(stab, value->array_deref.ref, syn_level, 
+                                   result);
         break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         symtab_add_entry_expr(stab, value->call.func_expr, syn_level, result);
         if (value->call.vars != NULL)
         {
-            symtab_add_entry_expr_list(stab, value->call.vars, syn_level, result);
+            symtab_add_entry_expr_list(stab, value->call.vars, syn_level,
+                                       result);
         }
         break;
     case EXPR_FUNC:
         if (value->func_value)
         {
-            symtab_add_entry_func(stab, value->func_value, syn_level + 2, result);
+            symtab_add_entry_func(stab, value->func_value, syn_level + 2,
+                                  result);
         }
         break;
     case EXPR_BUILD_IN:
-        symtab_add_entry_expr_list(stab, value->func_build_in.param, syn_level, result);
+        symtab_add_entry_expr_list(stab, value->func_build_in.param, syn_level,
+                                   result);
         break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
@@ -1055,8 +1061,8 @@ int symtab_add_entry_func_list(symtab * stab_parent, func_list * list,
         func * func_value = node->value;
         if (func_value)
         {
-            symtab_add_entry_func(stab_parent, func_value,
-                                  syn_level + 1, result);
+            symtab_add_entry_func(stab_parent, func_value, syn_level + 1,
+                                  result);
         }
         node = node->next;
     }

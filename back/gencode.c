@@ -86,8 +86,6 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
             func * sup_func_value = entry->func_value;
             if (sup_func_value)
             {
-                /* printf("func_value %s %d %d\n", value->id.id, entry->syn_level, syn_level); */
-
                 if (entry->syn_level == 0)
                 {
                     value->id.id_type_value = ID_TYPE_FUNC_TOP;
@@ -130,8 +128,6 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                 var_value->type == VAR_DIM || var_value->type == VAR_ARRAY ||
                 var_value->type == VAR_FUNC)
             {
-                /* printf("var_value %s %d %d\n", value->id.id, entry->syn_level, syn_level); */
-                
                 if (syn_level == entry->syn_level)
                 {
                     value->id.id_type_value = ID_TYPE_LOCAL;

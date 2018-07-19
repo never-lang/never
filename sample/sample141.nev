@@ -1,0 +1,20 @@
+
+func rodCut( rod -> int, price[n] -> int ) -> int
+{
+    func __rodCut( i -> int, rod -> int, maxP -> int, price[n] -> int ) -> int
+    {
+        return i < rod ? __rodCut( i + 1,
+                                   rod - i - 1,
+                                   price[i] + rodCut(rod - i - 1, price) > maxP ?
+                                   price[i] + rodCut(rod - i - 1, price) : maxP,
+                                   price
+                                 ) : maxP;
+    }
+    return __rodCut( 0, rod, price[0], price );
+}
+
+func main() -> int
+{
+    return rodCut( 8, { 1, 5, 8, 9, 10, 17, 17, 20 } -> int );
+}
+
