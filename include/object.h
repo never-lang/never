@@ -88,6 +88,9 @@ object * object_new_vec(unsigned int size);
 object * object_new_arr(unsigned int dims, object_arr_dim * dv);
 object * object_new_func(mem_ptr vec, ip_ptr addr);
 
+object_arr_dim * object_arr_dim_copy(unsigned int dims, object_arr_dim * value);
+object * object_arr_copy(object * value);
+
 void object_delete(object * obj);
 
 void object_arr_print(object_arr * value);

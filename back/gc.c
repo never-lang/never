@@ -380,9 +380,9 @@ void gc_set_func_vec(gc * collector, mem_ptr func_addr, mem_ptr vec)
     collector->mem[func_addr].object_value->func_value->vec = vec;
 }
 
-object gc_get_object(gc * collector, mem_ptr addr)
+object * gc_get_object(gc * collector, mem_ptr addr)
 {
-    return *collector->mem[addr].object_value;
+    return collector->mem[addr].object_value;
 }
 
 gc_stack * gc_stack_new(int stack_size)

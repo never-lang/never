@@ -1135,7 +1135,7 @@ int vm_execute(vm * machine, program * prog, object * result)
     if (machine->running == VM_HALT)
     {
         *result =
-            gc_get_object(machine->collector, machine->stack[machine->sp].addr);
+            *gc_get_object(machine->collector, machine->stack[machine->sp].addr);
         return 0;
     }
 

@@ -58,12 +58,30 @@ void test_four()
     object_delete(obj1);
 }
 
+void test_five()
+{
+    object_arr_dim * dv = NULL;
+    object * obj1 = NULL;
+    object * obj2 = NULL;
+    
+    dv = object_arr_dim_new(2);
+    dv[0].elems = 10;
+    dv[1].elems = 20;
+    
+    obj1 = object_new_arr(2, dv);
+    obj2 = object_arr_copy(obj1);
+    
+    object_delete(obj1);
+    object_delete(obj2);
+}
+
 int main(int argc, char * argv[])
 {
     test_one();
     test_two();
     test_three();
     test_four();
+    test_five();
 
     return 0;
 }

@@ -158,6 +158,47 @@ object * object_new_func(mem_ptr vec, ip_ptr addr)
     return obj;
 }
 
+object_arr_dim * object_arr_dim_copy(unsigned int dims, object_arr_dim * value)
+{
+    unsigned int d;
+    object_arr_dim * dv =
+        (object_arr_dim *)malloc(dims * sizeof(object_arr_dim));
+
+    for (d = 0; d < dims; d++)
+    {
+        dv[d].elems = value[d].elems;
+        dv[d].mult = value[d].mult;
+    }
+
+    return dv;
+}
+
+object * object_arr_copy(object * value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+    object_arr * arr_value = value->arr_value;
+    object_arr * copy = (object_arr *)malloc(sizeof(object_arr));
+
+    copy->dims = arr_value->dims;
+    copy->elems = arr_value->elems;
+    copy->dv = object_arr_dim_copy(arr_value->dims, arr_value->dv);
+
+    if (copy->elems != 0)
+    {
+        copy->value =
+            (mem_ptr *)malloc(copy->elems * sizeof(mem_ptr));
+    }
+    else
+    {
+        copy->value = NULL;
+    }
+    
+    obj->type = OBJECT_ARRAY;
+    obj->arr_value = copy;
+    
+    return obj;
+}
+
 void object_delete(object * obj)
 {
     switch (obj->type)
