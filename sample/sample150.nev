@@ -1,0 +1,11 @@
+
+func sum( tab[n] -> int ) -> int
+{
+    return 10;
+}
+
+func main() -> int
+{
+    return sum( 2 * { 3, 5 } -> int );
+}
+

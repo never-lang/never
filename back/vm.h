@@ -98,6 +98,17 @@ void vm_execute_op_not_int(vm * machine, bytecode * code);
 void vm_execute_int_to_float(vm * machine, bytecode * code);
 void vm_execute_float_to_int(vm * machine, bytecode * code);
 
+void vm_execute_op_neg_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_neg_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_add_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_add_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_sub_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_sub_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_mul_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_mul_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code);
+
 void vm_execute_jumpz(vm * machine, bytecode * code);
 void vm_execute_jump(vm * machine, bytecode * code);
 void vm_execute_label(vm * machine, bytecode * code);

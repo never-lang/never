@@ -66,6 +66,17 @@ typedef enum bytecode_type
 
     BYTECODE_INT_TO_FLOAT,
     BYTECODE_FLOAT_TO_INT,
+    
+    BYTECODE_OP_NEG_ARR_INT,
+    BYTECODE_OP_NEG_ARR_FLOAT,
+    BYTECODE_OP_ADD_ARR_INT,
+    BYTECODE_OP_ADD_ARR_FLOAT,
+    BYTECODE_OP_SUB_ARR_INT,
+    BYTECODE_OP_SUB_ARR_FLOAT,
+    BYTECODE_OP_MUL_ARR_INT,
+    BYTECODE_OP_MUL_ARR_FLOAT,
+    BYTECODE_OP_MUL_ARR_ARR_INT,
+    BYTECODE_OP_MUL_ARR_ARR_FLOAT,
 
     BYTECODE_JUMPZ,
     BYTECODE_JUMP,
@@ -240,6 +251,17 @@ void bytecode_print_op_not_int(bytecode * code);
 
 void bytecode_print_int_to_float(bytecode * code);
 void bytecode_print_float_to_int(bytecode * code);
+
+void bytecode_print_op_neg_arr_int(bytecode * code);
+void bytecode_print_op_neg_arr_float(bytecode * code);
+void bytecode_print_op_add_arr_int(bytecode * code);
+void bytecode_print_op_add_arr_float(bytecode * code);
+void bytecode_print_op_sub_arr_int(bytecode * code);
+void bytecode_print_op_sub_arr_float(bytecode * code);
+void bytecode_print_op_mul_arr_int(bytecode * code);
+void bytecode_print_op_mul_arr_float(bytecode * code);
+void bytecode_print_op_mul_arr_arr_int(bytecode * code);
+void bytecode_print_op_mul_arr_arr_float(bytecode * code);
 
 void bytecode_print_jumpz(bytecode * code);
 void bytecode_print_jump(bytecode * code);

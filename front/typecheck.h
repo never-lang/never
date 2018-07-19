@@ -43,6 +43,9 @@ int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
                                     int * result);
 
 int expr_id_check_type(symtab * tab, expr * value, int * result);
+int expr_add_sub_check_type(symtab * tab, expr * value, int * result);
+int expr_mul_check_type(symtab * tab, expr * value, int * result);
+int expr_div_check_type(symtab * tab, expr * value, int * result);
 int expr_array_deref_check_type(symtab * tab, expr * value, int * result);
 int expr_call_check_type(symtab * tab, expr * value, int * result);
 int expr_cond_check_type(symtab * tab, expr * value, int * result);

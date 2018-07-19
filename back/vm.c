@@ -72,6 +72,17 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_INT_TO_FLOAT, vm_execute_int_to_float },
     { BYTECODE_FLOAT_TO_INT, vm_execute_float_to_int },
 
+    { BYTECODE_OP_NEG_ARR_INT, vm_execute_op_neg_arr_int },
+    { BYTECODE_OP_NEG_ARR_FLOAT, vm_execute_op_neg_arr_float },
+    { BYTECODE_OP_ADD_ARR_INT, vm_execute_op_add_arr_int },
+    { BYTECODE_OP_ADD_ARR_FLOAT, vm_execute_op_add_arr_float },
+    { BYTECODE_OP_SUB_ARR_INT, vm_execute_op_sub_arr_int },
+    { BYTECODE_OP_SUB_ARR_FLOAT, vm_execute_op_sub_arr_float },
+    { BYTECODE_OP_MUL_ARR_INT, vm_execute_op_mul_arr_int },
+    { BYTECODE_OP_MUL_ARR_FLOAT, vm_execute_op_mul_arr_float },
+    { BYTECODE_OP_MUL_ARR_ARR_INT, vm_execute_op_mul_arr_arr_int },
+    { BYTECODE_OP_MUL_ARR_ARR_FLOAT, vm_execute_op_mul_arr_arr_float },
+
     { BYTECODE_JUMPZ, vm_execute_jumpz },
     { BYTECODE_JUMP, vm_execute_jump },
     { BYTECODE_LABEL, vm_execute_label },
@@ -636,6 +647,56 @@ void vm_execute_float_to_int(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_op_neg_arr_int(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_mul_arr_int(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_mul_arr_float(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
+void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
+{
+    assert(0);
 }
 
 void vm_execute_jumpz(vm * machine, bytecode * code)

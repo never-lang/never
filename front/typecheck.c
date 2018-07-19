@@ -310,6 +310,217 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     return 0;
 }
 
+int expr_add_sub_check_type(symtab * tab, expr * value, int * result)
+{
+    expr_check_type(tab, value->left, result);
+    expr_check_type(tab, value->right, result);
+    if (value->left->comb == COMB_TYPE_INT &&
+        value->right->comb == COMB_TYPE_INT)
+    {
+        value->comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb == COMB_TYPE_INT &&
+             value->right->comb == COMB_TYPE_FLOAT)
+    {
+        expr_conv(value->left, EXPR_INT_TO_FLOAT);
+        value->comb = COMB_TYPE_FLOAT;
+
+        print_warning_msg(value->line_no, "converted int to float\n");
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT &&
+             value->right->comb == COMB_TYPE_INT)
+    {
+        expr_conv(value->right, EXPR_INT_TO_FLOAT);
+        value->comb = COMB_TYPE_FLOAT;
+
+        print_warning_msg(value->line_no, "converted int to float\n");
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT &&
+             value->right->comb == COMB_TYPE_FLOAT)
+    {
+        value->comb = COMB_TYPE_FLOAT;
+    }
+    else if (value->left->comb == COMB_TYPE_ARRAY &&
+             value->left->comb_ret->type == VAR_INT &&
+             value->right->comb == COMB_TYPE_ARRAY &&
+             value->right->comb_ret->type == VAR_INT &&
+             value->left->comb_dims == value->right->comb_dims)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->right->comb_dims;
+        value->comb_ret = value->right->comb_ret;
+    }
+    else if (value->left->comb == COMB_TYPE_ARRAY &&
+             value->left->comb_ret->type == VAR_FLOAT &&
+             value->right->comb == COMB_TYPE_ARRAY &&
+             value->right->comb_ret->type == VAR_FLOAT &&
+             value->left->comb_dims == value->right->comb_dims)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->right->comb_dims;
+        value->comb_ret = value->right->comb_ret;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "cannot exec arithmetic operation on types %s %s\n",
+                        comb_type_str(value->left->comb),
+                        comb_type_str(value->right->comb));
+    }
+
+    return 0;
+}
+
+int expr_mul_check_type(symtab * tab, expr * value, int * result)
+{
+    expr_check_type(tab, value->left, result);
+    expr_check_type(tab, value->right, result);
+    if (value->left->comb == COMB_TYPE_INT &&
+        value->right->comb == COMB_TYPE_INT)
+    {
+        value->comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb == COMB_TYPE_INT &&
+             value->right->comb == COMB_TYPE_FLOAT)
+    {
+        expr_conv(value->left, EXPR_INT_TO_FLOAT);
+        value->comb = COMB_TYPE_FLOAT;
+
+        print_warning_msg(value->line_no, "converted int to float\n");
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT &&
+             value->right->comb == COMB_TYPE_INT)
+    {
+        expr_conv(value->right, EXPR_INT_TO_FLOAT);
+        value->comb = COMB_TYPE_FLOAT;
+
+        print_warning_msg(value->line_no, "converted int to float\n");
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT &&
+             value->right->comb == COMB_TYPE_FLOAT)
+    {
+        value->comb = COMB_TYPE_FLOAT;
+    }
+    else if (value->left->comb == COMB_TYPE_INT &&
+             value->right->comb == COMB_TYPE_ARRAY &&
+             value->right->comb_ret->type == VAR_INT)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->right->comb_dims;
+        value->comb_ret = value->right->comb_ret;
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT &&
+             value->right->comb == COMB_TYPE_ARRAY &&
+             value->right->comb_ret->type == VAR_FLOAT)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->right->comb_dims;
+        value->comb_ret = value->right->comb_ret;
+    }
+    else if (value->left->comb == COMB_TYPE_INT &&
+             value->right->comb == COMB_TYPE_ARRAY &&
+             value->right->comb_ret->type == VAR_FLOAT)
+    {
+        expr_conv(value->left, EXPR_INT_TO_FLOAT);
+    
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->right->comb_dims;
+        value->comb_ret = value->right->comb_ret;
+
+        print_warning_msg(value->line_no, "converted int to float\n");
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT &&
+             value->right->comb == COMB_TYPE_ARRAY &&
+             value->right->comb_ret->type == VAR_INT)
+    {
+        expr_conv(value->left, EXPR_FLOAT_TO_INT);
+    
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->right->comb_dims;
+        value->comb_ret = value->right->comb_ret;
+
+        print_warning_msg(value->line_no, "converted float to int\n");
+    }
+    else if (value->left->comb == COMB_TYPE_ARRAY &&
+             value->right->comb == COMB_TYPE_ARRAY &&
+             value->left->comb_ret->type == VAR_INT &&
+             value->right->comb_ret->type == VAR_INT &&
+             value->left->comb_dims == 2 &&
+             value->left->comb_dims == value->right->comb_dims)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->left->comb_dims;
+        value->comb_ret = value->left->comb_ret;
+    }
+    else if (value->left->comb == COMB_TYPE_ARRAY &&
+             value->right->comb == COMB_TYPE_ARRAY &&
+             value->left->comb_ret->type == VAR_FLOAT &&
+             value->right->comb_ret->type == VAR_FLOAT &&
+             value->left->comb_dims == 2 &&
+             value->left->comb_dims == value->right->comb_dims)
+    {
+        value->comb = COMB_TYPE_ARRAY;
+        value->comb_dims = value->left->comb_dims;
+        value->comb_ret = value->left->comb_ret;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "cannot exec arithmetic operation on types %s %s\n",
+                        comb_type_str(value->left->comb),
+                        comb_type_str(value->right->comb));
+    }
+
+    return 0;
+}
+
+int expr_div_check_type(symtab * tab, expr * value, int * result)
+{
+    expr_check_type(tab, value->left, result);
+    expr_check_type(tab, value->right, result);
+    if (value->left->comb == COMB_TYPE_INT &&
+        value->right->comb == COMB_TYPE_INT)
+    {
+        value->comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb == COMB_TYPE_INT &&
+             value->right->comb == COMB_TYPE_FLOAT)
+    {
+        expr_conv(value->left, EXPR_INT_TO_FLOAT);
+        value->comb = COMB_TYPE_FLOAT;
+
+        print_warning_msg(value->line_no, "converted int to float\n");
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT &&
+             value->right->comb == COMB_TYPE_INT)
+    {
+        expr_conv(value->right, EXPR_INT_TO_FLOAT);
+        value->comb = COMB_TYPE_FLOAT;
+
+        print_warning_msg(value->line_no, "converted int to float\n");
+    }
+    else if (value->left->comb == COMB_TYPE_FLOAT &&
+             value->right->comb == COMB_TYPE_FLOAT)
+    {
+        value->comb = COMB_TYPE_FLOAT;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "cannot exec arithmetic operation on types %s %s\n",
+                        comb_type_str(value->left->comb),
+                        comb_type_str(value->right->comb));
+    }
+
+    return 0;
+}
+
 int expr_cond_check_type(symtab * tab, expr * value, int * result)
 {
     expr_check_type(tab, value->left, result);
@@ -520,47 +731,13 @@ int expr_check_type(symtab * tab, expr * value, int * result)
     break;
     case EXPR_ADD:
     case EXPR_SUB:
+        expr_add_sub_check_type(tab, value, result);
+    break;
     case EXPR_MUL:
+        expr_mul_check_type(tab, value, result);
+    break;
     case EXPR_DIV:
-    {
-        expr_check_type(tab, value->left, result);
-        expr_check_type(tab, value->right, result);
-        if (value->left->comb == COMB_TYPE_INT &&
-            value->right->comb == COMB_TYPE_INT)
-        {
-            value->comb = COMB_TYPE_INT;
-        }
-        else if (value->left->comb == COMB_TYPE_INT &&
-                 value->right->comb == COMB_TYPE_FLOAT)
-        {
-            expr_conv(value->left, EXPR_INT_TO_FLOAT);
-            value->comb = COMB_TYPE_FLOAT;
-
-            print_warning_msg(value->line_no, "converted int to float\n");
-        }
-        else if (value->left->comb == COMB_TYPE_FLOAT &&
-                 value->right->comb == COMB_TYPE_INT)
-        {
-            expr_conv(value->right, EXPR_INT_TO_FLOAT);
-            value->comb = COMB_TYPE_FLOAT;
-
-            print_warning_msg(value->line_no, "converted int to float\n");
-        }
-        else if (value->left->comb == COMB_TYPE_FLOAT &&
-                 value->right->comb == COMB_TYPE_FLOAT)
-        {
-            value->comb = COMB_TYPE_FLOAT;
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no,
-                            "cannot exec arithmetic operation on types %s %s\n",
-                            comb_type_str(value->left->comb),
-                            comb_type_str(value->right->comb));
-        }
-    }
+        expr_div_check_type(tab, value, result);
     break;
     case EXPR_MOD:
         expr_check_type(tab, value->left, result);
