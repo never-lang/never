@@ -10,6 +10,6 @@ func printtab( tab[n] -> float ) -> int
 
 func main() -> int
 {
-    return printtab( { 1.5, 2.5, 3.5 } -> float + { 3.0, 4.0, 7.0 } -> float );
+    return printtab( { 3.5, 5.5, 7.5 } -> float - { 3.0, 4.0, 7.0 } -> float );
 }
 

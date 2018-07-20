@@ -90,6 +90,7 @@ object * object_new_func(mem_ptr vec, ip_ptr addr);
 
 object_arr_dim * object_arr_dim_copy(unsigned int dims, object_arr_dim * value);
 object * object_arr_copy(object * value);
+char object_arr_can_add(object * m1, object * m2);
 
 void object_delete(object * obj);
 
@@ -97,3 +98,4 @@ void object_arr_print(object_arr * value);
 void object_print(object * obj);
 
 #endif /* __OBJECT_H__ */
+

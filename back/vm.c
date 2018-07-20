@@ -662,8 +662,7 @@ void vm_execute_op_neg_arr_int(vm * machine, bytecode * code)
 
     for (e = 0; e < m1->arr_value->elems; e++)
     {
-        mem_ptr eptr = m1->arr_value->value[e];
-        int eval = gc_get_int(machine->collector, eptr);
+        int eval = gc_get_int(machine->collector, m1->arr_value->value[e]);
         mem_ptr cptr = gc_alloc_int(machine->collector, -1 * eval);
         
         gc_set_arr_elem(machine->collector, mres, e, cptr);
@@ -689,8 +688,7 @@ void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
 
     for (e = 0; e < m1->arr_value->elems; e++)
     {
-        mem_ptr eptr = m1->arr_value->value[e];
-        float eval = gc_get_float(machine->collector, eptr);
+        float eval = gc_get_float(machine->collector, m1->arr_value->value[e]);
         mem_ptr cptr = gc_alloc_float(machine->collector, -1.0 * eval);
         
         gc_set_arr_elem(machine->collector, mres, e, cptr);
@@ -705,54 +703,146 @@ void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
 
 void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
 {
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    gc_stack entry = { 0 };
 
-    object_arr_print(m1);
-    object_arr_print(m2);
+    unsigned int e = 0;
+    object * m1 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp - 1].addr);
+    object * m2 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp].addr);
 
-    assert(0);
+    if (!object_arr_can_add(m1, m2))
+    {
+        print_error_msg(machine->line_no, "different array size\n");
+        machine->running = VM_ERROR;
+        return;
+    }
+
+    mem_ptr mres = gc_copy_arr(machine->collector,
+                               machine->stack[machine->sp].addr);
+
+    for (e = 0; e < m1->arr_value->elems; e++)
+    {
+        int eval1 = gc_get_int(machine->collector, m1->arr_value->value[e]);
+        int eval2 = gc_get_int(machine->collector, m2->arr_value->value[e]);
+        mem_ptr cptr = gc_alloc_int(machine->collector, eval1 + eval2);
+        
+        gc_set_arr_elem(machine->collector, mres, e, cptr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = mres;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
 {
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    gc_stack entry = { 0 };
 
-    object_arr_print(m1);
-    object_arr_print(m2);
+    unsigned int e = 0;
+    object * m1 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp - 1].addr);
+    object * m2 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp].addr);
 
-    assert(0);
+    if (!object_arr_can_add(m1, m2))
+    {
+        print_error_msg(machine->line_no, "different array size\n");
+        machine->running = VM_ERROR;
+        return;
+    }
+
+    mem_ptr mres = gc_copy_arr(machine->collector,
+                               machine->stack[machine->sp].addr);
+
+    for (e = 0; e < m1->arr_value->elems; e++)
+    {
+        float eval1 = gc_get_float(machine->collector, m1->arr_value->value[e]);
+        float eval2 = gc_get_float(machine->collector, m2->arr_value->value[e]);
+        mem_ptr cptr = gc_alloc_float(machine->collector, eval1 + eval2);
+        
+        gc_set_arr_elem(machine->collector, mres, e, cptr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = mres;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
 {
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    gc_stack entry = { 0 };
 
-    object_arr_print(m1);
-    object_arr_print(m2);
+    unsigned int e = 0;
+    object * m1 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp - 1].addr);
+    object * m2 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp].addr);
 
-    assert(0);
+    if (!object_arr_can_add(m1, m2))
+    {
+        print_error_msg(machine->line_no, "different array size\n");
+        machine->running = VM_ERROR;
+        return;
+    }
+
+    mem_ptr mres = gc_copy_arr(machine->collector,
+                               machine->stack[machine->sp].addr);
+
+    for (e = 0; e < m1->arr_value->elems; e++)
+    {
+        int eval1 = gc_get_int(machine->collector, m1->arr_value->value[e]);
+        int eval2 = gc_get_int(machine->collector, m2->arr_value->value[e]);
+        mem_ptr cptr = gc_alloc_int(machine->collector, eval1 - eval2);
+        
+        gc_set_arr_elem(machine->collector, mres, e, cptr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = mres;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
 {
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    gc_stack entry = { 0 };
 
-    object_arr_print(m1);
-    object_arr_print(m2);
+    unsigned int e = 0;
+    object * m1 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp - 1].addr);
+    object * m2 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp].addr);
 
-    assert(0);
+    if (!object_arr_can_add(m1, m2))
+    {
+        print_error_msg(machine->line_no, "different array size\n");
+        machine->running = VM_ERROR;
+        return;
+    }
+
+    mem_ptr mres = gc_copy_arr(machine->collector,
+                               machine->stack[machine->sp].addr);
+
+    for (e = 0; e < m1->arr_value->elems; e++)
+    {
+        float eval1 = gc_get_float(machine->collector, m1->arr_value->value[e]);
+        float eval2 = gc_get_float(machine->collector, m2->arr_value->value[e]);
+        mem_ptr cptr = gc_alloc_float(machine->collector, eval1 - eval2);
+        
+        gc_set_arr_elem(machine->collector, mres, e, cptr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = mres;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_op_mul_arr_int(vm * machine, bytecode * code)
@@ -770,8 +860,7 @@ void vm_execute_op_mul_arr_int(vm * machine, bytecode * code)
 
     for (e = 0; e < m1->arr_value->elems; e++)
     {
-        mem_ptr eptr = m1->arr_value->value[e];
-        int eval = gc_get_int(machine->collector, eptr);
+        int eval = gc_get_int(machine->collector, m1->arr_value->value[e]);
         mem_ptr cptr = gc_alloc_int(machine->collector, a * eval);
         
         gc_set_arr_elem(machine->collector, mres, e, cptr);
@@ -799,8 +888,7 @@ void vm_execute_op_mul_arr_float(vm * machine, bytecode * code)
 
     for (e = 0; e < m1->arr_value->elems; e++)
     {
-        mem_ptr eptr = m1->arr_value->value[e];
-        float eval = gc_get_float(machine->collector, eptr);
+        float eval = gc_get_float(machine->collector, m1->arr_value->value[e]);
         mem_ptr cptr = gc_alloc_float(machine->collector, a * eval);
         
         gc_set_arr_elem(machine->collector, mres, e, cptr);

@@ -199,6 +199,40 @@ object * object_arr_copy(object * value)
     return obj;
 }
 
+char object_arr_can_add(object * m1, object * m2)
+{
+    unsigned int d;
+    object_arr * arr1;
+    object_arr * arr2;
+
+    if (m1 == NULL || m2 == NULL)
+    {
+        return 0;
+    }
+
+    arr1 = m1->arr_value;
+    arr2 = m2->arr_value;
+    if (arr1 == NULL || arr2 == NULL)
+    {
+        return 0;
+    }
+
+    if (arr1->dims != arr2->dims)
+    {
+        return 0;
+    }
+
+    for (d = 0; d < arr1->dims; d++)
+    {
+        if (arr1->dv[d].elems != arr2->dv[d].elems)
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 void object_delete(object * obj)
 {
     switch (obj->type)
