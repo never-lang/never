@@ -1,11 +1,27 @@
-#include "getopt.h"
+/*
+MIT License
 
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+#include "getopt.h"
 #include <stdio.h>
 #include <string.h>
-
-#define BADCH (int)'?'
-#define BADARG (int)':'
-#define EMSG ""
 
 char * optarg;
 int optind = 1;
@@ -15,30 +31,26 @@ int optreset;
 
 int getopt(int argc, char * const argv[], const char * optstring)
 {
-    static char * place = EMSG; /* option letter processing */
-    const char * oli;           /* option letter list index */
+    static char * place = "";
+    const char * oli;
     if (optreset || !*place)
-    { /* update scanning pointer */
+    {
         optreset = 0;
         if (optind >= argc || *(place = argv[optind]) != '-')
         {
-            place = EMSG;
+            place = "";
             return (-1);
         }
         if (place[1] && *++place == '-')
-        { /* found "--" */
+        {
             ++optind;
-            place = EMSG;
+            place = "";
             return (-1);
         }
-    } /* option letter okay? */
+    }
     if ((optopt = (int)*place++) == (int)':' ||
         !(oli = strchr(optstring, optopt)))
     {
-        /*
-         * if the user didn't specify '-' as an option,
-         * assume it means -1.
-         */
         if (optopt == (int)'-')
         {
             return (-1);
@@ -51,30 +63,30 @@ int getopt(int argc, char * const argv[], const char * optstring)
         {
             (void)printf("illegal option -- %c\n", optopt);
         }
-        return (BADCH);
+        return (int)'?';
     }
     if (*++oli != ':')
-    { /* don't need argument */
+    {
         optarg = NULL;
         if (!*place)
             ++optind;
     }
     else
-    {               /* need an argument */
-        if (*place) /* no white space */
+    {
+        if (*place)
             optarg = place;
         else if (argc <= ++optind)
-        { /* no arg */
-            place = EMSG;
+        {
+            place = "";
             if (*optstring == ':')
-                return (BADARG);
+                return (int)':';
             if (opterr)
                 (void)printf("option requires an argument -- %c\n", optopt);
-            return (BADCH);
+            return (int)'?';
         }
-        else /* white space */
+        else
             optarg = argv[optind];
-        place = EMSG;
+        place = "";
         ++optind;
     }
     return (optopt);
