@@ -424,6 +424,49 @@ func main() -> int
 }
 ```
 
+## Array Operators
+Never lets to add, subtract and multiply int and float arrays.
+
+```
+func main() -> int
+{
+    return printtab( 2 * { 3, 5, 7, 9 } -> int );
+}
+```
+
+```
+func main() -> int
+{
+    return printtab( - { 1, -2, 3, -4, 5, -6 } -> int );
+}
+```
+
+```
+func main() -> int
+{
+    return printtab( { 3.5, 5.5, 7.5 } -> float - { 3.0, 4.0, 7.0 } -> float );
+}
+```
+
+```
+func main() -> int
+{
+    return printtab( { 1.5, 2.5, 3.5 } -> float + { 3.0, 4.0, 7.0 } -> float );
+}
+```
+
+```
+func main() -> int
+{
+    return printtab( { { 1.0, 2.0, 3.0 },
+                       { 3.0, 4.0, 5.0 } } -> float
+                               *
+                     { { 3.0, 4.0, 1.0, 1.0 },
+                       { 6.0, 7.0, 1.0, 1.0 },
+                       { 8.0, 2.0, 1.0, 1.0 } } -> float );
+}
+```
+
 ## Mathematical Functions
 Never supports a few built-in mathematical functions - ```sin(x)```,
 ```cos(x)```, ```tan(x)```, ```exp(x)```, ```log(x)```, ```sqrt(x)```
