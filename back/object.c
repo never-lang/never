@@ -199,19 +199,9 @@ object * object_arr_copy(object * value)
     return obj;
 }
 
-char object_arr_can_add(object * m1, object * m2)
+char object_arr_can_add(object_arr * arr1, object_arr * arr2)
 {
     unsigned int d;
-    object_arr * arr1;
-    object_arr * arr2;
-
-    if (m1 == NULL || m2 == NULL)
-    {
-        return 0;
-    }
-
-    arr1 = m1->arr_value;
-    arr2 = m2->arr_value;
     if (arr1 == NULL || arr2 == NULL)
     {
         return 0;
@@ -231,6 +221,24 @@ char object_arr_can_add(object * m1, object * m2)
     }
 
     return 1;
+}
+
+char object_arr_can_mult(object_arr * arr1, object_arr * arr2)
+{
+    if (arr1 == NULL || arr2 == NULL)
+    {
+        return 0;
+    }
+
+    if (arr1->dims != 2 || arr2->dims != 2)
+    {
+        return 0;
+    }
+    if (arr1->dv[1].elems == arr2->dv[0].elems)
+    {
+        return 1;
+    }
+    return 0;
 }
 
 void object_delete(object * obj)

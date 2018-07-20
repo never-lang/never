@@ -90,7 +90,8 @@ object * object_new_func(mem_ptr vec, ip_ptr addr);
 
 object_arr_dim * object_arr_dim_copy(unsigned int dims, object_arr_dim * value);
 object * object_arr_copy(object * value);
-char object_arr_can_add(object * m1, object * m2);
+char object_arr_can_add(object_arr * arr1, object_arr * arr2);
+char object_arr_can_mult(object_arr * arr1, object_arr * arr2);
 
 void object_delete(object * obj);
 
