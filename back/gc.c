@@ -236,6 +236,15 @@ mem_ptr gc_alloc_func(gc * collector, mem_ptr vec, ip_ptr addr)
     return gc_alloc_any(collector, object_new_func(vec, addr));
 }
 
+mem_ptr gc_copy_arr(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_ARRAY);
+
+    return gc_alloc_any(collector,
+                        object_arr_copy(collector->mem[addr].object_value));
+}
+
 int gc_get_int(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
@@ -382,6 +391,8 @@ void gc_set_func_vec(gc * collector, mem_ptr func_addr, mem_ptr vec)
 
 object * gc_get_object(gc * collector, mem_ptr addr)
 {
+    assert(collector->mem_size >= addr);
+
     return collector->mem[addr].object_value;
 }
 

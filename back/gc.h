@@ -77,6 +77,8 @@ mem_ptr gc_alloc_vec(gc * collector, unsigned int size);
 mem_ptr gc_alloc_arr(gc * collector, unsigned int dims, object_arr_dim * dv);
 mem_ptr gc_alloc_func(gc * collector, mem_ptr vec, ip_ptr addr);
 
+mem_ptr gc_copy_arr(gc * collector, mem_ptr addr);
+
 int gc_get_int(gc * collector, mem_ptr addr);
 void gc_set_int(gc * collector, mem_ptr addr, int value);
 

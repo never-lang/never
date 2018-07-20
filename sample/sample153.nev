@@ -1,11 +1,15 @@
 
-func sum( tab[n] -> float ) -> int
+func printtab( tab[n] -> float ) -> int
 {
-    return 10;
+    func __print( i -> int, tab[n] -> float, val -> float ) -> int
+    {
+        return i < n ? __print( i + 1, tab, printf(tab[i]) ) : 0;
+    }
+    return __print( 0, tab, 0.0 );
 }
 
 func main() -> int
 {
-    return sum( 2.0 * { 3.0, 5.0 } -> float );
+    return printtab( 1.5 * { 3.0, 5.0, 7.0, 6.0 } -> float );
 }
 

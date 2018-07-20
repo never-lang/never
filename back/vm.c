@@ -723,28 +723,60 @@ void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
 
 void vm_execute_op_mul_arr_int(vm * machine, bytecode * code)
 {
+    gc_stack entry = { 0 };
+
+    unsigned int e = 0;
     int a = gc_get_int(machine->collector,
                        machine->stack[machine->sp - 1].addr);
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    object * m1 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp].addr);
 
-    printf("%d\n", a);
-    object_arr_print(m1);
+    mem_ptr mres = gc_copy_arr(machine->collector,
+                               machine->stack[machine->sp].addr);
 
-    assert(0);
+    for (e = 0; e < m1->arr_value->elems; e++)
+    {
+        mem_ptr eptr = m1->arr_value->value[e];
+        int eval = gc_get_int(machine->collector, eptr);
+        mem_ptr cptr = gc_alloc_int(machine->collector, a * eval);
+        
+        gc_set_arr_elem(machine->collector, mres, e, cptr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = mres;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_op_mul_arr_float(vm * machine, bytecode * code)
 {
+    gc_stack entry = { 0 };
+
+    unsigned int e = 0;
     float a = gc_get_float(machine->collector,
                            machine->stack[machine->sp - 1].addr);
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    object * m1 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp].addr);
 
-    printf("%f\n", a);
-    object_arr_print(m1);
+    mem_ptr mres = gc_copy_arr(machine->collector,
+                               machine->stack[machine->sp].addr);
 
-    assert(0);
+    for (e = 0; e < m1->arr_value->elems; e++)
+    {
+        mem_ptr eptr = m1->arr_value->value[e];
+        float eval = gc_get_float(machine->collector, eptr);
+        mem_ptr cptr = gc_alloc_float(machine->collector, a * eval);
+        
+        gc_set_arr_elem(machine->collector, mres, e, cptr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = mres;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code)
