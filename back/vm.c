@@ -651,22 +651,56 @@ void vm_execute_float_to_int(vm * machine, bytecode * code)
 
 void vm_execute_op_neg_arr_int(vm * machine, bytecode * code)
 {
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    gc_stack entry = { 0 };
 
-    object_arr_print(m1);
+    unsigned int e = 0;
+    object * m1 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp].addr);
 
-    assert(0);
+    mem_ptr mres = gc_copy_arr(machine->collector,
+                               machine->stack[machine->sp].addr);
+
+    for (e = 0; e < m1->arr_value->elems; e++)
+    {
+        mem_ptr eptr = m1->arr_value->value[e];
+        int eval = gc_get_int(machine->collector, eptr);
+        mem_ptr cptr = gc_alloc_int(machine->collector, -1 * eval);
+        
+        gc_set_arr_elem(machine->collector, mres, e, cptr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = mres;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
 {
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    gc_stack entry = { 0 };
 
-    object_arr_print(m1);
+    unsigned int e = 0;
+    object * m1 = gc_get_object(machine->collector,
+                                machine->stack[machine->sp].addr);
 
-    assert(0);
+    mem_ptr mres = gc_copy_arr(machine->collector,
+                               machine->stack[machine->sp].addr);
+
+    for (e = 0; e < m1->arr_value->elems; e++)
+    {
+        mem_ptr eptr = m1->arr_value->value[e];
+        float eval = gc_get_float(machine->collector, eptr);
+        mem_ptr cptr = gc_alloc_float(machine->collector, -1.0 * eval);
+        
+        gc_set_arr_elem(machine->collector, mres, e, cptr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = mres;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
