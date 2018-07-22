@@ -1239,6 +1239,8 @@ void vm_execute_slide(vm * machine, bytecode * code)
                 machine->stack[machine->sp + code->slide.q];
         }
     }
+
+    gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp);
 }
 
 void vm_execute_ret(vm * machine, bytecode * code)

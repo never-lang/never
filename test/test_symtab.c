@@ -33,7 +33,7 @@ void test_one()
 
 void test_two()
 {
-    symtab_entry * entry;
+    symtab_entry * entry = NULL;
     symtab * tab = symtab_new(32, NULL);
     func * func_one = func_new(strdup("func_one"), NULL, NULL, NULL);
     func * func_three = func_new(strdup("func_three"), NULL, NULL, NULL);
@@ -57,7 +57,7 @@ void test_two()
 
 void test_three()
 {
-    symtab_entry * entry;
+    symtab_entry * entry = NULL;
     symtab * tab = symtab_new(4, NULL);
     func * func_one = func_new(strdup("func_one"), NULL, NULL, NULL);
     func * func_two = func_new(strdup("func_two"), NULL, NULL, NULL);
@@ -88,7 +88,7 @@ void test_three()
 
 void test_four()
 {
-    symtab_entry * entry;
+    symtab_entry * entry = NULL;
     symtab * tab_one = symtab_new(32, NULL);
     symtab * tab_two = symtab_new(32, tab_one);
 

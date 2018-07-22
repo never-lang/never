@@ -1,0 +1,11 @@
+
+func main() -> int
+{
+    func loop(i -> int) -> int
+    {
+        return i < 100000 ? loop(i + 1) : 0;
+    }
+    
+    return loop(0);
+}
+

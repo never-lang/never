@@ -388,7 +388,7 @@ void bytecode_print_call(bytecode * code) { printf("%d: call\n", code->addr); }
 
 void bytecode_print_slide(bytecode * code)
 {
-    printf("%d: last call %u %u\n", code->addr, code->slide.q, code->slide.m);
+    printf("%d: slide %u %u\n", code->addr, code->slide.q, code->slide.m);
 }
 
 void bytecode_print_ret(bytecode * code)
