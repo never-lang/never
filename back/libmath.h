@@ -40,15 +40,15 @@ typedef enum libmath_func
     LIB_MATH_ASSERTF
 } libmath_func;
 
-var_list * vars_int_x();
-var_list * vars_float_x();
-var_list * vars_float_x_float_y();
+param_list * params_int_x();
+param_list * params_float_x();
+param_list * params_float_x_float_y();
 expr_list * params_x();
 expr_list * params_x_y();
 
 func * lib_math_func_any_new(const char * name, libmath_func math_id,
-                             var_list * vars, expr_list * params,
-                             var * var_ret);
+                             param_list * formal, expr_list * actual,
+                             param * param_ret);
 func * libmath_func_int_x_new(const char * name, libmath_func math_id);
 func * libmath_func_float_x_new(const char * name, libmath_func math_id);
 func * libmath_func_float_x_float_y_new(const char * name,

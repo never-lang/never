@@ -1,7 +1,7 @@
 #include "array.h"
 #include <stdlib.h>
 
-array * array_new(expr_list * elements, var * ret)
+array * array_new(expr_list * elements, param * ret)
 {
     array * value = (array *)malloc(sizeof(array));
 
@@ -27,7 +27,7 @@ array * array_new_sub(expr_list * elements)
     return value;
 }
 
-array * array_new_dims(expr_list * dims, var * ret)
+array * array_new_dims(expr_list * dims, param * ret)
 {
     array * value = (array *)malloc(sizeof(array));
 
@@ -52,7 +52,7 @@ void array_delete(array * value)
     }
     if (value->ret != NULL)
     {
-        var_delete(value->ret);
+        param_delete(value->ret);
     }
     free(value);
 }

@@ -69,7 +69,7 @@ void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
     }
     entries[index].type = type;
     entries[index].id = id;
-    entries[index].var_value = object_value;
+    entries[index].param_value = object_value;
     entries[index].syn_level = syn_level;
 }
 
@@ -104,7 +104,7 @@ void symtab_entry_resize(symtab_entry * entries, int size,
     for (i = 0; i < size; i++)
     {
         symtab_entry_add_object(entries_new, size_new, entries[i].type,
-                                entries[i].id, entries[i].var_value,
+                                entries[i].id, entries[i].param_value,
                                 entries[i].syn_level);
     }
 }
@@ -113,20 +113,20 @@ void symtab_entry_print(symtab_entry * entry)
 {
     if (entry->type == SYMTAB_VAR)
     {
-        var * var_value = entry->var_value;
-        if (var_value)
+        param * param_value = entry->param_value;
+        if (param_value)
         {
-            if (var_value->type == VAR_INT)
+            if (param_value->type == PARAM_INT)
             {
-                printf("[I][%s][%d]\n", var_value->id, entry->syn_level);
+                printf("[I][%s][%d]\n", param_value->id, entry->syn_level);
             }
-            else if (var_value->type == VAR_FLOAT)
+            else if (param_value->type == PARAM_FLOAT)
             {
-                printf("[R][%s][%d]\n", var_value->id, entry->syn_level);
+                printf("[R][%s][%d]\n", param_value->id, entry->syn_level);
             }
-            else if (var_value->type == VAR_FUNC)
+            else if (param_value->type == PARAM_FUNC)
             {
-                printf("[P][%s][%d]\n", var_value->id, entry->syn_level);
+                printf("[P][%s][%d]\n", param_value->id, entry->syn_level);
             }
         }
         else
@@ -177,15 +177,15 @@ void symtab_resize(symtab * tab)
     }
 }
 
-void symtab_add_var(symtab * tab, var * var_value, unsigned int syn_level)
+void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level)
 {
-    if (var_value->id == NULL)
+    if (param_value->id == NULL)
     {
         return;
     }
 
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_VAR, var_value->id,
-                            var_value, syn_level);
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_VAR, param_value->id,
+                            param_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }

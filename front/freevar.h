@@ -22,7 +22,7 @@
 #ifndef __FREEVAR_H__
 #define __FREEVAR_H__
 
-#include "var.h"
+#include "param.h"
 
 enum
 {
@@ -38,7 +38,7 @@ typedef struct freevar
     char * id;
     int index;
     union {
-        struct var * local_value;
+        struct param * local_value;
         struct freevar * global_value;
         struct func * func_value;
     };

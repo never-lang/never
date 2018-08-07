@@ -27,34 +27,34 @@
 #include <assert.h>
 #include <stdio.h>
 
-int expr_set_return_type(expr * value, var * ret)
+int expr_set_return_type(expr * value, param * ret)
 {
     if (ret == NULL)
     {
         value->comb = COMB_TYPE_VOID;
     }
-    else if (ret->type == VAR_INT)
+    else if (ret->type == PARAM_INT)
     {
         value->comb = COMB_TYPE_INT;
     }
-    else if (ret->type == VAR_FLOAT)
+    else if (ret->type == PARAM_FLOAT)
     {
         value->comb = COMB_TYPE_FLOAT;
     }
-    else if (ret->type == VAR_DIM)
+    else if (ret->type == PARAM_DIM)
     {
         value->comb = COMB_TYPE_INT;
     }
-    else if (ret->type == VAR_ARRAY)
+    else if (ret->type == PARAM_ARRAY)
     {
         value->comb = COMB_TYPE_ARRAY;
         value->comb_dims = ret->dims->count;
         value->comb_ret = ret->ret;
     }
-    else if (ret->type == VAR_FUNC)
+    else if (ret->type == PARAM_FUNC)
     {
         value->comb = COMB_TYPE_FUNC;
-        value->comb_vars = ret->vars;
+        value->comb_params = ret->params;
         value->comb_ret = ret->ret;
     }
     else
@@ -67,34 +67,34 @@ int expr_set_return_type(expr * value, var * ret)
 /*
  * check types
  */
-int var_cmp(var * var_one, var * var_two)
+int param_cmp(param * param_one, param * param_two)
 {
-    if (var_one == NULL && var_two == NULL)
+    if (param_one == NULL && param_two == NULL)
     {
         return TYPECHECK_SUCC;
     }
-    if ((var_one == NULL && var_two != NULL) ||
-        (var_one != NULL && var_two == NULL))
+    if ((param_one == NULL && param_two != NULL) ||
+        (param_one != NULL && param_two == NULL))
     {
         return TYPECHECK_FAIL;
     }
-    if (var_one->type == VAR_INT && var_two->type == VAR_INT)
+    if (param_one->type == PARAM_INT && param_two->type == PARAM_INT)
     {
         return TYPECHECK_SUCC;
     }
-    else if (var_one->type == VAR_FLOAT && var_two->type == VAR_FLOAT)
+    else if (param_one->type == PARAM_FLOAT && param_two->type == PARAM_FLOAT)
     {
         return TYPECHECK_SUCC;
     }
-    else if (var_one->type == VAR_ARRAY && var_two->type == VAR_ARRAY)
+    else if (param_one->type == PARAM_ARRAY && param_two->type == PARAM_ARRAY)
     {
-        return (var_one->dims->count == var_two->dims->count &&
-                var_cmp(var_one->ret, var_two->ret));
+        return (param_one->dims->count == param_two->dims->count &&
+                param_cmp(param_one->ret, param_two->ret));
     }
-    else if (var_one->type == VAR_FUNC && var_two->type == VAR_FUNC)
+    else if (param_one->type == PARAM_FUNC && param_two->type == PARAM_FUNC)
     {
-        return func_cmp(var_one->vars, var_one->ret, var_two->vars,
-                        var_one->ret);
+        return func_cmp(param_one->params, param_one->ret, param_two->params,
+                        param_one->ret);
     }
     else
     {
@@ -102,47 +102,47 @@ int var_cmp(var * var_one, var * var_two)
     }
 }
 
-int var_list_cmp(var_list * var_one, var_list * var_two)
+int param_list_cmp(param_list * param_one, param_list * param_two)
 {
-    if (var_one == NULL && var_two == NULL)
+    if (param_one == NULL && param_two == NULL)
     {
         return TYPECHECK_SUCC;
     }
-    if ((var_one == NULL && var_two != NULL) ||
-        (var_one != NULL && var_two == NULL))
+    if ((param_one == NULL && param_two != NULL) ||
+        (param_one != NULL && param_two == NULL))
     {
         return TYPECHECK_FAIL;
     }
 
-    if (var_one->count != var_two->count)
+    if (param_one->count != param_two->count)
     {
         return TYPECHECK_FAIL;
     }
 
-    var_list_node * var_one_node = var_one->tail;
-    var_list_node * var_two_node = var_two->tail;
-    while (var_one_node != NULL && var_two_node != NULL)
+    param_list_node * param_one_node = param_one->tail;
+    param_list_node * param_two_node = param_two->tail;
+    while (param_one_node != NULL && param_two_node != NULL)
     {
-        var * var_one_value = var_one_node->value;
-        var * var_two_value = var_two_node->value;
+        param * param_one_value = param_one_node->value;
+        param * param_two_value = param_two_node->value;
 
-        if (var_cmp(var_one_value, var_two_value) == TYPECHECK_FAIL)
+        if (param_cmp(param_one_value, param_two_value) == TYPECHECK_FAIL)
         {
             return TYPECHECK_FAIL;
         }
 
-        var_one_node = var_one_node->next;
-        var_two_node = var_two_node->next;
+        param_one_node = param_one_node->next;
+        param_two_node = param_two_node->next;
     }
 
     return TYPECHECK_SUCC;
 }
 
-int func_cmp(var_list * var_list_one, var * ret_one, var_list * var_list_two,
-             var * ret_two)
+int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_list_two,
+             param * ret_two)
 {
-    if (var_list_cmp(var_list_one, var_list_two) == TYPECHECK_SUCC &&
-        var_cmp(ret_one, ret_two) == TYPECHECK_SUCC)
+    if (param_list_cmp(param_list_one, param_list_two) == TYPECHECK_SUCC &&
+        param_cmp(ret_one, ret_two) == TYPECHECK_SUCC)
     {
         return TYPECHECK_SUCC;
     }
@@ -152,69 +152,69 @@ int func_cmp(var_list * var_list_one, var * ret_one, var_list * var_list_two,
     }
 }
 
-int var_expr_array_cmp(var * var_value, expr * expr_value)
+int param_expr_array_cmp(param * param_value, expr * expr_value)
 {
-    if (var_value->dims->count != expr_value->comb_dims)
+    if (param_value->dims->count != expr_value->comb_dims)
     {
         return TYPECHECK_FAIL;
     }
-    return var_cmp(var_value->ret, expr_value->comb_ret);
+    return param_cmp(param_value->ret, expr_value->comb_ret);
 }
 
-int var_expr_cmp(var * var_value, expr * expr_value)
+int param_expr_cmp(param * param_value, expr * expr_value)
 {
-    if (var_value == NULL && expr_value == NULL)
+    if (param_value == NULL && expr_value == NULL)
     {
         return TYPECHECK_SUCC;
     }
-    if ((var_value != NULL && expr_value == NULL) ||
-        (var_value == NULL && expr_value != NULL))
+    if ((param_value != NULL && expr_value == NULL) ||
+        (param_value == NULL && expr_value != NULL))
     {
         return TYPECHECK_FAIL;
     }
 
-    if (var_value->type == VAR_INT && expr_value->comb == COMB_TYPE_INT)
+    if (param_value->type == PARAM_INT && expr_value->comb == COMB_TYPE_INT)
     {
         return TYPECHECK_SUCC;
     }
-    else if (var_value->type == VAR_INT && expr_value->comb == COMB_TYPE_FLOAT)
+    else if (param_value->type == PARAM_INT && expr_value->comb == COMB_TYPE_FLOAT)
     {
         expr_conv(expr_value, EXPR_FLOAT_TO_INT);
 
         print_warning_msg(expr_value->line_no, "converted float to int\n");
         return TYPECHECK_SUCC;
     }
-    else if (var_value->type == VAR_FLOAT && expr_value->comb == COMB_TYPE_INT)
+    else if (param_value->type == PARAM_FLOAT && expr_value->comb == COMB_TYPE_INT)
     {
         expr_conv(expr_value, EXPR_INT_TO_FLOAT);
 
         print_warning_msg(expr_value->line_no, "converted int to float\n");
         return TYPECHECK_SUCC;
     }
-    else if (var_value->type == VAR_FLOAT &&
+    else if (param_value->type == PARAM_FLOAT &&
              expr_value->comb == COMB_TYPE_FLOAT)
     {
         return TYPECHECK_SUCC;
     }
-    else if (var_value->type == VAR_DIM && expr_value->comb == COMB_TYPE_INT)
+    else if (param_value->type == PARAM_DIM && expr_value->comb == COMB_TYPE_INT)
     {
         return TYPECHECK_SUCC;
     }
-    else if (var_value->type == VAR_DIM && expr_value->comb == COMB_TYPE_FLOAT)
+    else if (param_value->type == PARAM_DIM && expr_value->comb == COMB_TYPE_FLOAT)
     {
         expr_conv(expr_value, EXPR_FLOAT_TO_INT);
 
         print_warning_msg(expr_value->line_no, "converted float to int\n");
         return TYPECHECK_SUCC;
     }
-    else if (var_value->type == VAR_ARRAY &&
+    else if (param_value->type == PARAM_ARRAY &&
              expr_value->comb == COMB_TYPE_ARRAY)
     {
-        return var_expr_array_cmp(var_value, expr_value);
+        return param_expr_array_cmp(param_value, expr_value);
     }
-    else if (var_value->type == VAR_FUNC && expr_value->comb == COMB_TYPE_FUNC)
+    else if (param_value->type == PARAM_FUNC && expr_value->comb == COMB_TYPE_FUNC)
     {
-        return func_cmp(var_value->vars, var_value->ret, expr_value->comb_vars,
+        return func_cmp(param_value->params, param_value->ret, expr_value->comb_params,
                         expr_value->comb_ret);
     }
     else
@@ -223,34 +223,34 @@ int var_expr_cmp(var * var_value, expr * expr_value)
     }
 }
 
-int var_expr_list_cmp(var_list * vars, expr_list * list)
+int param_expr_list_cmp(param_list * params, expr_list * list)
 {
-    if (vars == NULL && list == NULL)
+    if (params == NULL && list == NULL)
     {
         return TYPECHECK_SUCC;
     }
-    if ((vars != NULL && list == NULL) || (vars == NULL && list != NULL))
+    if ((params != NULL && list == NULL) || (params == NULL && list != NULL))
     {
         return TYPECHECK_FAIL;
     }
-    if (vars->count != list->count)
+    if (params->count != list->count)
     {
         return TYPECHECK_FAIL;
     }
 
-    var_list_node * var_node = vars->tail;
+    param_list_node * param_node = params->tail;
     expr_list_node * expr_node = list->tail;
-    while (var_node != NULL && expr_node != NULL)
+    while (param_node != NULL && expr_node != NULL)
     {
-        var * var_value = var_node->value;
+        param * param_value = param_node->value;
         expr * expr_value = expr_node->value;
 
-        if (var_expr_cmp(var_value, expr_value) == TYPECHECK_FAIL)
+        if (param_expr_cmp(param_value, expr_value) == TYPECHECK_FAIL)
         {
             return TYPECHECK_FAIL;
         }
 
-        var_node = var_node->next;
+        param_node = param_node->next;
         expr_node = expr_node->next;
     }
 
@@ -269,42 +269,42 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             func * func_value = entry->func_value;
 
             value->comb = COMB_TYPE_FUNC;
-            value->comb_vars = func_value->vars;
+            value->comb_params = func_value->params;
             value->comb_ret = func_value->ret;
         }
-        else if (entry->type == SYMTAB_VAR && entry->var_value != NULL)
+        else if (entry->type == SYMTAB_VAR && entry->param_value != NULL)
         {
-            var * var_value = entry->var_value;
-            if (var_value->type == VAR_INT)
+            param * param_value = entry->param_value;
+            if (param_value->type == PARAM_INT)
             {
                 value->comb = COMB_TYPE_INT;
             }
-            else if (var_value->type == VAR_FLOAT)
+            else if (param_value->type == PARAM_FLOAT)
             {
                 value->comb = COMB_TYPE_FLOAT;
             }
-            else if (var_value->type == VAR_DIM)
+            else if (param_value->type == PARAM_DIM)
             {
                 value->comb = COMB_TYPE_INT;
             }
-            else if (var_value->type == VAR_ARRAY)
+            else if (param_value->type == PARAM_ARRAY)
             {
                 value->comb = COMB_TYPE_ARRAY;
-                value->comb_dims = var_value->dims->count;
-                value->comb_ret = var_value->ret;
+                value->comb_dims = param_value->dims->count;
+                value->comb_ret = param_value->ret;
             }
-            else if (var_value->type == VAR_FUNC)
+            else if (param_value->type == PARAM_FUNC)
             {
                 value->comb = COMB_TYPE_FUNC;
-                value->comb_vars = var_value->vars;
-                value->comb_ret = var_value->ret;
+                value->comb_params = param_value->params;
+                value->comb_ret = param_value->ret;
             }
         }
     }
     else
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(value->line_no, "cannot find variable %s\n",
+        print_error_msg(value->line_no, "cannot find paramiable %s\n",
                         value->id.id);
     }
     return 0;
@@ -322,14 +322,14 @@ int expr_neg_check_type(symtab * tab, expr * value, int * result)
         value->comb = COMB_TYPE_FLOAT;
     }
     else if (value->left->comb == COMB_TYPE_ARRAY &&
-             value->left->comb_ret->type == VAR_INT)
+             value->left->comb_ret->type == PARAM_INT)
     {
         value->comb = COMB_TYPE_ARRAY;
         value->comb_dims = value->left->comb_dims;
         value->comb_ret = value->left->comb_ret;
     }
     else if (value->left->comb == COMB_TYPE_ARRAY &&
-             value->left->comb_ret->type == VAR_FLOAT)
+             value->left->comb_ret->type == PARAM_FLOAT)
     {
         value->comb = COMB_TYPE_ARRAY;
         value->comb_dims = value->left->comb_dims;
@@ -377,9 +377,9 @@ int expr_add_sub_check_type(symtab * tab, expr * value, int * result)
         value->comb = COMB_TYPE_FLOAT;
     }
     else if (value->left->comb == COMB_TYPE_ARRAY &&
-             value->left->comb_ret->type == VAR_INT &&
+             value->left->comb_ret->type == PARAM_INT &&
              value->right->comb == COMB_TYPE_ARRAY &&
-             value->right->comb_ret->type == VAR_INT &&
+             value->right->comb_ret->type == PARAM_INT &&
              value->left->comb_dims == value->right->comb_dims)
     {
         value->comb = COMB_TYPE_ARRAY;
@@ -387,9 +387,9 @@ int expr_add_sub_check_type(symtab * tab, expr * value, int * result)
         value->comb_ret = value->right->comb_ret;
     }
     else if (value->left->comb == COMB_TYPE_ARRAY &&
-             value->left->comb_ret->type == VAR_FLOAT &&
+             value->left->comb_ret->type == PARAM_FLOAT &&
              value->right->comb == COMB_TYPE_ARRAY &&
-             value->right->comb_ret->type == VAR_FLOAT &&
+             value->right->comb_ret->type == PARAM_FLOAT &&
              value->left->comb_dims == value->right->comb_dims)
     {
         value->comb = COMB_TYPE_ARRAY;
@@ -441,7 +441,7 @@ int expr_mul_check_type(symtab * tab, expr * value, int * result)
     }
     else if (value->left->comb == COMB_TYPE_INT &&
              value->right->comb == COMB_TYPE_ARRAY &&
-             value->right->comb_ret->type == VAR_INT)
+             value->right->comb_ret->type == PARAM_INT)
     {
         value->comb = COMB_TYPE_ARRAY;
         value->comb_dims = value->right->comb_dims;
@@ -449,7 +449,7 @@ int expr_mul_check_type(symtab * tab, expr * value, int * result)
     }
     else if (value->left->comb == COMB_TYPE_FLOAT &&
              value->right->comb == COMB_TYPE_ARRAY &&
-             value->right->comb_ret->type == VAR_FLOAT)
+             value->right->comb_ret->type == PARAM_FLOAT)
     {
         value->comb = COMB_TYPE_ARRAY;
         value->comb_dims = value->right->comb_dims;
@@ -457,7 +457,7 @@ int expr_mul_check_type(symtab * tab, expr * value, int * result)
     }
     else if (value->left->comb == COMB_TYPE_INT &&
              value->right->comb == COMB_TYPE_ARRAY &&
-             value->right->comb_ret->type == VAR_FLOAT)
+             value->right->comb_ret->type == PARAM_FLOAT)
     {
         expr_conv(value->left, EXPR_INT_TO_FLOAT);
     
@@ -469,7 +469,7 @@ int expr_mul_check_type(symtab * tab, expr * value, int * result)
     }
     else if (value->left->comb == COMB_TYPE_FLOAT &&
              value->right->comb == COMB_TYPE_ARRAY &&
-             value->right->comb_ret->type == VAR_INT)
+             value->right->comb_ret->type == PARAM_INT)
     {
         expr_conv(value->left, EXPR_FLOAT_TO_INT);
     
@@ -481,8 +481,8 @@ int expr_mul_check_type(symtab * tab, expr * value, int * result)
     }
     else if (value->left->comb == COMB_TYPE_ARRAY &&
              value->right->comb == COMB_TYPE_ARRAY &&
-             value->left->comb_ret->type == VAR_INT &&
-             value->right->comb_ret->type == VAR_INT &&
+             value->left->comb_ret->type == PARAM_INT &&
+             value->right->comb_ret->type == PARAM_INT &&
              value->left->comb_dims == 2 &&
              value->left->comb_dims == value->right->comb_dims)
     {
@@ -492,8 +492,8 @@ int expr_mul_check_type(symtab * tab, expr * value, int * result)
     }
     else if (value->left->comb == COMB_TYPE_ARRAY &&
              value->right->comb == COMB_TYPE_ARRAY &&
-             value->left->comb_ret->type == VAR_FLOAT &&
-             value->right->comb_ret->type == VAR_FLOAT &&
+             value->left->comb_ret->type == PARAM_FLOAT &&
+             value->right->comb_ret->type == PARAM_FLOAT &&
              value->left->comb_dims == 2 &&
              value->left->comb_dims == value->right->comb_dims)
     {
@@ -569,12 +569,12 @@ int expr_cond_check_type(symtab * tab, expr * value, int * result)
         {
             if (value->middle->comb == COMB_TYPE_FUNC)
             {
-                if (func_cmp(value->middle->comb_vars, value->middle->comb_ret,
-                             value->right->comb_vars,
+                if (func_cmp(value->middle->comb_params, value->middle->comb_ret,
+                             value->right->comb_params,
                              value->right->comb_ret) == TYPECHECK_SUCC)
                 {
                     value->comb = COMB_TYPE_FUNC;
-                    value->comb_vars = value->middle->comb_vars;
+                    value->comb_params = value->middle->comb_params;
                     value->comb_ret = value->middle->comb_ret;
                 }
                 else
@@ -698,16 +698,16 @@ int expr_array_deref_check_type(symtab * tab, expr * value, int * result)
 int expr_call_check_type(symtab * tab, expr * value, int * result)
 {
     expr_check_type(tab, value->call.func_expr, result);
-    if (value->call.vars != NULL)
+    if (value->call.params != NULL)
     {
-        expr_list_check_type(tab, value->call.vars, result);
+        expr_list_check_type(tab, value->call.params, result);
     }
 
     switch (value->call.func_expr->comb)
     {
     case COMB_TYPE_FUNC:
-        if (var_expr_list_cmp(value->call.func_expr->comb_vars,
-                              value->call.vars) == TYPECHECK_SUCC)
+        if (param_expr_list_cmp(value->call.func_expr->comb_params,
+                              value->call.params) == TYPECHECK_SUCC)
         {
             expr_set_return_type(value, value->call.func_expr->comb_ret);
         }
@@ -862,7 +862,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
         expr_check_type(tab, value->left, result);
 
         value->comb = value->left->comb;
-        value->comb_vars = value->left->comb_vars;
+        value->comb_params = value->left->comb_params;
         value->comb_ret = value->left->comb_ret;
         value->comb_dims = value->left->comb_dims;
         break;
@@ -886,7 +886,7 @@ int expr_check_type(symtab * tab, expr * value, int * result)
             func_check_type(value->func_value->stab, value->func_value, result);
 
             value->comb = COMB_TYPE_FUNC;
-            value->comb_vars = value->func_value->vars;
+            value->comb_params = value->func_value->params;
             value->comb_ret = value->func_value->ret;
         }
     }
@@ -953,7 +953,7 @@ int func_check_type(symtab * tab, func * func_value, int * result)
     {
         expr_check_type(tab, func_value->body->ret, result);
 
-        if (var_expr_cmp(func_value->ret, func_value->body->ret) ==
+        if (param_expr_cmp(func_value->ret, func_value->body->ret) ==
             TYPECHECK_FAIL)
         {
             *result = TYPECHECK_FAIL;
@@ -992,13 +992,13 @@ int never_check_type(never * nev, int * result)
 /*
  * Add symbols to symtab
  */
-int symtab_add_var_from_basic_var(symtab * tab, var * var_value,
+int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
                                   unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = symtab_lookup(tab, var_value->id, SYMTAB_FLAT);
+    symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_FLAT);
     if (entry == NULL)
     {
-        symtab_add_var(tab, var_value, syn_level);
+        symtab_add_param(tab, param_value, syn_level);
     }
     else
     {
@@ -1006,46 +1006,46 @@ int symtab_add_var_from_basic_var(symtab * tab, var * var_value,
         if (entry->type == SYMTAB_FUNC)
         {
             func * al_func = entry->func_value;
-            print_error_msg(var_value->line_no,
+            print_error_msg(param_value->line_no,
                             "function %s already defined at line %u\n",
                             entry->id, al_func->line_no);
         }
         else if (entry->type == SYMTAB_VAR)
         {
-            var * al_var = entry->var_value;
-            print_error_msg(var_value->line_no,
+            param * al_param = entry->param_value;
+            print_error_msg(param_value->line_no,
                             "parameter %s already defined at line %u\n",
-                            entry->id, al_var->line_no);
+                            entry->id, al_param->line_no);
         }
     }
     return 0;
 }
 
-int symtab_add_var_from_var(symtab * tab, var * var_value,
+int symtab_add_param_from_param(symtab * tab, param * param_value,
                             unsigned int syn_level, int * result)
 {
-    if (var_value->type == VAR_ARRAY)
+    if (param_value->type == PARAM_ARRAY)
     {
-        symtab_add_var_from_basic_var(tab, var_value, syn_level, result);
-        symtab_add_var_from_var_list(tab, var_value->dims, syn_level, result);
+        symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
+        symtab_add_param_from_param_list(tab, param_value->dims, syn_level, result);
     }
     else
     {
-        symtab_add_var_from_basic_var(tab, var_value, syn_level, result);
+        symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
     }
     return 0;
 }
 
-int symtab_add_var_from_var_list(symtab * tab, var_list * list,
+int symtab_add_param_from_param_list(symtab * tab, param_list * list,
                                  unsigned int syn_level, int * result)
 {
-    var_list_node * node = list->tail;
+    param_list_node * node = list->tail;
     while (node != NULL)
     {
-        var * var_value = node->value;
-        if (var_value && var_value->id)
+        param * param_value = node->value;
+        if (param_value && param_value->id)
         {
-            symtab_add_var_from_var(tab, var_value, syn_level, result);
+            symtab_add_param_from_param(tab, param_value, syn_level, result);
         }
         node = node->next;
     }
@@ -1072,10 +1072,10 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
         }
         else if (entry->type == SYMTAB_VAR)
         {
-            var * al_var = entry->var_value;
+            param * al_param = entry->param_value;
             print_error_msg(func_value->line_no,
                             "parameter %s already defined at line %u\n",
-                            entry->id, al_var->line_no);
+                            entry->id, al_param->line_no);
         }
     }
 
@@ -1154,9 +1154,9 @@ int symtab_add_entry_expr(symtab * stab, expr * value, unsigned int syn_level,
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         symtab_add_entry_expr(stab, value->call.func_expr, syn_level, result);
-        if (value->call.vars != NULL)
+        if (value->call.params != NULL)
         {
-            symtab_add_entry_expr_list(stab, value->call.vars, syn_level,
+            symtab_add_entry_expr_list(stab, value->call.params, syn_level,
                                        result);
         }
         break;
@@ -1223,9 +1223,9 @@ int symtab_add_entry_func(symtab * stab_parent, func * func_value,
         symtab_add_func_from_func(func_value->stab, func_value, syn_level - 1,
                                   result);
     }
-    if (func_value->vars)
+    if (func_value->params)
     {
-        symtab_add_var_from_var_list(func_value->stab, func_value->vars,
+        symtab_add_param_from_param_list(func_value->stab, func_value->params,
                                      syn_level, result);
     }
     if (func_value->body && func_value->body->funcs)
@@ -1341,9 +1341,9 @@ int print_func_expr(expr * value, int depth)
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         print_func_expr(value->call.func_expr, depth);
-        if (value->call.vars != NULL)
+        if (value->call.params != NULL)
         {
-            print_func_expr_list(value->call.vars, depth);
+            print_func_expr_list(value->call.params, depth);
         }
         break;
     case EXPR_FUNC:
@@ -1444,13 +1444,13 @@ int print_functions(never * nev)
     return 0;
 }
 
-int func_main_check_num_vars(var_list * vars)
+int func_main_check_num_params(param_list * params)
 {
-    var_list_node * node = vars->tail;
+    param_list_node * node = params->tail;
     while (node != NULL)
     {
-        var * value = node->value;
-        if (value->type != VAR_INT && value->type != VAR_FLOAT)
+        param * value = node->value;
+        if (value->type != PARAM_INT && value->type != PARAM_FLOAT)
         {
             return 0;
         }
@@ -1469,13 +1469,13 @@ int func_main_check_type(symtab * tab, int * result)
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
             func * func_value = entry->func_value;
-            if (func_value->vars != NULL &&
-                func_main_check_num_vars(func_value->vars) == 0)
+            if (func_value->params != NULL &&
+                func_main_check_num_params(func_value->params) == 0)
             {
                 print_error_msg(
                     func_value->line_no,
                     "function main can take only numerical parameters\n",
-                    func_value->vars->count);
+                    func_value->params->count);
                 *result = TYPECHECK_FAIL;
             }
             if (func_value->ret == NULL)
@@ -1486,8 +1486,8 @@ int func_main_check_type(symtab * tab, int * result)
             }
             else
             {
-                if (func_value->ret->type != VAR_INT &&
-                    func_value->ret->type != VAR_FLOAT)
+                if (func_value->ret->type != PARAM_INT &&
+                    func_value->ret->type != PARAM_FLOAT)
                 {
                     print_error_msg(func_value->line_no,
                                     "incorrect function main return type\n");

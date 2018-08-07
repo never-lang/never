@@ -3,7 +3,7 @@
 
 typedef struct dim
 {
-    struct var * id;
+    struct param * id;
     unsigned int line_no;
 } dim;
 

@@ -2,7 +2,7 @@
 #define __ARRAY_H__
 
 #include "expr.h"
-#include "var.h"
+#include "param.h"
 #include "weakexpr.h"
 
 typedef enum array_type
@@ -18,13 +18,13 @@ typedef struct array
     array_type type;
     expr_list * elements;
     expr_list * dims;
-    var * ret;
+    param * ret;
     unsigned int line_no;
 } array;
 
-array * array_new(expr_list * elements, var * ret);
+array * array_new(expr_list * elements, param * ret);
 array * array_new_sub(expr_list * elements);
-array * array_new_dims(expr_list * dims, var * ret);
+array * array_new_dims(expr_list * dims, param * ret);
 
 void array_delete(array * value);
 

@@ -1,0 +1,84 @@
+/**
+ * Copyright 2018 Slawomir Maludzinski
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#ifndef __PARAM_H__
+#define __PARAM_H__
+
+enum
+{
+    PARAM_INT = 1,
+    PARAM_FLOAT,
+    PARAM_DIM,
+    PARAM_ARRAY,
+    PARAM_FUNC
+};
+
+typedef struct param
+{
+    int type;
+    int index;
+    char * id;
+    union {
+        struct param * array;
+        struct param_list * params;
+        struct param_list * dims;
+    };
+    struct param * ret;
+    unsigned int line_no;
+} param;
+
+typedef struct param_list_node
+{
+    param * value;
+    struct param_list_node * prev;
+    struct param_list_node * next;
+} param_list_node;
+
+typedef struct param_list
+{
+    int count;
+    param_list_node * head;
+    param_list_node * tail;
+} param_list;
+
+param * param_new_int(char * id);
+param * param_new_float(char * id);
+param * param_new_dim(char * id);
+param * param_new_array(char * id, param_list * dims, param * ret);
+param * param_new_func(char * id, param_list * params, param * ret);
+void param_delete(param * value);
+
+param_list_node * param_list_node_new(param * value);
+void param_list_node_delete(param_list_node * node);
+
+param_list * param_list_new();
+void param_list_delete(param_list * list);
+
+void param_list_add_beg(param_list * list, param * value);
+void param_list_add_end(param_list * list, param * value);
+
+void param_dim_set_array(param_list * dims, param * array);
+
+void param_print(param * value);
+void param_list_print(param_list * list);
+char * param_type_str(int type);
+
+#endif /* __PARAM_H__ */

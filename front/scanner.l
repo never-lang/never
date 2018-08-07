@@ -43,6 +43,18 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
      /* DO NOTHING */
 }
 
+let {
+    tokp->line_no = line_no;
+    scanner_printf("let\n");
+    return TOK_LET;
+}
+
+var {
+    tokp->line_no = line_no;
+    scanner_printf("var\n");
+    return TOK_VAR;
+}
+
 func {
     tokp->line_no = line_no;
     scanner_printf("func\n");

@@ -45,36 +45,36 @@ extern int parse_result;
 int never_func_main_params(never * nev, object ** params,
                            unsigned int * param_count)
 {
-    object * param = NULL;
+    object * object_param = NULL;
     symtab_entry * entry = NULL;
 
-    *param_count = 0;
     *params = NULL;
+    *param_count = 0;
 
     entry = symtab_lookup(nev->stab, "main", SYMTAB_FLAT);
     if (entry != NULL && entry->type == SYMTAB_FUNC &&
         entry->func_value != NULL)
     {
         func * func_value = entry->func_value;
-        if (func_value->vars != NULL)
+        if (func_value->params != NULL)
         {
-            *param_count = func_value->vars->count;
-            *params = param = malloc(sizeof(object) * (*param_count));
+            *param_count = func_value->params->count;
+            *params = object_param = malloc(sizeof(object) * (*param_count));
             memset(*params, 0, sizeof(object) * (*param_count));
 
-            var_list_node * node = func_value->vars->tail;
+            param_list_node * node = func_value->params->tail;
             while (node != NULL)
             {
-                var * value = node->value;
-                if (value->type == VAR_INT)
+                param * value = node->value;
+                if (value->type == PARAM_INT)
                 {
-                    param->type = OBJECT_INT;
+                    object_param->type = OBJECT_INT;
                 }
-                else if (value->type == VAR_FLOAT)
+                else if (value->type == PARAM_FLOAT)
                 {
-                    param->type = OBJECT_FLOAT;
+                    object_param->type = OBJECT_FLOAT;
                 }
-                param++;
+                object_param++;
                 node = node->next;
             }
         }

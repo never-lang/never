@@ -212,10 +212,10 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
 
         rec_expr =
             expr_tailrec(syn_level, func_value, op, value->call.func_expr);
-        if (value->call.vars != NULL)
+        if (value->call.params != NULL)
         {
             rec_vars =
-                expr_list_tailrec(syn_level, func_value, op, value->call.vars);
+                expr_list_tailrec(syn_level, func_value, op, value->call.params);
         }
 
         if (rec_expr == TAILREC_FOUND && rec_vars == TAILREC_NOT_FOUND)

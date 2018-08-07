@@ -88,8 +88,8 @@ typedef struct expr
 {
     expr_type type;
     comb_type comb;
-    struct var_list * comb_vars; /* function arguments */
-    struct var * comb_ret;       /* function ret */
+    struct param_list * comb_params; /* function arguments */
+    struct param * comb_ret;       /* function ret */
     int comb_dims;               /* array dimensions */
     unsigned int line_no;
     union {
@@ -100,7 +100,7 @@ typedef struct expr
             char * id;
             id_type id_type_value;
             union {
-                var * id_var_value;
+                param * id_param_value;
                 freevar * id_freevar_value;
                 func * id_func_value;
             };
@@ -119,13 +119,13 @@ typedef struct expr
         struct
         {
             struct expr * func_expr; /* EXPR_CALL, EXPR_LAST_CALL */
-            struct expr_list * vars;
+            struct expr_list * params;
         } call;
         struct
         {
             unsigned int id; /* EXPR_BUILD_IN */
             struct expr_list * param;
-            struct var * ret;
+            struct param * ret;
         } func_build_in;
         struct
         {
@@ -163,8 +163,8 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle,
 expr * expr_new_array(array * value);
 expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
 expr * expr_new_func(func * value);
-expr * expr_new_call(expr * func_expr, expr_list * vars);
-expr * expr_new_build_in(unsigned int id, expr_list * params, var * var_ret);
+expr * expr_new_call(expr * func_expr, expr_list * params);
+expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 
 expr * expr_conv(expr * expr_value, expr_type conv);
 

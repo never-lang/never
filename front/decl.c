@@ -19,39 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#include "decl.h"
 
-#include "array.h"
-#include "dim.h"
-#include "expr.h"
-#include "func.h"
-#include "never.h"
-#include "param.h"
 
-typedef union token_value {
-    int int_value;
-    float float_value;
-    char * str_value;
-    expr * expr_value;
-    expr_list * expr_list_value;
-    param * param_value;
-    param_list * param_list_value;
-    dim * dim_value;
-    dim_list * dim_list_value;
-    array * array_value;
-    func * func_value;
-    func_list * func_list_value;
-    func_body * func_body_value;
-    never * never_value;
-} token_value;
-
-typedef struct token
-{
-    int line_no;
-    token_value val;
-} token;
-
-#define YYSTYPE token
-
-#endif /* __TYPES_H__ */

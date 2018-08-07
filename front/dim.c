@@ -1,12 +1,12 @@
 #include "dim.h"
-#include "var.h"
+#include "param.h"
 #include <stdlib.h>
 
 dim * dim_new(char * id)
 {
     dim * value = malloc(sizeof(dim));
 
-    value->id = var_new_int(id);
+    value->id = param_new_int(id);
     value->line_no = 0;
 
     return value;
@@ -16,7 +16,7 @@ void dim_delete(dim * value)
 {
     if (value->id != NULL)
     {
-        var_delete(value->id);
+        param_delete(value->id);
     }
     free(value);
 }

@@ -110,7 +110,7 @@ expr * expr_new_array(array * value)
 
     ret->type = EXPR_ARRAY;
     ret->comb = COMB_TYPE_UNKNOWN;
-    ret->comb_vars = NULL;
+    ret->comb_params = NULL;
     ret->comb_ret = NULL;
     ret->line_no = 0;
     ret->array.array_value = value;
@@ -143,7 +143,7 @@ expr * expr_new_func(func * value)
     return ret;
 }
 
-expr * expr_new_call(expr * func_expr, expr_list * vars)
+expr * expr_new_call(expr * func_expr, expr_list * params)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
 
@@ -151,12 +151,12 @@ expr * expr_new_call(expr * func_expr, expr_list * vars)
     ret->line_no = 0;
     ret->comb = COMB_TYPE_UNKNOWN;
     ret->call.func_expr = func_expr;
-    ret->call.vars = vars;
+    ret->call.params = params;
 
     return ret;
 }
 
-expr * expr_new_build_in(unsigned int id, expr_list * params, var * var_ret)
+expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
 
@@ -165,7 +165,7 @@ expr * expr_new_build_in(unsigned int id, expr_list * params, var * var_ret)
     ret->comb = COMB_TYPE_UNKNOWN;
     ret->func_build_in.id = id;
     ret->func_build_in.param = params;
-    ret->func_build_in.ret = var_ret;
+    ret->func_build_in.ret = param_ret;
 
     return ret;
 }
@@ -240,9 +240,9 @@ void expr_delete(expr * value)
         {
             expr_delete(value->call.func_expr);
         }
-        if (value->call.vars != NULL)
+        if (value->call.params != NULL)
         {
-            expr_list_delete(value->call.vars);
+            expr_list_delete(value->call.params);
         }
         break;
     case EXPR_FUNC:
@@ -258,7 +258,7 @@ void expr_delete(expr * value)
         }
         if (value->func_build_in.ret != NULL)
         {
-            var_delete(value->func_build_in.ret);
+            param_delete(value->func_build_in.ret);
         }
         break;
     case EXPR_INT_TO_FLOAT:

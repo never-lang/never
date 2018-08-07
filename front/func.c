@@ -23,13 +23,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-func * func_new(char * id, var_list * vars, var * ret, func_body * body)
+func * func_new(char * id, param_list * params, param * ret, func_body * body)
 {
     func * value = (func *)malloc(sizeof(func));
 
     value->id = id;
     value->index = 0;
-    value->vars = vars;
+    value->params = params;
     value->ret = ret;
     value->body = body;
     value->freevars = NULL;
@@ -46,13 +46,13 @@ void func_delete(func * value)
     {
         free(value->id);
     }
-    if (value->vars)
+    if (value->params)
     {
-        var_list_delete(value->vars);
+        param_list_delete(value->params);
     }
     if (value->ret)
     {
-        var_delete(value->ret);
+        param_delete(value->ret);
     }
     if (value->body)
     {

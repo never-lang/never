@@ -28,16 +28,18 @@ int yyerror(never ** nev, char * str)
 %token <val.int_value> TOK_NUM_INT
 %token <val.str_value> TOK_FLOAT
 %token <val.str_value> TOK_INT
+%token <val.str_value> TOK_LET
+%token <val.str_value> TOK_VAR
 %token <val.str_value> TOK_FUNC
 %token <val.str_value> TOK_RET /* -> */
 %token <val.str_value> TOK_RETURN
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
-%type <val.var_value> dim
-%type <val.var_list_value> dim_list
-%type <val.var_value> var
-%type <val.var_list_value> var_list
+%type <val.param_value> dim
+%type <val.param_list_value> dim_list
+%type <val.param_value> param
+%type <val.param_list_value> param_list
 %type <val.array_value> array;
 %type <val.func_value> func
 %type <val.func_list_value> func_list
@@ -57,10 +59,10 @@ int yyerror(never ** nev, char * str)
 %start never
 
 %destructor { free($$); } TOK_ID
-%destructor { var_delete($$); } dim
-%destructor { var_list_delete($$); } dim_list
-%destructor { var_delete($$); } var
-%destructor { var_list_delete($$); } var_list
+%destructor { param_delete($$); } dim
+%destructor { param_list_delete($$); } dim_list
+%destructor { param_delete($$); } param
+%destructor { param_list_delete($$); } param_list
 %destructor { expr_delete($$); } expr
 %destructor { expr_list_delete($$); } expr_list
 %destructor { array_delete($$); } array
@@ -206,13 +208,13 @@ expr: expr '[' expr_list ']' /* array dereference */
     $$->line_no = $<line_no>2;
 };
 
-array: ARR_DIM_BEG expr_list ARR_DIM_END TOK_RET var
+array: ARR_DIM_BEG expr_list ARR_DIM_END TOK_RET param
 {
     $$ = array_new_dims($2, $5);
     $$->line_no = $<line_no>1;
 };
 
-array: '{' expr_list '}' TOK_RET var
+array: '{' expr_list '}' TOK_RET param
 {
     $$ = array_new($2, $5);
     $$->line_no = $<line_no>1;
@@ -253,103 +255,103 @@ expr_list: expr_list ',' expr
     $$ = $1;
 };
 
-var: TOK_INT
+param: TOK_INT
 {
-    $$ = var_new_int(NULL);
+    $$ = param_new_int(NULL);
     $$->line_no = $<line_no>1;
 };
 
-var: TOK_ID TOK_RET TOK_INT
+param: TOK_ID TOK_RET TOK_INT
 {
-    $$ = var_new_int($1);
+    $$ = param_new_int($1);
     $$->line_no = $<line_no>2;
 };
 
-var: TOK_FLOAT
+param: TOK_FLOAT
 {
-    $$ = var_new_float(NULL);
+    $$ = param_new_float(NULL);
     $$->line_no = $<line_no>1;
 };
 
-var: TOK_ID TOK_RET TOK_FLOAT 
+param: TOK_ID TOK_RET TOK_FLOAT 
 {
-    $$ = var_new_float($1);
+    $$ = param_new_float($1);
     $$->line_no = $<line_no>2;
 };
 
-var: '[' dim_list ']' TOK_RET var
+param: '[' dim_list ']' TOK_RET param
 {
-    $$ = var_new_array(NULL, $2, $5);
+    $$ = param_new_array(NULL, $2, $5);
     $$->line_no = $<line_no>1;
 };
 
-var: TOK_ID '[' dim_list ']' TOK_RET var
+param: TOK_ID '[' dim_list ']' TOK_RET param
 {
-    $$ = var_new_array($1, $3, $6);
+    $$ = param_new_array($1, $3, $6);
     $$->line_no = $<line_no>1;
 };
 
-var: '(' ')' TOK_RET var
+param: '(' ')' TOK_RET param
 {
-    $$ = var_new_func(NULL, NULL, $4);
+    $$ = param_new_func(NULL, NULL, $4);
     $$->line_no = $<line_no>4;
 };
 
-var: '(' var_list ')' TOK_RET var
+param: '(' param_list ')' TOK_RET param
 {
-    $$ = var_new_func(NULL, $2, $5);
+    $$ = param_new_func(NULL, $2, $5);
     $$->line_no = $<line_no>5;
 };
 
-var: TOK_ID '(' ')' TOK_RET var
+param: TOK_ID '(' ')' TOK_RET param
 {
-    $$ = var_new_func($1, NULL, $5);
+    $$ = param_new_func($1, NULL, $5);
     $$->line_no = $<line_no>5;
 };
 
-var: TOK_ID '(' var_list ')' TOK_RET var
+param: TOK_ID '(' param_list ')' TOK_RET param
 {
-    $$ = var_new_func($1, $3, $6);
+    $$ = param_new_func($1, $3, $6);
     $$->line_no = $<line_no>6;
 };
 
 dim: TOK_ID
 {
-    $$ = var_new_dim($1);
+    $$ = param_new_dim($1);
     $$->line_no = $<line_no>1;
 };
 
 dim_list: dim
 {
-    $$ = var_list_new();
-    var_list_add_end($$, $1);
+    $$ = param_list_new();
+    param_list_add_end($$, $1);
 };
 
 dim_list: dim_list ',' dim
 {
-    var_list_add_end($1, $3);
+    param_list_add_end($1, $3);
     $$ = $1;
 };
 
-var_list: var
+param_list: param
 {
-    $$ = var_list_new();
-    var_list_add_end($$, $1);
+    $$ = param_list_new();
+    param_list_add_end($$, $1);
 };
 
-var_list: var_list ',' var
+param_list: param_list ',' param
 {
-    var_list_add_end($1, $3);
+    param_list_add_end($1, $3);
     $$ = $1;
 };
 
-func: TOK_FUNC TOK_ID '(' ')' TOK_RET var func_body
+func: TOK_FUNC TOK_ID '(' ')' TOK_RET param func_body
 {
     $$ = func_new($2, NULL, $6, $7);
     $$->line_no = $<line_no>2;
 };
 
-func: TOK_FUNC TOK_ID '(' var_list ')' TOK_RET var func_body
+func: TOK_FUNC TOK_ID '(' param_list ')' TOK_RET param func_body
 {
     $$ = func_new($2, $4, $7, $8);
     $$->line_no = $<line_no>2;

@@ -11,7 +11,7 @@ int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
     int first_distance = -1;
     int curr_distance = -1;
     int first_comb_elems = 0;
-    var * ret = expr_value->array.array_value->ret;
+    param * ret = expr_value->array.array_value->ret;
 
     expr_list_weak_node * node = depth_list->tail;
     curr_distance = first_distance = node->distance;
@@ -33,12 +33,12 @@ int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
 
             if (node->distance == first_distance)
             {
-                if (var_expr_cmp(ret, value) == TYPECHECK_FAIL)
+                if (param_expr_cmp(ret, value) == TYPECHECK_FAIL)
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(
                         value->line_no, "incorrect types in array %s %s\n",
-                        var_type_str(ret->type), expr_type_str(value->type));
+                        param_type_str(ret->type), expr_type_str(value->type));
                 }
             }
             else
@@ -59,7 +59,7 @@ int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
                         *result = TYPECHECK_FAIL;
                         print_error_msg(value->line_no,
                                         "incorrect types in array %s %s\n",
-                                        var_type_str(ret->type),
+                                        param_type_str(ret->type),
                                         expr_type_str(value->type));
                     }
                 }
@@ -76,7 +76,7 @@ int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
                             print_error_msg(
                                 value->line_no,
                                 "incorrect dimesions in array %s %s\n",
-                                var_type_str(ret->type),
+                                param_type_str(ret->type),
                                 expr_type_str(value->type));
                         }
                     }
@@ -85,7 +85,7 @@ int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
                         *result = TYPECHECK_FAIL;
                         print_error_msg(value->line_no,
                                         "incorrect types in array %s %s\n",
-                                        var_type_str(ret->type),
+                                        param_type_str(ret->type),
                                         expr_type_str(value->type));
                     }
                 }

@@ -29,15 +29,15 @@
 /* GP old, FP old, IP old */
 #define NUM_FRAME_PTRS 3
 
-int func_enum_vars(func * func_value)
+int func_enum_params(func * func_value)
 {
     int index = 0;
-    var_list_node * node = NULL;
+    param_list_node * node = NULL;
 
-    node = func_value->vars->tail;
+    node = func_value->params->tail;
     while (node != NULL)
     {
-        var * value = node->value;
+        param * value = node->value;
         if (value != NULL)
         {
             value->index = -(index++);
@@ -121,17 +121,17 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                 }
             }
         }
-        else if (entry->type == SYMTAB_VAR && entry->var_value != NULL)
+        else if (entry->type == SYMTAB_VAR && entry->param_value != NULL)
         {
-            var * var_value = entry->var_value;
-            if (var_value->type == VAR_INT || var_value->type == VAR_FLOAT ||
-                var_value->type == VAR_DIM || var_value->type == VAR_ARRAY ||
-                var_value->type == VAR_FUNC)
+            param * param_value = entry->param_value;
+            if (param_value->type == PARAM_INT || param_value->type == PARAM_FLOAT ||
+                param_value->type == PARAM_DIM || param_value->type == PARAM_ARRAY ||
+                param_value->type == PARAM_FUNC)
             {
                 if (syn_level == entry->syn_level)
                 {
                     value->id.id_type_value = ID_TYPE_LOCAL;
-                    value->id.id_var_value = var_value;
+                    value->id.id_param_value = param_value;
                 }
                 else
                 {
@@ -150,7 +150,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
             }
             else
             {
-                printf("unknown var type %d\n", var_value->type);
+                printf("unknown param type %d\n", param_value->type);
                 assert(0);
             }
         }
@@ -233,9 +233,9 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         expr_gencode(syn_level, func_value, value->call.func_expr, result);
-        if (value->call.vars != NULL)
+        if (value->call.params != NULL)
         {
-            expr_list_gencode(syn_level, func_value, value->call.vars, result);
+            expr_list_gencode(syn_level, func_value, value->call.params, result);
         }
         break;
     case EXPR_FUNC:
@@ -306,10 +306,10 @@ int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
             freevar_value->type = FREEVAR_FUNC;
             freevar_value->func_value = entry->func_value;
         }
-        else if (entry->type == SYMTAB_VAR && entry->var_value)
+        else if (entry->type == SYMTAB_VAR && entry->param_value)
         {
             freevar_value->type = FREEVAR_LOCAL;
-            freevar_value->local_value = entry->var_value;
+            freevar_value->local_value = entry->param_value;
         }
     }
     else
@@ -400,9 +400,9 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         func_gencode_freevars_expr(func_value, value->call.func_expr, result);
-        if (value->call.vars)
+        if (value->call.params)
         {
-            func_gencode_freevars_expr_list(func_value, value->call.vars,
+            func_gencode_freevars_expr_list(func_value, value->call.params,
                                             result);
         }
         break;
@@ -498,9 +498,9 @@ int func_gencode_freevars(func * func_value, int * result)
 
 int func_gencode(unsigned int syn_level, func * func_value, int * result)
 {
-    if (func_value->vars != NULL)
+    if (func_value->params != NULL)
     {
-        func_enum_vars(func_value);
+        func_enum_params(func_value);
     }
     if (func_value->body != NULL)
     {
@@ -584,7 +584,7 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
 {
     bytecode bc = { 0 };
 
-    if (value->local_value->type == VAR_DIM)
+    if (value->local_value->type == PARAM_DIM)
     {
         bc.type = BYTECODE_ID_DIM_LOCAL;
         bc.id_dim_local.stack_level = stack_level;
@@ -658,18 +658,18 @@ int expr_id_local_emit(expr * value, int stack_level, bytecode_list * code,
 {
     bytecode bc = { 0 };
 
-    if (value->id.id_var_value->type == VAR_DIM)
+    if (value->id.id_param_value->type == PARAM_DIM)
     {
         bc.type = BYTECODE_ID_DIM_LOCAL;
         bc.id_dim_local.stack_level = stack_level;
-        bc.id_dim_local.index = value->id.id_var_value->array->index;
-        bc.id_dim_local.dim_index = value->id.id_var_value->index;
+        bc.id_dim_local.index = value->id.id_param_value->array->index;
+        bc.id_dim_local.dim_index = value->id.id_param_value->index;
     }
     else
     {
         bc.type = BYTECODE_ID_LOCAL;
         bc.id_local.stack_level = stack_level;
-        bc.id_local.index = value->id.id_var_value->index;
+        bc.id_local.index = value->id.id_param_value->index;
     }
 
     bytecode_add(code, &bc);
@@ -794,13 +794,13 @@ int expr_neg_emit(expr * value, int stack_level, bytecode_list * code,
         bytecode_add(code, &bc);
     }
     else if (value->comb == COMB_TYPE_ARRAY &&
-             value->comb_ret->type == VAR_INT)
+             value->comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_NEG_ARR_INT;
         bytecode_add(code, &bc);
     }
     else if (value->comb == COMB_TYPE_ARRAY &&
-             value->comb_ret->type == VAR_FLOAT)
+             value->comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_NEG_ARR_FLOAT;
         bytecode_add(code, &bc);
@@ -835,13 +835,13 @@ int expr_add_emit(expr * value, int stack_level, bytecode_list * code,
         bytecode_add(code, &bc);
     }
     else if (value->comb == COMB_TYPE_ARRAY &&
-             value->comb_ret->type == VAR_INT)
+             value->comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_ADD_ARR_INT;
         bytecode_add(code, &bc);
     }
     else if (value->comb == COMB_TYPE_ARRAY &&
-             value->comb_ret->type == VAR_FLOAT)
+             value->comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_ADD_ARR_FLOAT;
         bytecode_add(code, &bc);
@@ -876,13 +876,13 @@ int expr_sub_emit(expr * value, int stack_level, bytecode_list * code,
         bytecode_add(code, &bc);
     }
     else if (value->comb == COMB_TYPE_ARRAY &&
-             value->comb_ret->type == VAR_INT)
+             value->comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_SUB_ARR_INT;
         bytecode_add(code, &bc);
     }
     else if (value->comb == COMB_TYPE_ARRAY &&
-             value->comb_ret->type == VAR_FLOAT)
+             value->comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_SUB_ARR_FLOAT;
         bytecode_add(code, &bc);
@@ -929,7 +929,7 @@ int expr_mul_emit(expr * value, int stack_level, bytecode_list * code,
         bytecode_add(code, &bc);
     }
     else if (value->comb == COMB_TYPE_ARRAY &&
-             value->comb_ret->type == VAR_INT &&
+             value->comb_ret->type == PARAM_INT &&
              value->left->comb == COMB_TYPE_ARRAY &&
              value->right->comb == COMB_TYPE_ARRAY)
     {
@@ -937,7 +937,7 @@ int expr_mul_emit(expr * value, int stack_level, bytecode_list * code,
         bytecode_add(code, &bc);
     }
     else if (value->comb == COMB_TYPE_ARRAY &&
-             value->comb_ret->type == VAR_FLOAT &&
+             value->comb_ret->type == PARAM_FLOAT &&
              value->left->comb == COMB_TYPE_ARRAY &&
              value->right->comb == COMB_TYPE_ARRAY)
     {
@@ -1107,10 +1107,10 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
     bc.type = BYTECODE_MARK;
     mark = bytecode_add(code, &bc);
 
-    if (value->call.vars)
+    if (value->call.params)
     {
-        expr_list_emit(value->call.vars, stack_level + v, code, result);
-        v += value->call.vars->count;
+        expr_list_emit(value->call.params, stack_level + v, code, result);
+        v += value->call.params->count;
     }
     expr_emit(value->call.func_expr, stack_level + v, code, result);
 
@@ -1130,10 +1130,10 @@ int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code,
     int v = 0;
     bytecode bc = { 0 };
 
-    if (value->call.vars)
+    if (value->call.params)
     {
-        expr_list_emit(value->call.vars, stack_level + v, code, result);
-        v += value->call.vars->count;
+        expr_list_emit(value->call.params, stack_level + v, code, result);
+        v += value->call.params->count;
     }
     expr_emit(value->call.func_expr, stack_level + v, code, result);
 
@@ -1582,7 +1582,7 @@ int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code,
 int func_emit(func * func_value, int stack_level, bytecode_list * code,
               int * result)
 {
-    int var_count = 0;
+    int param_count = 0;
     int freevar_count = 0;
     int func_count = 0;
     bytecode bc = { 0 };
@@ -1637,13 +1637,13 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code,
         bytecode_add(code, &bc);
     }
 
-    if (func_value->vars != NULL)
+    if (func_value->params != NULL)
     {
-        var_count = func_value->vars->count;
+        param_count = func_value->params->count;
     }
 
     bc.type = BYTECODE_RET;
-    bc.ret.count = var_count;
+    bc.ret.count = param_count;
     bytecode_add(code, &bc);
 
     bc.type = BYTECODE_LABEL;

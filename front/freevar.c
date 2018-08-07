@@ -150,7 +150,7 @@ void freevar_print(freevar * value)
     case FREEVAR_LOCAL:
         if (value->local_value)
         {
-            var_print(value->local_value);
+            param_print(value->local_value);
         }
         break;
     case FREEVAR_GLOBAL:

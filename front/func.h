@@ -25,7 +25,7 @@
 #include "expr.h"
 #include "freevar.h"
 #include "symtab.h"
-#include "var.h"
+#include "param.h"
 
 struct func_body;
 struct func_list;
@@ -34,8 +34,8 @@ typedef struct func
 {
     char * id;
     int index;
-    var_list * vars;
-    var * ret;
+    param_list * params;
+    param * ret;
     struct func_body * body;
     struct freevar_list * freevars;
     struct symtab * stab;
@@ -63,7 +63,7 @@ typedef struct func_list
     func_list_node * tail;
 } func_list;
 
-func * func_new(char * id, var_list * vars, var * ret, func_body * body);
+func * func_new(char * id, param_list * params, param * ret, func_body * body);
 void func_delete(func * value);
 
 void func_print(func * value);
@@ -81,3 +81,4 @@ void func_list_add_beg(func_list * list, func * value);
 void func_list_add_end(func_list * list, func * value);
 
 #endif /* __FUNC_H__ */
+

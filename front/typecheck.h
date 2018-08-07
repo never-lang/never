@@ -27,16 +27,16 @@
 #define TYPECHECK_SUCC 0
 #define TYPECHECK_FAIL 1
 
-int expr_set_return_type(expr * value, var * ret);
+int expr_set_return_type(expr * value, param * ret);
 
-int var_cmp(var * var_one, var * var_two);
-int var_list_cmp(var_list * var_one, var_list * var_two);
-int func_cmp(var_list * var_list_one, var * ret_one, var_list * var_list_two,
-             var * ret_two);
+int param_cmp(param * param_one, param * param_two);
+int param_list_cmp(param_list * param_one, param_list * param_two);
+int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_list_two,
+             param * ret_two);
 
-int var_expr_array_cmp(var * var_value, expr * expr_value);
-int var_expr_cmp(var * var_value, expr * expr_value);
-int var_expr_list_cmp(var_list * vars, expr_list * list);
+int param_expr_array_cmp(param * param_value, expr * expr_value);
+int param_expr_cmp(param * param_value, expr * expr_value);
+int param_expr_list_cmp(param_list * params, expr_list * list);
 
 int array_dims_check_type_expr(symtab * tab, expr * value, int * result);
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
@@ -56,11 +56,11 @@ int func_check_type(symtab * tab, func * func_value, int * result);
 int func_list_check_type(symtab * tab, func_list * list, int * result);
 int never_check_type(never * nev, int * result);
 
-int symtab_add_var_from_basic_var(symtab * tab, var * var_value,
+int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
                                   unsigned int syn_level, int * result);
-int symtab_add_var_from_var(symtab * tab, var * var_value,
+int symtab_add_param_from_param(symtab * tab, param * param_value,
                             unsigned int syn_level, int * result);
-int symtab_add_var_from_var_list(symtab * tab, var_list * list,
+int symtab_add_param_from_param_list(symtab * tab, param_list * list,
                                  unsigned int syn_level, int * result);
 int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result);
@@ -85,7 +85,7 @@ int print_func(func * value, int depth);
 int print_func_list(func_list * list, int depth);
 int print_functions(never * nev);
 
-int func_main_check_num_vars(var_list * vars);
+int func_main_check_num_params(param_list * params);
 int func_main_check_type(symtab * tab, int * result);
 
 int never_sem_check(never * nev);

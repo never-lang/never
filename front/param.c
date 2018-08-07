@@ -19,44 +19,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "var.h"
+#include "param.h"
 #include "dim.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-var * var_new_int(char * id)
+param * param_new_int(char * id)
 {
-    var * value = (var *)malloc(sizeof(var));
+    param * value = (param *)malloc(sizeof(param));
 
-    value->type = VAR_INT;
+    value->type = PARAM_INT;
     value->index = -1;
     value->id = id;
-    value->vars = NULL;
+    value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
 
     return value;
 }
 
-var * var_new_float(char * id)
+param * param_new_float(char * id)
 {
-    var * value = (var *)malloc(sizeof(var));
+    param * value = (param *)malloc(sizeof(param));
 
-    value->type = VAR_FLOAT;
+    value->type = PARAM_FLOAT;
     value->index = -1;
     value->id = id;
-    value->vars = NULL;
+    value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
 
     return value;
 }
 
-var * var_new_dim(char * id)
+param * param_new_dim(char * id)
 {
-    var * value = (var *)malloc(sizeof(var));
+    param * value = (param *)malloc(sizeof(param));
 
-    value->type = VAR_DIM;
+    value->type = PARAM_DIM;
     value->index = -1;
     value->id = id;
     value->array = NULL;
@@ -66,11 +66,11 @@ var * var_new_dim(char * id)
     return value;
 }
 
-var * var_new_array(char * id, var_list * dims, var * ret)
+param * param_new_array(char * id, param_list * dims, param * ret)
 {
-    var * value = (var *)malloc(sizeof(var));
+    param * value = (param *)malloc(sizeof(param));
 
-    value->type = VAR_ARRAY;
+    value->type = PARAM_ARRAY;
     value->index = -1;
     value->id = id;
     value->dims = dims;
@@ -79,53 +79,53 @@ var * var_new_array(char * id, var_list * dims, var * ret)
 
     if (dims != NULL)
     {
-        var_dim_set_array(dims, value);
+        param_dim_set_array(dims, value);
     }
 
     return value;
 }
 
-var * var_new_func(char * id, var_list * vars, var * ret)
+param * param_new_func(char * id, param_list * params, param * ret)
 {
-    var * value = (var *)malloc(sizeof(var));
+    param * value = (param *)malloc(sizeof(param));
 
-    value->type = VAR_FUNC;
+    value->type = PARAM_FUNC;
     value->index = -1;
     value->id = id;
-    value->vars = vars;
+    value->params = params;
     value->ret = ret;
     value->line_no = 0;
 
     return value;
 }
 
-void var_delete(var * value)
+void param_delete(param * value)
 {
     if (value->id)
     {
         free(value->id);
     }
 
-    if (value->type == VAR_FUNC && value->vars != NULL)
+    if (value->type == PARAM_FUNC && value->params != NULL)
     {
-        var_list_delete(value->vars);
+        param_list_delete(value->params);
     }
-    else if (value->type == VAR_ARRAY && value->dims != NULL)
+    else if (value->type == PARAM_ARRAY && value->dims != NULL)
     {
-        var_list_delete(value->dims);
+        param_list_delete(value->dims);
     }
 
     if (value->ret)
     {
-        var_delete(value->ret);
+        param_delete(value->ret);
     }
 
     free(value);
 }
 
-var_list_node * var_list_node_new(var * value)
+param_list_node * param_list_node_new(param * value)
 {
-    var_list_node * node = (var_list_node *)malloc(sizeof(var_list_node));
+    param_list_node * node = (param_list_node *)malloc(sizeof(param_list_node));
 
     node->value = value;
     node->prev = NULL;
@@ -134,18 +134,18 @@ var_list_node * var_list_node_new(var * value)
     return node;
 }
 
-void var_list_node_delete(var_list_node * node)
+void param_list_node_delete(param_list_node * node)
 {
     if (node->value)
     {
-        var_delete(node->value);
+        param_delete(node->value);
     }
     free(node);
 }
 
-var_list * var_list_new()
+param_list * param_list_new()
 {
-    var_list * list = (var_list *)malloc(sizeof(var_list));
+    param_list * list = (param_list *)malloc(sizeof(param_list));
 
     list->count = 0;
     list->head = NULL;
@@ -154,22 +154,22 @@ var_list * var_list_new()
     return list;
 }
 
-void var_list_delete(var_list * list)
+void param_list_delete(param_list * list)
 {
-    var_list_node * node = list->tail;
+    param_list_node * node = list->tail;
 
     while (node != NULL)
     {
-        var_list_node * tmp = node->next;
-        var_list_node_delete(node);
+        param_list_node * tmp = node->next;
+        param_list_node_delete(node);
         node = tmp;
     }
     free(list);
 }
 
-void var_list_add_beg(var_list * list, var * value)
+void param_list_add_beg(param_list * list, param * value)
 {
-    var_list_node * node = var_list_node_new(value);
+    param_list_node * node = param_list_node_new(value);
 
     list->count++;
     if (list->head == NULL && list->tail == NULL)
@@ -184,9 +184,9 @@ void var_list_add_beg(var_list * list, var * value)
     }
 }
 
-void var_list_add_end(var_list * list, var * value)
+void param_list_add_end(param_list * list, param * value)
 {
-    var_list_node * node = var_list_node_new(value);
+    param_list_node * node = param_list_node_new(value);
 
     list->count++;
     if (list->head == NULL && list->tail == NULL)
@@ -201,13 +201,13 @@ void var_list_add_end(var_list * list, var * value)
     }
 }
 
-void var_dim_set_array(var_list * dims, var * array)
+void param_dim_set_array(param_list * dims, param * array)
 {
     int index = 0;
-    var_list_node * node = dims->tail;
+    param_list_node * node = dims->tail;
     while (node != NULL)
     {
-        var * value = node->value;
+        param * value = node->value;
         if (value != NULL)
         {
             value->index = index++;
@@ -217,45 +217,45 @@ void var_dim_set_array(var_list * dims, var * array)
     }
 }
 
-void var_print(var * value)
+void param_print(param * value)
 {
     if (value == NULL)
         return;
 
-    printf("var %s %d %s\n", var_type_str(value->type), value->index,
+    printf("param %s %d %s\n", param_type_str(value->type), value->index,
            value->id);
-    var_print(value->ret);
+    param_print(value->ret);
 }
 
-void var_list_print(var_list * list)
+void param_list_print(param_list * list)
 {
-    var_list_node * node = list->tail;
+    param_list_node * node = list->tail;
     while (node != NULL)
     {
-        var * value = node->value;
+        param * value = node->value;
         if (value != NULL)
         {
-            var_print(value);
+            param_print(value);
         }
 
         node = node->next;
     }
 }
 
-char * var_type_str(int type)
+char * param_type_str(int type)
 {
     switch (type)
     {
-    case VAR_INT:
-        return "VAR_INT";
-    case VAR_FLOAT:
-        return "VAR_FLOAT";
-    case VAR_DIM:
-        return "VAR_DIM";
-    case VAR_ARRAY:
-        return "VAR_ARRAY";
-    case VAR_FUNC:
-        return "VAR_FUNC";
+    case PARAM_INT:
+        return "PARAM_INT";
+    case PARAM_FLOAT:
+        return "PARAM_FLOAT";
+    case PARAM_DIM:
+        return "PARAM_DIM";
+    case PARAM_ARRAY:
+        return "PARAM_ARRAY";
+    case PARAM_FUNC:
+        return "PARAM_FUNC";
     }
-    return "VAR_???";
+    return "PARAM_???";
 }

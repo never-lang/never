@@ -520,9 +520,9 @@ int expr_constred(expr * value, int * result)
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         expr_constred(value->call.func_expr, result);
-        if (value->call.vars != NULL)
+        if (value->call.params != NULL)
         {
-            expr_list_constred(value->call.vars, result);
+            expr_list_constred(value->call.params, result);
         }
         break;
     case EXPR_FUNC:

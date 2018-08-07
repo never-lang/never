@@ -24,35 +24,35 @@
 #include <stdio.h>
 #include <string.h>
 
-var_list * vars_int_x()
+param_list * params_int_x()
 {
-    var_list * vars = NULL;
+    param_list * params = NULL;
 
-    vars = var_list_new();
-    var_list_add_end(vars, var_new_int(strdup("x")));
+    params = param_list_new();
+    param_list_add_end(params, param_new_int(strdup("x")));
 
-    return vars;
+    return params;
 }
 
-var_list * vars_float_x()
+param_list * params_float_x()
 {
-    var_list * vars = NULL;
+    param_list * params = NULL;
 
-    vars = var_list_new();
-    var_list_add_end(vars, var_new_float(strdup("x")));
+    params = param_list_new();
+    param_list_add_end(params, param_new_float(strdup("x")));
 
-    return vars;
+    return params;
 }
 
-var_list * vars_float_x_float_y()
+param_list * params_float_x_float_y()
 {
-    var_list * vars = NULL;
+    param_list * params = NULL;
 
-    vars = var_list_new();
-    var_list_add_end(vars, var_new_float(strdup("x")));
-    var_list_add_end(vars, var_new_float(strdup("y")));
+    params = param_list_new();
+    param_list_add_end(params, param_new_float(strdup("x")));
+    param_list_add_end(params, param_new_float(strdup("y")));
 
-    return vars;
+    return params;
 }
 
 expr_list * params_x()
@@ -77,20 +77,20 @@ expr_list * params_x_y()
 }
 
 func * lib_math_func_any_new(const char * name, libmath_func math_id,
-                             var_list * vars, expr_list * params, var * var_ret)
+                             param_list * formal, expr_list * actual, param * param_ret)
 {
     char * func_id = NULL;
     expr * func_expr = NULL;
     func_body * body = NULL;
     func * func_value = NULL;
 
-    if (var_ret->type == VAR_INT)
+    if (param_ret->type == PARAM_INT)
     {
-        func_expr = expr_new_build_in(math_id, params, var_new_int(NULL));
+        func_expr = expr_new_build_in(math_id, actual, param_new_int(NULL));
     }
-    else if (var_ret->type == VAR_FLOAT)
+    else if (param_ret->type == PARAM_FLOAT)
     {
-        func_expr = expr_new_build_in(math_id, params, var_new_float(NULL));
+        func_expr = expr_new_build_in(math_id, actual, param_new_float(NULL));
     }
     else
     {
@@ -100,34 +100,34 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
     body = func_body_new(NULL, func_expr);
 
     func_id = strdup(name);
-    func_value = func_new(func_id, vars, var_ret, body);
+    func_value = func_new(func_id, formal, param_ret, body);
 
     return func_value;
 }
 
 func * libmath_func_int_x_new(const char * name, libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, vars_int_x(), params_x(),
-                                 var_new_int(NULL));
+    return lib_math_func_any_new(name, math_id, params_int_x(), params_x(),
+                                 param_new_int(NULL));
 }
 
 func * libmath_func_float_x_new(const char * name, libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, vars_float_x(), params_x(),
-                                 var_new_float(NULL));
+    return lib_math_func_any_new(name, math_id, params_float_x(), params_x(),
+                                 param_new_float(NULL));
 }
 
 func * libmath_func_float_x_float_y_new(const char * name, libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, vars_float_x_float_y(),
-                                 params_x_y(), var_new_float(NULL));
+    return lib_math_func_any_new(name, math_id, params_float_x_float_y(),
+                                 params_x_y(), param_new_float(NULL));
 }
 
 func * libmath_func_float_x_float_y_int_new(const char * name,
                                             libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, vars_float_x_float_y(),
-                                 params_x_y(), var_new_int(NULL));
+    return lib_math_func_any_new(name, math_id, params_float_x_float_y(),
+                                 params_x_y(), param_new_int(NULL));
 }
 
 func * libmath_func_sin_new()
