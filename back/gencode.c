@@ -29,12 +29,12 @@
 /* GP old, FP old, IP old */
 #define NUM_FRAME_PTRS 3
 
-int func_enum_params(func * func_value)
+int func_enum_param_list(param_list * params)
 {
     int index = 0;
     param_list_node * node = NULL;
 
-    node = func_value->params->tail;
+    node = params->tail;
     while (node != NULL)
     {
         param * value = node->value;
@@ -47,24 +47,19 @@ int func_enum_params(func * func_value)
     return 0;
 }
 
-int func_enum_funcs(func * func_value)
+int func_enum_func_list(func_list * list)
 {
     int index = 1;
-    func_list * list = NULL;
 
-    list = func_value->body->funcs;
-    if (list != NULL)
+    func_list_node * node = list->tail;
+    while (node != NULL)
     {
-        func_list_node * node = list->tail;
-        while (node != NULL)
+        func * value = node->value;
+        if (value != NULL)
         {
-            func * value = node->value;
-            if (value != NULL)
-            {
-                value->index = index++;
-            }
-            node = node->next;
+            value->index = index++;
         }
+        node = node->next;
     }
 
     return 0;
@@ -500,11 +495,11 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
 {
     if (func_value->params != NULL)
     {
-        func_enum_params(func_value);
+        func_enum_param_list(func_value->params);
     }
-    if (func_value->body != NULL)
+    if (func_value->body && func_value->body->funcs != NULL)
     {
-        func_enum_funcs(func_value);
+        func_enum_func_list(func_value->body->funcs);
     }
 
     if (func_value->body && func_value->body->funcs)

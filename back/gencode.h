@@ -31,8 +31,8 @@ enum
     GENCODE_FAIL = 1
 };
 
-int func_enum_vars(func * func_value);
-int func_enum_funcs(func * func_value);
+int func_enum_param_list(param_list * params);
+int func_enum_func_list(func_list * list);
 
 int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                     int * result);

@@ -75,10 +75,11 @@ void func_print(func * value)
     printf("func %d %s@%u\n", value->index, value->id, value->addr);
 }
 
-func_body * func_body_new(func_list * funcs, expr * ret)
+func_body * func_body_new(bind_list * binds, func_list * funcs, expr * ret)
 {
     func_body * body = (func_body *)malloc(sizeof(func_body));
 
+    body->binds = binds;
     body->funcs = funcs;
     body->ret = ret;
 

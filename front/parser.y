@@ -41,6 +41,10 @@ int yyerror(never ** nev, char * str)
 %type <val.param_value> param
 %type <val.param_list_value> param_list
 %type <val.array_value> array;
+%type <val.let_value> let
+%type <val.var_value> var
+%type <val.bind_value> bind
+%type <val.bind_list_value> bind_list
 %type <val.func_value> func
 %type <val.func_list_value> func_list
 %type <val.func_body_value> func_body
@@ -58,17 +62,21 @@ int yyerror(never ** nev, char * str)
 
 %start never
 
-%destructor { free($$); } TOK_ID
-%destructor { param_delete($$); } dim
-%destructor { param_list_delete($$); } dim_list
-%destructor { param_delete($$); } param
-%destructor { param_list_delete($$); } param_list
-%destructor { expr_delete($$); } expr
-%destructor { expr_list_delete($$); } expr_list
-%destructor { array_delete($$); } array
-%destructor { func_delete($$); } func
-%destructor { func_list_delete($$); } func_list
-%destructor { func_body_delete($$); } func_body
+%destructor { if ($$) free($$); } TOK_ID
+%destructor { if ($$) param_delete($$); } dim
+%destructor { if ($$) param_list_delete($$); } dim_list
+%destructor { if ($$) param_delete($$); } param
+%destructor { if ($$) param_list_delete($$); } param_list
+%destructor { if ($$) expr_delete($$); } expr
+%destructor { if ($$) expr_list_delete($$); } expr_list
+%destructor { if ($$) array_delete($$); } array
+%destructor { if ($$) bind_delete($$); } let
+%destructor { if ($$) bind_delete($$); } var
+%destructor { if ($$) bind_delete($$); } bind
+%destructor { if ($$) bind_list_delete($$); } bind_list
+%destructor { if ($$) func_delete($$); } func
+%destructor { if ($$) func_list_delete($$); } func_list
+%destructor { if ($$) func_body_delete($$); } func_body
 %destructor {  } never
 
 %pure-parser
@@ -345,6 +353,40 @@ param_list: param_list ',' param
     $$ = $1;
 };
 
+let: TOK_LET TOK_ID '=' expr
+{
+    $$ = bind_new_let($2, $4);
+    $$->line_no = $<line_no>2;
+};
+
+var: TOK_VAR TOK_ID '=' expr
+{
+    $$ = bind_new_var($2, $4);
+    $$->line_no = $<line_no>2;
+};
+
+bind: let
+{
+    $$ = $1;
+};
+
+bind: var
+{
+    $$ = $1;
+};
+
+bind_list: bind
+{
+    $$ = bind_list_new();
+    bind_list_add_end($$, $1);
+};
+
+bind_list: bind_list bind
+{
+    bind_list_add_end($1, $2);
+    $$ = $1;
+};
+
 func: TOK_FUNC TOK_ID '(' ')' TOK_RET param func_body
 {
     $$ = func_new($2, NULL, $6, $7);
@@ -367,19 +409,29 @@ func: TOK_FUNC TOK_ID error
     $$ = NULL;
 };
 
+func_body: '{' bind_list TOK_RETURN expr ';' '}'
+{
+    $$ = func_body_new($2, NULL, $4);
+};
+
 func_body: '{' func_list TOK_RETURN expr ';' '}'
 {
-    $$ = func_body_new($2, $4);
+    $$ = func_body_new(NULL, $2, $4);
+};
+
+func_body: '{' bind_list func_list TOK_RETURN expr ';' '}'
+{
+    $$ = func_body_new($2, $3, $5);
 };
 
 func_body: '{' TOK_RETURN expr ';' '}'
 {
-    $$ = func_body_new(NULL, $3);
+    $$ = func_body_new(NULL, NULL, $3);
 };
 
 func_body: '{' '}'
 {
-    $$ = func_body_new(NULL, NULL);
+    $$ = func_body_new(NULL, NULL, NULL);
 };
 
 func_list: func

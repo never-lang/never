@@ -25,9 +25,10 @@
 #include "array.h"
 #include "dim.h"
 #include "expr.h"
+#include "param.h"
+#include "bind.h"
 #include "func.h"
 #include "never.h"
-#include "param.h"
 
 typedef union token_value {
     int int_value;
@@ -40,6 +41,10 @@ typedef union token_value {
     dim * dim_value;
     dim_list * dim_list_value;
     array * array_value;
+    bind * let_value;
+    bind * var_value;
+    bind * bind_value;
+    bind_list * bind_list_value;
     func * func_value;
     func_list * func_list_value;
     func_body * func_body_value;

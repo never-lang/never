@@ -27,8 +27,9 @@
 #include "symtab.h"
 #include "param.h"
 
-struct func_body;
-struct func_list;
+typedef struct func_body func_body;
+typedef struct bind_list bind_list;
+typedef struct func_list func_list;
 
 typedef struct func
 {
@@ -36,7 +37,7 @@ typedef struct func
     int index;
     param_list * params;
     param * ret;
-    struct func_body * body;
+    func_body * body;
     struct freevar_list * freevars;
     struct symtab * stab;
     unsigned int addr;
@@ -45,7 +46,8 @@ typedef struct func
 
 typedef struct func_body
 {
-    struct func_list * funcs;
+    bind_list * binds;
+    func_list * funcs;
     struct expr * ret;
 } func_body;
 
@@ -68,7 +70,7 @@ void func_delete(func * value);
 
 void func_print(func * value);
 
-func_body * func_body_new(func_list * funcs, expr * ret);
+func_body * func_body_new(bind_list * binds, func_list * funcs, expr * ret);
 void func_body_delete(func_body * body);
 
 func_list_node * func_list_node_new(func * value);
