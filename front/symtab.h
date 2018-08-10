@@ -23,8 +23,9 @@
 #define __SYMTAB_H__
 
 #include "array.h"
-#include "func.h"
 #include "param.h"
+#include "bind.h"
+#include "func.h"
 
 enum
 {
@@ -34,8 +35,9 @@ enum
 
 enum
 {
-    SYMTAB_VAR = 1,
-    SYMTAB_FUNC = 2
+    SYMTAB_PARAM = 1,
+    SYMTAB_BIND = 2,
+    SYMTAB_FUNC = 3
 };
 
 typedef struct symtab_entry
@@ -73,6 +75,7 @@ symtab * symtab_new(unsigned int size, symtab * parent);
 void symtab_delete(symtab * tab);
 
 void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level);
+void symtab_add_bind(symtab * tab, bind * let_value, unsigned int syn_level);
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
 
 symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested);

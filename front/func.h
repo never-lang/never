@@ -26,9 +26,9 @@
 #include "freevar.h"
 #include "symtab.h"
 #include "param.h"
+#include "bind.h"
 
 typedef struct func_body func_body;
-typedef struct bind_list bind_list;
 typedef struct func_list func_list;
 
 typedef struct func

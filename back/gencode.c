@@ -116,7 +116,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                 }
             }
         }
-        else if (entry->type == SYMTAB_VAR && entry->param_value != NULL)
+        else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
         {
             param * param_value = entry->param_value;
             if (param_value->type == PARAM_INT || param_value->type == PARAM_FLOAT ||
@@ -148,6 +148,10 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                 printf("unknown param type %d\n", param_value->type);
                 assert(0);
             }
+        }
+        else
+        {
+            assert(0);
         }
     }
     else
@@ -301,10 +305,14 @@ int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
             freevar_value->type = FREEVAR_FUNC;
             freevar_value->func_value = entry->func_value;
         }
-        else if (entry->type == SYMTAB_VAR && entry->param_value)
+        else if (entry->type == SYMTAB_PARAM && entry->param_value)
         {
             freevar_value->type = FREEVAR_LOCAL;
             freevar_value->local_value = entry->param_value;
+        }
+        else
+        {
+            assert(0);
         }
     }
     else

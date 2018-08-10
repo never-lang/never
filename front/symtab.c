@@ -111,7 +111,7 @@ void symtab_entry_resize(symtab_entry * entries, int size,
 
 void symtab_entry_print(symtab_entry * entry)
 {
-    if (entry->type == SYMTAB_VAR)
+    if (entry->type == SYMTAB_PARAM)
     {
         param * param_value = entry->param_value;
         if (param_value)
@@ -133,6 +133,10 @@ void symtab_entry_print(symtab_entry * entry)
         {
             printf("[U][%s][%d]\n", entry->id, entry->syn_level);
         }
+    }
+    else if (entry->type == SYMTAB_BIND)
+    {
+        printf("[B][%s][%d]\n", entry->id, entry->syn_level);
     }
     else if (entry->type == SYMTAB_FUNC)
     {
@@ -184,8 +188,21 @@ void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level)
         return;
     }
 
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_VAR, param_value->id,
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_PARAM, param_value->id,
                             param_value, syn_level);
+    tab->count++;
+    symtab_resize(tab);
+}
+
+void symtab_add_bind(symtab * tab, bind * bind_value, unsigned int syn_level)
+{
+    if (bind_value->id == NULL)
+    {
+        return;
+    }
+
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_BIND, bind_value->id,
+                            bind_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }

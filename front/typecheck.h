@@ -52,6 +52,8 @@ int expr_call_check_type(symtab * tab, expr * value, int * result);
 int expr_cond_check_type(symtab * tab, expr * value, int * result);
 int expr_check_type(symtab * tab, expr * value, int * result);
 int expr_list_check_type(symtab * tab, expr_list * list, int * result);
+int bind_check_type(symtab * tab, bind * value, int * result);
+int bind_list_check_type(symtab * tab, bind_list * list, int * result);
 int func_check_type(symtab * tab, func * func_value, int * result);
 int func_list_check_type(symtab * tab, func_list * list, int * result);
 int never_check_type(never * nev, int * result);

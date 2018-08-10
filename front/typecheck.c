@@ -272,7 +272,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             value->comb_params = func_value->params;
             value->comb_ret = func_value->ret;
         }
-        else if (entry->type == SYMTAB_VAR && entry->param_value != NULL)
+        else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
         {
             param * param_value = entry->param_value;
             if (param_value->type == PARAM_INT)
@@ -299,6 +299,10 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
                 value->comb_params = param_value->params;
                 value->comb_ret = param_value->ret;
             }
+        }
+        else
+        {
+            assert(0);
         }
     }
     else
@@ -943,8 +947,47 @@ int expr_list_check_type(symtab * tab, expr_list * list, int * result)
     return 0;
 }
 
+int bind_check_type(symtab * tab, bind * value, int * result)
+{
+    switch (value->type)
+    {
+        case BIND_UNKNOWN:
+            assert(0);
+        break;
+        case BIND_LET:
+        case BIND_VAR:
+            if (value->expr_value != NULL)
+            {
+                expr_check_type(tab, value->expr_value, result);
+            }
+        break;
+    }
+
+    return 0;
+}
+
+int bind_list_check_type(symtab * tab, bind_list * list, int * result)
+{
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * bind_value = node->value;
+        if (bind_value != NULL)
+        {
+            bind_check_type(tab, bind_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int func_check_type(symtab * tab, func * func_value, int * result)
 {
+    if (func_value->body && func_value->body->binds)
+    {
+        bind_list_check_type(tab, func_value->body->binds, result);
+    }
     if (func_value->body && func_value->body->funcs)
     {
         func_list_check_type(tab, func_value->body->funcs, result);
@@ -1010,12 +1053,16 @@ int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
                             "function %s already defined at line %u\n",
                             entry->id, al_func->line_no);
         }
-        else if (entry->type == SYMTAB_VAR)
+        else if (entry->type == SYMTAB_PARAM)
         {
             param * al_param = entry->param_value;
             print_error_msg(param_value->line_no,
                             "parameter %s already defined at line %u\n",
                             entry->id, al_param->line_no);
+        }
+        else
+        {
+            assert(0);
         }
     }
     return 0;
@@ -1070,12 +1117,16 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
                             "function %s already defined at line %u\n",
                             entry->id, al_func->line_no);
         }
-        else if (entry->type == SYMTAB_VAR)
+        else if (entry->type == SYMTAB_PARAM)
         {
             param * al_param = entry->param_value;
             print_error_msg(func_value->line_no,
                             "parameter %s already defined at line %u\n",
                             entry->id, al_param->line_no);
+        }
+        else
+        {
+            assert(0);
         }
     }
 
