@@ -300,6 +300,13 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
                 value->comb_ret = param_value->ret;
             }
         }
+        else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
+        {
+            value->comb = entry->bind_value->expr_value->comb;
+            value->comb_params = entry->bind_value->expr_value->comb_params;
+            value->comb_ret = entry->bind_value->expr_value->comb_ret;
+            value->comb_dims = entry->bind_value->expr_value->comb_dims;            
+        }
         else
         {
             assert(0);
@@ -308,7 +315,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     else
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(value->line_no, "cannot find paramiable %s\n",
+        print_error_msg(value->line_no, "cannot find param %s\n",
                         value->id.id);
     }
     return 0;
@@ -1060,6 +1067,13 @@ int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
                             "parameter %s already defined at line %u\n",
                             entry->id, al_param->line_no);
         }
+        else if (entry->type == SYMTAB_BIND)
+        {
+            bind * al_bind = entry->bind_value;
+            print_error_msg(param_value->line_no,
+                            "bind %s already defined at line %u\n",
+                            entry->id, al_bind->line_no);
+        }
         else
         {
             assert(0);
@@ -1099,6 +1113,62 @@ int symtab_add_param_from_param_list(symtab * tab, param_list * list,
     return 0;
 }
 
+int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
+                              unsigned int syn_level, int * result)
+{
+    symtab_entry * entry = symtab_lookup(tab, bind_value->id, SYMTAB_FLAT);
+    if (entry == NULL)
+    {
+        symtab_add_bind(tab, bind_value, syn_level);
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        if (entry->type == SYMTAB_FUNC)
+        {
+            func * al_func = entry->func_value;
+            print_error_msg(bind_value->line_no,
+                            "function %s already defined at line %u\n",
+                            entry->id, al_func->line_no);
+        }
+        else if (entry->type == SYMTAB_PARAM)
+        {
+            param * al_param = entry->param_value;
+            print_error_msg(bind_value->line_no,
+                            "parameter %s already defined at line %u\n",
+                            entry->id, al_param->line_no);
+        }
+        else if (entry->type == SYMTAB_BIND)
+        {
+            bind * al_bind = entry->bind_value;
+            print_error_msg(bind_value->line_no,
+                            "bind %s already defined at line %u\n",
+                            entry->id, al_bind->line_no);
+        }
+        else
+        {
+            assert(0);
+        }
+    }
+    return 0;
+}
+
+int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
+                                   unsigned int syn_level, int * result)
+{
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * bind_value = node->value;
+        if (bind_value && bind_value->id)
+        {
+            symtab_add_bind_from_bind(tab, bind_value, syn_level, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
 int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result)
 {
@@ -1123,6 +1193,13 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
             print_error_msg(func_value->line_no,
                             "parameter %s already defined at line %u\n",
                             entry->id, al_param->line_no);
+        }
+        else if (entry->type == SYMTAB_BIND)
+        {
+            bind * al_bind = entry->bind_value;
+            print_error_msg(func_value->line_no,
+                            "bind %s already defined at line %u\n",
+                            entry->id, al_bind->line_no);
         }
         else
         {
@@ -1262,6 +1339,35 @@ int symtab_add_entry_array(symtab * stab_parent, array * array_value,
     return 0;
 }
 
+int symtab_add_entry_bind(symtab * stab_parent, bind * bind_value,
+                           unsigned int syn_level, int * result)
+{
+    if (bind_value->expr_value != NULL)
+    {
+        symtab_add_entry_expr(stab_parent, bind_value->expr_value, syn_level,
+                              result);
+    }
+    return 0;
+}
+
+int symtab_add_entry_bind_list(symtab * stab_parent, bind_list * list,
+                               unsigned int syn_level, int * result)
+{
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * bind_value = node->value;
+        if (bind_value)
+        {
+            symtab_add_entry_bind(stab_parent, bind_value, syn_level + 1,
+                                  result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int symtab_add_entry_func(symtab * stab_parent, func * func_value,
                           unsigned int syn_level, int * result)
 {
@@ -1279,11 +1385,22 @@ int symtab_add_entry_func(symtab * stab_parent, func * func_value,
         symtab_add_param_from_param_list(func_value->stab, func_value->params,
                                      syn_level, result);
     }
+    if (func_value->body && func_value->body->binds)
+    {
+        symtab_add_bind_from_bind_list(func_value->stab,
+                                       func_value->body->binds, syn_level,
+                                       result);
+    }
     if (func_value->body && func_value->body->funcs)
     {
         symtab_add_func_from_func_list(func_value->stab,
                                        func_value->body->funcs, syn_level,
                                        result);
+    }
+    if (func_value->body && func_value->body->binds)
+    {
+        symtab_add_entry_bind_list(func_value->stab, func_value->body->binds,
+                                   syn_level, result);
     }
     if (func_value->body && func_value->body->funcs)
     {
@@ -1440,6 +1557,32 @@ int print_func_array(array * value, int depth)
         print_func_expr_list(value->dims, depth);
     }
 
+    return 0;
+}
+
+int print_bind(bind * value, int depth)
+{
+    if (value->expr_value)
+    {
+        print_func_expr(value->expr_value, depth);
+    }
+
+    return 0;
+}
+
+int print_bind_list(bind_list * list, int depth)
+{
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * value = node->value;
+        if (value != NULL)
+        {
+            print_bind(value, depth);
+        }
+
+        node = node->next;
+    }
     return 0;
 }
 

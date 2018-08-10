@@ -45,6 +45,7 @@ typedef struct symtab_entry
     int type;
     const char * id;
     union {
+        bind * bind_value;
         param * param_value;
         func * func_value;
     };
