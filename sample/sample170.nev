@@ -1,0 +1,17 @@
+
+func area(a -> float, b -> float, c -> float) -> float
+{
+    let p = (a + b + c) / 2.0
+    /* let p = c; */
+    /* let p = 20.0 */
+    func d() -> float { return 20.0; }
+    
+    return sqrt(p * (p - a) * (p - b) * (p - c));
+    /* return p - c; */
+}
+
+func main() -> float
+{
+    return area(3.0, 4.0, 5.0);
+}
+
