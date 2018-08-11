@@ -32,7 +32,8 @@ enum
 };
 
 int func_enum_param_list(param_list * params);
-int func_enum_func_list(func_list * list);
+int func_enum_bind_list(bind_list * list, int start);
+int func_enum_func_list(func_list * list, int start);
 
 int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                     int * result);
@@ -43,6 +44,11 @@ int expr_list_gencode(unsigned int syn_level, func * func_value,
 
 int array_gencode(unsigned int syn_level, func * func_value,
                   array * array_value, int * result);
+
+int bind_gencode(unsigned int syn_level, func * func_value, bind * bind_value,
+                 int * result);
+int bind_list_gencode(unsigned int syn_level, func * func_value,
+                      bind_list * list, int * result);                 
 
 int func_gencode_freevars_expr(func * func_value, expr * value, int * result);
 int func_gencode_freevars_expr_list(func * func_value, expr_list * list,
@@ -71,6 +77,8 @@ int func_freevar_list_emit(freevar_list * freevars, int stack_level,
                            bytecode_list * code, int * result);
 
 int expr_id_local_emit(expr * value, int stack_level, bytecode_list * code,
+                       int * result);
+int expr_id_bind_emit(expr * value, int stack_level, bytecode_list * code,
                        int * result);
 int expr_id_global_emit(expr * value, int stack_value, bytecode_list * code,
                         int * result);
@@ -120,7 +128,10 @@ int expr_array_emit(expr * value, int stack_level, bytecode_list * code,
                     int * result);
 int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code,
                           int * result);
-
+int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
+              int * result);
+int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
+                   int * result);
 int func_emit(func * func_value, int stack_level, bytecode_list * code,
               int * result);
 int func_list_emit(func_list * list, int stack_level, bytecode_list * code,

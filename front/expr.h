@@ -75,12 +75,14 @@ typedef enum id_type
     ID_TYPE_UNKNOWN = 0,
     ID_TYPE_LOCAL = 1,
     ID_TYPE_GLOBAL = 2,
-    ID_TYPE_FUNC_TOP = 3,
-    ID_TYPE_FUNC = 4,
-    ID_TYPE_FUNC_NEST = 5
+    ID_TYPE_BIND = 3,
+    ID_TYPE_FUNC_TOP = 4,
+    ID_TYPE_FUNC = 5,
+    ID_TYPE_FUNC_NEST = 6
 } id_type;
 
 typedef struct array array;
+typedef struct bind bind;
 typedef struct func func;
 typedef struct expr_list expr_list;
 
@@ -100,8 +102,9 @@ typedef struct expr
             char * id;
             id_type id_type_value;
             union {
-                param * id_param_value;
                 freevar * id_freevar_value;
+                param * id_param_value;
+                bind * id_bind_value;
                 func * id_func_value;
             };
         } id;

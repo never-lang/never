@@ -47,9 +47,27 @@ int func_enum_param_list(param_list * params)
     return 0;
 }
 
-int func_enum_func_list(func_list * list)
+int func_enum_bind_list(bind_list * list, int start)
 {
-    int index = 1;
+    int index = start;
+
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_enum_func_list(func_list * list, int start)
+{
+    int index = start;
 
     func_list_node * node = list->tail;
     while (node != NULL)
@@ -148,6 +166,36 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                 printf("unknown param type %d\n", param_value->type);
                 assert(0);
             }
+        }
+        else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
+        {
+            bind * bind_value = entry->bind_value;
+            if (bind_value->type == BIND_LET || bind_value->type == BIND_VAR)
+            {
+                if (syn_level == entry->syn_level)
+                {
+                    value->id.id_type_value = ID_TYPE_BIND;
+                    value->id.id_bind_value = bind_value;
+                }
+                else
+                {
+                    freevar * freevar_value = NULL;
+                    if (func_value->freevars == NULL)
+                    {
+                        func_value->freevars = freevar_list_new();
+                    }
+                    
+                    freevar_value =
+                        freevar_list_add(func_value->freevars, value->id.id);
+                        
+                        value->id.id_type_value = ID_TYPE_GLOBAL;
+                        value->id.id_freevar_value = freevar_value;
+                }
+            }
+            else
+            {
+                fprintf(stderr, "unknown bind type %d\n", bind_value->type);
+            }            
         }
         else
         {
@@ -283,6 +331,43 @@ int array_gencode(unsigned int syn_level, func * func_value,
         expr_list_gencode(syn_level, func_value, array_value->dims, result);
     }
 
+    return 0;
+}
+
+int bind_gencode(unsigned int syn_level, func * func_value, bind * bind_value,
+                 int * result)
+{
+    switch (bind_value->type)
+    {
+        case BIND_UNKNOWN:
+            fprintf(stderr, "unknown bind type\n");
+            assert(0);
+        break;
+        case BIND_LET:
+        case BIND_VAR:
+            if (bind_value->expr_value != NULL)
+            {
+                expr_gencode(syn_level, func_value, bind_value->expr_value, result);
+            }
+        break;
+    }
+
+    return 0;
+}
+
+int bind_list_gencode(unsigned int syn_level, func * func_value,
+                      bind_list * list, int * result)
+{
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * bind_value = node->value;
+        if (bind_value)
+        {
+            bind_gencode(syn_level, func_value, bind_value, result);
+        }
+        node = node->next;
+    }
     return 0;
 }
 
@@ -501,15 +586,26 @@ int func_gencode_freevars(func * func_value, int * result)
 
 int func_gencode(unsigned int syn_level, func * func_value, int * result)
 {
+    int start = 1;
     if (func_value->params != NULL)
     {
         func_enum_param_list(func_value->params);
     }
+    if (func_value->body && func_value->body->binds != NULL)
+    {
+        func_enum_bind_list(func_value->body->binds, start);
+        start += func_value->body->binds->count;
+    }
     if (func_value->body && func_value->body->funcs != NULL)
     {
-        func_enum_func_list(func_value->body->funcs);
+        func_enum_func_list(func_value->body->funcs, start);
     }
 
+    if (func_value->body && func_value->body->binds)
+    {
+        bind_list_gencode(syn_level, func_value, func_value->body->binds,
+                          result);
+    }
     if (func_value->body && func_value->body->funcs)
     {
         func_list_gencode(syn_level, func_value->body->funcs, result);
@@ -680,6 +776,20 @@ int expr_id_local_emit(expr * value, int stack_level, bytecode_list * code,
     return 0;
 }
 
+int expr_id_bind_emit(expr * value, int stack_level, bytecode_list * code,
+                       int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level;
+    bc.id_local.index = value->id.id_bind_value->index;
+
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
 int expr_id_global_emit(expr * value, int stack_value, bytecode_list * code,
                         int * result)
 {
@@ -754,6 +864,9 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code,
     case ID_TYPE_GLOBAL:
         expr_id_global_emit(value, stack_level, code, result);
         break;
+    case ID_TYPE_BIND:
+        expr_id_bind_emit(value, stack_level, code, result);
+        break;        
     case ID_TYPE_FUNC_TOP:
         if (value->id.id_func_value != NULL)
         {
@@ -1582,6 +1695,44 @@ int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code,
     return 0;
 }
 
+int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
+              int * result)
+{
+    switch (bind_value->type)
+    {
+        case BIND_UNKNOWN:
+            fprintf(stderr, "unknown bind type\n");
+            assert(0);
+        break;
+        case BIND_LET:
+        case BIND_VAR:
+            if (bind_value->expr_value != NULL)
+            {
+                expr_emit(bind_value->expr_value, stack_level, code, result);
+            }
+        break;
+    }
+    return 0;
+}
+
+int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
+                   int * result)
+{
+    int b = 0;
+    
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * bind_value = node->value;
+        if (bind_value != NULL)
+        {
+            bind_emit(bind_value, stack_level + b++, code, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
 int func_emit(func * func_value, int stack_level, bytecode_list * code,
               int * result)
 {
@@ -1622,10 +1773,15 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code,
     labelA = bytecode_add(code, &bc);
     func_value->addr = labelA->addr;
 
+    if (func_value->body && func_value->body->binds)
+    {
+        bind_list_emit(func_value->body->binds, 0, code, result);
+        func_count += func_value->body->binds->count;
+    }
     if (func_value->body && func_value->body->funcs)
     {
-        func_list_emit(func_value->body->funcs, 0, code, result);
-        func_count = func_value->body->funcs->count;
+        func_list_emit(func_value->body->funcs, func_count, code, result);
+        func_count += func_value->body->funcs->count;
     }
 
     if (func_value->body && func_value->body->ret)
