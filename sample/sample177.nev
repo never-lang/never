@@ -1,0 +1,22 @@
+
+func fun(a -> float) -> float
+{
+    let f = func (a -> float) -> float { return 2.0 * a; }
+
+    func (a -> float) -> float
+    {
+        return 120.0;
+    }
+    func (b -> float) -> float
+    {
+        return 222.0;
+    }
+
+    return f(a);
+}
+
+func main() -> float
+{
+    return fun(12.0);
+}
+

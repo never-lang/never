@@ -387,6 +387,17 @@ bind_list: bind_list bind
     $$ = $1;
 };
 
+func: TOK_FUNC '(' ')' TOK_RET param func_body
+{
+    $$ = func_new(NULL, NULL, $5, $6);
+    $$->line_no = $<line_no>2;
+};
+
+func: TOK_FUNC '(' param_list ')' TOK_RET param func_body
+{
+    $$ = func_new(NULL, $3, $6, $7);
+};
+
 func: TOK_FUNC TOK_ID '(' ')' TOK_RET param func_body
 {
     $$ = func_new($2, NULL, $6, $7);
