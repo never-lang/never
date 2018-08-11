@@ -589,12 +589,40 @@ int array_constread(array * value, int * result)
     {
         expr_list_constred(value->dims, result);
     }
+    return 0;
+}
 
+int bind_constred(bind * value, int * result)
+{
+    if (value->expr_value != NULL)
+    {
+        expr_constred(value->expr_value, result);
+    }
+    return 0;
+}
+
+int bind_list_constred(bind_list * list, int * result)
+{
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * value = node->value;
+        if (value != NULL)
+        {
+            bind_constred(value, result);
+        }
+
+        node = node->next;
+    }
     return 0;
 }
 
 int func_constred(func * value, int * result)
 {
+    if (value->body != NULL && value->body->binds != NULL)
+    {
+        bind_list_constred(value->body->binds, result);
+    }
     if (value->body != NULL && value->body->funcs != NULL)
     {
         func_list_constred(value->body->funcs, result);

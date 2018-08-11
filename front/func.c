@@ -88,6 +88,10 @@ func_body * func_body_new(bind_list * binds, func_list * funcs, expr * ret)
 
 void func_body_delete(func_body * body)
 {
+    if (body->binds)
+    {
+        bind_list_delete(body->binds);
+    }
     if (body->funcs)
     {
         func_list_delete(body->funcs);
