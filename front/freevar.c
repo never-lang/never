@@ -190,6 +190,8 @@ char * freevar_type_str(int type)
         return "FREEVAR_UNKNOWN";
     case FREEVAR_LOCAL:
         return "FREEVAR_LOCAL";
+    case FREEVAR_BIND:
+        return "FREEVAR_BIND";
     case FREEVAR_GLOBAL:
         return "FREEVAR_GLOBAL";
     case FREEVAR_FUNC:

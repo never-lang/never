@@ -1,0 +1,18 @@
+
+func outer(a -> float, b -> float) -> (float) -> float
+{
+    let p = (a + b) / 2.0
+    
+    func inner(c -> float) -> float
+    {
+        return c * p;
+    }
+    
+    return inner;
+}
+
+func main() -> float
+{
+    return outer(3.0, 5.0)(3.0);
+}
+

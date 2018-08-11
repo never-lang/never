@@ -28,8 +28,9 @@ enum
 {
     FREEVAR_UNKNOWN = 0,
     FREEVAR_LOCAL = 1,
-    FREEVAR_GLOBAL = 2,
-    FREEVAR_FUNC = 3
+    FREEVAR_BIND = 2,
+    FREEVAR_GLOBAL = 3,
+    FREEVAR_FUNC = 4
 };
 
 typedef struct freevar
@@ -39,6 +40,7 @@ typedef struct freevar
     int index;
     union {
         struct param * local_value;
+        struct bind * bind_value;
         struct freevar * global_value;
         struct func * func_value;
     };

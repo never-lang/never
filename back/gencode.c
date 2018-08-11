@@ -395,6 +395,11 @@ int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
             freevar_value->type = FREEVAR_LOCAL;
             freevar_value->local_value = entry->param_value;
         }
+        else if (entry->type == SYMTAB_BIND && entry->bind_value)
+        {
+            freevar_value->type = FREEVAR_BIND;
+            freevar_value->bind_value = entry->bind_value;
+        }
         else
         {
             assert(0);
@@ -530,6 +535,32 @@ int func_gencode_freevars_expr_list(func * func_value, expr_list * list,
     return 0;
 }
 
+int func_gencode_freevars_bind(func * func_value, bind * bind_value,
+                               int * result)
+{
+    if (bind_value->expr_value)
+    {
+        func_gencode_freevars_expr(func_value, bind_value->expr_value, result);
+    }
+    return 0;
+}
+
+int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
+                                    int * result)
+{
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * bind_value = node->value;
+        if (bind_value != NULL)
+        {
+            func_gencode_freevars_bind(func_value, bind_value, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
 int func_gencode_freevars_func(func * func_value, func * subfunc_value,
                                int * result)
 {
@@ -571,6 +602,11 @@ int func_gencode_freevars_func_list(func * func_value, func_list * list,
 
 int func_gencode_freevars(func * func_value, int * result)
 {
+    if (func_value->body && func_value->body->binds)
+    {
+        func_gencode_freevars_bind_list(func_value, func_value->body->binds,
+                                        result);
+    }
     if (func_value->body && func_value->body->funcs)
     {
         func_gencode_freevars_func_list(func_value, func_value->body->funcs,
@@ -702,6 +738,20 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
     return 0;
 }
 
+int func_freevar_id_bind_emit(freevar * value, int stack_level,
+                              bytecode_list * code, int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level;
+    bc.id_local.index = value->bind_value->index;
+
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
 int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code,
                       int * result)
 {
@@ -715,6 +765,9 @@ int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code,
         break;
     case FREEVAR_LOCAL:
         func_freevar_id_local_emit(value, stack_level, code, result);
+        break;
+    case FREEVAR_BIND:
+        func_freevar_id_bind_emit(value, stack_level, code, result);
         break;
     case FREEVAR_GLOBAL:
         bc.type = BYTECODE_ID_GLOBAL;

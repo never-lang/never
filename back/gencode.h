@@ -50,11 +50,15 @@ int bind_gencode(unsigned int syn_level, func * func_value, bind * bind_value,
 int bind_list_gencode(unsigned int syn_level, func * func_value,
                       bind_list * list, int * result);                 
 
+int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
+                                  int * result);
 int func_gencode_freevars_expr(func * func_value, expr * value, int * result);
 int func_gencode_freevars_expr_list(func * func_value, expr_list * list,
                                     int * result);
-int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
-                                  int * result);
+int func_gencode_freevars_bind(func * func_value, bind * bind_value,
+                               int * result);
+int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
+                                    int * result);
 int func_gencode_freevars_func(func * func_value, func * subfunc_value,
                                int * result);
 int func_gencode_freevars_func_list(func * func_value, func_list * list,
@@ -71,6 +75,8 @@ int expr_float_emit(expr * value, int stack_level, bytecode_list * code,
 
 int func_freevar_id_local_emit(freevar * value, int stack_level,
                                bytecode_list * code, int * result);
+int func_freevar_id_bind_emit(freevar * value, int stack_level,
+                              bytecode_list * code, int * result);
 int func_freevar_emit(freevar * value, int stack_level, bytecode_list * code,
                       int * result);
 int func_freevar_list_emit(freevar_list * freevars, int stack_level,
