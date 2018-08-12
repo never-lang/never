@@ -64,9 +64,6 @@ int expr_set_return_type(expr * value, param * ret)
     return 0;
 }
 
-/*
- * check types
- */
 int param_cmp(param * param_one, param * param_two)
 {
     if (param_one == NULL && param_two == NULL)
@@ -257,6 +254,196 @@ int param_expr_list_cmp(param_list * params, expr_list * list)
     return TYPECHECK_SUCC;
 }
 
+/*
+ * Add symbols to symtab
+ */
+int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
+                                  unsigned int syn_level, int * result)
+{
+    symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_FLAT);
+    if (entry == NULL)
+    {
+        symtab_add_param(tab, param_value, syn_level);
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        if (entry->type == SYMTAB_FUNC)
+        {
+            func * al_func = entry->func_value;
+            print_error_msg(param_value->line_no,
+                            "function %s already defined at line %u\n",
+                            entry->id, al_func->line_no);
+        }
+        else if (entry->type == SYMTAB_PARAM)
+        {
+            param * al_param = entry->param_value;
+            print_error_msg(param_value->line_no,
+                            "parameter %s already defined at line %u\n",
+                            entry->id, al_param->line_no);
+        }
+        else if (entry->type == SYMTAB_BIND)
+        {
+            bind * al_bind = entry->bind_value;
+            print_error_msg(param_value->line_no,
+                            "bind %s already defined at line %u\n",
+                            entry->id, al_bind->line_no);
+        }
+        else
+        {
+            assert(0);
+        }
+    }
+    return 0;
+}
+
+int symtab_add_param_from_param(symtab * tab, param * param_value,
+                            unsigned int syn_level, int * result)
+{
+    if (param_value->type == PARAM_ARRAY)
+    {
+        symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
+        symtab_add_param_from_param_list(tab, param_value->dims, syn_level, result);
+    }
+    else
+    {
+        symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
+    }
+    return 0;
+}
+
+int symtab_add_param_from_param_list(symtab * tab, param_list * list,
+                                 unsigned int syn_level, int * result)
+{
+    param_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        param * param_value = node->value;
+        if (param_value && param_value->id)
+        {
+            symtab_add_param_from_param(tab, param_value, syn_level, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
+                              unsigned int syn_level, int * result)
+{
+    symtab_entry * entry = symtab_lookup(tab, bind_value->id, SYMTAB_FLAT);
+    if (entry == NULL)
+    {
+        symtab_add_bind(tab, bind_value, syn_level);
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        if (entry->type == SYMTAB_FUNC)
+        {
+            func * al_func = entry->func_value;
+            print_error_msg(bind_value->line_no,
+                            "function %s already defined at line %u\n",
+                            entry->id, al_func->line_no);
+        }
+        else if (entry->type == SYMTAB_PARAM)
+        {
+            param * al_param = entry->param_value;
+            print_error_msg(bind_value->line_no,
+                            "parameter %s already defined at line %u\n",
+                            entry->id, al_param->line_no);
+        }
+        else if (entry->type == SYMTAB_BIND)
+        {
+            bind * al_bind = entry->bind_value;
+            print_error_msg(bind_value->line_no,
+                            "bind %s already defined at line %u\n",
+                            entry->id, al_bind->line_no);
+        }
+        else
+        {
+            assert(0);
+        }
+    }
+    return 0;
+}
+
+int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
+                                   unsigned int syn_level, int * result)
+{
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * bind_value = node->value;
+        if (bind_value && bind_value->id)
+        {
+            symtab_add_bind_from_bind(tab, bind_value, syn_level, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+int symtab_add_func_from_func(symtab * tab, func * func_value,
+                              unsigned int syn_level, int * result)
+{
+    symtab_entry * entry = symtab_lookup(tab, func_value->id, SYMTAB_FLAT);
+    if (entry == NULL)
+    {
+        symtab_add_func(tab, func_value, syn_level);
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        if (entry->type == SYMTAB_FUNC)
+        {
+            func * al_func = entry->func_value;
+            print_error_msg(func_value->line_no,
+                            "function %s already defined at line %u\n",
+                            entry->id, al_func->line_no);
+        }
+        else if (entry->type == SYMTAB_PARAM)
+        {
+            param * al_param = entry->param_value;
+            print_error_msg(func_value->line_no,
+                            "parameter %s already defined at line %u\n",
+                            entry->id, al_param->line_no);
+        }
+        else if (entry->type == SYMTAB_BIND)
+        {
+            bind * al_bind = entry->bind_value;
+            print_error_msg(func_value->line_no,
+                            "bind %s already defined at line %u\n",
+                            entry->id, al_bind->line_no);
+        }
+        else
+        {
+            assert(0);
+        }
+    }
+
+    return 0;
+}
+
+int symtab_add_func_from_func_list(symtab * tab, func_list * list,
+                                   unsigned int syn_level, int * result)
+{
+    func_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        func * func_value = node->value;
+        if (func_value && func_value->id)
+        {
+            symtab_add_func_from_func(tab, func_value, syn_level, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+/*
+ * check types
+ */
 int expr_id_check_type(symtab * tab, expr * value, int * result)
 {
     symtab_entry * entry = NULL;
@@ -751,192 +938,6 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-/*
- * Add symbols to symtab
- */
-int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
-                                  unsigned int syn_level, int * result)
-{
-    symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_FLAT);
-    if (entry == NULL)
-    {
-        symtab_add_param(tab, param_value, syn_level);
-    }
-    else
-    {
-        *result = TYPECHECK_FAIL;
-        if (entry->type == SYMTAB_FUNC)
-        {
-            func * al_func = entry->func_value;
-            print_error_msg(param_value->line_no,
-                            "function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
-        }
-        else if (entry->type == SYMTAB_PARAM)
-        {
-            param * al_param = entry->param_value;
-            print_error_msg(param_value->line_no,
-                            "parameter %s already defined at line %u\n",
-                            entry->id, al_param->line_no);
-        }
-        else if (entry->type == SYMTAB_BIND)
-        {
-            bind * al_bind = entry->bind_value;
-            print_error_msg(param_value->line_no,
-                            "bind %s already defined at line %u\n",
-                            entry->id, al_bind->line_no);
-        }
-        else
-        {
-            assert(0);
-        }
-    }
-    return 0;
-}
-
-int symtab_add_param_from_param(symtab * tab, param * param_value,
-                            unsigned int syn_level, int * result)
-{
-    if (param_value->type == PARAM_ARRAY)
-    {
-        symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
-        symtab_add_param_from_param_list(tab, param_value->dims, syn_level, result);
-    }
-    else
-    {
-        symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
-    }
-    return 0;
-}
-
-int symtab_add_param_from_param_list(symtab * tab, param_list * list,
-                                 unsigned int syn_level, int * result)
-{
-    param_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        param * param_value = node->value;
-        if (param_value && param_value->id)
-        {
-            symtab_add_param_from_param(tab, param_value, syn_level, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
-                              unsigned int syn_level, int * result)
-{
-    symtab_entry * entry = symtab_lookup(tab, bind_value->id, SYMTAB_FLAT);
-    if (entry == NULL)
-    {
-        symtab_add_bind(tab, bind_value, syn_level);
-    }
-    else
-    {
-        *result = TYPECHECK_FAIL;
-        if (entry->type == SYMTAB_FUNC)
-        {
-            func * al_func = entry->func_value;
-            print_error_msg(bind_value->line_no,
-                            "function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
-        }
-        else if (entry->type == SYMTAB_PARAM)
-        {
-            param * al_param = entry->param_value;
-            print_error_msg(bind_value->line_no,
-                            "parameter %s already defined at line %u\n",
-                            entry->id, al_param->line_no);
-        }
-        else if (entry->type == SYMTAB_BIND)
-        {
-            bind * al_bind = entry->bind_value;
-            print_error_msg(bind_value->line_no,
-                            "bind %s already defined at line %u\n",
-                            entry->id, al_bind->line_no);
-        }
-        else
-        {
-            assert(0);
-        }
-    }
-    return 0;
-}
-
-int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
-                                   unsigned int syn_level, int * result)
-{
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * bind_value = node->value;
-        if (bind_value && bind_value->id)
-        {
-            symtab_add_bind_from_bind(tab, bind_value, syn_level, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int symtab_add_func_from_func(symtab * tab, func * func_value,
-                              unsigned int syn_level, int * result)
-{
-    symtab_entry * entry = symtab_lookup(tab, func_value->id, SYMTAB_FLAT);
-    if (entry == NULL)
-    {
-        symtab_add_func(tab, func_value, syn_level);
-    }
-    else
-    {
-        *result = TYPECHECK_FAIL;
-        if (entry->type == SYMTAB_FUNC)
-        {
-            func * al_func = entry->func_value;
-            print_error_msg(func_value->line_no,
-                            "function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
-        }
-        else if (entry->type == SYMTAB_PARAM)
-        {
-            param * al_param = entry->param_value;
-            print_error_msg(func_value->line_no,
-                            "parameter %s already defined at line %u\n",
-                            entry->id, al_param->line_no);
-        }
-        else if (entry->type == SYMTAB_BIND)
-        {
-            bind * al_bind = entry->bind_value;
-            print_error_msg(func_value->line_no,
-                            "bind %s already defined at line %u\n",
-                            entry->id, al_bind->line_no);
-        }
-        else
-        {
-            assert(0);
-        }
-    }
-
-    return 0;
-}
-
-int symtab_add_func_from_func_list(symtab * tab, func_list * list,
-                                   unsigned int syn_level, int * result)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * func_value = node->value;
-        if (func_value && func_value->id)
-        {
-            symtab_add_func_from_func(tab, func_value, syn_level, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
 
 int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                     int * result)

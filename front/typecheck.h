@@ -38,6 +38,21 @@ int param_expr_array_cmp(param * param_value, expr * expr_value);
 int param_expr_cmp(param * param_value, expr * expr_value);
 int param_expr_list_cmp(param_list * params, expr_list * list);
 
+int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
+                                  unsigned int syn_level, int * result);
+int symtab_add_param_from_param(symtab * tab, param * param_value,
+                            unsigned int syn_level, int * result);
+int symtab_add_param_from_param_list(symtab * tab, param_list * list,
+                                 unsigned int syn_level, int * result);
+int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
+                              unsigned int syn_level, int * result);
+int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
+                                   unsigned int syn_level, int * result);
+int symtab_add_func_from_func(symtab * tab, func * func_value,
+                              unsigned int syn_level, int * result);
+int symtab_add_func_from_func_list(symtab * tab, func_list * list,
+                                   unsigned int syn_level, int * result);
+
 int array_dims_check_type_expr(symtab * tab, expr * value, unsigned syn_level,
                                int * result);
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
@@ -68,22 +83,6 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result);
 int never_check_type(never * nev, int * result);
-
-
-int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
-                                  unsigned int syn_level, int * result);
-int symtab_add_param_from_param(symtab * tab, param * param_value,
-                            unsigned int syn_level, int * result);
-int symtab_add_param_from_param_list(symtab * tab, param_list * list,
-                                 unsigned int syn_level, int * result);
-int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
-                              unsigned int syn_level, int * result);
-int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
-                                   unsigned int syn_level, int * result);
-int symtab_add_func_from_func(symtab * tab, func * func_value,
-                              unsigned int syn_level, int * result);
-int symtab_add_func_from_func_list(symtab * tab, func_list * list,
-                                   unsigned int syn_level, int * result);
 
 int print_func_array(array * value, int depth);
 int print_func_expr(expr * value, int depth);
