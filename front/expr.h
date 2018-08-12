@@ -53,9 +53,10 @@ typedef enum expr_type
     EXPR_CALL = 23,        /* ID ( expr_list) */
     EXPR_LAST_CALL = 24,   /* ID (expr_list */
     EXPR_FUNC = 25,        /* func ID ( ... ) */
-    EXPR_BUILD_IN = 26,
-    EXPR_INT_TO_FLOAT = 27,
-    EXPR_FLOAT_TO_INT = 28
+    EXPR_SEQ = 26,
+    EXPR_BUILD_IN = 27,
+    EXPR_INT_TO_FLOAT = 28,
+    EXPR_FLOAT_TO_INT = 29
 } expr_type;
 
 typedef enum comb_type
@@ -119,6 +120,10 @@ typedef struct expr
             struct expr * middle; /* in ternary left_expr ? middle_expr :
                                      right_expr */
         };
+        struct                        /* EXPR_SEQ */
+        {
+            struct expr_list * list;
+        } seq;
         struct
         {
             struct expr * func_expr; /* EXPR_CALL, EXPR_LAST_CALL */
@@ -165,6 +170,7 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle,
                       expr * expr_right);
 expr * expr_new_array(array * value);
 expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
+expr * expr_new_seq(expr_list * list);
 expr * expr_new_func(func * value);
 expr * expr_new_call(expr * func_expr, expr_list * params);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);

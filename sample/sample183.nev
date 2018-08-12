@@ -1,0 +1,8 @@
+
+func main() -> int
+{
+    let val = 100
+
+    return { print(val); print(val); print(val); };
+}
+

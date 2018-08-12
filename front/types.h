@@ -36,6 +36,7 @@ typedef union token_value {
     char * str_value;
     expr * expr_value;
     expr_list * expr_list_value;
+    expr_list * expr_seq_value;
     param * param_value;
     param_list * param_list_value;
     dim * dim_value;

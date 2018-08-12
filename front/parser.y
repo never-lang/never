@@ -36,6 +36,7 @@ int yyerror(never ** nev, char * str)
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
+%type <val.expr_seq_value> expr_seq
 %type <val.param_value> dim
 %type <val.param_list_value> dim_list
 %type <val.param_value> param
@@ -69,6 +70,7 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) param_list_delete($$); } param_list
 %destructor { if ($$) expr_delete($$); } expr
 %destructor { if ($$) expr_list_delete($$); } expr_list
+%destructor { if ($$) expr_list_delete($$); } expr_seq
 %destructor { if ($$) array_delete($$); } array
 %destructor { if ($$) bind_delete($$); } let
 %destructor { if ($$) bind_delete($$); } var
@@ -251,6 +253,11 @@ expr: expr '(' expr_list ')'
     $$->line_no = $1->line_no;
 };
 
+expr: '{' expr_seq '}'
+{
+    $$ = expr_new_seq($2);
+};
+
 expr_list: expr
 {
     $$ = expr_list_new();
@@ -260,6 +267,18 @@ expr_list: expr
 expr_list: expr_list ',' expr
 {
     expr_list_add_end($1, $3);
+    $$ = $1;
+};
+
+expr_seq: expr ';'
+{
+    $$ = expr_list_new();
+    expr_list_add_end($$, $1);
+};
+
+expr_seq: expr_seq expr ';'
+{
+    expr_list_add_end($1, $2);
     $$ = $1;
 };
 
