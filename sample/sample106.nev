@@ -24,8 +24,8 @@ func foreach2Tab( tab[dim] -> [D] -> int, eachTab(t[D] -> int, (int) -> int) -> 
 
 func main() -> int
 {
-    return foreach2Tab( { { 1, 2, 3, 4, 5, 6 } -> int,
-                          { 16, 17, 18 } -> int } -> [D] -> int,
+    return foreach2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
+                          [ 16, 17, 18 ] -> int ] -> [D] -> int,
                         foreachTab, twice );
 }
 

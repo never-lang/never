@@ -78,7 +78,7 @@ func tprint( t[elems] -> int ) -> int
 }
 func main() -> int
 {
-	return tprint( { 10, 20, 30, 40, 50, 60 } -> int );
+	return tprint( [ 10, 20, 30, 40, 50, 60 ] -> int );
 }
 ```
 
@@ -95,7 +95,7 @@ func tsum( t[elems] -> int) -> int
 }
 func main() -> int
 {
-	return tsum( { 10, 20, 30, 40, 50, 60 } -> int );
+	return tsum( [ 10, 20, 30, 40, 50, 60 ] -> int );
 }
 ```
 To calculate sum of array elements in each recursive call sum is increased. Finally sum of all elements is returned.
@@ -111,7 +111,7 @@ func tmin( t[elems] -> int ) -> int
 }
 func main() -> int
 {
-	return tmin( { 60, 20, 10, 30, 50, 40, 80, 90, 100 } -> int );
+	return tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int );
 }
 ```
 Similar idea can be used to determine the lowest value within an array...
@@ -127,7 +127,7 @@ func exists( e -> int, t[elems] -> int ) -> int
 }
 func main() -> int
 {
-	return exists( 100, { 60, 20, 10, 30, 50, 40, 80, 90, 100 } -> int );
+	return exists( 100, [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int );
 }
 ```
 ...or used to determine if given value exists with an array. Recursive calls stop when sought after value is found.
@@ -148,7 +148,7 @@ func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
 }
 func main() -> int
 {
-	return tforeach( { 10, 20, 50, 30, 40 } -> int, add_five );
+	return tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five );
 }
 ```
 [Never][never-lang] supports first-call functions which can be passed to other functions. This property can be used to execute arbitrary function over all elements. In the above example function ```add_five``` is passed to ```tforeach``` function.
@@ -169,7 +169,7 @@ func tmapi( t[elems] -> int, mapi(i -> int, e -> int) -> int) -> int
 }
 func main() -> int
 {
-	return tmapi( { 10, 20, 50, 30, 40 } -> int, sum_mapi );
+	return tmapi( [ 10, 20, 50, 30, 40 ] -> int, sum_mapi );
 }
 ```
 The above listing presents ```mapi``` function which is invoked with element index and its value.
@@ -194,7 +194,7 @@ func filter( t[elems] -> int, if( int ) -> int, do( int ) -> int ) -> int
 }
 func main() -> int
 {
-	return filter( { 61, 22, 11, 34, 58, 41, 83, 92, 101 } -> int,
+	return filter( [ 61, 22, 11, 34, 58, 41, 83, 92, 101 ] -> int,
 	               odd, do );
 }
 ```

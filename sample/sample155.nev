@@ -10,6 +10,6 @@ func printtab( tab[n] -> int ) -> int
 
 func main() -> int
 {
-    return printtab( - { 1, -2, 3, -4, 5, -6 } -> int );
+    return printtab( - [ 1, -2, 3, -4, 5, -6 ] -> int );
 }
 

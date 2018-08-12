@@ -10,7 +10,7 @@ func tmin( t[elems] -> int ) -> int
 
 func main() -> int
 {
-	return tmin( { 60, 20, 10, 30, 50, 40, 80, 90, 100 } -> int );
+	return tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int );
 }
 
 

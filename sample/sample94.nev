@@ -11,8 +11,8 @@ func f2(tab2[D1, D2] -> int) -> int
 
 func main() -> int
 {
-    return f2({{ 1, 2 },
-               { 3, 4 }} -> int);
+    return f2([[ 1, 2 ],
+               [ 3, 4 ]] -> int);
 }
 
 

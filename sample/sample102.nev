@@ -11,7 +11,7 @@ func tprint( t[elems] -> int ) -> int
 
 func main() -> int
 {
-	return tprint( { 10, 20, 30, 40, 50, 60 } -> int );
+	return tprint( [ 10, 20, 30, 40, 50, 60 ] -> int );
 }
 
 

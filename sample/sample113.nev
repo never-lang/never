@@ -6,8 +6,8 @@ func call(tab[row] -> [D, D] -> int) -> int
 
 func f1(a -> int) -> int
 {
-    return call( { {[10, 10]} -> int,
-                   {[20, 20]} -> int } -> [D, D] -> int );
+    return call( [ {[10, 10]} -> int,
+                   {[20, 20]} -> int ] -> [D, D] -> int );
 }
 
 func main() -> int

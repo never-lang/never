@@ -10,6 +10,6 @@ func printtab( tab[n] -> int ) -> int
 
 func main() -> int
 {
-    return printtab( { 1, 2, 4 } -> int + { 3, 4, 3 } -> int );
+    return printtab( [ 1, 2, 4 ] -> int + [ 3, 4, 3 ] -> int );
 }
 

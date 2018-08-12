@@ -257,10 +257,10 @@ value of its element.
 ```
 func f1(a -> int) -> [D, D] -> int
 {
-    return { { a, 0, 0, 0 },
-             { 0, a, 0, 0 },
-             { 0, 0, a, 0 },
-             { 0, 0, 0, a } } -> int;
+    return [ [ a, 0, 0, 0 ],
+             [ 0, a, 0, 0 ],
+             [ 0, 0, a, 0 ],
+             [ 0, 0, 0, a ] ] -> int;
 }
 
 func main() -> int
@@ -280,8 +280,8 @@ func call(tab[row] -> [D] -> int) -> int
 
 func f1() -> int
 {
-    return call({ { 9, 8, 7, 6, 5 } -> int,
-                  { 9, 7, 5 } -> int        } -> [_] -> int);
+    return call([ [ 9, 8, 7, 6, 5 ] -> int,
+                  [ 9, 7, 5 ] -> int        ] -> [_] -> int);
 }
 
 func main() -> int
@@ -293,10 +293,10 @@ func main() -> int
 ```
 func f1(a -> int, b -> int, c -> int) -> [D] -> () -> int
 {
-    return {
+    return [
              func f1() -> int { return a + b + c; },
              func f2() -> int { return a + b - c; }  
-           } -> () -> int;
+           ] -> () -> int;
 }
 
 func main() -> int
@@ -316,7 +316,7 @@ func f1(tab[row, col] -> int) -> int
 
 func main() -> int
 {
-    return f1( { {10, 20, 30}, {30, 40, 50} } -> int );
+    return f1( [ [10, 20, 30], [30, 40, 50] ] -> int );
 }
 ```
 
@@ -335,7 +335,7 @@ func tmin( t[elems] -> int ) -> int
 
 func main() -> int
 {
-	return tmin( { 20, 10, 30, 50, 40 } -> int );
+	return tmin( [ 20, 10, 30, 50, 40 ] -> int );
 }
 ```
 
@@ -359,7 +359,7 @@ func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
 
 func main() -> int
 {
-	return tforeach( { 10, 20, 50, 30, 40 } -> int, add_five );
+	return tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five );
 }
 ```
 
@@ -386,8 +386,8 @@ func print2Tab( tab[dim] -> [D] -> int ) -> int
 
 func main() -> int
 {
-    return print2Tab( { { 1, 2, 3, 4, 5, 6 } -> int,
-                        { 16, 17, 18 } -> int } -> [D] -> int );
+    return print2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
+                        [ 16, 17, 18 ] -> int ] -> [D] -> int );
 }
 ```
 
@@ -418,8 +418,8 @@ func foreach2Tab( tab[dim] -> [D] -> int, eachTab(t[D] -> int, (int) -> int) -> 
 
 func main() -> int
 {
-    return foreach2Tab( { { 1, 2, 3, 4, 5, 6 } -> int,
-                          { 16, 17, 18 } -> int } -> [D] -> int,
+    return foreach2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
+                          [ 16, 17, 18 ] -> int ] -> [D] -> int,
                         foreachTab, twice );
 }
 ```
@@ -430,40 +430,40 @@ Never lets to add, subtract and multiply int and float arrays.
 ```
 func main() -> int
 {
-    return printtab( 2 * { 3, 5, 7, 9 } -> int );
+    return printtab( 2 * [ 3, 5, 7, 9 ] -> int );
 }
 ```
 
 ```
 func main() -> int
 {
-    return printtab( - { 1, -2, 3, -4, 5, -6 } -> int );
+    return printtab( - [ 1, -2, 3, -4, 5, -6 ] -> int );
 }
 ```
 
 ```
 func main() -> int
 {
-    return printtab( { 3.5, 5.5, 7.5 } -> float - { 3.0, 4.0, 7.0 } -> float );
+    return printtab( [ 3.5, 5.5, 7.5 ] -> float - [ 3.0, 4.0, 7.0 ] -> float );
 }
 ```
 
 ```
 func main() -> int
 {
-    return printtab( { 1.5, 2.5, 3.5 } -> float + { 3.0, 4.0, 7.0 } -> float );
+    return printtab( [ 1.5, 2.5, 3.5 ] -> float + [ 3.0, 4.0, 7.0 ] -> float );
 }
 ```
 
 ```
 func main() -> int
 {
-    return printtab( { { 1.0, 2.0, 3.0 },
-                       { 3.0, 4.0, 5.0 } } -> float
+    return printtab( [ [ 1.0, 2.0, 3.0 ],
+                       [ 3.0, 4.0, 5.0 ] ] -> float
                                *
-                     { { 3.0, 4.0, 1.0, 1.0 },
-                       { 6.0, 7.0, 1.0, 1.0 },
-                       { 8.0, 2.0, 1.0, 1.0 } } -> float );
+                     [ [ 3.0, 4.0, 1.0, 1.0 ],
+                       [ 6.0, 7.0, 1.0, 1.0 ],
+                       [ 8.0, 2.0, 1.0, 1.0 ] ] -> float );
 }
 ```
 

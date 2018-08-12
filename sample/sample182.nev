@@ -11,6 +11,6 @@ func outer(to -> int) -> (int) -> int
 
 func main() -> int
 {
-    return outer(1000)(0);
+    return outer(10)(0);
 }
 

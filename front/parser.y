@@ -222,13 +222,13 @@ array: ARR_DIM_BEG expr_list ARR_DIM_END TOK_RET param
     $$->line_no = $<line_no>1;
 };
 
-array: '{' expr_list '}' TOK_RET param
+array: '[' expr_list ']' TOK_RET param
 {
     $$ = array_new($2, $5);
     $$->line_no = $<line_no>1;
 };
 
-array: '{' expr_list '}'
+array: '[' expr_list ']'
 {
     $$ = array_new_sub($2);
     $$->line_no = $<line_no>1;

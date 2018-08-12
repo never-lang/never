@@ -10,6 +10,6 @@ func printtab( tab[n] -> int ) -> int
 
 func main() -> int
 {
-    return printtab( 2 * { 3, 5, 7, 9 } -> int );
+    return printtab( 2 * [ 3, 5, 7, 9 ] -> int );
 }
 

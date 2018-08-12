@@ -11,11 +11,11 @@ func printtab( tab[row, col] -> int ) -> int
 
 func main() -> int
 {
-    return printtab( {{ 1, 2, 3 },
-                      { 3, 4, 5 }} -> int
+    return printtab( [[ 1, 2, 3 ],
+                      [ 3, 4, 5 ]] -> int
                            *
-                     {{ 3, 4, 1, 1 },
-                      { 6, 7, 1, 1 },
-                      { 8, 2, 1, 1 }} -> int );
+                     [[ 3, 4, 1, 1 ],
+                      [ 6, 7, 1, 1 ],
+                      [ 8, 2, 1, 1 ]] -> int );
 }
 

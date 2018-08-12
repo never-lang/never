@@ -18,7 +18,7 @@ func filter( t[elems] -> int, if( int ) -> int, do( int ) -> int ) -> int
 }
 func main() -> int
 {
-	return filter( { 61, 22, 11, 34, 58, 41, 83, 92, 101 } -> int,
+	return filter( [ 61, 22, 11, 34, 58, 41, 83, 92, 101 ] -> int,
 	               odd, do );
 }
 
