@@ -155,7 +155,8 @@ int array_well_formed(expr * value, int * result)
     return 0;
 }
 
-int array_check_type(symtab * tab, expr * value, int * result)
+int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
+                     int * result)
 {
     if (value->array.array_value->type == ARRAY_INIT)
     {
@@ -164,7 +165,7 @@ int array_check_type(symtab * tab, expr * value, int * result)
         if (value->array.array_value->elements != NULL)
         {
             expr_list_check_type(tab, value->array.array_value->elements,
-                                 result);
+                                 syn_level, result);
         }
 
         array_well_formed(value, &arr_result);
@@ -186,7 +187,7 @@ int array_check_type(symtab * tab, expr * value, int * result)
         if (value->array.array_value->elements != NULL)
         {
             expr_list_check_type(tab, value->array.array_value->elements,
-                                 result);
+                                 syn_level, result);
         }
     }
     else if (value->array.array_value->type == ARRAY_DIMS)
@@ -194,7 +195,7 @@ int array_check_type(symtab * tab, expr * value, int * result)
         if (value->array.array_value->dims != NULL)
         {
             array_dims_check_type_expr_list(tab, value->array.array_value->dims,
-                                            result);
+                                            syn_level, result);
         }
 
         if (*result == TYPECHECK_SUCC)
@@ -213,9 +214,10 @@ int array_check_type(symtab * tab, expr * value, int * result)
     return 0;
 }
 
-int expr_array_check_type(symtab * tab, expr * value, int * result)
+int expr_array_check_type(symtab * tab, expr * value, unsigned int syn_level,
+                          int * result)
 {
-    array_check_type(tab, value, result);
+    array_check_type(tab, value, syn_level, result);
 
     return 0;
 }

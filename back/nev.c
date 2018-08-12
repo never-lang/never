@@ -111,8 +111,8 @@ int nev_compile_prog(program * prog)
                     never_emit(nev, code);
                     bytecode_func_addr(code);
 
-                    print_functions(nev);
-                    bytecode_print(code);
+                    /*print_functions(nev);
+                    bytecode_print(code);*/
 
                     never_func_main_params(nev, &prog->params,
                                            &prog->param_count);
