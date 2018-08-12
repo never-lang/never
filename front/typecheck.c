@@ -1165,6 +1165,7 @@ int bind_check_type(symtab * tab, bind * value, unsigned int syn_level,
             if (value->expr_value != NULL)
             {
                 expr_check_type(tab, value->expr_value, syn_level, result);
+                symtab_add_bind_from_bind(tab, value, syn_level, result);
             }
         break;
     }
@@ -1208,19 +1209,13 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
     }
     if (func_value->body && func_value->body->binds)
     {
-        symtab_add_bind_from_bind_list(func_value->stab,
-                                       func_value->body->binds, syn_level,
-                                       result);
+        bind_list_check_type(func_value->stab, func_value->body->binds, syn_level, result);
     }
     if (func_value->body && func_value->body->funcs)
     {
         symtab_add_func_from_func_list(func_value->stab,
                                        func_value->body->funcs, syn_level,
                                        result);
-    }
-    if (func_value->body && func_value->body->binds)
-    {
-        bind_list_check_type(func_value->stab, func_value->body->binds, syn_level, result);
     }
     if (func_value->body && func_value->body->funcs)
     {
