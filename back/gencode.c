@@ -291,6 +291,9 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
             func_gencode(syn_level + 2, value->func_value, result);
         }
         break;
+    case EXPR_SEQ:
+        assert(0);
+        break;
     case EXPR_BUILD_IN:
         expr_list_gencode(syn_level, func_value, value->func_build_in.param,
                           result);
@@ -504,6 +507,9 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
         {
             func_gencode_freevars_func(func_value, value->func_value, result);
         }
+        break;
+    case EXPR_SEQ:
+        assert(0);
         break;
     case EXPR_BUILD_IN:
         func_gencode_freevars_expr_list(func_value, value->func_build_in.param,
@@ -1582,6 +1588,9 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         {
             func_emit(value->func_value, stack_level, code, result);
         }
+        break;
+    case EXPR_SEQ:
+        assert(0);
         break;
     case EXPR_BUILD_IN:
         expr_list_emit(value->func_build_in.param, stack_level, code, result);

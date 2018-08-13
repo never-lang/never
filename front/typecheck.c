@@ -1088,7 +1088,6 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         expr_call_check_type(tab, value, syn_level, result);
         break;
     case EXPR_FUNC:
-    {
         if (value->func_value)
         {
             func_check_type(tab, value->func_value, syn_level + 2, result);
@@ -1097,8 +1096,10 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
             value->comb_params = value->func_value->params;
             value->comb_ret = value->func_value->ret;
         }
-    }
-    break;
+        break;
+    case EXPR_SEQ:
+        assert(0);
+        break;
     case EXPR_BUILD_IN:
         expr_list_check_type(tab, value->func_build_in.param, syn_level, result);
         expr_set_return_type(value, value->func_build_in.ret);
@@ -1341,6 +1342,11 @@ int print_func_expr(expr * value, int depth)
             print_func(value->func_value, depth + 1);
         }
         break;
+    case EXPR_SEQ:
+        if (value->seq.list)
+        {
+            print_func_expr_list(value->seq.list, depth);
+        }
     case EXPR_BUILD_IN:
         print_func_expr_list(value->func_build_in.param, depth + 1);
         break;

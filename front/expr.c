@@ -258,9 +258,15 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_FUNC:
-        if (value->func_value)
+        if (value->func_value != NULL)
         {
             func_delete(value->func_value);
+        }
+        break;
+    case EXPR_SEQ:
+        if (value->seq.list != NULL)
+        {
+            expr_list_delete(value->seq.list);
         }
         break;
     case EXPR_BUILD_IN:

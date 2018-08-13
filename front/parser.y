@@ -439,24 +439,24 @@ func: TOK_FUNC TOK_ID error
     $$ = NULL;
 };
 
-func_body: '{' bind_list TOK_RETURN expr ';' '}'
+func_body: '{' bind_list /* TOK_RETURN */ ';' expr '}'
 {
     $$ = func_body_new($2, NULL, $4);
 };
 
-func_body: '{' func_list TOK_RETURN expr ';' '}'
+func_body: '{' func_list /* TOK_RETURN */ ';' expr '}'
 {
     $$ = func_body_new(NULL, $2, $4);
 };
 
-func_body: '{' bind_list func_list TOK_RETURN expr ';' '}'
+func_body: '{' bind_list func_list /* TOK_RETURN */ ';' expr '}'
 {
     $$ = func_body_new($2, $3, $5);
 };
 
-func_body: '{' TOK_RETURN expr ';' '}'
+func_body: '{' /* TOK_RETURN */ expr '}'
 {
-    $$ = func_body_new(NULL, NULL, $3);
+    $$ = func_body_new(NULL, NULL, $2);
 };
 
 func_body: '{' '}'

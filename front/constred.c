@@ -22,6 +22,7 @@
 #include "constred.h"
 #include "utils.h"
 #include <stdio.h>
+#include <assert.h>
 
 int expr_constred(expr * value, int * result)
 {
@@ -529,6 +530,12 @@ int expr_constred(expr * value, int * result)
         if (value->func_value)
         {
             func_constred(value->func_value, result);
+        }
+        break;
+    case EXPR_SEQ:
+        if (value->seq.list != NULL)
+        {
+            expr_list_constred(value->seq.list, result);
         }
         break;
     case EXPR_BUILD_IN:
