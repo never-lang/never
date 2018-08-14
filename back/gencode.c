@@ -292,7 +292,10 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
         }
         break;
     case EXPR_SEQ:
-        assert(0);
+        if (value->seq.list != NULL)
+        {
+            expr_list_gencode(syn_level, func_value, value->seq.list, result);
+        }
         break;
     case EXPR_BUILD_IN:
         expr_list_gencode(syn_level, func_value, value->func_build_in.param,
@@ -509,7 +512,11 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
         }
         break;
     case EXPR_SEQ:
-        assert(0);
+        if (value->seq.list != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, value->seq.list,
+                                            result);
+        }
         break;
     case EXPR_BUILD_IN:
         func_gencode_freevars_expr_list(func_value, value->func_build_in.param,
@@ -1590,7 +1597,10 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         }
         break;
     case EXPR_SEQ:
-        assert(0);
+        if (value->seq.list != NULL)
+        {
+            expr_seq_emit(value->seq.list, stack_level, code, result);
+        }
         break;
     case EXPR_BUILD_IN:
         expr_list_emit(value->func_build_in.param, stack_level, code, result);
@@ -1649,6 +1659,38 @@ int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code,
             expr_emit(value, stack_level + e++, code, result);
         }
         node = node->prev;
+    }
+
+    return 0;
+}
+
+int expr_seq_emit(expr_list * list, int stack_level, bytecode_list * code,
+                  int * result)
+{
+    int prev = 0;
+
+    expr_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        if (prev)
+        {
+            bytecode bc = { 0 };
+
+            /* pop previous value of stack */
+            bc.type = BYTECODE_SLIDE;
+            bc.slide.m = 0;
+            bc.slide.q = 1;            
+
+            bytecode_add(code, &bc);
+        }
+        prev = 1;
+    
+        expr * value = node->value;
+        if (value != NULL)
+        {
+            expr_emit(value, stack_level, code, result);
+        }
+        node = node->next;
     }
 
     return 0;

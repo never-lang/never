@@ -74,6 +74,8 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                     int * result);
 int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
                          int * result);
+int expr_seq_check_type(symtab * tab, expr * value, unsigned syn_level,
+                        int * result);
 int bind_check_type(symtab * tab, bind * value, unsigned int syn_level,
                     int * result);
 int bind_list_check_type(symtab * tab, bind_list * list, unsigned int syn_level,

@@ -3,19 +3,18 @@ func dir_deg(d -> int, coeff -> float) -> (float) -> float
 {
     func fah2cel(f -> float) -> float
     {
-        return coeff * ((f - 32.0) / 1.8);
+        coeff * ((f - 32.0) / 1.8)
     }
-    
     func cel2fah(c -> float) -> float
     {
-        return coeff * (c * 1.8 + 32.0);
-    }
+        coeff * (c * 1.8 + 32.0)
+    };
 
-    return d == 0 ? cel2fah : fah2cel;
+    d == 0 ? cel2fah : fah2cel
 }
 
 func main() -> float
 {
-    return dir_deg(0, 100.0)(100.0);
+    dir_deg(0, 100.0)(100.0)
 }
 

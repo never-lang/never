@@ -122,7 +122,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code,
               int * result);
 int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code,
                    int * result);
-
+int expr_seq_emit(expr_list * list, int stack_level, bytecode_list * code,
+                  int * result);
 int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,
                              int stack_level, bytecode_list * code,
                              int * result);

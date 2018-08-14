@@ -1,11 +1,11 @@
 
 func calc() -> (float) -> float
 {
-    return func fah2cel(f -> float) -> float { return (f - 32.0) / 1.8; };
+    func fah2cel(f -> float) -> float { (f - 32.0) / 1.8 }
 }
 
 func main() -> float
 {
-    return calc()(212.0);
+    calc()(212.0)
 }
 

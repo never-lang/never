@@ -1,7 +1,7 @@
 
 func min(a -> float, b -> float) -> float
 {
-    return (a < b) ? a : b;
+    (a < b) ? a : b
 }
 
 func twice(single_func(float, float) -> float) -> (float, float) -> float
@@ -10,18 +10,16 @@ func twice(single_func(float, float) -> float) -> (float, float) -> float
     {
         func one_more() -> float
         {
-            return 10.00;
-        }
-    
-        return one_more() * single_func(a, b);
-    }
-
-    return twice_func;
+            10.00
+        };
+        one_more() * single_func(a, b)
+    };
+    twice_func
 }
 
 func main() -> int
 {
-    return assert(twice(min)(12.0, 15.0) == 120.00);
+    assert(twice(min)(12.0, 15.0) == 120.00)
 }
 
 

@@ -1098,7 +1098,10 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_SEQ:
-        assert(0);
+        if (value->seq.list != NULL)
+        {
+            expr_seq_check_type(tab, value, syn_level, result);
+        }
         break;
     case EXPR_BUILD_IN:
         expr_list_check_type(tab, value->func_build_in.param, syn_level, result);
@@ -1148,6 +1151,34 @@ int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
             expr_check_type(tab, value, syn_level, result);
         }
         node = node->next;
+    }
+
+    return 0;
+}
+
+int expr_seq_check_type(symtab * tab, expr * value, unsigned syn_level,
+                        int * result)
+{
+    expr_list_node * node = NULL;
+
+    expr_list_check_type(tab, value->seq.list, syn_level, result);
+
+    node = value->seq.list->head;
+    if (node != NULL && node->value != NULL)
+    {
+        expr * expr_last = node->value;
+        
+        value->comb = expr_last->comb;
+        value->comb_params = expr_last->comb_params;
+        value->comb_ret = expr_last->comb_ret;
+        value->comb_dims = expr_last->comb_dims;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "no type in sequence %s\n");
     }
 
     return 0;
@@ -1337,22 +1368,28 @@ int print_func_expr(expr * value, int depth)
         }
         break;
     case EXPR_FUNC:
-        if (value->func_value)
+        if (value->func_value != NULL)
         {
             print_func(value->func_value, depth + 1);
         }
         break;
     case EXPR_SEQ:
-        if (value->seq.list)
+        if (value->seq.list != NULL)
         {
             print_func_expr_list(value->seq.list, depth);
         }
     case EXPR_BUILD_IN:
-        print_func_expr_list(value->func_build_in.param, depth + 1);
+        if (value->func_build_in.param != NULL)
+        {
+            print_func_expr_list(value->func_build_in.param, depth + 1);
+        }
         break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
-        print_func_expr(value->left, depth);
+        if (value->left != NULL)
+        {
+            print_func_expr(value->left, depth);
+        }
         break;
     }
     return 0;

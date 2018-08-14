@@ -1,12 +1,12 @@
 
 func dir_deg(d -> int, degree -> float) -> float
 {
-    return (d == 0 ? func fah2cel(f -> float) -> float { return (f - 32.0) / 1.8; }
-                   : func cel2fah(c -> float) -> float { return c * 1.8 + 32.0; })(degree);
+    (d == 0 ? func fah2cel(f -> float) -> float { (f - 32.0) / 1.8 }
+            : func cel2fah(c -> float) -> float { c * 1.8 + 32.0 })(degree)
 }
 
 func main() -> float
 {
-    return dir_deg(1, 100.0);
+    dir_deg(1, 100.0)
 }
 

@@ -1,22 +1,22 @@
 
 func min(a -> float, b -> float) -> float
 {
-    return (a < b) ? a : b;
+    (a < b) ? a : b
 }
 
 func max(a -> float, b -> float) -> float
 {
-    return (a > b) ? a : b;
+    (a > b) ? a : b
 }
 
 func select(a -> int) -> (float, float) -> float
 {
-    return a < 100 ? min : max;
+    a < 100 ? min : max
 }
 
 func main() -> int 
 {
-    return assert(select(110)(40.0, 20.0) == 40.0);
+    assert(select(110)(40.0, 20.0) == 40.0)
 }
 
 
