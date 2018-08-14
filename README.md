@@ -1,5 +1,6 @@
 # Never - Functional Programming Language
 [![Build Status](https://travis-ci.org/never-lang/never.svg?branch=master)](https://travis-ci.org/never-lang/never)
+[![Version](https://badge.fury.io/gh/never-lang%2Fnever.svg)](https://github.com/never-lang/never/releases)
 
 Never is a simple functional programming language. Technically it may be
 classified as syntactically scoped, strongly typed, call by value, pure
@@ -247,6 +248,66 @@ func main() -> float
     return dir_deg(0)(100.0);
 }
 
+```
+
+## Bindings
+Functions let to define bindings with local values.
+
+```
+func area(a -> float, b -> float, c -> float) -> float
+{
+    let p = (a + b + c) / 2.0
+    return sqrt(p * (p - a) * (p - b) * (p - c));
+}
+```
+
+In comparison to function, though, they cannot be mutually recursive. Thus
+their values can be declared and used in their order. In the following example
+variables ```q``` and ```p``` are declared in correct order. When reversed
+compilation error will be displayed.
+
+```
+func outer(a -> float, b -> float) -> float
+{
+    let q = 10.0
+    let p = a + q
+
+    return p + q;
+}
+```
+
+Bindings can hold any expressions. Thus the following code is also possible...
+
+```
+func outer(to -> int) -> () -> int
+{
+    let p = 2 * to
+    let f = func rec() -> int
+    {
+        return p;
+    }
+
+    return f;
+}
+```
+
+... or even
+
+```
+func outer(to -> int) -> (int) -> int
+{
+    let f = func rec(start -> int) -> int
+    {
+        return start < to ? rec(print(start) + 1) : 0;
+    }
+
+    return f;
+}
+
+func main() -> int
+{
+    return outer(10)(0);
+}
 ```
 
 ## Arrays
