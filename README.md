@@ -224,7 +224,7 @@ The idea of in-lining functions may be taken into extreme...
 ```
 func calc() -> (float) -> float
 {
-    func fah2cel(float f) -> float { return (f - 32.0) / 1.8; }
+    func fah2cel(float f) -> float { (f - 32.0) / 1.8 }
 }
 
 func main() -> float
@@ -299,7 +299,7 @@ func outer(to -> int) -> (int) -> int
         start < to ? rec(print(start) + 1) : 0
     };
 
-    return f
+    f
 }
 
 func main() -> int
