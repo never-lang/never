@@ -1,13 +1,13 @@
 
 func printtab(i -> int, t[dim1, dim2] -> int) -> int
 {
-    return print(t[dim1 - 1, dim2 - 1]);
+    print(t[dim1 - 1, dim2 - 1])
 }
 
 func main() -> int
 {
-    return printtab(3, [ [ 10, 20 ], 
-                         [ 30, 40 ],
-                         [ 50, 60 ] ] -> int);
+    printtab(3, [ [ 10, 20 ], 
+                  [ 30, 40 ],
+                  [ 50, 60 ] ] -> int)
 }
 

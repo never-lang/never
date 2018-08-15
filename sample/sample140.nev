@@ -3,13 +3,13 @@ func rodCut( rod -> int ) -> int
 {
     func __rodCut( rod -> int ) -> int
     {
-        return rod < 10 ? rodCut( rod + 1 ) : 0;
-    }
-    return __rodCut( rod );
+        rod < 10 ? rodCut( rod + 1 ) : 0
+    };
+    __rodCut( rod )
 }
 
 func main() -> int
 {
-    return rodCut( 0 );
+    rodCut( 0 )
 }
 

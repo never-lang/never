@@ -1,17 +1,17 @@
 
 func call(tab[row] -> [D, D] -> int) -> int
 {
-    return tab[row - 1][0, 0];
+    tab[row - 1][0, 0]
 }
 
 func f1(a -> int) -> int
 {
-    return call( [ {[10, 10]} -> int,
-                   {[20, 20]} -> int ] -> [D, D] -> int );
+    call( [ {[10, 10]} -> int,
+            {[20, 20]} -> int ] -> [D, D] -> int )
 }
 
 func main() -> int
 {
-    return assert(f1(8) == 10);
+    assert(f1(8) == 10)
 }
 

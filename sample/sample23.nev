@@ -2,23 +2,23 @@ func calc(coeff -> int, n -> int) -> int
 {
     func C() -> int 
     {
-        return coeff;
+        coeff
     }
 
     func help(n -> int) -> int 
     {
         func fib(n -> int) -> int 
         {
-            return ((n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)) * C();
-        }
-        return fib(n);
-    }
+            ((n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)) * C()
+        };
+        fib(n)
+    };
     
-    return help(n);     
+    help(n)
 }
 
 func main() -> int 
 {
-     return calc(2, 7);
+     calc(2, 7)
 }
 

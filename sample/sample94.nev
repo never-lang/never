@@ -1,18 +1,18 @@
 
 func f1(a -> int, b -> int, tab[FD1, FD2] -> int) -> int
 {
-    return 2 * FD1 * FD2;
+    2 * FD1 * FD2
 }
 
 func f2(tab2[D1, D2] -> int) -> int
 {
-    return f1(10, 20, tab2);
+    f1(10, 20, tab2)
 }
 
 func main() -> int
 {
-    return f2([[ 1, 2 ],
-               [ 3, 4 ]] -> int);
+    f2([[ 1, 2 ],
+        [ 3, 4 ]] -> int)
 }
 
 

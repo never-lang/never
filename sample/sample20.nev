@@ -1,26 +1,26 @@
 
 func min(a -> float, b -> float) -> float
 {
-    return (a < b) ? a : b;
+    (a < b) ? a : b
 }
 
 func funGen(a -> float, b -> float, f1(a -> float, b -> float) -> float) -> float
 {
-    return 2.0 * f1(a, b);
+    2.0 * f1(a, b)
 }
 
 func funGen2(f1(a -> float, b -> float) -> float) -> (a -> float, b -> float) -> float
 {
     func twice(a -> float, b -> float) -> float
     {
-        return 2.0 * f1(a, b);
-    }
-    return twice;
+        2.0 * f1(a, b)
+    };
+    twice
 }
 
 func main() -> int 
 {
-    return assert(funGen2(min)(15.0, 20.0) == 30.0);
+    assert(funGen2(min)(15.0, 20.0) == 30.0)
 }
 
 

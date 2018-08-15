@@ -2,14 +2,13 @@ func calc(n -> int, coeff -> int) -> int
 {
      func fib(n -> int) -> int
      {
-         return ((n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)) * coeff;
-     }
+         ((n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)) * coeff
+     };
      
-     return fib(n);
+     fib(n)
 }
-
 func main() -> int 
 {
-     return calc(7, 2);
+     calc(7, 2)
 }
 

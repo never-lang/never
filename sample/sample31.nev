@@ -1,6 +1,6 @@
 
 func main() -> int 
 {
-    return assert(20 / 5 / 2 == 2);
+    assert(20 / 5 / 2 == 2)
 }
 

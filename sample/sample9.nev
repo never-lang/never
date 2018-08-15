@@ -3,6 +3,6 @@
  */
 func main() -> int
 {
-    return assert(func min(a -> float, b -> float) -> float { return (a < b) ? a : b; }(100.0, 20.0) == 20.0);
+    assert(func min(a -> float, b -> float) -> float { (a < b) ? a : b }(100.0, 20.0) == 20.0)
 }
 

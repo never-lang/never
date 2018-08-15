@@ -1,6 +1,6 @@
 
 func main() -> int
 {
-    return assert(1 < 10 && 20 < 30 ? 1 : 0);
+    assert(1 < 10 && 20 < 30 ? 1 : 0)
 }
 

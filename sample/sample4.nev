@@ -2,11 +2,11 @@
 
 func min(a -> float, b -> float) -> float
 {
-    return (a < b) ? a : b;
+    (a < b) ? a : b
 }
 
 func main() -> int
 {
-    return assert(min(min(10.0, 8.0), min(20.0, 30.0)) == 8.0);
+    assert(min(min(10.0, 8.0), min(20.0, 30.0)) == 8.0)
 }
 

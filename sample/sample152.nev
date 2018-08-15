@@ -3,20 +3,20 @@ func printtab( tab[row, col] -> float ) -> int
 {
     func __printtab( i -> int, tab[row, col] -> float, val -> float ) -> int
     {
-        return i < row * col ?
-               __printtab( i + 1, tab, printf( tab[i / col, i % col] )) : 0;
-    }
-    return __printtab ( 0, tab, 0.0 );
+        i < row * col ?
+         __printtab( i + 1, tab, printf( tab[i / col, i % col] )) : 0
+    };
+    __printtab ( 0, tab, 0.0 )
 }
 
 func main() -> int
 {
-    return printtab( [[ 1.0, 2.0 ],
-                      [ 3.0, 4.0 ],
-                      [ 5.0, 6.0 ]] -> float 
-                            -
-                     [[ 3.0, 3.0 ],
-                      [ 3.0, 3.0 ],
-                      [ 3.0, 3.0 ]] -> float );
+    printtab( [[ 1.0, 2.0 ],
+               [ 3.0, 4.0 ],
+               [ 5.0, 6.0 ]] -> float 
+                     -
+              [[ 3.0, 3.0 ],
+               [ 3.0, 3.0 ],
+               [ 3.0, 3.0 ]] -> float )
 }
 

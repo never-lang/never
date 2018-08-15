@@ -2,13 +2,13 @@
 func outer(a -> float, b -> float) -> float
 {
     let q = 10.0
-    let p = a + q
+    let p = a + q;
 
-    return p + q;
+    p + q
 }
 
 func main() -> float
 {
-    return outer(3.0, 5.0);
+    outer(3.0, 5.0)
 }
 

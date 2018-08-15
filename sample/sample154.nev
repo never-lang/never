@@ -3,13 +3,13 @@ func printtab( tab[n] -> float ) -> int
 {
     func __print( i -> int, tab[n] -> float, val -> float ) -> int
     {
-        return i < n ? __print( i + 1, tab, printf(tab[i]) ) : 0;
-    }
-    return __print( 0, tab, 0.0 );
+        i < n ? __print( i + 1, tab, printf(tab[i]) ) : 0
+    };
+    __print( 0, tab, 0.0 )
 }
 
 func main() -> int
 {
-    return printtab( [ 1.5, 2.5, 3.5 ] -> float + [ 3.0, 4.0, 7.0 ] -> float );
+    printtab( [ 1.5, 2.5, 3.5 ] -> float + [ 3.0, 4.0, 7.0 ] -> float )
 }
 

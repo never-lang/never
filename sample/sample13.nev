@@ -3,14 +3,14 @@ func get_func(glob1 -> float) -> (float, float) -> float
 {
     func min(a -> float, b -> float) -> float
     {
-        return a < b ? glob1 * a : glob1 * b;
-    }
+        a < b ? glob1 * a : glob1 * b
+    };
     
-    return min;
+    min
 }
 
 func main() -> int 
 {
-    return assert(get_func(20.0)(15.0, 30.0) == 300.0);
+    assert(get_func(20.0)(15.0, 30.0) == 300.0)
 }
 

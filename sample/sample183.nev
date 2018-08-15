@@ -1,16 +1,16 @@
 func outer(to -> int) -> () -> int
 {
     let p = 2 * to
-    let f = func rec() -> int
+    let f = func () -> int
     {
-        return p;
-    }
+        p
+    };
 
-    return f;
+    f
 }
 
 func main() -> int
 {
-    return outer(10)();
+    outer(10)()
 }
 

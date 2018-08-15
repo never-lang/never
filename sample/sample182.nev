@@ -3,14 +3,14 @@ func outer(to -> int) -> (int) -> int
 {
     let f = func rec(start -> int) -> int
     {
-        return start < to ? rec(print(start) + 1) : 0;
-    }
+        start < to ? rec(print(start) + 1) : 0
+    };
 
-    return f;
+    f
 }
 
 func main() -> int
 {
-    return outer(10)(0);
+    outer(10)(0)
 }
 

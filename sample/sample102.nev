@@ -3,15 +3,15 @@ func tprint( t[elems] -> int ) -> int
 {
 	func __tprint( val -> int, i -> int, t[elems] -> int ) -> int
 	{
-		return i < elems - 1 ? __tprint( print(t[i]), i + 1, t ) : t[i];
-	}
+		i < elems - 1 ? __tprint( print(t[i]), i + 1, t ) : t[i]
+	};
 	
-	return __tprint(t[0], 0, t);
+	__tprint(t[0], 0, t)
 }
 
 func main() -> int
 {
-	return tprint( [ 10, 20, 30, 40, 50, 60 ] -> int );
+	tprint( [ 10, 20, 30, 40, 50, 60 ] -> int )
 }
 
 

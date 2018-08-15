@@ -3,39 +3,39 @@
  */
 func min(a -> float, b -> float) -> float
 {
-    return a < b ? a : b;
+    a < b ? a : b
 }
 
 func twice(coeff -> float, single_func(float, float) -> float) -> (float, float) -> float
 {
     func top() -> float
     {
-        return 80.0;
+        80.0
     }
 
     func one() -> (float, float) -> float
     {
         func mult(e -> float) -> float
         {
-             return coeff ;
+             coeff
         }
 
         func twice_func(a -> float, b -> float) -> float
         {
             func twice_func_nest(a -> float, b -> float) ->float
             {
-                return min(11.0, 12.0) * mult(10.0) * single_func(a, b);
-            }
-            return twice_func_nest(a, b);
-        }
-        return twice_func;
-    }
-    return one();
+                min(11.0, 12.0) * mult(10.0) * single_func(a, b)
+            };
+            twice_func_nest(a, b)
+        };
+        twice_func
+    };
+    one()
 }
 
 func main() -> float 
 {
-    return twice(20.0, min)(10.0, 20.0);
+    twice(20.0, min)(10.0, 20.0)
 }
 
 

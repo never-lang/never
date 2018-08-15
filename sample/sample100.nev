@@ -3,14 +3,13 @@ func tmin( t[elems] -> int ) -> int
 {
 	func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
 	{
-		return i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min;
-	}
-	return __tmin(t[0], 0, t);
+        i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min
+	};
+	__tmin(t[0], 0, t)
 }
 
 func main() -> int
 {
-	return tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int );
+	tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int )
 }
-
 

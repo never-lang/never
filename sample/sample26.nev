@@ -1,30 +1,30 @@
 func no(n -> float) -> float
 {
-    return n;
+    n
 }
 
 func mutrec(n -> float, no(float) -> float) -> float
 {
     func A(no(float) -> float, n -> float) -> float
     {
-        return (n == 1.0) ? B(1.0, no) : 87.0;
+        (n == 1.0) ? B(1.0, no) : 87.0
     }
     
     func B(n -> float, no(float) -> float) -> float
     {
-        return (n == 1.0) ? A(no, 10.0) : 12.0;
+        (n == 1.0) ? A(no, 10.0) : 12.0
     }
     
     func C(n -> float) -> float
     {
-        return A(no, n);
-    }
+        A(no, n)
+    };
     
-    return C(n);
+    C(n)
 }
 
 func main() -> int 
 {
-    return assert(mutrec(1.0, no) == 87.0);
+    assert(mutrec(1.0, no) == 87.0)
 }
 

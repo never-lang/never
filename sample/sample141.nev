@@ -3,21 +3,21 @@ func rodCut( to -> int ) -> int
 {
     func from_to( i -> int, to -> int, val -> int ) -> int
     {
-        return i < to ? from_to( i + 1, to, print(i) ) : to;
+        i < to ? from_to( i + 1, to, print(i) ) : to
     }
     func cuts( to -> int) -> int
     {
         func __cuts( i -> int, to -> int, val -> int ) -> int
         {
-            return i < to ? __cuts( i + 1, to - i - 1, from_to( 0, to, 0 ) ) : to;
-        }
-        return __cuts( 0, to, 0 );
-    }
-    return cuts( to );
+            i < to ? __cuts( i + 1, to - i - 1, from_to( 0, to, 0 ) ) : to
+        };
+        __cuts( 0, to, 0 )
+    };
+    cuts( to )
 }
 
 func main() -> int
 {
-    return rodCut( 8 );
+    rodCut( 8 )
 }
 

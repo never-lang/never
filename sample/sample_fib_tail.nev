@@ -1,10 +1,10 @@
 func fib(n -> int, a -> int, b -> int) -> int
 {
-    return (n == 0) ? a : (n == 1) ? b : fib(n - 1, b, a + b);
+    (n == 0) ? a : (n == 1) ? b : fib(n - 1, b, a + b)
 }
 
 func main() -> int
 {
-    return fib(20, 1, 1);
+    fib(20, 1, 1)
 }
 

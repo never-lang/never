@@ -1,6 +1,6 @@
 
 func main() -> float
 {
-    return sin(3.141);
+    sin(3.141)
 }
 

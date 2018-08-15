@@ -1,15 +1,15 @@
 func min(a -> float, b -> float) -> float 
 { 
-    return a < b ? a + a : b + b; 
+    a < b ? a + a : b + b
 }
 
 func execute(a -> float, b -> float, f1(float, float) -> float) -> float
 {
-    return f1(a, b);
+    f1(a, b)
 } 
  
 func main() -> int
 {
-    return assert(execute(15.0, 20.0, min) == 30.0);
+    assert(execute(15.0, 20.0, min) == 30.0)
 }
 

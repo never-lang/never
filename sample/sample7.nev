@@ -5,24 +5,24 @@ func twice(c1 -> float, c2 -> float) -> (float, float) -> float
 {
     func mult() -> float
     {
-        return c2 == 0.0 ? 0.0 : c1 / c2;
+         c2 == 0.0 ? 0.0 : c1 / c2
     }
 
     func twice_func(a -> float, b -> float) -> float
     {
         func twice_func_nest(a -> float, b -> float) -> float
         {
-            return mult();
-        }
-        return twice_func_nest(a, b);
-    }
+            mult()
+        };
+        twice_func_nest(a, b)
+    };
     
-    return twice_func;
+    twice_func
 }
 
 func main() -> float 
 {
-    return twice(12.0, 3.0)(10.0, 20.0);
+    twice(12.0, 3.0)(10.0, 20.0)
 }
 
 

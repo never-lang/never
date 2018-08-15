@@ -1,6 +1,6 @@
 
 func main() -> int 
 {
-    return assert((2 + 2 * 2) == 6);
+    assert((2 + 2 * 2) == 6)
 }
 

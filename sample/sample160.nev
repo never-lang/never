@@ -3,19 +3,19 @@ func printtab( tab[row, col] -> int ) -> int
 {
     func __printtab( i -> int, tab[row, col] -> int, val -> int ) -> int
     {
-        return i < row * col ?
-               __printtab( i + 1, tab, print( tab[i / col, i % col] )) : 0;
-    }
-    return __printtab ( 0, tab, 0 );
+        i < row * col ?
+          __printtab( i + 1, tab, print( tab[i / col, i % col] )) : 0
+    };
+    __printtab ( 0, tab, 0 )
 }
 
 func main() -> int
 {
-    return printtab( [[ 1, 2, 3 ],
-                      [ 3, 4, 5 ]] -> int
-                           *
-                     [[ 3, 4, 1, 1 ],
-                      [ 6, 7, 1, 1 ],
-                      [ 8, 2, 1, 1 ]] -> int );
+    printtab( [[ 1, 2, 3 ],
+               [ 3, 4, 5 ]] -> int
+                    *
+              [[ 3, 4, 1, 1 ],
+               [ 6, 7, 1, 1 ],
+               [ 8, 2, 1, 1 ]] -> int )
 }
 

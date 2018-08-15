@@ -1,11 +1,11 @@
 
 func add(a -> int, b -> int, c -> int) -> int
 {
-    return a + b + c;
+    a + b + c
 }
 
 func main(a -> int, b -> int) -> int
 {
-    return add(a, b, 1);
+    add(a, b, 1)
 }
 

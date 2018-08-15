@@ -3,16 +3,16 @@
  */
 func min(a -> float, b -> float) -> float
 { 
-    return a < b ? a : b;
+    a < b ? a : b
 } 
  
 func max(a -> float, b -> float) -> float
 {
-    return a > b ? a : b;
+    a > b ? a : b
 }
 
 func main() -> int
 {
-    return assert((1.0 < 2.0 ? min : max)(10.0, 20.0) == 10.0);
+    assert((1.0 < 2.0 ? min : max)(10.0, 20.0) == 10.0)
 }
 

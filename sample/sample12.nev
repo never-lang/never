@@ -3,15 +3,15 @@
  */
 func execute(a -> int, b -> int, f1(int, int) -> int) -> int
 {
-    return f1(a, b);
+    f1(a, b)
 } 
  
 func main() -> int
 {
-    return assert(execute(10, 20, 
-                  func min(a -> int, b -> int) -> int
-                  { 
-                       return a < b ? a : b; 
-                  }) == 10);
+    assert(execute(10, 20, 
+             func min(a -> int, b -> int) -> int
+             { 
+                  a < b ? a : b
+             }) == 10)
 }
 

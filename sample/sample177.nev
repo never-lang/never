@@ -1,23 +1,23 @@
 
 func fun(a -> float) -> float
 {
-    let f1 = func (a -> float) -> float { return 2.0 * a; }
+    let f1 = func (a -> float) -> float { 2.0 * a }
 
     let f2 = func () -> float
     {
-        return 120.0;
+        120.0
     }
 
     let f3 = func () -> float
     {
-        return 222.0;
-    }
+        222.0
+    };
 
-    return f1(a) + f2() + f3();
+    f1(a) + f2() + f3()
 }
 
 func main() -> float
 {
-    return fun(12.0);
+    fun(12.0)
 }
 

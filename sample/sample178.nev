@@ -4,13 +4,14 @@ func outer(a -> float, b -> float) -> float
     let p = a + b
     func inner(c -> float) -> float
     {
-        return p * c;
-    }
-    return inner(2.0);
+        p * c
+    };
+    
+    inner(2.0)
 }
 
 func main() -> float
 {
-    return outer(3.0, 5.0);
+    outer(3.0, 5.0)
 }
 

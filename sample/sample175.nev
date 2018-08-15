@@ -4,15 +4,15 @@ func outer(a -> float, b -> float) -> (float) -> float
     let p = (a + b) / 2.0
     func inner(c -> float) -> float
     {
-        let q = p + 1.0
-        return c * q;
-    }
+        let q = p + 1.0;
+        c * q
+    };
     
-    return inner;
+    inner
 }
 
 func main() -> float
 {
-    return outer(3.0, 5.0)(3.0);
+    outer(3.0, 5.0)(3.0)
 }
 
