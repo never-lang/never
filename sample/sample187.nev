@@ -1,0 +1,24 @@
+func rec(i -> int) -> int
+{
+    i > 0
+        ?
+            (i % 2 == 0)
+            ?
+            {
+                print(999);
+                rec(i - 1)
+            }
+            :
+            {
+                print(888);
+                rec(i - 1)
+            }
+        :
+        0
+}
+
+func main() -> int
+{
+    rec(5)
+}
+

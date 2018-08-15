@@ -5,7 +5,7 @@ func rec(i -> int) -> int
         {
             print(9999);
             print(8888);
-            rec(i - 1);
+            rec(i - 1)
         }
         :
         0

@@ -6,7 +6,7 @@ func f(i -> int) -> int
     {
         print(2 * i);
         print(a);
-        print(b);
+        print(b)
     }
 }
 

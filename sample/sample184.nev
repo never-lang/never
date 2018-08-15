@@ -3,7 +3,7 @@ func main() -> float
     {
         printf(10.0);
         printf(20.0);
-        printf(30.0);
+        printf(30.0)
     }
 }
 

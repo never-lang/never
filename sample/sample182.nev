@@ -3,7 +3,7 @@ func outer(to -> int) -> (int) -> int
 {
     let f = func rec(start -> int) -> int
     {
-        start < to ? rec(print(start) + 1) : 0
+        start < to ? { print(start); rec(start + 1) } : 0
     };
 
     f

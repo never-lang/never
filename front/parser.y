@@ -270,15 +270,15 @@ expr_list: expr_list ',' expr
     $$ = $1;
 };
 
-expr_seq: expr ';'
+expr_seq: expr
 {
     $$ = expr_list_new();
     expr_list_add_end($$, $1);
 };
 
-expr_seq: expr_seq expr ';'
+expr_seq: expr_seq ';' expr
 {
-    expr_list_add_end($1, $2);
+    expr_list_add_end($1, $3);
     $$ = $1;
 };
 
