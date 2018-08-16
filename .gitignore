@@ -17,3 +17,4 @@ test_vm
 build/
 front/parser.h
 front/parser.c
+front/parser.output
