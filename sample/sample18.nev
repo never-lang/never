@@ -6,7 +6,7 @@ func get(f(float, float) -> float) -> (float, float) -> float
 
 func main() -> int
 {
-    assert(get(func min(a -> float, b -> float) -> float { a < b ? a : b })(130.0, 20.0 - -80.0) == 100.0)
+    assert(get(lambda func min(a -> float, b -> float) -> float { a < b ? a : b })(130.0, 20.0 - -80.0) == 100.0)
 }
 
 

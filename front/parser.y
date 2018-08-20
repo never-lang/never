@@ -32,7 +32,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_VAR
 %token <val.str_value> TOK_FUNC
 %token <val.str_value> TOK_RET /* -> */
-%token <val.str_value> TOK_RETURN
+%token <val.str_value> TOK_LAMBDA
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -236,9 +236,9 @@ array: '[' expr_list ']'
     $$->line_no = $<line_no>1;
 };
 
-expr: func
+expr: TOK_LAMBDA func
 {
-    $$ = expr_new_func($1);
+    $$ = expr_new_func($2);
 };
 
 expr: expr '(' ')'
@@ -439,22 +439,22 @@ func: TOK_FUNC TOK_ID error
     $$ = NULL;
 };
 
-func_body: '{' bind_list ';' expr '}'
+func_body: '{' bind_list ';' expr_seq '}'
 {
     $$ = func_body_new($2, NULL, $4);
 };
 
-func_body: '{' func_list ';' expr '}'
+func_body: '{' func_list ';' expr_seq '}'
 {
     $$ = func_body_new(NULL, $2, $4);
 };
 
-func_body: '{' bind_list func_list ';' expr '}'
+func_body: '{' bind_list func_list ';' expr_seq '}'
 {
     $$ = func_body_new($2, $3, $5);
 };
 
-func_body: '{' expr '}'
+func_body: '{' expr_seq '}'
 {
     $$ = func_body_new(NULL, NULL, $2);
 };

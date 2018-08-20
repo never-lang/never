@@ -70,7 +70,8 @@ void func_delete(func * value);
 
 void func_print(func * value);
 
-func_body * func_body_new(bind_list * binds, func_list * funcs, expr * ret);
+func_body * func_body_new(bind_list * binds, func_list * funcs, expr_list * ret);
+func_body * func_body_new_expr(bind_list * binds, func_list * funcs, expr * ret);
 void func_body_delete(func_body * body);
 
 func_list_node * func_list_node_new(func * value);

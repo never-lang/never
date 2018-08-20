@@ -1,14 +1,14 @@
 
 func fun(a -> float) -> float
 {
-    let f1 = func (a -> float) -> float { 2.0 * a }
+    let f1 = lambda func (a -> float) -> float { 2.0 * a }
 
-    let f2 = func () -> float
+    let f2 = lambda func () -> float
     {
         120.0
     }
 
-    let f3 = func () -> float
+    let f3 = lambda func () -> float
     {
         222.0
     };

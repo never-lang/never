@@ -1,5 +1,4 @@
 
-
 func dir_deg(d -> int) -> (float) -> float
 {
     func fah2cel(f -> float) -> float

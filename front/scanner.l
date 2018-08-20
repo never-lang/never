@@ -61,10 +61,10 @@ func {
     return TOK_FUNC;
 }
 
-return {
+lambda {
     tokp->line_no = line_no;
-    scanner_printf("return\n");
-    return TOK_RETURN;
+    scanner_printf("lambda\n");
+    return TOK_LAMBDA;
 }
 
 int {

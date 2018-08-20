@@ -97,7 +97,7 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
         printf("build_in with ret type not supported\n");
         assert(0);
     }
-    body = func_body_new(NULL, NULL, func_expr);
+    body = func_body_new_expr(NULL, NULL, func_expr);
 
     func_id = strdup(name);
     func_value = func_new(func_id, formal, param_ret, body);

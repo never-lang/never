@@ -1,7 +1,7 @@
 func outer(to -> int) -> () -> int
 {
     let p = 2 * to
-    let f = func () -> int
+    let f = lambda func () -> int
     {
         p
     };

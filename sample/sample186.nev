@@ -3,11 +3,9 @@ func f(i -> int) -> int
     let a = i * i
     let b = i * i * i;
     
-    {
-        print(2 * i);
-        print(a);
-        print(b)
-    }
+    print(2 * i);
+    print(a);
+    print(b)
 }
 
 func main() -> int

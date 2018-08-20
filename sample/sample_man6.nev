@@ -6,7 +6,7 @@ func degrees(conv(float) -> float, degree -> float) -> float
 
 func main() -> float
 {
-    degrees(func rea2cel(d -> float) -> float
+    degrees(lambda func rea2cel(d -> float) -> float
             {
                 d * 4.0 / 5.0
             }, 100.0)

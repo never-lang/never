@@ -320,7 +320,6 @@ tailrec_type expr_seq_tailrec(unsigned int syn_level, func * func_value,
             if (rec_expr == TAILREC_FOUND || rec_expr == TAILREC_NOT_POSSIBLE)
             {
                 rec = TAILREC_NOT_POSSIBLE;
-                break;
             }
         }
         node = node->next;
