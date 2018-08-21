@@ -7,14 +7,15 @@ addons:
 compiler:
   - clang
   - gcc
-# Build steps
 script:
-  - mkdir build && cd build
+# Build steps
+  - mkdir -p build && cd build
   - cmake ..
   - make && make test
 after_success:
-  # Creating report
-  - cmake -DENABLE_COVERAGE=ON
+# Creating report
+  - mkdir -p build && cd build
+  - cmake -DENABLE_COVERAGE=ON ..
   - make
   - make test
   # Uploading report to CodeCov
