@@ -1,10 +1,21 @@
 language: c
+addons:
+  apt:
+    packages: &1
+    - lcov
 # Compiler selection
 compiler:
   - clang
   - gcc
-# Build steps
 script:
-  - mkdir build && cd build
-  - cmake ..
-  - make && make test
+# Build steps
+  - cmake -G "Unix Makefiles"
+  - make -j 8
+  - make -j 8 test
+after_success:
+# Creating report
+  - cmake -DENABLE_COVERAGE=ON
+  - make
+  - make test
+  # Uploading report to CodeCov
+  - bash <(curl -s https://codecov.io/bash)
