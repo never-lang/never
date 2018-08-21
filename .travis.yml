@@ -1,4 +1,8 @@
 language: c
+addons:
+  apt:
+    packages: &1
+    - lcov
 # Compiler selection
 compiler:
   - clang
@@ -8,3 +12,10 @@ script:
   - mkdir build && cd build
   - cmake ..
   - make && make test
+after_success:
+  # Creating report
+  - cmake -DENABLE_COVERAGE=ON
+  - make
+  - make test
+  # Uploading report to CodeCov
+  - bash <(curl -s https://codecov.io/bash)

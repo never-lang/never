@@ -7,6 +7,16 @@ if (MSVC)
 endif (MSVC)
 
 
+if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
+  if(ENABLE_COVERAGE)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g ")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+  endif(ENABLE_COVERAGE)
+endif ()
+
 # test
 include_directories(".." "../include" "../front" "../back")
 add_executable(test_exec test_exec.c)
