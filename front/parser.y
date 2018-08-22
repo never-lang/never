@@ -51,6 +51,7 @@ int yyerror(never ** nev, char * str)
 %type <val.func_body_value> func_body
 %type <val.never_value> never
 
+%right '='
 %right <val.str_value> '?' ':'
 %left TOK_OR
 %left TOK_AND
@@ -253,9 +254,16 @@ expr: expr '(' expr_list ')'
     $$->line_no = $1->line_no;
 };
 
+expr: expr '=' expr
+{
+    $$ = expr_new_ass($1, $3);
+    $$->line_no = $<line_no>2;
+};
+
 expr: '{' expr_seq '}'
 {
     $$ = expr_new_seq($2);
+    $$->line_no = $<line_no>1;
 };
 
 expr_list: expr

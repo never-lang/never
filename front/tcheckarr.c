@@ -171,14 +171,14 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
         array_well_formed(value, &arr_result);
         if (arr_result == TYPECHECK_SUCC)
         {
-            value->comb = COMB_TYPE_ARRAY;
-            value->comb_ret = value->array.array_value->ret;
-            value->comb_dims = value->array.array_value->dims->count;
+            value->comb.comb = COMB_TYPE_ARRAY;
+            value->comb.comb_ret = value->array.array_value->ret;
+            value->comb.comb_dims = value->array.array_value->dims->count;
         }
         else
         {
             *result = TYPECHECK_FAIL;
-            value->comb = COMB_TYPE_ERR;
+            value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no, "array is not well formed\n");
         }
     }
@@ -200,13 +200,13 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
 
         if (*result == TYPECHECK_SUCC)
         {
-            value->comb = COMB_TYPE_ARRAY;
-            value->comb_ret = value->array.array_value->ret;
-            value->comb_dims = value->array.array_value->dims->count;
+            value->comb.comb = COMB_TYPE_ARRAY;
+            value->comb.comb_ret = value->array.array_value->ret;
+            value->comb.comb_dims = value->array.array_value->dims->count;
         }
         else
         {
-            value->comb = COMB_TYPE_ERR;
+            value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no, "array is not well formed\n");
         }
     }

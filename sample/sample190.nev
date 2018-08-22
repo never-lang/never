@@ -1,0 +1,14 @@
+func f(i -> int) -> int
+{
+    let a = 0
+    let b = i * i * i;
+    
+    a = 10;
+    b = a + 20
+}
+
+func main() -> int
+{
+    f(5)
+}
+

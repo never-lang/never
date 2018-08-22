@@ -32,7 +32,7 @@ expr * expr_new_int(int int_value)
 
     ret->type = EXPR_INT;
     ret->int_value = int_value;
-    ret->comb = COMB_TYPE_INT;
+    ret->comb.comb = COMB_TYPE_INT;
     ret->line_no = 0;
 
     return ret;
@@ -44,7 +44,7 @@ expr * expr_new_float(float float_value)
 
     ret->type = EXPR_FLOAT;
     ret->float_value = float_value;
-    ret->comb = COMB_TYPE_FLOAT;
+    ret->comb.comb = COMB_TYPE_FLOAT;
     ret->line_no = 0;
 
     return ret;
@@ -56,7 +56,7 @@ expr * expr_new_id(char * id)
 
     ret->type = EXPR_ID;
     ret->id.id = id;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
 
     return ret;
@@ -67,7 +67,7 @@ expr * expr_new_one(int type, expr * left)
     expr * ret = (expr *)malloc(sizeof(expr));
 
     ret->type = type;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
     ret->left = left;
     ret->middle = NULL;
@@ -81,7 +81,7 @@ expr * expr_new_two(int type, expr * left, expr * right)
     expr * ret = (expr *)malloc(sizeof(expr));
 
     ret->type = type;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
     ret->left = left;
     ret->middle = NULL;
@@ -95,7 +95,7 @@ expr * expr_new_three(int type, expr * left, expr * middle, expr * right)
     expr * ret = (expr *)malloc(sizeof(expr));
 
     ret->type = type;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
     ret->left = left;
     ret->middle = middle;
@@ -109,9 +109,9 @@ expr * expr_new_array(array * value)
     expr * ret = (expr *)malloc(sizeof(expr));
 
     ret->type = EXPR_ARRAY;
-    ret->comb = COMB_TYPE_UNKNOWN;
-    ret->comb_params = NULL;
-    ret->comb_ret = NULL;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb_params = NULL;
+    ret->comb.comb_ret = NULL;
     ret->line_no = 0;
     ret->array.array_value = value;
 
@@ -123,7 +123,7 @@ expr * expr_new_array_deref(expr * array_expr, expr_list * ref)
     expr * ret = (expr *)malloc(sizeof(expr));
 
     ret->type = EXPR_ARRAY_DEREF;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
     ret->array_deref.array_expr = array_expr;
     ret->array_deref.ref = ref;
@@ -137,7 +137,7 @@ expr * expr_new_seq(expr_list * list)
     
     ret->type = EXPR_SEQ;
     ret->line_no = 0;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->seq.list = list;
     
     return ret;
@@ -149,7 +149,7 @@ expr * expr_new_func(func * value)
 
     ret->type = EXPR_FUNC;
     ret->line_no = 0;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->func_value = value;
 
     return ret;
@@ -161,7 +161,7 @@ expr * expr_new_call(expr * func_expr, expr_list * params)
 
     ret->type = EXPR_CALL;
     ret->line_no = 0;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->call.func_expr = func_expr;
     ret->call.params = params;
 
@@ -174,11 +174,24 @@ expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret)
 
     ret->type = EXPR_BUILD_IN;
     ret->line_no = 0;
-    ret->comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->func_build_in.id = id;
     ret->func_build_in.param = params;
     ret->func_build_in.ret = param_ret;
 
+    return ret;
+}
+
+expr * expr_new_ass(expr * l_value, expr * r_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_ASS;
+    ret->line_no = 0;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->ass.l_value = l_value;
+    ret->ass.r_value = r_value;
+    
     return ret;
 }
 
@@ -191,7 +204,7 @@ expr * expr_conv(expr * expr_value, expr_type conv)
     *ret = *expr_value;
 
     expr_value->type = conv;
-    expr_value->comb =
+    expr_value->comb.comb =
         (conv == EXPR_INT_TO_FLOAT) ? COMB_TYPE_FLOAT : COMB_TYPE_INT;
     expr_value->left = ret;
 
@@ -277,6 +290,16 @@ void expr_delete(expr * value)
         if (value->func_build_in.ret != NULL)
         {
             param_delete(value->func_build_in.ret);
+        }
+        break;
+    case EXPR_ASS:
+        if (value->ass.l_value != NULL)
+        {
+            free(value->ass.l_value);
+        }
+        if (value->ass.r_value != NULL)
+        {
+            expr_delete(value->ass.r_value);
         }
         break;
     case EXPR_INT_TO_FLOAT:

@@ -54,9 +54,10 @@ typedef enum expr_type
     EXPR_LAST_CALL = 24,   /* ID (expr_list */
     EXPR_FUNC = 25,        /* func ID ( ... ) */
     EXPR_SEQ = 26,
-    EXPR_BUILD_IN = 27,
-    EXPR_INT_TO_FLOAT = 28,
-    EXPR_FLOAT_TO_INT = 29
+    EXPR_ASS = 27,
+    EXPR_BUILD_IN = 28,
+    EXPR_INT_TO_FLOAT = 29,
+    EXPR_FLOAT_TO_INT = 30
 } expr_type;
 
 typedef enum comb_type
@@ -87,13 +88,18 @@ typedef struct bind bind;
 typedef struct func func;
 typedef struct expr_list expr_list;
 
-typedef struct expr
+typedef struct expr_comb
 {
-    expr_type type;
     comb_type comb;
     struct param_list * comb_params; /* function arguments */
     struct param * comb_ret;       /* function ret */
     int comb_dims;               /* array dimensions */
+} expr_comb;
+
+typedef struct expr
+{
+    expr_type type;
+    expr_comb comb;
     unsigned int line_no;
     union {
         int int_value;     /* EXPR_INT */
@@ -144,6 +150,11 @@ typedef struct expr
             struct expr * array_expr; /* EXPR_ARRAY_DEREF */
             struct expr_list * ref;
         } array_deref;
+        struct
+        {
+            struct expr * l_value;
+            struct expr * r_value;
+        } ass;
     };
 } expr;
 
@@ -173,6 +184,7 @@ expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
 expr * expr_new_seq(expr_list * list);
 expr * expr_new_func(func * value);
 expr * expr_new_call(expr * func_expr, expr_list * params);
+expr * expr_new_ass(expr * l_value, expr * r_value);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 
 expr * expr_conv(expr * expr_value, expr_type conv);

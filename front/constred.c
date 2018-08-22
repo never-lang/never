@@ -41,7 +41,7 @@ int expr_constred(expr * value, int * result)
             expr * left_value = value->left;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = -(left_value->int_value);
 
             expr_delete(left_value);
@@ -51,7 +51,7 @@ int expr_constred(expr * value, int * result)
             expr * left_value = value->left;
 
             value->type = EXPR_FLOAT;
-            value->comb = COMB_TYPE_FLOAT;
+            value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value = -(left_value->float_value);
 
             expr_delete(left_value);
@@ -67,7 +67,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value + right_value->int_value;
 
             expr_delete(left_value);
@@ -80,7 +80,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_FLOAT;
-            value->comb = COMB_TYPE_FLOAT;
+            value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value =
                 left_value->float_value + right_value->float_value;
 
@@ -98,7 +98,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value - right_value->int_value;
 
             expr_delete(left_value);
@@ -111,7 +111,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_FLOAT;
-            value->comb = COMB_TYPE_FLOAT;
+            value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value =
                 left_value->float_value - right_value->float_value;
 
@@ -129,7 +129,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value * right_value->int_value;
 
             expr_delete(left_value);
@@ -142,7 +142,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_FLOAT;
-            value->comb = COMB_TYPE_FLOAT;
+            value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value =
                 left_value->float_value * right_value->float_value;
 
@@ -167,7 +167,7 @@ int expr_constred(expr * value, int * result)
             }
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value / right_value->int_value;
 
             expr_delete(left_value);
@@ -187,7 +187,7 @@ int expr_constred(expr * value, int * result)
             }
 
             value->type = EXPR_FLOAT;
-            value->comb = COMB_TYPE_FLOAT;
+            value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value =
                 left_value->float_value / right_value->float_value;
 
@@ -212,7 +212,7 @@ int expr_constred(expr * value, int * result)
             }
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value % right_value->int_value;
 
             expr_delete(left_value);
@@ -229,7 +229,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value < right_value->int_value;
 
             expr_delete(left_value);
@@ -242,7 +242,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value =
                 left_value->float_value < right_value->float_value;
 
@@ -260,7 +260,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value > right_value->int_value;
 
             expr_delete(left_value);
@@ -273,7 +273,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value =
                 left_value->float_value > right_value->float_value;
 
@@ -291,7 +291,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value <= right_value->int_value;
 
             expr_delete(left_value);
@@ -304,7 +304,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value =
                 left_value->float_value <= right_value->float_value;
 
@@ -322,7 +322,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value >= right_value->int_value;
 
             expr_delete(left_value);
@@ -335,7 +335,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value =
                 left_value->float_value >= right_value->float_value;
 
@@ -353,7 +353,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value == right_value->int_value;
 
             expr_delete(left_value);
@@ -366,7 +366,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value =
                 left_value->float_value == right_value->float_value;
 
@@ -384,7 +384,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value != right_value->int_value;
 
             expr_delete(left_value);
@@ -397,7 +397,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value =
                 left_value->float_value != right_value->float_value;
 
@@ -415,7 +415,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value && right_value->int_value;
 
             expr_delete(left_value);
@@ -432,7 +432,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value || right_value->int_value;
 
             expr_delete(left_value);
@@ -448,7 +448,7 @@ int expr_constred(expr * value, int * result)
             expr * right_value = value->right;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = !(left_value->int_value);
 
             expr_delete(left_value);
@@ -463,7 +463,7 @@ int expr_constred(expr * value, int * result)
             expr * left_value = value->left;
 
             value->type = EXPR_INT;
-            value->comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_INT;
             value->int_value = left_value->int_value;
 
             expr_delete(left_value);
@@ -473,7 +473,7 @@ int expr_constred(expr * value, int * result)
             expr * left_value = value->left;
 
             value->type = EXPR_FLOAT;
-            value->comb = COMB_TYPE_FLOAT;
+            value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value = left_value->float_value;
 
             expr_delete(left_value);
@@ -537,6 +537,9 @@ int expr_constred(expr * value, int * result)
         {
             expr_list_constred(value->seq.list, result);
         }
+        break;
+    case EXPR_ASS:
+        assert(0);
         break;
     case EXPR_BUILD_IN:
         expr_list_constred(value->func_build_in.param, result);
