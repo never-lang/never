@@ -182,15 +182,15 @@ expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret)
     return ret;
 }
 
-expr * expr_new_ass(expr * l_value, expr * r_value)
+expr * expr_new_ass(expr * left, expr * right)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_ASS;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
-    ret->ass.l_value = l_value;
-    ret->ass.r_value = r_value;
+    ret->ass.left = left;
+    ret->ass.right = right;
     
     return ret;
 }
@@ -293,13 +293,13 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_ASS:
-        if (value->ass.l_value != NULL)
+        if (value->ass.left != NULL)
         {
-            free(value->ass.l_value);
+            free(value->ass.left);
         }
-        if (value->ass.r_value != NULL)
+        if (value->ass.right != NULL)
         {
-            expr_delete(value->ass.r_value);
+            expr_delete(value->ass.right);
         }
         break;
     case EXPR_INT_TO_FLOAT:

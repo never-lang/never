@@ -149,6 +149,20 @@ int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_li
     }
 }
 
+int array_cmp(int comb_dims_one, param * ret_one,
+              int comb_dims_two, param * ret_two)
+{
+    if (comb_dims_one == comb_dims_two &&
+        param_cmp(ret_one, ret_two) == TYPECHECK_SUCC)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else
+    {
+        return TYPECHECK_FAIL;
+    }
+}
+
 int param_expr_array_cmp(param * param_value, expr * expr_value)
 {
     if (param_value->dims->count != expr_value->comb.comb_dims)
@@ -720,6 +734,7 @@ int expr_div_check_type(symtab * tab, expr * value, unsigned int syn_level,
 {
     expr_check_type(tab, value->left, syn_level, result);
     expr_check_type(tab, value->right, syn_level, result);
+    
     if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
     {
@@ -759,6 +774,57 @@ int expr_div_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
+int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
+                        int * result)
+{
+    expr_check_type(tab, value->left, syn_level, result);
+    expr_check_type(tab, value->right, syn_level, result);
+
+    if (value->left->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
+             value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        value->comb.comb = COMB_TYPE_FLOAT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FUNC &&
+             value->right->comb.comb == COMB_TYPE_FUNC &&
+             func_cmp(value->middle->comb.comb_params,
+                      value->middle->comb.comb_ret,
+                      value->right->comb.comb_params,
+                      value->right->comb.comb_ret) == TYPECHECK_SUCC)
+    {
+        value->comb.comb = COMB_TYPE_FUNC;
+        value->comb.comb_params = value->middle->comb.comb_params;
+        value->comb.comb_ret = value->middle->comb.comb_ret;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
+             value->right->comb.comb == COMB_TYPE_ARRAY &&
+             array_cmp(value->middle->comb.comb_dims,
+                       value->middle->comb.comb_ret,
+                       value->right->comb.comb_dims,
+                       value->right->comb.comb_ret) == TYPECHECK_SUCC)
+    {
+        value->comb.comb = COMB_TYPE_ARRAY;
+        value->comb.comb_dims = value->middle->comb.comb_dims;
+        value->comb.comb_ret = value->middle->comb.comb_ret;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "cannot assign different types %s %s\n",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+    }
+
+    return 0;
+}
+
 int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
                          int * result)
 {
@@ -772,7 +838,8 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
         {
             if (value->middle->comb.comb == COMB_TYPE_FUNC)
             {
-                if (func_cmp(value->middle->comb.comb_params, value->middle->comb.comb_ret,
+                if (func_cmp(value->middle->comb.comb_params,
+                             value->middle->comb.comb_ret,
                              value->right->comb.comb_params,
                              value->right->comb.comb_ret) == TYPECHECK_SUCC)
                 {
@@ -787,6 +854,26 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
                                     "functions are different %s:%u %s:%u\n",
                                     value->middle->id, value->middle->line_no,
                                     value->right->id, value->right->line_no);
+                }
+            }
+            else if (value->middle->comb.comb == COMB_TYPE_ARRAY)
+            {
+                if (array_cmp(value->middle->comb.comb_dims,
+                              value->middle->comb.comb_ret,
+                              value->right->comb.comb_dims,
+                              value->right->comb.comb_ret) == TYPECHECK_SUCC)
+                {
+                    value->comb.comb = COMB_TYPE_ARRAY;
+                    value->comb.comb_dims = value->middle->comb.comb_dims;
+                    value->comb.comb_ret = value->middle->comb.comb_ret;
+                }
+                else
+                {
+                    *result = TYPECHECK_FAIL;
+                    print_error_msg(value->line_no,
+                                    "arrays are different first line %u second line %u\n",
+                                    value->middle->line_no,
+                                    value->right->line_no);
                 }
             }
             else
@@ -1104,7 +1191,7 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_ASS:
-        assert(0);
+        expr_ass_check_type(tab, value, syn_level, result);
         break;
     case EXPR_BUILD_IN:
         expr_list_check_type(tab, value->func_build_in.param, syn_level, result);
@@ -1382,7 +1469,8 @@ int print_func_expr(expr * value, int depth)
             print_func_expr_list(value->seq.list, depth);
         }
     case EXPR_ASS:
-        assert(0);
+        print_func_expr(value->left, depth);
+        print_func_expr(value->right, depth);
         break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)

@@ -539,7 +539,8 @@ int expr_constred(expr * value, int * result)
         }
         break;
     case EXPR_ASS:
-        assert(0);
+        expr_constred(value->left, result);
+        expr_constred(value->right, result);
         break;
     case EXPR_BUILD_IN:
         expr_list_constred(value->func_build_in.param, result);

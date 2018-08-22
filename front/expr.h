@@ -152,8 +152,8 @@ typedef struct expr
         } array_deref;
         struct
         {
-            struct expr * l_value;
-            struct expr * r_value;
+            struct expr * left;
+            struct expr * right;
         } ass;
     };
 } expr;
@@ -184,7 +184,7 @@ expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
 expr * expr_new_seq(expr_list * list);
 expr * expr_new_func(func * value);
 expr * expr_new_call(expr * func_expr, expr_list * params);
-expr * expr_new_ass(expr * l_value, expr * r_value);
+expr * expr_new_ass(expr * left, expr * right);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 
 expr * expr_conv(expr * expr_value, expr_type conv);

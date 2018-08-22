@@ -31,8 +31,10 @@ int expr_set_return_type(expr * value, param * ret);
 
 int param_cmp(param * param_one, param * param_two);
 int param_list_cmp(param_list * param_one, param_list * param_two);
-int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_list_two,
-             param * ret_two);
+int func_cmp(param_list * param_list_one, param * ret_one,
+             param_list * param_list_two, param * ret_two);
+int array_cmp(int comb_dims_one, param * ret_one,
+              int comb_dims_two, param * ret_two); 
 
 int param_expr_array_cmp(param * param_value, expr * expr_value);
 int param_expr_cmp(param * param_value, expr * expr_value);
@@ -64,6 +66,8 @@ int expr_add_sub_check_type(symtab * tab, expr * value, unsigned int syn_level,
                             int * result);
 int expr_mul_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result);
 int expr_div_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result);
+int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
+                        int * result);
 int expr_array_deref_check_type(symtab * tab, expr * value, unsigned int syn_level,
                                 int * result);
 int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,

@@ -112,6 +112,8 @@ int expr_or_emit(expr * value, int stack_level, bytecode_list * code,
                  int * result);
 int expr_not_emit(expr * value, int stack_level, bytecode_list * code,
                   int * result);
+int expr_ass_emit(expr * value, int stack_level, bytecode_list * code,
+                  int * result);
 int expr_cond_emit(expr * value, int stack_level, bytecode_list * code,
                    int * result);
 int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
