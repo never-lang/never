@@ -832,72 +832,76 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
     expr_check_type(tab, value->middle, syn_level, result);
     expr_check_type(tab, value->right, syn_level, result);
 
-    if (value->left->comb.comb == COMB_TYPE_INT)
-    {
-        if (value->middle->comb.comb == value->right->comb.comb)
-        {
-            if (value->middle->comb.comb == COMB_TYPE_FUNC)
-            {
-                if (func_cmp(value->middle->comb.comb_params,
-                             value->middle->comb.comb_ret,
-                             value->right->comb.comb_params,
-                             value->right->comb.comb_ret) == TYPECHECK_SUCC)
-                {
-                    value->comb.comb = COMB_TYPE_FUNC;
-                    value->comb.comb_params = value->middle->comb.comb_params;
-                    value->comb.comb_ret = value->middle->comb.comb_ret;
-                }
-                else
-                {
-                    *result = TYPECHECK_FAIL;
-                    print_error_msg(value->line_no,
-                                    "functions are different %s:%u %s:%u\n",
-                                    value->middle->id, value->middle->line_no,
-                                    value->right->id, value->right->line_no);
-                }
-            }
-            else if (value->middle->comb.comb == COMB_TYPE_ARRAY)
-            {
-                if (array_cmp(value->middle->comb.comb_dims,
-                              value->middle->comb.comb_ret,
-                              value->right->comb.comb_dims,
-                              value->right->comb.comb_ret) == TYPECHECK_SUCC)
-                {
-                    value->comb.comb = COMB_TYPE_ARRAY;
-                    value->comb.comb_dims = value->middle->comb.comb_dims;
-                    value->comb.comb_ret = value->middle->comb.comb_ret;
-                }
-                else
-                {
-                    *result = TYPECHECK_FAIL;
-                    print_error_msg(value->line_no,
-                                    "arrays are different first line %u second line %u\n",
-                                    value->middle->line_no,
-                                    value->right->line_no);
-                }
-            }
-            else
-            {
-                value->comb.comb = value->middle->comb.comb;
-            }
-        }
-        else
-        {
-            print_error_msg(
-                value->line_no,
-                "types on conditional expression do not match %s %s\n",
-                comb_type_str(value->middle->comb.comb),
-                comb_type_str(value->right->comb.comb));
-        }
-    }
-    else
+    if (value->left->comb.comb != COMB_TYPE_INT)
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
                         "cannot execute conditional operator on %s\n",
                         comb_type_str(value->left->comb.comb));
+        return 0;
     }
+    
+    if (value->middle->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = value->middle->comb.comb;
+    }
+    else if (value->middle->comb.comb == COMB_TYPE_FLOAT &&
+             value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        value->comb.comb = value->middle->comb.comb;
+    }
+    else if (value->middle->comb.comb == COMB_TYPE_FUNC &&
+             value->right->comb.comb == COMB_TYPE_FUNC)
+    {
+        if (func_cmp(value->middle->comb.comb_params,
+                     value->middle->comb.comb_ret,
+                     value->right->comb.comb_params,
+                     value->right->comb.comb_ret) == TYPECHECK_SUCC)
+        {
+            value->comb.comb = COMB_TYPE_FUNC;
+            value->comb.comb_params = value->middle->comb.comb_params;
+            value->comb.comb_ret = value->middle->comb.comb_ret;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(value->line_no,
+                            "functions are different %s:%u %s:%u\n",
+                            value->middle->id, value->middle->line_no,
+                            value->right->id, value->right->line_no);
+        }
+    }
+    else if (value->middle->comb.comb == COMB_TYPE_ARRAY)
+    {
+         if (array_cmp(value->middle->comb.comb_dims,
+                       value->middle->comb.comb_ret,
+                       value->right->comb.comb_dims,
+                       value->right->comb.comb_ret) == TYPECHECK_SUCC)
+         {
+             value->comb.comb = COMB_TYPE_ARRAY;
+             value->comb.comb_dims = value->middle->comb.comb_dims;
+             value->comb.comb_ret = value->middle->comb.comb_ret;
+         }
+         else
+         {
+             *result = TYPECHECK_FAIL;
+             print_error_msg(value->line_no,
+                             "arrays are different first line %u second line %u\n",
+                             value->middle->line_no,
+                             value->right->line_no);
+         }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no,
+                        "types on conditional expression do not match %s %s\n",
+                        comb_type_str(value->middle->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+    }
+
     return 0;
 }
 
