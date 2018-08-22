@@ -1,0 +1,10 @@
+func f(a -> int) -> [_] -> int
+{
+    (a == 0) ? [ 1, 1 ] -> int : [ 1, 1 ] -> int
+}
+
+func main() -> int
+{
+    f(3)[0]
+}
+

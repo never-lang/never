@@ -295,7 +295,7 @@ void expr_delete(expr * value)
     case EXPR_ASS:
         if (value->ass.left != NULL)
         {
-            free(value->ass.left);
+            expr_delete(value->ass.left);
         }
         if (value->ass.right != NULL)
         {
