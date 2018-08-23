@@ -33,6 +33,19 @@ object_arr_dim * object_arr_dim_new(unsigned int dims)
 
 void object_arr_dim_delete(object_arr_dim * dv) { free(dv); }
 
+void object_arr_delete(object_arr * arr_value)
+{
+    if (arr_value->value != NULL)
+    {
+        free(arr_value->value);
+    }
+    if (arr_value->dv != NULL)
+    {
+        object_arr_dim_delete(arr_value->dv);
+    }
+    free(arr_value);
+}
+
 object * object_new()
 {
     object * obj = (object *)malloc(sizeof(object));
@@ -264,15 +277,7 @@ void object_delete(object * obj)
     case OBJECT_ARRAY:
         if (obj->arr_value != NULL)
         {
-            if (obj->arr_value->value != NULL)
-            {
-                free(obj->arr_value->value);
-            }
-            if (obj->arr_value->dv != NULL)
-            {
-                object_arr_dim_delete(obj->arr_value->dv);
-            }
-            free(obj->arr_value);
+            object_arr_delete(obj->arr_value);
         }
         break;
     case OBJECT_FUNC:

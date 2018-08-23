@@ -109,6 +109,11 @@ void vm_execute_op_mul_arr_float(vm * machine, bytecode * code);
 void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code);
 void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code);
 
+void vm_execute_op_ass_int(vm * machine, bytecode * code);
+void vm_execute_op_ass_float(vm * machine, bytecode * code);
+void vm_execute_op_ass_array(vm * machine, bytecode * code);
+void vm_execute_op_ass_func(vm * machine, bytecode * code);
+
 void vm_execute_jumpz(vm * machine, bytecode * code);
 void vm_execute_jump(vm * machine, bytecode * code);
 void vm_execute_label(vm * machine, bytecode * code);

@@ -785,6 +785,22 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = COMB_TYPE_INT;
     }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        expr_conv(value->right, EXPR_FLOAT_TO_INT);
+        value->comb.comb = COMB_TYPE_INT;
+
+        print_warning_msg(value->line_no, "converted float to int\n");
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
+             value->right->comb.comb == COMB_TYPE_INT)
+    {
+        expr_conv(value->right, EXPR_INT_TO_FLOAT);
+        value->comb.comb = COMB_TYPE_FLOAT;
+
+        print_warning_msg(value->line_no, "converted int to float\n");
+    }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
     {
@@ -803,14 +819,14 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             array_cmp(value->middle->comb.comb_dims,
-                       value->middle->comb.comb_ret,
+             array_cmp(value->left->comb.comb_dims,
+                       value->left->comb.comb_ret,
                        value->right->comb.comb_dims,
                        value->right->comb.comb_ret) == TYPECHECK_SUCC)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->middle->comb.comb_dims;
-        value->comb.comb_ret = value->middle->comb.comb_ret;
+        value->comb.comb_dims = value->left->comb.comb_dims;
+        value->comb.comb_ret = value->left->comb.comb_ret;
     }
     else
     {

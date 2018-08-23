@@ -82,6 +82,8 @@ void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv,
 unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv,
                                  object_arr_dim * addr, int * oobounds);
 
+void object_arr_delete(object_arr * arr_value);
+
 object * object_new_int(int value);
 object * object_new_float(float value);
 object * object_new_vec(unsigned int size);

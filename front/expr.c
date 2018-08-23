@@ -189,8 +189,8 @@ expr * expr_new_ass(expr * left, expr * right)
     ret->type = EXPR_ASS;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
-    ret->ass.left = left;
-    ret->ass.right = right;
+    ret->left = left;
+    ret->right = right;
     
     return ret;
 }
@@ -293,13 +293,13 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_ASS:
-        if (value->ass.left != NULL)
+        if (value->left != NULL)
         {
-            expr_delete(value->ass.left);
+            expr_delete(value->left);
         }
-        if (value->ass.right != NULL)
+        if (value->right != NULL)
         {
-            expr_delete(value->ass.right);
+            expr_delete(value->right);
         }
         break;
     case EXPR_INT_TO_FLOAT:

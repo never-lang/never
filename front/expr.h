@@ -150,11 +150,6 @@ typedef struct expr
             struct expr * array_expr; /* EXPR_ARRAY_DEREF */
             struct expr_list * ref;
         } array_deref;
-        struct
-        {
-            struct expr * left;
-            struct expr * right;
-        } ass;
     };
 } expr;
 

@@ -83,6 +83,11 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_MUL_ARR_ARR_INT, vm_execute_op_mul_arr_arr_int },
     { BYTECODE_OP_MUL_ARR_ARR_FLOAT, vm_execute_op_mul_arr_arr_float },
 
+    { BYTECODE_OP_ASS_INT, vm_execute_op_ass_int },
+    { BYTECODE_OP_ASS_FLOAT, vm_execute_op_ass_float },
+    { BYTECODE_OP_ASS_ARRAY, vm_execute_op_ass_array },
+    { BYTECODE_OP_ASS_FUNC, vm_execute_op_ass_func },
+
     { BYTECODE_JUMPZ, vm_execute_jumpz },
     { BYTECODE_JUMP, vm_execute_jump },
     { BYTECODE_LABEL, vm_execute_label },
@@ -461,8 +466,8 @@ void vm_execute_op_lte_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     int a =
-        gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-    int b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a >= b);
 
     entry.type = GC_MEM_ADDR;
@@ -1003,6 +1008,38 @@ void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
+}
+
+void vm_execute_op_ass_int(vm * machine, bytecode * code)
+{
+    int a = gc_get_int(machine->collector,
+                       machine->stack[machine->sp - 1].addr);
+    gc_set_int(machine->collector, machine->stack[machine->sp].addr, a);
+    
+    machine->sp--;    
+}
+
+void vm_execute_op_ass_float(vm * machine, bytecode * code)
+{
+    float a = gc_get_float(machine->collector,
+                           machine->stack[machine->sp - 1].addr);
+    gc_set_float(machine->collector, machine->stack[machine->sp].addr, a);
+    
+    machine->sp--;    
+}
+
+void vm_execute_op_ass_array(vm * machine, bytecode * code)
+{
+    object_arr * m1 = gc_get_arr(machine->collector,
+                                 machine->stack[machine->sp - 1].addr);
+    gc_set_arr(machine->collector, machine->stack[machine->sp].addr, m1);
+    
+    machine->sp--;
+}
+
+void vm_execute_op_ass_func(vm * machine, bytecode * code)
+{
+    assert(0);
 }
 
 void vm_execute_jumpz(vm * machine, bytecode * code)

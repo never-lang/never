@@ -78,6 +78,11 @@ typedef enum bytecode_type
     BYTECODE_OP_MUL_ARR_ARR_INT,
     BYTECODE_OP_MUL_ARR_ARR_FLOAT,
 
+    BYTECODE_OP_ASS_INT,
+    BYTECODE_OP_ASS_FLOAT,
+    BYTECODE_OP_ASS_ARRAY,
+    BYTECODE_OP_ASS_FUNC,
+
     BYTECODE_JUMPZ,
     BYTECODE_JUMP,
     BYTECODE_LABEL,
@@ -262,6 +267,11 @@ void bytecode_print_op_mul_arr_int(bytecode * code);
 void bytecode_print_op_mul_arr_float(bytecode * code);
 void bytecode_print_op_mul_arr_arr_int(bytecode * code);
 void bytecode_print_op_mul_arr_arr_float(bytecode * code);
+
+void bytecode_print_op_ass_int(bytecode * code);
+void bytecode_print_op_ass_float(bytecode * code);
+void bytecode_print_op_ass_array(bytecode * code);
+void bytecode_print_op_ass_func(bytecode * code);
 
 void bytecode_print_jumpz(bytecode * code);
 void bytecode_print_jump(bytecode * code);

@@ -1260,8 +1260,39 @@ int expr_not_emit(expr * value, int stack_level, bytecode_list * code,
 int expr_ass_emit(expr * value, int stack_level, bytecode_list * code,
                   int * result)
 {
-    assert(0);
+    bytecode bc = { 0 };
     
+    expr_emit(value->right, stack_level, code, result);
+    expr_emit(value->left, stack_level + 1, code, result);
+
+    if (value->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_ASS_INT;
+        bytecode_add(code, &bc);
+    }
+    else if (value->comb.comb == COMB_TYPE_FLOAT)
+    {
+        bc.type = BYTECODE_OP_ASS_FLOAT;
+        bytecode_add(code, &bc);
+    }
+    else if (value->comb.comb == COMB_TYPE_ARRAY)
+    {
+        bc.type = BYTECODE_OP_ASS_ARRAY;
+        bytecode_add(code, &bc);
+    }
+    else if (value->comb.comb == COMB_TYPE_FUNC)
+    {
+        bc.type = BYTECODE_OP_ASS_FUNC;
+        bytecode_add(code, &bc);
+    }
+    else
+    {
+        *result = GENCODE_FAIL;
+        print_error_msg(value->line_no, "cannot assign type %s\n",
+                        comb_type_str(value->comb.comb));
+        assert(0);
+    }
+
     return 0;
 }
 

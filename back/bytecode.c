@@ -80,6 +80,11 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_MUL_ARR_ARR_INT, bytecode_print_op_mul_arr_arr_int },
     { BYTECODE_OP_MUL_ARR_ARR_FLOAT, bytecode_print_op_mul_arr_arr_float },
 
+    { BYTECODE_OP_ASS_INT, bytecode_print_op_ass_int },
+    { BYTECODE_OP_ASS_FLOAT, bytecode_print_op_ass_float },
+    { BYTECODE_OP_ASS_ARRAY, bytecode_print_op_ass_array },
+    { BYTECODE_OP_ASS_FUNC, bytecode_print_op_ass_func },
+
     { BYTECODE_JUMPZ, bytecode_print_jumpz },
     { BYTECODE_JUMP, bytecode_print_jump },
     { BYTECODE_LABEL, bytecode_print_label },
@@ -335,6 +340,26 @@ void bytecode_print_op_mul_arr_arr_int(bytecode * code)
 void bytecode_print_op_mul_arr_arr_float(bytecode * code)
 {
     printf("%d: op mul arr arr float\n", code->addr);
+}
+
+void bytecode_print_op_ass_int(bytecode * code)
+{
+    printf("%d: op ass int\n", code->addr);
+}
+
+void bytecode_print_op_ass_float(bytecode * code)
+{
+    printf("%d: op ass int\n", code->addr);
+}
+
+void bytecode_print_op_ass_array(bytecode * code)
+{
+    printf("%d: op ass int\n", code->addr);
+}
+
+void bytecode_print_op_ass_func(bytecode * code)
+{
+    printf("%d: op ass func\n", code->addr);
 }
 
 void bytecode_print_jumpz(bytecode * code)
