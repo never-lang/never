@@ -21,7 +21,15 @@
  */
 #include "nev.h"
 #include <assert.h>
+#include <dirent.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#ifndef PATH_MAX
+#define PATH_MAX 255
+#endif
 
 void run(int param1, int param2, program * prog)
 {
@@ -38,6 +46,20 @@ void run(int param1, int param2, program * prog)
         assert(result.type == OBJECT_INT &&
                result.int_value == 10 * (param1 + param2));
     }
+}
+
+char * readall(const char * file)
+{
+    FILE * f = fopen(file, "r");
+    fseek(f, 0L, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0L, SEEK_SET);
+
+    char * src = (char *)calloc(fsize + 1, sizeof(char));
+    fread(src, sizeof(char), fsize, f);
+    fclose(f);
+
+    return src;
 }
 
 void test_one()
@@ -63,9 +85,62 @@ void test_one()
     program_delete(prog);
 }
 
+void test_sample(const char * samplepath)
+{
+    int ret = 0;
+    object result = { 0 };
+    program * prog = program_new();
+    char * prog_str = readall(samplepath);
+    if (NULL != prog_str)
+    {
+        ret = nev_compile_str(prog_str, prog);
+        if (ret != 0) {
+            printf("path: %s\nprog_str: %s\n", samplepath, prog_str);
+        }
+        assert(ret == 0);
+
+        ret = nev_execute(prog, &result, DEFAULT_VM_MEM_SIZE,
+                          DEFAULT_VM_STACK_SIZE);
+        if (ret != 0) {
+            printf("path: %s\nprog_str: %s\n", samplepath, prog_str);
+        }
+
+        assert(ret == 0);
+
+        free(prog_str);
+    }
+}
+
+void test_samples(const char * dirpath)
+{
+    DIR * dir;
+    struct dirent * ent;
+    if ((dir = opendir(dirpath)) != NULL)
+    {
+        while ((ent = readdir(dir)) != NULL)
+        {
+            if (0 == strcmp(".\0", ent->d_name) || 0 == strcmp("..\0", ent->d_name))
+            {
+                continue;
+            }
+            char samplepath[PATH_MAX + 1] = { 0 };
+            snprintf(samplepath, PATH_MAX, "%s/%s", dirpath, ent->d_name);
+            test_sample((const char *)samplepath);
+        }
+        closedir(dir);
+    }
+}
+
 int main(int argc, char * argv[])
 {
+    char cwd[PATH_MAX] = { 0 };
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
+    {
+        printf("Current working dir: %s\n", cwd);
+    }
+
     test_one();
+    test_samples((const char *)"../sample\0");
 
     return 0;
 }
