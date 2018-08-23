@@ -11,11 +11,11 @@ script:
 # Build steps
   - cmake -G "Unix Makefiles"
   - make -j 8
-  - make -j 8 test
+  - ctest -VV
 after_success:
 # Creating report
   - cmake -DENABLE_COVERAGE=ON
   - make
-  - make test
+  - ctest -VV
   # Uploading report to CodeCov
   - bash <(curl -s https://codecov.io/bash)
