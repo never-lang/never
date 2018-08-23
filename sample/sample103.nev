@@ -18,4 +18,3 @@ func main() -> int
 	tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five )
 }
 
-

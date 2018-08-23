@@ -1,12 +1,13 @@
 # Never - Functional Programming Language
 [![Build Status](https://travis-ci.org/never-lang/never.svg?branch=master)](https://travis-ci.org/never-lang/never)
-[![Version](https://badge.fury.io/gh/never-lang%2Fnever.svg)](https://github.com/never-lang/never/releases)
+[![Version](https://img.shields.io/github/release/never-lang/never.svg)](https://github.com/never-lang/never/releases)
+[![Codecov](https://codecov.io/gh/never-lang/never/branch/master/graph/badge.svg)](https://codecov.io/gh/never-lang/never)
 
 Never is a simple functional programming language. Technically it may be
 classified as syntactically scoped, strongly typed, call by value, pure
 functional programming language.
 
-In practise Never offers basic data types, arrays, first order functions and some 
+In practise Never offers basic data types, arrays, first order functions and some
 mathematical functions to make it useful to calculate expressions. Also it
 demonstrates how functions can be compiled, invoked and passed as parameters
 or results between other functions.
@@ -615,7 +616,7 @@ void test_one()
         {
             assert(result.type == OBJECT_INT && result.int_value == 50);
         }
-        
+
         prog->params[0].int_value = 9;
         prog->params[1].int_value = 1;
 
