@@ -1024,22 +1024,25 @@ void vm_execute_op_ass_float(vm * machine, bytecode * code)
     float a = gc_get_float(machine->collector,
                            machine->stack[machine->sp - 1].addr);
     gc_set_float(machine->collector, machine->stack[machine->sp].addr, a);
-    
+
+    /*machine->stack[machine->sp].addr = machine->stack[machine->sp - 1].addr;*/
     machine->sp--;    
 }
 
 void vm_execute_op_ass_array(vm * machine, bytecode * code)
 {
-    object_arr * m1 = gc_get_arr(machine->collector,
+    /*object_arr * m1 = gc_get_arr(machine->collector,
                                  machine->stack[machine->sp - 1].addr);
-    gc_set_arr(machine->collector, machine->stack[machine->sp].addr, m1);
+    gc_set_arr(machine->collector, machine->stack[machine->sp].addr, m1); */
     
+    machine->stack[machine->sp].addr = machine->stack[machine->sp - 1].addr;
     machine->sp--;
 }
 
 void vm_execute_op_ass_func(vm * machine, bytecode * code)
 {
-    assert(0);
+    machine->stack[machine->sp].addr = machine->stack[machine->sp - 1].addr;
+    machine->sp--;
 }
 
 void vm_execute_jumpz(vm * machine, bytecode * code)

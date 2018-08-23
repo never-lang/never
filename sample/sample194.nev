@@ -1,0 +1,19 @@
+func f(i -> int) -> [_] -> int
+{
+    let a = 2
+    let b = i * i * i
+    let t1 = [ 1, 2, 3 ] -> int
+    let t2 = [ 11, 12, 13, 14 ] -> int;
+    
+    a = a * 10;
+    b = 1;
+    t1[b] = a;
+
+    t1
+}
+
+func main() -> int
+{
+    f(5)[1]
+}
+

@@ -307,6 +307,7 @@ object_arr * gc_get_arr(gc * collector, mem_ptr addr)
     return collector->mem[addr].object_value->arr_value;
 }
 
+#if 0
 void gc_set_arr(gc * collector, mem_ptr addr, object_arr * value)
 {
     assert(collector->mem_size >= addr);
@@ -318,6 +319,7 @@ void gc_set_arr(gc * collector, mem_ptr addr, object_arr * value)
         collector->mem[addr].object_value->arr_value = value;
     }
 }
+#endif
 
 unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr,
                                   unsigned int dim)

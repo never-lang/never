@@ -1,0 +1,16 @@
+func f(i -> int) -> (int) -> int
+{
+    let a = 2
+    let b = i * i * i
+    let f1 = lambda func(a -> int) -> int { a * a }
+    let f2 = lambda func(b -> int) -> int { b + b };
+    
+    f1 = f2;
+    f1
+}
+
+func main() -> int
+{
+    f(5)(20)
+}
+

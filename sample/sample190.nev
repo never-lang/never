@@ -1,19 +1,15 @@
-func f(i -> int) -> [_] -> int
+func f(i -> int) -> int
 {
     let a = 2
-    let b = i * i * i
-    let t1 = [ 1, 2, 3 ] -> int
-    let t2 = [ 1, 2, 3, 4 ] -> int;
+    let b = i * i * i;
     
     a = a * 10;
-    b = 1;
-    t1[b] = a;
-
-    t1 = t2
+    b = a;
+    b
 }
 
 func main() -> int
 {
-    f(5)[0]
+    f(5)
 }
 

@@ -4,7 +4,8 @@ func f(a -> int) -> int
     let i = [ 4, 3, 2, 1, 0 ] -> int;
     
     t[i[a]] = 20;
-    t[i[a]] = 30
+    t[i[a]] = 30;
+    t[i[a]]
 }
 
 func main() -> int

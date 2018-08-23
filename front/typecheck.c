@@ -808,14 +808,14 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     }
     else if (value->left->comb.comb == COMB_TYPE_FUNC &&
              value->right->comb.comb == COMB_TYPE_FUNC &&
-             func_cmp(value->middle->comb.comb_params,
-                      value->middle->comb.comb_ret,
+             func_cmp(value->left->comb.comb_params,
+                      value->left->comb.comb_ret,
                       value->right->comb.comb_params,
                       value->right->comb.comb_ret) == TYPECHECK_SUCC)
     {
         value->comb.comb = COMB_TYPE_FUNC;
-        value->comb.comb_params = value->middle->comb.comb_params;
-        value->comb.comb_ret = value->middle->comb.comb_ret;
+        value->comb.comb_params = value->left->comb.comb_params;
+        value->comb.comb_ret = value->left->comb.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
