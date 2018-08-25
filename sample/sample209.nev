@@ -1,0 +1,9 @@
+
+func main() -> float
+{
+    let a = 12.0
+    let b = 3.0;
+    
+    a / b
+}
+

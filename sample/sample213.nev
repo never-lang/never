@@ -1,0 +1,7 @@
+
+func main() -> int
+{
+    assert(!(1 && 10) == 0);
+    assert(!(1 || 10) == 0)
+}
+

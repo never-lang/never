@@ -1,0 +1,7 @@
+
+func main() -> float
+{
+    let a = 1;
+    a
+}
+

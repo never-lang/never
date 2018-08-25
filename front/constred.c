@@ -442,17 +442,15 @@ int expr_constred(expr * value, int * result)
     case EXPR_NOT:
         expr_constred(value->left, result);
 
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+        if (value->left->type == EXPR_INT)
         {
             expr * left_value = value->left;
-            expr * right_value = value->right;
 
             value->type = EXPR_INT;
             value->comb.comb = COMB_TYPE_INT;
             value->int_value = !(left_value->int_value);
 
             expr_delete(left_value);
-            expr_delete(right_value);
         }
         break;
     case EXPR_SUP:
