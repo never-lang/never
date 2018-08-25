@@ -1028,7 +1028,14 @@ void vm_execute_op_ass_array(vm * machine, bytecode * code)
 
 void vm_execute_op_ass_func(vm * machine, bytecode * code)
 {
-    machine->stack[machine->sp].addr = machine->stack[machine->sp - 1].addr;
+    ip_ptr fptr = gc_get_func_addr(machine->collector,
+                                   machine->stack[machine->sp - 1].addr);
+    mem_ptr mptr = gc_get_func_vec(machine->collector,
+                                   machine->stack[machine->sp - 1].addr);
+
+    gc_set_func_addr(machine->collector, machine->stack[machine->sp].addr, fptr);
+    gc_set_func_vec(machine->collector, machine->stack[machine->sp].addr, mptr);
+
     machine->sp--;
 }
 

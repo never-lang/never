@@ -76,16 +76,6 @@ typedef struct object
     };
 } object;
 
-object_arr_dim * object_arr_dim_new(unsigned int dims);
-void object_arr_dim_delete(object_arr_dim * dv);
-
-void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv,
-                         unsigned int * elems);
-unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv,
-                                 object_arr_dim * addr, int * oobounds);
-
-void object_arr_delete(object_arr * arr_value);
-
 object * object_new_int(int value);
 object * object_new_float(float value);
 object * object_new_vec(unsigned int size);
@@ -93,12 +83,21 @@ object * object_new_arr(unsigned int dims, object_arr_dim * dv);
 object * object_new_arr_ref(mem_ptr arr_value);
 object * object_new_func(mem_ptr vec, ip_ptr addr);
 
+void object_delete(object * obj);
+void object_arr_delete(object_arr * arr_value);
+
+object_arr_dim * object_arr_dim_new(unsigned int dims);
+void object_arr_dim_delete(object_arr_dim * dv);
+
+void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv,
+                         unsigned int * elems);
+unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv,
+                                 object_arr_dim * addr, int * oobounds);
 object_arr_dim * object_arr_dim_copy(unsigned int dims, object_arr_dim * value);
 object * object_arr_copy(object * value);
+
 char object_arr_can_add(object_arr * arr1, object_arr * arr2);
 char object_arr_can_mult(object_arr * arr1, object_arr * arr2);
-
-void object_delete(object * obj);
 
 void object_arr_print(object_arr * value);
 void object_print(object * obj);
