@@ -1014,17 +1014,15 @@ void vm_execute_op_ass_float(vm * machine, bytecode * code)
                            machine->stack[machine->sp - 1].addr);
     gc_set_float(machine->collector, machine->stack[machine->sp].addr, a);
 
-    /*machine->stack[machine->sp].addr = machine->stack[machine->sp - 1].addr;*/
     machine->sp--;    
 }
 
 void vm_execute_op_ass_array(vm * machine, bytecode * code)
 {
-    /*object_arr * m1 = gc_get_arr(machine->collector,
+    mem_ptr array_1 = gc_get_arr(machine->collector,
                                  machine->stack[machine->sp - 1].addr);
-    gc_set_arr(machine->collector, machine->stack[machine->sp].addr, m1); */
+    gc_set_arr(machine->collector, machine->stack[machine->sp].addr, array_1);
     
-    machine->stack[machine->sp].addr = machine->stack[machine->sp - 1].addr;
     machine->sp--;
 }
 

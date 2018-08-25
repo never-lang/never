@@ -309,34 +309,28 @@ void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
     collector->mem[addr].object_value->vec_value->value[vec_index] = value;
 }
 
-object_arr * gc_get_arr_obj(gc * collector, mem_ptr addr)
-{
-    assert(collector->mem_size >= addr);
-    assert(collector->mem[addr].object_value->type == OBJECT_ARRAY);
-
-    return collector->mem[addr].object_value->arr_value;
-}
-
-#if 0
-void gc_set_arr(gc * collector, mem_ptr addr, object_arr * value)
-{
-    assert(collector->mem_size >= addr);
-    assert(collector->mem[addr].object_value->type == OBJECT_ARRAY);
-    
-    if (collector->mem[addr].object_value->arr_value != value)
-    {
-        object_arr_delete(collector->mem[addr].object_value->arr_value);
-        collector->mem[addr].object_value->arr_value = value;
-    }
-}
-#endif
-
 mem_ptr gc_get_arr(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_ARRAY_REF);
     
     return collector->mem[addr].object_value->arr_ref_value;
+}
+
+void gc_set_arr(gc * collector, mem_ptr addr, mem_ptr array)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_ARRAY_REF);
+    
+    collector->mem[addr].object_value->arr_ref_value = array;
+}
+
+object_arr * gc_get_arr_obj(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_ARRAY);
+
+    return collector->mem[addr].object_value->arr_value;
 }
 
 unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr,

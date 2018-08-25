@@ -1,0 +1,16 @@
+func f(i -> int) -> [_] -> int
+{
+    let t1 = [ 1, 2, 3 ] -> int
+    let t2 = [ 11, 12, 13, 14 ] -> int
+    let t3 = [ 111, 112, 113, 114 ] -> int;
+    
+    t1 = t3;
+    t2 = t3;
+    t1
+}
+
+func main() -> int
+{
+    assert(f(5)[1] == 112)
+}
+
