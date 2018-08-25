@@ -75,6 +75,7 @@ mem_ptr gc_alloc_int(gc * collector, int value);
 mem_ptr gc_alloc_float(gc * collector, float value);
 mem_ptr gc_alloc_vec(gc * collector, unsigned int size);
 mem_ptr gc_alloc_arr(gc * collector, unsigned int dims, object_arr_dim * dv);
+mem_ptr gc_alloc_arr_ref(gc * collector, mem_ptr array);
 mem_ptr gc_alloc_func(gc * collector, mem_ptr vec, ip_ptr addr);
 
 mem_ptr gc_copy_arr(gc * collector, mem_ptr addr);
@@ -89,8 +90,9 @@ mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
 void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
                 mem_ptr value);
 
-object_arr * gc_get_arr(gc * collector, mem_ptr addr);
+object_arr * gc_get_arr_obj(gc * collector, mem_ptr addr);
 /* void gc_set_arr(gc * collector, mem_ptr addr, object_arr * value); */
+mem_ptr gc_get_arr(gc * collector, mem_ptr addr);
 unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr,
                                   unsigned int dim);
 unsigned int gc_get_arr_dims(gc * collector, mem_ptr addr);

@@ -189,7 +189,8 @@ void vm_execute_id_dim_local(vm * machine, bytecode * code)
                        ->stack[machine->sp - (code->id_dim_local.stack_level -
                                               code->id_dim_local.index)]
                        .addr;
-    unsigned int dim_elems = gc_get_arr_dim_elems(machine->collector, addr,
+    mem_ptr array = gc_get_arr(machine->collector, addr);
+    unsigned int dim_elems = gc_get_arr_dim_elems(machine->collector, array,
                                                   code->id_dim_local.dim_index);
     mem_ptr elems = gc_alloc_int(machine->collector, dim_elems);
 
@@ -659,11 +660,10 @@ void vm_execute_op_neg_arr_int(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
 
     unsigned int e = 0;
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array);
 
-    mem_ptr mres = gc_copy_arr(machine->collector,
-                               machine->stack[machine->sp].addr);
+    mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
     {
@@ -674,10 +674,9 @@ void vm_execute_op_neg_arr_int(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
@@ -685,11 +684,10 @@ void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
 
     unsigned int e = 0;
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array);
 
-    mem_ptr mres = gc_copy_arr(machine->collector,
-                               machine->stack[machine->sp].addr);
+    mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
     {
@@ -700,10 +698,9 @@ void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
@@ -711,10 +708,10 @@ void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
 
     unsigned int e = 0;
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array_1 = gc_get_arr(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
+    object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
     if (!object_arr_can_add(m1, m2))
     {
@@ -723,8 +720,7 @@ void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
         return;
     }
 
-    mem_ptr mres = gc_copy_arr(machine->collector,
-                               machine->stack[machine->sp].addr);
+    mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
     {
@@ -736,7 +732,7 @@ void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
@@ -747,10 +743,10 @@ void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
 
     unsigned int e = 0;
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array_1 = gc_get_arr(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
+    object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
     if (!object_arr_can_add(m1, m2))
     {
@@ -759,8 +755,7 @@ void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
         return;
     }
 
-    mem_ptr mres = gc_copy_arr(machine->collector,
-                               machine->stack[machine->sp].addr);
+    mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
     {
@@ -772,7 +767,7 @@ void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
@@ -783,10 +778,10 @@ void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
 
     unsigned int e = 0;
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array_1 = gc_get_arr(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
+    object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
     if (!object_arr_can_add(m1, m2))
     {
@@ -795,8 +790,7 @@ void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
         return;
     }
 
-    mem_ptr mres = gc_copy_arr(machine->collector,
-                               machine->stack[machine->sp].addr);
+    mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
     {
@@ -808,7 +802,7 @@ void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
@@ -819,10 +813,10 @@ void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
 
     unsigned int e = 0;
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array_1 = gc_get_arr(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
+    object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
     if (!object_arr_can_add(m1, m2))
     {
@@ -831,8 +825,7 @@ void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
         return;
     }
 
-    mem_ptr mres = gc_copy_arr(machine->collector,
-                               machine->stack[machine->sp].addr);
+    mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
     {
@@ -844,7 +837,7 @@ void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
@@ -855,13 +848,11 @@ void vm_execute_op_mul_arr_int(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
 
     unsigned int e = 0;
-    int a = gc_get_int(machine->collector,
-                       machine->stack[machine->sp - 1].addr);
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array);
 
-    mem_ptr mres = gc_copy_arr(machine->collector,
-                               machine->stack[machine->sp].addr);
+    mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
     {
@@ -872,7 +863,7 @@ void vm_execute_op_mul_arr_int(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
@@ -885,11 +876,10 @@ void vm_execute_op_mul_arr_float(vm * machine, bytecode * code)
     unsigned int e = 0;
     float a = gc_get_float(machine->collector,
                            machine->stack[machine->sp - 1].addr);
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array);
 
-    mem_ptr mres = gc_copy_arr(machine->collector,
-                               machine->stack[machine->sp].addr);
+    mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
     {
@@ -900,7 +890,7 @@ void vm_execute_op_mul_arr_float(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
@@ -909,14 +899,13 @@ void vm_execute_op_mul_arr_float(vm * machine, bytecode * code)
 void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    
     unsigned int i, j, k;
     mem_ptr mres = { 0 };
     object_arr_dim * dv = NULL;
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array_1 = gc_get_arr(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
+    object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
     if (!object_arr_can_mult(m1, m2))
     {
@@ -952,7 +941,7 @@ void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
@@ -965,10 +954,10 @@ void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
     unsigned int i, j, k;
     mem_ptr mres = { 0 };
     object_arr_dim * dv = NULL;
-    object_arr * m1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    object_arr * m2 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp].addr);
+    mem_ptr array_1 = gc_get_arr(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr array = gc_get_arr(machine->collector, machine->stack[machine->sp].addr);
+    object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
+    object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
     if (!object_arr_can_mult(m1, m2))
     {
@@ -1004,7 +993,7 @@ void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
     }
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = mres;
+    entry.addr = gc_alloc_arr_ref(machine->collector, mres);
 
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
@@ -1103,7 +1092,7 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
     vm_check_stack(machine);
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = array;
+    entry.addr = gc_alloc_arr_ref(machine->collector, array);
 
     machine->stack[machine->sp] = entry;
 }
@@ -1125,8 +1114,8 @@ void vm_execute_mk_init_array(vm * machine, bytecode * code)
         dv[d].elems =
             gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
     }
-    array = gc_alloc_arr(machine->collector, dims, dv);
 
+    array = gc_alloc_arr(machine->collector, dims, dv);
     elems = gc_get_arr_elems(machine->collector, array);
     for (d = 0; d < elems; d++)
     {
@@ -1138,7 +1127,7 @@ void vm_execute_mk_init_array(vm * machine, bytecode * code)
     vm_check_stack(machine);
 
     entry.type = GC_MEM_ADDR;
-    entry.addr = array;
+    entry.addr = gc_alloc_arr_ref(machine->collector, array);
 
     machine->stack[machine->sp] = entry;
 }
@@ -1172,7 +1161,7 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
         addr[d].mult = e;
     }
 
-    array = machine->stack[machine->sp--].addr;
+    array = gc_get_arr(machine->collector, machine->stack[machine->sp--].addr);
     assert(gc_get_arr_dims(machine->collector, array) == dims);
 
     dv = gc_get_arr_dv(machine->collector, array);

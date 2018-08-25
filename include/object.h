@@ -32,8 +32,9 @@ typedef enum object_type
     OBJECT_INT = 1,
     OBJECT_FLOAT = 2,
     OBJECT_ARRAY = 3,
-    OBJECT_VEC = 4,
-    OBJECT_FUNC = 5
+    OBJECT_ARRAY_REF = 4,
+    OBJECT_VEC = 5,
+    OBJECT_FUNC = 6
 } object_type;
 
 typedef struct object_vec
@@ -70,6 +71,7 @@ typedef struct object
         float float_value;        /* OBJECT_FLOAT */
         object_vec * vec_value;   /* OBJECT_VEC */
         object_arr * arr_value;   /* OBJECT_ARR */
+        mem_ptr arr_ref_value;    /* OBJECT_ARR_REF */
         object_func * func_value; /* OBJECT_FUNC */
     };
 } object;
@@ -88,6 +90,7 @@ object * object_new_int(int value);
 object * object_new_float(float value);
 object * object_new_vec(unsigned int size);
 object * object_new_arr(unsigned int dims, object_arr_dim * dv);
+object * object_new_arr_ref(mem_ptr arr_value);
 object * object_new_func(mem_ptr vec, ip_ptr addr);
 
 object_arr_dim * object_arr_dim_copy(unsigned int dims, object_arr_dim * value);

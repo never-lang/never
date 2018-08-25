@@ -157,6 +157,16 @@ object * object_new_arr(unsigned int dims, object_arr_dim * dv)
     return obj;
 }
 
+object * object_new_arr_ref(mem_ptr arr_value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+    
+    obj->type = OBJECT_ARRAY_REF;
+    obj->arr_ref_value = arr_value;
+    
+    return obj;
+}
+
 object * object_new_func(mem_ptr vec, ip_ptr addr)
 {
     object * obj = (object *)malloc(sizeof(object));
@@ -280,6 +290,8 @@ void object_delete(object * obj)
             object_arr_delete(obj->arr_value);
         }
         break;
+    case OBJECT_ARRAY_REF:
+        break;
     case OBJECT_FUNC:
         free(obj->func_value);
         break;
@@ -320,6 +332,9 @@ void object_print(object * obj)
         break;
     case OBJECT_ARRAY:
         object_arr_print(obj->arr_value);
+        break;
+    case OBJECT_ARRAY_REF:
+        printf("object_arr_ref\n");
         break;
     case OBJECT_FUNC:
         printf("object_func\n");

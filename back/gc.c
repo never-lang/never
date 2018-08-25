@@ -153,6 +153,11 @@ void gc_mark(gc * collector, mem_ptr addr)
         case OBJECT_ARRAY:
             gc_mark_arr(collector, addr);
             break;
+        case OBJECT_ARRAY_REF:
+            collector->mem[addr].mark = 1;
+            gc_mark_arr(collector,
+                        collector->mem[addr].object_value->arr_ref_value);
+            break;
         case OBJECT_FUNC:
             collector->mem[addr].mark = 1;
             gc_mark_vec(collector,
@@ -234,6 +239,11 @@ mem_ptr gc_alloc_arr(gc * collector, unsigned int dims, object_arr_dim * dv)
     return gc_alloc_any(collector, object_new_arr(dims, dv));
 }
 
+mem_ptr gc_alloc_arr_ref(gc * collector, mem_ptr array)
+{
+    return gc_alloc_any(collector, object_new_arr_ref(array));
+}
+
 mem_ptr gc_alloc_func(gc * collector, mem_ptr vec, ip_ptr addr)
 {
     return gc_alloc_any(collector, object_new_func(vec, addr));
@@ -299,7 +309,7 @@ void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
     collector->mem[addr].object_value->vec_value->value[vec_index] = value;
 }
 
-object_arr * gc_get_arr(gc * collector, mem_ptr addr)
+object_arr * gc_get_arr_obj(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_ARRAY);
@@ -320,6 +330,14 @@ void gc_set_arr(gc * collector, mem_ptr addr, object_arr * value)
     }
 }
 #endif
+
+mem_ptr gc_get_arr(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_ARRAY_REF);
+    
+    return collector->mem[addr].object_value->arr_ref_value;
+}
 
 unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr,
                                   unsigned int dim)
