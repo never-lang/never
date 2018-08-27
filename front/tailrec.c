@@ -278,6 +278,10 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
         }
     }
     break;
+    case EXPR_WHILE:
+    case EXPR_DO_WHILE:
+        assert(0);
+    break;
     case EXPR_BUILD_IN:
         rec = expr_list_tailrec(syn_level, func_value,
                                 value->func_build_in.param, last_call);

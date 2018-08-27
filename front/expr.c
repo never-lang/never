@@ -195,6 +195,32 @@ expr * expr_new_ass(expr * left, expr * right)
     return ret;
 }
 
+expr * expr_new_while(expr * cond, expr * do_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_WHILE;
+    ret->line_no = 0;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->whileloop.cond = cond;
+    ret->whileloop.do_value = do_value;
+    
+    return ret;
+}
+
+expr * expr_new_do_while(expr * cond, expr * do_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_DO_WHILE;
+    ret->line_no = 0;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->whileloop.cond = cond;
+    ret->whileloop.do_value = do_value;
+    
+    return ret;
+}
+
 expr * expr_conv(expr * expr_value, expr_type conv)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -300,6 +326,17 @@ void expr_delete(expr * value)
         if (value->right != NULL)
         {
             expr_delete(value->right);
+        }
+        break;
+    case EXPR_WHILE:
+    case EXPR_DO_WHILE:
+        if (value->whileloop.cond != NULL)
+        {
+            expr_delete(value->whileloop.cond);
+        }
+        if (value->right != NULL)
+        {
+            expr_delete(value->whileloop.do_value);
         }
         break;
     case EXPR_INT_TO_FLOAT:

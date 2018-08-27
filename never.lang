@@ -142,26 +142,28 @@
     </context>
 
     <context id="keywords" style-ref="keyword">
-      <keyword>return</keyword>
+      <keyword>let</keyword>
+      <keyword>var</keyword>
       <keyword>func</keyword>
+      <keyword>lambda</keyword>
+      <keyword>while</keyword>
+      <keyword>do</keyword>
+      <keyword>for</keyword>
+      <keyword>if</keyword>
+      <keyword>then</keyword>
+      <keyword>else</keyword>
     </context>
 
     <context id="operators" style-ref="operator">
-      <keyword>-></keyword>
+      <keyword>\+</keyword>
+      <keyword>\-</keyword>
+      <keyword>\*</keyword>
+      <keyword>\/</keyword>
     </context>
 
     <context id="types" style-ref="type">
-      <keyword>bool</keyword>
-      <keyword>char</keyword>
-      <keyword>double</keyword>
       <keyword>float</keyword>
       <keyword>int</keyword>
-      <keyword>(u)?int(8|16|32|64)_t</keyword>
-      <keyword>long</keyword>
-      <keyword>short</keyword>
-      <keyword>signed</keyword>
-      <keyword>unsigned</keyword>
-      <keyword>void</keyword>
     </context>
 
     <!-- C99 booleans -->

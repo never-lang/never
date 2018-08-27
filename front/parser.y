@@ -33,6 +33,8 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_FUNC
 %token <val.str_value> TOK_RET /* -> */
 %token <val.str_value> TOK_LAMBDA
+%token <val.str_value> TOK_WHILE
+%token <val.str_value> TOK_DO
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -263,6 +265,18 @@ expr: expr '=' expr
 expr: '{' expr_seq '}'
 {
     $$ = expr_new_seq($2);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_WHILE '(' expr ')' expr
+{
+    $$ = expr_new_while($3, $5);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_DO expr TOK_WHILE '(' expr ')'
+{
+    $$ = expr_new_while($2, $5);
     $$->line_no = $<line_no>1;
 };
 

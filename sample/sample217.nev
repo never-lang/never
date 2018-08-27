@@ -1,0 +1,14 @@
+
+func main() -> int
+{
+    let n = 10;
+
+    do
+    {
+        print(n % 10);
+        n = n / 10
+    } while (n != 0);
+        
+    0
+}
+

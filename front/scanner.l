@@ -61,6 +61,18 @@ func {
     return TOK_FUNC;
 }
 
+while {
+    tokp->line_no = line_no;
+    scanner_printf("while\n");
+    return TOK_WHILE;
+}
+
+do {
+    tokp->line_no = line_no;
+    scanner_printf("do\n");
+    return TOK_DO;
+}
+
 lambda {
     tokp->line_no = line_no;
     scanner_printf("lambda\n");
