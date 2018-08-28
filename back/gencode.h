@@ -116,6 +116,10 @@ int expr_ass_emit(expr * value, int stack_level, bytecode_list * code,
                   int * result);
 int expr_cond_emit(expr * value, int stack_level, bytecode_list * code,
                    int * result);
+int expr_while_emit(expr * value, int stack_level, bytecode_list * code, 
+                    int * result);
+int expr_do_while_emit(expr * value, int stack_level, bytecode_list * code, 
+                       int * result);
 int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
                    int * result);
 int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code,

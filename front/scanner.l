@@ -73,6 +73,18 @@ do {
     return TOK_DO;
 }
 
+if {
+    tokp->line_no = line_no;
+    scanner_printf("if\n");
+    return TOK_IF;
+}
+
+else {
+    tokp->line_no = line_no;
+    scanner_printf("if\n");
+    return TOK_ELSE;
+}
+
 lambda {
     tokp->line_no = line_no;
     scanner_printf("lambda\n");

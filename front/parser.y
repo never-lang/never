@@ -35,6 +35,9 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_LAMBDA
 %token <val.str_value> TOK_WHILE
 %token <val.str_value> TOK_DO
+%token <val.str_value> TOK_IF
+%token <val.str_value> TOK_THEN
+%token <val.str_value> TOK_ELSE
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -53,6 +56,7 @@ int yyerror(never ** nev, char * str)
 %type <val.func_body_value> func_body
 %type <val.never_value> never
 
+%right TOK_ELSE
 %right '='
 %right <val.str_value> '?' ':'
 %left TOK_OR
@@ -207,6 +211,12 @@ expr: expr '?' expr ':' expr
 {
     $$ = expr_new_three(EXPR_COND, $1, $3, $5);
     $$->line_no = $<line_no>2;
+};
+
+expr: TOK_IF '(' expr ')' expr TOK_ELSE expr
+{
+    $$ = expr_new_three(EXPR_COND, $3, $5, $7);
+    $$->line_no = $<line_no>1;
 };
 
 expr: array

@@ -1,0 +1,8 @@
+
+func main() -> int
+{
+    let i = 10;
+    
+    if (i > 0) { print(10) } else { print(20) }
+}
+

@@ -280,7 +280,29 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
     break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
-        assert(0);
+    {
+        tailrec_type rec_cond;
+        tailrec_type rec_do;
+
+        rec_cond = expr_tailrec(syn_level, func_value, value->whileloop.cond,
+                                last_call);
+        rec_do = expr_tailrec(syn_level, func_value,
+                              value->whileloop.do_value, last_call);
+
+        if (rec_cond == TAILREC_FOUND || rec_do == TAILREC_FOUND)
+        {
+            rec = TAILREC_NOT_POSSIBLE;
+        }
+        else if (rec_cond == TAILREC_NOT_POSSIBLE ||
+                 rec_do == TAILREC_NOT_POSSIBLE)
+        {
+            rec = TAILREC_NOT_POSSIBLE;
+        }
+        else
+        {
+            rec = TAILREC_NOT_FOUND;
+        }
+    }
     break;
     case EXPR_BUILD_IN:
         rec = expr_list_tailrec(syn_level, func_value,

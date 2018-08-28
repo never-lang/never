@@ -1215,7 +1215,21 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
-        assert(0);
+        expr_check_type(tab, value->whileloop.cond, syn_level, result);
+        expr_check_type(tab, value->whileloop.do_value, syn_level, result);
+        
+        if (value->whileloop.cond->comb.comb == COMB_TYPE_INT)
+        {
+            value->comb.comb = COMB_TYPE_INT;        
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "while loop condition type is %s\n",
+                            comb_type_str(value->left->comb.comb));
+        }
         break;
     case EXPR_BUILD_IN:
         expr_list_check_type(tab, value->func_build_in.param, syn_level, result);
