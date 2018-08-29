@@ -1,0 +1,19 @@
+
+func main() -> int
+{
+    let i = 40;
+
+    if (i > 100)
+    {
+        print(100)
+    }
+    else if (i > 50)
+    {
+        print(50)
+    }
+    else
+    {
+        print(0)
+    }
+}
+

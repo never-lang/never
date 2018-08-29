@@ -56,7 +56,8 @@ int yyerror(never ** nev, char * str)
 %type <val.func_body_value> func_body
 %type <val.never_value> never
 
-%right TOK_ELSE
+%right TOK_IF TOK_ELSE
+
 %right '='
 %right <val.str_value> '?' ':'
 %left TOK_OR
@@ -213,7 +214,13 @@ expr: expr '?' expr ':' expr
     $$->line_no = $<line_no>2;
 };
 
-expr: TOK_IF '(' expr ')' expr TOK_ELSE expr
+expr: TOK_IF '(' expr ')' expr %prec TOK_IF
+{
+    $$ = expr_new_three(EXPR_COND, $3, $5, expr_new_int(0));
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_IF '(' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
 {
     $$ = expr_new_three(EXPR_COND, $3, $5, $7);
     $$->line_no = $<line_no>1;
