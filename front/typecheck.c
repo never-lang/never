@@ -1228,7 +1228,26 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
                             "while loop condition type is %s\n",
-                            comb_type_str(value->left->comb.comb));
+                            comb_type_str(value->whileloop.cond->comb.comb));
+        }
+        break;
+    case EXPR_FOR:
+        expr_check_type(tab, value->forloop.init, syn_level, result);
+        expr_check_type(tab, value->forloop.cond, syn_level, result);
+        expr_check_type(tab, value->forloop.incr, syn_level, result);
+        expr_check_type(tab, value->forloop.do_value, syn_level, result);
+        
+        if (value->forloop.cond->comb.comb == COMB_TYPE_INT)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "for loop condition is %s\n",
+                            comb_type_str(value->forloop.cond->comb.comb));
         }
         break;
     case EXPR_BUILD_IN:
@@ -1512,8 +1531,14 @@ int print_func_expr(expr * value, int depth)
         break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
-        print_func_expr(value->left, depth);
-        print_func_expr(value->right, depth);
+        print_func_expr(value->whileloop.cond, depth);
+        print_func_expr(value->whileloop.do_value, depth);
+        break;
+    case EXPR_FOR:
+        print_func_expr(value->forloop.init, depth);
+        print_func_expr(value->forloop.cond, depth);
+        print_func_expr(value->forloop.incr, depth);
+        print_func_expr(value->forloop.do_value, depth);
         break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)

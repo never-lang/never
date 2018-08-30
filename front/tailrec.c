@@ -304,6 +304,42 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
         }
     }
     break;
+    case EXPR_FOR:
+    {
+        tailrec_type rec_init;
+        tailrec_type rec_cond;
+        tailrec_type rec_incr;
+        tailrec_type rec_do;
+        
+        rec_init = expr_tailrec(syn_level, func_value, value->forloop.init,
+                                last_call);
+        rec_cond = expr_tailrec(syn_level, func_value, value->forloop.cond,
+                                last_call);
+        rec_incr = expr_tailrec(syn_level, func_value, value->forloop.incr,
+                                last_call);
+        rec_do = expr_tailrec(syn_level, func_value, value->forloop.do_value,
+                              last_call);
+                              
+        if (rec_init == TAILREC_FOUND ||
+            rec_cond == TAILREC_FOUND ||
+            rec_incr == TAILREC_FOUND ||
+            rec_do == TAILREC_FOUND)
+        {
+            rec = TAILREC_NOT_POSSIBLE;
+        }
+        else if (rec_init == TAILREC_NOT_POSSIBLE ||
+                 rec_cond == TAILREC_NOT_POSSIBLE ||
+                 rec_incr == TAILREC_NOT_POSSIBLE ||
+                 rec_do == TAILREC_NOT_POSSIBLE)
+        {
+            rec = TAILREC_NOT_POSSIBLE;
+        }
+        else
+        {
+            rec = TAILREC_NOT_FOUND;
+        }
+    }
+    break;
     case EXPR_BUILD_IN:
         rec = expr_list_tailrec(syn_level, func_value,
                                 value->func_build_in.param, last_call);

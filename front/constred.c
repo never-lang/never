@@ -542,8 +542,14 @@ int expr_constred(expr * value, int * result)
         break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
-        expr_constred(value->left, result);
-        expr_constred(value->right, result);
+        expr_constred(value->whileloop.cond, result);
+        expr_constred(value->whileloop.do_value, result);
+        break;
+    case EXPR_FOR:
+        expr_constred(value->forloop.init, result);
+        expr_constred(value->forloop.cond, result);
+        expr_constred(value->forloop.incr, result);
+        expr_constred(value->forloop.do_value, result);
         break;
     case EXPR_BUILD_IN:
         expr_list_constred(value->func_build_in.param, result);

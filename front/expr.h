@@ -57,9 +57,10 @@ typedef enum expr_type
     EXPR_ASS = 27,
     EXPR_WHILE = 28,
     EXPR_DO_WHILE = 29,
-    EXPR_BUILD_IN = 30,
-    EXPR_INT_TO_FLOAT = 31,
-    EXPR_FLOAT_TO_INT = 32
+    EXPR_FOR = 30,
+    EXPR_BUILD_IN = 31,
+    EXPR_INT_TO_FLOAT = 32,
+    EXPR_FLOAT_TO_INT = 33
 } expr_type;
 
 typedef enum comb_type
@@ -139,6 +140,13 @@ typedef struct expr
         } whileloop;
         struct
         {
+            struct expr * init;
+            struct expr * cond;
+            struct expr * incr;
+            struct expr * do_value;
+        } forloop;
+        struct
+        {
             struct expr * func_expr; /* EXPR_CALL, EXPR_LAST_CALL */
             struct expr_list * params;
         } call;
@@ -189,6 +197,7 @@ expr * expr_new_call(expr * func_expr, expr_list * params);
 expr * expr_new_ass(expr * left, expr * right);
 expr * expr_new_while(expr * cond, expr * do_value);
 expr * expr_new_do_while(expr * cond, expr * do_value);
+expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 
 expr * expr_conv(expr * expr_value, expr_type conv);

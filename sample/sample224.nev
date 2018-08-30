@@ -1,0 +1,12 @@
+
+func main() -> int
+{
+    var i = 1
+    var C = 10;
+
+    for (i = 15; i >= 0; i = i - 1)
+    {
+        print(C + i)
+    }
+}
+

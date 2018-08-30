@@ -38,6 +38,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_IF
 %token <val.str_value> TOK_THEN
 %token <val.str_value> TOK_ELSE
+%token <val.str_value> TOK_FOR
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -294,6 +295,12 @@ expr: TOK_WHILE '(' expr ')' expr
 expr: TOK_DO expr TOK_WHILE '(' expr ')'
 {
     $$ = expr_new_while($2, $5);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr
+{
+    $$ = expr_new_for($3, $5, $7, $9);
     $$->line_no = $<line_no>1;
 };
 

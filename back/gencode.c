@@ -306,6 +306,12 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
         expr_gencode(syn_level, func_value, value->whileloop.cond, result);
         expr_gencode(syn_level, func_value, value->whileloop.do_value, result);
         break;
+    case EXPR_FOR:
+        expr_gencode(syn_level, func_value, value->forloop.init, result);
+        expr_gencode(syn_level, func_value, value->forloop.cond, result);
+        expr_gencode(syn_level, func_value, value->forloop.incr, result);
+        expr_gencode(syn_level, func_value, value->forloop.do_value, result);
+        break;
     case EXPR_BUILD_IN:
         expr_list_gencode(syn_level, func_value, value->func_build_in.param,
                           result);
@@ -535,6 +541,12 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
     case EXPR_DO_WHILE:
         func_gencode_freevars_expr(func_value, value->whileloop.cond, result);
         func_gencode_freevars_expr(func_value, value->whileloop.do_value, result);
+        break;
+    case EXPR_FOR:
+        func_gencode_freevars_expr(func_value, value->forloop.init, result);
+        func_gencode_freevars_expr(func_value, value->forloop.cond, result);
+        func_gencode_freevars_expr(func_value, value->forloop.incr, result);
+        func_gencode_freevars_expr(func_value, value->forloop.do_value, result);
         break;
     case EXPR_BUILD_IN:
         func_gencode_freevars_expr_list(func_value, value->func_build_in.param,
@@ -1414,6 +1426,61 @@ int expr_do_while_emit(expr * value, int stack_level, bytecode_list * code,
     return 0;
 }
 
+int expr_for_emit(expr * value, int stack_level, bytecode_list * code, 
+                  int * result)
+{
+    bytecode bc = { 0 };
+    bytecode *cond, *condz;
+    bytecode *labelA, *labelB;
+
+    expr_emit(value->forloop.init, stack_level, code, result);
+    
+    /* pop previous value of stack */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 1;            
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelA = bytecode_add(code, &bc);
+
+    expr_emit(value->forloop.cond, stack_level, code, result);
+    
+    bc.type = BYTECODE_JUMPZ;
+    condz = bytecode_add(code, &bc);
+        
+    expr_emit(value->forloop.do_value, stack_level, code, result);
+
+    /* pop previous value of stack */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 1;            
+    bytecode_add(code, &bc);
+
+    expr_emit(value->forloop.incr, stack_level, code, result);    
+
+    /* pop previous value of stack */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 1;            
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_JUMP;
+    cond = bytecode_add(code, &bc);
+    cond->jump.offset = labelA->addr - cond->addr;
+
+    bc.type = BYTECODE_LABEL;
+    labelB = bytecode_add(code, &bc);
+    condz->jump.offset = labelB->addr - condz->addr;
+
+    /* for loop returns int 0 */
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 0;
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
 int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
                    int * result)
 {
@@ -1745,6 +1812,9 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         break;
     case EXPR_DO_WHILE:
         expr_do_while_emit(value, stack_level, code, result);
+        break;
+    case EXPR_FOR:
+        expr_for_emit(value, stack_level, code, result);
         break;
     case EXPR_BUILD_IN:
         expr_list_emit(value->func_build_in.param, stack_level, code, result);
