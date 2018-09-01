@@ -1,0 +1,17 @@
+
+func ass(v -> int) -> int
+{
+    v = 10
+}
+
+func main() -> int
+{
+    let i = 1;
+    
+    print(i);
+    
+    ass(i);
+    
+    print(i)
+}
+

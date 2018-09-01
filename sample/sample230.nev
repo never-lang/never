@@ -1,0 +1,18 @@
+
+func ass(tab[_] -> int) -> int
+{
+    tab = [ 10, 20, 30, 40 ] -> int;
+    0
+}
+
+func main() -> int
+{
+    let tab = [ 1, 2, 3, 4 ] -> int;
+    
+    print(tab[0]);
+
+    ass(tab);
+
+    print(tab[0])
+}
+
