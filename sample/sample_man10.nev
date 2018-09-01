@@ -1,8 +1,8 @@
 
 func dir_deg(d -> int) -> (float) -> float
 {
-    d == 0 ? lambda func fah2cel(f -> float) -> float { (f - 32.0) / 1.8 }
-           : lambda func cel2fah(c -> float) -> float { c * 1.8 + 32.0 }
+    d == 0 ? let func fah2cel(f -> float) -> float { (f - 32.0) / 1.8 }
+           : let func cel2fah(c -> float) -> float { c * 1.8 + 32.0 }
 }
 
 func main() -> float

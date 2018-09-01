@@ -1,7 +1,7 @@
 
 func f1(a -> int, b -> int, c -> int) -> () -> int
 {
-    lambda func f2() -> int { a + b + c }
+    let func f2() -> int { a + b + c }
 }
 
 func main() -> int

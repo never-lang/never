@@ -1,6 +1,6 @@
 /* this example shows that condition expression will be eliminated */
 func main() -> int
 {
-    print( 0 ? 10 : lambda func (a -> int) -> int { a }(20 * 2) )
+    print( 0 ? 10 : let func (a -> int) -> int { a }(20 * 2) )
 }
 

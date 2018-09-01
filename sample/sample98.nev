@@ -6,8 +6,8 @@ func exec( f[dim] -> (int) -> int ) -> int
 
 func main() -> int
 {
-    exec( [ lambda func X(a -> int) -> int { 2 * a },
-            lambda func X(a -> int) -> int { 220 + a } ] -> (int) -> int )
+    exec( [ let func X(a -> int) -> int { 2 * a },
+            let func X(a -> int) -> int { 220 + a } ] -> (int) -> int )
 }
 
 

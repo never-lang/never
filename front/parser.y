@@ -32,7 +32,6 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_VAR
 %token <val.str_value> TOK_FUNC
 %token <val.str_value> TOK_RET /* -> */
-%token <val.str_value> TOK_LAMBDA
 %token <val.str_value> TOK_WHILE
 %token <val.str_value> TOK_DO
 %token <val.str_value> TOK_IF
@@ -257,7 +256,7 @@ array: '[' expr_list ']'
     $$->line_no = $<line_no>1;
 };
 
-expr: TOK_LAMBDA func
+expr: TOK_LET func
 {
     $$ = expr_new_func($2);
 };

@@ -9,7 +9,7 @@ func execute(a -> int, b -> int, f1(int, int) -> int) -> int
 func main() -> int
 {
     assert(execute(10, 20, 
-             lambda func min(a -> int, b -> int) -> int
+             let func min(a -> int, b -> int) -> int
              { 
                   a < b ? a : b
              }) == 10)

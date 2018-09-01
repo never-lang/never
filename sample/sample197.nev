@@ -1,8 +1,8 @@
 func f(i -> int) -> (int) -> int
 {
-    let f1 = lambda func(a -> int) -> int { a * a };
-    let f2 = lambda func(b -> int) -> int { b + b };
-    let f3 = lambda func(c -> int) -> int { i * i };    
+    let f1 = let func(a -> int) -> int { a * a };
+    let f2 = let func(b -> int) -> int { b + b };
+    let f3 = let func(c -> int) -> int { i * i };    
     
     f1 = f3;
     f2 = f3;

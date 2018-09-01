@@ -2,8 +2,8 @@
 func f1(a -> int, b -> int, c -> int) -> [D] -> () -> int
 {
     [
-        lambda func f1() -> int { a + b + c },
-        lambda func f2() -> int { a + b - c }  
+        let func f1() -> int { a + b + c },
+        let func f2() -> int { a + b - c }  
     ] -> () -> int
 }
 

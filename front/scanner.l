@@ -91,12 +91,6 @@ else {
     return TOK_ELSE;
 }
 
-lambda {
-    tokp->line_no = line_no;
-    scanner_printf("lambda\n");
-    return TOK_LAMBDA;
-}
-
 int {
     tokp->line_no = line_no;
     scanner_printf("int\n");

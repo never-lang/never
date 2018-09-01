@@ -1,11 +1,11 @@
 
 func get(c -> int) -> (float, float) -> float
 {
-    c ? lambda func min(a -> float, b -> float) -> float
+    c ? let func min(a -> float, b -> float) -> float
            {
               a < b ? a : b
            }
-      : lambda func max(a -> float, b -> float) -> float
+      : let func max(a -> float, b -> float) -> float
            {
               a > b ? a : b
            }
