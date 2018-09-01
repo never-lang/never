@@ -20,10 +20,10 @@ func counter(from -> float, to -> float, by -> float) -> (float, float) -> (floa
         func increase_sub(n_a -> float, n_b -> float, n_c -> float) -> float
         {
             dec() + inc(1.0, 2.0) + inc(4.0, 4.0)
-        };
+        }
         
         increase_sub
-    };
+    }
     
     increase
 }

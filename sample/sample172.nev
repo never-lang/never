@@ -1,8 +1,8 @@
 
 func area(a -> float, b -> float, c -> float) -> float
 {
-    let p = (a + b + c) / 2.0
-    func coeff() -> float { 100.0 };
+    let p = (a + b + c) / 2.0;
+    func coeff() -> float { 100.0 }
     
     coeff() * sqrt(p * (p - a) * (p - b) * (p - c))
 }

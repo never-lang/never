@@ -1,7 +1,7 @@
 
 func table(a -> float, b -> float, c -> float) -> float
 {
-    let p = [ a, b, c, a + b, a + c, b + c ] -> float
+    let p = [ a, b, c, a + b, a + c, b + c ] -> float;
     let q = 3;
 
     p[q]

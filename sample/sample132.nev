@@ -9,7 +9,7 @@ func tmapi( t[elems] -> int, mapi(i -> int, e -> int) -> int) -> int
 	func __tmapi( val -> int, i -> int, t[elems] -> int ) -> int
 	{
 		i < elems ? __tmapi( mapi(i, t[i]), i + 1, t ) : 0
-	};
+	}
 	__tmapi(t[0], 0, t)
 }
 

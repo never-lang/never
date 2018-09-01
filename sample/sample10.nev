@@ -9,7 +9,7 @@ func funGen1(a -> float, b -> float) -> float
     func funInt(a -> float, b -> float) -> float
     {
         a * b
-    };
+    }
     funInt(a, b + 2.0)
 }
 

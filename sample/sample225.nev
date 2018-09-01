@@ -6,7 +6,7 @@ func max(a -> int, b -> int) -> int
 
 func cutrod(price[_] -> int, len -> int) -> int
 {
-    var i = 0
+    var i = 0;
     var max_p = -1;
     
     if (len <= 0)

@@ -4,7 +4,7 @@ func tmin( t[elems] -> int ) -> int
 	func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
 	{
         i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min
-	};
+	}
 	__tmin(t[0], 0, t)
 }
 

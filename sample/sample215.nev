@@ -3,8 +3,8 @@ func main() -> int
 {
     func loop(i -> int) -> int
     {
-        let f1 = lambda func(a -> int) -> int { a * a }
-        let f2 = lambda func(b -> int) -> int { b + b }
+        let f1 = lambda func(a -> int) -> int { a * a };
+        let f2 = lambda func(b -> int) -> int { b + b };
         let f3 = lambda func(c -> int) -> int { i * i };    
     
         i < 1000 ? 
@@ -14,7 +14,7 @@ func main() -> int
                 loop(i + 1) 
             } : 
             10
-    };
+    }
     
     loop(0)
 }

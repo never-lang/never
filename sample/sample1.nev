@@ -14,7 +14,7 @@ func minCoeff(p1 -> float, p2 -> float, coeff -> float) -> float
     func min(n_a -> float, n_b -> float) -> float
     {
         coeff * (n_a < n_b ? n_a : n_b)
-    };
+    }
     min(p2, p1)
 }
 

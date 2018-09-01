@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    let a = 12
+    let a = 12;
     let b = 3;
     
     assert((a % b) == 0)

@@ -6,7 +6,7 @@ func main() -> int
         let t = [ 1, 2, 3, 4, 5 ] -> int;
     
         i < 10 ? { print(t[i % 5]); loop(i + 1) } : 10
-    };
+    }
     
     loop(0)
 }

@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    let i = 10
+    let i = 10;
     let val = 1000;
     
     if (i > 0) { print(val) }

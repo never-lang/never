@@ -4,7 +4,7 @@ func tsum( t[elems] -> int) -> int
 	func __tsum( sum -> int, i -> int, t[elems] -> int ) -> int
 	{
         i < elems ? __tsum( sum + t[i], i + 1, t ) : sum
-	};
+	}
 	__tsum(0, 0, t)
 }
 

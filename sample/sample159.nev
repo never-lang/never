@@ -5,7 +5,7 @@ func printtab( tab[row, col] -> float ) -> int
     {
         i < row * col ?
            __printtab( i + 1, tab, printf( tab[i / col, i % col] )) : 0
-    };
+    }
     __printtab ( 0, tab, 0.0 )
 }
 

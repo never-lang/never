@@ -1,7 +1,7 @@
 
 func sum(a -> float, b -> float, c -> float) -> float
 {
-    let p = a + b + c
+    let p = a + b + c;
     let q = 10.0 + 2.0;
 
     p + q

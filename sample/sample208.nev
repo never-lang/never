@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    let a = 1
+    let a = 1;
     let b = 10;
     
     assert((b - 1) == 9)

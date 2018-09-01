@@ -1,7 +1,7 @@
 func f(i -> int) -> [_] -> int
 {
-    let t1 = [ 1, 2, 3 ] -> int
-    let t2 = [ 11, 12, 13, 14 ] -> int
+    let t1 = [ 1, 2, 3 ] -> int;
+    let t2 = [ 11, 12, 13, 14 ] -> int;
     let t3 = [ 111, 112, 113, 114 ] -> int;
     
     t1 = t3;

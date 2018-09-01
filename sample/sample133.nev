@@ -4,7 +4,7 @@ func exists( e -> int, t[elems] -> int ) -> int
 	func __exists( i -> int, e -> int, t[elems] -> int ) -> int
 	{
 	    i < elems ? ( e == t[i] ? 1 : __exists( i + 1, e, t ) ) : 0
-	};
+	}
 	__exists( 0, e, t )
 }
 

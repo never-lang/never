@@ -25,11 +25,11 @@ func twice(coeff -> float, single_func(float, float) -> float) -> (float, float)
             func twice_func_nest(a -> float, b -> float) ->float
             {
                 min(11.0, 12.0) * mult(10.0) * single_func(a, b)
-            };
+            }
             twice_func_nest(a, b)
-        };
+        }
         twice_func
-    };
+    }
     one()
 }
 

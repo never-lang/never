@@ -17,7 +17,7 @@ func filter( t[elems] -> int, if_func( int ) -> int, do_func( int ) -> int ) -> 
 	               do_func( e -> int ) -> int ) -> int
 	{
 	    i < elems ? __filter( if_func(t[i]) ? do_func(t[i]) : 0, i + 1, t, if_func, do_func ) : 0
-	};
+	}
 	__filter( 0, 0, t, if_func, do_func )
 }
 func main() -> int

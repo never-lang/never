@@ -440,13 +440,13 @@ bind: var
     $$ = $1;
 };
 
-bind_list: bind
+bind_list: bind ';'
 {
     $$ = bind_list_new();
     bind_list_add_end($$, $1);
 };
 
-bind_list: bind_list bind
+bind_list: bind_list bind ';'
 {
     bind_list_add_end($1, $2);
     $$ = $1;
@@ -485,19 +485,19 @@ func: TOK_FUNC TOK_ID error
     $$ = NULL;
 };
 
-func_body: '{' bind_list ';' expr_seq '}'
+func_body: '{' bind_list expr_seq '}'
 {
-    $$ = func_body_new($2, NULL, $4);
+    $$ = func_body_new($2, NULL, $3);
 };
 
-func_body: '{' func_list ';' expr_seq '}'
+func_body: '{' func_list expr_seq '}'
 {
-    $$ = func_body_new(NULL, $2, $4);
+    $$ = func_body_new(NULL, $2, $3);
 };
 
-func_body: '{' bind_list func_list ';' expr_seq '}'
+func_body: '{' bind_list func_list expr_seq '}'
 {
-    $$ = func_body_new($2, $3, $5);
+    $$ = func_body_new($2, $3, $4);
 };
 
 func_body: '{' expr_seq '}'

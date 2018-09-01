@@ -1,6 +1,6 @@
 func f(i -> int) -> int
 {
-    let a = 0
+    let a = 0;
     let b = i * i * i;
     
     a = b = 10;

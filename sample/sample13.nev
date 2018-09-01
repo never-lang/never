@@ -4,7 +4,7 @@ func get_func(glob1 -> float) -> (float, float) -> float
     func min(a -> float, b -> float) -> float
     {
         a < b ? glob1 * a : glob1 * b
-    };
+    }
     
     min
 }

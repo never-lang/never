@@ -1,11 +1,11 @@
 
 func outer(a -> float, b -> float) -> float
 {
-    let p = a + b
+    let p = a + b;
     func inner(c -> float) -> float
     {
         p * c
-    };
+    }
     
     inner(2.0)
 }

@@ -3,7 +3,7 @@ func main() -> int
      func fib(n -> int) -> int 
      {
          (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
-     };
+     }
      assert(fib(7) == 21)
 }
 

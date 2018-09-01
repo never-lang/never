@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    let i = 0
+    let i = 0;
     let w = while (i < 10) { print(i); i = i + 1 };
     
     w

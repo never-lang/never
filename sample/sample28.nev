@@ -18,7 +18,7 @@ func mutrec(n -> float) -> float
     func C(n -> float) -> float
     {
         A(n)
-    };
+    }
     
     C(n)
 }

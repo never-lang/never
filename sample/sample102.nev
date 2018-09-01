@@ -4,8 +4,7 @@ func tprint( t[elems] -> int ) -> int
 	func __tprint( val -> int, i -> int, t[elems] -> int ) -> int
 	{
 		i < elems - 1 ? __tprint( print(t[i]), i + 1, t ) : t[i]
-	};
-	
+	}
 	__tprint(t[0], 0, t)
 }
 

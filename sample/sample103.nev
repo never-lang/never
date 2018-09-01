@@ -9,7 +9,7 @@ func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
 	func __tforeach( val -> int, i -> int, t[elems] -> int ) -> int
 	{
 		i < elems ? __tforeach( each(t[i]), i + 1, t ) : 0
-	};
+	}
 	__tforeach(t[0], 0, t)
 }
 

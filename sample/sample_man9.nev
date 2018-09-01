@@ -8,7 +8,7 @@ func dir_deg(d -> int, coeff -> float) -> (float) -> float
     func cel2fah(c -> float) -> float
     {
         coeff * (c * 1.8 + 32.0)
-    };
+    }
 
     d == 0 ? cel2fah : fah2cel
 }

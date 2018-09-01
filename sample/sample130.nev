@@ -4,7 +4,7 @@ func factorial(n -> int) -> int
     func factrec(n -> int, val -> int) -> int
     {
         n == 0 ? val : factrec(n - 1, n * val)
-    };
+    }
 
     factrec(n, 1)
 }

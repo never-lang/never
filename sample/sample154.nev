@@ -4,7 +4,7 @@ func printtab( tab[n] -> float ) -> int
     func __print( i -> int, tab[n] -> float, val -> float ) -> int
     {
         i < n ? __print( i + 1, tab, printf(tab[i]) ) : 0
-    };
+    }
     __print( 0, tab, 0.0 )
 }
 
