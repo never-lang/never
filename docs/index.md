@@ -315,7 +315,7 @@ flow expressions known from other languages. These are ```if```, ```if else```,
 ```while```, ```do while``` and ```for``` expressions. As these structures
 are expressions they also return a value. All of them, except for ```if else```
 return ```0 -> int``` value. Also expression following ```if``` must return
-```int```.
+```int``` value.
 
 Assignment expression ```=``` lets to assign value of an expression on the
 right hand side to a value on the left hand side. Please note, that if
