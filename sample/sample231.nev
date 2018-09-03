@@ -1,0 +1,16 @@
+
+func ass(a -> float) -> float
+{
+    printf(a);
+    a = 12.5
+}
+
+func main() -> int
+{
+    let i = 10.0;
+    
+    print(i);
+    ass(i);    
+    print(i)
+}
+

@@ -17,7 +17,7 @@ The following code listing presents Fibonacci function expressed in [Never][neve
 ```
 func fib(n -> int) -> int 
 {
-    return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
+    (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
 }
 ```
 
@@ -28,7 +28,7 @@ First, it needs to be the last call. Second, it needs parameter ```n```. Also we
 ```
 func fib(n -> int, a -> int, b -> int) -> int
 {
-    return (n == 0) ? a : (n == 1) ? b : fib(n - 1, b, a + b);
+    (n == 0) ? a : (n == 1) ? b : fib(n - 1, b, a + b)
 }
 ```
 
@@ -40,7 +40,7 @@ Other functions can be turned into tail recursive as well.
 ```
 func gcd(x -> int, y -> int) -> int
 {
-    return (y == 0) ? x : gcd(y, x % y);
+    (y == 0) ? x : gcd(y, x % y)
 }
 ```
 
@@ -49,13 +49,13 @@ The above function present greatest common divisor function.
 ```
 func factorial(n -> int, val -> int) -> int
 {
-    return n == 0 ? val : factorial(n - 1, n * val);
+    n == 0 ? val : factorial(n - 1, n * val)
 }
 ```
 ```
 func power(a -> int, n -> int, val -> int) -> int
 {
-    return n == 0 ? val : power(a, n - 1, a * val);
+    n == 0 ? val : power(a, n - 1, a * val)
 }
 ```
 
@@ -71,14 +71,14 @@ func tprint( t[elems] -> int ) -> int
 {
 	func __tprint( val -> int, i -> int, t[elems] -> int ) -> int
 	{
-		return i < elems - 1 ? __tprint( print(t[i]), i + 1, t ) : t[i];
+        i < elems - 1 ? __tprint( print(t[i]), i + 1, t ) : t[i]
 	}
 	
-	return __tprint(t[0], 0, t);
+	__tprint(t[0], 0, t)
 }
 func main() -> int
 {
-	return tprint( [ 10, 20, 30, 40, 50, 60 ] -> int );
+	tprint( [ 10, 20, 30, 40, 50, 60 ] -> int )
 }
 ```
 
@@ -89,13 +89,13 @@ func tsum( t[elems] -> int) -> int
 {
 	func __tsum( sum -> int, i -> int, t[elems] -> int ) -> int
 	{
-		return i < elems ? __tsum( sum + t[i], i + 1, t ) : sum;
+		i < elems ? __tsum( sum + t[i], i + 1, t ) : sum
 	}
-	return __tsum(0, 0, t);
+	__tsum(0, 0, t)
 }
 func main() -> int
 {
-	return tsum( [ 10, 20, 30, 40, 50, 60 ] -> int );
+	tsum( [ 10, 20, 30, 40, 50, 60 ] -> int )
 }
 ```
 To calculate sum of array elements in each recursive call sum is increased. Finally sum of all elements is returned.
@@ -105,13 +105,13 @@ func tmin( t[elems] -> int ) -> int
 {
 	func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
 	{
-		return i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min;
+		i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min
 	}
-	return __tmin(t[0], 0, t);
+    __tmin(t[0], 0, t)
 }
 func main() -> int
 {
-	return tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int );
+	tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int )
 }
 ```
 Similar idea can be used to determine the lowest value within an array...
@@ -121,13 +121,13 @@ func exists( e -> int, t[elems] -> int ) -> int
 {
 	func __exists( i -> int, e -> int, t[elems] -> int ) -> int
 	{
-		return i < elems ? ( e == t[i] ? 1 : __exists( i + 1, e, t ) ) : 0;
+	    i < elems ? ( e == t[i] ? 1 : __exists( i + 1, e, t ) ) : 0
 	}
-	return __exists( 0, e, t );
+	__exists( 0, e, t )
 }
 func main() -> int
 {
-	return exists( 100, [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int );
+	exists( 100, [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int )
 }
 ```
 ...or used to determine if given value exists with an array. Recursive calls stop when sought after value is found.
@@ -135,20 +135,20 @@ func main() -> int
 ```
 func add_five(e -> int) -> int
 {
-	return print(e + 5);
+	print(e + 5)
 }
 
 func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
 {
 	func __tforeach( val -> int, i -> int, t[elems] -> int ) -> int
 	{
-		return i < elems ? __tforeach( each(t[i]), i + 1, t ) : 0;
+        i < elems ? __tforeach( each(t[i]), i + 1, t ) : 0
 	}
-	return __tforeach(t[0], 0, t);
+	__tforeach(t[0], 0, t)
 }
 func main() -> int
 {
-	return tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five );
+	tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five )
 }
 ```
 [Never][never-lang] supports first-call functions which can be passed to other functions. This property can be used to execute arbitrary function over all elements. In the above example function ```add_five``` is passed to ```tforeach``` function.
@@ -156,20 +156,20 @@ func main() -> int
 ```
 func sum_mapi(i -> int, e -> int) -> int
 {
-	return print(i + e);
+    print(i + e)
 }
 
 func tmapi( t[elems] -> int, mapi(i -> int, e -> int) -> int) -> int
 {
 	func __tmapi( val -> int, i -> int, t[elems] -> int ) -> int
 	{
-		return i < elems ? __tmapi( mapi(i, t[i]), i + 1, t ) : 0;
+	    i < elems ? __tmapi( mapi(i, t[i]), i + 1, t ) : 0
 	}
-	return __tmapi(t[0], 0, t);
+	__tmapi(t[0], 0, t)
 }
 func main() -> int
 {
-	return tmapi( [ 10, 20, 50, 30, 40 ] -> int, sum_mapi );
+	tmapi( [ 10, 20, 50, 30, 40 ] -> int, sum_mapi )
 }
 ```
 The above listing presents ```mapi``` function which is invoked with element index and its value.
@@ -177,25 +177,25 @@ The above listing presents ```mapi``` function which is invoked with element ind
 ```
 func odd( e -> int ) -> int
 {
-    return e % 2;
+    e % 2
 }
 func do( e -> int ) -> int
 {
-    return print(e + 1);
+    print(e + 1)
 }
 
 func filter( t[elems] -> int, if( int ) -> int, do( int ) -> int ) -> int
 {
 	func __filter( val -> int, i -> int, t[elems] -> int, if( e -> int) -> int, do( e -> int ) -> int ) -> int
 	{
-		return i < elems ? __filter( if(t[i]) ? do(t[i]) : 0,  i + 1, t, if, do ) : 0;
+		i < elems ? __filter( if(t[i]) ? do(t[i]) : 0,  i + 1, t, if, do ) : 0
 	}
-	return __filter( 0, 0, t, if, do );
+	__filter( 0, 0, t, if, do )
 }
 func main() -> int
 {
-	return filter( [ 61, 22, 11, 34, 58, 41, 83, 92, 101 ] -> int,
-	               odd, do );
+	filter( [ 61, 22, 11, 34, 58, 41, 83, 92, 101 ] -> int,
+            odd, do )
 }
 ```
 The idea to pass first-class functions can be extended. The above listing presents ```filter``` function which is executed over all elements of an array. When ```if``` function return value other than zero then function ```do``` is invoked.

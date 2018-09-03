@@ -1,20 +1,21 @@
 # Never - Functional Programming Language
 [![Build Status](https://travis-ci.org/never-lang/never.svg?branch=master)](https://travis-ci.org/never-lang/never)
+[![Version](https://img.shields.io/github/release/never-lang/never.svg)](https://github.com/never-lang/never/releases)
+[![Codecov](https://codecov.io/gh/never-lang/never/branch/master/graph/badge.svg)](https://codecov.io/gh/never-lang/never)
 
 Never is a simple functional programming language. Technically it may be
-classified as syntactically scoped, strongly typed, call by value, pure
-functional programming language.
+classified as syntactically scoped, strongly typed, call by value, functional programming language.
 
-In practise Never offers basic data types, arrays, first order functions and some 
-mathematical functions to make it useful to calculate expressions. Also it
-demonstrates how functions can be compiled, invoked and passed as parameters
-or results between other functions.
+In practise Never offers basic data types, assignment, control flow, arrays,
+first order functions and some mathematical functions to make it useful
+to calculate expressions. Also it demonstrates how functions can be compiled,
+invoked and passed as parameters or results between other functions.
 
 ## Introduction
 ```
 func main() -> float
 {
-    return 100.0 * 1.8 + 32.0;
+    100.0 * 1.8 + 32.0
 }
 ```
 A program written in Never language starts in function ```main```. ```Main```
@@ -26,30 +27,30 @@ of boiling water given in Celsius degrees is converted to Fahrenheit degrees.
 ```
 func cel2fah(c -> float) -> float
 {
-    return c * 1.8 + 32.0;
+    c * 1.8 + 32.0
 }
 
 func main() -> float
 {
-    return cel2fah(100.0);
+    cel2fah(100.0)
 }
 ```
 
 In practice, however, one will define a function which will convert any degree.
 The above listing presents such a function.
 
-In particular, Functions may invoke themselves. The Fibonacci function is
+In particular, functions may invoke themselves. The Fibonacci function is
 a classic example:
 
 ```
 func fib(n -> int) -> int
 {
-    return (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2);
+    (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
 }
 
 func main() -> int
 {
-    return fib(7);
+    fib(7)
 }
 ```
 
@@ -58,12 +59,12 @@ or greatest common divisor:
 ```
 func gcd(x -> int, y -> int) -> int
 {
-    return (y == 0) ? x : gcd(y, x % y);
+    (y == 0) ? x : gcd(y, x % y)
 }
 
 func main() -> int
 {
-    return gcd(56, 12);
+    gcd(56, 12)
 }
 ```
 
@@ -87,22 +88,22 @@ feature.
 ```
 func fah2cel(f -> float) -> float
 {
-    return (f - 32.0) / 1.8;
+    (f - 32.0) / 1.8
 }
 
 func cel2fah(c -> float) -> float
 {
-    return c * 1.8 + 32.0;
+    c * 1.8 + 32.0
 }
 
 func dir_deg(d -> int) -> (float) -> float
 {
-    return d == 0 ? fah2cel : cel2fah;
+    d == 0 ? fah2cel : cel2fah
 }
 
 func main() -> float
 {
-    return dir_deg(1)(100.0);
+    dir_deg(1)(100.0)
 }
 ```
 
@@ -115,22 +116,22 @@ Functions may also take other functions as arguments.
 ```
 func fah2cel(f -> float) -> float
 {
-    return (f - 32.0) / 1.8;
+    (f - 32.0) / 1.8
 }
 
 func cel2fah(c -> float) -> float
 {
-    return c * 1.8 + 32.0;
+    c * 1.8 + 32.0
 }
 
 func degrees(conv(float) -> float, degree -> float) -> float
 {
-    return conv(degree);
+    conv(degree)
 }
 
 func main() -> float
 {
-    return degrees(cel2fah, 100.0);
+    degrees(cel2fah, 100.0)
 }
 ```
 
@@ -147,20 +148,19 @@ func dir_deg(d -> int) -> (float) -> float
 {
     func fah2cel(f -> float) -> float
     {
-        return (f - 32) / 1.8;
+        (f - 32) / 1.8
     }
-
     func cel2fah(c -> float) -> float
     {
-        return c * 1.8 + 32;
+        c * 1.8 + 32
     }
 
-    return d == 0 ? fah2cel : cel2fah;
+    d == 0 ? fah2cel : cel2fah
 }
 
 func main() -> float
 {
-    return dir_deg(0)(100.0);
+    dir_deg(0)(100.0)
 }
 ```
 
@@ -175,20 +175,19 @@ func dir_deg(d -> float, coeff -> float) -> (float) -> float
 {
     func fah2cel(f -> float) -> float
     {
-        return coeff * ((f - 32.0) / 1.8);
+        coeff * ((f - 32.0) / 1.8)
     }
-
     func cel2fah(c -> float) -> float
     {
-        return coeff * (c * 1.8 + 32.0);
+        coeff * (c * 1.8 + 32.0)
     }
 
-    return d == 0 ? cel2fah : fah2cel;
+    d == 0 ? cel2fah : fah2cel
 }
 
 func main() -> float
 {
-    return dir_deg(0, 100.0)(100.0);
+    dir_deg(0, 100.0)(100.0)
 }
 ```
 
@@ -205,15 +204,15 @@ This leads to very interesting syntax which is supported by Never.
 ```
 func degrees(conv(float) -> float, degree -> float) -> float
 {
-    return conv(degree);
+    conv(degree)
 }
 
 func main() -> float
 {
-    return degrees(func rea2cel(d -> float) -> float
-                   {
-                        return d * 4.0 / 5.0;
-                   }, 100.0);
+    degrees(let func rea2cel(d -> float) -> float
+            {
+                 d * 4.0 / 5.0
+            }, 100.0)
 }
 ```
 
@@ -225,12 +224,12 @@ The idea of in-lining functions may be taken into extreme...
 ```
 func calc() -> (float) -> float
 {
-    return func fah2cel(float f) -> float { return (f - 32.0) / 1.8; };
+    func fah2cel(float f) -> float { (f - 32.0) / 1.8 }
 }
 
 func main() -> float
 {
-    return calc()(212.0);
+    calc()(212.0)
 }
 ```
 ... and a little step further.
@@ -238,13 +237,13 @@ func main() -> float
 ```
 func dir_deg(d -> int) -> (float) -> float
 {
-    return d == 0 ? func fah2cel(f -> float) -> float { return (f - 32.0) / 1.8; }
-                  : func cel2fah(c -> float) -> float { return c * 1.8 + 32.0; };
+    d == 0 ? let func fah2cel(f -> float) -> float { (f - 32.0) / 1.8 }
+           : let func cel2fah(c -> float) -> float { c * 1.8 + 32.0 }
 }
 
 func main() -> float
 {
-    return dir_deg(0)(100.0);
+    dir_deg(0)(100.0)
 }
 
 ```
@@ -255,8 +254,8 @@ Functions let to define bindings with local values.
 ```
 func area(a -> float, b -> float, c -> float) -> float
 {
-    let p = (a + b + c) / 2.0
-    return sqrt(p * (p - a) * (p - b) * (p - c));
+    let p = (a + b + c) / 2.0;
+    sqrt(p * (p - a) * (p - b) * (p - c))
 }
 ```
 
@@ -268,10 +267,10 @@ compilation error will be displayed.
 ```
 func outer(a -> float, b -> float) -> float
 {
-    let q = 10.0
-    let p = a + q
+    let q = 10.0;
+    let p = a + q;
 
-    return p + q;
+    p + q
 }
 ```
 
@@ -280,13 +279,13 @@ Bindings can hold any expressions. Thus the following code is also possible...
 ```
 func outer(to -> int) -> () -> int
 {
-    let p = 2 * to
-    let f = func rec() -> int
+    let p = 2 * to;
+    let f = let func rec() -> int
     {
-        return p;
-    }
+        p
+    };
 
-    return f;
+    f
 }
 ```
 
@@ -295,19 +294,86 @@ func outer(to -> int) -> () -> int
 ```
 func outer(to -> int) -> (int) -> int
 {
-    let f = func rec(start -> int) -> int
+    let f = let func rec(start -> int) -> int
     {
-        return start < to ? rec(print(start) + 1) : 0;
-    }
+        start < to ? rec(print(start) + 1) : 0
+    };
 
-    return f;
+    f
 }
 
 func main() -> int
 {
-    return outer(10)(0);
+    outer(10)(0)
 }
 ```
+
+## Assignments and Flow Control
+
+Writing code using just recursion if very difficult. Never lets to use control
+flow expressions known from other languages. These are ```if```, ```if else```,
+```while```, ```do while``` and ```for``` expressions. As these structures
+are expressions they also return a value. All of them, except for ```if else```
+return ```0 -> int``` value. Also expression following ```if``` must return
+```int```.
+
+Assignment expression ```=``` lets to assign value of an expression on the
+right hand side to a value on the left hand side. Please note, that if
+the value on the left hand side is a temporary, assignment will be discarded.
+
+The following examples present assignments and flow control.
+
+```
+func main() -> int
+{
+    let n = 18;
+
+    do
+    {
+        print(n % 2);
+        n = n / 2
+    } while (n != 0);
+        
+    5
+}
+```
+
+The above example converts value ```18``` into binary format.
+
+```
+func max(a -> int, b -> int) -> int { a > b ? a : b }
+
+func cutrod(price[P] -> int, memo[M] -> int, len -> int) -> int
+{
+    var i = 0;
+    var max_p = -1;
+    
+    if (memo[len] != -1)
+    {
+        max_p = memo[len]
+    }
+    else
+    {
+         while (i < len)
+         {
+             max_p = max(max_p, price[i] + cutrod(price, memo, len - i - 1));
+             i = i + 1
+         }
+    };
+    
+    memo[len] = max_p
+}
+
+func main() -> int
+{
+    let price = [ 2, 7, 9, 10, 10, 14, 17, 21 ] -> int;
+    let memo = [ 0, -1, -1, -1, -1, -1, -1, -1, -1 ] -> int; 
+    
+    cutrod(price, memo, 8)
+}
+```
+
+The above example solves rod cutting dynamic problem.
 
 ## Arrays
 Never supports arrays of any dimension. Array are also expressions and may be
@@ -317,15 +383,15 @@ value of its element.
 ```
 func f1(a -> int) -> [D, D] -> int
 {
-    return [ [ a, 0, 0, 0 ],
-             [ 0, a, 0, 0 ],
-             [ 0, 0, a, 0 ],
-             [ 0, 0, 0, a ] ] -> int;
+     [ [ a, 0, 0, 0 ],
+       [ 0, a, 0, 0 ],
+       [ 0, 0, a, 0 ],
+       [ 0, 0, 0, a ] ] -> int
 }
 
 func main() -> int
 {
-    return f1(11)[0, 0];
+    f1(11)[0, 0]
 }
 ```
 
@@ -335,33 +401,33 @@ arrays...
 ```
 func call(tab[row] -> [D] -> int) -> int
 {
-    return tab[row - 1][1];
+    tab[row - 1][1]
 }
 
 func f1() -> int
 {
-    return call([ [ 9, 8, 7, 6, 5 ] -> int,
-                  [ 9, 7, 5 ] -> int        ] -> [_] -> int);
+    call([ [ 9, 8, 7, 6, 5 ] -> int,
+           [ 9, 7, 5 ] -> int        ] -> [_] -> int)
 }
 
 func main() -> int
 {
-    return f1();
+    f1()
 }
 ```
 ...or even functions.
 ```
 func f1(a -> int, b -> int, c -> int) -> [D] -> () -> int
 {
-    return [
-             func f1() -> int { return a + b + c; },
-             func f2() -> int { return a + b - c; }  
-           ] -> () -> int;
+     [
+        let func f1() -> int { a + b + c },
+        let func f2() -> int { a + b - c }  
+     ] -> () -> int
 }
 
 func main() -> int
 {
-    return f1(80, 90, 100)[1]();
+    f1(80, 90, 100)[1]()
 }
 
 ```
@@ -371,12 +437,12 @@ arguments. This type of array passing type is called conformant arrays.
 ```
 func f1(tab[row, col] -> int) -> int
 {
-    return row * col;
+    row * col
 }
 
 func main() -> int
 {
-    return f1( [ [10, 20, 30], [30, 40, 50] ] -> int );
+    f1( [ [10, 20, 30], [30, 40, 50] ] -> int )
 }
 ```
 
@@ -386,16 +452,16 @@ lowest element in an array.
 ```
 func tmin( t[elems] -> int ) -> int
 {
-	func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
-	{
-		return i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min;
-	}
-	return __tmin(t[0], 0, t);
+    func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
+    {
+        i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min
+    }
+    __tmin(t[0], 0, t)
 }
 
 func main() -> int
 {
-	return tmin( [ 20, 10, 30, 50, 40 ] -> int );
+    tmin( [ 20, 10, 30, 50, 40 ] -> int )
 }
 ```
 
@@ -405,21 +471,21 @@ and tail recursion.
 ```
 func add_five(e -> int) -> int
 {
-	return print(e + 5);
+    print(e + 5)
 }
 
 func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
 {
-	func __tforeach( val -> int, i -> int, t[elems] -> int ) -> int
-	{
-		return i < elems ? __tforeach( each(t[i]), i + 1, t ) : 0;
-	}
-	return __tforeach(t[0], 0, t);
+    func __tforeach( val -> int, i -> int, t[elems] -> int ) -> int
+    {
+        i < elems ? __tforeach( each(t[i]), i + 1, t ) : 0
+    }
+    __tforeach(t[0], 0, t)
 }
 
 func main() -> int
 {
-	return tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five );
+    tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five )
 }
 ```
 
@@ -430,24 +496,24 @@ func printTab( tab[dim] -> int ) -> int
 {
     func __printTab( val -> int, i -> int, tab[dim] -> int ) -> int
     {
-        return i < dim ? __printTab( print(2 * tab[i]), i + 1, tab) : i;
+        i < dim ? __printTab( print(2 * tab[i]), i + 1, tab) : i
     }
-    return __printTab(0, 0, tab);
+    __printTab(0, 0, tab)
 }
 
 func print2Tab( tab[dim] -> [D] -> int ) -> int
 {
     func __print2Tab( val -> int, i -> int, tab[dim] -> [D] -> int ) -> int
     {
-        return i < dim ? __print2Tab( printTab(tab[i]), i + 1, tab ) : i;
+        i < dim ? __print2Tab( printTab(tab[i]), i + 1, tab ) : i
     }
-    return __print2Tab(0, 0, tab);
+    __print2Tab(0, 0, tab)
 }
 
 func main() -> int
 {
-    return print2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
-                        [ 16, 17, 18 ] -> int ] -> [D] -> int );
+    print2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
+                 [ 16, 17, 18 ] -> int ] -> [D] -> int )
 }
 ```
 
@@ -455,32 +521,32 @@ The above code can be rewritten using ```foreach``` functions.
 ```
 func twice(e -> int) -> int
 {
-    return print(2 * e); 
+    print(2 * e)
 }
 
 func foreachTab( tab[dim] -> int, each(e -> int) -> int ) -> int
 {
     func __foreachTab( val -> int, i -> int, tab[dim] -> int ) -> int
     {
-        return i < dim ? __foreachTab( each(tab[i]), i + 1, tab) : i;
+        i < dim ? __foreachTab( each(tab[i]), i + 1, tab) : i
     }
-    return __foreachTab(0, 0, tab);
+    __foreachTab(0, 0, tab)
 }
 
 func foreach2Tab( tab[dim] -> [D] -> int, eachTab(t[D] -> int, (int) -> int) -> int, each(e -> int) -> int ) -> int
 {
     func __foreach2Tab( val -> int, i -> int, tab[dim] -> [D] -> int ) -> int
     {
-        return i < dim ? __foreach2Tab( eachTab(tab[i], each), i + 1, tab ) : i;
+        i < dim ? __foreach2Tab( eachTab(tab[i], each), i + 1, tab ) : i
     }
-    return __foreach2Tab(0, 0, tab);
+    __foreach2Tab(0, 0, tab)
 }
 
 func main() -> int
 {
-    return foreach2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
-                          [ 16, 17, 18 ] -> int ] -> [D] -> int,
-                        foreachTab, twice );
+    foreach2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
+                   [ 16, 17, 18 ] -> int ] -> [D] -> int,
+                   foreachTab, twice )
 }
 ```
 
@@ -490,40 +556,40 @@ Never lets to add, subtract and multiply int and float arrays.
 ```
 func main() -> int
 {
-    return printtab( 2 * [ 3, 5, 7, 9 ] -> int );
+    printtab( 2 * [ 3, 5, 7, 9 ] -> int )
 }
 ```
 
 ```
 func main() -> int
 {
-    return printtab( - [ 1, -2, 3, -4, 5, -6 ] -> int );
+    printtab( - [ 1, -2, 3, -4, 5, -6 ] -> int )
 }
 ```
 
 ```
 func main() -> int
 {
-    return printtab( [ 3.5, 5.5, 7.5 ] -> float - [ 3.0, 4.0, 7.0 ] -> float );
+    printtab( [ 3.5, 5.5, 7.5 ] -> float - [ 3.0, 4.0, 7.0 ] -> float )
 }
 ```
 
 ```
 func main() -> int
 {
-    return printtab( [ 1.5, 2.5, 3.5 ] -> float + [ 3.0, 4.0, 7.0 ] -> float );
+    printtab( [ 1.5, 2.5, 3.5 ] -> float + [ 3.0, 4.0, 7.0 ] -> float )
 }
 ```
 
 ```
 func main() -> int
 {
-    return printtab( [ [ 1.0, 2.0, 3.0 ],
-                       [ 3.0, 4.0, 5.0 ] ] -> float
-                               *
-                     [ [ 3.0, 4.0, 1.0, 1.0 ],
-                       [ 6.0, 7.0, 1.0, 1.0 ],
-                       [ 8.0, 2.0, 1.0, 1.0 ] ] -> float );
+    printtab( [ [ 1.0, 2.0, 3.0 ],
+                [ 3.0, 4.0, 5.0 ] ] -> float
+                        *
+              [ [ 3.0, 4.0, 1.0, 1.0 ],
+                [ 6.0, 7.0, 1.0, 1.0 ],
+                [ 8.0, 2.0, 1.0, 1.0 ] ] -> float )
 }
 ```
 
@@ -536,29 +602,29 @@ in between functions as any other function.
 ```
 func deg2rad(deg -> float) -> float
 {
-    return deg * 3.14159265359 / 180;
+    deg * 3.14159265359 / 180
 }
 
 func get_func() -> (float) -> float
 {
-    return cos;
+    cos
 }
 
 func main() -> float
 {
-    return get_func()(deg2rad(60.0));
+    get_func()(deg2rad(60.0))
 }
 ```
 
-## Write to stdout functions - print and printf
-Never implements a simple `print(int x) -> int` and `printf(float x) -> float` function.
+## Console Output
+Never implements simple `print(int x) -> int` and `printf(float x) -> float` functions.
 The function writes an integer or float parameter `x` (with a new line character)
 to standard output and returns passed value.  By default `printf` uses `"%.2f\n"` formatting.
 
 ```
 func main() -> float
 {
-	return printf(123.456);
+    printf(123.456)
 }
 ```
 
@@ -571,12 +637,12 @@ Never language can be embedded in Unix shell and C code.
 
 func add(a -> int, b -> int, c -> int) -> int
 {
-    return a + b + c;
+    a + b + c
 }
 
 func main(a -> int, b -> int) -> int
 {
-    return add(a, b, 1);
+    add(a, b, 1)
 }
 
 ```
@@ -603,7 +669,7 @@ void test_one()
     int ret = 0;
     object result = { 0 };
     program * prog = program_new();
-    const char * prog_str = "func main(a -> int, b -> int) -> int { return 10 * (a + b); }";
+    const char * prog_str = "func main(a -> int, b -> int) -> int { 10 * (a + b) }";
 
     ret = nev_compile_str(prog_str, prog);
     if (ret == 0)
@@ -616,7 +682,7 @@ void test_one()
         {
             assert(result.type == OBJECT_INT && result.int_value == 50);
         }
-        
+
         prog->params[0].int_value = 9;
         prog->params[1].int_value = 1;
 
