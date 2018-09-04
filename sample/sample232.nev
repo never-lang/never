@@ -1,0 +1,23 @@
+
+func three(d -> int) -> int
+{
+    let t = [ 1, 2, 3 ] -> int;
+    
+    t[10] = 10
+}
+
+func two(d -> int) -> int
+{
+    three(d)
+}
+
+func one(d -> int) -> int
+{
+    two(d)
+}
+
+func main() -> int
+{
+    one(0)
+}
+

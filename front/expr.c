@@ -136,6 +136,7 @@ expr * expr_new_seq(expr_list * list)
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_SEQ;
+    /* ret->line_no = list->head->value->line_no; */
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->seq.list = list;

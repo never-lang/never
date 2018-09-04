@@ -1220,21 +1220,26 @@ void vm_execute_mark(vm * machine, bytecode * code)
     gc_stack entry1 = { 0 };
     gc_stack entry2 = { 0 };
     gc_stack entry3 = { 0 };
-
-    entry1.type = GC_MEM_ADDR;
-    entry1.addr = machine->gp;
-
-    entry2.type = GC_MEM_STACK;
-    entry2.addr = machine->fp;
+    gc_stack entryL = { 0 };
 
     entry3.type = GC_MEM_IP;
     entry3.ip = code->mark.addr;
 
-    machine->stack[machine->sp + 1] = entry1;
-    machine->stack[machine->sp + 2] = entry2;
-    machine->stack[machine->sp + 3] = entry3;
+    entry2.type = GC_MEM_STACK;
+    entry2.addr = machine->fp;
 
-    machine->fp = machine->sp = machine->sp + 3;
+    entry1.type = GC_MEM_ADDR;
+    entry1.addr = machine->gp;
+
+    entryL.type = GC_MEM_IP;
+    entryL.ip = machine->line_no;
+
+    machine->stack[machine->sp + 4] = entry3;
+    machine->stack[machine->sp + 3] = entry2;
+    machine->stack[machine->sp + 2] = entry1;
+    machine->stack[machine->sp + 1] = entryL;
+
+    machine->fp = machine->sp = machine->sp + 4;
     vm_check_stack(machine);
 }
 
@@ -1281,8 +1286,8 @@ void vm_execute_ret(vm * machine, bytecode * code)
 {
     machine->gp = machine->stack[machine->fp - 2].addr;
     machine->ip = machine->stack[machine->fp].ip;
-    machine->stack[machine->fp - 2] = machine->stack[machine->sp];
-    machine->sp = machine->fp - 2;
+    machine->stack[machine->fp - 3] = machine->stack[machine->sp];
+    machine->sp = machine->fp - 3;
     machine->fp = machine->stack[machine->fp - 1].sp;
 
     gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp);
@@ -1400,6 +1405,12 @@ int vm_execute(vm * machine, program * prog, object * result)
         vm_execute_op[bc->type].execute(machine, bc);
     }
 
+    if (machine->running == VM_ERROR)
+    {
+        vm_print(machine);
+        vm_print_stack_trace(machine);    
+    }
+
     if (machine->running == VM_HALT)
     {
         *result =
@@ -1441,6 +1452,23 @@ void vm_delete(vm * machine)
     free(machine);
 }
 
+void vm_print_stack_trace(vm * machine)
+{
+    ip_ptr ip = { 0 };
+    ip_ptr line = { 0 };
+    stack_ptr fp = { 0 };
+    
+    fp = machine->fp;
+    while (fp > 0)
+    {
+        line = machine->stack[fp - 3].ip;
+        ip = machine->stack[fp].ip;
+        printf("called from line %u ip:%u fp:%d\n", line, ip, fp);
+        
+        fp = machine->stack[fp - 1].sp;
+    }
+}
+
 void vm_print(vm * machine)
 {
     printf("machine:\n");
@@ -1454,3 +1482,5 @@ void vm_print(vm * machine)
     printf("\trunning: %d\n", machine->running);
     printf("\n");
 }
+
+

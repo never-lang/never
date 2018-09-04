@@ -143,6 +143,7 @@ int vm_execute(vm * machine, program * prog, object * result);
 vm * vm_new(unsigned int mem_size, unsigned int stack_size);
 void vm_delete(vm * machine);
 
+void vm_print_stack_trace(vm * machine);
 void vm_print(vm * machine);
 
 #endif /* __VM_H__ */

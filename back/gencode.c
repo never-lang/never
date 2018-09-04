@@ -26,8 +26,8 @@
 #include <assert.h>
 #include <stdio.h>
 
-/* GP old, FP old, IP old */
-#define NUM_FRAME_PTRS 3
+/* GP old, FP old, IP old, line_no */
+#define NUM_FRAME_PTRS 4
 
 int func_enum_param_list(param_list * params)
 {
@@ -1488,6 +1488,10 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
     bytecode bc = { 0 };
     bytecode *mark, *label;
 
+    bc.type = BYTECODE_LINE;
+    bc.line.no = value->line_no;
+    bytecode_add(code, &bc);
+
     bc.type = BYTECODE_MARK;
     mark = bytecode_add(code, &bc);
 
@@ -2096,18 +2100,18 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code,
         bind_list_emit(func_value->body->binds, 0, code, result);
         func_count += func_value->body->binds->count;
     }
+
     if (func_value->body && func_value->body->funcs)
     {
         func_list_emit(func_value->body->funcs, func_count, code, result);
         func_count += func_value->body->funcs->count;
     }
-
     if (func_value->body && func_value->body->ret)
     {
         expr_emit(func_value->body->ret, func_count, code, result);
     }
 
-    if (bc.line.no > 0)
+    if (func_value->body->ret->line_no > 0)
     {
         bc.type = BYTECODE_LINE;
         bc.line.no = func_value->body->ret->line_no;
