@@ -147,6 +147,8 @@ int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
               int * result);
 int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
                    int * result);
+int func_body_emit(func * func_value, int stack_level, bytecode_list * code,
+                   int * result);
 int func_emit(func * func_value, int stack_level, bytecode_list * code,
               int * result);
 int func_list_emit(func_list * list, int stack_level, bytecode_list * code,

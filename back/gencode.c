@@ -2055,14 +2055,57 @@ int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
     return 0;
 }
 
+int func_body_emit(func * func_value, int stack_level, bytecode_list * code,
+                   int * result)
+{
+    bytecode bc = { 0 };
+    bytecode *labelA;
+    int func_count = 0;
+    int param_count = 0;
+
+    bc.type = BYTECODE_LABEL;
+    labelA = bytecode_add(code, &bc);
+    func_value->addr = labelA->addr;
+
+    if (func_value->body && func_value->body->binds)
+    {
+        bind_list_emit(func_value->body->binds, 0, code, result);
+        func_count += func_value->body->binds->count;
+    }
+    if (func_value->body && func_value->body->funcs)
+    {
+        func_list_emit(func_value->body->funcs, func_count, code, result);
+        func_count += func_value->body->funcs->count;
+    }
+    if (func_value->body && func_value->body->ret)
+    {
+        expr_emit(func_value->body->ret, func_count, code, result);
+    }
+    if (func_value->body->ret->line_no > 0)
+    {
+        bc.type = BYTECODE_LINE;
+        bc.line.no = func_value->body->ret->line_no;
+        bytecode_add(code, &bc);
+    }
+
+    if (func_value->params != NULL)
+    {
+        param_count = func_value->params->count;
+    }
+
+    bc.type = BYTECODE_RET;
+    bc.ret.count = param_count;
+    bytecode_add(code, &bc);
+
+    return 0;
+}
+
 int func_emit(func * func_value, int stack_level, bytecode_list * code,
               int * result)
 {
-    int param_count = 0;
-    int freevar_count = 0;
-    int func_count = 0;
     bytecode bc = { 0 };
-    bytecode *jump, *labelA, *labelB;
+    bytecode *jump, *labelB;
+    int freevar_count = 0;
 
     bc.type = BYTECODE_FUNC_DEF;
     bytecode_add(code, &bc);
@@ -2091,41 +2134,7 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code,
     bc.type = BYTECODE_JUMP;
     jump = bytecode_add(code, &bc);
 
-    bc.type = BYTECODE_LABEL;
-    labelA = bytecode_add(code, &bc);
-    func_value->addr = labelA->addr;
-
-    if (func_value->body && func_value->body->binds)
-    {
-        bind_list_emit(func_value->body->binds, 0, code, result);
-        func_count += func_value->body->binds->count;
-    }
-
-    if (func_value->body && func_value->body->funcs)
-    {
-        func_list_emit(func_value->body->funcs, func_count, code, result);
-        func_count += func_value->body->funcs->count;
-    }
-    if (func_value->body && func_value->body->ret)
-    {
-        expr_emit(func_value->body->ret, func_count, code, result);
-    }
-
-    if (func_value->body->ret->line_no > 0)
-    {
-        bc.type = BYTECODE_LINE;
-        bc.line.no = func_value->body->ret->line_no;
-        bytecode_add(code, &bc);
-    }
-
-    if (func_value->params != NULL)
-    {
-        param_count = func_value->params->count;
-    }
-
-    bc.type = BYTECODE_RET;
-    bc.ret.count = param_count;
-    bytecode_add(code, &bc);
+    func_body_emit(func_value, stack_level, code, result);
 
     bc.type = BYTECODE_LABEL;
     labelB = bytecode_add(code, &bc);
