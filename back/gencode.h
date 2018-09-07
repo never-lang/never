@@ -24,6 +24,7 @@
 
 #include "bytecode.h"
 #include "never.h"
+#include "weakfunc.h"
 
 enum
 {
@@ -98,61 +99,61 @@ int expr_id_func_nest_emit(func * func_value, int stack_level,
 int expr_id_emit(expr * value, int stack_level, bytecode_list * code,
                  int * result);
 int expr_neg_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 int expr_add_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 int expr_sub_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 int expr_mul_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 
 int expr_and_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 int expr_or_emit(expr * value, int stack_level, bytecode_list * code,
-                 int * result);
+                 func_list_weak * list_weak, int * result);
 int expr_not_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 int expr_ass_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 int expr_cond_emit(expr * value, int stack_level, bytecode_list * code,
-                   int * result);
+                   func_list_weak * list_weak, int * result);
 int expr_while_emit(expr * value, int stack_level, bytecode_list * code, 
-                    int * result);
+                    func_list_weak * list_weak, int * result);
 int expr_do_while_emit(expr * value, int stack_level, bytecode_list * code, 
-                       int * result);
+                       func_list_weak * list_weak, int * result);
 int expr_for_emit(expr * value, int stack_level, bytecode_list * code, 
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
-                   int * result);
+                   func_list_weak * list_weak, int * result);
 int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code,
-                        int * result);
+                        func_list_weak * list_weak, int * result);
 int expr_emit(expr * value, int stack_level, bytecode_list * code,
-              int * result);
+              func_list_weak * list_weak, int * result);
 int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code,
-                   int * result);
+                   func_list_weak * list_weak, int * result);
 int expr_seq_emit(expr_list * list, int stack_level, bytecode_list * code,
-                  int * result);
+                  func_list_weak * list_weak, int * result);
 int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,
                              int stack_level, bytecode_list * code,
-                             int * result);
+                             func_list_weak * list_weak, int * result);
 int array_init_emit(expr * value, int stack_level, bytecode_list * code,
-                    int * result);
+                    func_list_weak * list_weak, int * result);
 int array_dims_emit(array * array_value, int stack_level, bytecode_list * code,
-                    int * result);
+                    func_list_weak * list_weak, int * result);
 int expr_array_emit(expr * value, int stack_level, bytecode_list * code,
-                    int * result);
+                    func_list_weak * list_weak, int * result);
 int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code,
-                          int * result);
+                          func_list_weak * list_weak, int * result);
 int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
-              int * result);
+              func_list_weak * list_weak, int * result);
 int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
-                   int * result);
-int func_body_emit(func * func_value, int stack_level, bytecode_list * code,
-                   int * result);
+                   func_list_weak * list_weak, int * result);
+int func_body_emit(func * func_value, bytecode_list * code,
+                   func_list_weak * list_weak, int * result);
 int func_emit(func * func_value, int stack_level, bytecode_list * code,
-              int * result);
+              func_list_weak * list_weak, int * result);
 int func_list_emit(func_list * list, int stack_level, bytecode_list * code,
-                   int * result);
+                   func_list_weak * list_weak, int * result);
 int never_emit(never * nev, bytecode_list * code);
 
 int func_main_emit(never * nev, int stack_level, bytecode_list * code,

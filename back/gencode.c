@@ -204,7 +204,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
     }
     else
     {
-        *result = 1;
+        *result = GENCODE_FAIL;
         print_error_msg(
             value->line_no,
             "cannot find variable %s, at this stage it is very bad\n",
@@ -989,11 +989,11 @@ int expr_id_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_neg_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result)
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     
-    expr_emit(value->left, stack_level, code, result);
+    expr_emit(value->left, stack_level, code, list_weak, result);
 
     if (value->comb.comb == COMB_TYPE_INT)
     {
@@ -1029,12 +1029,12 @@ int expr_neg_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_add_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result)
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     
-    expr_emit(value->left, stack_level, code, result);
-    expr_emit(value->right, stack_level + 1, code, result);
+    expr_emit(value->left, stack_level, code, list_weak, result);
+    expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
     if (value->comb.comb == COMB_TYPE_INT)
     {
@@ -1070,12 +1070,12 @@ int expr_add_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_sub_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result)
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
 
-    expr_emit(value->left, stack_level, code, result);
-    expr_emit(value->right, stack_level + 1, code, result);
+    expr_emit(value->left, stack_level, code, list_weak, result);
+    expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
     if (value->comb.comb == COMB_TYPE_INT)
     {
@@ -1111,12 +1111,12 @@ int expr_sub_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_mul_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result)
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
 
-    expr_emit(value->left, stack_level, code, result);
-    expr_emit(value->right, stack_level + 1, code, result);
+    expr_emit(value->left, stack_level, code, list_weak, result);
+    expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
     if (value->comb.comb == COMB_TYPE_INT)
     {
@@ -1168,18 +1168,18 @@ int expr_mul_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_and_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result)
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *condzA, *condzB, *jumpE;
     bytecode *labelEF, *labelE;
 
-    expr_emit(value->left, stack_level, code, result);
+    expr_emit(value->left, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_JUMPZ;
     condzA = bytecode_add(code, &bc);
 
-    expr_emit(value->right, stack_level, code, result);
+    expr_emit(value->right, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_JUMPZ;
     condzB = bytecode_add(code, &bc);
@@ -1208,13 +1208,13 @@ int expr_and_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_or_emit(expr * value, int stack_level, bytecode_list * code,
-                 int * result)
+                 func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *condzA, *condzB, *jumpET, *jumpE;
     bytecode *labelB, *labelET, *labelEF, *labelE;
 
-    expr_emit(value->left, stack_level, code, result);
+    expr_emit(value->left, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_JUMPZ;
     condzA = bytecode_add(code, &bc);
@@ -1226,7 +1226,7 @@ int expr_or_emit(expr * value, int stack_level, bytecode_list * code,
     labelB = bytecode_add(code, &bc);
     condzA->jump.offset = labelB->addr - condzA->addr;
 
-    expr_emit(value->right, stack_level, code, result);
+    expr_emit(value->right, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_JUMPZ;
     condzB = bytecode_add(code, &bc);
@@ -1258,10 +1258,10 @@ int expr_or_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_not_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result)
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
-    expr_emit(value->left, stack_level, code, result);
+    expr_emit(value->left, stack_level, code, list_weak, result);
 
     if (value->comb.comb == COMB_TYPE_INT)
     {
@@ -1280,12 +1280,12 @@ int expr_not_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_ass_emit(expr * value, int stack_level, bytecode_list * code,
-                  int * result)
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     
-    expr_emit(value->right, stack_level, code, result);
-    expr_emit(value->left, stack_level + 1, code, result);
+    expr_emit(value->right, stack_level, code, list_weak, result);
+    expr_emit(value->left, stack_level + 1, code, list_weak, result);
 
     if (value->comb.comb == COMB_TYPE_INT)
     {
@@ -1319,18 +1319,18 @@ int expr_ass_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_cond_emit(expr * value, int stack_level, bytecode_list * code,
-                   int * result)
+                   func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *cond, *condz;
     bytecode *labelA, *labelB;
 
-    expr_emit(value->left, stack_level, code, result);
+    expr_emit(value->left, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_JUMPZ;
     condz = bytecode_add(code, &bc);
 
-    expr_emit(value->middle, stack_level, code, result);
+    expr_emit(value->middle, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_JUMP;
     cond = bytecode_add(code, &bc);
@@ -1339,7 +1339,7 @@ int expr_cond_emit(expr * value, int stack_level, bytecode_list * code,
     labelA = bytecode_add(code, &bc);
     condz->jump.offset = labelA->addr - condz->addr;
 
-    expr_emit(value->right, stack_level, code, result);
+    expr_emit(value->right, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_LABEL;
     labelB = bytecode_add(code, &bc);
@@ -1349,7 +1349,7 @@ int expr_cond_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_while_emit(expr * value, int stack_level, bytecode_list * code, 
-                    int * result)
+                    func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *cond, *condz;
@@ -1358,12 +1358,12 @@ int expr_while_emit(expr * value, int stack_level, bytecode_list * code,
     bc.type = BYTECODE_LABEL;
     labelA = bytecode_add(code, &bc);
     
-    expr_emit(value->whileloop.cond, stack_level, code, result);
+    expr_emit(value->whileloop.cond, stack_level, code, list_weak, result);
     
     bc.type = BYTECODE_JUMPZ;
     condz = bytecode_add(code, &bc);
     
-    expr_emit(value->whileloop.do_value, stack_level, code, result);
+    expr_emit(value->whileloop.do_value, stack_level, code, list_weak, result);
     
     /* pop previous value of stack */
     bc.type = BYTECODE_SLIDE;
@@ -1388,7 +1388,7 @@ int expr_while_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_do_while_emit(expr * value, int stack_level, bytecode_list * code, 
-                       int * result)
+                       func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *cond, *condz;
@@ -1397,7 +1397,7 @@ int expr_do_while_emit(expr * value, int stack_level, bytecode_list * code,
     bc.type = BYTECODE_LABEL;
     labelA = bytecode_add(code, &bc);
 
-    expr_emit(value->whileloop.do_value, stack_level, code, result);
+    expr_emit(value->whileloop.do_value, stack_level, code, list_weak, result);
     
     /* pop previous value of stack */
     bc.type = BYTECODE_SLIDE;
@@ -1405,7 +1405,7 @@ int expr_do_while_emit(expr * value, int stack_level, bytecode_list * code,
     bc.slide.q = 1;            
     bytecode_add(code, &bc);
 
-    expr_emit(value->whileloop.cond, stack_level, code, result);
+    expr_emit(value->whileloop.cond, stack_level, code, list_weak, result);
     
     bc.type = BYTECODE_JUMPZ;
     condz = bytecode_add(code, &bc);
@@ -1427,13 +1427,13 @@ int expr_do_while_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_for_emit(expr * value, int stack_level, bytecode_list * code, 
-                  int * result)
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *cond, *condz;
     bytecode *labelA, *labelB;
 
-    expr_emit(value->forloop.init, stack_level, code, result);
+    expr_emit(value->forloop.init, stack_level, code, list_weak, result);
     
     /* pop previous value of stack */
     bc.type = BYTECODE_SLIDE;
@@ -1444,12 +1444,12 @@ int expr_for_emit(expr * value, int stack_level, bytecode_list * code,
     bc.type = BYTECODE_LABEL;
     labelA = bytecode_add(code, &bc);
 
-    expr_emit(value->forloop.cond, stack_level, code, result);
+    expr_emit(value->forloop.cond, stack_level, code, list_weak, result);
     
     bc.type = BYTECODE_JUMPZ;
     condz = bytecode_add(code, &bc);
         
-    expr_emit(value->forloop.do_value, stack_level, code, result);
+    expr_emit(value->forloop.do_value, stack_level, code, list_weak, result);
 
     /* pop previous value of stack */
     bc.type = BYTECODE_SLIDE;
@@ -1457,7 +1457,7 @@ int expr_for_emit(expr * value, int stack_level, bytecode_list * code,
     bc.slide.q = 1;            
     bytecode_add(code, &bc);
 
-    expr_emit(value->forloop.incr, stack_level, code, result);    
+    expr_emit(value->forloop.incr, stack_level, code, list_weak, result);    
 
     /* pop previous value of stack */
     bc.type = BYTECODE_SLIDE;
@@ -1482,7 +1482,7 @@ int expr_for_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
-                   int * result)
+                   func_list_weak * list_weak, int * result)
 {
     int v = NUM_FRAME_PTRS;
     bytecode bc = { 0 };
@@ -1497,10 +1497,10 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
 
     if (value->call.params)
     {
-        expr_list_emit(value->call.params, stack_level + v, code, result);
+        expr_list_emit(value->call.params, stack_level + v, code, list_weak, result);
         v += value->call.params->count;
     }
-    expr_emit(value->call.func_expr, stack_level + v, code, result);
+    expr_emit(value->call.func_expr, stack_level + v, code, list_weak, result);
 
     bc.type = BYTECODE_CALL;
     bytecode_add(code, &bc);
@@ -1513,17 +1513,17 @@ int expr_call_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code,
-                        int * result)
+                        func_list_weak * list_weak, int * result)
 {
     int v = 0;
     bytecode bc = { 0 };
 
     if (value->call.params)
     {
-        expr_list_emit(value->call.params, stack_level + v, code, result);
+        expr_list_emit(value->call.params, stack_level + v, code, list_weak, result);
         v += value->call.params->count;
     }
-    expr_emit(value->call.func_expr, stack_level + v, code, result);
+    expr_emit(value->call.func_expr, stack_level + v, code, list_weak, result);
 
     bc.type = BYTECODE_SLIDE;
     bc.slide.q = stack_level + v;
@@ -1536,7 +1536,8 @@ int expr_last_call_emit(expr * value, int stack_level, bytecode_list * code,
     return 0;
 }
 
-int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
+int expr_emit(expr * value, int stack_level, bytecode_list * code,
+              func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
 
@@ -1552,20 +1553,20 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         expr_id_emit(value, stack_level, code, result);
         break;
     case EXPR_NEG:
-        expr_neg_emit(value, stack_level, code, result);
+        expr_neg_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_ADD:
-        expr_add_emit(value, stack_level, code, result);
+        expr_add_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_SUB:
-        expr_sub_emit(value, stack_level, code, result);
+        expr_sub_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_MUL:
-        expr_mul_emit(value, stack_level, code, result);    
+        expr_mul_emit(value, stack_level, code, list_weak, result);    
         break;
     case EXPR_DIV:
-        expr_emit(value->left, stack_level, code, result);
-        expr_emit(value->right, stack_level + 1, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
+        expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
         bc.type = BYTECODE_LINE;
         bc.line.no = value->line_no;
@@ -1590,8 +1591,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         }
         break;
     case EXPR_MOD:
-        expr_emit(value->right, stack_level, code, result);
-        expr_emit(value->left, stack_level + 1, code, result);
+        expr_emit(value->right, stack_level, code, list_weak, result);
+        expr_emit(value->left, stack_level + 1, code, list_weak, result);
 
         bc.type = BYTECODE_LINE;
         bc.line.no = value->line_no;
@@ -1613,8 +1614,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         }
         break;
     case EXPR_LT:
-        expr_emit(value->left, stack_level, code, result);
-        expr_emit(value->right, stack_level + 1, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
+        expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
@@ -1638,8 +1639,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         }
         break;
     case EXPR_GT:
-        expr_emit(value->left, stack_level, code, result);
-        expr_emit(value->right, stack_level + 1, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
+        expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
@@ -1663,8 +1664,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         }
         break;
     case EXPR_LTE:
-        expr_emit(value->left, stack_level, code, result);
-        expr_emit(value->right, stack_level + 1, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
+        expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
@@ -1689,8 +1690,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         }
         break;
     case EXPR_GTE:
-        expr_emit(value->left, stack_level, code, result);
-        expr_emit(value->right, stack_level + 1, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
+        expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
@@ -1715,8 +1716,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         }
         break;
     case EXPR_EQ:
-        expr_emit(value->left, stack_level, code, result);
-        expr_emit(value->right, stack_level + 1, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
+        expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
@@ -1740,8 +1741,8 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
         }
         break;
     case EXPR_NEQ:
-        expr_emit(value->left, stack_level, code, result);
-        expr_emit(value->right, stack_level + 1, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
+        expr_emit(value->right, stack_level + 1, code, list_weak, result);
 
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
@@ -1767,68 +1768,69 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 
         break;
     case EXPR_AND:
-        expr_and_emit(value, stack_level, code, result);
+        expr_and_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_OR:
-        expr_or_emit(value, stack_level, code, result);
+        expr_or_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_NOT:
-        expr_not_emit(value, stack_level, code, result);
+        expr_not_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_SUP:
-        expr_emit(value->left, stack_level, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
         break;
     case EXPR_COND:
-        expr_cond_emit(value, stack_level, code, result);
+        expr_cond_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_ARRAY:
         if (value->array.array_value != NULL)
         {
-            expr_array_emit(value, stack_level, code, result);
+            expr_array_emit(value, stack_level, code, list_weak, result);
         }
         break;
     case EXPR_ARRAY_DEREF:
-        expr_array_deref_emit(value, stack_level, code, result);
+        expr_array_deref_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_CALL:
-        expr_call_emit(value, stack_level, code, result);
+        expr_call_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_LAST_CALL:
-        expr_last_call_emit(value, stack_level, code, result);
+        expr_last_call_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_FUNC:
         if (value->func_value)
         {
-            func_emit(value->func_value, stack_level, code, result);
+            func_emit(value->func_value, stack_level, code, list_weak, result);
         }
         break;
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
-            expr_seq_emit(value->seq.list, stack_level, code, result);
+            expr_seq_emit(value->seq.list, stack_level, code, list_weak, result);
         }
         break;
     case EXPR_ASS:
-        expr_ass_emit(value, stack_level, code, result);
+        expr_ass_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_WHILE:
-        expr_while_emit(value, stack_level, code, result);
+        expr_while_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_DO_WHILE:
-        expr_do_while_emit(value, stack_level, code, result);
+        expr_do_while_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_FOR:
-        expr_for_emit(value, stack_level, code, result);
+        expr_for_emit(value, stack_level, code, list_weak, result);
         break;
     case EXPR_BUILD_IN:
-        expr_list_emit(value->func_build_in.param, stack_level, code, result);
+        expr_list_emit(value->func_build_in.param, stack_level, code,
+                       list_weak, result);
 
         bc.type = BYTECODE_BUILD_IN;
         bc.build_in.id = value->func_build_in.id;
         bytecode_add(code, &bc);
         break;
     case EXPR_INT_TO_FLOAT:
-        expr_emit(value->left, stack_level, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
 
         if (value->left->comb.comb == COMB_TYPE_INT)
         {
@@ -1845,7 +1847,7 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 
         break;
     case EXPR_FLOAT_TO_INT:
-        expr_emit(value->left, stack_level, code, result);
+        expr_emit(value->left, stack_level, code, list_weak, result);
 
         if (value->left->comb.comb == COMB_TYPE_FLOAT)
         {
@@ -1865,7 +1867,7 @@ int expr_emit(expr * value, int stack_level, bytecode_list * code, int * result)
 }
 
 int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code,
-                   int * result)
+                   func_list_weak * list_weak, int * result)
 {
     int e = 0;
     expr_list_node * node = list->head;
@@ -1874,7 +1876,7 @@ int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code,
         expr * value = node->value;
         if (value != NULL)
         {
-            expr_emit(value, stack_level + e++, code, result);
+            expr_emit(value, stack_level + e++, code, list_weak, result);
         }
         node = node->prev;
     }
@@ -1883,7 +1885,7 @@ int expr_list_emit(expr_list * list, int stack_level, bytecode_list * code,
 }
 
 int expr_seq_emit(expr_list * list, int stack_level, bytecode_list * code,
-                  int * result)
+                 func_list_weak * list_weak,  int * result)
 {
     int prev = 0;
 
@@ -1906,7 +1908,7 @@ int expr_seq_emit(expr_list * list, int stack_level, bytecode_list * code,
         expr * value = node->value;
         if (value != NULL)
         {
-            expr_emit(value, stack_level, code, result);
+            expr_emit(value, stack_level, code, list_weak, result);
         }
         node = node->next;
     }
@@ -1915,10 +1917,10 @@ int expr_seq_emit(expr_list * list, int stack_level, bytecode_list * code,
 }
 
 int array_dims_emit(array * array_value, int stack_level, bytecode_list * code,
-                    int * result)
+                    func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
-    expr_list_emit(array_value->dims, stack_level, code, result);
+    expr_list_emit(array_value->dims, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_MK_ARRAY;
     bc.mk_array.dims = array_value->dims->count;
@@ -1930,7 +1932,7 @@ int array_dims_emit(array * array_value, int stack_level, bytecode_list * code,
 
 int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,
                              int stack_level, bytecode_list * code,
-                             int * result)
+                             func_list_weak * list_weak, int * result)
 {
     int elem_dist = -1;
     *elements_count = 0;
@@ -1943,7 +1945,8 @@ int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,
         expr * value = node->value;
         if (value != NULL && node->distance == elem_dist)
         {
-            expr_emit(value, stack_level + (*elements_count)++, code, result);
+            expr_emit(value, stack_level + (*elements_count)++, code,
+                      list_weak, result);
         }
         else
         {
@@ -1956,7 +1959,7 @@ int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,
 }
 
 int array_init_emit(expr * value, int stack_level, bytecode_list * code,
-                    int * result)
+                    func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     int elements_count = 0;
@@ -1966,11 +1969,11 @@ int array_init_emit(expr * value, int stack_level, bytecode_list * code,
     array_to_depth_list(value, depth_list);
 
     array_init_elements_emit(depth_list, &elements_count, stack_level, code,
-                             result);
+                             list_weak, result);
     expr_list_weak_delete(depth_list);
 
     expr_list_emit(array_value->dims, stack_level + elements_count, code,
-                   result);
+                   list_weak, result);
 
     bc.type = BYTECODE_MK_INIT_ARRAY;
     bc.mk_array.dims = array_value->dims->count;
@@ -1981,13 +1984,13 @@ int array_init_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int expr_array_emit(expr * value, int stack_level, bytecode_list * code,
-                    int * result)
+                    func_list_weak * list_weak, int * result)
 {
     array * array_value = value->array.array_value;
 
     if (array_value->type == ARRAY_INIT)
     {
-        array_init_emit(value, stack_level, code, result);
+        array_init_emit(value, stack_level, code, list_weak, result);
     }
     else if (array_value->type == ARRAY_SUB)
     {
@@ -1995,19 +1998,19 @@ int expr_array_emit(expr * value, int stack_level, bytecode_list * code,
     }
     else if (array_value->type == ARRAY_DIMS)
     {
-        array_dims_emit(array_value, stack_level, code, result);
+        array_dims_emit(array_value, stack_level, code, list_weak, result);
     }
 
     return 0;
 }
 
 int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code,
-                          int * result)
+                          func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
 
-    expr_emit(value->array_deref.array_expr, stack_level, code, result);
-    expr_list_emit(value->array_deref.ref, stack_level + 1, code, result);
+    expr_emit(value->array_deref.array_expr, stack_level, code, list_weak, result);
+    expr_list_emit(value->array_deref.ref, stack_level + 1, code, list_weak, result);
 
     bc.type = BYTECODE_ARRAY_DEREF;
     bc.array_deref.dims = value->array_deref.ref->count;
@@ -2018,7 +2021,7 @@ int expr_array_deref_emit(expr * value, int stack_level, bytecode_list * code,
 }
 
 int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
-              int * result)
+              func_list_weak * list_weak, int * result)
 {
     switch (bind_value->type)
     {
@@ -2030,7 +2033,7 @@ int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
         case BIND_VAR:
             if (bind_value->expr_value != NULL)
             {
-                expr_emit(bind_value->expr_value, stack_level, code, result);
+                expr_emit(bind_value->expr_value, stack_level, code, list_weak, result);
             }
         break;
     }
@@ -2038,7 +2041,7 @@ int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
 }
 
 int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
-                   int * result)
+                   func_list_weak * list_weak, int * result)
 {
     int b = 0;
     
@@ -2048,38 +2051,39 @@ int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
         bind * bind_value = node->value;
         if (bind_value != NULL)
         {
-            bind_emit(bind_value, stack_level + b++, code, result);
+            bind_emit(bind_value, stack_level + b++, code, list_weak, result);
         }
         node = node->next;
     }
     return 0;
 }
 
-int func_body_emit(func * func_value, int stack_level, bytecode_list * code,
-                   int * result)
+int func_body_emit(func * func_value, bytecode_list * code,
+                   func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *labelA;
     int func_count = 0;
     int param_count = 0;
 
-    bc.type = BYTECODE_LABEL;
+    bc.type = BYTECODE_FUNC_DEF;
     labelA = bytecode_add(code, &bc);
     func_value->addr = labelA->addr;
 
     if (func_value->body && func_value->body->binds)
     {
-        bind_list_emit(func_value->body->binds, 0, code, result);
+        bind_list_emit(func_value->body->binds, 0, code, list_weak, result);
         func_count += func_value->body->binds->count;
     }
     if (func_value->body && func_value->body->funcs)
     {
-        func_list_emit(func_value->body->funcs, func_count, code, result);
+        func_list_emit(func_value->body->funcs, func_count, code,
+                       list_weak, result);
         func_count += func_value->body->funcs->count;
     }
     if (func_value->body && func_value->body->ret)
     {
-        expr_emit(func_value->body->ret, func_count, code, result);
+        expr_emit(func_value->body->ret, func_count, code, list_weak, result);
     }
     if (func_value->body->ret->line_no > 0)
     {
@@ -2101,10 +2105,9 @@ int func_body_emit(func * func_value, int stack_level, bytecode_list * code,
 }
 
 int func_emit(func * func_value, int stack_level, bytecode_list * code,
-              int * result)
+              func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
-    bytecode *jump, *labelB;
     int freevar_count = 0;
 
     bc.type = BYTECODE_FUNC_DEF;
@@ -2131,14 +2134,7 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code,
     bc.id_func.func_value = func_value;
     bytecode_add(code, &bc);
 
-    bc.type = BYTECODE_JUMP;
-    jump = bytecode_add(code, &bc);
-
-    func_body_emit(func_value, stack_level, code, result);
-
-    bc.type = BYTECODE_LABEL;
-    labelB = bytecode_add(code, &bc);
-    jump->jump.offset = labelB->addr - jump->addr;
+    func_list_weak_add(list_weak, func_value);
 
     return 0;
 }
@@ -2188,7 +2184,7 @@ int func_main_emit(never * nev, int stack_level, bytecode_list * code,
 }
 
 int func_list_emit(func_list * list, int stack_level, bytecode_list * code,
-                   int * result)
+                   func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     unsigned int n = list->count;
@@ -2203,7 +2199,8 @@ int func_list_emit(func_list * list, int stack_level, bytecode_list * code,
         func * func_value = node->value;
         if (func_value != NULL)
         {
-            func_emit(func_value, stack_level + list->count, code, result);
+            func_emit(func_value, stack_level + list->count, code,
+                      list_weak, result);
 
             bc.type = BYTECODE_REWRITE;
             bc.rewrite.j = n--;
@@ -2218,12 +2215,22 @@ int never_emit(never * nev, bytecode_list * code)
 {
     int stack_level = 0;
     int gencode_res = 0;
+    func_list_weak * list_weak = NULL;
 
-    if (nev->funcs)
+    list_weak = func_list_weak_new();
+    func_list_emit(nev->funcs, stack_level, code, list_weak, &gencode_res);
+    func_main_emit(nev, stack_level, code, &gencode_res);
+        
+    while (list_weak->count > 0)
     {
-        func_list_emit(nev->funcs, stack_level, code, &gencode_res);
-        func_main_emit(nev, stack_level, code, &gencode_res);
+        func * value = func_list_weak_pop(list_weak);
+        if (value != NULL)
+        {
+            func_body_emit(value, code, list_weak, &gencode_res);    
+        }
     }
+ 
+    func_list_weak_delete(list_weak);
 
     return gencode_res;
 }
