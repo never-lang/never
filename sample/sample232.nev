@@ -7,11 +7,16 @@ func three(d -> int) -> int
 }
 catch (index)
 {
-    d + 10
+    let func(a -> int) -> int { 100 }(10);
+    d * 10
+}
+catch (arrsize)
+{
+    t[0]
 }
 catch (division)
 {
-    print(10)
+    100
 }
 catch
 {

@@ -145,12 +145,12 @@
       <keyword>let</keyword>
       <keyword>var</keyword>
       <keyword>func</keyword>
-      <keyword>lambda</keyword>
+      <keyword>catch</keyword>
+      <keyword>throw</keyword>
       <keyword>while</keyword>
       <keyword>do</keyword>
       <keyword>for</keyword>
       <keyword>if</keyword>
-      <keyword>then</keyword>
       <keyword>else</keyword>
     </context>
 

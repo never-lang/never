@@ -924,8 +924,9 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
 int array_dims_check_type_expr(symtab * tab, expr * value, unsigned int syn_level,
                                int * result)
 {
-    expr_check_type(tab, value, syn_level, result);
+    int res = TYPECHECK_SUCC;
 
+    expr_check_type(tab, value, syn_level, result);
     if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         expr_conv(value, EXPR_FLOAT_TO_INT);
@@ -933,29 +934,34 @@ int array_dims_check_type_expr(symtab * tab, expr * value, unsigned int syn_leve
     }
     else if (value->comb.comb != COMB_TYPE_INT)
     {
-        *result = TYPECHECK_FAIL;
+        *result = res = TYPECHECK_FAIL;
         print_error_msg(value->line_no,
                         "incorrect types %s passed to deref array\n",
                         comb_type_str(value->comb.comb));
     }
-    return 0;
+    return res;
 }
 
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
                                     unsigned int syn_level, int * result)
 {
+    int res = TYPECHECK_SUCC;
+    
     expr_list_node * node = list->tail;
     while (node != NULL)
     {
         expr * value = node->value;
         if (value != NULL)
         {
-            array_dims_check_type_expr(tab, value, syn_level, result);
+            if (array_dims_check_type_expr(tab, value, syn_level, result) == TYPECHECK_FAIL)
+            {
+                res = TYPECHECK_FAIL;
+            }
         }
         node = node->next;
     }
 
-    return TYPECHECK_SUCC;
+    return res;
 }
 
 int expr_array_deref_check_type(symtab * tab, expr * value,
@@ -980,19 +986,18 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
         }
         else
         {
-            array_dims_check_type_expr_list(tab, value->array_deref.ref,
-                                            syn_level, result);
-            if (*result == TYPECHECK_FAIL)
-            {
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(
-                    value->line_no,
-                    "incorrect types of arguments passed to deref array\n");
-            }
-            else
+            if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
+                                                syn_level, result) == TYPECHECK_SUCC)
             {
                 expr_set_return_type(value,
                                      value->array_deref.array_expr->comb.comb_ret);
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "incorrect types of arguments passed to deref array\n");
             }
         }
     }
@@ -1369,6 +1374,56 @@ int bind_list_check_type(symtab * tab, bind_list * list, unsigned int syn_level,
     return 0;
 }
 
+int except_check_type(symtab * tab, except * value, func * func_value,
+                      unsigned int syn_level, int * result)
+{
+    if (value->expr_value != NULL)
+    {
+        expr_check_type(tab, value->expr_value, syn_level, result);
+    }
+    if (param_expr_cmp(func_value->decl->ret, value->expr_value) == TYPECHECK_FAIL)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no,
+                        "incorrect return type in function %s\n",
+                        func_value->decl->id);
+    }
+
+    return 0;
+}
+
+int except_list_check_type(symtab * tab, except_list * list, func * func_value,
+                           unsigned int syn_level, int * result)
+{
+    except_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        except * value = node->value;
+        if (value != NULL)
+        {
+            except_check_type(tab, value, func_value, syn_level, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_except_check_type(symtab * tab, func_except * value, func * func_value,
+                           unsigned int syn_level, int * result)
+{
+    if (value->list != NULL)
+    {
+        except_list_check_type(tab, value->list, func_value, syn_level, result);
+    }
+    if (value->all != NULL)
+    {
+        except_check_type(tab, value->all, func_value, syn_level, result);
+    }
+
+    return 0;
+}
+
 int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                     int * result)
 {
@@ -1386,9 +1441,15 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
         symtab_add_param_from_param_list(func_value->stab, func_value->decl->params,
                                          syn_level, result);
     }
+    if (func_value->except)
+    {
+        func_except_check_type(func_value->stab, func_value->except, func_value,
+                               syn_level, result);
+    }
     if (func_value->body && func_value->body->binds)
     {
-        bind_list_check_type(func_value->stab, func_value->body->binds, syn_level, result);
+        bind_list_check_type(func_value->stab, func_value->body->binds,
+                             syn_level, result);
     }
     if (func_value->body && func_value->body->funcs)
     {
@@ -1398,11 +1459,13 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
     }
     if (func_value->body && func_value->body->funcs)
     {
-        func_list_check_type(func_value->stab, func_value->body->funcs, syn_level, result);
+        func_list_check_type(func_value->stab, func_value->body->funcs,
+                             syn_level, result);
     }
     if (func_value->body && func_value->body->ret)
     {
-        expr_check_type(func_value->stab, func_value->body->ret, syn_level, result);
+        expr_check_type(func_value->stab, func_value->body->ret, syn_level,
+                        result);
 
         if (param_expr_cmp(func_value->decl->ret, func_value->body->ret) ==
             TYPECHECK_FAIL)
@@ -1587,7 +1650,7 @@ int print_func_array(array * value, int depth)
     return 0;
 }
 
-int print_bind(bind * value, int depth)
+int print_func_bind(bind * value, int depth)
 {
     if (value->expr_value)
     {
@@ -1597,7 +1660,7 @@ int print_bind(bind * value, int depth)
     return 0;
 }
 
-int print_bind_list(bind_list * list, int depth)
+int print_func_bind_list(bind_list * list, int depth)
 {
     bind_list_node * node = list->tail;
     while (node != NULL)
@@ -1605,9 +1668,34 @@ int print_bind_list(bind_list * list, int depth)
         bind * value = node->value;
         if (value != NULL)
         {
-            print_bind(value, depth);
+            print_func_bind(value, depth);
         }
 
+        node = node->next;
+    }
+    return 0;
+}
+
+int print_func_except(except * value, int depth)
+{
+    if (value->expr_value != NULL)
+    {
+        print_func_expr(value->expr_value, depth);
+    }
+
+    return 0;
+}
+
+int print_func_except_list(except_list * list, int depth)
+{
+    except_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        except * value = node->value;
+        if (value != NULL)
+        {
+            print_func_except(value, depth);
+        }
         node = node->next;
     }
     return 0;
@@ -1628,13 +1716,25 @@ int print_func(func * value, int depth)
     {
         freevar_list_print(value->freevars);
     }
+    if (value->body != NULL && value->body->binds != NULL)
+    {
+        print_func_bind_list(value->body->binds, depth);
+    }
     if (value->body != NULL && value->body->funcs != NULL)
     {
         print_func_list(value->body->funcs, depth + 1);
     }
-    if (value->body && value->body->ret)
+    if (value->body != NULL && value->body->ret != NULL)
     {
         print_func_expr(value->body->ret, depth);
+    }
+    if (value->except != NULL && value->except->list != NULL)
+    {
+        print_func_except_list(value->except->list, depth);
+    }
+    if (value->except != NULL && value->except->all != NULL)
+    {
+        print_func_except(value->except->all, depth);
     }
 
     return 0;

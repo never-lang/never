@@ -1,25 +1,27 @@
 #include "except.h"
 #include <stdlib.h>
 
-except * except_new_all(expr_list * list)
+except * except_new_all(expr_list * seq)
 {
     except * value = (except *)malloc(sizeof(except));
 
     value->type = EXCEPT_ALL;
     value->id = NULL;
-    value->list = list;
+    value->no = EXCEPT_NO_UNKNOWN;
+    value->expr_value = expr_new_seq(seq);
     value->line_no = 0;
 
     return value;
 }
 
-except * except_new_id(char * id, expr_list * list)
+except * except_new_id(char * id, expr_list * seq)
 {
     except * value = (except *)malloc(sizeof(except));
 
     value->type = EXCEPT_ID;
     value->id = id;
-    value->list = list;
+    value->no = EXCEPT_NO_UNKNOWN;
+    value->expr_value = expr_new_seq(seq);
     value->line_no = 0;
 
     return value;
@@ -31,9 +33,9 @@ void except_delete(except * value)
     {
         free(value->id);
     }
-    if (value->list)
+    if (value->expr_value)
     {
-        expr_list_delete(value->list);
+        expr_delete(value->expr_value);
     }
     free(value);
 }

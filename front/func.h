@@ -62,8 +62,8 @@ typedef struct func_body
 
 typedef struct func_except
 {
-    except * all;
     except_list * list; 
+    except * all;
 } func_except;
 
 typedef struct func_list_node

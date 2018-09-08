@@ -10,11 +10,20 @@ typedef enum except_type
     EXCEPT_ID = 2
 } except_type;
 
+typedef enum except_no
+{
+    EXCEPT_NO_UNKNOWN = 0,
+    EXCEPT_NO_DIVISION = 1,
+    EXCEPT_NO_ARR_SIZE = 2,
+    EXCEPT_NO_INDEX_OOB = 3
+} except_no;
+
 typedef struct except
 {
     except_type type;
     char * id;
-    expr_list * list;
+    unsigned int no;
+    expr * expr_value;
     unsigned int line_no;
 } except;
 
@@ -32,8 +41,8 @@ typedef struct except_list
     except_list_node * tail;
 } except_list;
 
-except * except_new_all(expr_list * list);
-except * except_new_id(char * id, expr_list * expr_list);
+except * except_new_all(expr_list * seq);
+except * except_new_id(char * id, expr_list * seq);
 
 void except_delete(except * value);
 
