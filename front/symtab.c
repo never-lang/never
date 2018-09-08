@@ -209,13 +209,13 @@ void symtab_add_bind(symtab * tab, bind * bind_value, unsigned int syn_level)
 
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level)
 {
-    if (func_value->id == NULL)
+    if (func_value->decl->id == NULL)
     {
         return;
     }
 
     symtab_entry_add_object(tab->entries, tab->size, SYMTAB_FUNC,
-                            func_value->id, func_value, syn_level);
+                            func_value->decl->id, func_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }

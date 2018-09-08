@@ -81,8 +81,9 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
 {
     char * func_id = NULL;
     expr * func_expr = NULL;
-    func_body * body = NULL;
+    func_decl * decl = NULL;
     func * func_value = NULL;
+    func_body * body = NULL;
 
     if (param_ret->type == PARAM_INT)
     {
@@ -100,7 +101,8 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
     body = func_body_new_expr(NULL, NULL, func_expr);
 
     func_id = strdup(name);
-    func_value = func_new(func_id, formal, param_ret, body);
+    decl = func_decl_new(func_id, formal, param_ret);
+    func_value = func_new(decl, body);
 
     return func_value;
 }

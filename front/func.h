@@ -27,22 +27,31 @@
 #include "symtab.h"
 #include "param.h"
 #include "bind.h"
+#include "except.h"
 
 typedef struct func_body func_body;
 typedef struct func_list func_list;
+typedef struct func_decl func_decl;
+typedef struct func_except func_except;
 
 typedef struct func
 {
-    char * id;
     int index;
-    param_list * params;
-    param * ret;
+    func_decl * decl;
     func_body * body;
+    func_except * except;
     struct freevar_list * freevars;
     struct symtab * stab;
     unsigned int addr;
     unsigned int line_no;
 } func;
+
+typedef struct func_decl
+{
+    char * id;
+    param_list * params;
+    param * ret;
+} func_decl;
 
 typedef struct func_body
 {
@@ -50,6 +59,12 @@ typedef struct func_body
     func_list * funcs;
     struct expr * ret;
 } func_body;
+
+typedef struct func_except
+{
+    except * all;
+    except_list * list; 
+} func_except;
 
 typedef struct func_list_node
 {
@@ -65,14 +80,21 @@ typedef struct func_list
     func_list_node * tail;
 } func_list;
 
-func * func_new(char * id, param_list * params, param * ret, func_body * body);
+func * func_new(func_decl * decl, func_body * body);
+func * func_new_except(func_decl * decl, func_body * body, func_except * except);
 void func_delete(func * value);
 
 void func_print(func * value);
 
+func_decl * func_decl_new(char * id, param_list * params, param * ret);
+void func_decl_delete(func_decl * value);
+
 func_body * func_body_new(bind_list * binds, func_list * funcs, expr_list * ret);
 func_body * func_body_new_expr(bind_list * binds, func_list * funcs, expr * ret);
 void func_body_delete(func_body * body);
+
+func_except * func_except_new(except * all, except_list * list);
+void func_except_delete(func_except * value);
 
 func_list_node * func_list_node_new(func * value);
 void func_list_node_delete(func_list_node * node);

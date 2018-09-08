@@ -35,8 +35,10 @@ void test_two()
 {
     symtab_entry * entry = NULL;
     symtab * tab = symtab_new(32, NULL);
-    func * func_one = func_new(strdup("func_one"), NULL, NULL, NULL);
-    func * func_three = func_new(strdup("func_three"), NULL, NULL, NULL);
+    func_decl * decl_one = func_decl_new(strdup("func_one"), NULL, NULL);
+    func * func_one = func_new(decl_one, NULL);
+    func_decl * decl_three = func_decl_new(strdup("func_three"), NULL, NULL);
+    func * func_three = func_new(decl_three, NULL);
 
     symtab_add_func(tab, func_one, 0);
     symtab_add_func(tab, func_three, 0);
@@ -59,10 +61,14 @@ void test_three()
 {
     symtab_entry * entry = NULL;
     symtab * tab = symtab_new(4, NULL);
-    func * func_one = func_new(strdup("func_one"), NULL, NULL, NULL);
-    func * func_two = func_new(strdup("func_two"), NULL, NULL, NULL);
-    func * func_three = func_new(strdup("func_three"), NULL, NULL, NULL);
-    func * func_four = func_new(strdup("func_four"), NULL, NULL, NULL);
+    func_decl * decl_one = func_decl_new(strdup("func_one"), NULL, NULL); 
+    func * func_one = func_new(decl_one, NULL);
+    func_decl * decl_two = func_decl_new(strdup("func_two"), NULL, NULL);
+    func * func_two = func_new(decl_two, NULL);
+    func_decl * decl_three = func_decl_new(strdup("func_three"), NULL, NULL);
+    func * func_three = func_new(decl_three, NULL);
+    func_decl * decl_four = func_decl_new(strdup("func_four"), NULL, NULL);
+    func * func_four = func_new(decl_four, NULL);
 
     symtab_add_func(tab, func_one, 0);
     symtab_add_func(tab, func_two, 0);
@@ -92,12 +98,18 @@ void test_four()
     symtab * tab_one = symtab_new(32, NULL);
     symtab * tab_two = symtab_new(32, tab_one);
 
-    func * func_one = func_new(strdup("func_one"), NULL, NULL, NULL);
-    func * func_two = func_new(strdup("func_two"), NULL, NULL, NULL);
-    func * func_three = func_new(strdup("func_three"), NULL, NULL, NULL);
-    func * func_four = func_new(strdup("func_four"), NULL, NULL, NULL);
-    func * func_five = func_new(strdup("func_five"), NULL, NULL, NULL);
-    func * func_six = func_new(strdup("func_six"), NULL, NULL, NULL);
+    func_decl * decl_one = func_decl_new(strdup("func_one"), NULL, NULL);
+    func * func_one = func_new(decl_one, NULL);
+    func_decl * decl_two = func_decl_new(strdup("func_two"), NULL, NULL);
+    func * func_two = func_new(decl_two, NULL);
+    func_decl * decl_three = func_decl_new(strdup("func_three"), NULL, NULL);
+    func * func_three = func_new(decl_three, NULL);
+    func_decl * decl_four = func_decl_new(strdup("func_four"), NULL, NULL);
+    func * func_four = func_new(decl_four, NULL);
+    func_decl * decl_five = func_decl_new(strdup("func_five"), NULL, NULL);
+    func * func_five = func_new(decl_five, NULL);
+    func_decl * decl_six = func_decl_new(strdup("func_six"), NULL, NULL);
+    func * func_six = func_new(decl_six, NULL);
 
     symtab_add_func(tab_one, func_one, 0);
     symtab_add_func(tab_one, func_two, 0);

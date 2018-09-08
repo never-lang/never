@@ -3,7 +3,19 @@ func three(d -> int) -> int
 {
     let t = [ 1, 2, 3 ] -> int;
     
-    t[10] = 10
+    t[0] = 10
+}
+catch (index)
+{
+    d + 10
+}
+catch (division)
+{
+    print(10)
+}
+catch
+{
+    100
 }
 
 func two(d -> int) -> int

@@ -43,6 +43,12 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
      /* DO NOTHING */
 }
 
+catch {
+    tokp->line_no = line_no;
+    scanner_printf("catch\n");
+    return TOK_CATCH;
+}
+
 for {
     tokp->line_no = line_no;
     scanner_printf("for\n");
@@ -59,6 +65,12 @@ var {
     tokp->line_no = line_no;
     scanner_printf("var\n");
     return TOK_VAR;
+}
+
+throw {
+    tokp->line_no = line_no;
+    scanner_printf("throw\n");
+    return TOK_THROW;
 }
 
 func {

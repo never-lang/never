@@ -23,15 +23,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-func * func_new(char * id, param_list * params, param * ret, func_body * body)
+func * func_new(func_decl * decl, func_body * body)
+{
+    return func_new_except(decl, body, NULL);
+}
+
+func * func_new_except(func_decl * decl, func_body * body, func_except * except)
 {
     func * value = (func *)malloc(sizeof(func));
 
-    value->id = id;
     value->index = 0;
-    value->params = params;
-    value->ret = ret;
+    value->decl = decl;
     value->body = body;
+    value->except = except;
     value->freevars = NULL;
     value->stab = NULL;
     value->addr = 0;
@@ -42,21 +46,17 @@ func * func_new(char * id, param_list * params, param * ret, func_body * body)
 
 void func_delete(func * value)
 {
-    if (value->id)
+    if (value->decl)
     {
-        free(value->id);
-    }
-    if (value->params)
-    {
-        param_list_delete(value->params);
-    }
-    if (value->ret)
-    {
-        param_delete(value->ret);
+        func_decl_delete(value->decl);
     }
     if (value->body)
     {
         func_body_delete(value->body);
+    }
+    if (value->except)
+    {
+        func_except_delete(value->except);
     }
     if (value->freevars)
     {
@@ -72,7 +72,58 @@ void func_delete(func * value)
 
 void func_print(func * value)
 {
-    printf("func %d %s@%u\n", value->index, value->id, value->addr);
+    printf("func %d %s@%u\n", value->index, value->decl->id, value->addr);
+}
+
+func_decl * func_decl_new(char * id, param_list * params, param * ret)
+{
+    func_decl * decl = (func_decl *)malloc(sizeof(func_decl));
+    
+    decl->id = id;
+    decl->params = params;
+    decl->ret = ret;
+    
+    return decl;
+}
+
+void func_decl_delete(func_decl * value)
+{
+    if (value->id)
+    {
+        free(value->id);
+    }
+    if (value->params)
+    {
+        param_list_delete(value->params);
+    }
+    if (value->ret)
+    {
+        param_delete(value->ret);
+    }
+    free(value);
+}
+
+func_except * func_except_new(except * all, except_list * list)
+{
+    func_except * value = (func_except *)malloc(sizeof(func_except));
+    
+    value->all = all;
+    value->list = list;
+    
+    return value;
+}
+
+void func_except_delete(func_except * value)
+{
+    if (value->all)
+    {
+        except_delete(value->all);
+    }
+    if (value->list)
+    {
+        except_list_delete(value->list);
+    }
+    free(value);
 }
 
 func_body * func_body_new(bind_list * binds, func_list * funcs, expr_list * ret)

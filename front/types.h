@@ -29,6 +29,7 @@
 #include "bind.h"
 #include "func.h"
 #include "never.h"
+#include "except.h"
 
 typedef union token_value {
     int int_value;
@@ -46,9 +47,13 @@ typedef union token_value {
     bind * var_value;
     bind * bind_value;
     bind_list * bind_list_value;
+    func_decl * func_decl_value;
     func * func_value;
     func_list * func_list_value;
     func_body * func_body_value;
+    func_except * func_except_value;
+    except * except_value;
+    except_list * except_list_value;
     never * never_value;
 } token_value;
 

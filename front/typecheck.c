@@ -401,7 +401,7 @@ int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
 int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = symtab_lookup(tab, func_value->id, SYMTAB_FLAT);
+    symtab_entry * entry = symtab_lookup(tab, func_value->decl->id, SYMTAB_FLAT);
     if (entry == NULL)
     {
         symtab_add_func(tab, func_value, syn_level);
@@ -446,7 +446,7 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list,
     while (node != NULL)
     {
         func * func_value = node->value;
-        if (func_value && func_value->id)
+        if (func_value && func_value->decl->id)
         {
             symtab_add_func_from_func(tab, func_value, syn_level, result);
         }
@@ -470,8 +470,8 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             func * func_value = entry->func_value;
 
             value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.comb_params = func_value->params;
-            value->comb.comb_ret = func_value->ret;
+            value->comb.comb_params = func_value->decl->params;
+            value->comb.comb_ret = func_value->decl->ret;
         }
         else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
         {
@@ -1200,8 +1200,8 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
             func_check_type(tab, value->func_value, syn_level + 2, result);
 
             value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.comb_params = value->func_value->params;
-            value->comb.comb_ret = value->func_value->ret;
+            value->comb.comb_params = value->func_value->decl->params;
+            value->comb.comb_ret = value->func_value->decl->ret;
         }
         break;
     case EXPR_SEQ:
@@ -1376,15 +1376,15 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
     {
         func_value->stab = symtab_new(32, tab);
     }
-    if (func_value->id)
+    if (func_value->decl->id)
     {
         symtab_add_func_from_func(func_value->stab, func_value, syn_level - 1,
                                   result);
     }
-    if (func_value->params)
+    if (func_value->decl->params)
     {
-        symtab_add_param_from_param_list(func_value->stab, func_value->params,
-                                     syn_level, result);
+        symtab_add_param_from_param_list(func_value->stab, func_value->decl->params,
+                                         syn_level, result);
     }
     if (func_value->body && func_value->body->binds)
     {
@@ -1404,13 +1404,13 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
     {
         expr_check_type(func_value->stab, func_value->body->ret, syn_level, result);
 
-        if (param_expr_cmp(func_value->ret, func_value->body->ret) ==
+        if (param_expr_cmp(func_value->decl->ret, func_value->body->ret) ==
             TYPECHECK_FAIL)
         {
             *result = TYPECHECK_FAIL;
             print_error_msg(func_value->line_no,
                             "incorrect return type in function %s\n",
-                            func_value->id);
+                            func_value->decl->id);
         }
     }
 
@@ -1615,10 +1615,10 @@ int print_bind_list(bind_list * list, int depth)
 
 int print_func(func * value, int depth)
 {
-    if (value->id != NULL)
+    if (value->decl->id != NULL)
     {
-        printf("\nfunction (%d): %d %s@%u\n", depth, value->index, value->id,
-               value->addr);
+        printf("\nfunction (%d): %d %s@%u\n", depth, value->index,
+               value->decl->id, value->addr);
     }
     if (value->stab)
     {
@@ -1690,16 +1690,16 @@ int func_main_check_type(symtab * tab, int * result)
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
             func * func_value = entry->func_value;
-            if (func_value->params != NULL &&
-                func_main_check_num_params(func_value->params) == 0)
+            if (func_value->decl->params != NULL &&
+                func_main_check_num_params(func_value->decl->params) == 0)
             {
                 print_error_msg(
                     func_value->line_no,
                     "function main can take only numerical parameters\n",
-                    func_value->params->count);
+                    func_value->decl->params->count);
                 *result = TYPECHECK_FAIL;
             }
-            if (func_value->ret == NULL)
+            if (func_value->decl->ret == NULL)
             {
                 print_error_msg(func_value->line_no,
                                 "incorrect function main return type\n");
@@ -1707,8 +1707,8 @@ int func_main_check_type(symtab * tab, int * result)
             }
             else
             {
-                if (func_value->ret->type != PARAM_INT &&
-                    func_value->ret->type != PARAM_FLOAT)
+                if (func_value->decl->ret->type != PARAM_INT &&
+                    func_value->decl->ret->type != PARAM_FLOAT)
                 {
                     print_error_msg(func_value->line_no,
                                     "incorrect function main return type\n");

@@ -56,13 +56,13 @@ int never_func_main_params(never * nev, object ** params,
         entry->func_value != NULL)
     {
         func * func_value = entry->func_value;
-        if (func_value->params != NULL)
+        if (func_value->decl->params != NULL)
         {
-            *param_count = func_value->params->count;
+            *param_count = func_value->decl->params->count;
             *params = object_param = malloc(sizeof(object) * (*param_count));
             memset(*params, 0, sizeof(object) * (*param_count));
 
-            param_list_node * node = func_value->params->tail;
+            param_list_node * node = func_value->decl->params->tail;
             while (node != NULL)
             {
                 param * value = node->value;
@@ -111,8 +111,8 @@ int nev_compile_prog(program * prog)
                     never_emit(nev, code);
                     bytecode_func_addr(code);
 
-                    print_functions(nev);
-                    bytecode_print(code);
+                    /* print_functions(nev);
+                    bytecode_print(code); */
                     
                     never_func_main_params(nev, &prog->params,
                                            &prog->param_count);

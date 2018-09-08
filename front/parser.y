@@ -38,6 +38,8 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_THEN
 %token <val.str_value> TOK_ELSE
 %token <val.str_value> TOK_FOR
+%token <val.str_value> TOK_CATCH
+%token <val.str_value> TOK_THROW
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -51,9 +53,14 @@ int yyerror(never ** nev, char * str)
 %type <val.var_value> var
 %type <val.bind_value> bind
 %type <val.bind_list_value> bind_list
+%type <val.func_decl_value> func_decl
 %type <val.func_value> func
 %type <val.func_list_value> func_list
 %type <val.func_body_value> func_body
+%type <val.func_except_value> func_except
+%type <val.except_value> except_all
+%type <val.except_value> except
+%type <val.except_list_value> except_list
 %type <val.never_value> never
 
 %right TOK_IF TOK_ELSE
@@ -451,37 +458,24 @@ bind_list: bind_list bind ';'
     $$ = $1;
 };
 
-func: TOK_FUNC '(' ')' TOK_RET param func_body
+func_decl: '(' ')' TOK_RET param
 {
-    $$ = func_new(NULL, NULL, $5, $6);
-    $$->line_no = $<line_no>2;
+    $$ = func_decl_new(NULL, NULL,$4);
 };
 
-func: TOK_FUNC '(' param_list ')' TOK_RET param func_body
+func_decl: '(' param_list ')' TOK_RET param
 {
-    $$ = func_new(NULL, $3, $6, $7);
+    $$ = func_decl_new(NULL, $2, $5);
 };
 
-func: TOK_FUNC TOK_ID '(' ')' TOK_RET param func_body
+func_decl: TOK_ID '(' ')' TOK_RET param
 {
-    $$ = func_new($2, NULL, $6, $7);
-    $$->line_no = $<line_no>2;
+    $$ = func_decl_new($1, NULL, $5);
 };
 
-func: TOK_FUNC TOK_ID '(' param_list ')' TOK_RET param func_body
+func_decl: TOK_ID '(' param_list ')' TOK_RET param
 {
-    $$ = func_new($2, $4, $7, $8);
-    $$->line_no = $<line_no>2;
-};
-
-func: TOK_FUNC TOK_ID error
-{
-    print_error_msg(line_no, "error in function %s defined at %d\n", $2, $<line_no>2);
-    free($2);
-    
-    yyclearin;
-    yyerrok;
-    $$ = NULL;
+    $$ = func_decl_new($1, $3, $6);
 };
 
 func_body: '{' bind_list expr_seq '}'
@@ -507,6 +501,67 @@ func_body: '{' expr_seq '}'
 func_body: '{' '}'
 {
     $$ = func_body_new(NULL, NULL, NULL);
+};
+
+except_all: TOK_CATCH '{' expr_seq '}'
+{
+    $$ = except_new_all($3);
+    $$->line_no = $<line_no>1;
+};
+
+except: TOK_CATCH '(' TOK_ID ')' '{' expr_seq '}'
+{
+    $$ = except_new_id($3, $6);
+    $$->line_no = $<line_no>1;
+};
+
+except_list: except
+{
+    $$ = except_list_new();
+    except_list_add_end($$, $1);
+};
+
+except_list: except_list except
+{
+    except_list_add_end($1, $2);
+    $$ = $1;
+};
+
+func_except: except_all
+{
+    $$ = func_except_new($1, NULL);
+};
+
+func_except: except_list
+{
+    $$ = func_except_new(NULL, $1);
+};
+
+func_except: except_list except_all
+{
+    $$ = func_except_new($2, $1);
+};
+
+func: TOK_FUNC func_decl func_body
+{
+    $$ = func_new($2, $3);
+    $$->line_no = $<line_no>1;
+};
+
+func: TOK_FUNC func_decl func_body func_except
+{
+    $$ = func_new_except($2, $3, $4);
+    $$->line_no = $<line_no>1;
+};
+
+func: TOK_FUNC TOK_ID error
+{
+    print_error_msg(line_no, "error in function %s defined at %d\n", $2, $<line_no>2);
+    free($2);
+    
+    yyclearin;
+    yyerrok;
+    $$ = NULL;
 };
 
 func_list: func

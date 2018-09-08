@@ -666,9 +666,9 @@ int func_gencode_freevars(func * func_value, int * result)
 int func_gencode(unsigned int syn_level, func * func_value, int * result)
 {
     int start = 1;
-    if (func_value->params != NULL)
+    if (func_value->decl->params != NULL)
     {
-        func_enum_param_list(func_value->params);
+        func_enum_param_list(func_value->decl->params);
     }
     if (func_value->body && func_value->body->binds != NULL)
     {
@@ -2092,9 +2092,9 @@ int func_body_emit(func * func_value, bytecode_list * code,
         bytecode_add(code, &bc);
     }
 
-    if (func_value->params != NULL)
+    if (func_value->decl->params != NULL)
     {
-        param_count = func_value->params->count;
+        param_count = func_value->decl->params->count;
     }
 
     bc.type = BYTECODE_RET;
