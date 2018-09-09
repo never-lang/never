@@ -2058,6 +2058,59 @@ int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
     return 0;
 }
 
+int except_all_emit(except * value, int stack_level, bytecode_list * code,
+                    func_list_weak * list_weak, int * result)
+{
+    if (value->expr_value != NULL)
+    {
+        expr_emit(value->expr_value, stack_level, code, list_weak, result);
+    }
+    
+    return 0;
+}
+
+int except_emit(except * value, int stack_level, bytecode_list * code,
+                func_list_weak * list_weak, int * result)
+{
+    if (value->expr_value != NULL)
+    {
+        expr_emit(value->expr_value, stack_level, code, list_weak, result);
+    }
+    
+    return 0;
+}
+
+int except_list_emit(except_list * list, int stack_level, bytecode_list * code,
+                     func_list_weak * list_weak, int * result)
+{
+    except_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        except * value = node->value;
+        if (value != NULL)
+        {
+            except_emit(value, stack_level, code, list_weak, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_except_emit(func_except * value, int stack_level, bytecode_list * code,
+                     func_list_weak * list_weak, int * result)
+{
+    if (value->list != NULL)
+    {
+        except_list_emit(value->list, stack_level, code, list_weak, result);
+    }
+    if (value->all != NULL)
+    {
+        except_all_emit(value->all, stack_level, code, list_weak, result);
+    }
+    return 0;
+}
+
 int func_body_emit(func * func_value, bytecode_list * code,
                    func_list_weak * list_weak, int * result)
 {

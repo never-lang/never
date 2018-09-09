@@ -148,6 +148,14 @@ int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
               func_list_weak * list_weak, int * result);
 int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
                    func_list_weak * list_weak, int * result);
+int except_all_emit(except * value, int stack_level, bytecode_list * code,
+                    func_list_weak * list_weak, int * result);
+int except_emit(except * value, int stack_level, bytecode_list * code,
+                func_list_weak * list_weak, int * result);
+int except_list_emit(except_list * list, int stack_level, bytecode_list * code,
+                     func_list_weak * list_weak, int * result);
+int func_except_emit(func_except * value, int stack_level, bytecode_list * code,
+                     func_list_weak * list_weak, int * result);
 int func_body_emit(func * func_value, bytecode_list * code,
                    func_list_weak * list_weak, int * result);
 int func_emit(func * func_value, int stack_level, bytecode_list * code,
