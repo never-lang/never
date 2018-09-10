@@ -6,8 +6,8 @@ except * except_new_all(expr_list * seq)
     except * value = (except *)malloc(sizeof(except));
 
     value->type = EXCEPT_ALL;
-    value->id = NULL;
     value->no = EXCEPT_NO_UNKNOWN;
+    value->id = NULL;
     value->expr_value = expr_new_seq(seq);
     value->line_no = 0;
 
@@ -19,8 +19,8 @@ except * except_new_id(char * id, expr_list * seq)
     except * value = (except *)malloc(sizeof(except));
 
     value->type = EXCEPT_ID;
-    value->id = id;
     value->no = EXCEPT_NO_UNKNOWN;
+    value->id = id;
     value->expr_value = expr_new_seq(seq);
     value->line_no = 0;
 

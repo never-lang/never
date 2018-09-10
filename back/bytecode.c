@@ -94,11 +94,13 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
 
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
+    { BYTECODE_FUNC_OBJ, bytecode_print_func_obj },
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
 
     { BYTECODE_MARK, bytecode_print_mark },
     { BYTECODE_CALL, bytecode_print_call },
     { BYTECODE_SLIDE, bytecode_print_slide },
+    { BYTECODE_CLEAR_STACK, bytecode_print_clear_stack },
     { BYTECODE_RET, bytecode_print_ret },
     { BYTECODE_LINE, bytecode_print_line },
     { BYTECODE_BUILD_IN, bytecode_print_build_in },
@@ -106,6 +108,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_ALLOC, bytecode_print_alloc },
     { BYTECODE_REWRITE, bytecode_print_rewrite },
     { BYTECODE_PUSH_PARAM, bytecode_print_push_param },
+    { BYTECODE_PUSH_EXCEPT, bytecode_print_push_except },
 
     { BYTECODE_HALT, bytecode_print_halt }
 };
@@ -399,6 +402,11 @@ void bytecode_print_func_def(bytecode * code)
     printf("\n%d: func def\n", code->addr);
 }
 
+void bytecode_print_func_obj(bytecode * code)
+{
+    printf("%d: func obj\n", code->addr);
+}
+
 void bytecode_print_global_vec(bytecode * code)
 {
     printf("%d: global vec %d\n", code->addr, code->global_vec.count);
@@ -414,6 +422,11 @@ void bytecode_print_call(bytecode * code) { printf("%d: call\n", code->addr); }
 void bytecode_print_slide(bytecode * code)
 {
     printf("%d: slide %u %u\n", code->addr, code->slide.q, code->slide.m);
+}
+
+void bytecode_print_clear_stack(bytecode * code)
+{
+    printf("%d: clear stack\n", code->addr);
 }
 
 void bytecode_print_ret(bytecode * code)
@@ -449,6 +462,11 @@ void bytecode_print_rewrite(bytecode * code)
 void bytecode_print_push_param(bytecode * code)
 {
     printf("%d: push param\n", code->addr);
+}
+
+void bytecode_print_push_except(bytecode * code)
+{
+    printf("%d: push except\n", code->addr);
 }
 
 void bytecode_print_halt(bytecode * code) { printf("%d: halt\n", code->addr); }

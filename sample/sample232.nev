@@ -5,18 +5,18 @@ func three(d -> int) -> int
     
     t[0] = 10
 }
-catch (index)
+catch (index_out_of_bounds)
 {
-    let func(a -> int) -> int { 100 }(10);
+    let func(a -> int) -> int { a * 100 }(7);
     d * 10
 }
-catch (arrsize)
+catch (wrong_array_size)
 {
-    t[0]
+    0
 }
-catch (division)
+catch (division_by_zero)
 {
-    100
+    789
 }
 catch
 {

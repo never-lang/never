@@ -18,11 +18,15 @@ typedef enum except_no
     EXCEPT_NO_INDEX_OOB = 3
 } except_no;
 
+#define EXCEPT_NO_DIVISION_NAME "division_by_zero"
+#define EXCEPT_NO_ARR_SIZE_NAME "wrong_array_size"
+#define EXCEPT_NO_INDEX_OOB_NAME "index_out_of_bounds"
+
 typedef struct except
 {
     except_type type;
+    int no;
     char * id;
-    unsigned int no;
     expr * expr_value;
     unsigned int line_no;
 } except;

@@ -392,6 +392,34 @@ int bind_list_gencode(unsigned int syn_level, func * func_value,
     return 0;
 }
 
+int except_gencode(unsigned int syn_level, func * func_value,
+                   except * value, int * result)
+{
+    if (value->expr_value != NULL)
+    {
+        expr_gencode(syn_level, func_value, value->expr_value, result);
+    }
+
+    return 0;
+}
+
+int except_list_gencode(unsigned int syn_level, func * func_value,
+                        except_list * list, int * result)
+{
+    except_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        except * value = node->value;
+        if (value != NULL)
+        {
+            except_gencode(syn_level, func_value, value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 /**
  * free variables
  */
@@ -604,6 +632,49 @@ int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
     return 0;
 }
 
+int func_gencode_freevars_except(func * func_value, except * except_value,
+                                 int * result)
+{
+    if (except_value->expr_value != NULL)
+    {
+        func_gencode_freevars_expr(func_value, except_value->expr_value, result);
+    }
+
+    return 0;
+}
+
+int func_gencode_freevars_except_list(func * func_value, except_list * list,
+                                      int * result)
+{
+    except_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        except * value = node->value;
+        if (value != NULL)
+        {
+            func_gencode_freevars_except(func_value, value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_gencode_freevars_func_except(func * func_value, func_except * value,
+                                      int * result)
+{
+    if (value->list != NULL)
+    {
+        func_gencode_freevars_except_list(func_value, value->list, result);
+    }
+    if (value->all != NULL)
+    {
+        func_gencode_freevars_except(func_value, value->all, result);
+    }
+
+    return 0;
+}
+
 int func_gencode_freevars_func(func * func_value, func * subfunc_value,
                                int * result)
 {
@@ -659,6 +730,10 @@ int func_gencode_freevars(func * func_value, int * result)
     {
         func_gencode_freevars_expr(func_value, func_value->body->ret, result);
     }
+    if (func_value->except)
+    {
+        func_gencode_freevars_func_except(func_value, func_value->except, result);
+    }
 
     return 0;
 }
@@ -692,6 +767,14 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
     if (func_value->body && func_value->body->ret)
     {
         expr_gencode(syn_level, func_value, func_value->body->ret, result);
+    }
+    if (func_value->except && func_value->except->list)
+    {
+        except_list_gencode(syn_level, func_value, func_value->except->list, result);
+    }
+    if (func_value->except && func_value->except->all)
+    {
+        except_gencode(syn_level, func_value, func_value->except->all, result);
     }
 
     /** set subfunction local/global indexes **/
@@ -1920,6 +2003,7 @@ int array_dims_emit(array * array_value, int stack_level, bytecode_list * code,
                     func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
+    
     expr_list_emit(array_value->dims, stack_level, code, list_weak, result);
 
     bc.type = BYTECODE_MK_ARRAY;
@@ -2058,30 +2142,77 @@ int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
     return 0;
 }
 
-int except_all_emit(except * value, int stack_level, bytecode_list * code,
-                    func_list_weak * list_weak, int * result)
+int except_all_emit(except * value, func * func_value, int stack_level,
+                    bytecode_list * code, func_list_weak * list_weak, int * result)
 {
+    bytecode bc = { 0 };
+    int param_count = 0;
+
+    bc.type = BYTECODE_CLEAR_STACK;
+    bytecode_add(code, &bc);
+
     if (value->expr_value != NULL)
     {
         expr_emit(value->expr_value, stack_level, code, list_weak, result);
     }
+
+    if (func_value->decl->params != NULL)
+    {
+        param_count = func_value->decl->params->count;
+    }
+    bc.type = BYTECODE_RET;
+    bc.ret.count = param_count;
+    bytecode_add(code, &bc);
     
     return 0;
 }
 
-int except_emit(except * value, int stack_level, bytecode_list * code,
-                func_list_weak * list_weak, int * result)
+int except_emit(except * value, func * func_value, int stack_level,
+                bytecode_list * code, func_list_weak * list_weak, int * result)
 {
+    bytecode bc = { 0 };
+    bytecode *labelA = NULL;
+    bytecode *condz = NULL;
+    int param_count = 0;
+
+    bc.type = BYTECODE_CLEAR_STACK;
+    bytecode_add(code, &bc);
+    
+    bc.type = BYTECODE_INT;
+    bc.integer.value = value->no;
+    bytecode_add(code, &bc);
+
+    bc.type = BYTECODE_PUSH_EXCEPT;
+    bytecode_add(code, &bc);
+    
+    bc.type = BYTECODE_OP_EQ_INT;
+    bytecode_add(code, &bc);
+    
+    bc.type = BYTECODE_JUMPZ;
+    condz = bytecode_add(code, &bc);
+
     if (value->expr_value != NULL)
     {
         expr_emit(value->expr_value, stack_level, code, list_weak, result);
     }
+
+    if (func_value->decl->params != NULL)
+    {
+        param_count = func_value->decl->params->count;
+    }
+    bc.type = BYTECODE_RET;
+    bc.ret.count = param_count;
+    bytecode_add(code, &bc);
+    
+    bc.type = BYTECODE_LABEL;
+    labelA = bytecode_add(code, &bc);
+    condz->jump.offset = labelA->addr - condz->addr;
     
     return 0;
 }
 
-int except_list_emit(except_list * list, int stack_level, bytecode_list * code,
-                     func_list_weak * list_weak, int * result)
+int except_list_emit(except_list * list, func * func_value, int stack_level,
+                     bytecode_list * code, func_list_weak * list_weak, int * result)
 {
     except_list_node * node = list->tail;
     while (node != NULL)
@@ -2089,7 +2220,7 @@ int except_list_emit(except_list * list, int stack_level, bytecode_list * code,
         except * value = node->value;
         if (value != NULL)
         {
-            except_emit(value, stack_level, code, list_weak, result);
+            except_emit(value, func_value, stack_level, code, list_weak, result);
         }
         node = node->next;
     }
@@ -2097,16 +2228,17 @@ int except_list_emit(except_list * list, int stack_level, bytecode_list * code,
     return 0;
 }
 
-int func_except_emit(func_except * value, int stack_level, bytecode_list * code,
-                     func_list_weak * list_weak, int * result)
+int func_except_emit(func_except * value, func * func_value, int stack_level, 
+                     bytecode_list * code, func_list_weak * list_weak, int * result)
 {
     if (value->list != NULL)
     {
-        except_list_emit(value->list, stack_level, code, list_weak, result);
+        except_list_emit(value->list, func_value, stack_level, code, list_weak,
+                         result);
     }
     if (value->all != NULL)
     {
-        except_all_emit(value->all, stack_level, code, list_weak, result);
+        except_all_emit(value->all, func_value, stack_level, code, list_weak, result);
     }
     return 0;
 }
@@ -2115,7 +2247,7 @@ int func_body_emit(func * func_value, bytecode_list * code,
                    func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
-    bytecode *labelA;
+    bytecode *labelA = NULL;
     int func_count = 0;
     int param_count = 0;
 
@@ -2149,10 +2281,15 @@ int func_body_emit(func * func_value, bytecode_list * code,
     {
         param_count = func_value->decl->params->count;
     }
-
+    
     bc.type = BYTECODE_RET;
     bc.ret.count = param_count;
     bytecode_add(code, &bc);
+
+    if (func_value->except != NULL)
+    {
+        func_except_emit(func_value->except, func_value, 0, code, list_weak, result);
+    }
 
     return 0;
 }
@@ -2163,7 +2300,7 @@ int func_emit(func * func_value, int stack_level, bytecode_list * code,
     bytecode bc = { 0 };
     int freevar_count = 0;
 
-    bc.type = BYTECODE_FUNC_DEF;
+    bc.type = BYTECODE_FUNC_OBJ;
     bytecode_add(code, &bc);
 
     if (func_value->line_no > 0)

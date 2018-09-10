@@ -51,6 +51,11 @@ int bind_gencode(unsigned int syn_level, func * func_value, bind * bind_value,
 int bind_list_gencode(unsigned int syn_level, func * func_value,
                       bind_list * list, int * result);                 
 
+int except_gencode(unsigned int syn_level, func * func_value,
+                   except * value, int * result);
+int except_list_gencode(unsigned int syn_levl, func * func_value,
+                        except_list * list, int * result);
+
 int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
                                   int * result);
 int func_gencode_freevars_expr(func * func_value, expr * value, int * result);
@@ -60,6 +65,12 @@ int func_gencode_freevars_bind(func * func_value, bind * bind_value,
                                int * result);
 int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
                                     int * result);
+int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
+                                    int * result);
+int func_gencode_freevars_except_list(func * func_value, except_list * list,
+                                      int * result);
+int func_gencode_freevars_func_except(func * func_value, func_except * value,
+                                 int * result);
 int func_gencode_freevars_func(func * func_value, func * subfunc_value,
                                int * result);
 int func_gencode_freevars_func_list(func * func_value, func_list * list,
@@ -148,14 +159,14 @@ int bind_emit(bind * bind_value, int stack_level, bytecode_list * code,
               func_list_weak * list_weak, int * result);
 int bind_list_emit(bind_list * list, int stack_level, bytecode_list * code,
                    func_list_weak * list_weak, int * result);
-int except_all_emit(except * value, int stack_level, bytecode_list * code,
-                    func_list_weak * list_weak, int * result);
-int except_emit(except * value, int stack_level, bytecode_list * code,
-                func_list_weak * list_weak, int * result);
-int except_list_emit(except_list * list, int stack_level, bytecode_list * code,
-                     func_list_weak * list_weak, int * result);
-int func_except_emit(func_except * value, int stack_level, bytecode_list * code,
-                     func_list_weak * list_weak, int * result);
+int except_all_emit(except * value, func * func_value, int stack_level,
+                    bytecode_list * code, func_list_weak * list_weak, int * result);
+int except_emit(except * value, func * func_value, int stack_level,
+                bytecode_list * code, func_list_weak * list_weak, int * result);
+int except_list_emit(except_list * list, func * func_value, int stack_level,
+                     bytecode_list * code, func_list_weak * list_weak, int * result);
+int func_except_emit(func_except * value, func * func_value, int stack_level,
+                     bytecode_list * code, func_list_weak * list_weak, int * result);
 int func_body_emit(func * func_value, bytecode_list * code,
                    func_list_weak * list_weak, int * result);
 int func_emit(func * func_value, int stack_level, bytecode_list * code,

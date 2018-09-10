@@ -26,6 +26,7 @@
 #include "utils.h"
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 int expr_set_return_type(expr * value, param * ret)
 {
@@ -1374,9 +1375,38 @@ int bind_list_check_type(symtab * tab, bind_list * list, unsigned int syn_level,
     return 0;
 }
 
+int except_check_id(except * value, int * result)
+{
+    if (strcmp(value->id, EXCEPT_NO_INDEX_OOB_NAME) == 0)
+    {
+        value->no = EXCEPT_NO_INDEX_OOB;
+    }
+    else if (strcmp(value->id, EXCEPT_NO_ARR_SIZE_NAME) == 0)
+    {
+        value->no = EXCEPT_NO_ARR_SIZE;
+    }
+    else if (strcmp(value->id, EXCEPT_NO_DIVISION_NAME) == 0)
+    {
+        value->no = EXCEPT_NO_DIVISION;
+    }
+    else
+    {
+        value->no = EXCEPT_NO_UNKNOWN;
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no,
+                        "unknown exception %s\n", value->id);
+    }
+    return 0;
+}
+
 int except_check_type(symtab * tab, except * value, func * func_value,
                       unsigned int syn_level, int * result)
 {
+    if (value->id != NULL)
+    {
+        except_check_id(value, result);
+    }
+
     if (value->expr_value != NULL)
     {
         expr_check_type(tab, value->expr_value, syn_level, result);
@@ -1678,6 +1708,10 @@ int print_func_bind_list(bind_list * list, int depth)
 
 int print_func_except(except * value, int depth)
 {
+    if (value->id != NULL)
+    {
+        printf("except %s\n", value->id);
+    }
     if (value->expr_value != NULL)
     {
         print_func_expr(value->expr_value, depth);

@@ -97,10 +97,12 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
 
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
+    { BYTECODE_FUNC_OBJ, vm_execute_func_obj },
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
     { BYTECODE_MARK, vm_execute_mark },
     { BYTECODE_CALL, vm_execute_call },
     { BYTECODE_SLIDE, vm_execute_slide },
+    { BYTECODE_CLEAR_STACK, vm_execute_clear_stack },
     { BYTECODE_RET, vm_execute_ret },
     { BYTECODE_LINE, vm_execute_line },
     { BYTECODE_BUILD_IN, vm_execute_build_in },
@@ -108,6 +110,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_ALLOC, vm_execute_alloc },
     { BYTECODE_REWRITE, vm_execute_rewrite },
     { BYTECODE_PUSH_PARAM, vm_execute_push_param },
+    { BYTECODE_PUSH_EXCEPT, vm_execute_push_except },
 
     { BYTECODE_HALT, vm_execute_halt }
 };
@@ -1194,6 +1197,8 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
 
 void vm_execute_func_def(vm * machine, bytecode * code) { /* no op */ }
 
+void vm_execute_func_obj(vm * machine, bytecode * code) { /* no op */ }
+
 void vm_execute_global_vec(vm * machine, bytecode * code)
 {
     int c;
@@ -1280,6 +1285,11 @@ void vm_execute_slide(vm * machine, bytecode * code)
     }
 
     gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp);
+}
+
+void vm_execute_clear_stack(vm * machine, bytecode * code)
+{
+    assert(0);
 }
 
 void vm_execute_ret(vm * machine, bytecode * code)
@@ -1387,6 +1397,20 @@ void vm_execute_push_param(vm * machine, bytecode * code)
     }
 }
 
+void vm_execute_push_except(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr addr = gc_alloc_int(machine->collector, machine->except);
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
 void vm_execute_halt(vm * machine, bytecode * code)
 {
     machine->running = VM_HALT;
@@ -1433,6 +1457,8 @@ vm * vm_new(unsigned int mem_size, unsigned int stack_size)
     machine->stack_size = stack_size;
     machine->stack = gc_stack_new(stack_size);
     machine->collector = gc_new(mem_size);
+    machine->except = 0;
+    machine->line_no = 0;
 
     vm_execute_op_test();
 

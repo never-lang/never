@@ -43,6 +43,7 @@ typedef struct vm
     struct gc_stack * stack;
     struct gc * collector;
 
+    int except;
     unsigned int line_no;
     vm_state running;
 
@@ -123,10 +124,12 @@ void vm_execute_mk_init_array(vm * machine, bytecode * code);
 void vm_execute_array_deref(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
+void vm_execute_func_obj(vm * machine, bytecode * code);
 void vm_execute_global_vec(vm * machine, bytecode * code);
 void vm_execute_mark(vm * machine, bytecode * code);
 void vm_execute_call(vm * machine, bytecode * code);
 void vm_execute_slide(vm * machine, bytecode * code);
+void vm_execute_clear_stack(vm * machine, bytecode * code);
 void vm_execute_ret(vm * machine, bytecode * code);
 void vm_execute_line(vm * machine, bytecode * code);
 void vm_execute_build_in(vm * machine, bytecode * code);
@@ -134,6 +137,7 @@ void vm_execute_copyglob(vm * machine, bytecode * code);
 void vm_execute_alloc(vm * machine, bytecode * code);
 void vm_execute_rewrite(vm * machine, bytecode * code);
 void vm_execute_push_param(vm * machine, bytecode * code);
+void vm_execute_push_except(vm * machine, bytecode * code);
 
 void vm_execute_halt(vm * machine, bytecode * code);
 

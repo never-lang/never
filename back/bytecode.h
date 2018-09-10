@@ -92,10 +92,12 @@ typedef enum bytecode_type
     BYTECODE_ARRAY_DEREF,
 
     BYTECODE_FUNC_DEF,
+    BYTECODE_FUNC_OBJ,
     BYTECODE_GLOBAL_VEC,
     BYTECODE_MARK,
     BYTECODE_CALL,
     BYTECODE_SLIDE,
+    BYTECODE_CLEAR_STACK,
     BYTECODE_RET,
     BYTECODE_LINE,
     BYTECODE_BUILD_IN,
@@ -103,6 +105,7 @@ typedef enum bytecode_type
     BYTECODE_ALLOC,
     BYTECODE_REWRITE,
     BYTECODE_PUSH_PARAM,
+    BYTECODE_PUSH_EXCEPT,
 
     BYTECODE_HALT,
     BYTECODE_END
@@ -282,10 +285,12 @@ void bytecode_print_mk_init_array(bytecode * code);
 void bytecode_print_array_deref(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
+void bytecode_print_func_obj(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);
 void bytecode_print_mark(bytecode * code);
 void bytecode_print_call(bytecode * code);
 void bytecode_print_slide(bytecode * code);
+void bytecode_print_clear_stack(bytecode * code);
 void bytecode_print_ret(bytecode * code);
 void bytecode_print_line(bytecode * code);
 void bytecode_print_build_in(bytecode * code);
@@ -293,6 +298,7 @@ void bytecode_print_copyglob(bytecode * code);
 void bytecode_print_alloc(bytecode * code);
 void bytecode_print_rewrite(bytecode * code);
 void bytecode_print_push_param(bytecode * code);
+void bytecode_print_push_except(bytecode * code);
 
 void bytecode_print_halt(bytecode * code);
 
