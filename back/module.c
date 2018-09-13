@@ -26,25 +26,49 @@ module * module_new()
 {
     module * value = (module *)malloc(sizeof(module));
     
+    value->code_arr = NULL;
+    value->code_size = 0;
     value->code = bytecode_new();
+    value->exctab_value = exception_tab_new(32);
     
     return value;
 }
 
 void module_delete(module * value)
 {
-    if (value->code)
+    if (value->code != NULL)
     {
         bytecode_delete(value->code);
+    }
+    if (value->code_arr != NULL)
+    {
+        bytecode_array_delete(value->code_arr);
+    }
+    if (value->exctab_value != NULL)
+    {
+        exception_tab_delete(value->exctab_value);
     }
     free(value);
 }
 
+void module_close(module * value)
+{
+    if (value->code != NULL)
+    {
+        bytecode_func_addr(value->code);
+        bytecode_to_array(value->code, &value->code_arr, &value->code_size);
+    }
+}
+
 void module_print(module * value)
 {
-    if (value->code)
+    if (value->code != NULL)
     {
         bytecode_print(value->code);
+    }
+    if (value->exctab_value != NULL)
+    {
+        exception_tab_print(value->exctab_value);
     }
 }
 

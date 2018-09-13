@@ -28,8 +28,7 @@ typedef struct program
 {
     object * params;
     unsigned int param_count;
-    struct bytecode * code_arr;
-    unsigned int code_size;
+    struct module * module_value;
 } program;
 
 program * program_new();

@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include "exctab.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <assert.h>
@@ -44,7 +45,7 @@ exctab_entry * exctab_search(exctab_entry * tab, int tab_len, unsigned int excep
 {
     int from = 0;
     int to = tab_len - 1;
-    exctab * found = NULL;
+    exctab_entry * found = NULL;
 
     if (tab == NULL || tab_len == 0) return NULL;
 
@@ -77,7 +78,7 @@ exctab * exception_tab_new(unsigned int size)
     
     value->size = size;
     value->count = 0;
-    value->tab = (exctab *)malloc(size * sizeof(exctab_entry));
+    value->tab = (exctab_entry *)malloc(size * sizeof(exctab_entry));
     value->tab[0].block_addr = UINT_MAX;
     value->tab[0].handler_addr = UINT_MAX;
     
@@ -108,7 +109,7 @@ void exception_tab_insert(exctab * value, unsigned int block_addr,
     if (value->count >= value->size - 1)
     {
         value->size *= 2;
-        value->tab = (exctab *)realloc(value->tab, value->size * sizeof(exctab_entry));
+        value->tab = (exctab_entry *)realloc(value->tab, value->size * sizeof(exctab_entry));
     }
 }
 
@@ -122,5 +123,15 @@ unsigned int exception_tab_search(exctab * value, unsigned int except_ip)
     return res->handler_addr;
 }
 
+void exception_tab_print(exctab * value)
+{
+    unsigned int i = 0;
+    
+    for (i = 0; i < value->count + 1; i++)
+    {
+        printf("block_addr %u handler_addr %u\n", value->tab[i].block_addr,
+                                                  value->tab[i].handler_addr);
+    }
+}
 
 

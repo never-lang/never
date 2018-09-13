@@ -106,6 +106,7 @@ typedef enum bytecode_type
     BYTECODE_REWRITE,
     BYTECODE_PUSH_PARAM,
     BYTECODE_PUSH_EXCEPT,
+    BYTECODE_RETHROW,
 
     BYTECODE_HALT,
     BYTECODE_END
@@ -299,6 +300,7 @@ void bytecode_print_alloc(bytecode * code);
 void bytecode_print_rewrite(bytecode * code);
 void bytecode_print_push_param(bytecode * code);
 void bytecode_print_push_except(bytecode * code);
+void bytecode_print_rethrow(bytecode * code);
 
 void bytecode_print_halt(bytecode * code);
 

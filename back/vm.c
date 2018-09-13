@@ -24,6 +24,7 @@
 #include "libmath.h"
 #include "libvm.h"
 #include "utils.h"
+#include "module.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -111,6 +112,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_REWRITE, vm_execute_rewrite },
     { BYTECODE_PUSH_PARAM, vm_execute_push_param },
     { BYTECODE_PUSH_EXCEPT, vm_execute_push_except },
+    { BYTECODE_RETHROW, vm_execute_rethrow },
 
     { BYTECODE_HALT, vm_execute_halt }
 };
@@ -1411,6 +1413,11 @@ void vm_execute_push_except(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
+void vm_execute_rethrow(vm * machine, bytecode * code)
+{
+    assert(0);
+}
+
 void vm_execute_halt(vm * machine, bytecode * code)
 {
     machine->running = VM_HALT;
@@ -1424,7 +1431,7 @@ int vm_execute(vm * machine, program * prog, object * result)
     machine->running = VM_RUNNING;
     while (machine->running == VM_RUNNING)
     {
-        bc = prog->code_arr + machine->ip;
+        bc = prog->module_value->code_arr + machine->ip;
         machine->ip++;
         vm_execute_op[bc->type].execute(machine, bc);
     }
@@ -1502,6 +1509,7 @@ void vm_print(vm * machine)
     printf("\tfp: %d\n", machine->fp);
     printf("\tgp: %u\n", machine->gp);
     printf("\tip: %u\n", machine->ip);
+    printf("\texcept: %d\n", machine->except);
     printf("\tline_no: %u\n", machine->line_no);
     printf("\tstack_size: %u\n", machine->stack_size);
     printf("\tmem_size: %u\n", machine->collector->mem_size);

@@ -109,6 +109,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_REWRITE, bytecode_print_rewrite },
     { BYTECODE_PUSH_PARAM, bytecode_print_push_param },
     { BYTECODE_PUSH_EXCEPT, bytecode_print_push_except },
+    { BYTECODE_RETHROW, bytecode_print_rethrow },
 
     { BYTECODE_HALT, bytecode_print_halt }
 };
@@ -467,6 +468,11 @@ void bytecode_print_push_param(bytecode * code)
 void bytecode_print_push_except(bytecode * code)
 {
     printf("%d: push except\n", code->addr);
+}
+
+void bytecode_print_rethrow(bytecode * code)
+{
+    printf("%d: rethrow\n", code->addr);
 }
 
 void bytecode_print_halt(bytecode * code) { printf("%d: halt\n", code->addr); }

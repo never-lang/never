@@ -31,6 +31,7 @@
 #include "typecheck.h"
 #include "utils.h"
 #include "vm.h"
+#include "module.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,21 +105,13 @@ int nev_compile_prog(program * prog)
                 never_tailrec(nev);
                 if (ret == 0)
                 {
-                    bytecode_list * code;
+                    never_emit(nev, prog->module_value);
 
-                    code = bytecode_new();
-
-                    never_emit(nev, code);
-                    bytecode_func_addr(code);
-
-                    print_functions(nev);
-                    bytecode_print(code);
+                    /* print_functions(nev);
+                    module_print(prog->module_value); */
                     
-                    never_func_main_params(nev, &prog->params,
-                                           &prog->param_count);
-                    bytecode_to_array(code, &prog->code_arr, &prog->code_size);
-
-                    bytecode_delete(code);
+                    never_func_main_params(nev, &prog->params, &prog->param_count);
+                    module_close(prog->module_value);
                 }
             }
         }
@@ -180,7 +173,7 @@ int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
     int ret = 0;
     vm * machine = NULL;
 
-    if (prog->code_arr == NULL)
+    if (prog->module_value->code_arr == NULL)
     {
         return 0;
     }

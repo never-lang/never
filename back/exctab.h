@@ -43,6 +43,8 @@ void exception_tab_insert(exctab * value, unsigned int block_addr,
                           unsigned int handler_addr);
 unsigned int exception_tab_search(exctab * value, unsigned int except_ip);
 
+void exception_tab_print(exctab * value);
+
 #endif /* __EXCTAB_H__ */
 
 

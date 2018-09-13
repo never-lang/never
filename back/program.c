@@ -21,6 +21,7 @@
  */
 #include "program.h"
 #include "bytecode.h"
+#include "module.h"
 #include <stdlib.h>
 
 program * program_new(object * params, unsigned int param_count,
@@ -30,8 +31,7 @@ program * program_new(object * params, unsigned int param_count,
 
     value->params = NULL;
     value->param_count = 0;
-    value->code_arr = NULL;
-    value->code_size = 0;
+    value->module_value = module_new();
 
     return value;
 }
@@ -42,9 +42,9 @@ void program_delete(program * value)
     {
         object_delete(value->params);
     }
-    if (value->code_arr != NULL)
+    if (value->module_value != NULL)
     {
-        bytecode_array_delete(value->code_arr);
+        module_delete(value->module_value);
     }
     free(value);
 }

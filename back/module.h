@@ -23,13 +23,19 @@
 #define __MODULE_H__
 
 #include "bytecode.h"
+#include "exctab.h"
 
 typedef struct module {
     bytecode_list * code;
+    bytecode * code_arr;
+    unsigned int code_size;
+    exctab * exctab_value;
 } module;
 
 module * module_new();
 void module_delete(module * value);
+
+void module_close(module * value);
 
 void module_print(module * value);
 
