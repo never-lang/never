@@ -315,7 +315,8 @@ void vm_execute_op_div_int(vm * machine, bytecode * code)
     if (b == 0)
     {
         print_error_msg(machine->line_no, "cannot divide by zero\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_DIVISION;
         return;
     }
 
@@ -339,7 +340,8 @@ void vm_execute_op_mod_int(vm * machine, bytecode * code)
     if (b == 0)
     {
         print_error_msg(machine->line_no, "cannot divide by zero\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_DIVISION;
         return;
     }
 
@@ -425,7 +427,8 @@ void vm_execute_op_div_float(vm * machine, bytecode * code)
     if (b == 0)
     {
         print_error_msg(machine->line_no, "cannot divide by zero\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_DIVISION;
         return;
     }
 
@@ -721,7 +724,8 @@ void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
     if (!object_arr_can_add(m1, m2))
     {
         print_error_msg(machine->line_no, "improper array size\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
     }
 
@@ -756,7 +760,8 @@ void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
     if (!object_arr_can_add(m1, m2))
     {
         print_error_msg(machine->line_no, "improper array size\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
     }
 
@@ -791,7 +796,8 @@ void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
     if (!object_arr_can_add(m1, m2))
     {
         print_error_msg(machine->line_no, "improper array size\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
     }
 
@@ -826,7 +832,8 @@ void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
     if (!object_arr_can_add(m1, m2))
     {
         print_error_msg(machine->line_no, "improper array size\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
     }
 
@@ -915,7 +922,8 @@ void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code)
     if (!object_arr_can_mult(m1, m2))
     {
         print_error_msg(machine->line_no, "improper array size\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
     }
 
@@ -967,7 +975,8 @@ void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
     if (!object_arr_can_mult(m1, m2))
     {
         print_error_msg(machine->line_no, "improper array size\n");
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
     }
 
@@ -1083,7 +1092,8 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
             object_arr_dim_delete(dv);
             print_error_msg(machine->line_no, "array index %d out of bounds\n",
                             d);
-            machine->running = VM_ERROR;
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NO_INDEX_OOB;
             return;
         }
         dv[d].elems = e;
@@ -1165,7 +1175,8 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
             object_arr_dim_delete(addr);
             print_error_msg(machine->line_no, "array index %d out of bounds\n",
                             d);
-            machine->running = VM_ERROR;
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NO_INDEX_OOB;
             return;
         }
         addr[d].mult = e;
@@ -1182,7 +1193,8 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     {
         print_error_msg(machine->line_no, "array index %d out of bounds\n",
                         oobounds);
-        machine->running = VM_ERROR;
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_INDEX_OOB;
         return;
     }
 
@@ -1291,7 +1303,7 @@ void vm_execute_slide(vm * machine, bytecode * code)
 
 void vm_execute_clear_stack(vm * machine, bytecode * code)
 {
-    assert(0);
+    machine->sp = machine->fp;
 }
 
 void vm_execute_ret(vm * machine, bytecode * code)
@@ -1402,7 +1414,9 @@ void vm_execute_push_param(vm * machine, bytecode * code)
 void vm_execute_push_except(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_int(machine->collector, machine->except);
+    mem_ptr addr = gc_alloc_int(machine->collector, machine->exception);
+
+    printf("push exception %d\n", machine->exception);
 
     machine->sp++;
     vm_check_stack(machine);
@@ -1415,6 +1429,7 @@ void vm_execute_push_except(vm * machine, bytecode * code)
 
 void vm_execute_rethrow(vm * machine, bytecode * code)
 {
+    /* TODO: */
     assert(0);
 }
 
@@ -1434,6 +1449,15 @@ int vm_execute(vm * machine, program * prog, object * result)
         bc = prog->module_value->code_arr + machine->ip;
         machine->ip++;
         vm_execute_op[bc->type].execute(machine, bc);
+
+        if (machine->running == VM_EXCEPTION)
+        {
+            machine->ip = exception_tab_search(prog->module_value->exctab_value, machine->ip);
+            
+            printf("excep ip %d\n", machine->ip);
+            
+            machine->running = VM_RUNNING;
+        }
     }
 
     if (machine->running == VM_ERROR)
@@ -1464,7 +1488,7 @@ vm * vm_new(unsigned int mem_size, unsigned int stack_size)
     machine->stack_size = stack_size;
     machine->stack = gc_stack_new(stack_size);
     machine->collector = gc_new(mem_size);
-    machine->except = 0;
+    machine->exception = EXCEPT_NO_UNKNOWN;
     machine->line_no = 0;
 
     vm_execute_op_test();
@@ -1509,7 +1533,7 @@ void vm_print(vm * machine)
     printf("\tfp: %d\n", machine->fp);
     printf("\tgp: %u\n", machine->gp);
     printf("\tip: %u\n", machine->ip);
-    printf("\texcept: %d\n", machine->except);
+    printf("\texcept: %d\n", machine->exception);
     printf("\tline_no: %u\n", machine->line_no);
     printf("\tstack_size: %u\n", machine->stack_size);
     printf("\tmem_size: %u\n", machine->collector->mem_size);

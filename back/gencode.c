@@ -2142,27 +2142,47 @@ int bind_list_emit(bind_list * list, int stack_level, module * module_value,
     return 0;
 }
 
+int except_implicit_emit(func * func_value, int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    
+    bc.type = BYTECODE_CLEAR_STACK;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_RETHROW;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+    
 int except_all_emit(except * value, func * func_value, int stack_level,
                     module * module_value, func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
+    bytecode *labelA, *labelE = NULL;
     int param_count = 0;
 
     bc.type = BYTECODE_CLEAR_STACK;
-    bytecode_add(module_value->code, &bc);
+    labelA = bytecode_add(module_value->code, &bc);
 
     if (value->expr_value != NULL)
     {
         expr_emit(value->expr_value, stack_level, module_value, list_weak, result);
     }
-
     if (func_value->decl->params != NULL)
     {
         param_count = func_value->decl->params->count;
     }
+    
     bc.type = BYTECODE_RET;
     bc.ret.count = param_count;
     bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+
+    exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr);    
     
     return 0;
 }
@@ -2175,11 +2195,8 @@ int except_emit(except * value, func * func_value, int stack_level,
     bytecode *condz = NULL;
     int param_count = 0;
 
-    bc.type = BYTECODE_LABEL;
-    labelA = bytecode_add(module_value->code, &bc);
-
     bc.type = BYTECODE_CLEAR_STACK;
-    bytecode_add(module_value->code, &bc);
+    labelA = bytecode_add(module_value->code, &bc);
     
     bc.type = BYTECODE_INT;
     bc.integer.value = value->no;
@@ -2198,11 +2215,11 @@ int except_emit(except * value, func * func_value, int stack_level,
     {
         expr_emit(value->expr_value, stack_level, module_value, list_weak, result);
     }
-
     if (func_value->decl->params != NULL)
     {
         param_count = func_value->decl->params->count;
     }
+    
     bc.type = BYTECODE_RET;
     bc.ret.count = param_count;
     bytecode_add(module_value->code, &bc);
@@ -2245,6 +2262,9 @@ int func_except_emit(func_except * value, func * func_value, int stack_level,
     {
         except_all_emit(value->all, func_value, stack_level, module_value, list_weak, result);
     }
+
+    except_implicit_emit(func_value, stack_level, module_value, list_weak, result);
+
     return 0;
 }
 

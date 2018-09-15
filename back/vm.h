@@ -24,12 +24,14 @@
 
 #include "bytecode.h"
 #include "program.h"
+#include "except.h"
 
 typedef enum vm_state
 {
     VM_HALT = 0,
     VM_RUNNING = 1,
-    VM_ERROR = 2
+    VM_EXCEPTION = 2,
+    VM_ERROR = 3
 } vm_state;
 
 typedef struct vm
@@ -43,7 +45,7 @@ typedef struct vm
     struct gc_stack * stack;
     struct gc * collector;
 
-    int except;
+    except_no exception;
     unsigned int line_no;
     vm_state running;
 

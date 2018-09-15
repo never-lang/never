@@ -165,6 +165,8 @@ int except_emit(except * value, func * func_value, int stack_level,
                 module * module_value, func_list_weak * list_weak, int * result);
 int except_list_emit(except_list * list, func * func_value, int stack_level,
                      module * module_value, func_list_weak * list_weak, int * result);
+int except_implicit_emit(func * func_value, int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result);
 int func_except_emit(func_except * value, func * func_value, int stack_level,
                      module * module_value, func_list_weak * list_weak, int * result);
 int func_body_emit(func * func_value, module * module_value,

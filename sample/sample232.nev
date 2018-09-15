@@ -1,31 +1,31 @@
 
-func three(d -> int) -> int
+func three(d -> int, c -> int) -> int
 {
-    let t = [ 1, 2, 3 ] -> int;
-    
-    t[0] = 10
+    /* let t = [ 1, 2, 3 ] -> int;
+    t[10] = d */
+    10 / d
 }
-catch (index_out_of_bounds)
+catch (division_by_zero)
 {
-    let func(a -> int) -> int { a * 100 }(7);
-    d * 10
+    /* let func(a -> int) -> int { a * 100 }(7); */
+    c + 101
 }
 catch (wrong_array_size)
 {
     0
 }
-catch (division_by_zero)
+catch (index_out_of_bounds)
 {
-    789
+    d + 102
 }
 catch
 {
-    100
+    1090
 }
 
 func two(d -> int) -> int
 {
-    three(d)
+    three(d, 199)
 }
 
 func one(d -> int) -> int
