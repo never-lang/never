@@ -1,0 +1,17 @@
+
+func one(a -> int, b -> int, c -> int) -> int
+{
+    let d = a + b + c + 10;
+    let e = a + b + c + 20;
+    let f = a + b + c + 30;
+    
+    print(d);
+    print(e);
+    print(f)
+}
+
+func main() -> int
+{
+    one(10, 20, 30)
+}
+

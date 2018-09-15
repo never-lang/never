@@ -142,6 +142,7 @@ void vm_execute_push_param(vm * machine, bytecode * code);
 void vm_execute_push_except(vm * machine, bytecode * code);
 void vm_execute_rethrow(vm * machine, bytecode * code);
 
+void vm_execute_unhandled_exception(vm * machine, bytecode * code);
 void vm_execute_halt(vm * machine, bytecode * code);
 
 void vm_check_stack(vm * machine);

@@ -6,10 +6,10 @@ func three(d -> int, c -> int) -> int
     t[0] = d;
     17770 / d
 }
-catch (division_by_zero)
+
+func two(d -> int) -> int
 {
-    let func(a -> int) -> int { a * 100 }(7);
-    c + 100
+    three(d, 199)
 }
 catch (wrong_array_size)
 {
@@ -17,16 +17,7 @@ catch (wrong_array_size)
 }
 catch (index_out_of_bounds)
 {
-    c + 102
-}
-catch
-{
-    1090
-}
-
-func two(d -> int) -> int
-{
-    three(d, 199)
+    d + 102
 }
 
 func one(d -> int) -> int
@@ -38,4 +29,10 @@ func main() -> int
 {
     one(0)
 }
+catch (division_by_zero)
+{
+    155
+}
+
+
 

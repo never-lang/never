@@ -111,6 +111,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_PUSH_EXCEPT, bytecode_print_push_except },
     { BYTECODE_RETHROW, bytecode_print_rethrow },
 
+    { BYTECODE_UNHANDLED_EXCEPTION, bytecode_print_unhandled_exception },
     { BYTECODE_HALT, bytecode_print_halt }
 };
 
@@ -473,6 +474,11 @@ void bytecode_print_push_except(bytecode * code)
 void bytecode_print_rethrow(bytecode * code)
 {
     printf("%d: rethrow\n", code->addr);
+}
+
+void bytecode_print_unhandled_exception(bytecode * code)
+{
+    printf("%d: unhandled exception\n", code->addr);
 }
 
 void bytecode_print_halt(bytecode * code) { printf("%d: halt\n", code->addr); }

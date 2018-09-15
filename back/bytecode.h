@@ -108,6 +108,7 @@ typedef enum bytecode_type
     BYTECODE_PUSH_EXCEPT,
     BYTECODE_RETHROW,
 
+    BYTECODE_UNHANDLED_EXCEPTION,
     BYTECODE_HALT,
     BYTECODE_END
 } bytecode_type;
@@ -167,7 +168,7 @@ typedef struct bytecode
             unsigned int q;
             unsigned int m;
         } slide;
-        struct /* BYTECODE_RET */
+        struct /* BYTECODE_RET, BYTECODE_CLEAR_STACK */
         {
             unsigned int count;
         } ret;
@@ -302,6 +303,7 @@ void bytecode_print_push_param(bytecode * code);
 void bytecode_print_push_except(bytecode * code);
 void bytecode_print_rethrow(bytecode * code);
 
+void bytecode_print_unhandled_exception(bytecode * code);
 void bytecode_print_halt(bytecode * code);
 
 bytecode_list_node * bytecode_list_node_new(bytecode * value);

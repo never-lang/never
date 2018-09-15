@@ -114,6 +114,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_PUSH_EXCEPT, vm_execute_push_except },
     { BYTECODE_RETHROW, vm_execute_rethrow },
 
+    { BYTECODE_UNHANDLED_EXCEPTION, vm_execute_unhandled_exception },
     { BYTECODE_HALT, vm_execute_halt }
 };
 
@@ -1303,7 +1304,11 @@ void vm_execute_slide(vm * machine, bytecode * code)
 
 void vm_execute_clear_stack(vm * machine, bytecode * code)
 {
-    machine->sp = machine->fp;
+    /* actualy there should be a better way to remove local params */
+    unsigned int param_count = code->ret.count;
+    machine->sp = machine->fp + param_count;
+
+    machine->running = VM_RUNNING;
 }
 
 void vm_execute_ret(vm * machine, bytecode * code)
@@ -1315,6 +1320,12 @@ void vm_execute_ret(vm * machine, bytecode * code)
     machine->fp = machine->stack[machine->fp - 1].sp;
 
     gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp);
+}
+
+void vm_execute_rethrow(vm * machine, bytecode * code)
+{
+    vm_execute_ret(machine, code);
+    machine->running = VM_EXCEPTION;
 }
 
 void vm_execute_line(vm * machine, bytecode * code)
@@ -1416,8 +1427,6 @@ void vm_execute_push_except(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     mem_ptr addr = gc_alloc_int(machine->collector, machine->exception);
 
-    printf("push exception %d\n", machine->exception);
-
     machine->sp++;
     vm_check_stack(machine);
 
@@ -1427,10 +1436,10 @@ void vm_execute_push_except(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
-void vm_execute_rethrow(vm * machine, bytecode * code)
+void vm_execute_unhandled_exception(vm * machine, bytecode * code)
 {
-    /* TODO: */
-    assert(0);
+    printf("unhandled exception %d\n", machine->exception);
+    machine->running = VM_ERROR;
 }
 
 void vm_execute_halt(vm * machine, bytecode * code)
@@ -1452,10 +1461,8 @@ int vm_execute(vm * machine, program * prog, object * result)
 
         if (machine->running == VM_EXCEPTION)
         {
-            machine->ip = exception_tab_search(prog->module_value->exctab_value, machine->ip);
-            
-            printf("excep ip %d\n", machine->ip);
-            
+            machine->ip = exception_tab_search(prog->module_value->exctab_value,
+                                               machine->ip - 1);
             machine->running = VM_RUNNING;
         }
     }
@@ -1465,8 +1472,7 @@ int vm_execute(vm * machine, program * prog, object * result)
         vm_print(machine);
         vm_print_stack_trace(machine);    
     }
-
-    if (machine->running == VM_HALT)
+    else if (machine->running == VM_HALT)
     {
         *result =
             *gc_get_object(machine->collector, machine->stack[machine->sp].addr);
