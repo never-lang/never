@@ -2146,15 +2146,8 @@ int except_implicit_emit(func * func_value, int stack_level, module * module_val
                          func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
-    int param_count = 0;
-
-    if (func_value->decl->params != NULL)
-    {
-        param_count = func_value->decl->params->count;
-    }
     
     bc.type = BYTECODE_RETHROW;
-    bc.ret.count = param_count;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -2173,7 +2166,7 @@ int except_all_emit(except * value, func * func_value, int stack_level,
     }
 
     bc.type = BYTECODE_CLEAR_STACK;
-    bc.ret.count = param_count;
+    bc.clear.count = param_count;
     labelA = bytecode_add(module_value->code, &bc);
 
     if (value->expr_value != NULL)
@@ -2182,7 +2175,6 @@ int except_all_emit(except * value, func * func_value, int stack_level,
     }
     
     bc.type = BYTECODE_RET;
-    bc.ret.count = param_count;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_LABEL;
@@ -2207,7 +2199,7 @@ int except_emit(except * value, func * func_value, int stack_level,
     }
 
     bc.type = BYTECODE_CLEAR_STACK;
-    bc.ret.count = param_count;
+    bc.clear.count = param_count;
     labelA = bytecode_add(module_value->code, &bc);
     
     bc.type = BYTECODE_INT;
@@ -2229,7 +2221,6 @@ int except_emit(except * value, func * func_value, int stack_level,
     }
     
     bc.type = BYTECODE_RET;
-    bc.ret.count = param_count;
     bytecode_add(module_value->code, &bc);
     
     bc.type = BYTECODE_LABEL;
@@ -2280,7 +2271,6 @@ int func_body_emit(func * func_value, module * module_value,
     bytecode bc = { 0 };
     bytecode *labelA, *labelE = NULL;
     int func_count = 0;
-    int param_count = 0;
 
     bc.type = BYTECODE_FUNC_DEF;
     labelA = bytecode_add(module_value->code, &bc);
@@ -2307,14 +2297,8 @@ int func_body_emit(func * func_value, module * module_value,
         bc.line.no = func_value->body->ret->line_no;
         bytecode_add(module_value->code, &bc);
     }
-
-    if (func_value->decl->params != NULL)
-    {
-        param_count = func_value->decl->params->count;
-    }
     
     bc.type = BYTECODE_RET;
-    bc.ret.count = param_count;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_LABEL;

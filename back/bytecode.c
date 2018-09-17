@@ -433,7 +433,7 @@ void bytecode_print_clear_stack(bytecode * code)
 
 void bytecode_print_ret(bytecode * code)
 {
-    printf("%d: ret %d\n", code->addr, code->ret.count);
+    printf("%d: ret %d\n", code->addr, code->clear.count);
 }
 
 void bytecode_print_line(bytecode * code)

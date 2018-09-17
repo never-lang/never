@@ -1,0 +1,37 @@
+
+func three(d -> int, c -> int) -> int
+{
+    let f = let func(p -> int) -> int { (p + 10) / p };
+    
+    f(d)
+}
+
+func two(d -> int) -> int
+{
+    three(d, 199)
+}
+catch (wrong_array_size)
+{
+    0
+}
+catch (index_out_of_bounds)
+{
+    d + 102
+}
+catch (division_by_zero)
+{
+    155
+}
+
+func one(d -> int) -> int
+{
+    two(d)
+}
+
+func main() -> int
+{
+    one(0)
+}
+
+
+

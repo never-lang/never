@@ -168,10 +168,10 @@ typedef struct bytecode
             unsigned int q;
             unsigned int m;
         } slide;
-        struct /* BYTECODE_RET, BYTECODE_CLEAR_STACK */
+        struct /* BYTECODE_CLEAR_STACK */
         {
             unsigned int count;
-        } ret;
+        } clear;
         struct /* BYTECODE_LINE */
         {
             unsigned int no;

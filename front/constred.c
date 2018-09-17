@@ -637,6 +637,30 @@ int bind_list_constred(bind_list * list, int * result)
     return 0;
 }
 
+int except_constred(except * value, int * result)
+{
+    if (value->expr_value != NULL)
+    {
+        expr_constred(value->expr_value, result);
+    }
+    return 0;
+}
+
+int except_list_constred(except_list * list, int * result)
+{
+    except_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        except * value = node->value;
+        if (value != NULL)
+        {
+            except_constred(value, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
 int func_constred(func * value, int * result)
 {
     if (value->body != NULL && value->body->binds != NULL)
@@ -650,6 +674,14 @@ int func_constred(func * value, int * result)
     if (value->body != NULL && value->body->ret != NULL)
     {
         expr_constred(value->body->ret, result);
+    }
+    if (value->except != NULL && value->except->list != NULL)
+    {
+        except_list_constred(value->except->list, result);
+    }
+    if (value->except != NULL && value->except->all != NULL)
+    {
+        except_constred(value->except->all, result);
     }
 
     return 0;

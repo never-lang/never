@@ -1305,7 +1305,9 @@ void vm_execute_slide(vm * machine, bytecode * code)
 void vm_execute_clear_stack(vm * machine, bytecode * code)
 {
     /* actualy there should be a better way to remove local params */
-    unsigned int param_count = code->ret.count;
+    /* when variadic parametes (...) are introduced machine->params_pointers */
+    /* is likely needed  */
+    unsigned int param_count = code->clear.count;
     machine->sp = machine->fp + param_count;
 
     machine->running = VM_RUNNING;
