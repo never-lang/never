@@ -338,42 +338,38 @@ func main() -> int
 }
 ```
 
-The above example converts value ```18``` into binary format.
+The above example converts value ```18``` into binary format. The following
+code calculates divisors of a number and outlines ```for``` and ```if```
+expressions.
 
 ```
-func max(a -> int, b -> int) -> int { a > b ? a : b }
-
-func cutrod(price[P] -> int, memo[M] -> int, len -> int) -> int
+func divisors(n -> int) -> int
 {
-    var i = 0;
-    var max_p = -1;
-    
-    if (memo[len] != -1)
+    var i = 1;
+
+    for (i = 1; i * i <= n; i = i + 1) 
     {
-        max_p = memo[len]
+        if (n % i == 0)
+        {
+            if (n / i != i)
+            {
+                print(n / i);
+                print(i)
+            }
+            else
+            {
+                print(i)
+            }
+        }
     }
-    else
-    {
-         while (i < len)
-         {
-             max_p = max(max_p, price[i] + cutrod(price, memo, len - i - 1));
-             i = i + 1
-         }
-    };
-    
-    memo[len] = max_p
+
 }
 
 func main() -> int
 {
-    let price = [ 2, 7, 9, 10, 10, 14, 17, 21 ] -> int;
-    let memo = [ 0, -1, -1, -1, -1, -1, -1, -1, -1 ] -> int; 
-    
-    cutrod(price, memo, 8)
+    divisors(60)
 }
 ```
-
-The above example solves rod cutting dynamic problem.
 
 ## Arrays
 Never supports arrays of any dimension. Array are also expressions and may be
@@ -547,6 +543,42 @@ func main() -> int
     foreach2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
                    [ 16, 17, 18 ] -> int ] -> [D] -> int,
                    foreachTab, twice )
+}
+```
+
+Arrays can be used to memorize sub-problem results in dynamic programming. 
+The following example solves rod cutting dynamic problem.
+
+```
+func max(a -> int, b -> int) -> int { a > b ? a : b }
+
+func cutrod(price[P] -> int, memo[M] -> int, len -> int) -> int
+{
+    var i = 0;
+    var max_p = -1;
+    
+    if (memo[len] != -1)
+    {
+        max_p = memo[len]
+    }
+    else
+    {
+         while (i < len)
+         {
+             max_p = max(max_p, price[i] + cutrod(price, memo, len - i - 1));
+             i = i + 1
+         }
+    };
+    
+    memo[len] = max_p
+}
+
+func main() -> int
+{
+    let price = [ 2, 7, 9, 10, 10, 14, 17, 21 ] -> int;
+    let memo = [ 0, -1, -1, -1, -1, -1, -1, -1, -1 ] -> int; 
+    
+    cutrod(price, memo, 8)
 }
 ```
 

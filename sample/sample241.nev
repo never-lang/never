@@ -1,0 +1,28 @@
+
+func divisors(n -> int) -> int
+{
+    var i = 1;
+
+    for (i = 1; i * i <= n; i = i + 1) 
+    {
+        if (n % i == 0)
+        {
+            if (n / i != i)
+            {
+                print(n / i);
+                print(i)
+            }
+            else
+            {
+                print(i)
+            }
+        }
+    }
+
+}
+
+func main() -> int
+{
+    divisors(60)    
+}
+
