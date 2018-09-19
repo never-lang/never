@@ -15,12 +15,20 @@ typedef enum except_no
     EXCEPT_NO_UNKNOWN = 0,
     EXCEPT_NO_DIVISION = 1,
     EXCEPT_NO_ARR_SIZE = 2,
-    EXCEPT_NO_INDEX_OOB = 3
+    EXCEPT_NO_INDEX_OOB = 3,
+    EXCEPT_NO_INVALID = 4,
+    EXCEPT_NO_OVERFLOW = 5,
+    EXCEPT_NO_UNDERFLOW = 6,
+    EXCEPT_NO_INEXACT = 7
 } except_no;
 
 #define EXCEPT_NO_DIVISION_NAME "division_by_zero"
 #define EXCEPT_NO_ARR_SIZE_NAME "wrong_array_size"
 #define EXCEPT_NO_INDEX_OOB_NAME "index_out_of_bounds"
+#define EXCEPT_NO_INVALID_NAME "invalid"
+#define EXCEPT_NO_OVERFLOW_NAME "overflow"
+#define EXCEPT_NO_UNDERFLOW_NAME "underflow"
+#define EXCEPT_NO_INEXACT_NAME "inexact"
 
 typedef struct except
 {

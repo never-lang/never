@@ -1,0 +1,10 @@
+
+func main() -> float
+{
+    log(-10.0)
+}
+catch (invalid)
+{
+    -1.0
+}
+

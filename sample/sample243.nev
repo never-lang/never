@@ -1,0 +1,10 @@
+
+func main() -> int
+{
+    sqrt(-1)
+}
+catch (invalid)
+{
+    -1
+}
+

@@ -154,12 +154,34 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     break;
     }
 
-    if (fetestexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW | FE_UNDERFLOW))
+    if (fetestexcept(FE_DIVBYZERO | FE_INEXACT | FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW))
     {
+        if (fetestexcept(FE_DIVBYZERO))
+        {
+            machine->exception = EXCEPT_NO_DIVISION;
+        }
+        else if (fetestexcept(FE_INEXACT))
+        {
+            machine->exception = EXCEPT_NO_INEXACT;
+        }
+        else if (fetestexcept(FE_INVALID))
+        {
+            machine->exception = EXCEPT_NO_INVALID;
+        }
+        else if (fetestexcept(FE_OVERFLOW))
+        {
+            machine->exception = EXCEPT_NO_OVERFLOW;
+        }
+        else if (fetestexcept(FE_UNDERFLOW))
+        {
+            machine->exception = EXCEPT_NO_UNDERFLOW;
+        }
+
         print_error_msg(machine->line_no,
                         "an error occurred in build in function %s\n",
                         libmath_func_to_str(code->build_in.id));
-        machine->running = VM_ERROR;
+
+        machine->running = VM_EXCEPTION;
         return;
     }
 

@@ -1389,6 +1389,22 @@ int except_check_id(except * value, int * result)
     {
         value->no = EXCEPT_NO_DIVISION;
     }
+    else if (strcmp(value->id, EXCEPT_NO_INVALID_NAME) == 0)
+    {
+        value->no = EXCEPT_NO_INVALID;
+    }
+    else if (strcmp(value->id, EXCEPT_NO_OVERFLOW_NAME) == 0)
+    {
+        value->no = EXCEPT_NO_OVERFLOW;
+    }
+    else if (strcmp(value->id, EXCEPT_NO_UNDERFLOW_NAME) == 0)
+    {
+        value->no = EXCEPT_NO_UNDERFLOW;
+    }
+    else if (strcmp(value->id, EXCEPT_NO_INEXACT_NAME) == 0)
+    {
+        value->no = EXCEPT_NO_INEXACT;
+    }
     else
     {
         value->no = EXCEPT_NO_UNKNOWN;
