@@ -338,9 +338,11 @@ func main() -> int
 }
 ```
 
-The above example converts value ```18``` into binary format. The following
-code calculates divisors of a number and outlines ```for``` and ```if```
-expressions.
+The above example converts value ```18``` into binary format.
+
+The following code calculates divisors of a number and outlines ```for``` and ```if```
+expressions. The following factorizes a number using ```for```
+and ```while``` expressions.
 
 ```
 func divisors(n -> int) -> int
@@ -368,6 +370,28 @@ func divisors(n -> int) -> int
 func main() -> int
 {
     divisors(60)
+}
+```
+
+```
+func factorize(n -> int) -> int
+{
+    var i = 1;
+
+    for (i = 2; i <= n; i = i + 1) 
+    {
+        while (n % i == 0)
+        {
+            print(i);
+            n = n / i
+        }
+    }
+
+}
+
+func main() -> int
+{
+    factorize(2020)
 }
 ```
 

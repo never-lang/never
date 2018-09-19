@@ -1,0 +1,21 @@
+
+func factorize(n -> int) -> int
+{
+    var i = 1;
+
+    for (i = 2; i <= n; i = i + 1) 
+    {
+        while (n % i == 0)
+        {
+            print(i);
+            n = n / i
+        }
+    }
+
+}
+
+func main() -> int
+{
+    factorize(2020)    
+}
+
