@@ -45,6 +45,10 @@ tailrec_type bind_tailrec(unsigned int syn_level, func * func_value,
                           bind * value, expr ** last_call);
 tailrec_type bind_list_tailrec(unsigned int syn_level, func * func_value,
                                bind_list * list, expr ** last_call);
+tailrec_type except_tailrec(unsigned int syn_level, func * func_value,
+                            except * value, expr ** last_call);
+tailrec_type except_list_tailrec(unsigned int syn_level, func * func_value,
+                                 except_list * list, expr ** last_call);
 tailrec_type func_tailrec(unsigned int syn_level, func * value, expr ** last_call);
 
 int func_list_tailrec(unsigned int syn_level, func_list * list);

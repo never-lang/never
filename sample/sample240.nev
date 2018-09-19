@@ -1,0 +1,16 @@
+
+func one(d -> int) -> int
+{
+    d < 10 ? { print(d); one(d + 1) } : 0
+}
+catch (division_by_zero)
+{
+    one(1)
+}
+
+func main() -> int
+{
+    one(0)
+}
+
+

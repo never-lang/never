@@ -482,10 +482,55 @@ tailrec_type bind_list_tailrec(unsigned int syn_level, func * func_value,
         bind * value = node->value;
         if (value != NULL)
         {
-            tailrec_type rec_expr;
+            tailrec_type rec_expr = TAILREC_NOT_FOUND;
 
             rec_expr = bind_tailrec(syn_level, func_value, value, last_call);
             if (rec_expr == TAILREC_FOUND || rec_expr == TAILREC_NOT_POSSIBLE)
+            {
+                rec = TAILREC_NOT_POSSIBLE;
+            }
+        }
+        node = node->next;
+    }
+
+    return rec;
+}
+
+tailrec_type except_tailrec(unsigned int syn_level, func * func_value,
+                            except * value, expr ** last_call)
+{
+    tailrec_type rec = TAILREC_NOT_FOUND;
+
+    if (value->expr_value != NULL)
+    {
+        tailrec_type rec_expr = TAILREC_NOT_FOUND;
+
+        rec_expr = expr_tailrec(syn_level, func_value,
+                                value->expr_value, last_call);
+        if (rec_expr == TAILREC_FOUND || rec_expr == TAILREC_NOT_POSSIBLE)
+        {
+            rec = TAILREC_NOT_POSSIBLE;
+        }
+    }
+
+    return rec;
+}
+
+tailrec_type except_list_tailrec(unsigned int syn_level, func * func_value,
+                                 except_list * list, expr ** last_call)
+{
+    tailrec_type rec = TAILREC_NOT_FOUND;
+
+    except_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        except * value = node->value;
+        if (value != NULL)
+        {
+            tailrec_type rec_exc = TAILREC_NOT_FOUND;
+
+            rec_exc = except_tailrec(syn_level, func_value, value, last_call);
+            if (rec_exc == TAILREC_FOUND || rec_exc == TAILREC_NOT_POSSIBLE)
             {
                 rec = TAILREC_NOT_POSSIBLE;
             }
@@ -503,15 +548,26 @@ tailrec_type func_tailrec(unsigned int syn_level, func * value,
 
     if (value->body != NULL && value->body->binds != NULL)
     {
-        rec = bind_list_tailrec(syn_level, value, value->body->binds, last_call);
+        expr * last_call_bind = NULL;
+        bind_list_tailrec(syn_level, value, value->body->binds, &last_call_bind);
     }
     if (value->body != NULL && value->body->funcs != NULL)
     {
-        rec = func_list_tailrec(syn_level, value->body->funcs);
+        func_list_tailrec(syn_level, value->body->funcs);
     }
-    if (value->body && value->body->ret)
+    if (value->body != NULL && value->body->ret != NULL)
     {
         rec = expr_tailrec(syn_level, value, value->body->ret, last_call);
+    }
+    if (value->except != NULL && value->except->list != NULL)
+    {
+        expr * last_call_exc = NULL;
+        except_list_tailrec(syn_level, value, value->except->list, &last_call_exc);
+    }
+    if (value->except != NULL && value->except->all != NULL)
+    {
+        expr * last_call_exc = NULL;
+        except_tailrec(syn_level, value, value->except->all, &last_call_exc);
     }
 
     return rec;
