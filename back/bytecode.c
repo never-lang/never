@@ -354,12 +354,12 @@ void bytecode_print_op_ass_int(bytecode * code)
 
 void bytecode_print_op_ass_float(bytecode * code)
 {
-    printf("%d: op ass int\n", code->addr);
+    printf("%d: op ass float\n", code->addr);
 }
 
 void bytecode_print_op_ass_array(bytecode * code)
 {
-    printf("%d: op ass int\n", code->addr);
+    printf("%d: op ass array\n", code->addr);
 }
 
 void bytecode_print_op_ass_func(bytecode * code)

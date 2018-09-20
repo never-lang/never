@@ -1100,12 +1100,11 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
         dv[d].elems = e;
     }
 
-    elem = gc_alloc_int(machine->collector, 10);
-
     array = gc_alloc_arr(machine->collector, dims, dv);
     elems = gc_get_arr_elems(machine->collector, array);
     for (d = 0; d < elems; d++)
     {
+        elem = gc_alloc_int(machine->collector, 0);
         gc_set_arr_elem(machine->collector, array, d, elem);
     }
 
