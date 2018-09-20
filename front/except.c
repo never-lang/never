@@ -118,6 +118,22 @@ void except_list_add_end(except_list * list, except * value)
     }
 }
 
+char * except_to_str(except_no no)
+{
+    switch (no)
+    {
+        case EXCEPT_NO_UNKNOWN: return EXCEPT_NO_UNKNOWN_NAME; 
+        case EXCEPT_NO_DIVISION: return EXCEPT_NO_DIVISION_NAME; 
+        case EXCEPT_NO_ARR_SIZE: return EXCEPT_NO_ARR_SIZE_NAME;
+        case EXCEPT_NO_INDEX_OOB: return EXCEPT_NO_INDEX_OOB_NAME;
+        case EXCEPT_NO_INVALID: return EXCEPT_NO_INVALID_NAME;
+        case EXCEPT_NO_OVERFLOW: return EXCEPT_NO_OVERFLOW_NAME;
+        case EXCEPT_NO_UNDERFLOW: return EXCEPT_NO_UNDERFLOW_NAME;
+        case EXCEPT_NO_INEXACT: return EXCEPT_NO_INEXACT_NAME;
+    }
+    
+    return EXCEPT_NO_UNKNOWN_NAME;
+}
 
 
 
