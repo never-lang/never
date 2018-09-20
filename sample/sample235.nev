@@ -21,4 +21,8 @@ func main() -> int
 {
     one(0)
 }
+catch
+{
+    0
+}
 

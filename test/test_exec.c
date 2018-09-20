@@ -67,7 +67,7 @@ void test_one()
     int ret = 0;
     program * prog = program_new();
     const char * prog_str =
-        "func main(a -> int, b -> int) -> int { return 10 * (a + b); }";
+        "func main(a -> int, b -> int) -> int { 10 * (a + b) }";
 
     ret = nev_compile_str(prog_str, prog);
     if (ret == 0)
