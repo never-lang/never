@@ -12,6 +12,6 @@ func f1(a -> int) -> int
 
 func main() -> int
 {
-    assert(f1(8) == 10)
+    assert(f1(8) == 0)
 }
 

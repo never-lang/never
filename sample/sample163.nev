@@ -3,7 +3,7 @@ func main() -> int
 {
     func loop(i -> int) -> int
     {
-        i < 1000 ? { print(i); loop(i + 1) } : 10
+        i < 10 ? { print(i); loop(i + 1) } : 10
     }
     
     loop(0)

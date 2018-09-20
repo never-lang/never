@@ -22,6 +22,7 @@ typedef enum except_no
     EXCEPT_NO_INEXACT = 7
 } except_no;
 
+#define EXCEPT_NO_UNKNOWN_NAME "unknown_exception"
 #define EXCEPT_NO_DIVISION_NAME "division_by_zero"
 #define EXCEPT_NO_ARR_SIZE_NAME "wrong_array_size"
 #define EXCEPT_NO_INDEX_OOB_NAME "index_out_of_bounds"
@@ -66,6 +67,8 @@ void except_list_delete(except_list * list);
 
 void except_list_add_beg(except_list * list, except * value);
 void except_list_add_end(except_list * list, except * value);
+
+char * except_to_str(except_no no);
 
 #endif /* __EXCEPT_H__ */
 
