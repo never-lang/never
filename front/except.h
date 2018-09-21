@@ -26,7 +26,7 @@ typedef enum except_no
 #define EXCEPT_NO_DIVISION_NAME "division_by_zero"
 #define EXCEPT_NO_ARR_SIZE_NAME "wrong_array_size"
 #define EXCEPT_NO_INDEX_OOB_NAME "index_out_of_bounds"
-#define EXCEPT_NO_INVALID_NAME "invalid"
+#define EXCEPT_NO_INVALID_NAME "invalid_domain"
 #define EXCEPT_NO_OVERFLOW_NAME "overflow"
 #define EXCEPT_NO_UNDERFLOW_NAME "underflow"
 #define EXCEPT_NO_INEXACT_NAME "inexact"

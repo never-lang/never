@@ -672,6 +672,76 @@ func main() -> float
 }
 ```
 
+## Exceptions
+During program execution some operations may fail. One well known example of them
+is division by zero. Another one is dereferencing array out of its bounds.
+A well written program should handle such situations and respond in another way.
+
+Never can handle internal errors using exceptions handlers specified after
+every function. Such handlers can execute arbitrary code. If an exception
+happens inside exception handler it replaces exception being processed.
+
+The following code shows how exception ```invalid_domain``` raised when negative
+parameter passed to ```sqrt``` function is passed.
+
+```
+func main() -> int
+{
+    sqrt(-1)
+}
+catch (invalid_domain)
+{
+    -1
+}
+```
+
+Exception need not be processed in the same function where they occurred. They
+are passed down call stack. First function which defines exception handler
+is used. Also any exception can be caught by parameterless exception handler.
+
+```
+func three(d -> int, c -> int) -> int
+{
+    let t = [ 1, 2, 3 ] -> int;
+
+    t[0] = d;
+    170 / d
+}
+
+func two(d -> int) -> int
+{
+    three(d, 199)
+}
+catch (wrong_array_size)
+{
+    0
+}
+catch (index_out_of_bounds)
+{
+    d + 102
+}
+
+func one(d -> int) -> int
+{
+    two(d)
+}
+
+func main() -> int
+{
+    one(0)
+}
+catch (division_by_zero)
+{
+    155
+}
+```
+
+In the above example exception division by zero is caught by handler defined
+in function ```main```. If index out of bound was raised it would be caught
+by exception handler defined in function ```two```. Please also note that
+exception handlers can access function parameters. All bindings and nested
+functions are not accessible.
+
 ## Console Output
 Never implements simple `print(int x) -> int` and `printf(float x) -> float` functions.
 The function writes an integer or float parameter `x` (with a new line character)

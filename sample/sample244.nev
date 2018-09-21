@@ -3,7 +3,7 @@ func main() -> float
 {
     log(-10.0)
 }
-catch (invalid)
+catch (invalid_domain)
 {
     -1.0
 }

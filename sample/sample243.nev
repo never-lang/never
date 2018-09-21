@@ -3,7 +3,7 @@ func main() -> int
 {
     sqrt(-1)
 }
-catch (invalid)
+catch (invalid_domain)
 {
     -1
 }
