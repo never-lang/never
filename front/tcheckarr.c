@@ -198,6 +198,13 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
                                             syn_level, result);
         }
 
+        if (param_is_num(value->array.array_value->ret) == TYPECHECK_FAIL)
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "dynamic array of ints and floats supported\n");
+        }
+
         if (*result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;

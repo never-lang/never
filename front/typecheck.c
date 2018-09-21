@@ -164,6 +164,16 @@ int array_cmp(int comb_dims_one, param * ret_one,
     }
 }
 
+int param_is_num(param * value)
+{
+    if (value->type == PARAM_INT || value->type == PARAM_FLOAT)
+    {
+        return TYPECHECK_SUCC;
+    }
+
+    return TYPECHECK_FAIL;
+}
+
 int param_expr_array_cmp(param * param_value, expr * expr_value)
 {
     if (param_value->dims->count != expr_value->comb.comb_dims)
@@ -1857,8 +1867,7 @@ int func_main_check_type(symtab * tab, int * result)
             }
             else
             {
-                if (func_value->decl->ret->type != PARAM_INT &&
-                    func_value->decl->ret->type != PARAM_FLOAT)
+                if (param_is_num(func_value->decl->ret) == TYPECHECK_FAIL)
                 {
                     print_error_msg(func_value->line_no,
                                     "incorrect function main return type\n");

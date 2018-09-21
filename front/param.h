@@ -22,18 +22,18 @@
 #ifndef __PARAM_H__
 #define __PARAM_H__
 
-enum
+typedef enum param_type
 {
     PARAM_INT = 1,
     PARAM_FLOAT,
     PARAM_DIM,
     PARAM_ARRAY,
     PARAM_FUNC
-};
+} param_type;
 
 typedef struct param
 {
-    int type;
+    param_type type;
     int index;
     char * id;
     union {
@@ -79,6 +79,6 @@ void param_dim_set_array(param_list * dims, param * array);
 
 void param_print(param * value);
 void param_list_print(param_list * list);
-char * param_type_str(int type);
+char * param_type_str(param_type type);
 
 #endif /* __PARAM_H__ */

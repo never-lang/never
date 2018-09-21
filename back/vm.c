@@ -93,7 +93,8 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_JUMP, vm_execute_jump },
     { BYTECODE_LABEL, vm_execute_label },
 
-    { BYTECODE_MK_ARRAY, vm_execute_mk_array },
+    { BYTECODE_MK_ARRAY_INT, vm_execute_mk_array_int },
+    { BYTECODE_MK_ARRAY_FLOAT, vm_execute_mk_array_float },
     { BYTECODE_MK_INIT_ARRAY, vm_execute_mk_init_array },
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
 
@@ -1072,7 +1073,7 @@ void vm_execute_jump(vm * machine, bytecode * code)
 
 void vm_execute_label(vm * machine, bytecode * code) { /* no op */ }
 
-void vm_execute_mk_array(vm * machine, bytecode * code)
+void vm_execute_mk_array_num(vm * machine, bytecode * code, param_type value)
 {
     unsigned int d = 0;
     unsigned int dims = 0;
@@ -1104,7 +1105,18 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
     elems = gc_get_arr_elems(machine->collector, array);
     for (d = 0; d < elems; d++)
     {
-        elem = gc_alloc_int(machine->collector, 0);
+        if (value == PARAM_INT)
+        {
+            elem = gc_alloc_int(machine->collector, 0);
+        }
+        else if (value == PARAM_FLOAT)
+        {
+            elem = gc_alloc_float(machine->collector, 0.0);
+        }
+        else
+        {
+            assert(0);
+        }
         gc_set_arr_elem(machine->collector, array, d, elem);
     }
 
@@ -1115,6 +1127,16 @@ void vm_execute_mk_array(vm * machine, bytecode * code)
     entry.addr = gc_alloc_arr_ref(machine->collector, array);
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_mk_array_int(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_INT);
+}
+
+void vm_execute_mk_array_float(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_FLOAT);
 }
 
 void vm_execute_mk_init_array(vm * machine, bytecode * code)

@@ -121,7 +121,8 @@ void vm_execute_jumpz(vm * machine, bytecode * code);
 void vm_execute_jump(vm * machine, bytecode * code);
 void vm_execute_label(vm * machine, bytecode * code);
 
-void vm_execute_mk_array(vm * machine, bytecode * code);
+void vm_execute_mk_array_int(vm * machine, bytecode * code);
+void vm_execute_mk_array_float(vm * machine, bytecode * code);
 void vm_execute_mk_init_array(vm * machine, bytecode * code);
 void vm_execute_array_deref(vm * machine, bytecode * code);
 

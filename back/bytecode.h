@@ -87,7 +87,8 @@ typedef enum bytecode_type
     BYTECODE_JUMP,
     BYTECODE_LABEL,
 
-    BYTECODE_MK_ARRAY,
+    BYTECODE_MK_ARRAY_INT,
+    BYTECODE_MK_ARRAY_FLOAT,
     BYTECODE_MK_INIT_ARRAY,
     BYTECODE_ARRAY_DEREF,
 
@@ -282,7 +283,8 @@ void bytecode_print_jumpz(bytecode * code);
 void bytecode_print_jump(bytecode * code);
 void bytecode_print_label(bytecode * code);
 
-void bytecode_print_mk_array(bytecode * code);
+void bytecode_print_mk_array_int(bytecode * code);
+void bytecode_print_mk_array_float(bytecode * code);
 void bytecode_print_mk_init_array(bytecode * code);
 void bytecode_print_array_deref(bytecode * code);
 

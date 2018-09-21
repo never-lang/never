@@ -89,7 +89,8 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_JUMP, bytecode_print_jump },
     { BYTECODE_LABEL, bytecode_print_label },
 
-    { BYTECODE_MK_ARRAY, bytecode_print_mk_array },
+    { BYTECODE_MK_ARRAY_INT, bytecode_print_mk_array_int },
+    { BYTECODE_MK_ARRAY_FLOAT, bytecode_print_mk_array_float },
     { BYTECODE_MK_INIT_ARRAY, bytecode_print_mk_init_array },
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
 
@@ -384,9 +385,14 @@ void bytecode_print_label(bytecode * code)
     printf("%d: label\n", code->addr);
 }
 
-void bytecode_print_mk_array(bytecode * code)
+void bytecode_print_mk_array_int(bytecode * code)
 {
-    printf("%d: mk array %d\n", code->addr, code->mk_array.dims);
+    printf("%d: mk array int %d\n", code->addr, code->mk_array.dims);
+}
+
+void bytecode_print_mk_array_float(bytecode * code)
+{
+    printf("%d: mk array float %d\n", code->addr, code->mk_array.dims);
 }
 
 void bytecode_print_mk_init_array(bytecode * code)

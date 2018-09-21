@@ -242,7 +242,7 @@ void param_list_print(param_list * list)
     }
 }
 
-char * param_type_str(int type)
+char * param_type_str(param_type type)
 {
     switch (type)
     {

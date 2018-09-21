@@ -2006,7 +2006,18 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     
     expr_list_emit(array_value->dims, stack_level, module_value, list_weak, result);
 
-    bc.type = BYTECODE_MK_ARRAY;
+    if (array_value->ret->type == PARAM_INT)
+    {
+        bc.type = BYTECODE_MK_ARRAY_INT;
+    }
+    else if (array_value->ret->type == PARAM_FLOAT)
+    {
+        bc.type = BYTECODE_MK_ARRAY_FLOAT;
+    }
+    else
+    {
+        assert(0);
+    }
     bc.mk_array.dims = array_value->dims->count;
 
     bytecode_add(module_value->code, &bc);
@@ -2061,7 +2072,6 @@ int array_init_emit(expr * value, int stack_level, module * module_value,
 
     bc.type = BYTECODE_MK_INIT_ARRAY;
     bc.mk_array.dims = array_value->dims->count;
-
     bytecode_add(module_value->code, &bc);
 
     return 0;

@@ -36,6 +36,7 @@ int func_cmp(param_list * param_list_one, param * ret_one,
 int array_cmp(int comb_dims_one, param * ret_one,
               int comb_dims_two, param * ret_two); 
 
+int param_is_num(param * value);
 int param_expr_array_cmp(param * param_value, expr * expr_value);
 int param_expr_cmp(param * param_value, expr * expr_value);
 int param_expr_list_cmp(param_list * params, expr_list * list);
