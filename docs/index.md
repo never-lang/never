@@ -332,9 +332,7 @@ func main() -> int
     {
         print(n % 2);
         n = n / 2
-    } while (n != 0);
-        
-    5
+    } while (n != 0)
 }
 ```
 
