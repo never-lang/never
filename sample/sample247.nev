@@ -1,4 +1,3 @@
-
 func print_str(hw[L] -> float) -> int
 {
     func __print(hw[L] -> float, i -> int) -> int

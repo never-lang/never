@@ -1,38 +1,32 @@
-
-func three(d -> int, c -> int) -> int
+func print_str(hw[L] -> int) -> int
 {
-    let t = [ 1, 2, 3 ] -> int;
-
-    t[10] = d;
-    17770 / d
+    func __print(hw[L] -> int, i -> int) -> int
+    {
+        i < L ? { print(hw[i]); __print(hw, i + 1) } : 0
+    }
+    
+    __print(hw, 0)
 }
 
-func two(d -> int) -> int
+func reverse(hw[L] -> int) -> [_] -> int
 {
-    three(d, 199)
-}
-catch (wrong_array_size)
-{
-    0
-}
-catch (index_out_of_bounds)
-{
-    d + 102
-}
+    let rev = {[ L ]} -> int;
+    
+    func __reverse(hw[L1] -> int, rev[L2] -> int, i -> int) -> int
+    {
+        i < L1 ? { rev[L2 - i - 1] = hw[i]; __reverse(hw, rev, i + 1) } : 0 
+    }
+    __reverse(hw, rev, 0);
 
-func one(d -> int) -> int
-{
-    two(d)
+    rev
 }
 
 func main() -> int
 {
-    one(0)
+    let hw = [ 72, 101, 108, 108, 111, 44, 32, 87, 111, 114, 108, 100, 33 ] -> int;
+    
+    print_str(hw);
+    print_str(reverse(hw))
 }
-catch (division_by_zero)
-{
-    155
-}
-
 
 
