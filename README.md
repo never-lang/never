@@ -656,7 +656,7 @@ in between functions as any other function.
 ```
 func deg2rad(deg -> float) -> float
 {
-    deg * 3.14159265359 / 180
+    deg * 3.14159 / 180
 }
 
 func get_func() -> (float) -> float
@@ -667,6 +667,37 @@ func get_func() -> (float) -> float
 func main() -> float
 {
     get_func()(deg2rad(60.0))
+}
+```
+
+Together with arrays mathematical functions can be used to express and calculate
+vector rotations. Code snippet included below rotates vector ```[[ 0, 10 ]]```
+by 0, 45, 90, 180, 270 and 360 degrees.
+
+```
+func print_vect(vect[D1, D2] -> float) -> int
+{
+    printf(vect[0, 0]);
+    printf(vect[0, 1]);
+    0
+}
+
+func rotate_matrix(alpha -> float) -> [_,_] -> float
+{
+    [ [ cos(alpha), -sin(alpha) ],
+      [ sin(alpha), cos(alpha)  ] ] -> float
+}
+
+func main() -> int
+{
+    let vect = [[ 10.0, 0.0 ]] -> float;
+
+    print_vect(vect * rotate_matrix(0.0));
+    print_vect(vect * rotate_matrix(3.14159 / 4.0));
+    print_vect(vect * rotate_matrix(3.14159 / 2.0));
+    print_vect(vect * rotate_matrix(3.14159));
+    print_vect(vect * rotate_matrix(3.0 * 3.14159 / 2.0));
+    print_vect(vect * rotate_matrix(2.0 * 3.14159))
 }
 ```
 
