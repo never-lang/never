@@ -671,7 +671,7 @@ func main() -> float
 ```
 
 Together with arrays mathematical functions can be used to express and calculate
-vector rotations. Code snippet included below rotates vector ```[[ 0, 10 ]]```
+vector rotations. Code snippet included below rotates vector ```[[ 10.0, 0.0 ]]```
 by 0, 45, 90, 180, 270 and 360 degrees.
 
 ```
