@@ -23,35 +23,37 @@
 #define __TAILREC_H__
 
 #include "never.h"
+#include "weakexpr.h"
 
-typedef enum
+typedef enum tailrec_op
 {
-    TAILREC_NOT_FOUND = 0,
-    TAILREC_FOUND = 1,
-    TAILREC_NOT_POSSIBLE = 2
-} tailrec_type;
+    TAILREC_OP_SKIP = 0,
+    TAILREC_OP_ADD = 1
+} tailrec_op;
 
-tailrec_type expr_id_tailrec(unsigned int syn_level, func * func_value,
-                             expr * value);
-tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
-                          expr * value, expr ** last_call);
-tailrec_type expr_list_tailrec(unsigned int syn_level, func * func_value,
-                               expr_list * list, expr ** last_call);
-tailrec_type expr_seq_tailrec(unsigned int syn_level, func * func_value,
-                              expr_list * list, expr ** last_call);
-tailrec_type array_tailrec(unsigned int syn_level, func * func_value,
-                           array * value, expr ** last_call);
-tailrec_type bind_tailrec(unsigned int syn_level, func * func_value,
-                          bind * value, expr ** last_call);
-tailrec_type bind_list_tailrec(unsigned int syn_level, func * func_value,
-                               bind_list * list, expr ** last_call);
-tailrec_type except_tailrec(unsigned int syn_level, func * func_value,
-                            except * value, expr ** last_call);
-tailrec_type except_list_tailrec(unsigned int syn_level, func * func_value,
-                                 except_list * list, expr ** last_call);
-tailrec_type func_tailrec(unsigned int syn_level, func * value, expr ** last_call);
+int expr_id_tailrec(unsigned int syn_level, func * func_value,
+                    expr * value, tailrec_op op, expr_list_weak * list_weak);
+int expr_tailrec(unsigned int syn_level, func * func_value,
+                 expr * value, tailrec_op op, expr_list_weak * list_weak);
+int expr_list_tailrec(unsigned int syn_level, func * func_value,
+                     expr_list * list, tailrec_op op, expr_list_weak * list_weak);
+int expr_seq_tailrec(unsigned int syn_level, func * func_value,
+                     expr_list * list, tailrec_op op, expr_list_weak * list_weak);
+int array_tailrec(unsigned int syn_level, func * func_value,
+                  array * value, tailrec_op op, expr_list_weak * list_weak);
+int bind_tailrec(unsigned int syn_level, func * func_value,
+                 bind * value, tailrec_op op, expr_list_weak * list_weak);
+int bind_list_tailrec(unsigned int syn_level, func * func_value,
+                      bind_list * list, tailrec_op op, expr_list_weak * list_weak);
+int except_tailrec(unsigned int syn_level, func * func_value,
+                   except * value, tailrec_op op, expr_list_weak * list_weak);
+int except_list_tailrec(unsigned int syn_level, func * func_value,
+                        except_list * list, tailrec_op op, expr_list_weak * list_weak);
 
+int last_call_list_tailrec(expr_list_weak * list_weak);
+int func_tailrec(unsigned int syn_level, func * value);
 int func_list_tailrec(unsigned int syn_level, func_list * list);
+
 int never_tailrec(never * nev);
 
 #endif /* __TAILREC_H__ */

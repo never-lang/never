@@ -24,7 +24,8 @@
 #include <assert.h>
 #include <stdio.h>
 
-tailrec_type expr_id_tailrec(unsigned int syn_level, func * func_value, expr * value)
+int expr_id_tailrec(unsigned int syn_level, func * func_value,
+                    expr * value, tailrec_op op, expr_list_weak * list_weak)
 {
     symtab_entry * entry = NULL;
 
@@ -34,21 +35,19 @@ tailrec_type expr_id_tailrec(unsigned int syn_level, func * func_value, expr * v
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
             func * sup_func_value = entry->func_value;
-            if (syn_level - 1 == entry->syn_level && func_value == sup_func_value)
+            if (op == TAILREC_OP_ADD && syn_level - 1 == entry->syn_level && func_value == sup_func_value)
             {
-                return TAILREC_FOUND;
+                expr_list_weak_add(list_weak, value, 0);
+                return 0;
             }
         }
     }
-
-    return TAILREC_NOT_FOUND;
+    return 0;
 }
 
-tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
-                          expr * value, expr ** last_call)
+int expr_tailrec(unsigned int syn_level, func * func_value,
+                 expr * value, tailrec_op op, expr_list_weak * list_weak)
 {
-    tailrec_type rec = TAILREC_NOT_FOUND;
-
     switch (value->type)
     {
     case EXPR_INT:
@@ -58,25 +57,11 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
         /* no tailrec possible */
         break;
     case EXPR_ID:
-        rec = expr_id_tailrec(syn_level, func_value, value);
+        expr_id_tailrec(syn_level, func_value, value, op, list_weak);
         break;
     case EXPR_NEG:
     {
-        tailrec_type rec_left;
-
-        rec_left = expr_tailrec(syn_level, func_value, value->left, last_call);
-        if (rec_left == TAILREC_FOUND)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else if (rec_left == TAILREC_NOT_FOUND)
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
-        else if (rec_left == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
     }
     break;
     case EXPR_ADD:
@@ -93,296 +78,131 @@ tailrec_type expr_tailrec(unsigned int syn_level, func * func_value,
     case EXPR_AND:
     case EXPR_OR:
     {
-        tailrec_type rec_left;
-        tailrec_type rec_right;
-
-        rec_left = expr_tailrec(syn_level, func_value, value->left, last_call);
-        rec_right = expr_tailrec(syn_level, func_value, value->right, last_call);
-
-        if (rec_left == TAILREC_FOUND || rec_right == TAILREC_FOUND)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else if (rec_left == TAILREC_NOT_POSSIBLE ||
-                 rec_right == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
+        expr_tailrec(syn_level, func_value, value->right, TAILREC_OP_SKIP, list_weak);
     }
     break;
     case EXPR_NOT:
     {
-        tailrec_type rec_left;
-
-        rec_left = expr_tailrec(syn_level, func_value, value->left, last_call);
-        if (rec_left == TAILREC_FOUND)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else if (rec_left == TAILREC_NOT_FOUND)
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
-        else if (rec_left == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
     }
     break;
     case EXPR_SUP:
-        rec = expr_tailrec(syn_level, func_value, value->left, last_call);
-        break;
+        expr_tailrec(syn_level, func_value, value->left, op, list_weak);
+    break;
     case EXPR_COND:
     {
-        tailrec_type rec_left;
-        tailrec_type rec_middle;
-        tailrec_type rec_right;
-
-        rec_left = expr_tailrec(syn_level, func_value, value->left, last_call);
-        rec_middle = expr_tailrec(syn_level, func_value, value->middle, last_call);
-        rec_right = expr_tailrec(syn_level, func_value, value->right, last_call);
-
-        if (rec_left == TAILREC_NOT_POSSIBLE ||
-            rec_middle == TAILREC_NOT_POSSIBLE ||
-            rec_right == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else if (rec_middle == TAILREC_FOUND && rec_right == TAILREC_FOUND)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else if (rec_middle == TAILREC_FOUND && rec_right == TAILREC_NOT_FOUND)
-        {
-            rec = TAILREC_FOUND;
-        }
-        else if (rec_middle == TAILREC_NOT_FOUND && rec_right == TAILREC_FOUND)
-        {
-            rec = TAILREC_FOUND;
-        }
-        else
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
+        expr_tailrec(syn_level, func_value, value->middle, op, list_weak);
+        expr_tailrec(syn_level, func_value, value->right, op, list_weak);
     }
     break;
     case EXPR_ARRAY:
         if (value->array.array_value != NULL)
         {
-            rec = array_tailrec(syn_level, func_value, value->array.array_value, 
-                                last_call);
+            array_tailrec(syn_level, func_value, value->array.array_value, 
+                          TAILREC_OP_SKIP, list_weak);
         }
         break;
     case EXPR_ARRAY_DEREF:
     {
-        tailrec_type rec_array_expr = TAILREC_NOT_FOUND;
-        tailrec_type rec_array_ref = TAILREC_NOT_FOUND;
-
         if (value->array_deref.array_expr != NULL)
         {
-            rec_array_expr = expr_tailrec(syn_level, func_value,
-                                          value->array_deref.array_expr, last_call);
+            expr_tailrec(syn_level, func_value,
+                         value->array_deref.array_expr, TAILREC_OP_SKIP, list_weak);
         }
         if (value->array_deref.ref != NULL)
         {
-            rec_array_ref = expr_list_tailrec(syn_level, func_value,
-                                              value->array_deref.ref, last_call);
-        }
-
-        if (rec_array_expr == TAILREC_NOT_FOUND &&
-            rec_array_ref == TAILREC_NOT_FOUND)
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
-        else
-        {
-            rec = TAILREC_NOT_POSSIBLE;
+            expr_list_tailrec(syn_level, func_value,
+                              value->array_deref.ref, TAILREC_OP_SKIP, list_weak);
         }
     }
     break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
     {
-        tailrec_type rec_expr = TAILREC_NOT_FOUND;
-        tailrec_type rec_vars = TAILREC_NOT_FOUND;
-
-        rec_expr =
-            expr_tailrec(syn_level, func_value, value->call.func_expr, last_call);
+        expr_tailrec(syn_level, func_value, value->call.func_expr, op, list_weak);
         if (value->call.params != NULL)
         {
-            rec_vars =
-                expr_list_tailrec(syn_level, func_value, value->call.params,
-                                  last_call);
-        }
-
-        if (rec_expr == TAILREC_FOUND && rec_vars == TAILREC_NOT_FOUND)
-        {
-            *last_call = value;
-            rec = TAILREC_FOUND;
-        }
-        else if (rec_expr == TAILREC_NOT_FOUND && rec_vars == TAILREC_NOT_FOUND)
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
-        else
-        {
-            rec = TAILREC_NOT_POSSIBLE;
+            expr_list_tailrec(syn_level, func_value, value->call.params, TAILREC_OP_SKIP, list_weak);
         }
     }
     break;
     case EXPR_FUNC:
         if (value->func_value)
         {
-            expr * last_call = NULL;
-            
-            rec = func_tailrec(syn_level + 2, value->func_value, &last_call);
-            if (rec == TAILREC_FOUND)
-            {
-                assert(last_call);
-                last_call->type = EXPR_LAST_CALL;
-            }
+            func_tailrec(syn_level + 2, value->func_value);
         }
-        rec = TAILREC_NOT_FOUND;
-        break;
+    break;
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
-            rec = expr_seq_tailrec(syn_level, func_value, value->seq.list,
-                                   last_call);
+            expr_seq_tailrec(syn_level, func_value, value->seq.list,
+                             op, list_weak);
         }
         break;
     case EXPR_ASS:
     {
-        tailrec_type rec_left;
-        tailrec_type rec_right;
-
-        rec_left = expr_tailrec(syn_level, func_value, value->left, last_call);
-        rec_right = expr_tailrec(syn_level, func_value, value->right, last_call);
-
-        if (rec_left == TAILREC_FOUND || rec_right == TAILREC_FOUND)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else if (rec_left == TAILREC_NOT_POSSIBLE ||
-                 rec_right == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
+        expr_tailrec(syn_level, func_value, value->right, TAILREC_OP_SKIP, list_weak);
     }
     break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
     {
-        tailrec_type rec_cond;
-        tailrec_type rec_do;
-
-        rec_cond = expr_tailrec(syn_level, func_value, value->whileloop.cond,
-                                last_call);
-        rec_do = expr_tailrec(syn_level, func_value,
-                              value->whileloop.do_value, last_call);
-
-        if (rec_cond == TAILREC_FOUND || rec_do == TAILREC_FOUND)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else if (rec_cond == TAILREC_NOT_POSSIBLE ||
-                 rec_do == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
+        expr_tailrec(syn_level, func_value, value->whileloop.cond,
+                     TAILREC_OP_SKIP, list_weak);
+        expr_tailrec(syn_level, func_value,
+                     value->whileloop.do_value, TAILREC_OP_SKIP, list_weak);
     }
     break;
     case EXPR_FOR:
     {
-        tailrec_type rec_init;
-        tailrec_type rec_cond;
-        tailrec_type rec_incr;
-        tailrec_type rec_do;
-        
-        rec_init = expr_tailrec(syn_level, func_value, value->forloop.init,
-                                last_call);
-        rec_cond = expr_tailrec(syn_level, func_value, value->forloop.cond,
-                                last_call);
-        rec_incr = expr_tailrec(syn_level, func_value, value->forloop.incr,
-                                last_call);
-        rec_do = expr_tailrec(syn_level, func_value, value->forloop.do_value,
-                              last_call);
-                              
-        if (rec_init == TAILREC_FOUND ||
-            rec_cond == TAILREC_FOUND ||
-            rec_incr == TAILREC_FOUND ||
-            rec_do == TAILREC_FOUND)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else if (rec_init == TAILREC_NOT_POSSIBLE ||
-                 rec_cond == TAILREC_NOT_POSSIBLE ||
-                 rec_incr == TAILREC_NOT_POSSIBLE ||
-                 rec_do == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
-        else
-        {
-            rec = TAILREC_NOT_FOUND;
-        }
+        expr_tailrec(syn_level, func_value, value->forloop.init,
+                     TAILREC_OP_SKIP, list_weak);
+        expr_tailrec(syn_level, func_value, value->forloop.cond,
+                     TAILREC_OP_SKIP, list_weak);
+        expr_tailrec(syn_level, func_value, value->forloop.incr,
+                     TAILREC_OP_SKIP, list_weak);
+        expr_tailrec(syn_level, func_value, value->forloop.do_value,
+                     TAILREC_OP_SKIP, list_weak);
     }
     break;
     case EXPR_BUILD_IN:
-        rec = expr_list_tailrec(syn_level, func_value,
-                                value->func_build_in.param, last_call);
+        expr_list_tailrec(syn_level, func_value,
+                          value->func_build_in.param, TAILREC_OP_SKIP, list_weak);
         break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
-        rec = expr_tailrec(syn_level, func_value, value->left, last_call);
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
         break;
     }
-    return rec;
+
+    return 0;
 }
 
-tailrec_type expr_list_tailrec(unsigned int syn_level, func * func_value,
-                               expr_list * list, expr ** last_call)
+int expr_list_tailrec(unsigned int syn_level, func * func_value,
+                      expr_list * list, tailrec_op op, expr_list_weak * list_weak)
 {
-    tailrec_type rec = TAILREC_NOT_FOUND;
-
     expr_list_node * node = list->tail;
     while (node != NULL)
     {
         expr * value = node->value;
         if (value)
         {
-            tailrec_type rec_expr;
-
-            rec_expr = expr_tailrec(syn_level, func_value, value, last_call);
-            if (rec_expr == TAILREC_FOUND || rec_expr == TAILREC_NOT_POSSIBLE)
-            {
-                rec = TAILREC_NOT_POSSIBLE;
-            }
+            expr_tailrec(syn_level, func_value, value, TAILREC_OP_SKIP, list_weak);
         }
         node = node->next;
     }
 
-    return rec;
+    return 0;
 }
 
-tailrec_type expr_seq_tailrec(unsigned int syn_level, func * func_value,
-                              expr_list * list, expr ** last_call)
+int expr_seq_tailrec(unsigned int syn_level, func * func_value,
+                     expr_list * list, tailrec_op op, expr_list_weak * list_weak)
 {
     expr_list_node * last = NULL;
     expr_list_node * node = NULL;
-    tailrec_type rec = TAILREC_NOT_FOUND;
     
     last = list->head;
     if (last != NULL)
@@ -390,7 +210,7 @@ tailrec_type expr_seq_tailrec(unsigned int syn_level, func * func_value,
         expr * value = last->value;
         if (value != NULL)
         {
-            rec = expr_tailrec(syn_level, func_value, value, last_call);
+            expr_tailrec(syn_level, func_value, value, op, list_weak);
         }
     }
     
@@ -400,177 +220,144 @@ tailrec_type expr_seq_tailrec(unsigned int syn_level, func * func_value,
         expr * value = node->value;
         if (value != NULL)
         {
-            tailrec_type rec_expr;
-            
-            rec_expr = expr_tailrec(syn_level, func_value, value, last_call);
-            if (rec_expr == TAILREC_FOUND || rec_expr == TAILREC_NOT_POSSIBLE)
-            {
-                rec = TAILREC_NOT_POSSIBLE;
-            }
+            expr_tailrec(syn_level, func_value, value, TAILREC_OP_SKIP, list_weak);
         }
         node = node->next;
     }
     
-    return rec;
+    return 0;
 }
 
-tailrec_type array_tailrec(unsigned int syn_level, func * func_value,
-                           array * value, expr ** last_call)
+int array_tailrec(unsigned int syn_level, func * func_value,
+                  array * value, tailrec_op op, expr_list_weak * list_weak)
 {
-    tailrec_type rec = TAILREC_NOT_FOUND;
-    tailrec_type rec_array_expr = TAILREC_NOT_FOUND;
-
     if (value->type == ARRAY_INIT || value->type == ARRAY_SUB)
     {
         if (value->elements != NULL)
         {
-            rec_array_expr =
-                expr_list_tailrec(syn_level, func_value,
-                                  value->elements, last_call);
+            expr_list_tailrec(syn_level, func_value,
+                              value->elements, TAILREC_OP_SKIP, list_weak);
         }
     }
     else if (value->type == ARRAY_DIMS)
     {
         if (value->dims != NULL)
         {
-            rec_array_expr =
-                expr_list_tailrec(syn_level, func_value,
-                                  value->dims, last_call);
+            expr_list_tailrec(syn_level, func_value,
+                              value->dims, TAILREC_OP_SKIP, list_weak);
         }
     }
 
-    if (rec_array_expr == TAILREC_NOT_FOUND)
-    {
-        rec = TAILREC_NOT_FOUND;
-    }
-    else
-    {
-        rec = TAILREC_NOT_POSSIBLE;
-    }
-
-    return rec;
+    return 0;
 }
 
-tailrec_type bind_tailrec(unsigned int syn_level, func * func_value,
-                          bind * value, expr ** last_call)
+int bind_tailrec(unsigned int syn_level, func * func_value,
+                          bind * value, tailrec_op op, expr_list_weak * list_weak)
 {
-    tailrec_type rec = TAILREC_NOT_FOUND;
-
     if (value->expr_value != NULL)
     {
-        tailrec_type rec_expr = TAILREC_NOT_FOUND;
-
-        rec_expr = expr_tailrec(syn_level, func_value,
-                                value->expr_value, last_call);
-        if (rec_expr == TAILREC_FOUND || rec_expr == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
+        expr_tailrec(syn_level, func_value,
+                     value->expr_value, op, list_weak);
     }
     
-    return rec;
+    return 0;
 }
 
-tailrec_type bind_list_tailrec(unsigned int syn_level, func * func_value,
-                               bind_list * list, expr ** last_call)
+int bind_list_tailrec(unsigned int syn_level, func * func_value,
+                      bind_list * list, tailrec_op op, expr_list_weak * list_weak)
 {
-    tailrec_type rec = TAILREC_NOT_FOUND;
-
     bind_list_node * node = list->tail;
     while (node != NULL)
     {
         bind * value = node->value;
         if (value != NULL)
         {
-            tailrec_type rec_expr = TAILREC_NOT_FOUND;
-
-            rec_expr = bind_tailrec(syn_level, func_value, value, last_call);
-            if (rec_expr == TAILREC_FOUND || rec_expr == TAILREC_NOT_POSSIBLE)
-            {
-                rec = TAILREC_NOT_POSSIBLE;
-            }
+            bind_tailrec(syn_level, func_value, value, op, list_weak);
         }
         node = node->next;
     }
 
-    return rec;
+    return 0;
 }
 
-tailrec_type except_tailrec(unsigned int syn_level, func * func_value,
-                            except * value, expr ** last_call)
+int except_tailrec(unsigned int syn_level, func * func_value,
+                   except * value, tailrec_op op, expr_list_weak * list_weak)
 {
-    tailrec_type rec = TAILREC_NOT_FOUND;
-
     if (value->expr_value != NULL)
     {
-        tailrec_type rec_expr = TAILREC_NOT_FOUND;
-
-        rec_expr = expr_tailrec(syn_level, func_value,
-                                value->expr_value, last_call);
-        if (rec_expr == TAILREC_FOUND || rec_expr == TAILREC_NOT_POSSIBLE)
-        {
-            rec = TAILREC_NOT_POSSIBLE;
-        }
+        expr_tailrec(syn_level, func_value,
+                     value->expr_value, op, list_weak);
     }
 
-    return rec;
+    return 0;
 }
 
-tailrec_type except_list_tailrec(unsigned int syn_level, func * func_value,
-                                 except_list * list, expr ** last_call)
+int except_list_tailrec(unsigned int syn_level, func * func_value,
+                        except_list * list, tailrec_op op, expr_list_weak * list_weak)
 {
-    tailrec_type rec = TAILREC_NOT_FOUND;
-
     except_list_node * node = list->tail;
     while (node != NULL)
     {
         except * value = node->value;
         if (value != NULL)
         {
-            tailrec_type rec_exc = TAILREC_NOT_FOUND;
-
-            rec_exc = except_tailrec(syn_level, func_value, value, last_call);
-            if (rec_exc == TAILREC_FOUND || rec_exc == TAILREC_NOT_POSSIBLE)
-            {
-                rec = TAILREC_NOT_POSSIBLE;
-            }
+            except_tailrec(syn_level, func_value, value, op, list_weak);
         }
         node = node->next;
     }
 
-    return rec;
+    return 0;
 }
 
-tailrec_type func_tailrec(unsigned int syn_level, func * value,
-                          expr ** last_call)
+int last_call_list_tailrec(expr_list_weak * list_weak)
 {
-    tailrec_type rec = TAILREC_NOT_FOUND;
+    expr_list_weak_node * node = list_weak->tail;
+
+    while (node != NULL)
+    {
+        expr * value = node->value;
+        if (value != NULL)
+        {
+            assert(value->type == EXPR_CALL);
+            value->type = EXPR_LAST_CALL;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_tailrec(unsigned int syn_level, func * value)
+{
+    expr_list_weak * list_weak = expr_list_weak_new();
 
     if (value->body != NULL && value->body->binds != NULL)
     {
-        expr * last_call_bind = NULL;
-        bind_list_tailrec(syn_level, value, value->body->binds, &last_call_bind);
+        bind_list_tailrec(syn_level, value, value->body->binds, TAILREC_OP_SKIP, list_weak);
     }
+    
     if (value->body != NULL && value->body->funcs != NULL)
     {
         func_list_tailrec(syn_level, value->body->funcs);
     }
+    
     if (value->body != NULL && value->body->ret != NULL)
     {
-        rec = expr_tailrec(syn_level, value, value->body->ret, last_call);
+        expr_tailrec(syn_level, value, value->body->ret, TAILREC_OP_ADD, list_weak);
     }
     if (value->except != NULL && value->except->list != NULL)
     {
-        expr * last_call_exc = NULL;
-        except_list_tailrec(syn_level, value, value->except->list, &last_call_exc);
+        except_list_tailrec(syn_level, value, value->except->list, TAILREC_OP_SKIP, list_weak);
     }
     if (value->except != NULL && value->except->all != NULL)
     {
-        expr * last_call_exc = NULL;
-        except_tailrec(syn_level, value, value->except->all, &last_call_exc);
+        except_tailrec(syn_level, value, value->except->all, TAILREC_OP_SKIP, list_weak);
     }
+    
+    last_call_list_tailrec(list_weak);
+    expr_list_weak_delete(list_weak);
 
-    return rec;
+    return 0;
 }
 
 int func_list_tailrec(unsigned int syn_level, func_list * list)
@@ -581,15 +368,7 @@ int func_list_tailrec(unsigned int syn_level, func_list * list)
         func * value = node->value;
         if (value != NULL)
         {
-            expr * last_call = NULL;
-            tailrec_type rec = TAILREC_NOT_FOUND;
-
-            rec = func_tailrec(syn_level + 1, value, &last_call);
-            if (rec == TAILREC_FOUND)
-            {
-                assert(last_call);
-                last_call->type = EXPR_LAST_CALL;
-            }
+            func_tailrec(syn_level + 1, value);
         }
         node = node->next;
     }
