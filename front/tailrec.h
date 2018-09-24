@@ -32,25 +32,24 @@ typedef enum tailrec_op
 } tailrec_op;
 
 int expr_id_tailrec(unsigned int syn_level, func * func_value,
-                    expr * value, tailrec_op op, expr_list_weak * list_weak);
+                    expr * value, tailrec_op op);
 int expr_tailrec(unsigned int syn_level, func * func_value,
-                 expr * value, tailrec_op op, expr_list_weak * list_weak);
+                 expr * value, tailrec_op op);
 int expr_list_tailrec(unsigned int syn_level, func * func_value,
-                     expr_list * list, tailrec_op op, expr_list_weak * list_weak);
+                     expr_list * list, tailrec_op op);
 int expr_seq_tailrec(unsigned int syn_level, func * func_value,
-                     expr_list * list, tailrec_op op, expr_list_weak * list_weak);
+                     expr_list * list, tailrec_op op);
 int array_tailrec(unsigned int syn_level, func * func_value,
-                  array * value, tailrec_op op, expr_list_weak * list_weak);
+                  array * value, tailrec_op op);
 int bind_tailrec(unsigned int syn_level, func * func_value,
-                 bind * value, tailrec_op op, expr_list_weak * list_weak);
+                 bind * value, tailrec_op op);
 int bind_list_tailrec(unsigned int syn_level, func * func_value,
-                      bind_list * list, tailrec_op op, expr_list_weak * list_weak);
+                      bind_list * list, tailrec_op op);
 int except_tailrec(unsigned int syn_level, func * func_value,
-                   except * value, tailrec_op op, expr_list_weak * list_weak);
+                   except * value, tailrec_op op);
 int except_list_tailrec(unsigned int syn_level, func * func_value,
-                        except_list * list, tailrec_op op, expr_list_weak * list_weak);
+                        except_list * list, tailrec_op op);
 
-int last_call_list_tailrec(expr_list_weak * list_weak);
 int func_tailrec(unsigned int syn_level, func * value);
 int func_list_tailrec(unsigned int syn_level, func_list * list);
 

@@ -1,0 +1,25 @@
+
+func main() -> int
+{
+    func loop(i -> int) -> int
+    {
+        if (i < 10)
+        {
+            if (i % 2 == 0)
+            {
+                print(i); loop(i + 1)
+            }
+            else
+            {
+                print(i); loop(i + 3)
+            }
+        }
+        else
+        {
+            10
+        }
+    }
+    
+    loop(0)
+}
+

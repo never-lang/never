@@ -5,6 +5,10 @@ func main() -> int
     {
         i < 10 ? { print(i); loop(i + 1) } : 10
     }
+    catch
+    {
+        loop(100)
+    }
     
     loop(0)
 }

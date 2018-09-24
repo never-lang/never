@@ -25,7 +25,7 @@
 #include <stdio.h>
 
 int expr_id_tailrec(unsigned int syn_level, func * func_value,
-                    expr * value, tailrec_op op, expr_list_weak * list_weak)
+                    expr * value, tailrec_op op)
 {
     symtab_entry * entry = NULL;
 
@@ -35,10 +35,10 @@ int expr_id_tailrec(unsigned int syn_level, func * func_value,
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
         {
             func * sup_func_value = entry->func_value;
-            if (op == TAILREC_OP_ADD && syn_level - 1 == entry->syn_level && func_value == sup_func_value)
+            if (op == TAILREC_OP_ADD &&
+                syn_level - 1 == entry->syn_level && func_value == sup_func_value)
             {
-                expr_list_weak_add(list_weak, value, 0);
-                return 0;
+                return 1;
             }
         }
     }
@@ -46,7 +46,7 @@ int expr_id_tailrec(unsigned int syn_level, func * func_value,
 }
 
 int expr_tailrec(unsigned int syn_level, func * func_value,
-                 expr * value, tailrec_op op, expr_list_weak * list_weak)
+                 expr * value, tailrec_op op)
 {
     switch (value->type)
     {
@@ -57,12 +57,10 @@ int expr_tailrec(unsigned int syn_level, func * func_value,
         /* no tailrec possible */
         break;
     case EXPR_ID:
-        expr_id_tailrec(syn_level, func_value, value, op, list_weak);
+        expr_id_tailrec(syn_level, func_value, value, op);
         break;
     case EXPR_NEG:
-    {
-        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
-    }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP);
     break;
     case EXPR_ADD:
     case EXPR_SUB:
@@ -77,54 +75,54 @@ int expr_tailrec(unsigned int syn_level, func * func_value,
     case EXPR_NEQ:
     case EXPR_AND:
     case EXPR_OR:
-    {
-        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
-        expr_tailrec(syn_level, func_value, value->right, TAILREC_OP_SKIP, list_weak);
-    }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, func_value, value->right, TAILREC_OP_SKIP);
     break;
     case EXPR_NOT:
-    {
-        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
-    }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP);
     break;
     case EXPR_SUP:
-        expr_tailrec(syn_level, func_value, value->left, op, list_weak);
+        expr_tailrec(syn_level, func_value, value->left, op);
     break;
     case EXPR_COND:
-    {
-        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
-        expr_tailrec(syn_level, func_value, value->middle, op, list_weak);
-        expr_tailrec(syn_level, func_value, value->right, op, list_weak);
-    }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, func_value, value->middle, op);
+        expr_tailrec(syn_level, func_value, value->right, op);
     break;
     case EXPR_ARRAY:
         if (value->array.array_value != NULL)
         {
             array_tailrec(syn_level, func_value, value->array.array_value, 
-                          TAILREC_OP_SKIP, list_weak);
+                          TAILREC_OP_SKIP);
         }
-        break;
+    break;
     case EXPR_ARRAY_DEREF:
-    {
         if (value->array_deref.array_expr != NULL)
         {
             expr_tailrec(syn_level, func_value,
-                         value->array_deref.array_expr, TAILREC_OP_SKIP, list_weak);
+                         value->array_deref.array_expr, TAILREC_OP_SKIP);
         }
         if (value->array_deref.ref != NULL)
         {
             expr_list_tailrec(syn_level, func_value,
-                              value->array_deref.ref, TAILREC_OP_SKIP, list_weak);
+                              value->array_deref.ref, TAILREC_OP_SKIP);
         }
-    }
     break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
     {
-        expr_tailrec(syn_level, func_value, value->call.func_expr, op, list_weak);
+        expr_tailrec(syn_level, func_value, value->call.func_expr, op);
+
+        /* found tail recursion */        
+        if (value->call.func_expr->type == EXPR_ID &&
+            expr_id_tailrec(syn_level, func_value, value->call.func_expr, op))
+        {
+            value->type = EXPR_LAST_CALL;
+        }
+        
         if (value->call.params != NULL)
         {
-            expr_list_tailrec(syn_level, func_value, value->call.params, TAILREC_OP_SKIP, list_weak);
+            expr_list_tailrec(syn_level, func_value, value->call.params, TAILREC_OP_SKIP);
         }
     }
     break;
@@ -137,69 +135,56 @@ int expr_tailrec(unsigned int syn_level, func * func_value,
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
-            expr_seq_tailrec(syn_level, func_value, value->seq.list,
-                             op, list_weak);
+            expr_seq_tailrec(syn_level, func_value, value->seq.list, op);
         }
-        break;
+    break;
     case EXPR_ASS:
-    {
-        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
-        expr_tailrec(syn_level, func_value, value->right, TAILREC_OP_SKIP, list_weak);
-    }
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, func_value, value->right, TAILREC_OP_SKIP);
     break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
-    {
-        expr_tailrec(syn_level, func_value, value->whileloop.cond,
-                     TAILREC_OP_SKIP, list_weak);
-        expr_tailrec(syn_level, func_value,
-                     value->whileloop.do_value, TAILREC_OP_SKIP, list_weak);
-    }
+        expr_tailrec(syn_level, func_value, value->whileloop.cond, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, func_value, value->whileloop.do_value, TAILREC_OP_SKIP);
     break;
     case EXPR_FOR:
-    {
-        expr_tailrec(syn_level, func_value, value->forloop.init,
-                     TAILREC_OP_SKIP, list_weak);
-        expr_tailrec(syn_level, func_value, value->forloop.cond,
-                     TAILREC_OP_SKIP, list_weak);
-        expr_tailrec(syn_level, func_value, value->forloop.incr,
-                     TAILREC_OP_SKIP, list_weak);
-        expr_tailrec(syn_level, func_value, value->forloop.do_value,
-                     TAILREC_OP_SKIP, list_weak);
-    }
+        expr_tailrec(syn_level, func_value, value->forloop.init, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, func_value, value->forloop.cond, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, func_value, value->forloop.incr, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, func_value, value->forloop.do_value, TAILREC_OP_SKIP);
     break;
     case EXPR_BUILD_IN:
         expr_list_tailrec(syn_level, func_value,
-                          value->func_build_in.param, TAILREC_OP_SKIP, list_weak);
-        break;
+                          value->func_build_in.param, TAILREC_OP_SKIP);
+    break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
-        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP, list_weak);
-        break;
+        expr_tailrec(syn_level, func_value, value->left, TAILREC_OP_SKIP);
+    break;
     }
 
     return 0;
 }
 
 int expr_list_tailrec(unsigned int syn_level, func * func_value,
-                      expr_list * list, tailrec_op op, expr_list_weak * list_weak)
+                      expr_list * list, tailrec_op op)
 {
     expr_list_node * node = list->tail;
+
     while (node != NULL)
     {
         expr * value = node->value;
         if (value)
         {
-            expr_tailrec(syn_level, func_value, value, TAILREC_OP_SKIP, list_weak);
+            expr_tailrec(syn_level, func_value, value, TAILREC_OP_SKIP);
         }
         node = node->next;
     }
-
     return 0;
 }
 
 int expr_seq_tailrec(unsigned int syn_level, func * func_value,
-                     expr_list * list, tailrec_op op, expr_list_weak * list_weak)
+                     expr_list * list, tailrec_op op)
 {
     expr_list_node * last = NULL;
     expr_list_node * node = NULL;
@@ -210,7 +195,7 @@ int expr_seq_tailrec(unsigned int syn_level, func * func_value,
         expr * value = last->value;
         if (value != NULL)
         {
-            expr_tailrec(syn_level, func_value, value, op, list_weak);
+            expr_tailrec(syn_level, func_value, value, op);
         }
     }
     
@@ -220,23 +205,22 @@ int expr_seq_tailrec(unsigned int syn_level, func * func_value,
         expr * value = node->value;
         if (value != NULL)
         {
-            expr_tailrec(syn_level, func_value, value, TAILREC_OP_SKIP, list_weak);
+            expr_tailrec(syn_level, func_value, value, TAILREC_OP_SKIP);
         }
         node = node->next;
     }
-    
     return 0;
 }
 
 int array_tailrec(unsigned int syn_level, func * func_value,
-                  array * value, tailrec_op op, expr_list_weak * list_weak)
+                  array * value, tailrec_op op)
 {
     if (value->type == ARRAY_INIT || value->type == ARRAY_SUB)
     {
         if (value->elements != NULL)
         {
             expr_list_tailrec(syn_level, func_value,
-                              value->elements, TAILREC_OP_SKIP, list_weak);
+                              value->elements, TAILREC_OP_SKIP);
         }
     }
     else if (value->type == ARRAY_DIMS)
@@ -244,96 +228,71 @@ int array_tailrec(unsigned int syn_level, func * func_value,
         if (value->dims != NULL)
         {
             expr_list_tailrec(syn_level, func_value,
-                              value->dims, TAILREC_OP_SKIP, list_weak);
+                              value->dims, TAILREC_OP_SKIP);
         }
     }
-
     return 0;
 }
 
 int bind_tailrec(unsigned int syn_level, func * func_value,
-                          bind * value, tailrec_op op, expr_list_weak * list_weak)
+                          bind * value, tailrec_op op)
 {
     if (value->expr_value != NULL)
     {
-        expr_tailrec(syn_level, func_value,
-                     value->expr_value, op, list_weak);
+        expr_tailrec(syn_level, func_value, value->expr_value, op);
     }
-    
     return 0;
 }
 
 int bind_list_tailrec(unsigned int syn_level, func * func_value,
-                      bind_list * list, tailrec_op op, expr_list_weak * list_weak)
+                      bind_list * list, tailrec_op op)
 {
     bind_list_node * node = list->tail;
+
     while (node != NULL)
     {
         bind * value = node->value;
         if (value != NULL)
         {
-            bind_tailrec(syn_level, func_value, value, op, list_weak);
+            bind_tailrec(syn_level, func_value, value, op);
         }
         node = node->next;
     }
-
     return 0;
 }
 
 int except_tailrec(unsigned int syn_level, func * func_value,
-                   except * value, tailrec_op op, expr_list_weak * list_weak)
+                   except * value, tailrec_op op)
 {
     if (value->expr_value != NULL)
     {
-        expr_tailrec(syn_level, func_value,
-                     value->expr_value, op, list_weak);
+        expr_tailrec(syn_level, func_value, value->expr_value, op);
     }
-
     return 0;
 }
 
 int except_list_tailrec(unsigned int syn_level, func * func_value,
-                        except_list * list, tailrec_op op, expr_list_weak * list_weak)
+                        except_list * list, tailrec_op op)
 {
     except_list_node * node = list->tail;
+
     while (node != NULL)
     {
         except * value = node->value;
         if (value != NULL)
         {
-            except_tailrec(syn_level, func_value, value, op, list_weak);
+            except_tailrec(syn_level, func_value, value, op);
         }
         node = node->next;
     }
-
-    return 0;
-}
-
-int last_call_list_tailrec(expr_list_weak * list_weak)
-{
-    expr_list_weak_node * node = list_weak->tail;
-
-    while (node != NULL)
-    {
-        expr * value = node->value;
-        if (value != NULL)
-        {
-            assert(value->type == EXPR_CALL);
-            value->type = EXPR_LAST_CALL;
-        }
-        node = node->next;
-    }
-
     return 0;
 }
 
 int func_tailrec(unsigned int syn_level, func * value)
 {
-    expr_list_weak * list_weak = expr_list_weak_new();
-
     if (value->body != NULL && value->body->binds != NULL)
     {
-        bind_list_tailrec(syn_level, value, value->body->binds, TAILREC_OP_SKIP, list_weak);
+        bind_list_tailrec(syn_level, value, value->body->binds, TAILREC_OP_SKIP);
     }
     
     if (value->body != NULL && value->body->funcs != NULL)
@@ -343,26 +302,23 @@ int func_tailrec(unsigned int syn_level, func * value)
     
     if (value->body != NULL && value->body->ret != NULL)
     {
-        expr_tailrec(syn_level, value, value->body->ret, TAILREC_OP_ADD, list_weak);
+        expr_tailrec(syn_level, value, value->body->ret, TAILREC_OP_ADD);
     }
     if (value->except != NULL && value->except->list != NULL)
     {
-        except_list_tailrec(syn_level, value, value->except->list, TAILREC_OP_SKIP, list_weak);
+        except_list_tailrec(syn_level, value, value->except->list, TAILREC_OP_SKIP);
     }
     if (value->except != NULL && value->except->all != NULL)
     {
-        except_tailrec(syn_level, value, value->except->all, TAILREC_OP_SKIP, list_weak);
+        except_tailrec(syn_level, value, value->except->all, TAILREC_OP_SKIP);
     }
-    
-    last_call_list_tailrec(list_weak);
-    expr_list_weak_delete(list_weak);
-
     return 0;
 }
 
 int func_list_tailrec(unsigned int syn_level, func_list * list)
 {
     func_list_node * node = list->tail;
+
     while (node != NULL)
     {
         func * value = node->value;
@@ -385,3 +341,4 @@ int never_tailrec(never * nev)
     }
     return 0;
 }
+
