@@ -115,6 +115,12 @@ float {
     return TOK_FLOAT;
 }
 
+string {
+    tokp->line_no = line_no;
+    scanner_printf("string\n");
+    return TOK_STRING;
+}
+
 "+"|"-"|"/"|"*"|"%"|"=" {
     tokp->line_no = line_no;
     scanner_printf("operator %s\n", yytext);
@@ -233,6 +239,13 @@ float {
     tokp->val.float_value = result;
     scanner_printf("num_float %f\n", result);
     return TOK_NUM_FLOAT;
+}
+
+\"{ID}\" {
+    tokp->line_no = line_no;
+    tokp->val.str_value = strdup(yytext);
+    scanner_printf("str %s\n", yytext);
+    return TOK_NUM_STRING;
 }
 
 {ID} {

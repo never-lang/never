@@ -26,6 +26,8 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_ID
 %token <val.float_value> TOK_NUM_FLOAT
 %token <val.int_value> TOK_NUM_INT
+%token <val.str_value> TOK_NUM_STRING
+%token <val.str_value> TOK_STRING
 %token <val.str_value> TOK_FLOAT
 %token <val.str_value> TOK_INT
 %token <val.str_value> TOK_LET
@@ -116,6 +118,12 @@ expr: TOK_NUM_INT
 expr: TOK_NUM_FLOAT
 {
     $$ = expr_new_float($1);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_NUM_STRING
+{
+    $$ = expr_new_string($1);
     $$->line_no = $<line_no>1;
 };
 
@@ -355,6 +363,18 @@ param: TOK_FLOAT
 param: TOK_ID TOK_RET TOK_FLOAT 
 {
     $$ = param_new_float($1);
+    $$->line_no = $<line_no>2;
+};
+
+param: TOK_STRING
+{
+    $$ = param_new_string(NULL);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID TOK_RET TOK_STRING
+{
+    $$ = param_new_string($1);
     $$->line_no = $<line_no>2;
 };
 

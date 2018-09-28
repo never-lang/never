@@ -52,6 +52,20 @@ param * param_new_float(char * id)
     return value;
 }
 
+param * param_new_string(char * id)
+{
+    param * value = (param *)malloc(sizeof(param));
+    
+    value->type = PARAM_STRING;
+    value->index = -1;
+    value->id = id;
+    value->params = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
 param * param_new_dim(char * id)
 {
     param * value = (param *)malloc(sizeof(param));
@@ -250,6 +264,8 @@ char * param_type_str(param_type type)
         return "PARAM_INT";
     case PARAM_FLOAT:
         return "PARAM_FLOAT";
+    case PARAM_STRING:
+        return "PARAM_STRING";
     case PARAM_DIM:
         return "PARAM_DIM";
     case PARAM_ARRAY:

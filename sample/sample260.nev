@@ -1,0 +1,11 @@
+
+func f1(txt -> string) -> string
+{
+    "ala_ma_kota"
+}
+
+func main() -> int
+{
+    0
+}
+

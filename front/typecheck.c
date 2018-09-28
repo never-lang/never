@@ -84,6 +84,10 @@ int param_cmp(param * param_one, param * param_two)
     {
         return TYPECHECK_SUCC;
     }
+    else if (param_one->type == PARAM_STRING && param_two->type == PARAM_STRING)
+    {
+        return TYPECHECK_SUCC;
+    }
     else if (param_one->type == PARAM_ARRAY && param_two->type == PARAM_ARRAY)
     {
         return (param_one->dims->count == param_two->dims->count &&
@@ -215,6 +219,10 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     }
     else if (param_value->type == PARAM_FLOAT &&
              expr_value->comb.comb == COMB_TYPE_FLOAT)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (param_value->type == PARAM_STRING && expr_value->comb.comb == COMB_TYPE_STRING)
     {
         return TYPECHECK_SUCC;
     }
@@ -1048,6 +1056,7 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
         break;
     case COMB_TYPE_INT:
     case COMB_TYPE_FLOAT:
+    case COMB_TYPE_STRING:
     case COMB_TYPE_ARRAY:
     case COMB_TYPE_BOOL:
     case COMB_TYPE_UNKNOWN:
@@ -1072,6 +1081,9 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         break;
     case EXPR_FLOAT:
         value->comb.comb = COMB_TYPE_FLOAT;
+        break;
+    case EXPR_STRING:
+        value->comb.comb = COMB_TYPE_STRING;
         break;
     case EXPR_ID:
         expr_id_check_type(tab, value, result);
@@ -1341,7 +1353,7 @@ int expr_seq_check_type(symtab * tab, expr * value, unsigned syn_level,
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
-                        "no type in sequence %s\n");
+                        "no type in sequence %s\n", expr_type_str(value->type));
     }
 
     return 0;
@@ -1578,6 +1590,9 @@ int print_func_expr(expr * value, int depth)
     case EXPR_INT:
     case EXPR_FLOAT:
         /* no symtabs possible */
+        break;
+    case EXPR_STRING:
+        assert(0);
         break;
     case EXPR_ID:
         /* no symtabs possible */

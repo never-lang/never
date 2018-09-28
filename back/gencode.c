@@ -163,7 +163,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
             }
             else
             {
-                printf("unknown param type %d\n", param_value->type);
+                printf("unknown param type %s\n", param_type_str(param_value->type));
                 assert(0);
             }
         }
@@ -224,6 +224,8 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
         break;
     case EXPR_FLOAT:
         /* printf("gencode EXPR_FLOAT %f\n", value->float_value); */
+        break;
+    case EXPR_STRING:
         break;
     case EXPR_ID:
         expr_id_gencode(syn_level, func_value, value, result);
@@ -477,11 +479,8 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
     switch (value->type)
     {
     case EXPR_INT:
-        /* not possible */
-        break;
     case EXPR_FLOAT:
-        /* not possible */
-        break;
+    case EXPR_STRING:
     case EXPR_ID:
         /* not possible */
         break;
@@ -836,6 +835,14 @@ int expr_float_emit(expr * value, int stack_level, module * module_value,
     bc.real.value = value->float_value;
 
     bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_string_emit(expr * value, int stack_level, module * module_value,
+                     int * result)
+{
+    assert(0);
 
     return 0;
 }
@@ -1631,6 +1638,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         break;
     case EXPR_FLOAT:
         expr_float_emit(value, stack_level, module_value, result);
+        break;
+    case EXPR_STRING:
+        expr_string_emit(value, stack_level, module_value, result);
         break;
     case EXPR_ID:
         expr_id_emit(value, stack_level, module_value, result);

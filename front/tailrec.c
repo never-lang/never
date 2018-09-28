@@ -51,9 +51,8 @@ int expr_tailrec(unsigned int syn_level, func * func_value,
     switch (value->type)
     {
     case EXPR_INT:
-        /* no tailrec possible */
-        break;
     case EXPR_FLOAT:
+    case EXPR_STRING:
         /* no tailrec possible */
         break;
     case EXPR_ID:
