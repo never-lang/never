@@ -842,7 +842,9 @@ int expr_float_emit(expr * value, int stack_level, module * module_value,
 int expr_string_emit(expr * value, int stack_level, module * module_value,
                      int * result)
 {
-    assert(0);
+    /* assert(0); */
+    
+    printf("string %s\n", value->string_value);
 
     return 0;
 }
@@ -1387,6 +1389,10 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
         bc.type = BYTECODE_OP_ASS_FLOAT;
         bytecode_add(module_value->code, &bc);
     }
+    else if (value->comb.comb == COMB_TYPE_STRING)
+    {
+        assert(0);
+    }
     else if (value->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_ASS_ARRAY;
@@ -1824,6 +1830,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             bc.type = BYTECODE_OP_EQ_FLOAT;
             bytecode_add(module_value->code, &bc);
         }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            assert(0);
+        }
         else
         {
             *result = GENCODE_FAIL;
@@ -1848,6 +1859,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_NEQ_FLOAT;
             bytecode_add(module_value->code, &bc);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            assert(0);
         }
         else
         {

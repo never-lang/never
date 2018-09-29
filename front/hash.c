@@ -19,21 +19,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __TCHECKARR_H__
-#define __TCHECKARR_H__
+#include "hash.h"
 
-#include "expr.h"
-#include "symtab.h"
-#include "weakexpr.h"
+#define HASH_MAGIC 5381
 
-int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
-                                 int * result);
-int array_set_dims(expr_list_weak * depth_list);
-int array_well_formed(expr * value, int * result);
+unsigned int hash_string(const char * string)
+{
+    char c;
+    unsigned int val = HASH_MAGIC;
 
-int array_check_type(symtab * tab, expr * value, unsigned syn_level,
-                     int * result);
-int expr_array_check_type(symtab * tab, expr * value, unsigned int syn_level,
-                          int * result);
+    while ((c = *string++) != 0)
+    {
+        val = ((val << 5) + val) + c;
+    }
 
-#endif /* __TCHECKARR_H__ */
+    return val;
+}
+
+
+

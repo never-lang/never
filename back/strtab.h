@@ -19,21 +19,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __TCHECKARR_H__
-#define __TCHECKARR_H__
+#ifndef __STRTAB_H__
+#define __STRTAB_H__
 
-#include "expr.h"
-#include "symtab.h"
-#include "weakexpr.h"
+typedef struct strtab_entry
+{
+    char * string;
+    unsigned int order;
+} strtab_entry;
 
-int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
-                                 int * result);
-int array_set_dims(expr_list_weak * depth_list);
-int array_well_formed(expr * value, int * result);
+typedef struct strtab
+{
+    unsigned int size;
+    unsigned int count;
+    strtab_entry * entries;
+} strtab;
 
-int array_check_type(symtab * tab, expr * value, unsigned syn_level,
-                     int * result);
-int expr_array_check_type(symtab * tab, expr * value, unsigned int syn_level,
-                          int * result);
+strtab_entry * strtab_entry_new(unsigned int size);
+void strtab_entry_delete(strtab_entry * entries, unsigned int size);
 
-#endif /* __TCHECKARR_H__ */
+unsigned int strtab_entry_add_string(strtab_entry * entries, unsigned int size,
+                                     char * string, unsigned int order);
+unsigned int strtab_entry_lookup_string(strtab_entry * entries, unsigned int size,
+                                        char * string);
+void strtab_entry_resize(strtab_entry * entries, unsigned int size,
+                         strtab_entry * entries_new, unsigned int size_new);
+
+strtab * strtab_new(unsigned int size);
+void strtab_delete(strtab * tab);
+
+void strtab_resize(strtab * tab);
+unsigned int strtab_add_string(strtab * tab, char * string);
+unsigned int strtab_lookup_string(strtab * tab, char * string);
+
+#endif /* __STRTAB_H__ */
+
+
