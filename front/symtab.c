@@ -103,9 +103,12 @@ void symtab_entry_resize(symtab_entry * entries, int size,
 
     for (i = 0; i < size; i++)
     {
-        symtab_entry_add_object(entries_new, size_new, entries[i].type,
-                                entries[i].id, entries[i].param_value,
-                                entries[i].syn_level);
+        if (entries[i].id != NULL)
+        {
+            symtab_entry_add_object(entries_new, size_new, entries[i].type,
+                                    entries[i].id, entries[i].param_value,
+                                    entries[i].syn_level);
+        }
     }
 }
 

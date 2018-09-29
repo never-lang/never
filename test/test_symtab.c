@@ -69,11 +69,20 @@ void test_three()
     func * func_three = func_new(decl_three, NULL);
     func_decl * decl_four = func_decl_new(strdup("func_four"), NULL, NULL);
     func * func_four = func_new(decl_four, NULL);
+    func_decl * decl_five = func_decl_new(strdup("func_five"), NULL, NULL);
+    func * func_five = func_new(decl_five, NULL);
+    func_decl * decl_six = func_decl_new(strdup("func_six"), NULL, NULL);
+    func * func_six = func_new(decl_six, NULL);
+    func_decl * decl_seven = func_decl_new(strdup("func_seven"), NULL, NULL);
+    func * func_seven = func_new(decl_seven, NULL);
 
     symtab_add_func(tab, func_one, 0);
     symtab_add_func(tab, func_two, 0);
     symtab_add_func(tab, func_three, 0);
     symtab_add_func(tab, func_four, 0);
+    symtab_add_func(tab, func_five, 0);
+    symtab_add_func(tab, func_six, 0);
+    symtab_add_func(tab, func_seven, 0);
 
     entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);
     assert(entry->func_value == func_one);
@@ -88,6 +97,9 @@ void test_three()
     func_delete(func_two);
     func_delete(func_three);
     func_delete(func_four);
+    func_delete(func_five);
+    func_delete(func_six);
+    func_delete(func_seven);
 
     symtab_delete(tab);
 }
@@ -95,8 +107,8 @@ void test_three()
 void test_four()
 {
     symtab_entry * entry = NULL;
-    symtab * tab_one = symtab_new(32, NULL);
-    symtab * tab_two = symtab_new(32, tab_one);
+    symtab * tab_one = symtab_new(2, NULL);
+    symtab * tab_two = symtab_new(2, tab_one);
 
     func_decl * decl_one = func_decl_new(strdup("func_one"), NULL, NULL);
     func * func_one = func_new(decl_one, NULL);
