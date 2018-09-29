@@ -43,8 +43,9 @@ void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
                              unsigned int syn_level)
 {
     unsigned int times = 0;
-    unsigned int index = hash_string(id) % size;
+    unsigned int index = 0;
 
+    index = hash_string(id) % size;
     while (entries[index].type != 0)
     {
         index = (index + 1) % size;
@@ -64,8 +65,9 @@ symtab_entry * symtab_entry_lookup_object(symtab_entry * entries,
                                           unsigned int size, const char * id)
 {
     unsigned int times = 0;
-    unsigned int index = hash_string(id) % size;
-
+    unsigned int index = 0;
+    
+    index = hash_string(id) % size;
     while (entries[index].type != 0)
     {
         if (strcmp(entries[index].id, id) == 0)
@@ -90,9 +92,12 @@ void symtab_entry_resize(symtab_entry * entries, int size,
 
     for (i = 0; i < size; i++)
     {
-        symtab_entry_add_object(entries_new, size_new, entries[i].type,
-                                entries[i].id, entries[i].param_value,
-                                entries[i].syn_level);
+        if (entries[i].id != NULL)
+        {
+            symtab_entry_add_object(entries_new, size_new, entries[i].type,
+                                    entries[i].id, entries[i].param_value,
+                                    entries[i].syn_level);
+        }
     }
 }
 
