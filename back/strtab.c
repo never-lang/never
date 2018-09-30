@@ -22,6 +22,7 @@
 #include "strtab.h"
 #include "hash.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
@@ -169,4 +170,51 @@ unsigned int strtab_lookup_string(strtab * tab, char * string)
 {
     return strtab_entry_lookup_string(tab->entries, tab->size, string);
 }
+
+void strtab_to_array(strtab * tab, char *** strings, unsigned int * size)
+{
+    unsigned int i = 0;
+    
+    *size = tab->count;
+    *strings = (char **)malloc(*size * sizeof(char *));
+
+    *strings[0] = NULL;
+    for (i = 0; i < tab->size; i++)
+    {
+        if (tab->entries[i].string != NULL)
+        {
+            (*strings)[tab->entries[i].order] = tab->entries[i].string;
+            tab->entries[i].string = NULL;
+        }
+    }
+}
+
+void strtab_array_delete(char ** strings, unsigned int size)
+{
+    unsigned int i = 0;
+    
+    for (i = 0; i < size; i++)
+    {
+        if (strings[i] != NULL)
+        {
+            free(strings[i]);
+        }
+    }
+
+    free(strings);
+}
+
+void strtab_array_print(char ** strings, unsigned int size)
+{
+    unsigned int i = 0;
+    
+    for (i = 0; i < size; i++)
+    {
+        if (strings[i] != NULL)
+        {
+            printf("string %s\n", strings[i]);
+        }
+    }
+}
+
 

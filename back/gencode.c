@@ -137,8 +137,11 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
         else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
         {
             param * param_value = entry->param_value;
-            if (param_value->type == PARAM_INT || param_value->type == PARAM_FLOAT ||
-                param_value->type == PARAM_DIM || param_value->type == PARAM_ARRAY ||
+            if (param_value->type == PARAM_INT ||
+                param_value->type == PARAM_FLOAT ||
+                param_value->type == PARAM_STRING ||
+                param_value->type == PARAM_DIM ||
+                param_value->type == PARAM_ARRAY ||
                 param_value->type == PARAM_FUNC)
             {
                 if (syn_level == entry->syn_level)
@@ -842,9 +845,12 @@ int expr_float_emit(expr * value, int stack_level, module * module_value,
 int expr_string_emit(expr * value, int stack_level, module * module_value,
                      int * result)
 {
-    /* assert(0); */
+    bytecode bc = { 0 };
     
-    printf("string %s\n", value->string_value);
+    bc.type = BYTECODE_STRING;
+    bc.string.index = strtab_add_string(module_value->strtab_value, value->string_value);
+
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1388,10 +1394,6 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     {
         bc.type = BYTECODE_OP_ASS_FLOAT;
         bytecode_add(module_value->code, &bc);
-    }
-    else if (value->comb.comb == COMB_TYPE_STRING)
-    {
-        assert(0);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY)
     {

@@ -42,6 +42,10 @@ int expr_set_return_type(expr * value, param * ret)
     {
         value->comb.comb = COMB_TYPE_FLOAT;
     }
+    else if (ret->type == PARAM_STRING)
+    {
+        value->comb.comb = COMB_TYPE_STRING;
+    }
     else if (ret->type == PARAM_DIM)
     {
         value->comb.comb = COMB_TYPE_INT;
@@ -217,8 +221,7 @@ int param_expr_cmp(param * param_value, expr * expr_value)
         print_warning_msg(expr_value->line_no, "converted int to float\n");
         return TYPECHECK_SUCC;
     }
-    else if (param_value->type == PARAM_FLOAT &&
-             expr_value->comb.comb == COMB_TYPE_FLOAT)
+    else if (param_value->type == PARAM_FLOAT && expr_value->comb.comb == COMB_TYPE_FLOAT)
     {
         return TYPECHECK_SUCC;
     }
@@ -503,6 +506,10 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             {
                 value->comb.comb = COMB_TYPE_FLOAT;
             }
+            else if (param_value->type == PARAM_STRING)
+            {
+                value->comb.comb = COMB_TYPE_STRING;
+            }
             else if (param_value->type == PARAM_DIM)
             {
                 value->comb.comb = COMB_TYPE_INT;
@@ -518,6 +525,10 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
                 value->comb.comb = COMB_TYPE_FUNC;
                 value->comb.comb_params = param_value->params;
                 value->comb.comb_ret = param_value->ret;
+            }
+            else
+            {
+                assert(0);
             }
         }
         else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
@@ -1589,10 +1600,8 @@ int print_func_expr(expr * value, int depth)
     {
     case EXPR_INT:
     case EXPR_FLOAT:
-        /* no symtabs possible */
-        break;
     case EXPR_STRING:
-        assert(0);
+        /* no symtabs possible */
         break;
     case EXPR_ID:
         /* no symtabs possible */

@@ -241,9 +241,9 @@ string {
     return TOK_NUM_FLOAT;
 }
 
-\"{ID}\" {
+\"(\\.|[^"\\])*\" {
     tokp->line_no = line_no;
-    tokp->val.str_value = strdup(yytext);
+    tokp->val.str_value = strndup(yytext + 1, yyleng - 2);
     scanner_printf("str %s\n", yytext);
     return TOK_NUM_STRING;
 }

@@ -34,6 +34,7 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_INT, vm_execute_int },
     { BYTECODE_FLOAT, vm_execute_float },
+    { BYTECODE_STRING, vm_execute_string },
 
     { BYTECODE_ID_LOCAL, vm_execute_id_local },
     { BYTECODE_ID_DIM_LOCAL, vm_execute_id_dim_local },
@@ -170,6 +171,24 @@ void vm_execute_float(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_string(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char ** strtab_array = machine->prog->module_value->strtab_array;
+    mem_ptr addr = gc_alloc_string(machine->collector, strtab_array[code->string.index]);
+
+    machine->sp++;
+    vm_check_stack(machine);
+    
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+    
+    machine->stack[machine->sp] = entry;
+
+    /* printf("string %u %s\n", code->string.index,
+                             strtab_array[code->string.index]); */
 }
 
 void vm_execute_id_local(vm * machine, bytecode * code)

@@ -31,10 +31,11 @@ typedef enum object_type
     OBJECT_UNKNOWN = 0,
     OBJECT_INT = 1,
     OBJECT_FLOAT = 2,
-    OBJECT_ARRAY = 3,
-    OBJECT_ARRAY_REF = 4,
-    OBJECT_VEC = 5,
-    OBJECT_FUNC = 6
+    OBJECT_STRING = 3,
+    OBJECT_ARRAY = 4,
+    OBJECT_ARRAY_REF = 5,
+    OBJECT_VEC = 6,
+    OBJECT_FUNC = 7
 } object_type;
 
 typedef struct object_vec
@@ -69,6 +70,7 @@ typedef struct object
     union {
         int int_value;            /* OBJECT_INT */
         float float_value;        /* OBJECT_FLOAT */
+        char * string_value;      /* OBJECT_STRING */
         object_vec * vec_value;   /* OBJECT_VEC */
         object_arr * arr_value;   /* OBJECT_ARR */
         mem_ptr arr_ref_value;    /* OBJECT_ARR_REF */
@@ -78,6 +80,7 @@ typedef struct object
 
 object * object_new_int(int value);
 object * object_new_float(float value);
+object * object_new_string(char * value);
 object * object_new_vec(unsigned int size);
 object * object_new_arr(unsigned int dims, object_arr_dim * dv);
 object * object_new_arr_ref(mem_ptr arr_value);

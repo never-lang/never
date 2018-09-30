@@ -30,6 +30,7 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_INT, bytecode_print_int },
     { BYTECODE_FLOAT, bytecode_print_float },
+    { BYTECODE_STRING, bytecode_print_string },
 
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
     { BYTECODE_ID_DIM_LOCAL, bytecode_print_id_dim_local },
@@ -138,6 +139,11 @@ void bytecode_print_int(bytecode * code)
 void bytecode_print_float(bytecode * code)
 {
     printf("%d: float %f\n", code->addr, code->real.value);
+}
+
+void bytecode_print_string(bytecode * code)
+{
+    printf("%d: string %u\n", code->addr, code->string.index);
 }
 
 void bytecode_print_id_local(bytecode * code)

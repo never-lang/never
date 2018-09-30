@@ -36,6 +36,7 @@ typedef enum libmath_func
     LIB_MATH_POW,
     LIB_MATH_PRINT,
     LIB_MATH_PRINTF,
+    LIB_MATH_PRINTS,
     LIB_MATH_ASSERT,
     LIB_MATH_ASSERTF
 } libmath_func;
@@ -43,6 +44,7 @@ typedef enum libmath_func
 param_list * params_int_x();
 param_list * params_float_x();
 param_list * params_float_x_float_y();
+param_list * params_string_x();
 expr_list * params_x();
 expr_list * params_x_y();
 
@@ -55,6 +57,7 @@ func * libmath_func_float_x_float_y_new(const char * name,
                                         libmath_func math_id);
 func * libmath_func_float_x_float_y_int_new(const char * name,
                                             libmath_func math_id);
+func * libmath_func_string_x_new(const char * name, libmath_func math_id);
 
 func * libmath_func_sin_new();
 func * libmath_func_cos_new();
@@ -64,6 +67,7 @@ func * libmath_func_log_new();
 func * libmath_func_sqrt_new();
 func * libmath_func_print_int_new();
 func * libmath_func_print_float_new();
+func * libmath_func_print_string_new();
 func * libmath_func_assert_int_new();
 func * libmath_func_assert_float_new();
 

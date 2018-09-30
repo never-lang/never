@@ -1,11 +1,18 @@
 
-func f1(txt -> string) -> string
+func f1() -> string
 {
-    "ala_ma_kota"
+    prints("ala ma kota")
+}
+
+func f2(txt -> string) -> string
+{
+    prints(txt)
 }
 
 func main() -> int
 {
+    f1();
+    f2("to jest string");
     0
 }
 

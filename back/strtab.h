@@ -52,6 +52,10 @@ void strtab_resize(strtab * tab);
 unsigned int strtab_add_string(strtab * tab, char * string);
 unsigned int strtab_lookup_string(strtab * tab, char * string);
 
+void strtab_to_array(strtab * tab, char *** strings, unsigned int * size);
+void strtab_array_delete(char ** strings, unsigned int size);
+void strtab_array_print(char ** strings, unsigned int size);
+
 #endif /* __STRTAB_H__ */
 
 

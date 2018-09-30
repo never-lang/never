@@ -23,6 +23,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 object * object_new()
 {
@@ -48,6 +49,16 @@ object * object_new_float(float value)
     obj->type = OBJECT_FLOAT;
     obj->float_value = value;
 
+    return obj;
+}
+
+object * object_new_string(char * value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+    
+    obj->type = OBJECT_STRING;
+    obj->string_value = strdup(value);
+    
     return obj;
 }
 
@@ -130,6 +141,12 @@ void object_delete(object * obj)
         break;
     case OBJECT_INT:
     case OBJECT_FLOAT:
+        break;
+    case OBJECT_STRING:
+        if (obj->string_value != NULL)
+        {
+            free(obj->string_value);
+        }
         break;
     case OBJECT_VEC:
         if (obj->vec_value != NULL && obj->vec_value->value != NULL)
@@ -326,6 +343,9 @@ void object_print(object * obj)
         break;
     case OBJECT_FLOAT:
         printf("object_float\n");
+        break;
+    case OBJECT_STRING:
+        printf("object_string\n");
         break;
     case OBJECT_VEC:
         printf("object_vec\n");

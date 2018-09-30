@@ -24,11 +24,17 @@
 
 #include "bytecode.h"
 #include "exctab.h"
+#include "strtab.h"
 
 typedef struct module {
+    strtab * strtab_value;
+    char ** strtab_array;
+    unsigned int strtab_size;
+    
     bytecode_list * code;
     bytecode * code_arr;
     unsigned int code_size;
+    
     exctab * exctab_value;
 } module;
 

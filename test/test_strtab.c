@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include "strtab.h"
+#include <stdlib.h>
 #include <assert.h>
 
 void test_one()
@@ -121,6 +122,35 @@ void test_six()
     strtab_delete(tab);
 }
 
+void test_seven()
+{
+    strtab * tab = strtab_new(4);
+    char ** strings = NULL;
+    unsigned int str_size = 0;
+
+    assert(strtab_add_string(tab, "one") == 1);
+    assert(strtab_add_string(tab, "two") == 2);
+    assert(strtab_add_string(tab, "three") == 3);
+    assert(strtab_add_string(tab, "four") == 4);
+    assert(strtab_add_string(tab, "five") == 5);
+    assert(strtab_add_string(tab, "six") == 6);
+    assert(strtab_add_string(tab, "seven") == 7);
+    assert(strtab_add_string(tab, "eight") == 8);
+    assert(strtab_add_string(tab, "nine") == 9);
+    assert(strtab_add_string(tab, "ten") == 10);
+    assert(strtab_add_string(tab, "eleven") == 11);
+    assert(strtab_add_string(tab, "twelve") == 12);
+    assert(strtab_add_string(tab, "thirteen") == 13);
+    assert(strtab_add_string(tab, "fourteen") == 14);
+    assert(strtab_add_string(tab, "fifteen") == 15);
+
+    strtab_to_array(tab, &strings, &str_size);
+    strtab_array_print(strings, str_size);
+    strtab_array_delete(strings, str_size);
+
+    strtab_delete(tab);
+}
+
 int main(int argc, char * argv[])
 {
     test_one();
@@ -129,6 +159,7 @@ int main(int argc, char * argv[])
     test_four();
     test_five();
     test_six();
+    test_seven();
 
     return 0;
 }

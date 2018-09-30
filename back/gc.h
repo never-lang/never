@@ -73,6 +73,7 @@ void gc_run(gc * collector, gc_stack * omfalos, int stack_size,
 mem_ptr gc_alloc_any(gc * collector, object * value);
 mem_ptr gc_alloc_int(gc * collector, int value);
 mem_ptr gc_alloc_float(gc * collector, float value);
+mem_ptr gc_alloc_string(gc * collector, char * value);
 mem_ptr gc_alloc_vec(gc * collector, unsigned int size);
 mem_ptr gc_alloc_arr(gc * collector, unsigned int dims, object_arr_dim * dv);
 mem_ptr gc_alloc_arr_ref(gc * collector, mem_ptr array);
@@ -85,6 +86,8 @@ void gc_set_int(gc * collector, mem_ptr addr, int value);
 
 float gc_get_float(gc * collector, mem_ptr addr);
 void gc_set_float(gc * collector, mem_ptr addr, float value);
+
+char * gc_get_string(gc * collector, mem_ptr addr);
 
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
 void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,

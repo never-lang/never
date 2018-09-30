@@ -44,6 +44,16 @@ param_list * params_float_x()
     return params;
 }
 
+param_list * params_string_x()
+{
+    param_list * params = NULL;
+    
+    params = param_list_new();
+    param_list_add_end(params, param_new_string(strdup("x")));
+    
+    return params;
+}
+
 param_list * params_float_x_float_y()
 {
     param_list * params = NULL;
@@ -93,6 +103,10 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
     {
         func_expr = expr_new_build_in(math_id, actual, param_new_float(NULL));
     }
+    else if (param_ret->type == PARAM_STRING)
+    {
+        func_expr = expr_new_build_in(math_id, actual, param_new_string(NULL));
+    }
     else
     {
         printf("build_in with ret type not supported\n");
@@ -130,6 +144,12 @@ func * libmath_func_float_x_float_y_int_new(const char * name,
 {
     return lib_math_func_any_new(name, math_id, params_float_x_float_y(),
                                  params_x_y(), param_new_int(NULL));
+}
+
+func * libmath_func_string_x_new(const char * name, libmath_func math_id)
+{
+    return lib_math_func_any_new(name, math_id, params_string_x(), params_x(),
+                                 param_new_string(NULL));
 }
 
 func * libmath_func_sin_new()
@@ -177,6 +197,11 @@ func * libmath_func_print_float_new()
     return libmath_func_float_x_new("printf", LIB_MATH_PRINTF);
 }
 
+func * libmath_func_print_string_new()
+{
+    return libmath_func_string_x_new("prints", LIB_MATH_PRINTS);
+}
+
 func * libmath_func_assert_int_new()
 {
     return libmath_func_int_x_new("assert", LIB_MATH_ASSERT);
@@ -198,6 +223,7 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_pow_new());
     func_list_add_end(funcs, libmath_func_print_int_new());
     func_list_add_end(funcs, libmath_func_print_float_new());
+    func_list_add_end(funcs, libmath_func_print_string_new());
     func_list_add_end(funcs, libmath_func_assert_int_new());
     func_list_add_end(funcs, libmath_func_assert_float_new());
 }
@@ -226,6 +252,8 @@ const char * libmath_func_to_str(libmath_func math_id)
         return "print";
     case LIB_MATH_PRINTF:
         return "printf";
+    case LIB_MATH_PRINTS:
+        return "prints";
     case LIB_MATH_ASSERT:
         return "assert";
     case LIB_MATH_ASSERTF:

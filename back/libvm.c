@@ -123,6 +123,14 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         addr = gc_alloc_float(machine->collector, x);
     }
     break;
+    case LIB_MATH_PRINTS:
+    {
+        char * x =
+            gc_get_string(machine->collector, machine->stack[machine->sp].addr);
+        printf("%s\n", x);
+        addr = gc_alloc_string(machine->collector, x);
+    }
+    break;
     case LIB_MATH_ASSERT:
     {
         int x =
