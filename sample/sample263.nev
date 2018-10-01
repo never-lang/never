@@ -1,0 +1,16 @@
+
+func main() -> int
+{
+    let s1 = "text equal";
+    let s2 = "text not equal";
+
+    if (s1 != s2)
+    {
+        1
+    }
+    else
+    {
+        0
+    }
+}
+

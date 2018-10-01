@@ -86,10 +86,10 @@ expr_list * params_x_y()
     return params;
 }
 
-func * lib_math_func_any_new(const char * name, libmath_func math_id,
-                             param_list * formal, expr_list * actual, param * param_ret)
+func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
+                             expr_list * actual, param * param_ret)
 {
-    char * func_id = NULL;
+    char * func_name = NULL;
     expr * func_expr = NULL;
     func_decl * decl = NULL;
     func * func_value = NULL;
@@ -114,102 +114,123 @@ func * lib_math_func_any_new(const char * name, libmath_func math_id,
     }
     body = func_body_new_expr(NULL, NULL, func_expr);
 
-    func_id = strdup(name);
-    decl = func_decl_new(func_id, formal, param_ret);
+    func_name = strdup(libmath_func_to_str(math_id));
+    decl = func_decl_new(func_name, formal, param_ret);
     func_value = func_new(decl, body);
 
     return func_value;
 }
 
-func * libmath_func_int_x_new(const char * name, libmath_func math_id)
+func * libmath_func_int_x_new(libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, params_int_x(), params_x(),
+    return lib_math_func_any_new(math_id, params_int_x(), params_x(),
                                  param_new_int(NULL));
 }
 
-func * libmath_func_float_x_new(const char * name, libmath_func math_id)
+func * libmath_func_float_x_new(libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, params_float_x(), params_x(),
+    return lib_math_func_any_new(math_id, params_float_x(), params_x(),
                                  param_new_float(NULL));
 }
 
-func * libmath_func_float_x_float_y_new(const char * name, libmath_func math_id)
+func * libmath_func_float_x_float_y_new(libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, params_float_x_float_y(),
+    return lib_math_func_any_new(math_id, params_float_x_float_y(),
                                  params_x_y(), param_new_float(NULL));
 }
 
-func * libmath_func_float_x_float_y_int_new(const char * name,
-                                            libmath_func math_id)
+func * libmath_func_float_x_float_y_int_new(libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, params_float_x_float_y(),
+    return lib_math_func_any_new(math_id, params_float_x_float_y(),
                                  params_x_y(), param_new_int(NULL));
 }
 
-func * libmath_func_string_x_new(const char * name, libmath_func math_id)
+func * libmath_func_int_x_string_new(libmath_func math_id)
 {
-    return lib_math_func_any_new(name, math_id, params_string_x(), params_x(),
+    return lib_math_func_any_new(math_id, params_int_x(), params_x(),
+                                 param_new_string(NULL));
+}
+
+func * libmath_func_float_x_string_new(libmath_func math_id)
+{
+    return lib_math_func_any_new(math_id, params_float_x(), params_x(),
+                                 param_new_string(NULL));
+}
+
+func * libmath_func_string_x_new(libmath_func math_id)
+{
+    return lib_math_func_any_new(math_id, params_string_x(), params_x(),
                                  param_new_string(NULL));
 }
 
 func * libmath_func_sin_new()
 {
-    return libmath_func_float_x_new("sin", LIB_MATH_SIN);
+    return libmath_func_float_x_new(LIB_MATH_SIN);
 }
 
 func * libmath_func_cos_new()
 {
-    return libmath_func_float_x_new("cos", LIB_MATH_COS);
+    return libmath_func_float_x_new(LIB_MATH_COS);
 }
 
 func * libmath_func_tan_new()
 {
-    return libmath_func_float_x_new("tan", LIB_MATH_TAN);
+    return libmath_func_float_x_new(LIB_MATH_TAN);
 }
 
 func * libmath_func_exp_new()
 {
-    return libmath_func_float_x_new("exp", LIB_MATH_EXP);
+    return libmath_func_float_x_new(LIB_MATH_EXP);
 }
 
 func * libmath_func_log_new()
 {
-    return libmath_func_float_x_new("log", LIB_MATH_LOG);
+    return libmath_func_float_x_new(LIB_MATH_LOG);
 }
 
 func * libmath_func_sqrt_new()
 {
-    return libmath_func_float_x_new("sqrt", LIB_MATH_SQRT);
+    return libmath_func_float_x_new(LIB_MATH_SQRT);
 }
 
 func * libmath_func_pow_new()
 {
-    return libmath_func_float_x_float_y_new("pow", LIB_MATH_POW);
+    return libmath_func_float_x_float_y_new(LIB_MATH_POW);
+}
+
+func * libmath_func_str_int_new()
+{
+    return libmath_func_int_x_string_new(LIB_MATH_STR);
+}
+
+func * libmath_func_str_float_new()
+{
+    return libmath_func_float_x_string_new(LIB_MATH_STRF);
 }
 
 func * libmath_func_print_int_new()
 {
-    return libmath_func_int_x_new("print", LIB_MATH_PRINT);
+    return libmath_func_int_x_new(LIB_MATH_PRINT);
 }
 
 func * libmath_func_print_float_new()
 {
-    return libmath_func_float_x_new("printf", LIB_MATH_PRINTF);
+    return libmath_func_float_x_new(LIB_MATH_PRINTF);
 }
 
 func * libmath_func_print_string_new()
 {
-    return libmath_func_string_x_new("prints", LIB_MATH_PRINTS);
+    return libmath_func_string_x_new(LIB_MATH_PRINTS);
 }
 
 func * libmath_func_assert_int_new()
 {
-    return libmath_func_int_x_new("assert", LIB_MATH_ASSERT);
+    return libmath_func_int_x_new(LIB_MATH_ASSERT);
 }
 
 func * libmath_func_assert_float_new()
 {
-    return libmath_func_float_x_float_y_int_new("assertf", LIB_MATH_ASSERTF);
+    return libmath_func_float_x_float_y_int_new(LIB_MATH_ASSERTF);
 }
 
 void libmath_add_funcs(func_list * funcs)
@@ -221,6 +242,8 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_log_new());
     func_list_add_end(funcs, libmath_func_sqrt_new());
     func_list_add_end(funcs, libmath_func_pow_new());
+    func_list_add_end(funcs, libmath_func_str_int_new());
+    func_list_add_end(funcs, libmath_func_str_float_new());
     func_list_add_end(funcs, libmath_func_print_int_new());
     func_list_add_end(funcs, libmath_func_print_float_new());
     func_list_add_end(funcs, libmath_func_print_string_new());
@@ -248,6 +271,10 @@ const char * libmath_func_to_str(libmath_func math_id)
         return "sqrt";
     case LIB_MATH_POW:
         return "pow";
+    case LIB_MATH_STR:
+        return "str";
+    case LIB_MATH_STRF:
+        return "strf";
     case LIB_MATH_PRINT:
         return "print";
     case LIB_MATH_PRINTF:

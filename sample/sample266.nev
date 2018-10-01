@@ -1,0 +1,11 @@
+
+func main() -> int
+{
+    let txt = "answer is ";
+    let value = 102.98;
+
+    prints(txt + strf(value));
+    
+    0
+}
+

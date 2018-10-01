@@ -207,6 +207,8 @@ void strtab_array_delete(char ** strings, unsigned int size)
 void strtab_array_print(char ** strings, unsigned int size)
 {
     unsigned int i = 0;
+
+    printf("---- strtab_array beg ---\n");
     
     for (i = 0; i < size; i++)
     {
@@ -215,6 +217,8 @@ void strtab_array_print(char ** strings, unsigned int size)
             printf("string %s\n", strings[i]);
         }
     }
+
+    printf("---- strtab_array end ---\n");
 }
 
 

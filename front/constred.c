@@ -21,6 +21,8 @@
  */
 #include "constred.h"
 #include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -74,8 +76,7 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -85,6 +86,28 @@ int expr_constred(expr * value, int * result)
             value->float_value =
                 left_value->float_value + right_value->float_value;
 
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_STRING && value->right->type == EXPR_STRING)
+        {
+            size_t left_len = 0;
+            size_t right_len = 0;
+            char * tmpstr = NULL; 
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+            
+            left_len = strlen(left_value->string_value);
+            right_len =  strlen(right_value->string_value);
+            tmpstr = (char *) malloc((left_len + right_len + 1) * sizeof(char));
+
+            strcpy(tmpstr, left_value->string_value);
+            strcpy(tmpstr + left_len, right_value->string_value);            
+            
+            value->type = EXPR_STRING;
+            value->comb.comb = COMB_TYPE_STRING;
+            value->string_value = tmpstr;
+            
             expr_delete(left_value);
             expr_delete(right_value);
         }

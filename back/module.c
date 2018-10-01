@@ -79,6 +79,10 @@ void module_close(module * value)
 
 void module_print(module * value)
 {
+    if (value->strtab_array != NULL)
+    {
+        strtab_array_print(value->strtab_array, value->strtab_size);
+    }
     if (value->code != NULL)
     {
         bytecode_print(value->code);

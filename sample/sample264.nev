@@ -1,0 +1,11 @@
+
+func main() -> int
+{
+    let s1 = "beginning";
+    let s2 = "and end";
+
+    prints(s1 + " " + s2);
+    
+    0
+}
+

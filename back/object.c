@@ -62,6 +62,16 @@ object * object_new_string(char * value)
     return obj;
 }
 
+object * object_new_string_take(char * value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+    
+    obj->type = OBJECT_STRING;
+    obj->string_value = value;
+    
+    return obj;
+}
+
 object * object_new_vec(unsigned int size)
 {
     object * obj = (object *)malloc(sizeof(object));

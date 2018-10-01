@@ -34,6 +34,8 @@ typedef enum libmath_func
     LIB_MATH_LOG,
     LIB_MATH_SQRT,
     LIB_MATH_POW,
+    LIB_MATH_STR,
+    LIB_MATH_STRF,
     LIB_MATH_PRINT,
     LIB_MATH_PRINTF,
     LIB_MATH_PRINTS,
@@ -48,16 +50,13 @@ param_list * params_string_x();
 expr_list * params_x();
 expr_list * params_x_y();
 
-func * lib_math_func_any_new(const char * name, libmath_func math_id,
-                             param_list * formal, expr_list * actual,
-                             param * param_ret);
-func * libmath_func_int_x_new(const char * name, libmath_func math_id);
-func * libmath_func_float_x_new(const char * name, libmath_func math_id);
-func * libmath_func_float_x_float_y_new(const char * name,
-                                        libmath_func math_id);
-func * libmath_func_float_x_float_y_int_new(const char * name,
-                                            libmath_func math_id);
-func * libmath_func_string_x_new(const char * name, libmath_func math_id);
+func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
+                             expr_list * actual, param * param_ret);
+func * libmath_func_int_x_new(libmath_func math_id);
+func * libmath_func_float_x_new(libmath_func math_id);
+func * libmath_func_float_x_float_y_new(libmath_func math_id);
+func * libmath_func_float_x_float_y_int_new(libmath_func math_id);
+func * libmath_func_string_x_new(libmath_func math_id);
 
 func * libmath_func_sin_new();
 func * libmath_func_cos_new();
@@ -65,6 +64,9 @@ func * libmath_func_tan_new();
 func * libmath_func_exp_new();
 func * libmath_func_log_new();
 func * libmath_func_sqrt_new();
+func * libmath_func_pow_new();
+func * libmath_func_str_int_new();
+func * libmath_func_str_float_new();
 func * libmath_func_print_int_new();
 func * libmath_func_print_float_new();
 func * libmath_func_print_string_new();

@@ -28,6 +28,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 vm_execute_str vm_execute_op[] = {
     { BYTECODE_UNKNOWN, vm_execute_unknown },
@@ -55,6 +56,8 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_MUL_FLOAT, vm_execute_op_mul_float },
     { BYTECODE_OP_DIV_FLOAT, vm_execute_op_div_float },
 
+    { BYTECODE_OP_ADD_STRING, vm_execute_op_add_string },
+
     { BYTECODE_OP_LT_INT, vm_execute_op_lt_int },
     { BYTECODE_OP_GT_INT, vm_execute_op_gt_int },
     { BYTECODE_OP_LTE_INT, vm_execute_op_lte_int },
@@ -68,6 +71,9 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_GTE_FLOAT, vm_execute_op_gte_float },
     { BYTECODE_OP_EQ_FLOAT, vm_execute_op_eq_float },
     { BYTECODE_OP_NEQ_FLOAT, vm_execute_op_neq_float },
+
+    { BYTECODE_OP_EQ_STRING, vm_execute_op_eq_string },
+    { BYTECODE_OP_NEQ_STRING, vm_execute_op_neq_string },
 
     { BYTECODE_OP_NOT_INT, vm_execute_op_not_int },
 
@@ -87,6 +93,7 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_OP_ASS_INT, vm_execute_op_ass_int },
     { BYTECODE_OP_ASS_FLOAT, vm_execute_op_ass_float },
+    { BYTECODE_OP_ASS_STRING, vm_execute_op_ass_string },
     { BYTECODE_OP_ASS_ARRAY, vm_execute_op_ass_array },
     { BYTECODE_OP_ASS_FUNC, vm_execute_op_ass_func },
 
@@ -186,9 +193,6 @@ void vm_execute_string(vm * machine, bytecode * code)
     entry.addr = addr;
     
     machine->stack[machine->sp] = entry;
-
-    /* printf("string %u %s\n", code->string.index,
-                             strtab_array[code->string.index]); */
 }
 
 void vm_execute_id_local(vm * machine, bytecode * code)
@@ -462,6 +466,31 @@ void vm_execute_op_div_float(vm * machine, bytecode * code)
     machine->sp--;
 }
 
+void vm_execute_op_add_string(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char * a = gc_get_string(machine->collector, machine->stack[machine->sp - 1].addr);
+    char * b = gc_get_string(machine->collector, machine->stack[machine->sp].addr);
+    size_t a_len = 0;
+    size_t b_len = 0;
+    char * tmpstr = NULL; 
+    mem_ptr addr = 0;
+    
+    a_len = strlen(a);
+    b_len = strlen(b);
+    tmpstr = (char *)malloc((a_len + b_len + 1) * sizeof(char));
+    strcpy(tmpstr, a);
+    strcpy(tmpstr + a_len, b);
+
+    addr = gc_alloc_string_take(machine->collector, tmpstr);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+    
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
 void vm_execute_op_lt_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
@@ -644,6 +673,36 @@ void vm_execute_op_neq_float(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_eq_string(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    
+    char * a = gc_get_string(machine->collector, machine->stack[machine->sp - 1].addr);
+    char * b = gc_get_string(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, strcmp(a, b) ? 0 : 1);
+    
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+    
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_neq_string(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    
+    char * a = gc_get_string(machine->collector, machine->stack[machine->sp - 1].addr);
+    char * b = gc_get_string(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, strcmp(a, b) ? 1 : 0);
+    
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+    
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
@@ -1050,6 +1109,15 @@ void vm_execute_op_ass_float(vm * machine, bytecode * code)
     gc_set_float(machine->collector, machine->stack[machine->sp].addr, a);
 
     machine->sp--;    
+}
+
+void vm_execute_op_ass_string(vm * machine, bytecode * code)
+{
+    char * a = gc_get_string(machine->collector,
+                             machine->stack[machine->sp - 1].addr);
+    gc_set_string(machine->collector, machine->stack[machine->sp].addr, a);
+    
+    machine->sp--;
 }
 
 void vm_execute_op_ass_array(vm * machine, bytecode * code)

@@ -49,6 +49,8 @@ typedef enum bytecode_type
     BYTECODE_OP_MUL_FLOAT,
     BYTECODE_OP_DIV_FLOAT,
 
+    BYTECODE_OP_ADD_STRING,
+
     BYTECODE_OP_LT_INT,
     BYTECODE_OP_GT_INT,
     BYTECODE_OP_LTE_INT,
@@ -62,6 +64,9 @@ typedef enum bytecode_type
     BYTECODE_OP_GTE_FLOAT,
     BYTECODE_OP_EQ_FLOAT,
     BYTECODE_OP_NEQ_FLOAT,
+
+    BYTECODE_OP_EQ_STRING,
+    BYTECODE_OP_NEQ_STRING,
 
     BYTECODE_OP_NOT_INT,
 
@@ -81,6 +86,7 @@ typedef enum bytecode_type
 
     BYTECODE_OP_ASS_INT,
     BYTECODE_OP_ASS_FLOAT,
+    BYTECODE_OP_ASS_STRING,
     BYTECODE_OP_ASS_ARRAY,
     BYTECODE_OP_ASS_FUNC,
 
@@ -250,6 +256,8 @@ void bytecode_print_op_sub_float(bytecode * code);
 void bytecode_print_op_mul_float(bytecode * code);
 void bytecode_print_op_div_float(bytecode * code);
 
+void bytecode_print_op_add_string(bytecode * code);
+
 void bytecode_print_op_lt_int(bytecode * code);
 void bytecode_print_op_gt_int(bytecode * code);
 void bytecode_print_op_lte_int(bytecode * code);
@@ -263,6 +271,9 @@ void bytecode_print_op_lte_float(bytecode * code);
 void bytecode_print_op_gte_float(bytecode * code);
 void bytecode_print_op_eq_float(bytecode * code);
 void bytecode_print_op_neq_float(bytecode * code);
+
+void bytecode_print_op_eq_string(bytecode * code);
+void bytecode_print_op_neq_string(bytecode * code);
 
 void bytecode_print_op_not_int(bytecode * code);
 
@@ -282,6 +293,7 @@ void bytecode_print_op_mul_arr_arr_float(bytecode * code);
 
 void bytecode_print_op_ass_int(bytecode * code);
 void bytecode_print_op_ass_float(bytecode * code);
+void bytecode_print_op_ass_string(bytecode * code);
 void bytecode_print_op_ass_array(bytecode * code);
 void bytecode_print_op_ass_func(bytecode * code);
 

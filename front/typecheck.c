@@ -620,6 +620,11 @@ int expr_add_sub_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = COMB_TYPE_FLOAT;
     }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        value->comb.comb = COMB_TYPE_STRING;
+    }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb_ret->type == PARAM_INT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
@@ -836,6 +841,11 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = COMB_TYPE_FLOAT;
     }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        value->comb.comb = COMB_TYPE_STRING;
+    }
     else if (value->left->comb.comb == COMB_TYPE_FUNC &&
              value->right->comb.comb == COMB_TYPE_FUNC &&
              func_cmp(value->left->comb.comb_params,
@@ -895,6 +905,11 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
     }
     else if (value->middle->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        value->comb.comb = value->middle->comb.comb;
+    }
+    else if (value->middle->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_STRING)
     {
         value->comb.comb = value->middle->comb.comb;
     }
@@ -1168,6 +1183,11 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
                  value->right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
         {
             value->comb.comb = COMB_TYPE_INT;
         }

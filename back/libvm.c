@@ -23,10 +23,11 @@
 #include "gc.h"
 #include "libmath.h"
 #include "utils.h"
-#include <assert.h>
-#include <fenv.h>
-#include <math.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
+#include <fenv.h>
+#include <assert.h>
 
 void libvm_execute_build_in(vm * machine, bytecode * code)
 {
@@ -107,6 +108,24 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         machine->sp--;
     }
     break;
+    case LIB_MATH_STR:
+    {
+        char tmpstr[36] = { 0 };
+        int x = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+
+        sprintf(tmpstr, "%d", x);
+        addr = gc_alloc_string(machine->collector, tmpstr);        
+    }
+    break;
+    case LIB_MATH_STRF:
+    {
+        char tmpstr[36] = { 0 };
+        float x = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+
+        sprintf(tmpstr, "%.2f", x);
+        addr = gc_alloc_string(machine->collector, tmpstr);
+    }
+    break;
     case LIB_MATH_PRINT:
     {
         int x =
@@ -160,6 +179,9 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         machine->sp--;
     }
     break;
+    default:
+        fprintf(stderr, "unknown build in function id %d\n", code->build_in.id);
+        assert(0);
     }
 
     if (fetestexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW))

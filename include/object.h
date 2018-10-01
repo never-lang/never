@@ -81,6 +81,7 @@ typedef struct object
 object * object_new_int(int value);
 object * object_new_float(float value);
 object * object_new_string(char * value);
+object * object_new_string_take(char * value);
 object * object_new_vec(unsigned int size);
 object * object_new_arr(unsigned int dims, object_arr_dim * dv);
 object * object_new_arr_ref(mem_ptr arr_value);
