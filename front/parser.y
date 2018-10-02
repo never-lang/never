@@ -94,8 +94,12 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) bind_delete($$); } bind
 %destructor { if ($$) bind_list_delete($$); } bind_list
 %destructor { if ($$) func_delete($$); } func
+%destructor { if ($$) func_decl_delete($$); } func_decl
 %destructor { if ($$) func_list_delete($$); } func_list
 %destructor { if ($$) func_body_delete($$); } func_body
+%destructor { if ($$) func_except_delete($$); } func_except
+%destructor { if ($$) except_delete($$); } except_all
+%destructor { if ($$) except_list_delete($$); } except_list
 %destructor {  } never
 
 %pure-parser

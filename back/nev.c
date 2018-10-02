@@ -110,7 +110,7 @@ int nev_compile_prog(program * prog)
                     never_func_main_params(nev, &prog->params, &prog->param_count);
                     module_close(prog->module_value);
 
-                    /* print_functions(nev);
+                    /*print_functions(nev);
                     module_print(prog->module_value); */
                 }
             }

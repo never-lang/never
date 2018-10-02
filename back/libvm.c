@@ -130,7 +130,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     {
         int x =
             gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-        printf("%d\n", x);
+        printf("%d", x);
         addr = gc_alloc_int(machine->collector, x);
     }
     break;
@@ -138,7 +138,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     {
         float x =
             gc_get_float(machine->collector, machine->stack[machine->sp].addr);
-        printf("%.2f\n", x);
+        printf("%.2f", x);
         addr = gc_alloc_float(machine->collector, x);
     }
     break;
@@ -146,7 +146,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     {
         char * x =
             gc_get_string(machine->collector, machine->stack[machine->sp].addr);
-        printf("%s\n", x);
+        printf("%s", x);
         addr = gc_alloc_string(machine->collector, x);
     }
     break;

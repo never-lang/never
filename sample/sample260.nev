@@ -1,7 +1,7 @@
 
 func f1() -> string
 {
-    prints("ala ma kota")
+    prints("test test test very very\nlong long string\nwhich should be reallocated\n")
 }
 
 func f2(txt -> string) -> string
@@ -12,7 +12,7 @@ func f2(txt -> string) -> string
 func main() -> int
 {
     f1();
-    f2("to jest string");
+    f2("to jest string\n");
     0
 }
 

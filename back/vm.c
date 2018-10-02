@@ -25,6 +25,7 @@
 #include "libvm.h"
 #include "utils.h"
 #include "module.h"
+#include "strutil.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -471,18 +472,9 @@ void vm_execute_op_add_string(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     char * a = gc_get_string(machine->collector, machine->stack[machine->sp - 1].addr);
     char * b = gc_get_string(machine->collector, machine->stack[machine->sp].addr);
-    size_t a_len = 0;
-    size_t b_len = 0;
-    char * tmpstr = NULL; 
     mem_ptr addr = 0;
     
-    a_len = strlen(a);
-    b_len = strlen(b);
-    tmpstr = (char *)malloc((a_len + b_len + 1) * sizeof(char));
-    strcpy(tmpstr, a);
-    strcpy(tmpstr + a_len, b);
-
-    addr = gc_alloc_string_take(machine->collector, tmpstr);
+    addr = gc_alloc_string_take(machine->collector, string_add(a, b));
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
