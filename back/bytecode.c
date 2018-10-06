@@ -52,6 +52,10 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_DIV_FLOAT, bytecode_print_op_div_float },
 
     { BYTECODE_OP_ADD_STRING, bytecode_print_op_add_string },
+    { BYTECODE_OP_ADD_INT_STRING, bytecode_print_op_add_int_string },
+    { BYTECODE_OP_ADD_STRING_INT, bytecode_print_op_add_string_int },
+    { BYTECODE_OP_ADD_FLOAT_STRING, bytecode_print_op_add_float_string },
+    { BYTECODE_OP_ADD_STRING_FLOAT, bytecode_print_op_add_string_float },
 
     { BYTECODE_OP_LT_INT, bytecode_print_op_lt_int },
     { BYTECODE_OP_GT_INT, bytecode_print_op_gt_int },
@@ -238,6 +242,26 @@ void bytecode_print_op_div_float(bytecode * code)
 void bytecode_print_op_add_string(bytecode * code)
 {
     printf("%d: op add string\n", code->addr);
+}
+
+void bytecode_print_op_add_int_string(bytecode * code)
+{
+    printf("%d: op add int string\n", code->addr);
+}
+
+void bytecode_print_op_add_string_int(bytecode * code)
+{
+    printf("%d: op add string int\n", code->addr);
+}
+
+void bytecode_print_op_add_float_string(bytecode * code)
+{
+    printf("%d: op add float string\n", code->addr);
+}
+
+void bytecode_print_op_add_string_float(bytecode * code)
+{
+    printf("%d: op add string float\n", code->addr);
 }
 
 void bytecode_print_op_lt_int(bytecode * code)

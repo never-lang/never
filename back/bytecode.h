@@ -50,6 +50,10 @@ typedef enum bytecode_type
     BYTECODE_OP_DIV_FLOAT,
 
     BYTECODE_OP_ADD_STRING,
+    BYTECODE_OP_ADD_INT_STRING,
+    BYTECODE_OP_ADD_STRING_INT,
+    BYTECODE_OP_ADD_FLOAT_STRING,
+    BYTECODE_OP_ADD_STRING_FLOAT,
 
     BYTECODE_OP_LT_INT,
     BYTECODE_OP_GT_INT,
@@ -257,6 +261,10 @@ void bytecode_print_op_mul_float(bytecode * code);
 void bytecode_print_op_div_float(bytecode * code);
 
 void bytecode_print_op_add_string(bytecode * code);
+void bytecode_print_op_add_int_string(bytecode * code);
+void bytecode_print_op_add_string_int(bytecode * code);
+void bytecode_print_op_add_float_string(bytecode * code);
+void bytecode_print_op_add_string_float(bytecode * code);
 
 void bytecode_print_op_lt_int(bytecode * code);
 void bytecode_print_op_gt_int(bytecode * code);

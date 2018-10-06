@@ -23,6 +23,7 @@
 #include "gc.h"
 #include "libmath.h"
 #include "utils.h"
+#include "strutil.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -110,27 +111,21 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     break;
     case LIB_MATH_STR:
     {
-        char tmpstr[36] = { 0 };
         int x = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-
-        sprintf(tmpstr, "%d", x);
-        addr = gc_alloc_string(machine->collector, tmpstr);        
+        addr = gc_alloc_string_take(machine->collector, string_int(x));        
     }
     break;
     case LIB_MATH_STRF:
     {
-        char tmpstr[36] = { 0 };
         float x = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
-
-        sprintf(tmpstr, "%.2f", x);
-        addr = gc_alloc_string(machine->collector, tmpstr);
+        addr = gc_alloc_string_take(machine->collector, string_float(x));
     }
     break;
     case LIB_MATH_PRINT:
     {
         int x =
             gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-        printf("%d", x);
+        string_print_int(x);
         addr = gc_alloc_int(machine->collector, x);
     }
     break;
@@ -138,7 +133,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     {
         float x =
             gc_get_float(machine->collector, machine->stack[machine->sp].addr);
-        printf("%.2f", x);
+        string_print_float(x);
         addr = gc_alloc_float(machine->collector, x);
     }
     break;
@@ -146,7 +141,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     {
         char * x =
             gc_get_string(machine->collector, machine->stack[machine->sp].addr);
-        printf("%s", x);
+        string_print(x);
         addr = gc_alloc_string(machine->collector, x);
     }
     break;

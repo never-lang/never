@@ -34,7 +34,15 @@ void string_delete(string * value);
 void string_add_char(string * value, char c);
 char * string_take(string * value);
 
+char * string_int(int val);
+char * string_float(float val);
 char * string_add(char * str_one, char * str_two);
+char * string_add_int(char * str_one, int val, int order);
+char * string_add_float(char * str_one, float val, int order);
+
+void string_print(char * val);
+void string_print_int(int val);
+void string_print_float(float val);
 
 #endif /* __STRUTIL_H__ */
 

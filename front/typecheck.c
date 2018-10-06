@@ -625,6 +625,26 @@ int expr_add_sub_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = COMB_TYPE_STRING;
     }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        value->comb.comb = COMB_TYPE_STRING;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = COMB_TYPE_STRING;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        value->comb.comb = COMB_TYPE_STRING;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        value->comb.comb = COMB_TYPE_STRING;
+    }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb_ret->type == PARAM_INT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&

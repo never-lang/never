@@ -84,6 +84,10 @@ void vm_execute_op_mul_float(vm * machine, bytecode * code);
 void vm_execute_op_div_float(vm * machine, bytecode * code);
 
 void vm_execute_op_add_string(vm * machine, bytecode * code);
+void vm_execute_op_add_int_string(vm * machine, bytecode * code);
+void vm_execute_op_add_string_int(vm * machine, bytecode * code);
+void vm_execute_op_add_float_string(vm * machine, bytecode * code);
+void vm_execute_op_add_string_float(vm * machine, bytecode * code);
 
 void vm_execute_op_lt_int(vm * machine, bytecode * code);
 void vm_execute_op_gt_int(vm * machine, bytecode * code);
