@@ -1,0 +1,7 @@
+
+func main() -> int
+{
+    prints("and" + " " + "the" + " " + "answer" + " " + "is" + "\n");
+    0
+}
+

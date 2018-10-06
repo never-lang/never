@@ -20,7 +20,10 @@
  * THE SOFTWARE.
  */
 #include "constred.h"
+#include "strutil.h"
 #include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -30,6 +33,7 @@ int expr_constred(expr * value, int * result)
     {
     case EXPR_INT:
     case EXPR_FLOAT:
+    case EXPR_STRING:
     case EXPR_ID:
         /* cannot be reduced */
         break;
@@ -73,8 +77,7 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -84,6 +87,19 @@ int expr_constred(expr * value, int * result)
             value->float_value =
                 left_value->float_value + right_value->float_value;
 
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_STRING && value->right->type == EXPR_STRING)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+                        
+            value->type = EXPR_STRING;
+            value->comb.comb = COMB_TYPE_STRING;
+            value->string_value = string_add(left_value->string_value,
+                                             right_value->string_value);
+            
             expr_delete(left_value);
             expr_delete(right_value);
         }

@@ -23,10 +23,12 @@
 #include "gc.h"
 #include "libmath.h"
 #include "utils.h"
-#include <assert.h>
-#include <fenv.h>
-#include <math.h>
+#include "strutil.h"
+#include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
+#include <fenv.h>
+#include <assert.h>
 
 void libvm_execute_build_in(vm * machine, bytecode * code)
 {
@@ -107,11 +109,23 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         machine->sp--;
     }
     break;
+    case LIB_MATH_STR:
+    {
+        int x = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_string_take(machine->collector, string_int(x));        
+    }
+    break;
+    case LIB_MATH_STRF:
+    {
+        float x = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_string_take(machine->collector, string_float(x));
+    }
+    break;
     case LIB_MATH_PRINT:
     {
         int x =
             gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-        printf("%d\n", x);
+        string_print_int(x);
         addr = gc_alloc_int(machine->collector, x);
     }
     break;
@@ -119,8 +133,16 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     {
         float x =
             gc_get_float(machine->collector, machine->stack[machine->sp].addr);
-        printf("%.2f\n", x);
+        string_print_float(x);
         addr = gc_alloc_float(machine->collector, x);
+    }
+    break;
+    case LIB_MATH_PRINTS:
+    {
+        char * x =
+            gc_get_string(machine->collector, machine->stack[machine->sp].addr);
+        string_print(x);
+        addr = gc_alloc_string(machine->collector, x);
     }
     break;
     case LIB_MATH_ASSERT:
@@ -152,6 +174,9 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         machine->sp--;
     }
     break;
+    default:
+        fprintf(stderr, "unknown build in function id %d\n", code->build_in.id);
+        assert(0);
     }
 
     if (fetestexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW))

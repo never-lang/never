@@ -6,10 +6,13 @@
 #include <stdarg.h>
 #include "types.h"
 #include "parser.h"
+#include "utils.h"
+#include "strutil.h"
 
 #define YY_DECL int lex_scan(token * tokp)
 
 unsigned int line_no = 1;
+string * string_value = NULL;
 
 void scanner_printf(const char * format, ...)
 {
@@ -31,6 +34,7 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
 %option nounistd
 
 %x C_COMMENT
+%x C_STRING
 
 %%
 [ \t\r]+
@@ -113,6 +117,12 @@ float {
     tokp->line_no = line_no;
     scanner_printf("float\n");
     return TOK_FLOAT;
+}
+
+string {
+    tokp->line_no = line_no;
+    scanner_printf("string\n");
+    return TOK_STRING;
 }
 
 "+"|"-"|"/"|"*"|"%"|"=" {
@@ -240,6 +250,89 @@ float {
     tokp->val.str_value = strdup(yytext);
     scanner_printf("id %s\n", yytext);
     return TOK_ID;
+}
+
+\" {
+    string_value = string_new();
+    BEGIN(C_STRING);
+}
+
+<C_STRING>\" {
+    BEGIN(INITIAL);
+    string_add_char(string_value, '\0');
+
+    tokp->line_no = line_no;
+    tokp->val.str_value = string_take(string_value);
+    
+    if (string_value)
+    {
+        scanner_printf("string %s\n", string_value->buf);
+
+        string_delete(string_value);
+        string_value = NULL;
+    }
+
+    return TOK_NUM_STRING;    
+}
+
+<C_STRING>\n {
+    print_error_msg(line_no, "unterminated string\n");
+
+    if (string_value) { string_delete(string_value); string_value = NULL; }
+    yyterminate();
+    return yytext[0];
+}
+
+<C_STRING>\\[0-7]{1,3} {
+    int result;
+    
+    sscanf(yytext + 1, "%o", &result);
+    if (result > 0xff)
+    {
+        print_error_msg(line_no, "constant out of range\n");
+        
+        if (string_value) { string_delete(string_value); string_value = NULL; }
+        yyterminate();
+        return yytext[0];
+    }
+    string_add_char(string_value, result);
+}
+
+<C_STRING>\\[0-9]+ {
+    print_error_msg(line_no, "bad escape sequence\n");
+
+    if (string_value) { string_delete(string_value); string_value = NULL; }
+    yyterminate();
+    return yytext[0];
+}
+
+<C_STRING>\\n {
+    string_add_char(string_value, '\n');
+}
+<C_STRING>\\t {
+    string_add_char(string_value, '\t');
+}
+<C_STRING>\\r {
+    string_add_char(string_value, '\r');
+}
+<C_STRING>\\b {
+    string_add_char(string_value, '\b');
+}
+<C_STRING>\\f {
+    string_add_char(string_value, '\f');
+}
+
+<C_STRING>\\(.|\n) {
+    line_no++;
+    string_add_char(string_value, yytext[1]);
+}
+
+<C_STRING>[^\\\n\"]+ {
+    char *yptr = yytext;
+    while (*yptr)
+    {
+        string_add_char(string_value, *yptr++);
+    }
 }
 
 "/*"            { BEGIN(C_COMMENT); }

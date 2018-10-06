@@ -82,8 +82,12 @@ int func_list_gencode(unsigned int syn_level, func_list * list, int * result);
 
 int never_gencode(never * nev);
 
+int expr_int_emit(expr * value, int stack_level, module * module_value,
+                  int * result);
 int expr_float_emit(expr * value, int stack_level, module * module_value,
                     int * result);
+int expr_string_emit(expr * value, int stack_level, module * module_value,
+                     int * result);
 
 int func_freevar_id_local_emit(freevar * value, int stack_level,
                                module * module_value, int * result);

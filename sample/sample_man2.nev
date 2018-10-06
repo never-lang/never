@@ -6,6 +6,6 @@ func cel2fah(c -> float) -> float
 
 func main() -> float 
 {
-    cel2fah(100.0)
+    cel2fah(200.0)
 }
 

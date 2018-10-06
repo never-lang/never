@@ -164,6 +164,7 @@
     <context id="types" style-ref="type">
       <keyword>float</keyword>
       <keyword>int</keyword>
+      <keyword>string</keyword>
     </context>
 
     <!-- C99 booleans -->

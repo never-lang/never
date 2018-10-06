@@ -137,8 +137,11 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
         else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
         {
             param * param_value = entry->param_value;
-            if (param_value->type == PARAM_INT || param_value->type == PARAM_FLOAT ||
-                param_value->type == PARAM_DIM || param_value->type == PARAM_ARRAY ||
+            if (param_value->type == PARAM_INT ||
+                param_value->type == PARAM_FLOAT ||
+                param_value->type == PARAM_STRING ||
+                param_value->type == PARAM_DIM ||
+                param_value->type == PARAM_ARRAY ||
                 param_value->type == PARAM_FUNC)
             {
                 if (syn_level == entry->syn_level)
@@ -163,7 +166,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
             }
             else
             {
-                printf("unknown param type %d\n", param_value->type);
+                printf("unknown param type %s\n", param_type_str(param_value->type));
                 assert(0);
             }
         }
@@ -224,6 +227,8 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
         break;
     case EXPR_FLOAT:
         /* printf("gencode EXPR_FLOAT %f\n", value->float_value); */
+        break;
+    case EXPR_STRING:
         break;
     case EXPR_ID:
         expr_id_gencode(syn_level, func_value, value, result);
@@ -477,11 +482,8 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
     switch (value->type)
     {
     case EXPR_INT:
-        /* not possible */
-        break;
     case EXPR_FLOAT:
-        /* not possible */
-        break;
+    case EXPR_STRING:
     case EXPR_ID:
         /* not possible */
         break;
@@ -840,6 +842,19 @@ int expr_float_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_string_emit(expr * value, int stack_level, module * module_value,
+                     int * result)
+{
+    bytecode bc = { 0 };
+    
+    bc.type = BYTECODE_STRING;
+    bc.string.index = strtab_add_string(module_value->strtab_value, value->string_value);
+
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
 int func_freevar_id_local_emit(freevar * value, int stack_level,
                                module * module_value, int * result)
 {
@@ -1129,6 +1144,36 @@ int expr_add_emit(expr * value, int stack_level, module * module_value,
         bc.type = BYTECODE_OP_ADD_FLOAT;
         bytecode_add(module_value->code, &bc);
     }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_ADD_STRING;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_ADD_INT_STRING;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_ADD_STRING_INT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_ADD_FLOAT_STRING;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        bc.type = BYTECODE_OP_ADD_STRING_FLOAT;
+        bytecode_add(module_value->code, &bc);
+    }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_INT)
     {
@@ -1378,6 +1423,11 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     else if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_ASS_FLOAT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_ASS_STRING;
         bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY)
@@ -1632,6 +1682,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
     case EXPR_FLOAT:
         expr_float_emit(value, stack_level, module_value, result);
         break;
+    case EXPR_STRING:
+        expr_string_emit(value, stack_level, module_value, result);
+        break;
     case EXPR_ID:
         expr_id_emit(value, stack_level, module_value, result);
         break;
@@ -1814,6 +1867,17 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             bc.type = BYTECODE_OP_EQ_FLOAT;
             bytecode_add(module_value->code, &bc);
         }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            bc.type = BYTECODE_OP_EQ_STRING;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            assert(0);
+        }
         else
         {
             *result = GENCODE_FAIL;
@@ -1837,6 +1901,12 @@ int expr_emit(expr * value, int stack_level, module * module_value,
                  value->right->comb.comb == COMB_TYPE_FLOAT)
         {
             bc.type = BYTECODE_OP_NEQ_FLOAT;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            bc.type = BYTECODE_OP_NEQ_STRING;
             bytecode_add(module_value->code, &bc);
         }
         else

@@ -26,9 +26,14 @@ module * module_new()
 {
     module * value = (module *)malloc(sizeof(module));
     
+    value->strtab_value = strtab_new(32);
+    value->strtab_array = NULL;
+    value->strtab_size = 0;
+    
     value->code_arr = NULL;
     value->code_size = 0;
     value->code = bytecode_new();
+
     value->exctab_value = exception_tab_new(32);
     
     return value;
@@ -36,6 +41,14 @@ module * module_new()
 
 void module_delete(module * value)
 {
+    if (value->strtab_value != NULL)
+    {
+        strtab_delete(value->strtab_value);
+    }
+    if (value->strtab_array != NULL)
+    {
+        strtab_array_delete(value->strtab_array, value->strtab_size);
+    }
     if (value->code != NULL)
     {
         bytecode_delete(value->code);
@@ -53,6 +66,10 @@ void module_delete(module * value)
 
 void module_close(module * value)
 {
+    if (value->strtab_value != NULL)
+    {
+        strtab_to_array(value->strtab_value, &value->strtab_array, &value->strtab_size);
+    }
     if (value->code != NULL)
     {
         bytecode_func_addr(value->code);
@@ -62,6 +79,10 @@ void module_close(module * value)
 
 void module_print(module * value)
 {
+    if (value->strtab_array != NULL)
+    {
+        strtab_array_print(value->strtab_array, value->strtab_size);
+    }
     if (value->code != NULL)
     {
         bytecode_print(value->code);

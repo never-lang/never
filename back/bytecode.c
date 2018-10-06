@@ -30,6 +30,7 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_INT, bytecode_print_int },
     { BYTECODE_FLOAT, bytecode_print_float },
+    { BYTECODE_STRING, bytecode_print_string },
 
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
     { BYTECODE_ID_DIM_LOCAL, bytecode_print_id_dim_local },
@@ -50,6 +51,12 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_MUL_FLOAT, bytecode_print_op_mul_float },
     { BYTECODE_OP_DIV_FLOAT, bytecode_print_op_div_float },
 
+    { BYTECODE_OP_ADD_STRING, bytecode_print_op_add_string },
+    { BYTECODE_OP_ADD_INT_STRING, bytecode_print_op_add_int_string },
+    { BYTECODE_OP_ADD_STRING_INT, bytecode_print_op_add_string_int },
+    { BYTECODE_OP_ADD_FLOAT_STRING, bytecode_print_op_add_float_string },
+    { BYTECODE_OP_ADD_STRING_FLOAT, bytecode_print_op_add_string_float },
+
     { BYTECODE_OP_LT_INT, bytecode_print_op_lt_int },
     { BYTECODE_OP_GT_INT, bytecode_print_op_gt_int },
     { BYTECODE_OP_LTE_INT, bytecode_print_op_lte_int },
@@ -63,6 +70,9 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_GTE_FLOAT, bytecode_print_op_gte_float },
     { BYTECODE_OP_EQ_FLOAT, bytecode_print_op_eq_float },
     { BYTECODE_OP_NEQ_FLOAT, bytecode_print_op_neq_float },
+
+    { BYTECODE_OP_EQ_STRING, bytecode_print_op_eq_string },
+    { BYTECODE_OP_NEQ_STRING, bytecode_print_op_neq_string },
 
     { BYTECODE_OP_NOT_INT, bytecode_print_op_not_int },
 
@@ -82,6 +92,7 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_OP_ASS_INT, bytecode_print_op_ass_int },
     { BYTECODE_OP_ASS_FLOAT, bytecode_print_op_ass_float },
+    { BYTECODE_OP_ASS_STRING, bytecode_print_op_ass_string },
     { BYTECODE_OP_ASS_ARRAY, bytecode_print_op_ass_array },
     { BYTECODE_OP_ASS_FUNC, bytecode_print_op_ass_func },
 
@@ -138,6 +149,11 @@ void bytecode_print_int(bytecode * code)
 void bytecode_print_float(bytecode * code)
 {
     printf("%d: float %f\n", code->addr, code->real.value);
+}
+
+void bytecode_print_string(bytecode * code)
+{
+    printf("%d: string %u\n", code->addr, code->string.index);
 }
 
 void bytecode_print_id_local(bytecode * code)
@@ -223,6 +239,31 @@ void bytecode_print_op_div_float(bytecode * code)
     printf("%d: op div float\n", code->addr);
 }
 
+void bytecode_print_op_add_string(bytecode * code)
+{
+    printf("%d: op add string\n", code->addr);
+}
+
+void bytecode_print_op_add_int_string(bytecode * code)
+{
+    printf("%d: op add int string\n", code->addr);
+}
+
+void bytecode_print_op_add_string_int(bytecode * code)
+{
+    printf("%d: op add string int\n", code->addr);
+}
+
+void bytecode_print_op_add_float_string(bytecode * code)
+{
+    printf("%d: op add float string\n", code->addr);
+}
+
+void bytecode_print_op_add_string_float(bytecode * code)
+{
+    printf("%d: op add string float\n", code->addr);
+}
+
 void bytecode_print_op_lt_int(bytecode * code)
 {
     printf("%d: op lt int\n", code->addr);
@@ -280,7 +321,17 @@ void bytecode_print_op_eq_float(bytecode * code)
 
 void bytecode_print_op_neq_float(bytecode * code)
 {
-    printf("%d: op neq_float\n", code->addr);
+    printf("%d: op neq float\n", code->addr);
+}
+
+void bytecode_print_op_eq_string(bytecode * code)
+{
+    printf("%d: op eq string\n", code->addr);
+}
+
+void bytecode_print_op_neq_string(bytecode * code)
+{
+    printf("%d: op neq string\n", code->addr);
 }
 
 void bytecode_print_op_not_int(bytecode * code)
@@ -356,6 +407,11 @@ void bytecode_print_op_ass_int(bytecode * code)
 void bytecode_print_op_ass_float(bytecode * code)
 {
     printf("%d: op ass float\n", code->addr);
+}
+
+void bytecode_print_op_ass_string(bytecode * code)
+{
+    printf("%d: op ass string\n", code->addr);
 }
 
 void bytecode_print_op_ass_array(bytecode * code)

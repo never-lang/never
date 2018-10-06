@@ -23,6 +23,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 gc * gc_new(unsigned int mem_size)
 {
@@ -147,6 +148,9 @@ void gc_mark(gc * collector, mem_ptr addr)
         case OBJECT_FLOAT:
             collector->mem[addr].mark = 1;
             break;
+        case OBJECT_STRING:
+            collector->mem[addr].mark = 1;
+            break;
         case OBJECT_VEC:
             gc_mark_vec(collector, addr);
             break;
@@ -229,6 +233,16 @@ mem_ptr gc_alloc_float(gc * collector, float value)
     return gc_alloc_any(collector, object_new_float(value));
 }
 
+mem_ptr gc_alloc_string(gc * collector, char * value)
+{
+    return gc_alloc_any(collector, object_new_string(value));
+}
+
+mem_ptr gc_alloc_string_take(gc * collector, char * value)
+{
+    return gc_alloc_any(collector, object_new_string_take(value));
+}
+
 mem_ptr gc_alloc_vec(gc * collector, unsigned int size)
 {
     return gc_alloc_any(collector, object_new_vec(size));
@@ -288,6 +302,26 @@ void gc_set_float(gc * collector, mem_ptr addr, float value)
     assert(collector->mem[addr].object_value->type == OBJECT_FLOAT);
 
     collector->mem[addr].object_value->float_value = value;
+}
+
+char * gc_get_string(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_STRING);
+    
+    return collector->mem[addr].object_value->string_value;
+}
+
+void gc_set_string(gc * collector, mem_ptr addr, char * value)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_STRING);
+    
+    if (collector->mem[addr].object_value->string_value != NULL)
+    {
+        free(collector->mem[addr].object_value->string_value);
+    }
+    collector->mem[addr].object_value->string_value = strdup(value);
 }
 
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index)

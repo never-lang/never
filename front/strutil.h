@@ -19,21 +19,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __TCHECKARR_H__
-#define __TCHECKARR_H__
+#ifndef __STRUTIL_H__
+#define __STRUTIL_H__
 
-#include "expr.h"
-#include "symtab.h"
-#include "weakexpr.h"
+typedef struct string {
+    unsigned int pos;
+    unsigned int size;
+    char * buf;
+} string;
 
-int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
-                                 int * result);
-int array_set_dims(expr_list_weak * depth_list);
-int array_well_formed(expr * value, int * result);
+string * string_new();
+void string_delete(string * value);
 
-int array_check_type(symtab * tab, expr * value, unsigned syn_level,
-                     int * result);
-int expr_array_check_type(symtab * tab, expr * value, unsigned int syn_level,
-                          int * result);
+void string_add_char(string * value, char c);
+char * string_take(string * value);
 
-#endif /* __TCHECKARR_H__ */
+char * string_int(int val);
+char * string_float(float val);
+char * string_add(char * str_one, char * str_two);
+char * string_add_int(char * str_one, int val, int order);
+char * string_add_float(char * str_one, float val, int order);
+
+void string_print(char * val);
+void string_print_int(int val);
+void string_print_float(float val);
+
+#endif /* __STRUTIL_H__ */
+

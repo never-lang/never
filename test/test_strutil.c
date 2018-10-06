@@ -19,21 +19,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __TCHECKARR_H__
-#define __TCHECKARR_H__
+#include "strutil.h"
 
-#include "expr.h"
-#include "symtab.h"
-#include "weakexpr.h"
+void test_one()
+{
+    string * value = string_new();
 
-int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
-                                 int * result);
-int array_set_dims(expr_list_weak * depth_list);
-int array_well_formed(expr * value, int * result);
+    string_delete(value);
+}
 
-int array_check_type(symtab * tab, expr * value, unsigned syn_level,
-                     int * result);
-int expr_array_check_type(symtab * tab, expr * value, unsigned int syn_level,
-                          int * result);
+void test_two()
+{
+    unsigned int i = 0;
+    string * value = string_new();
+    
+    for (i = 0; i < 256; i++)
+    {
+        string_add_char(value, 'x');
+    }
+    
+    string_delete(value);
+}
 
-#endif /* __TCHECKARR_H__ */
+int main(int argc, char * argv[])
+{
+    test_one();
+    test_two();
+
+    return 0;
+}
+

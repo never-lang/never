@@ -20,25 +20,12 @@
  * THE SOFTWARE.
  */
 #include "symtab.h"
+#include "hash.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define HASH_MAGIC 5381
-
-unsigned int hash(const char * str)
-{
-    char c;
-    unsigned int val = HASH_MAGIC;
-
-    while ((c = *str++) != 0)
-    {
-        val = ((val << 5) + val) + c;
-    }
-
-    return val;
-}
 
 symtab_entry * symtab_entry_new(unsigned int size)
 {
@@ -56,8 +43,9 @@ void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
                              unsigned int syn_level)
 {
     unsigned int times = 0;
-    unsigned int index = hash(id) % size;
+    unsigned int index = 0;
 
+    index = hash_string(id) % size;
     while (entries[index].type != 0)
     {
         index = (index + 1) % size;
@@ -77,8 +65,9 @@ symtab_entry * symtab_entry_lookup_object(symtab_entry * entries,
                                           unsigned int size, const char * id)
 {
     unsigned int times = 0;
-    unsigned int index = hash(id) % size;
-
+    unsigned int index = 0;
+    
+    index = hash_string(id) % size;
     while (entries[index].type != 0)
     {
         if (strcmp(entries[index].id, id) == 0)

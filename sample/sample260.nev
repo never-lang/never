@@ -1,0 +1,18 @@
+
+func f1() -> string
+{
+    prints("test test test very very\nlong long string\nwhich should be reallocated\n")
+}
+
+func f2(txt -> string) -> string
+{
+    prints(txt)
+}
+
+func main() -> int
+{
+    f1();
+    f2("to jest string\n");
+    0
+}
+

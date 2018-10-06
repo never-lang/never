@@ -783,6 +783,59 @@ func main() -> float
 }
 ```
 
+It is also possible to print string of characters.
+
+```
+func main() -> int
+{
+    let txt = "answer is ";
+    let value = 200;
+
+    prints(txt + str(value) + "\n");
+    
+    0
+}
+```
+
+They may be concatenated with integers or floats.
+
+```
+func print_vect(vect[D1, D2] -> float) -> int
+{
+    prints("[" + vect[0, 0] + "," + vect[0, 1] + "]\n");
+    0
+}
+```
+
+String can also be assigned and compared.
+
+```
+func main() -> int
+{
+    let s1 = "string one\n";
+    let s2 = "text two\n";
+
+    prints(s1);
+    prints(s2);
+    
+    s2 = s1;
+    
+    prints(s2);
+
+    0
+}
+```
+
+```
+func main() -> int
+{
+    let s1 = "text equal";
+    let s2 = "text equal";
+
+    assert(if (s1 == s2) { 1 } else { 0 } == 1)
+}
+```
+
 ## Embedded Never
 Never language can be embedded in Unix shell and C code.
 
