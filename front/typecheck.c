@@ -1423,6 +1423,13 @@ int bind_check_type(symtab * tab, bind * value, unsigned int syn_level,
             if (value->expr_value != NULL)
             {
                 expr_check_type(tab, value->expr_value, syn_level, result);
+                if (value->expr_value->type == EXPR_ARRAY &&
+                    value->expr_value->array.array_value->type == ARRAY_SUB)
+                {
+                    *result = TYPECHECK_FAIL;
+                    value->expr_value->comb.comb = COMB_TYPE_ERR;
+                    print_error_msg(value->line_no, "no array type declared\n");
+                }
                 symtab_add_bind_from_bind(tab, value, syn_level, result);
             }
         break;

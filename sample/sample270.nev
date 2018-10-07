@@ -1,0 +1,22 @@
+
+func print_vector(v[D] -> int) -> int
+{
+    let i = 0;
+
+    for (i = 0; i < D; i = i + 1)
+    {
+        prints(v[i] + " ")
+    };
+    prints("\n");
+
+    0
+}
+
+func main() -> int
+{
+    let a = [ 1, 2, 3 ] -> int;
+    print_vector(a);
+
+    0
+}
+
