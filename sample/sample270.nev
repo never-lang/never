@@ -14,7 +14,7 @@ func print_vector(v[D] -> int) -> int
 
 func main() -> int
 {
-    let a = [ 1, 2, 3 ] -> int;
+    let a = [ 1, 2, 3, 4, 5 ] -> int;
     print_vector(a);
 
     0

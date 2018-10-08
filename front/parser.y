@@ -51,6 +51,8 @@ int yyerror(never ** nev, char * str)
 %type <val.param_value> param
 %type <val.param_list_value> param_list
 %type <val.array_value> array;
+%type <val.array_value> array_sub;
+%type <val.expr_list_value> array_sub_list
 %type <val.let_value> let
 %type <val.var_value> var
 %type <val.bind_value> bind
@@ -89,6 +91,8 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) expr_list_delete($$); } expr_list
 %destructor { if ($$) expr_list_delete($$); } expr_seq
 %destructor { if ($$) array_delete($$); } array
+%destructor { if ($$) array_delete($$); } array_sub
+%destructor { if ($$) expr_list_delete($$); } array_sub_list
 %destructor { if ($$) bind_delete($$); } let
 %destructor { if ($$) bind_delete($$); } var
 %destructor { if ($$) bind_delete($$); } bind
@@ -269,10 +273,28 @@ array: '[' expr_list ']' TOK_RET param
     $$->line_no = $<line_no>1;
 };
 
-array: '[' expr_list ']'
+array: '[' array_sub_list ']' TOK_RET param
+{
+    $$ = array_new($2, $5);
+    $$->line_no = $<line_no>1;
+};
+
+array_sub: '[' expr_list ']'
 {
     $$ = array_new_sub($2);
     $$->line_no = $<line_no>1;
+};
+
+array_sub_list: array_sub
+{
+    $$ = expr_list_new();
+    expr_list_add_end($$, expr_new_array($1));
+};
+
+array_sub_list: array_sub_list ',' array_sub
+{
+    expr_list_add_end($1, expr_new_array($3));
+    $$ = $1;
 };
 
 expr: TOK_LET func
