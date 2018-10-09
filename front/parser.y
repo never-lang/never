@@ -285,6 +285,12 @@ array_sub: '[' expr_list ']'
     $$->line_no = $<line_no>1;
 };
 
+array_sub: '[' array_sub_list ']'
+{
+    $$ = array_new_sub($2);
+    $$->line_no = $<line_no>1;
+};
+
 array_sub_list: array_sub
 {
     $$ = expr_list_new();
