@@ -1,0 +1,24 @@
+
+func adder(start -> int) -> () -> int
+{
+    let v = start;
+    func add() -> int
+    {
+        v = v + 1
+    }
+    add
+}
+
+func main() -> int
+{
+    let a1 = adder(10);
+    let a2 = adder(10);
+    
+    print(a1());
+    print(a1());
+    print(a2());
+    print(a2());
+    print(a1())
+}
+
+
