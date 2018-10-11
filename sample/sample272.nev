@@ -1,0 +1,11 @@
+
+func fib(n -> int) -> int
+{
+    n < 2 ? n : fib(n - 1) + fib(n - 2)
+}
+
+func main() -> int
+{
+    fib(4)
+}
+

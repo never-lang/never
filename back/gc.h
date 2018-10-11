@@ -59,7 +59,6 @@ typedef struct gc
 gc * gc_new(unsigned int mem_size);
 void gc_delete(gc * collector);
 
-void gc_mark_all(gc * collector);
 void gc_sweep_all(gc * collector);
 void gc_mark_vec(gc * collector, mem_ptr addr);
 void gc_mark_arr(gc * collector, mem_ptr addr);

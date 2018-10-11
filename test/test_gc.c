@@ -123,7 +123,7 @@ void test_four()
 void test_five()
 {
     static const unsigned int val_size = 90;
-    static const unsigned int mem_size = 100;
+    static const unsigned int mem_size = 200;
     unsigned int i, j;
     gc_stack ints[val_size];
     gc * collector = gc_new(mem_size);
@@ -139,7 +139,7 @@ void test_five()
             assert(gc_get_float(collector, ints[j].addr) ==
                    (float)(i * mem_size + j));
         }
-        gc_run_omfalos(collector, NULL, 0);
+        gc_run_omfalos(collector, ints, val_size);
     }
 
     gc_delete(collector);

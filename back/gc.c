@@ -34,10 +34,12 @@ gc * gc_new(unsigned int mem_size)
 
     mem[0].object_value = NULL;
     mem[0].next = 0;
+    mem[0].mark = 0;
     for (i = 1; i < mem_size; i++)
     {
         mem[i].object_value = NULL;
         mem[i].next = i + 1;
+        mem[i].mark = 0;
     }
     mem[mem_size - 1].object_value = NULL;
     mem[mem_size - 1].next = 0;
@@ -67,16 +69,6 @@ void gc_delete(gc * collector)
     free(collector);
 }
 
-void gc_mark_all(gc * collector)
-{
-    unsigned int i;
-
-    for (i = 0; i < collector->mem_size; i++)
-    {
-        collector->mem[i].mark = 0;
-    }
-}
-
 void gc_sweep_all(gc * collector)
 {
     unsigned int i;
@@ -91,6 +83,10 @@ void gc_sweep_all(gc * collector)
 
             collector->mem[i].next = collector->free;
             collector->free = i;
+        }
+        else if (collector->mem[i].mark == 1)
+        {
+            collector->mem[i].mark = 0;
         }
     }
 }
@@ -187,7 +183,6 @@ void gc_mark_access(gc * collector, gc_stack * omfalos, int stack_size)
 
 void gc_run_omfalos(gc * collector, gc_stack * omfalos, int stack_size)
 {
-    gc_mark_all(collector);
     gc_mark_access(collector, omfalos, stack_size);
     gc_sweep_all(collector);
 }
@@ -198,7 +193,6 @@ void gc_run(gc * collector, gc_stack * stack, int stack_size,
     static unsigned int t = 0;
     if (t++ % 10 != 0) return;
 
-    gc_mark_all(collector);
     gc_mark_access(collector, stack, stack_size);
     if (global_vec > 0)
     {
