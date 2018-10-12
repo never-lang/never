@@ -146,7 +146,6 @@ func nn() -> int
 
 func main() -> int
 {
-    nn();
-    0
+    nn()
 }
 
