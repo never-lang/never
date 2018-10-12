@@ -43,6 +43,7 @@ gc * gc_new(unsigned int mem_size)
     }
     mem[mem_size - 1].object_value = NULL;
     mem[mem_size - 1].next = 0;
+    mem[mem_size - 1].mark = 0;
 
     collector->free = 1;
     collector->mem_size = mem_size;

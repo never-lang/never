@@ -286,6 +286,7 @@ phases.
 
 ## Listing
 
+```
 func nn() -> int
 {
     let x = [ [1, 0, 1],
