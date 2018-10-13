@@ -911,6 +911,13 @@ note that the program can be executed with different input parameters many times
 Return value is set in ```result``` object which then can be used. In this
 example ```assert``` function assures that calculations are as expected.
 
+## More Information
+
+You can find more information about Never at the following pages:
+
+* [Tail Recursion](https://never-lang.github.io/never/tailrec.html)
+* [Neural Network in Never](https://never-lang.github.io/never/perceptron.html)
+
 ## Contact
 If you find it useful for any purpose I will be glad to hear from you.
 
