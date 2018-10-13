@@ -210,10 +210,10 @@ we need set of inputs ```x``` and expected results ```y```. They may be
 expressed in Never as follows:
 
 ```
-    let x = [ [1, 0, 1],
-              [0, 1, 0],
+    let x = [ [0, 1, 0],
+              [1, 0, 0],
               [1, 1, 1],
-              [1, 0, 0] ] -> float;
+              [0, 0, 1] ] -> float;
 ```
 
 ```
@@ -221,9 +221,11 @@ expressed in Never as follows:
     let yT = T_matrix(y);
 ```
 
-Expected results ```y``` are single values. To simplify notation instead of using
-```y = [ [1], [0], [1], [0] ]``` notation its more convenient to type vector
-```y = [ 1, 0, 1, 0 ]``` and transpose it.
+Expected results ```y``` are single values. To simplify notation instead of typing
+```y = [ [1], [0], [1], [0] ]``` it is more convenient to define vector
+```y = [ 1, 0, 1, 0 ]``` and transpose it. As you may notice it is expected
+the the network will ignore boundary values ```x0```, ```x2``` and
+return only value of ```x1```.
 
 Input weights are first initialized to random values. The following code can
 set ```[3, 1]``` matrix.
@@ -289,7 +291,7 @@ Learning cycles are executed using loop over forward and backward propagation
 phases.
 
 ```
-    for (i = 0; i < 100; i = i + 1)
+    for (i = 0; i < 1000; i = i + 1)
 ```
 
 ## Listing
@@ -299,7 +301,7 @@ func nn() -> int
 {
     let x = [ [0, 1, 0],
               [1, 0, 0],
-              [1, 1, 0],
+              [1, 1, 1],
               [0, 0, 1] ] -> float;
     let xT = T_matrix(x);
     let y = [ [1, 0, 1, 0] ] -> float;
@@ -316,7 +318,7 @@ func nn() -> int
     one_matrix(one);
     rand_matrix(W, rand);
 
-    for (i = 0; i < 100; i = i + 1)
+    for (i = 0; i < 1000; i = i + 1)
     {
         z = x * W;
         s = sigmoid_matrix(z);
@@ -352,10 +354,6 @@ func main() -> int
 All code in Never begins in ```main``` function. Thus we only execute function
 ```nn``` in it.
 
-Of course it would be interesting to check what neural network responses are.
-I prepared a code which outputs values for every possible input. As you may see
-in the network in seven out of eight cases returns expected values.
-
 | [ X ]        |  y      | expected |
 |--------------|---------|----------|
 | [ 1, 1, 1 ]  |  0.96   |   1.00   |
@@ -364,13 +362,19 @@ in the network in seven out of eight cases returns expected values.
 | [ 1, 0, 0 ]  |  0.05   |   0.00   |
 | [ 0, 1, 1 ]  |  1.00   |   1.00   |
 | [ 0, 1, 0 ]  |  1.00   |   1.00   |
-| [ 0, 0, 1 ]  |  0.05   |   0.05   |
-| [ 0, 0, 0 ]  |  0.50   |   0.50   |
+| [ 0, 0, 1 ]  |  0.05   |   0.00   |
+| [ 0, 0, 0 ]  |  0.50   |   0.00   |
+
+Of course it would be interesting to check what neural network responses are.
+I prepared a code which outputs values for every possible input. As you may see
+in the network in seven out of eight cases returns expected values.
 
 ## Summary
 
 The article demonstrates how Never language can be used to define a simple
 neural network. Also supervised perceptron learning algorithm is demonstrated.
+I hope you liked it and learnt something useful about neural networks,
+matrix algebra or Never programming language.
 
 [perceptron]: https://never-lang.github.io/never/perceptron.png "Perceptron"
 
