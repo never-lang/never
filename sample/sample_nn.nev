@@ -107,10 +107,10 @@ func print_matrix(W[D1, D2] -> float) -> int
 
 func nn() -> int
 {
-    let x = [ [1, 0, 1],
-              [0, 1, 0],
+    let x = [ [0, 1, 0],
+              [1, 0, 0],
               [1, 1, 1],
-              [1, 0, 0] ] -> float;
+              [0, 0, 1] ] -> float;
     let xT = T_matrix(x);
     let y = [ [1, 0, 1, 0] ] -> float;
     let yT = T_matrix(y);
@@ -138,7 +138,34 @@ func nn() -> int
     
     z = ([[ 1, 1, 1 ]] -> float) * W;
     s = sigmoid_matrix(z);
-    
+    print_matrix(s);
+
+    z = ([[ 1, 1, 0 ]] -> float) * W;
+    s = sigmoid_matrix(z);
+    print_matrix(s);
+
+    z = ([[ 1, 0, 1 ]] -> float) * W;
+    s = sigmoid_matrix(z);
+    print_matrix(s);
+
+    z = ([[ 1, 0, 0 ]] -> float) * W;
+    s = sigmoid_matrix(z);
+    print_matrix(s);
+
+    z = ([[ 0, 1, 1 ]] -> float) * W;
+    s = sigmoid_matrix(z);
+    print_matrix(s);
+
+    z = ([[ 0, 1, 0 ]] -> float) * W;
+    s = sigmoid_matrix(z);
+    print_matrix(s);
+
+    z = ([[ 0, 0, 1 ]] -> float) * W;
+    s = sigmoid_matrix(z);
+    print_matrix(s);
+
+    z = ([[ 0, 0, 0 ]] -> float) * W;
+    s = sigmoid_matrix(z);
     print_matrix(s);
     
     0   
