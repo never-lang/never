@@ -6,6 +6,6 @@ func fib(n -> int) -> int
 
 func main() -> int
 {
-    fib(4)
+    fib(34)
 }
 

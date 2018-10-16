@@ -31,6 +31,8 @@ gc * gc_new(unsigned int mem_size)
 
     gc * collector = (gc *)malloc(sizeof(gc));
     gc_mem * mem = (gc_mem *)malloc(mem_size * sizeof(gc_mem));
+    mem_ptr * wb_list_0 = (mem_ptr *)malloc(mem_size * sizeof(mem_ptr));
+    mem_ptr * wb_list_1 = (mem_ptr *)malloc(mem_size * sizeof(mem_ptr));
 
     mem[0].object_value = NULL;
     mem[0].next = 0;
@@ -44,6 +46,12 @@ gc * gc_new(unsigned int mem_size)
     mem[mem_size - 1].object_value = NULL;
     mem[mem_size - 1].next = 0;
     mem[mem_size - 1].mark = 0;
+
+    collector->w_index = 0;
+    collector->wb_top[0] = 0;
+    collector->wb_top[1] = 0;
+    collector->wb_list[0] = wb_list_0;
+    collector->wb_list[1] = wb_list_1;
 
     collector->free = 1;
     collector->mem_size = mem_size;
@@ -67,29 +75,45 @@ void gc_delete(gc * collector)
     {
         free(collector->mem);
     }
+    if (collector->wb_list[0] != NULL)
+    {
+        free(collector->wb_list[0]);
+    }
+    if (collector->wb_list[1] != NULL)
+    {
+        free(collector->wb_list[1]);
+    }
     free(collector);
 }
 
 void gc_sweep_all(gc * collector)
 {
     unsigned int i;
+    unsigned int w_index = collector->w_index;
+    unsigned int b_index = (collector->w_index + 1) % 2;
 
-    for (i = 0; i < collector->mem_size; i++)
+    for (i = 0; i < collector->wb_top[w_index]; i++)
     {
-        if (collector->mem[i].mark == 0 &&
-            collector->mem[i].object_value != NULL)
-        {
-            object_delete(collector->mem[i].object_value);
-            collector->mem[i].object_value = NULL;
+        mem_ptr idx = collector->wb_list[w_index][i];
 
-            collector->mem[i].next = collector->free;
-            collector->free = i;
-        }
-        else if (collector->mem[i].mark == 1)
+        if (collector->mem[idx].mark == 0 &&
+            collector->mem[idx].object_value != NULL)
         {
-            collector->mem[i].mark = 0;
+            object_delete(collector->mem[idx].object_value);
+            collector->mem[idx].object_value = NULL;
+
+            collector->mem[idx].next = collector->free;
+            collector->free = idx;
+        }
+        else if (collector->mem[idx].mark == 1)
+        {
+            collector->mem[idx].mark = 0;
+            collector->wb_list[b_index][collector->wb_top[b_index]++] = idx;
         }
     }
+
+    collector->wb_top[w_index] = 0;
+    collector->w_index = b_index;
 }
 
 void gc_mark_vec(gc * collector, mem_ptr addr)
@@ -205,6 +229,7 @@ void gc_run(gc * collector, gc_stack * stack, int stack_size,
 mem_ptr gc_alloc_any(gc * collector, object * value)
 {
     mem_ptr loc = collector->free;
+    unsigned int w_index = collector->w_index;
 
     if (loc == 0)
     {
@@ -214,6 +239,8 @@ mem_ptr gc_alloc_any(gc * collector, object * value)
 
     collector->mem[loc].object_value = value;
     collector->free = collector->mem[loc].next;
+
+    collector->wb_list[w_index][collector->wb_top[w_index]++] = loc;
 
     return loc;
 }

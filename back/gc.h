@@ -54,6 +54,9 @@ typedef struct gc
     mem_ptr free;
     unsigned int mem_size;
     gc_mem * mem;
+    unsigned int w_index;
+    unsigned int wb_top[2];
+    mem_ptr * wb_list[2];
 } gc;
 
 gc * gc_new(unsigned int mem_size);
