@@ -1,0 +1,18 @@
+
+func tab(a -> int) -> [_] -> int
+{
+    [ a, a, a, a ] -> int
+}
+
+func main() -> int
+{
+    let a = 12;
+    let v = {[ 1 ]} -> int;
+
+    v = tab(a);
+    print(v[0]);
+
+    a = 10;
+    print(v[0])
+}
+

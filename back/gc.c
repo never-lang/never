@@ -215,8 +215,10 @@ void gc_run_omfalos(gc * collector, gc_stack * omfalos, int stack_size)
 void gc_run(gc * collector, gc_stack * stack, int stack_size,
             mem_ptr global_vec)
 {
-    static unsigned int t = 0;
-    if (t++ % 10 != 0) return;
+    if (collector->wb_top[collector->w_index] < collector->mem_size * 0.8)
+    {
+        return;
+    }
 
     gc_mark_access(collector, stack, stack_size);
     if (global_vec > 0)
