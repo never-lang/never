@@ -4,7 +4,7 @@ enable_language(C)
 
 find_package(BISON)
 find_package(FLEX)
-BISON_TARGET(parser ${CMAKE_CURRENT_SOURCE_DIR}/front/parser.y ${CMAKE_CURRENT_SOURCE_DIR}/front/parser.c VERBOSE parser.txt REPORT_FILE parser.output)
+BISON_TARGET(parser ${CMAKE_CURRENT_SOURCE_DIR}/front/parser.y ${CMAKE_CURRENT_SOURCE_DIR}/front/parser.c VERBOSE parser.txt)
 FLEX_TARGET(scanner ${CMAKE_CURRENT_SOURCE_DIR}/front/scanner.l  ${CMAKE_CURRENT_SOURCE_DIR}/front/scanner.c)
 ADD_FLEX_BISON_DEPENDENCY(scanner parser)
 

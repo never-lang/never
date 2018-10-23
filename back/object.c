@@ -218,8 +218,15 @@ void object_arr_dim_mult(unsigned int dims, object_arr_dim * dv,
     *elems = e;
     for (d = 0; d < dims; d++)
     {
-        e /= dv[d].elems;
-        dv[d].mult = e;
+        if (dv[d].elems != 0)
+        {
+            e /= dv[d].elems;
+            dv[d].mult = e;
+        }
+        else
+        {
+            dv[d].mult = 1;
+        }
     }
 }
 
@@ -282,6 +289,17 @@ object * object_arr_copy(object * value)
     obj->arr_value = copy;
     
     return obj;
+}
+
+void object_arr_append(object_arr * arr_value, mem_ptr value)
+{
+    assert(arr_value->dims == 1);
+
+    arr_value->elems++;
+    arr_value->dv[0].elems++;
+    
+    arr_value->value = (mem_ptr *)realloc(arr_value->value, sizeof(mem_ptr) * arr_value->elems);
+    arr_value->value[arr_value->elems - 1] = value;
 }
 
 char object_arr_can_add(object_arr * arr1, object_arr * arr2)

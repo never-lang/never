@@ -31,23 +31,29 @@ typedef enum tailrec_op
     TAILREC_OP_ADD = 1
 } tailrec_op;
 
-int expr_id_tailrec(unsigned int syn_level, func * func_value,
+int expr_id_tailrec(unsigned int syn_level, symtab * stab,
                     expr * value, tailrec_op op);
-int expr_tailrec(unsigned int syn_level, func * func_value,
+int expr_tailrec(unsigned int syn_level, symtab * stab,
                  expr * value, tailrec_op op);
-int expr_list_tailrec(unsigned int syn_level, func * func_value,
+int expr_list_tailrec(unsigned int syn_level, symtab * stab,
                      expr_list * list, tailrec_op op);
-int expr_seq_tailrec(unsigned int syn_level, func * func_value,
+int expr_seq_tailrec(unsigned int syn_level, symtab * stab,
                      expr_list * list, tailrec_op op);
-int array_tailrec(unsigned int syn_level, func * func_value,
+int qualifier_tailrec(unsigned int syn_level, symtab * stab,
+                      qualifier * value, tailrec_op op);
+int qualifier_list_tailrec(unsigned int syn_level, symtab * stab,
+                           qualifier_list * list, tailrec_op op);
+int listcomp_tailrec(unsigned int syn_level, symtab * stab,
+                     listcomp * value, tailrec_op op);
+int array_tailrec(unsigned int syn_level, symtab * stab,
                   array * value, tailrec_op op);
-int bind_tailrec(unsigned int syn_level, func * func_value,
+int bind_tailrec(unsigned int syn_level, symtab * stab,
                  bind * value, tailrec_op op);
-int bind_list_tailrec(unsigned int syn_level, func * func_value,
+int bind_list_tailrec(unsigned int syn_level, symtab * stab,
                       bind_list * list, tailrec_op op);
-int except_tailrec(unsigned int syn_level, func * func_value,
+int except_tailrec(unsigned int syn_level, symtab * stab,
                    except * value, tailrec_op op);
-int except_list_tailrec(unsigned int syn_level, func * func_value,
+int except_list_tailrec(unsigned int syn_level, symtab * stab,
                         except_list * list, tailrec_op op);
 
 int func_tailrec(unsigned int syn_level, func * value);

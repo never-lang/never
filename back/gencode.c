@@ -86,12 +86,12 @@ int func_enum_func_list(func_list * list, int start)
 /**
  * free variables
  */
-int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
-                    int * result)
+int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
+                    expr * value, int * result)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(func_value->stab, value->id.id, SYMTAB_NESTED);
+    entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
@@ -190,15 +190,38 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
                     
                     freevar_value =
                         freevar_list_add(func_value->freevars, value->id.id);
-                        
-                        value->id.id_type_value = ID_TYPE_GLOBAL;
-                        value->id.id_freevar_value = freevar_value;
+                    
+                    value->id.id_type_value = ID_TYPE_GLOBAL;
+                    value->id.id_freevar_value = freevar_value;
                 }
             }
             else
             {
                 fprintf(stderr, "unknown bind type %d\n", bind_value->type);
             }            
+        }
+        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
+        {
+            qualifier * qualifier_value = entry->qualifier_value;
+            if (syn_level == entry->syn_level)
+            {
+                value->id.id_type_value = ID_TYPE_QUALIFIER;
+                value->id.id_qualifier_value = qualifier_value;
+            }
+            else
+            {
+                freevar * freevar_value = NULL;
+                if (func_value->freevars == NULL)
+                {
+                    func_value->freevars = freevar_list_new();
+                }
+                
+                freevar_value =
+                    freevar_list_add(func_value->freevars, value->id.id);
+                
+                value->id.id_type_value = ID_TYPE_GLOBAL;
+                value->id.id_freevar_value = freevar_value;
+            }
         }
         else
         {
@@ -211,15 +234,15 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
         print_error_msg(
             value->line_no,
             "cannot find variable %s, at this stage it is very bad\n",
-            value->id);
+            value->id.id);
         assert(0);
     }
 
     return 0;
 }
 
-int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
-                 int * result)
+int expr_gencode(unsigned int syn_level, func * func_value, symtab * stab,
+                 expr * value, int * result)
 {
     switch (value->type)
     {
@@ -231,10 +254,10 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
     case EXPR_STRING:
         break;
     case EXPR_ID:
-        expr_id_gencode(syn_level, func_value, value, result);
+        expr_id_gencode(syn_level, func_value, stab, value, result);
         break;
     case EXPR_NEG:
-        expr_gencode(syn_level, func_value, value->left, result);
+        expr_gencode(syn_level, func_value, stab, value->left, result);
         break;
     case EXPR_ADD:
     case EXPR_SUB:
@@ -247,47 +270,47 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
     case EXPR_GTE:
     case EXPR_EQ:
     case EXPR_NEQ:
-        expr_gencode(syn_level, func_value, value->left, result);
-        expr_gencode(syn_level, func_value, value->right, result);
+        expr_gencode(syn_level, func_value, stab, value->left, result);
+        expr_gencode(syn_level, func_value, stab, value->right, result);
         break;
     case EXPR_AND:
     case EXPR_OR:
-        expr_gencode(syn_level, func_value, value->left, result);
-        expr_gencode(syn_level, func_value, value->right, result);
+        expr_gencode(syn_level, func_value, stab, value->left, result);
+        expr_gencode(syn_level, func_value, stab, value->right, result);
         break;
     case EXPR_NOT:
-        expr_gencode(syn_level, func_value, value->left, result);
+        expr_gencode(syn_level, func_value, stab, value->left, result);
         break;
     case EXPR_SUP:
-        expr_gencode(syn_level, func_value, value->left, result);
+        expr_gencode(syn_level, func_value, stab, value->left, result);
         break;
     case EXPR_COND:
-        expr_gencode(syn_level, func_value, value->left, result);
-        expr_gencode(syn_level, func_value, value->middle, result);
-        expr_gencode(syn_level, func_value, value->right, result);
+        expr_gencode(syn_level, func_value, stab, value->left, result);
+        expr_gencode(syn_level, func_value, stab, value->middle, result);
+        expr_gencode(syn_level, func_value, stab, value->right, result);
         break;
     case EXPR_ARRAY:
         if (value->array.array_value)
         {
-            array_gencode(syn_level, func_value, value->array.array_value,
+            array_gencode(syn_level, func_value, stab, value->array.array_value,
                           result);
         }
         break;
     case EXPR_ARRAY_DEREF:
-        expr_gencode(syn_level, func_value, value->array_deref.array_expr,
+        expr_gencode(syn_level, func_value, stab, value->array_deref.array_expr,
                      result);
         if (value->array_deref.ref != NULL)
         {
-            expr_list_gencode(syn_level, func_value, value->array_deref.ref,
+            expr_list_gencode(syn_level, func_value, stab, value->array_deref.ref,
                               result);
         }
         break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
-        expr_gencode(syn_level, func_value, value->call.func_expr, result);
+        expr_gencode(syn_level, func_value, stab, value->call.func_expr, result);
         if (value->call.params != NULL)
         {
-            expr_list_gencode(syn_level, func_value, value->call.params, result);
+            expr_list_gencode(syn_level, func_value, stab, value->call.params, result);
         }
         break;
     case EXPR_FUNC:
@@ -299,38 +322,45 @@ int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
-            expr_list_gencode(syn_level, func_value, value->seq.list, result);
+            expr_list_gencode(syn_level, func_value, stab, value->seq.list, result);
         }
         break;
     case EXPR_ASS:
-        expr_gencode(syn_level, func_value, value->left, result);
-        expr_gencode(syn_level, func_value, value->right, result);
+        expr_gencode(syn_level, func_value, stab, value->left, result);
+        expr_gencode(syn_level, func_value, stab, value->right, result);
         break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
-        expr_gencode(syn_level, func_value, value->whileloop.cond, result);
-        expr_gencode(syn_level, func_value, value->whileloop.do_value, result);
+        expr_gencode(syn_level, func_value, stab, value->whileloop.cond, result);
+        expr_gencode(syn_level, func_value, stab, value->whileloop.do_value, result);
         break;
     case EXPR_FOR:
-        expr_gencode(syn_level, func_value, value->forloop.init, result);
-        expr_gencode(syn_level, func_value, value->forloop.cond, result);
-        expr_gencode(syn_level, func_value, value->forloop.incr, result);
-        expr_gencode(syn_level, func_value, value->forloop.do_value, result);
+        expr_gencode(syn_level, func_value, stab, value->forloop.init, result);
+        expr_gencode(syn_level, func_value, stab, value->forloop.cond, result);
+        expr_gencode(syn_level, func_value, stab, value->forloop.incr, result);
+        expr_gencode(syn_level, func_value, stab, value->forloop.do_value, result);
         break;
     case EXPR_BUILD_IN:
-        expr_list_gencode(syn_level, func_value, value->func_build_in.param,
+        expr_list_gencode(syn_level, func_value, stab, value->func_build_in.param,
                           result);
         break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
-        expr_gencode(syn_level, func_value, value->left, result);
+        expr_gencode(syn_level, func_value, stab, value->left, result);
+        break;
+    case EXPR_LISTCOMP:
+        if (value->listcomp_value != NULL)
+        {
+            listcomp_gencode(syn_level, func_value, value->listcomp_value->stab,
+                             value->listcomp_value, result);
+        }
         break;
     }
     return 0;
 }
 
 int expr_list_gencode(unsigned int syn_level, func * func_value,
-                      expr_list * list, int * result)
+                      symtab * stab, expr_list * list, int * result)
 {
     expr_list_node * node = list->tail;
     while (node != NULL)
@@ -338,30 +368,88 @@ int expr_list_gencode(unsigned int syn_level, func * func_value,
         expr * value = node->value;
         if (value)
         {
-            expr_gencode(syn_level, func_value, value, result);
+            expr_gencode(syn_level, func_value, stab, value, result);
         }
         node = node->next;
     }
     return 0;
 }
 
-int array_gencode(unsigned int syn_level, func * func_value,
-                  array * array_value, int * result)
+int qualifier_gencode(unsigned int syn_level, func * func_value,
+                      symtab * stab, qualifier * value, int * result)
 {
-    if (array_value->type == ARRAY_INIT || array_value->type == ARRAY_SUB)
+    switch (value->type)
     {
-        expr_list_gencode(syn_level, func_value, array_value->elements, result);
-    }
-    else if (array_value->type == ARRAY_DIMS)
-    {
-        expr_list_gencode(syn_level, func_value, array_value->dims, result);
+        case QUALIFIER_UNKNOWN:
+            assert(0);
+        break;
+        case QUALIFIER_GENERATOR:
+            if (value->expr_value != NULL)
+            {
+                expr_gencode(syn_level, func_value, stab, value->expr_value, result);
+            }
+        break;
+        case QUALIFIER_FILTER:
+            if (value->expr_value != NULL)
+            {
+                expr_gencode(syn_level, func_value, stab, value->expr_value, result);
+            }
+        break;
     }
 
     return 0;
 }
 
-int bind_gencode(unsigned int syn_level, func * func_value, bind * bind_value,
-                 int * result)
+int qualifier_list_gencode(unsigned int syn_level, func * func_value,
+                           symtab * stab, qualifier_list * list, int * result)
+{
+    qualifier_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        qualifier * qualifier_value = node->value;
+        if (qualifier_value != NULL)
+        {
+            qualifier_gencode(syn_level, func_value, stab, qualifier_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int listcomp_gencode(unsigned int syn_level, func * func_value,
+                     symtab * stab, listcomp * value, int * result)
+{
+    if (value->list != NULL)
+    {
+        qualifier_list_gencode(syn_level, func_value, stab, value->list, result);
+    }
+    if (value->expr_value != NULL)
+    {
+        expr_gencode(syn_level, func_value, stab, value->expr_value, result);
+    }
+
+    return 0;
+}
+
+int array_gencode(unsigned int syn_level, func * func_value,
+                  symtab * stab, array * array_value, int * result)
+{
+    if (array_value->type == ARRAY_INIT || array_value->type == ARRAY_SUB)
+    {
+        expr_list_gencode(syn_level, func_value, stab, array_value->elements, result);
+    }
+    else if (array_value->type == ARRAY_DIMS)
+    {
+        expr_list_gencode(syn_level, func_value, stab, array_value->dims, result);
+    }
+
+    return 0;
+}
+
+int bind_gencode(unsigned int syn_level, func * func_value, symtab * stab,
+                 bind * bind_value, int * result)
 {
     switch (bind_value->type)
     {
@@ -373,7 +461,7 @@ int bind_gencode(unsigned int syn_level, func * func_value, bind * bind_value,
         case BIND_VAR:
             if (bind_value->expr_value != NULL)
             {
-                expr_gencode(syn_level, func_value, bind_value->expr_value, result);
+                expr_gencode(syn_level, func_value, stab, bind_value->expr_value, result);
             }
         break;
     }
@@ -382,7 +470,7 @@ int bind_gencode(unsigned int syn_level, func * func_value, bind * bind_value,
 }
 
 int bind_list_gencode(unsigned int syn_level, func * func_value,
-                      bind_list * list, int * result)
+                      symtab * stab, bind_list * list, int * result)
 {
     bind_list_node * node = list->tail;
     while (node != NULL)
@@ -390,7 +478,7 @@ int bind_list_gencode(unsigned int syn_level, func * func_value,
         bind * bind_value = node->value;
         if (bind_value)
         {
-            bind_gencode(syn_level, func_value, bind_value, result);
+            bind_gencode(syn_level, func_value, stab, bind_value, result);
         }
         node = node->next;
     }
@@ -398,18 +486,18 @@ int bind_list_gencode(unsigned int syn_level, func * func_value,
 }
 
 int except_gencode(unsigned int syn_level, func * func_value,
-                   except * value, int * result)
+                   symtab * stab, except * value, int * result)
 {
     if (value->expr_value != NULL)
     {
-        expr_gencode(syn_level, func_value, value->expr_value, result);
+        expr_gencode(syn_level, func_value, stab, value->expr_value, result);
     }
 
     return 0;
 }
 
 int except_list_gencode(unsigned int syn_level, func * func_value,
-                        except_list * list, int * result)
+                        symtab * stab, except_list * list, int * result)
 {
     except_list_node * node = list->tail;
     while (node != NULL)
@@ -417,7 +505,7 @@ int except_list_gencode(unsigned int syn_level, func * func_value,
         except * value = node->value;
         if (value != NULL)
         {
-            except_gencode(syn_level, func_value, value, result);
+            except_gencode(syn_level, func_value, stab, value, result);
         }
         node = node->next;
     }
@@ -428,7 +516,7 @@ int except_list_gencode(unsigned int syn_level, func * func_value,
 /**
  * free variables
  */
-int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
+int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * freevar_value,
                                   int * result)
 {
     /** search in symtab */
@@ -436,7 +524,7 @@ int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
     /** otherwise mark as global and set index */
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(func_value->stab, freevar_value->id, SYMTAB_FLAT);
+    entry = symtab_lookup(stab, freevar_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value)
@@ -453,6 +541,11 @@ int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
         {
             freevar_value->type = FREEVAR_BIND;
             freevar_value->bind_value = entry->bind_value;
+        }
+        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value)
+        {
+            freevar_value->type = FREEVAR_QUALIFIER;
+            freevar_value->qualifier_value = entry->qualifier_value;
         }
         else
         {
@@ -477,7 +570,7 @@ int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
     return 0;
 }
 
-int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
+int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result)
 {
     switch (value->type)
     {
@@ -488,7 +581,7 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
         /* not possible */
         break;
     case EXPR_NEG:
-        func_gencode_freevars_expr(func_value, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
         break;
     case EXPR_ADD:
     case EXPR_SUB:
@@ -501,97 +594,98 @@ int func_gencode_freevars_expr(func * func_value, expr * value, int * result)
     case EXPR_GTE:
     case EXPR_EQ:
     case EXPR_NEQ:
-        func_gencode_freevars_expr(func_value, value->left, result);
-        func_gencode_freevars_expr(func_value, value->right, result);
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
         break;
     case EXPR_AND:
     case EXPR_OR:
-        func_gencode_freevars_expr(func_value, value->left, result);
-        func_gencode_freevars_expr(func_value, value->right, result);
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
         break;
     case EXPR_NOT:
-        func_gencode_freevars_expr(func_value, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
         break;
     case EXPR_SUP:
-        func_gencode_freevars_expr(func_value, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
         break;
     case EXPR_COND:
-        func_gencode_freevars_expr(func_value, value->left, result);
-        func_gencode_freevars_expr(func_value, value->middle, result);
-        func_gencode_freevars_expr(func_value, value->right, result);
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->middle, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
         break;
     case EXPR_ARRAY:
-        if (value->array.array_value->dims)
+        if (value->array.array_value != NULL)
         {
-            func_gencode_freevars_expr_list(
-                func_value, value->array.array_value->dims, result);
-        }
-        if (value->array.array_value->elements)
-        {
-            func_gencode_freevars_expr_list(
-                func_value, value->array.array_value->elements, result);
+            func_gencode_freevars_array(func_value, stab, value->array.array_value, result);
         }
         break;
     case EXPR_ARRAY_DEREF:
-        func_gencode_freevars_expr(func_value, value->array_deref.array_expr,
+        func_gencode_freevars_expr(func_value, stab, value->array_deref.array_expr,
                                    result);
         if (value->array_deref.ref != NULL)
         {
-            func_gencode_freevars_expr_list(func_value, value->array_deref.ref,
+            func_gencode_freevars_expr_list(func_value, stab, value->array_deref.ref,
                                             result);
         }
         break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
-        func_gencode_freevars_expr(func_value, value->call.func_expr, result);
+        func_gencode_freevars_expr(func_value, stab, value->call.func_expr, result);
         if (value->call.params)
         {
-            func_gencode_freevars_expr_list(func_value, value->call.params,
+            func_gencode_freevars_expr_list(func_value, stab, value->call.params,
                                             result);
         }
         break;
     case EXPR_FUNC:
         if (value->func_value)
         {
-            func_gencode_freevars_func(func_value, value->func_value, result);
+            func_gencode_freevars_func(func_value, stab, value->func_value, result);
         }
         break;
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
-            func_gencode_freevars_expr_list(func_value, value->seq.list,
+            func_gencode_freevars_expr_list(func_value, stab, value->seq.list,
                                             result);
         }
         break;
     case EXPR_ASS:
-        func_gencode_freevars_expr(func_value, value->left, result);
-        func_gencode_freevars_expr(func_value, value->right, result);
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
         break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
-        func_gencode_freevars_expr(func_value, value->whileloop.cond, result);
-        func_gencode_freevars_expr(func_value, value->whileloop.do_value, result);
+        func_gencode_freevars_expr(func_value, stab, value->whileloop.cond, result);
+        func_gencode_freevars_expr(func_value, stab, value->whileloop.do_value, result);
         break;
     case EXPR_FOR:
-        func_gencode_freevars_expr(func_value, value->forloop.init, result);
-        func_gencode_freevars_expr(func_value, value->forloop.cond, result);
-        func_gencode_freevars_expr(func_value, value->forloop.incr, result);
-        func_gencode_freevars_expr(func_value, value->forloop.do_value, result);
+        func_gencode_freevars_expr(func_value, stab, value->forloop.init, result);
+        func_gencode_freevars_expr(func_value, stab, value->forloop.cond, result);
+        func_gencode_freevars_expr(func_value, stab, value->forloop.incr, result);
+        func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
         break;
     case EXPR_BUILD_IN:
-        func_gencode_freevars_expr_list(func_value, value->func_build_in.param,
+        func_gencode_freevars_expr_list(func_value, stab, value->func_build_in.param,
                                         result);
         break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
-        func_gencode_freevars_expr(func_value, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        break;
+    case EXPR_LISTCOMP:
+        if (value->listcomp_value != NULL)
+        {
+            func_gencode_freevars_listcomp(func_value, value->listcomp_value->stab,
+                                           value->listcomp_value, result);
+        }
         break;
     }
 
     return 0;
 }
 
-int func_gencode_freevars_expr_list(func * func_value, expr_list * list,
+int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
                                     int * result)
 {
     expr_list_node * node = list->tail;
@@ -600,7 +694,7 @@ int func_gencode_freevars_expr_list(func * func_value, expr_list * list,
         expr * value = node->value;
         if (value != NULL)
         {
-            func_gencode_freevars_expr(func_value, value, result);
+            func_gencode_freevars_expr(func_value, stab, value, result);
         }
         node = node->next;
     }
@@ -608,17 +702,93 @@ int func_gencode_freevars_expr_list(func * func_value, expr_list * list,
     return 0;
 }
 
-int func_gencode_freevars_bind(func * func_value, bind * bind_value,
+int func_gencode_freevars_qualifier(func * func_value, symtab * stab,
+                                    qualifier * value, int * result)
+{
+    switch (value->type)
+    {
+        case QUALIFIER_UNKNOWN:
+            assert(0);
+        break;
+        case QUALIFIER_GENERATOR:
+            if (value->expr_value != NULL)
+            {
+                func_gencode_freevars_expr(func_value, stab, value->expr_value, result);
+            }
+        break;
+        case QUALIFIER_FILTER:
+            if (value->expr_value != NULL)
+            {
+                func_gencode_freevars_expr(func_value, stab, value->expr_value, result);
+            }
+        break;
+    }
+
+    return 0;
+}                                    
+
+int func_gencode_freevars_qualifier_list(func * func_value, symtab * stab,
+                                         qualifier_list * list, int * result)
+{
+    qualifier_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        qualifier * qualifier_value = node->value;
+        if (qualifier_value != NULL)
+        {
+            func_gencode_freevars_qualifier(func_value, stab, qualifier_value, result);
+        }
+        node = node->next;
+    }
+
+
+    return 0;
+}
+
+int func_gencode_freevars_listcomp(func * func_value, symtab * stab,
+                                   listcomp * value, int * result)
+{
+    if (value->list != NULL)
+    {
+        func_gencode_freevars_qualifier_list(func_value, stab, value->list, result);
+    }
+    if (value->expr_value != NULL)
+    {
+        func_gencode_freevars_expr(func_value, stab, value->expr_value, result);
+    }
+
+    return 0;
+}                                   
+
+int func_gencode_freevars_array(func * func_value, symtab * stab, array * array_value,
+                                int * result)
+{
+    if (array_value->dims != NULL)
+    {
+        func_gencode_freevars_expr_list(
+            func_value, stab, array_value->dims, result);
+    }
+    if (array_value->elements != NULL)
+    {
+        func_gencode_freevars_expr_list(
+            func_value, stab, array_value->elements, result);
+    }
+
+    return 0;
+}                                
+
+int func_gencode_freevars_bind(func * func_value, symtab * stab, bind * bind_value,
                                int * result)
 {
     if (bind_value->expr_value)
     {
-        func_gencode_freevars_expr(func_value, bind_value->expr_value, result);
+        func_gencode_freevars_expr(func_value, stab, bind_value->expr_value, result);
     }
     return 0;
 }
 
-int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
+int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
                                     int * result)
 {
     bind_list_node * node = list->tail;
@@ -627,25 +797,25 @@ int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
         bind * bind_value = node->value;
         if (bind_value != NULL)
         {
-            func_gencode_freevars_bind(func_value, bind_value, result);
+            func_gencode_freevars_bind(func_value, stab, bind_value, result);
         }
         node = node->next;
     }
     return 0;
 }
 
-int func_gencode_freevars_except(func * func_value, except * except_value,
+int func_gencode_freevars_except(func * func_value, symtab * stab, except * except_value,
                                  int * result)
 {
     if (except_value->expr_value != NULL)
     {
-        func_gencode_freevars_expr(func_value, except_value->expr_value, result);
+        func_gencode_freevars_expr(func_value, stab, except_value->expr_value, result);
     }
 
     return 0;
 }
 
-int func_gencode_freevars_except_list(func * func_value, except_list * list,
+int func_gencode_freevars_except_list(func * func_value, symtab * stab, except_list * list,
                                       int * result)
 {
     except_list_node * node = list->tail;
@@ -654,7 +824,7 @@ int func_gencode_freevars_except_list(func * func_value, except_list * list,
         except * value = node->value;
         if (value != NULL)
         {
-            func_gencode_freevars_except(func_value, value, result);
+            func_gencode_freevars_except(func_value, stab, value, result);
         }
         node = node->next;
     }
@@ -662,22 +832,22 @@ int func_gencode_freevars_except_list(func * func_value, except_list * list,
     return 0;
 }
 
-int func_gencode_freevars_func_except(func * func_value, func_except * value,
+int func_gencode_freevars_func_except(func * func_value, symtab * stab, func_except * value,
                                       int * result)
 {
     if (value->list != NULL)
     {
-        func_gencode_freevars_except_list(func_value, value->list, result);
+        func_gencode_freevars_except_list(func_value, stab, value->list, result);
     }
     if (value->all != NULL)
     {
-        func_gencode_freevars_except(func_value, value->all, result);
+        func_gencode_freevars_except(func_value, stab, value->all, result);
     }
 
     return 0;
 }
 
-int func_gencode_freevars_func(func * func_value, func * subfunc_value,
+int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_value,
                                int * result)
 {
     if (subfunc_value->freevars)
@@ -688,7 +858,7 @@ int func_gencode_freevars_func(func * func_value, func * subfunc_value,
             freevar * freevar_value = node->value;
             if (freevar_value != NULL)
             {
-                func_gencode_freevars_freevar(func_value, freevar_value,
+                func_gencode_freevars_freevar(func_value, stab, freevar_value,
                                               result);
             }
             node = node->next;
@@ -698,7 +868,7 @@ int func_gencode_freevars_func(func * func_value, func * subfunc_value,
     return 0;
 }
 
-int func_gencode_freevars_func_list(func * func_value, func_list * list,
+int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list * list,
                                     int * result)
 {
     func_list_node * node = list->tail;
@@ -708,7 +878,7 @@ int func_gencode_freevars_func_list(func * func_value, func_list * list,
         func * subfunc_value = node->value;
         if (subfunc_value != NULL)
         {
-            func_gencode_freevars_func(func_value, subfunc_value, result);
+            func_gencode_freevars_func(func_value, stab, subfunc_value, result);
         }
         node = node->next;
     }
@@ -716,25 +886,25 @@ int func_gencode_freevars_func_list(func * func_value, func_list * list,
     return 0;
 }
 
-int func_gencode_freevars(func * func_value, int * result)
+int func_gencode_freevars(func * func_value, symtab * stab, int * result)
 {
     if (func_value->body && func_value->body->binds)
     {
-        func_gencode_freevars_bind_list(func_value, func_value->body->binds,
+        func_gencode_freevars_bind_list(func_value, stab, func_value->body->binds,
                                         result);
     }
     if (func_value->body && func_value->body->funcs)
     {
-        func_gencode_freevars_func_list(func_value, func_value->body->funcs,
+        func_gencode_freevars_func_list(func_value, stab, func_value->body->funcs,
                                         result);
     }
     if (func_value->body && func_value->body->ret)
     {
-        func_gencode_freevars_expr(func_value, func_value->body->ret, result);
+        func_gencode_freevars_expr(func_value, stab, func_value->body->ret, result);
     }
     if (func_value->except)
     {
-        func_gencode_freevars_func_except(func_value, func_value->except, result);
+        func_gencode_freevars_func_except(func_value, stab, func_value->except, result);
     }
 
     return 0;
@@ -759,7 +929,7 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
 
     if (func_value->body && func_value->body->binds)
     {
-        bind_list_gencode(syn_level, func_value, func_value->body->binds,
+        bind_list_gencode(syn_level, func_value, func_value->stab, func_value->body->binds,
                           result);
     }
     if (func_value->body && func_value->body->funcs)
@@ -768,19 +938,19 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
     }
     if (func_value->body && func_value->body->ret)
     {
-        expr_gencode(syn_level, func_value, func_value->body->ret, result);
+        expr_gencode(syn_level, func_value, func_value->stab, func_value->body->ret, result);
     }
     if (func_value->except && func_value->except->list)
     {
-        except_list_gencode(syn_level, func_value, func_value->except->list, result);
+        except_list_gencode(syn_level, func_value, func_value->stab, func_value->except->list, result);
     }
     if (func_value->except && func_value->except->all)
     {
-        except_gencode(syn_level, func_value, func_value->except->all, result);
+        except_gencode(syn_level, func_value, func_value->stab, func_value->except->all, result);
     }
 
     /** set subfunction local/global indexes **/
-    func_gencode_freevars(func_value, result);
+    func_gencode_freevars(func_value, func_value->stab, result);
 
     return 0;
 }
@@ -893,6 +1063,20 @@ int func_freevar_id_bind_emit(freevar * value, int stack_level,
     return 0;
 }
 
+int func_freevar_id_qualifier_emit(freevar * value, int stack_level,
+                                   module * module_value, int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level - value->qualifier_value->stack_level - 3;
+    bc.id_local.index = 0;
+    
+    bytecode_add(module_value->code, &bc);
+    
+    return 0;
+}
+
 int func_freevar_emit(freevar * value, int stack_level, module * module_value,
                       int * result)
 {
@@ -906,6 +1090,9 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
         break;
     case FREEVAR_LOCAL:
         func_freevar_id_local_emit(value, stack_level, module_value, result);
+        break;
+    case FREEVAR_QUALIFIER:
+        func_freevar_id_qualifier_emit(value, stack_level, module_value, result);
         break;
     case FREEVAR_BIND:
         func_freevar_id_bind_emit(value, stack_level, module_value, result);
@@ -1060,6 +1247,9 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
         break;
     case ID_TYPE_BIND:
         expr_id_bind_emit(value, stack_level, module_value, result);
+        break;
+    case ID_TYPE_QUALIFIER:
+        expr_id_qualifier_emit(value, stack_level, module_value, result);
         break;        
     case ID_TYPE_FUNC_TOP:
         if (value->id.id_func_value != NULL)
@@ -1727,8 +1917,8 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_MOD:
-        expr_emit(value->right, stack_level, module_value, list_weak, result);
-        expr_emit(value->left, stack_level + 1, module_value, list_weak, result);
+        expr_emit(value->left, stack_level, module_value, list_weak, result);
+        expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
 
         bc.type = BYTECODE_LINE;
         bc.line.no = value->line_no;
@@ -2015,6 +2205,13 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             assert(0);
         }
         break;
+    case EXPR_LISTCOMP:
+        if (value->listcomp_value != NULL)
+        {
+            listcomp_emit(value->listcomp_value, stack_level, module_value,
+                          list_weak, result);
+        }
+        break;
     }
     return 0;
 }
@@ -2069,6 +2266,214 @@ int expr_seq_emit(expr_list * list, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_id_qualifier_emit(expr * value, int stack_level, module * module_value,
+                           int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level - value->id.id_qualifier_value->stack_level - 3;
+    bc.id_local.index = 0;
+
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_yeld_emit(listcomp * listcomp_value, int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(listcomp_value->expr_value, stack_level, module_value, list_weak, result);
+
+    /* append value to the list */
+    bc.type = BYTECODE_ARRAY_APPEND;
+    bc.id_local.stack_level = stack_level - listcomp_value->stack_level;
+    bc.id_local.index = 0;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int generator_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                   int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode * labelA, * labelE;
+    bytecode * cond, * condz;
+    qualifier * value = node->value;
+    value->stack_level = stack_level;
+    
+    expr_emit(value->expr_value, stack_level, module_value,
+              list_weak, result);
+
+    /* loop counter */
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelA = bytecode_add(module_value->code, &bc);
+
+    /* loop all elements */
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = 0;
+    bc.id_local.index = 0;
+    bytecode_add(module_value->code, &bc);    
+
+    bc.type = BYTECODE_ID_DIM_LOCAL;
+    bc.id_dim_local.stack_level = 2; 
+    bc.id_dim_local.index = 0;
+    bc.id_dim_local.dim_index = 0; 
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_OP_LT_INT;
+    bytecode_add(module_value->code, &bc);
+    
+    bc.type = BYTECODE_JUMPZ;
+    condz = bytecode_add(module_value->code, &bc);
+
+    /* push value */
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = 1;
+    bc.id_local.index = 0;
+    bytecode_add(module_value->code, &bc);
+    
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = 1;
+    bc.id_local.index = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_ARRAY_DEREF;
+    bc.array_deref.dims = 1;
+    bytecode_add(module_value->code, &bc);
+
+    qualifier_stack_emit(listcomp_value, node->next, stack_level + 3, module_value,
+                         list_weak, result);
+
+    /* pop value */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 1;
+    bytecode_add(module_value->code, &bc);
+
+    /* inc loop counter */
+    bc.type = BYTECODE_OP_INC_INT;
+    bc.id_local.stack_level = 0;
+    bc.id_local.index = 0;
+    bytecode_add(module_value->code, &bc);
+
+    /* jump to beginning */
+    bc.type = BYTECODE_JUMP;
+    cond = bytecode_add(module_value->code, &bc);
+    cond->jump.offset = labelA->addr - cond->addr;
+
+    /* loop end */
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+    condz->jump.offset = labelE->addr - condz->addr;
+
+    /* pop list and counter */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 2;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int filter_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                int stack_level, module * module_value,
+                func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode * labelE, * condz;
+    qualifier * value = node->value;
+    value->stack_level = stack_level;
+
+    expr_emit(value->expr_value, stack_level, module_value,
+              list_weak, result);
+
+    bc.type = BYTECODE_JUMPZ;
+    condz = bytecode_add(module_value->code, &bc);
+    
+    qualifier_stack_emit(listcomp_value, node->next, stack_level, module_value,
+                         list_weak, result);
+
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+    condz->jump.offset = labelE->addr - condz->addr;     
+    
+    return 0;
+}
+
+int qualifier_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                   int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result)
+{
+    qualifier * value = node->value;
+
+    switch (value->type)
+    {
+        case QUALIFIER_GENERATOR:
+            generator_emit(listcomp_value, node, stack_level, module_value, list_weak, result);
+        break;
+        case QUALIFIER_FILTER:
+            filter_emit(listcomp_value, node, stack_level, module_value, list_weak, result);
+        break;
+        case QUALIFIER_UNKNOWN:
+            assert(0);
+        break;
+    }
+
+    return 0;
+}
+
+int qualifier_stack_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                         int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result)
+{
+    if (node != NULL)
+    {
+        qualifier * value = node->value;
+        if (value != NULL)
+        {
+            qualifier_emit(listcomp_value, node, stack_level, module_value,
+                           list_weak, result);
+        }
+    }
+    else
+    {
+        if (listcomp_value->expr_value != NULL)
+        {
+            expr_yeld_emit(listcomp_value, stack_level, module_value, list_weak, result);
+        }
+    }
+
+    return 0;
+}                         
+                 
+int listcomp_emit(listcomp * listcomp_value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    listcomp_value->stack_level = stack_level;
+
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 0;
+    bytecode_add(module_value->code, &bc);    
+
+    bc.type = BYTECODE_MK_INIT_ARRAY;
+    bc.mk_array.dims = 1;
+    bytecode_add(module_value->code, &bc);
+
+    qualifier_stack_emit(listcomp_value, listcomp_value->list->tail, stack_level + 1,
+                         module_value, list_weak, result);
+    return 0;
+}                  
+
 int array_dims_emit(array * array_value, int stack_level, module * module_value,
                     func_list_weak * list_weak, int * result)
 {
@@ -2088,8 +2493,8 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     {
         assert(0);
     }
-    bc.mk_array.dims = array_value->dims->count;
 
+    bc.mk_array.dims = array_value->dims->count;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -2435,7 +2840,7 @@ int func_main_emit(never * nev, int stack_level, module * module_value,
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(nev->stab, "main", SYMTAB_FLAT);
+    entry = symtab_lookup(nev->stab, "main", SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL && entry->type == SYMTAB_FUNC)
     {
         bytecode bc = { 0 };

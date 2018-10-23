@@ -99,6 +99,7 @@ unsigned int object_arr_dim_addr(unsigned int dims, object_arr_dim * dv,
                                  object_arr_dim * addr, int * oobounds);
 object_arr_dim * object_arr_dim_copy(unsigned int dims, object_arr_dim * value);
 object * object_arr_copy(object * value);
+void object_arr_append(object_arr * arr_value, mem_ptr value);
 
 char object_arr_can_add(object_arr * arr1, object_arr * arr2);
 char object_arr_can_mult(object_arr * arr1, object_arr * arr2);

@@ -75,6 +75,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_NEQ_STRING, bytecode_print_op_neq_string },
 
     { BYTECODE_OP_NOT_INT, bytecode_print_op_not_int },
+    { BYTECODE_OP_INC_INT, bytecode_print_op_inc_int },
 
     { BYTECODE_INT_TO_FLOAT, bytecode_print_int_to_float },
     { BYTECODE_FLOAT_TO_INT, bytecode_print_float_to_int },
@@ -104,6 +105,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_MK_ARRAY_FLOAT, bytecode_print_mk_array_float },
     { BYTECODE_MK_INIT_ARRAY, bytecode_print_mk_init_array },
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
+    { BYTECODE_ARRAY_APPEND, bytecode_print_array_append },
 
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_FUNC_OBJ, bytecode_print_func_obj },
@@ -339,6 +341,13 @@ void bytecode_print_op_not_int(bytecode * code)
     printf("%d: op not\n", code->addr);
 }
 
+void bytecode_print_op_inc_int(bytecode * code)
+{
+    printf("%d: op inc int %d %d\n", code->addr, 
+                                     code->id_local.stack_level,
+                                     code->id_local.index);
+}
+
 void bytecode_print_int_to_float(bytecode * code)
 {
     printf("%d: int to float\n", code->addr);
@@ -459,6 +468,13 @@ void bytecode_print_mk_init_array(bytecode * code)
 void bytecode_print_array_deref(bytecode * code)
 {
     printf("%d: array ref %d\n", code->addr, code->array_deref.dims);
+}
+
+void bytecode_print_array_append(bytecode * code)
+{
+    printf("%d: array append %d %d\n", code->addr, 
+                                       code->id_local.stack_level,
+                                       code->id_local.index);
 }
 
 void bytecode_print_func_def(bytecode * code)

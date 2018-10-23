@@ -130,16 +130,21 @@ void symtab_entry_print(symtab_entry * entry)
     {
         printf("[B][%s][%d]\n", entry->id, entry->syn_level);
     }
+    else if (entry->type == SYMTAB_QUALIFIER)
+    {
+        printf("[Q][%s][%d]\n", entry->id, entry->syn_level);
+    }
     else if (entry->type == SYMTAB_FUNC)
     {
         printf("[F][%s][%d]\n", entry->id, entry->syn_level);
     }
 }
 
-symtab * symtab_new(unsigned int size, symtab * parent)
+symtab * symtab_new(unsigned int size, symtab_type type, symtab * parent)
 {
     symtab * tab = (symtab *)malloc(sizeof(symtab));
-
+    
+    tab->type = type;
     tab->size = size;
     tab->count = 0;
     tab->parent = parent;
@@ -199,6 +204,19 @@ void symtab_add_bind(symtab * tab, bind * bind_value, unsigned int syn_level)
     symtab_resize(tab);
 }
 
+void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned int syn_level)
+{
+    if (qualifier_value->id == NULL)
+    {
+        return;
+    }
+    
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_QUALIFIER, qualifier_value->id,
+                            qualifier_value, syn_level);
+    tab->count++;
+    symtab_resize(tab);
+}
+
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level)
 {
     if (func_value->decl->id == NULL)
@@ -212,14 +230,17 @@ void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level)
     symtab_resize(tab);
 }
 
-symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested)
+symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup)
 {
     symtab_entry * entry = NULL;
 
     entry = symtab_entry_lookup_object(tab->entries, tab->size, id);
-    if (nested && entry == NULL && tab->parent != NULL)
+    if (((lookup == SYMTAB_LOOKUP_GLOBAL) ||
+         ((lookup == SYMTAB_LOOKUP_LOCAL) && (tab->type == SYMTAB_TYPE_BLOCK))) &&
+        (entry == NULL) && 
+        (tab->parent != NULL))
     {
-        return symtab_lookup(tab->parent, id, nested);
+        return symtab_lookup(tab->parent, id, lookup);
     }
     else
     {

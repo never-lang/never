@@ -22,6 +22,7 @@
 #include "expr.h"
 #include "array.h"
 #include "func.h"
+#include "listcomp.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -249,6 +250,18 @@ expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value)
     return ret;
 }
 
+expr * expr_new_listcomp(listcomp * listcomp_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_LISTCOMP;
+    ret->line_no = 0;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->listcomp_value = listcomp_value;    
+        
+    return ret;
+}
+
 expr * expr_conv(expr * expr_value, expr_type conv)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -394,6 +407,9 @@ void expr_delete(expr * value)
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
         expr_delete(value->left);
+        break;
+    case EXPR_LISTCOMP:
+        listcomp_delete(value->listcomp_value);
         break;
     }
 

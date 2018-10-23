@@ -73,6 +73,8 @@ typedef enum bytecode_type
     BYTECODE_OP_NEQ_STRING,
 
     BYTECODE_OP_NOT_INT,
+    
+    BYTECODE_OP_INC_INT,
 
     BYTECODE_INT_TO_FLOAT,
     BYTECODE_FLOAT_TO_INT,
@@ -102,6 +104,7 @@ typedef enum bytecode_type
     BYTECODE_MK_ARRAY_FLOAT,
     BYTECODE_MK_INIT_ARRAY,
     BYTECODE_ARRAY_DEREF,
+    BYTECODE_ARRAY_APPEND,
 
     BYTECODE_FUNC_DEF,
     BYTECODE_FUNC_OBJ,
@@ -142,7 +145,7 @@ typedef struct bytecode
         {
             unsigned int index; /* BYTECODE_STRING */
         } string;
-        struct /* BYTECODE_ID_LOCAL */
+        struct /* BYTECODE_ID_LOCAL BYTECODE_INC_INT */
         {
             int stack_level;
             int index;
@@ -284,6 +287,7 @@ void bytecode_print_op_eq_string(bytecode * code);
 void bytecode_print_op_neq_string(bytecode * code);
 
 void bytecode_print_op_not_int(bytecode * code);
+void bytecode_print_op_inc_int(bytecode * code);
 
 void bytecode_print_int_to_float(bytecode * code);
 void bytecode_print_float_to_int(bytecode * code);
@@ -313,6 +317,7 @@ void bytecode_print_mk_array_int(bytecode * code);
 void bytecode_print_mk_array_float(bytecode * code);
 void bytecode_print_mk_init_array(bytecode * code);
 void bytecode_print_array_deref(bytecode * code);
+void bytecode_print_array_append(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_func_obj(bytecode * code);

@@ -68,5 +68,7 @@ void bind_list_delete(bind_list * list);
 void bind_list_add_beg(bind_list * list, bind * value);
 void bind_list_add_end(bind_list * list, bind * value);
 
+void bind_print(bind * value);
+
 #endif /* __BIND_H__ */
 

@@ -86,6 +86,7 @@ mem_ptr gc_copy_arr(gc * collector, mem_ptr addr);
 
 int gc_get_int(gc * collector, mem_ptr addr);
 void gc_set_int(gc * collector, mem_ptr addr, int value);
+void gc_inc_int(gc * collector, mem_ptr addr);
 
 float gc_get_float(gc * collector, mem_ptr addr);
 void gc_set_float(gc * collector, mem_ptr addr, float value);
@@ -110,6 +111,7 @@ object_arr_dim * gc_get_arr_dv(gc * collector, mem_ptr addr);
 mem_ptr gc_get_arr_elem(gc * collector, mem_ptr addr, unsigned int elem_index);
 void gc_set_arr_elem(gc * collector, mem_ptr addr, unsigned int elem_index,
                      mem_ptr value);
+void gc_append_arr_elem(gc * collector, mem_ptr addr, mem_ptr value);
 
 ip_ptr gc_get_func_addr(gc * collector, mem_ptr func_addr);
 mem_ptr gc_get_func_vec(gc * collector, mem_ptr func_addr);

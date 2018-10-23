@@ -81,6 +81,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_NEQ_STRING, vm_execute_op_neq_string },
 
     { BYTECODE_OP_NOT_INT, vm_execute_op_not_int },
+    { BYTECODE_OP_INC_INT, vm_execute_op_inc_int },
 
     { BYTECODE_INT_TO_FLOAT, vm_execute_int_to_float },
     { BYTECODE_FLOAT_TO_INT, vm_execute_float_to_int },
@@ -110,6 +111,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_MK_ARRAY_FLOAT, vm_execute_mk_array_float },
     { BYTECODE_MK_INIT_ARRAY, vm_execute_mk_init_array },
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
+    { BYTECODE_ARRAY_APPEND, vm_execute_array_append },
 
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_FUNC_OBJ, vm_execute_func_obj },
@@ -362,9 +364,9 @@ void vm_execute_op_div_int(vm * machine, bytecode * code)
 void vm_execute_op_mod_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     int b =
-        gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+        gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = 0;
 
     if (b == 0)
@@ -777,6 +779,15 @@ void vm_execute_op_not_int(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_op_inc_int(vm * machine, bytecode * code)
+{
+    mem_ptr addr = machine
+                       ->stack[machine->sp - (code->id_local.stack_level -
+                                              code->id_local.index)].addr;
+    
+    gc_inc_int(machine->collector, addr);        
 }
 
 void vm_execute_int_to_float(vm * machine, bytecode * code)
@@ -1376,6 +1387,18 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     entry.addr = elem;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_array_append(vm * machine, bytecode * code)
+{
+    mem_ptr addr = machine
+                       ->stack[machine->sp - (code->id_local.stack_level -
+                                              code->id_local.index)]
+                       .addr;
+    mem_ptr array = gc_get_arr(machine->collector, addr);
+    mem_ptr obj = machine->stack[machine->sp--].addr;
+    
+    gc_append_arr_elem(machine->collector, array, obj);
 }
 
 void vm_execute_func_def(vm * machine, bytecode * code) { /* no op */ }

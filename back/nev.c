@@ -52,7 +52,7 @@ int never_func_main_params(never * nev, object ** params,
     *params = NULL;
     *param_count = 0;
 
-    entry = symtab_lookup(nev->stab, "main", SYMTAB_FLAT);
+    entry = symtab_lookup(nev->stab, "main", SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL && entry->type == SYMTAB_FUNC &&
         entry->func_value != NULL)
     {
@@ -110,7 +110,7 @@ int nev_compile_prog(program * prog)
                     never_func_main_params(nev, &prog->params, &prog->param_count);
                     module_close(prog->module_value);
 
-                    /*print_functions(nev);
+                    /* print_functions(nev);
                     module_print(prog->module_value); */
                 }
             }

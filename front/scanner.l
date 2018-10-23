@@ -101,6 +101,12 @@ if {
     return TOK_IF;
 }
 
+in {
+    tokp->line_no = line_no;
+    scanner_printf("in\n");
+    return TOK_IN;
+}
+
 else {
     tokp->line_no = line_no;
     scanner_printf("if\n");
@@ -177,6 +183,12 @@ string {
     tokp->line_no = line_no;
     scanner_printf("&&\n", yytext);
     return TOK_AND;
+}
+
+"|" {
+    tokp->line_no = line_no;
+    scanner_printf("|\n", yytext);
+    return yytext[0];
 }
 
 "||" {

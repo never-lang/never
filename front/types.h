@@ -30,6 +30,7 @@
 #include "func.h"
 #include "never.h"
 #include "except.h"
+#include "listcomp.h"
 
 typedef union token_value {
     int int_value;
@@ -43,6 +44,9 @@ typedef union token_value {
     dim * dim_value;
     dim_list * dim_list_value;
     array * array_value;
+    listcomp * listcomp_value;
+    qualifier * qualifier_value;
+    qualifier_list * qualifier_list_value;
     bind * let_value;
     bind * var_value;
     bind * bind_value;

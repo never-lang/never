@@ -1,0 +1,22 @@
+
+func gf(v -> int) -> (int) -> int
+{
+     func f(d -> int) -> int
+     {
+         10 / d
+     }
+     catch
+     {
+         v
+     }
+     
+     f
+}
+
+func main() -> int
+{
+    var f = gf(87);
+    
+    f(0)
+}
+

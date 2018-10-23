@@ -26,7 +26,7 @@
 
 void test_one()
 {
-    symtab * tab = symtab_new(32, NULL);
+    symtab * tab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
 
     symtab_delete(tab);
 }
@@ -34,7 +34,7 @@ void test_one()
 void test_two()
 {
     symtab_entry * entry = NULL;
-    symtab * tab = symtab_new(32, NULL);
+    symtab * tab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     func_decl * decl_one = func_decl_new(strdup("func_one"), NULL, NULL);
     func * func_one = func_new(decl_one, NULL);
     func_decl * decl_three = func_decl_new(strdup("func_three"), NULL, NULL);
@@ -43,13 +43,13 @@ void test_two()
     symtab_add_func(tab, func_one, 0);
     symtab_add_func(tab, func_three, 0);
 
-    entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);
+    entry = symtab_lookup(tab, "func_one", SYMTAB_LOOKUP_LOCAL);
     assert(entry->func_value == func_one);
 
-    entry = symtab_lookup(tab, "func_two", SYMTAB_FLAT);
+    entry = symtab_lookup(tab, "func_two", SYMTAB_LOOKUP_LOCAL);
     assert(entry == NULL);
 
-    entry = symtab_lookup(tab, "func_three", SYMTAB_FLAT);
+    entry = symtab_lookup(tab, "func_three", SYMTAB_LOOKUP_LOCAL);
     assert(entry->func_value == func_three);
 
     func_delete(func_one);
@@ -60,7 +60,7 @@ void test_two()
 void test_three()
 {
     symtab_entry * entry = NULL;
-    symtab * tab = symtab_new(4, NULL);
+    symtab * tab = symtab_new(4, SYMTAB_TYPE_FUNC, NULL);
     func_decl * decl_one = func_decl_new(strdup("func_one"), NULL, NULL); 
     func * func_one = func_new(decl_one, NULL);
     func_decl * decl_two = func_decl_new(strdup("func_two"), NULL, NULL);
@@ -84,13 +84,13 @@ void test_three()
     symtab_add_func(tab, func_six, 0);
     symtab_add_func(tab, func_seven, 0);
 
-    entry = symtab_lookup(tab, "func_one", SYMTAB_FLAT);
+    entry = symtab_lookup(tab, "func_one", SYMTAB_LOOKUP_LOCAL);
     assert(entry->func_value == func_one);
 
-    entry = symtab_lookup(tab, "func_two", SYMTAB_FLAT);
+    entry = symtab_lookup(tab, "func_two", SYMTAB_LOOKUP_LOCAL);
     assert(entry->func_value == func_two);
 
-    entry = symtab_lookup(tab, "func_three", SYMTAB_FLAT);
+    entry = symtab_lookup(tab, "func_three", SYMTAB_LOOKUP_LOCAL);
     assert(entry->func_value == func_three);
 
     func_delete(func_one);
@@ -107,8 +107,8 @@ void test_three()
 void test_four()
 {
     symtab_entry * entry = NULL;
-    symtab * tab_one = symtab_new(2, NULL);
-    symtab * tab_two = symtab_new(2, tab_one);
+    symtab * tab_one = symtab_new(2, SYMTAB_TYPE_FUNC, NULL);
+    symtab * tab_two = symtab_new(2, SYMTAB_TYPE_FUNC, tab_one);
 
     func_decl * decl_one = func_decl_new(strdup("func_one"), NULL, NULL);
     func * func_one = func_new(decl_one, NULL);
@@ -130,25 +130,25 @@ void test_four()
     symtab_add_func(tab_two, func_five, 0);
     symtab_add_func(tab_two, func_six, 0);
 
-    entry = symtab_lookup(tab_two, "func_one", SYMTAB_NESTED);
+    entry = symtab_lookup(tab_two, "func_one", SYMTAB_LOOKUP_GLOBAL);
     assert(entry->func_value == func_one);
 
-    entry = symtab_lookup(tab_two, "func_two", SYMTAB_NESTED);
+    entry = symtab_lookup(tab_two, "func_two", SYMTAB_LOOKUP_GLOBAL);
     assert(entry->func_value == func_two);
 
-    entry = symtab_lookup(tab_two, "func_three", SYMTAB_NESTED);
+    entry = symtab_lookup(tab_two, "func_three", SYMTAB_LOOKUP_GLOBAL);
     assert(entry->func_value == func_three);
 
-    entry = symtab_lookup(tab_two, "func_four", SYMTAB_NESTED);
+    entry = symtab_lookup(tab_two, "func_four", SYMTAB_LOOKUP_GLOBAL);
     assert(entry->func_value == func_four);
 
-    entry = symtab_lookup(tab_two, "func_five", SYMTAB_NESTED);
+    entry = symtab_lookup(tab_two, "func_five", SYMTAB_LOOKUP_GLOBAL);
     assert(entry->func_value == func_five);
 
-    entry = symtab_lookup(tab_two, "func_six", SYMTAB_NESTED);
+    entry = symtab_lookup(tab_two, "func_six", SYMTAB_LOOKUP_GLOBAL);
     assert(entry->func_value == func_six);
 
-    entry = symtab_lookup(tab_two, "func_seven", SYMTAB_NESTED);
+    entry = symtab_lookup(tab_two, "func_seven", SYMTAB_LOOKUP_GLOBAL);
     assert(entry == NULL);
 
     func_delete(func_one);

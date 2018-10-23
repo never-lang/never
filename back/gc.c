@@ -312,6 +312,14 @@ void gc_set_int(gc * collector, mem_ptr addr, int value)
     collector->mem[addr].object_value->int_value = value;
 }
 
+void gc_inc_int(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_INT);
+
+    collector->mem[addr].object_value->int_value++;
+}
+
 float gc_get_float(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
@@ -442,6 +450,14 @@ void gc_set_arr_elem(gc * collector, mem_ptr addr, unsigned int elem_index,
     assert(collector->mem[addr].object_value->arr_value->elems >= elem_index);
 
     collector->mem[addr].object_value->arr_value->value[elem_index] = value;
+}
+
+void gc_append_arr_elem(gc * collector, mem_ptr addr, mem_ptr value)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_ARRAY);
+    
+    object_arr_append(collector->mem[addr].object_value->arr_value, value);
 }
 
 ip_ptr gc_get_func_addr(gc * collector, mem_ptr func_addr)

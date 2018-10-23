@@ -27,6 +27,9 @@
 #define TYPECHECK_SUCC 0
 #define TYPECHECK_FAIL 1
 
+typedef struct qualifier qualifier;
+typedef struct qualifier_list qualifier_list;
+
 int expr_set_return_type(expr * value, param * ret);
 
 int param_cmp(param * param_one, param * param_two);
@@ -75,6 +78,12 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
                          int * result);
 int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
                          int * result);
+int qualifier_check_type(symtab * tab, qualifier * value, unsigned int syn_level, 
+                         int * result);
+int qualifier_list_check_type(symtab * tab, qualifier_list * list,
+                              unsigned int syn_level, int * result);
+int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
+                             unsigned int syn_level, int * result);
 int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                     int * result);
 int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
@@ -97,9 +106,12 @@ int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result);
 int never_check_type(never * nev, int * result);
 
-int print_func_array(array * value, int depth);
 int print_func_expr(expr * value, int depth);
 int print_func_expr_list(expr_list * list, int depth);
+int print_func_qualifier(qualifier * value, int depth);
+int print_func_qualifier_list(qualifier_list * list, int depth);
+int print_func_listcomp(listcomp * value, int depth);
+int print_func_array(array * value, int depth);
 int print_func_bind(bind * value, int depth);
 int print_func_bind_list(bind_list * list, int depth);
 int print_func_except(except * value, int depth);

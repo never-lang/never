@@ -42,6 +42,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_FOR
 %token <val.str_value> TOK_CATCH
 %token <val.str_value> TOK_THROW
+%token <val.str_value> TOK_IN
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -52,6 +53,10 @@ int yyerror(never ** nev, char * str)
 %type <val.param_list_value> param_list
 %type <val.array_value> array;
 %type <val.array_value> array_sub;
+%type <val.listcomp_value> listcomp
+%type <val.qualifier_value> generator
+%type <val.qualifier_value> qualifier
+%type <val.qualifier_list_value> qualifier_list
 %type <val.expr_list_value> array_sub_list
 %type <val.let_value> let
 %type <val.var_value> var
@@ -92,6 +97,10 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) expr_list_delete($$); } expr_seq
 %destructor { if ($$) array_delete($$); } array
 %destructor { if ($$) array_delete($$); } array_sub
+%destructor { if ($$) listcomp_delete($$); } listcomp
+%destructor { if ($$) qualifier_delete($$); } generator
+%destructor { if ($$) qualifier_delete($$); } qualifier
+%destructor { if ($$) qualifier_list_delete($$); } qualifier_list
 %destructor { if ($$) expr_list_delete($$); } array_sub_list
 %destructor { if ($$) bind_delete($$); } let
 %destructor { if ($$) bind_delete($$); } var
@@ -301,6 +310,47 @@ array_sub_list: array_sub_list ',' array_sub
 {
     expr_list_add_end($1, expr_new_array($3));
     $$ = $1;
+};
+
+expr: listcomp
+{
+    $$ = expr_new_listcomp($1);
+    $$->line_no = $<line_no>1;
+};
+
+generator: TOK_ID TOK_IN expr
+{
+    $$ = qualifier_new_generator($1, $3);
+    $$->line_no = $<line_no>1;
+};
+
+generator: expr /* filter */
+{
+    $$ = qualifier_new_filter($1);
+    $$->line_no = $1->line_no;
+};
+
+qualifier: generator
+{
+    $$ = $1;
+};
+
+qualifier_list: qualifier
+{
+    $$ = qualifier_list_new();
+    qualifier_list_add_end($$, $1);
+};
+
+qualifier_list: qualifier_list ';' qualifier
+{
+    qualifier_list_add_end($1, $3);
+    $$ = $1;
+};
+
+listcomp: '[' expr '|' qualifier_list ']' TOK_RET param
+{
+    $$ = listcomp_new($2, $4, $7);
+    $$->line_no = $<line_no>1;
 };
 
 expr: TOK_LET func

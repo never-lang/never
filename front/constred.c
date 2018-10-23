@@ -596,6 +596,12 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
         }
         break;
+    case EXPR_LISTCOMP:
+        if (value->listcomp_value != NULL)
+        {
+            listcomp_constred(value->listcomp_value, result);
+        }
+        break;
     }
     return 0;
 }
@@ -612,6 +618,61 @@ int expr_list_constred(expr_list * list, int * result)
         }
         node = node->next;
     }
+    return 0;
+}
+
+int qualifier_constred(qualifier * value, int * result)
+{
+    switch (value->type)
+    {
+        case QUALIFIER_UNKNOWN:
+            assert(0);
+        break;
+        case QUALIFIER_GENERATOR:
+            if (value->expr_value != NULL)
+            {
+                expr_constred(value->expr_value, result);
+            }
+        break;
+        case QUALIFIER_FILTER:
+            if (value->expr_value != NULL)
+            {
+                expr_constred(value->expr_value, result);
+            }
+        break;
+    }
+
+    return 0;
+}
+
+int qualifier_list_constred(qualifier_list * list, int * result)
+{
+    qualifier_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        qualifier * qualifier_value = node->value;
+        if (qualifier_value != NULL)
+        {
+            qualifier_constred(qualifier_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int listcomp_constred(listcomp * value, int * result)
+{
+    if (value->list != NULL)
+    {
+        qualifier_list_constred(value->list, result);
+    }
+    if (value->expr_value != NULL)
+    {
+        expr_constred(value->expr_value, result);
+    }
+
     return 0;
 }
 

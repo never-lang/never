@@ -26,13 +26,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int array_depth_list_well_formed(expr * expr_value, expr_list_weak * depth_list,
+int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_list,
                                  int * result)
 {
     int first_distance = -1;
     int curr_distance = -1;
     int first_comb_elems = 0;
-    param * ret = expr_value->array.array_value->ret;
+    param * ret = array_value->ret;
 
     expr_list_weak_node * node = depth_list->tail;
     curr_distance = first_distance = node->distance;
@@ -149,6 +149,7 @@ int array_set_dims(expr_list_weak * depth_list)
     }
 
     node = depth_list->head;
+
     assert(node->value->type == EXPR_ARRAY &&
            node->value->array.array_value->type == ARRAY_INIT);
 
@@ -165,7 +166,7 @@ int array_well_formed(expr * value, int * result)
     expr_list_weak * depth_list = expr_list_weak_new();
     array_to_depth_list(value, depth_list);
 
-    array_depth_list_well_formed(value, depth_list, result);
+    array_depth_list_well_formed(value->array.array_value, depth_list, result);
     if (*result == TYPECHECK_SUCC)
     {
         array_set_dims(depth_list);

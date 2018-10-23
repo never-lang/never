@@ -49,7 +49,7 @@ array * array_new_dims(expr_list * dims, param * ret);
 
 void array_delete(array * value);
 
-int elements_to_depth_list(expr * value, expr_list_weak * bfs_list,
+int elements_to_depth_list(expr_list * elements, expr_list_weak * bfs_list,
                            int distance);
 int array_to_depth_list(expr * value, expr_list_weak * depth_list);
 

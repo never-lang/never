@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 freevar * freevar_new(char * id, int index)
 {
@@ -147,10 +148,25 @@ void freevar_print(freevar * value)
 
     switch (value->type)
     {
+    case FREEVAR_UNKNOWN:
+        assert(0);
+        break;
     case FREEVAR_LOCAL:
         if (value->local_value)
         {
             param_print(value->local_value);
+        }
+        break;
+    case FREEVAR_QUALIFIER:
+        if (value->qualifier_value)
+        {
+            qualifier_print(value->qualifier_value);
+        }
+        break;
+    case FREEVAR_BIND:
+        if (value->bind_value)
+        {
+            bind_print(value->bind_value);
         }
         break;
     case FREEVAR_GLOBAL:
@@ -182,7 +198,7 @@ void freevar_list_print(freevar_list * list)
     }
 }
 
-char * freevar_type_str(int type)
+char * freevar_type_str(freevar_type type)
 {
     switch (type)
     {
@@ -190,6 +206,8 @@ char * freevar_type_str(int type)
         return "FREEVAR_UNKNOWN";
     case FREEVAR_LOCAL:
         return "FREEVAR_LOCAL";
+    case FREEVAR_QUALIFIER:
+        return "FREEVAR_QUALIFIER";
     case FREEVAR_BIND:
         return "FREEVAR_BIND";
     case FREEVAR_GLOBAL:

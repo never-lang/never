@@ -78,10 +78,10 @@ void array_delete(array * value)
     free(value);
 }
 
-int elements_to_depth_list(expr * value, expr_list_weak * bfs_list,
+int elements_to_depth_list(expr_list * elements, expr_list_weak * bfs_list,
                            int distance)
 {
-    expr_list_node * node = value->array.array_value->elements->tail;
+    expr_list_node * node = elements->tail;
     while (node != NULL)
     {
         expr * elem = node->value;
@@ -100,7 +100,7 @@ int array_to_depth_list(expr * value, expr_list_weak * depth_list)
     expr_list_weak * bfs_list = expr_list_weak_new();
 
     expr_list_weak_add(bfs_list, value, 0);
-    elements_to_depth_list(value, bfs_list, 1);
+    elements_to_depth_list(value->array.array_value->elements, bfs_list, 1);
 
     while (bfs_list->count > 0)
     {
@@ -110,7 +110,8 @@ int array_to_depth_list(expr * value, expr_list_weak * depth_list)
         if (value->type == EXPR_ARRAY &&
             value->array.array_value->type == ARRAY_SUB)
         {
-            elements_to_depth_list(value, bfs_list, head->distance + 1);
+            elements_to_depth_list(value->array.array_value->elements,
+                                   bfs_list, head->distance + 1);
         }
 
         expr_list_weak_add(depth_list, value, head->distance + 1);

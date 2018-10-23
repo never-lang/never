@@ -24,23 +24,25 @@
 
 #include "param.h"
 
-enum
+typedef enum freevar_type
 {
     FREEVAR_UNKNOWN = 0,
     FREEVAR_LOCAL = 1,
-    FREEVAR_BIND = 2,
-    FREEVAR_GLOBAL = 3,
-    FREEVAR_FUNC = 4
-};
+    FREEVAR_QUALIFIER = 2,
+    FREEVAR_BIND = 3,
+    FREEVAR_GLOBAL = 4,
+    FREEVAR_FUNC = 5
+} freevar_type;
 
 typedef struct freevar
 {
-    int type;
+    freevar_type type;
     char * id;
     int index;
     union {
         struct param * local_value;
         struct bind * bind_value;
+        struct qualifier * qualifier_value;
         struct freevar * global_value;
         struct func * func_value;
     };
@@ -77,6 +79,6 @@ void freevar_list_add_end(freevar_list * list, freevar * value);
 void freevar_print(freevar * value);
 void freevar_list_print(freevar_list * list);
 
-char * freevar_type_str(int type);
+char * freevar_type_str(freevar_type type);
 
 #endif /* __FREEVAR_H__ */

@@ -36,46 +36,64 @@ int func_enum_param_list(param_list * params);
 int func_enum_bind_list(bind_list * list, int start);
 int func_enum_func_list(func_list * list, int start);
 
-int expr_id_gencode(unsigned int syn_level, func * func_value, expr * value,
-                    int * result);
-int expr_gencode(unsigned int syn_level, func * func_value, expr * value,
-                 int * result);
+int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * tab,
+                    expr * value, int * result);
+int expr_gencode(unsigned int syn_level, func * func_value, symtab * tab,
+                 expr * value, int * result);
 int expr_list_gencode(unsigned int syn_level, func * func_value,
-                      expr_list * list, int * result);
+                      symtab * tab, expr_list * list, int * result);
+
+int qualifier_gencode(unsigned int syn_level, func * func_value,
+                      symtab * stab, qualifier * value, int * result);
+int qualifier_list_gencode(unsigned int syn_level, func * func_value,
+                           symtab * stab, qualifier_list * list, int * result);
+
+int listcomp_gencode(unsigned int syn_level, func * func_value,
+                     symtab * stab, listcomp * value, int * result);
 
 int array_gencode(unsigned int syn_level, func * func_value,
-                  array * array_value, int * result);
+                  symtab * stab, array * array_value, int * result);
 
-int bind_gencode(unsigned int syn_level, func * func_value, bind * bind_value,
-                 int * result);
-int bind_list_gencode(unsigned int syn_level, func * func_value,
+int bind_gencode(unsigned int syn_level, func * func_value, symtab * stab,
+                 bind * bind_value, int * result);
+int bind_list_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                       bind_list * list, int * result);                 
 
-int except_gencode(unsigned int syn_level, func * func_value,
+int except_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                    except * value, int * result);
-int except_list_gencode(unsigned int syn_levl, func * func_value,
+int except_list_gencode(unsigned int syn_levl, func * func_value, symtab * stab,
                         except_list * list, int * result);
 
-int func_gencode_freevars_freevar(func * func_value, freevar * freevar_value,
+int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * freevar_value,
                                   int * result);
-int func_gencode_freevars_expr(func * func_value, expr * value, int * result);
-int func_gencode_freevars_expr_list(func * func_value, expr_list * list,
+int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result);
+int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
                                     int * result);
-int func_gencode_freevars_bind(func * func_value, bind * bind_value,
+int func_gencode_freevars_qualifier(func * func_value, symtab * stab,
+                                    qualifier * value, int * result);
+int func_gencode_freevars_qualifier_list(func * func_value, symtab * stab,
+                                         qualifier_list * list, int * result);
+int func_gencode_freevars_listcomp(func * func_value, symtab * stab,
+                                   listcomp * value, int * result);
+int func_gencode_freevars_array(func * func_value, symtab * stab, array * array_value,
+                                int * result);
+int func_gencode_freevars_bind(func * func_value, symtab * stab, bind * bind_value,
                                int * result);
-int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
+int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
                                     int * result);
-int func_gencode_freevars_bind_list(func * func_value, bind_list * list,
+int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
                                     int * result);
-int func_gencode_freevars_except_list(func * func_value, except_list * list,
-                                      int * result);
-int func_gencode_freevars_func_except(func * func_value, func_except * value,
+int func_gencode_freevars_except(func * func_value, symtab * stab, except * except_value,
                                  int * result);
-int func_gencode_freevars_func(func * func_value, func * subfunc_value,
+int func_gencode_freevars_except_list(func * func_value, symtab * stab, except_list * list,
+                                      int * result);
+int func_gencode_freevars_func_except(func * func_value, symtab * stab, func_except * value,
+                                 int * result);
+int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_value,
                                int * result);
-int func_gencode_freevars_func_list(func * func_value, func_list * list,
+int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list * list,
                                     int * result);
-int func_gencode_freevars(func * func_value, int * result);
+int func_gencode_freevars(func * func_value, symtab * stab, int * result);
 
 int func_gencode(unsigned int syn_level, func * func_value, int * result);
 int func_list_gencode(unsigned int syn_level, func_list * list, int * result);
@@ -100,6 +118,8 @@ int func_freevar_list_emit(freevar_list * freevars, int stack_level,
 
 int expr_id_local_emit(expr * value, int stack_level, module * module_value,
                        int * result);
+int expr_id_qualifier_emit(expr * value, int stack_level, module * module_value,
+                           int * result);
 int expr_id_bind_emit(expr * value, int stack_level, module * module_value,
                        int * result);
 int expr_id_global_emit(expr * value, int stack_value, module * module_value,
@@ -147,6 +167,22 @@ int expr_emit(expr * value, int stack_level, module * module_value,
 int expr_list_emit(expr_list * list, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
 int expr_seq_emit(expr_list * list, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result);
+int expr_yeld_emit(listcomp * listcomp_value, int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result);
+int generator_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                   int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result);
+int filter_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                int stack_level, module * module_value,
+                func_list_weak * list_weak, int * result);
+int qualifier_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                   int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result);
+int qualifier_stack_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                         int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result);
+int listcomp_emit(listcomp * listcomp_value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,
                              int stack_level, module * module_value,

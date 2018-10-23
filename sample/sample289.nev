@@ -1,0 +1,33 @@
+
+func print_cl(cl[D] -> (int) -> int) -> int
+{
+    var i = 0;
+    
+    for (i = 0; i < D; i = i + 1)
+    {
+        print(cl[i](2))
+    };
+    
+    0
+}
+
+func cl(z -> int) -> [_] -> (int) -> int
+{
+    [ let func(v -> int) -> int
+      {
+          let c = z;
+          c + v * u
+      }
+
+      | 
+
+      u in [ 1, 10, 100, 1000 ] -> int
+
+    ] -> (int) -> int
+}
+    
+func main() -> int
+{
+   print_cl(cl(10000))
+}
+

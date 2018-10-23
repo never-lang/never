@@ -24,6 +24,7 @@
 #include "tailrec.h"
 #include "tcheckarr.h"
 #include "utils.h"
+#include "listcomp.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -296,7 +297,7 @@ int param_expr_list_cmp(param_list * params, expr_list * list)
 int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
                                   unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_FLAT);
+    symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry == NULL)
     {
         symtab_add_param(tab, param_value, syn_level);
@@ -324,6 +325,13 @@ int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
             print_error_msg(param_value->line_no,
                             "bind %s already defined at line %u\n",
                             entry->id, al_bind->line_no);
+        }
+        else if (entry->type == SYMTAB_QUALIFIER)
+        {
+            qualifier * al_qualifier = entry->qualifier_value;
+            print_error_msg(param_value->line_no,
+                            "qualifier %s already defined at line %u\n",
+                            entry->id, al_qualifier->line_no);
         }
         else
         {
@@ -367,7 +375,7 @@ int symtab_add_param_from_param_list(symtab * tab, param_list * list,
 int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
                               unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = symtab_lookup(tab, bind_value->id, SYMTAB_FLAT);
+    symtab_entry * entry = symtab_lookup(tab, bind_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry == NULL)
     {
         symtab_add_bind(tab, bind_value, syn_level);
@@ -396,6 +404,13 @@ int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
                             "bind %s already defined at line %u\n",
                             entry->id, al_bind->line_no);
         }
+        else if (entry->type == SYMTAB_QUALIFIER)
+        {
+            qualifier * al_qualifier = entry->qualifier_value;
+            print_error_msg(bind_value->line_no,
+                            "qualifier %s already defined at line %u\n",
+                            entry->id, al_qualifier->line_no);
+        }
         else
         {
             assert(0);
@@ -420,10 +435,59 @@ int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
     return 0;
 }
 
+int symtab_add_qualifier_from_qualifier(symtab * tab, qualifier * value,
+                                        unsigned int syn_level, int * result)
+{
+    symtab_entry * entry = symtab_lookup(tab, value->id, SYMTAB_LOOKUP_LOCAL);
+    if (entry == NULL)
+    {
+        symtab_add_qualifier(tab, value, syn_level);
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        if (entry->type == SYMTAB_FUNC)
+        {
+            func * al_func = entry->func_value;
+            print_error_msg(value->line_no,
+                            "function %s already defined at line %u\n",
+                            entry->id, al_func->line_no);
+        }
+        else if (entry->type == SYMTAB_PARAM)
+        {
+            param * al_param = entry->param_value;
+            print_error_msg(value->line_no,
+                            "parameter %s already defined at line %u\n",
+                            entry->id, al_param->line_no);
+        }
+        else if (entry->type == SYMTAB_BIND)
+        {
+            bind * al_bind = entry->bind_value;
+            print_error_msg(value->line_no,
+                            "bind %s already defined at line %u\n",
+                            entry->id, al_bind->line_no);
+        }
+        else if (entry->type == SYMTAB_QUALIFIER)
+        {
+            qualifier * al_qualifier = entry->qualifier_value;
+            print_error_msg(value->line_no,
+                            "qualifier %s already defined at line %u\n",
+                            entry->id, al_qualifier->line_no);
+        }
+        else
+        {
+            assert(0);
+        }
+    }
+
+    return 0;
+}
+
 int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = symtab_lookup(tab, func_value->decl->id, SYMTAB_FLAT);
+    symtab_entry * entry = symtab_lookup(tab, func_value->decl->id,
+                                         SYMTAB_LOOKUP_LOCAL);
     if (entry == NULL)
     {
         symtab_add_func(tab, func_value, syn_level);
@@ -451,6 +515,13 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
             print_error_msg(func_value->line_no,
                             "bind %s already defined at line %u\n",
                             entry->id, al_bind->line_no);
+        }
+        else if (entry->type == SYMTAB_QUALIFIER)
+        {
+            qualifier * al_qualifier = entry->qualifier_value;
+            print_error_msg(func_value->line_no,
+                            "qualifier %s already defined at line %u\n",
+                            entry->id, al_qualifier->line_no);
         }
         else
         {
@@ -484,7 +555,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(tab, value->id.id, SYMTAB_NESTED);
+    entry = symtab_lookup(tab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
@@ -537,6 +608,10 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             value->comb.comb_params = entry->bind_value->expr_value->comb.comb_params;
             value->comb.comb_ret = entry->bind_value->expr_value->comb.comb_ret;
             value->comb.comb_dims = entry->bind_value->expr_value->comb.comb_dims;            
+        }
+        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
+        {
+            expr_set_return_type(value, entry->qualifier_value->expr_value->comb.comb_ret);
         }
         else
         {
@@ -1116,6 +1191,91 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
+int qualifier_check_type(symtab * tab, qualifier * value, unsigned int syn_level, 
+                         int * result)
+{
+    switch (value->type)
+    {
+        case QUALIFIER_UNKNOWN:
+            assert(0);
+        break;
+        case QUALIFIER_GENERATOR:
+            if (value->expr_value != NULL)
+            {
+                expr_check_type(tab, value->expr_value, syn_level, result);
+                if (value->expr_value->comb.comb != COMB_TYPE_ARRAY ||
+                    value->expr_value->comb.comb_dims != 1)
+                {
+                    *result = TYPECHECK_FAIL;
+                    print_error_msg(value->line_no,
+                                    "generators over one dimensional arrays\n");
+                }
+            }
+            symtab_add_qualifier_from_qualifier(tab, value, syn_level, result);
+        break;
+        case QUALIFIER_FILTER:
+            if (value->expr_value != NULL)
+            {
+                expr_check_type(tab, value->expr_value, syn_level, result);
+                if (value->expr_value->comb.comb != COMB_TYPE_INT)
+                {
+                    *result = TYPECHECK_FAIL;
+                    print_error_msg(value->line_no,
+                                    "filter should be int type is %s\n",
+                                     comb_type_str(value->expr_value->comb.comb));
+                }
+            }
+        break;
+    }
+
+    return 0;
+}
+
+int qualifier_list_check_type(symtab * tab, qualifier_list * list,
+                              unsigned int syn_level, int * result)
+{
+    qualifier_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        qualifier * qualifier_value = node->value;
+        if (qualifier_value != NULL)
+        {
+            qualifier_check_type(tab, qualifier_value, syn_level, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
+                             unsigned int syn_level, int * result)
+{
+    if (listcomp_value->stab == NULL)
+    {
+        listcomp_value->stab = symtab_new(8, SYMTAB_TYPE_BLOCK, tab);
+    }
+
+    qualifier_list_check_type(listcomp_value->stab, listcomp_value->list,
+                              syn_level, result);
+
+    expr_check_type(listcomp_value->stab, listcomp_value->expr_value, syn_level,
+                    result);
+
+    if (param_expr_cmp(listcomp_value->ret, listcomp_value->expr_value)
+                       == TYPECHECK_FAIL)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(listcomp_value->line_no,
+                        "incorrect return type in list comprehension %s %s\n",
+                        comb_type_str(listcomp_value->expr_value->comb.comb),
+                        param_type_str(listcomp_value->ret->type));
+    }
+
+    return 0;
+}
+
 
 int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                     int * result)
@@ -1361,6 +1521,20 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                             value->line_no, comb_type_str(value->left->comb.comb));
         }
         break;
+    case EXPR_LISTCOMP:
+        expr_listcomp_check_type(tab, value->listcomp_value, syn_level, result);
+        if (*result == TYPECHECK_SUCC)
+        {
+            value->comb.comb = COMB_TYPE_ARRAY;
+            value->comb.comb_ret = value->listcomp_value->ret;
+            value->comb.comb_dims = 1;
+        }
+        else
+        {
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "list comprehension is not well formed\n");
+        }
+        break;
     }
     return 0;
 }
@@ -1548,7 +1722,7 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 {
     if (func_value->stab == NULL)
     {
-        func_value->stab = symtab_new(32, tab);
+        func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);
     }
     if (func_value->decl->id)
     {
@@ -1622,7 +1796,7 @@ int never_check_type(never * nev, int * result)
     
     if (nev->stab == NULL)
     {
-        nev->stab = symtab_new(32, NULL);
+        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     }
 
     symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
@@ -1737,6 +1911,12 @@ int print_func_expr(expr * value, int depth)
             print_func_expr(value->left, depth);
         }
         break;
+    case EXPR_LISTCOMP:
+        if (value->listcomp_value != NULL)
+        {
+            print_func_listcomp(value->listcomp_value, depth);
+        }
+        break;
     }
     return 0;
 }
@@ -1753,6 +1933,61 @@ int print_func_expr_list(expr_list * list, int depth)
         }
         node = node->next;
     }
+    return 0;
+}
+
+int print_func_qualifier(qualifier * value, int depth)
+{
+    switch (value->type)
+    {
+        case QUALIFIER_UNKNOWN:
+            assert(0);
+        break;
+        case QUALIFIER_GENERATOR:
+            if (value->expr_value != NULL)
+            {
+                print_func_expr(value->expr_value, depth);
+            }
+        break;
+        case QUALIFIER_FILTER:
+            if (value->expr_value != NULL)
+            {
+                print_func_expr(value->expr_value, depth);
+            }
+        break;
+    }
+
+    return 0;
+}
+
+int print_func_qualifier_list(qualifier_list * list, int depth)
+{
+    qualifier_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        qualifier * qualifier_value = node->value;
+        if (qualifier_value != NULL)
+        {
+            print_func_qualifier(qualifier_value, depth);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int print_func_listcomp(listcomp * value, int depth)
+{
+    if (value->list != NULL)
+    {
+        print_func_qualifier_list(value->list, depth);
+    }
+    if (value->expr_value != NULL)
+    {
+        print_func_expr(value->expr_value, depth);
+    }
+
     return 0;
 }
 
@@ -1908,7 +2143,7 @@ int func_main_check_type(symtab * tab, int * result)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(tab, "main", SYMTAB_FLAT);
+    entry = symtab_lookup(tab, "main", SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)

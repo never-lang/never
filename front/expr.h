@@ -61,7 +61,8 @@ typedef enum expr_type
     EXPR_FOR = 31,
     EXPR_BUILD_IN = 32,
     EXPR_INT_TO_FLOAT = 33,
-    EXPR_FLOAT_TO_INT = 34
+    EXPR_FLOAT_TO_INT = 34,
+    EXPR_LISTCOMP = 35
 } expr_type;
 
 typedef enum comb_type
@@ -83,15 +84,18 @@ typedef enum id_type
     ID_TYPE_LOCAL = 1,
     ID_TYPE_GLOBAL = 2,
     ID_TYPE_BIND = 3,
-    ID_TYPE_FUNC_TOP = 4,
-    ID_TYPE_FUNC = 5,
-    ID_TYPE_FUNC_NEST = 6
+    ID_TYPE_QUALIFIER = 4,
+    ID_TYPE_FUNC_TOP = 5,
+    ID_TYPE_FUNC = 6,
+    ID_TYPE_FUNC_NEST = 7
 } id_type;
 
 typedef struct array array;
 typedef struct bind bind;
 typedef struct func func;
+typedef struct qualifier qualifier;
 typedef struct expr_list expr_list;
+typedef struct listcomp listcomp;
 
 typedef struct expr_comb
 {
@@ -118,6 +122,7 @@ typedef struct expr
                 freevar * id_freevar_value;
                 param * id_param_value;
                 bind * id_bind_value;
+                qualifier * id_qualifier_value;
                 func * id_func_value;
             };
         } id;
@@ -168,6 +173,7 @@ typedef struct expr
             struct expr * array_expr; /* EXPR_ARRAY_DEREF */
             struct expr_list * ref;
         } array_deref;
+        listcomp * listcomp_value; /* EXPR_LISTCOMP */
     };
 } expr;
 
@@ -203,6 +209,7 @@ expr * expr_new_while(expr * cond, expr * do_value);
 expr * expr_new_do_while(expr * cond, expr * do_value);
 expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
+expr * expr_new_listcomp(listcomp * listcomp_value);
 
 expr * expr_conv(expr * expr_value, expr_type conv);
 

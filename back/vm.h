@@ -107,6 +107,7 @@ void vm_execute_op_eq_string(vm * machine, bytecode * code);
 void vm_execute_op_neq_string(vm * machine, bytecode * code);
 
 void vm_execute_op_not_int(vm * machine, bytecode * code);
+void vm_execute_op_inc_int(vm * machine, bytecode * code);
 
 void vm_execute_int_to_float(vm * machine, bytecode * code);
 void vm_execute_float_to_int(vm * machine, bytecode * code);
@@ -136,6 +137,7 @@ void vm_execute_mk_array_int(vm * machine, bytecode * code);
 void vm_execute_mk_array_float(vm * machine, bytecode * code);
 void vm_execute_mk_init_array(vm * machine, bytecode * code);
 void vm_execute_array_deref(vm * machine, bytecode * code);
+void vm_execute_array_append(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_func_obj(vm * machine, bytecode * code);

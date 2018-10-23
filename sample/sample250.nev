@@ -49,7 +49,7 @@ func in_hidden(in_vec[D1, D2] -> float, w1[D3, D4] -> float) -> [D, D] -> float
 func main() -> int
 {
     /* print_vec(sigm_vec([[-9.0, -0.5, 0.0, 0.5, 9.0]] -> float)); */
-    let in = [[ 0.1, 0.2, 0.7 ]] -> float;
+    let win = [[ 0.1, 0.2, 0.7 ]] -> float;
     
     let w1 = [[ 0.1, 0.2, 0.3 ],
               [ 0.3, 0.2, 0.7 ],
@@ -61,7 +61,7 @@ func main() -> int
 
     let tmp = {[ 1, 1 ]} -> float;
     
-    tmp = in * w1;
+    tmp = win * w1;
     print_vec(tmp);
 
     tmp = sigm_vec(tmp);

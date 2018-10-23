@@ -21,6 +21,7 @@
  */
 #include "bind.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 bind * bind_new_let(char * id, expr * expr_value)
 {
@@ -140,6 +141,10 @@ void bind_list_add_end(bind_list * list, bind * value)
     }
 }
 
+void bind_print(bind * value)
+{
+    printf("bind %s\n", value->id);
+}
 
 
 

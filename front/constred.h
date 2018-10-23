@@ -32,6 +32,9 @@ enum
 
 int expr_constred(expr * value, int * result);
 int expr_list_constred(expr_list * list, int * result);
+int qualifier_constred(qualifier * value, int * result);
+int qualifier_list_constred(qualifier_list * list, int * result);
+int listcomp_constred(listcomp * value, int * result);
 int array_constread(array * value, int * result);
 int bind_constred(bind * value, int * result);
 int bind_list_constred(bind_list * list, int * result);

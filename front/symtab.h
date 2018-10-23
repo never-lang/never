@@ -26,27 +26,36 @@
 #include "param.h"
 #include "bind.h"
 #include "func.h"
+#include "listcomp.h"
 
-enum
+typedef enum symtab_lookup_op
 {
-    SYMTAB_FLAT = 0,
-    SYMTAB_NESTED = 1
-};
+    SYMTAB_LOOKUP_LOCAL = 0,
+    SYMTAB_LOOKUP_GLOBAL = 1
+} symtab_lookup_op;
 
-enum
+typedef enum symtab_type
+{
+    SYMTAB_TYPE_FUNC = 0,
+    SYMTAB_TYPE_BLOCK = 1
+} symtab_type;
+
+typedef enum symtab_entry_type
 {
     SYMTAB_PARAM = 1,
     SYMTAB_BIND = 2,
-    SYMTAB_FUNC = 3
-};
+    SYMTAB_QUALIFIER = 3,
+    SYMTAB_FUNC = 4
+} symtab_entry_type;
 
 typedef struct symtab_entry
 {
-    int type;
+    symtab_entry_type type;
     const char * id;
     union {
         bind * bind_value;
         param * param_value;
+        qualifier * qualifier_value;
         func * func_value;
     };
     unsigned int syn_level;
@@ -54,6 +63,7 @@ typedef struct symtab_entry
 
 typedef struct symtab
 {
+    symtab_type type;
     unsigned int size;
     unsigned int count;
     struct symtab * parent;
@@ -72,14 +82,15 @@ void symtab_entry_resize(symtab_entry * entries, int size,
 
 void symtab_entry_print(symtab_entry * entry);
 
-symtab * symtab_new(unsigned int size, symtab * parent);
+symtab * symtab_new(unsigned int size, symtab_type type, symtab * parent);
 void symtab_delete(symtab * tab);
 
 void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level);
 void symtab_add_bind(symtab * tab, bind * let_value, unsigned int syn_level);
+void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned int syn_level);
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
 
-symtab_entry * symtab_lookup(symtab * tab, const char * id, char nested);
+symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup);
 
 void symtab_resize(symtab * tab);
 
