@@ -1,0 +1,29 @@
+
+func print_cl(cl[D] -> float) -> int
+{
+    var i = 0;
+    
+    for (i = 0; i < D; i = i + 1)
+    {
+        printf(cl[i])
+    };
+    
+    0
+}
+
+func cl() -> [_] -> float
+{
+    func grad(d -> float) -> float
+    {
+        d * 2.0 * 3.14159265 / 360.0
+    }
+    
+    [ f(y) | f in [ sin, cos ] -> (float) -> float;
+             y in [ grad(0.0), grad(30.0), grad(45.0), grad(60.0), grad(90.0) ] -> float ] -> float
+}
+    
+func main() -> int
+{
+   print_cl(cl())
+}
+
