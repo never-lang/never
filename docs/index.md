@@ -668,7 +668,7 @@ func cl() -> [_] -> int
 }
 ```
 
-List comprehension may also return lambda functions.
+List comprehension may also invoke other functions.
 
 ```swift
 func cl() -> [_] -> float
@@ -683,6 +683,20 @@ func cl() -> [_] -> float
 }
 ```
 
+or even return list of closures.
+
+```swift
+func cl() -> [_] -> (float) -> float
+{
+    func grad(d -> float) -> float
+    {
+        d * 2.0 * 3.14159265 / 360.0
+    }
+    
+    [ g | f in [ sin, cos ] -> (float) -> float;
+          g in [ let func(x -> float) -> float { f(grad(x)) } ] -> (float) -> float ] -> (float) -> float
+}
+```
 
 ## Mathematical Functions
 Never supports a few built-in mathematical functions - ```sin(x)```,
