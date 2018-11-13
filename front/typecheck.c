@@ -1183,8 +1183,11 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     case COMB_TYPE_UNKNOWN:
     case COMB_TYPE_ERR:
     case COMB_TYPE_VOID:
-        print_error_msg(value->line_no, "cannot execute function on type %s\n",
-                        comb_type_str(value->call.func_expr->comb.comb));
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(value->line_no, "cannot execute function on type %s\n",
+                            comb_type_str(value->call.func_expr->comb.comb));
+        }
         break;
     }
 
@@ -1531,6 +1534,7 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         else
         {
+            *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no, "list comprehension is not well formed\n");
         }
@@ -2152,38 +2156,38 @@ int func_main_check_type(symtab * tab, int * result)
             if (func_value->decl->params != NULL &&
                 func_main_check_num_params(func_value->decl->params) == 0)
             {
+                *result = TYPECHECK_FAIL;
                 print_error_msg(
                     func_value->line_no,
                     "function main can take only numerical parameters\n",
                     func_value->decl->params->count);
-                *result = TYPECHECK_FAIL;
             }
             if (func_value->decl->ret == NULL)
             {
+                *result = TYPECHECK_FAIL;
                 print_error_msg(func_value->line_no,
                                 "incorrect function main return type\n");
-                *result = TYPECHECK_FAIL;
             }
             else
             {
                 if (param_is_num(func_value->decl->ret) == TYPECHECK_FAIL)
                 {
+                    *result = TYPECHECK_FAIL;
                     print_error_msg(func_value->line_no,
                                     "incorrect function main return type\n");
-                    *result = TYPECHECK_FAIL;
                 }
             }
         }
         else
         {
-            print_error_msg(0, "incorrect function main, expected function\n");
             *result = TYPECHECK_FAIL;
+            print_error_msg(0, "incorrect function main, expected function\n");
         }
     }
     else
     {
-        print_error_msg(0, "function main is not defined\n");
         *result = TYPECHECK_FAIL;
+        print_error_msg(0, "function main is not defined\n");
     }
 
     return 0;

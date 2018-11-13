@@ -72,7 +72,7 @@ int yyerror(never ** nev, char * str)
 %type <val.except_list_value> except_list
 %type <val.never_value> never
 
-%right TOK_IF TOK_ELSE
+%right TOK_IF TOK_ELSE TOK_FOR
 
 %right '='
 %right <val.str_value> '?' ':'
@@ -394,7 +394,7 @@ expr: TOK_DO expr TOK_WHILE '(' expr ')'
     $$->line_no = $<line_no>1;
 };
 
-expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr
+expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
 {
     $$ = expr_new_for($3, $5, $7, $9);
     $$->line_no = $<line_no>1;
