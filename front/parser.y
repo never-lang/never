@@ -43,6 +43,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_CATCH
 %token <val.str_value> TOK_THROW
 %token <val.str_value> TOK_IN
+%token <val.str_value> TOK_RECORD
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -51,6 +52,7 @@ int yyerror(never ** nev, char * str)
 %type <val.param_list_value> dim_list
 %type <val.param_value> param
 %type <val.param_list_value> param_list
+%type <val.param_list_value> param_seq
 %type <val.array_value> array;
 %type <val.array_value> array_sub;
 %type <val.listcomp_value> listcomp
@@ -70,6 +72,8 @@ int yyerror(never ** nev, char * str)
 %type <val.except_value> except_all
 %type <val.except_value> except
 %type <val.except_list_value> except_list
+%type <val.record_value> record
+%type <val.record_list_value> record_list
 %type <val.never_value> never
 
 %right TOK_IF TOK_ELSE TOK_FOR
@@ -113,6 +117,8 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) func_except_delete($$); } func_except
 %destructor { if ($$) except_delete($$); } except_all
 %destructor { if ($$) except_list_delete($$); } except_list
+%destructor { if ($$) record_delete($$); } record
+%destructor { if ($$) record_list_delete($$); } record_list
 %destructor {  } never
 
 %pure-parser
@@ -460,6 +466,18 @@ param: TOK_ID TOK_RET TOK_STRING
     $$->line_no = $<line_no>2;
 };
 
+param: TOK_ID
+{
+    $$ = param_new_id(NULL, $1);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID TOK_RET TOK_ID
+{
+    $$ = param_new_id($1, $3);
+    $$->line_no = $<line_no>1;
+};
+
 param: '[' dim_list ']' TOK_RET param
 {
     $$ = param_new_array(NULL, $2, $5);
@@ -523,6 +541,18 @@ param_list: param
 param_list: param_list ',' param
 {
     param_list_add_end($1, $3);
+    $$ = $1;
+};
+
+param_seq: param ';'
+{
+    $$ = param_list_new();
+    param_list_add_end($$, $1);
+};
+
+param_seq: param_seq param ';'
+{
+    param_list_add_end($1, $2);
     $$ = $1;
 };
 
@@ -678,9 +708,32 @@ func_list: func_list func
     $$ = $1;
 };
 
+record: TOK_RECORD TOK_ID '{' param_seq '}' ';'
+{
+    $$ = record_new($2, $4);
+    $$->line_no = $<line_no>1;
+};
+
+record_list: record
+{
+    $$ = record_list_new();
+    record_list_add_end($$, $1);
+};
+
+record_list: record_list record
+{
+    record_list_add_end($1, $2);
+    $$ = $1;
+};
+
+never: record_list func_list
+{
+    $$ = *nev = never_new($1, $2);
+};
+
 never: func_list
 {
-    $$ = *nev = never_new($1);
+    $$ = *nev = never_new(NULL, $1);
 };
 
 %%

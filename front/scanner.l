@@ -125,6 +125,11 @@ float {
     return TOK_FLOAT;
 }
 
+record {
+    tokp->line_no = line_no;
+    scanner_printf("record\n");
+} return TOK_RECORD;
+
 string {
     tokp->line_no = line_no;
     scanner_printf("string\n");

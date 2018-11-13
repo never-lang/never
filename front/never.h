@@ -24,14 +24,16 @@
 
 #include "func.h"
 #include "symtab.h"
+#include "record.h"
 
 typedef struct never
 {
     symtab * stab;
+    record_list * records;
     func_list * funcs;
 } never;
 
-never * never_new(func_list * funcs);
+never * never_new(record_list * records, func_list * funcs);
 void never_delete(never * nev);
 
 #endif /* __NEVER_H__ */

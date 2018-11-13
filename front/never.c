@@ -26,11 +26,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-never * never_new(func_list * funcs)
+never * never_new(record_list * records, func_list * funcs)
 {
     never * n = (never *)malloc(sizeof(never));
 
     n->stab = NULL;
+    n->records = records;
     n->funcs = funcs;
 
     return n;
@@ -38,6 +39,10 @@ never * never_new(func_list * funcs)
 
 void never_delete(never * nev)
 {
+    if (nev->records)
+    {
+        record_list_delete(nev->records);
+    }
     if (nev->funcs)
     {
         func_list_delete(nev->funcs);

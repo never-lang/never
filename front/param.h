@@ -27,6 +27,7 @@ typedef enum param_type
     PARAM_INT = 1,
     PARAM_FLOAT,
     PARAM_STRING,
+    PARAM_RECORD,
     PARAM_DIM,
     PARAM_ARRAY,
     PARAM_FUNC
@@ -37,6 +38,7 @@ typedef struct param
     param_type type;
     int index;
     char * id;
+    char * record;
     union {
         struct param * array;
         struct param_list * params;
@@ -63,6 +65,7 @@ typedef struct param_list
 param * param_new_int(char * id);
 param * param_new_float(char * id);
 param * param_new_string(char * id);
+param * param_new_id(char * id, char * record);
 param * param_new_dim(char * id);
 param * param_new_array(char * id, param_list * dims, param * ret);
 param * param_new_func(char * id, param_list * params, param * ret);

@@ -31,6 +31,7 @@
 #include "never.h"
 #include "except.h"
 #include "listcomp.h"
+#include "record.h"
 
 typedef union token_value {
     int int_value;
@@ -58,6 +59,8 @@ typedef union token_value {
     func_except * func_except_value;
     except * except_value;
     except_list * except_list_value;
+    record * record_value;
+    record_list * record_list_value;
     never * never_value;
 } token_value;
 

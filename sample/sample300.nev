@@ -1,0 +1,19 @@
+
+record Node {
+    a -> int;
+    f() -> int;
+    f -> float;
+};
+
+record Tree {
+    value -> int;
+    f(p -> int) -> Tree;
+    left -> Tree;
+    right -> Tree;
+};
+
+func main() -> int
+{
+    0
+}
+

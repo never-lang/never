@@ -31,6 +31,7 @@ param * param_new_int(char * id)
     value->type = PARAM_INT;
     value->index = -1;
     value->id = id;
+    value->record = NULL;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
@@ -45,6 +46,7 @@ param * param_new_float(char * id)
     value->type = PARAM_FLOAT;
     value->index = -1;
     value->id = id;
+    value->record = NULL;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
@@ -59,6 +61,22 @@ param * param_new_string(char * id)
     value->type = PARAM_STRING;
     value->index = -1;
     value->id = id;
+    value->record = NULL;
+    value->params = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_id(char * id, char * record)
+{
+    param * value = (param *)malloc(sizeof(param));
+    
+    value->type = PARAM_STRING;
+    value->index = -1;
+    value->id = id;
+    value->record = record;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
@@ -73,6 +91,7 @@ param * param_new_dim(char * id)
     value->type = PARAM_DIM;
     value->index = -1;
     value->id = id;
+    value->record = NULL;
     value->array = NULL;
     value->ret = NULL;
     value->line_no = 0;
@@ -87,6 +106,7 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     value->type = PARAM_ARRAY;
     value->index = -1;
     value->id = id;
+    value->record = NULL;
     value->dims = dims;
     value->ret = ret;
     value->line_no = 0;
@@ -106,6 +126,7 @@ param * param_new_func(char * id, param_list * params, param * ret)
     value->type = PARAM_FUNC;
     value->index = -1;
     value->id = id;
+    value->record = NULL;
     value->params = params;
     value->ret = ret;
     value->line_no = 0;
@@ -118,6 +139,10 @@ void param_delete(param * value)
     if (value->id)
     {
         free(value->id);
+    }
+    if (value->record)
+    {
+        free(value->record);
     }
 
     if (value->type == PARAM_FUNC && value->params != NULL)
@@ -266,6 +291,8 @@ char * param_type_str(param_type type)
         return "PARAM_FLOAT";
     case PARAM_STRING:
         return "PARAM_STRING";
+    case PARAM_RECORD:
+        return "PARAM_RECORD";
     case PARAM_DIM:
         return "PARAM_DIM";
     case PARAM_ARRAY:
