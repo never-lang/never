@@ -2,12 +2,12 @@
 #include "param.h"
 #include <stdlib.h>
 
-record * record_new(char * id, param_list * list)
+record * record_new(char * id, param_list * params)
 {
     record * value = (record *)malloc(sizeof(record));
     
     value->id = id;
-    value->list = list;
+    value->params = params;
     
     return value;
 }
@@ -19,12 +19,17 @@ void record_delete(record * value)
         free(value->id);
     }
 
-    if (value->list != NULL)
+    if (value->params != NULL)
     {
-        param_list_delete(value->list);
+        param_list_delete(value->params);
     }
 
     free(value);
+}
+
+param * record_find_param(record * value, char * id)
+{
+    return param_list_find(value->params, id);
 }
 
 record_list_node * record_list_node_new(record * value)

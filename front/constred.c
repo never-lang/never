@@ -602,6 +602,10 @@ int expr_constred(expr * value, int * result)
             listcomp_constred(value->listcomp_value, result);
         }
         break;
+    case EXPR_RECORD:
+    case EXPR_ATTR:
+        assert(0);
+        break;
     }
     return 0;
 }

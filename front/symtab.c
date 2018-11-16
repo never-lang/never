@@ -110,20 +110,20 @@ void symtab_entry_print(symtab_entry * entry)
         {
             if (param_value->type == PARAM_INT)
             {
-                printf("[I][%s][%d]\n", param_value->id, entry->syn_level);
+                printf("[PI][%s][%d]\n", param_value->id, entry->syn_level);
             }
             else if (param_value->type == PARAM_FLOAT)
             {
-                printf("[R][%s][%d]\n", param_value->id, entry->syn_level);
+                printf("[PI][%s][%d]\n", param_value->id, entry->syn_level);
             }
             else if (param_value->type == PARAM_FUNC)
             {
-                printf("[P][%s][%d]\n", param_value->id, entry->syn_level);
+                printf("[PF][%s][%d]\n", param_value->id, entry->syn_level);
             }
         }
         else
         {
-            printf("[U][%s][%d]\n", entry->id, entry->syn_level);
+            printf("[PU][%s][%d]\n", entry->id, entry->syn_level);
         }
     }
     else if (entry->type == SYMTAB_BIND)
@@ -134,10 +134,27 @@ void symtab_entry_print(symtab_entry * entry)
     {
         printf("[Q][%s][%d]\n", entry->id, entry->syn_level);
     }
+    else if (entry->type == SYMTAB_RECORD)
+    {
+        printf("[R][%s][%d]\n", entry->id, entry->syn_level);
+    }
     else if (entry->type == SYMTAB_FUNC)
     {
         printf("[F][%s][%d]\n", entry->id, entry->syn_level);
     }
+}
+
+char * symtab_entry_type_str(symtab_entry_type type)
+{
+    switch (type)
+    {
+        case SYMTAB_PARAM: return "param";
+        case SYMTAB_BIND: return "bind";
+        case SYMTAB_QUALIFIER: return "qualifier";
+        case SYMTAB_RECORD: return "record";
+        case SYMTAB_FUNC: return "func";
+    }
+    return "unknown";
 }
 
 symtab * symtab_new(unsigned int size, symtab_type type, symtab * parent)
@@ -213,6 +230,20 @@ void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned in
     
     symtab_entry_add_object(tab->entries, tab->size, SYMTAB_QUALIFIER, qualifier_value->id,
                             qualifier_value, syn_level);
+    tab->count++;
+    symtab_resize(tab);
+}
+
+void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_level)
+{
+    if (record_value->id == NULL)
+    {
+        return;
+    }
+    
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_RECORD, record_value->id,
+                            record_value, syn_level);
+                            
     tab->count++;
     symtab_resize(tab);
 }

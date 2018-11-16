@@ -23,6 +23,7 @@
 #include "dim.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 param * param_new_int(char * id)
 {
@@ -31,7 +32,7 @@ param * param_new_int(char * id)
     value->type = PARAM_INT;
     value->index = -1;
     value->id = id;
-    value->record = NULL;
+    value->record_id = NULL;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
@@ -46,7 +47,7 @@ param * param_new_float(char * id)
     value->type = PARAM_FLOAT;
     value->index = -1;
     value->id = id;
-    value->record = NULL;
+    value->record_id = NULL;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
@@ -61,22 +62,7 @@ param * param_new_string(char * id)
     value->type = PARAM_STRING;
     value->index = -1;
     value->id = id;
-    value->record = NULL;
-    value->params = NULL;
-    value->ret = NULL;
-    value->line_no = 0;
-
-    return value;
-}
-
-param * param_new_id(char * id, char * record)
-{
-    param * value = (param *)malloc(sizeof(param));
-    
-    value->type = PARAM_STRING;
-    value->index = -1;
-    value->id = id;
-    value->record = record;
+    value->record_id = NULL;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
@@ -91,7 +77,7 @@ param * param_new_dim(char * id)
     value->type = PARAM_DIM;
     value->index = -1;
     value->id = id;
-    value->record = NULL;
+    value->record_id = NULL;
     value->array = NULL;
     value->ret = NULL;
     value->line_no = 0;
@@ -106,7 +92,7 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     value->type = PARAM_ARRAY;
     value->index = -1;
     value->id = id;
-    value->record = NULL;
+    value->record_id = NULL;
     value->dims = dims;
     value->ret = ret;
     value->line_no = 0;
@@ -119,6 +105,21 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     return value;
 }
 
+param * param_new_record(char * id, char * record_id)
+{
+    param * value = (param *)malloc(sizeof(param));
+    
+    value->type = PARAM_RECORD;
+    value->index = -1;
+    value->id = id;
+    value->record_id = record_id;
+    value->record_value = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
 param * param_new_func(char * id, param_list * params, param * ret)
 {
     param * value = (param *)malloc(sizeof(param));
@@ -126,7 +127,7 @@ param * param_new_func(char * id, param_list * params, param * ret)
     value->type = PARAM_FUNC;
     value->index = -1;
     value->id = id;
-    value->record = NULL;
+    value->record_id = NULL;
     value->params = params;
     value->ret = ret;
     value->line_no = 0;
@@ -140,9 +141,9 @@ void param_delete(param * value)
     {
         free(value->id);
     }
-    if (value->record)
+    if (value->record_id)
     {
-        free(value->record);
+        free(value->record_id);
     }
 
     if (value->type == PARAM_FUNC && value->params != NULL)
@@ -238,6 +239,29 @@ void param_list_add_end(param_list * list, param * value)
         node->prev = list->head;
         list->head = node;
     }
+}
+
+param * param_list_find(param_list * list, char * id)
+{
+    param * ret = NULL;
+
+    param_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL)
+        {
+            if (strcmp(value->id, id) == 0)
+            {
+                ret = value;
+                break; 
+            }
+        }
+
+        node = node->next;
+    }
+    
+    return ret;
 }
 
 void param_dim_set_array(param_list * dims, param * array)

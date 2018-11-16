@@ -25,6 +25,7 @@
 #include "array.h"
 #include "param.h"
 #include "bind.h"
+#include "record.h"
 #include "func.h"
 #include "listcomp.h"
 
@@ -45,7 +46,8 @@ typedef enum symtab_entry_type
     SYMTAB_PARAM = 1,
     SYMTAB_BIND = 2,
     SYMTAB_QUALIFIER = 3,
-    SYMTAB_FUNC = 4
+    SYMTAB_RECORD = 4,
+    SYMTAB_FUNC = 5
 } symtab_entry_type;
 
 typedef struct symtab_entry
@@ -56,6 +58,7 @@ typedef struct symtab_entry
         bind * bind_value;
         param * param_value;
         qualifier * qualifier_value;
+        record * record_value;
         func * func_value;
     };
     unsigned int syn_level;
@@ -81,6 +84,7 @@ void symtab_entry_resize(symtab_entry * entries, int size,
                          symtab_entry * entries_new, int size_new);
 
 void symtab_entry_print(symtab_entry * entry);
+char * symtab_entry_type_str(symtab_entry_type type);
 
 symtab * symtab_new(unsigned int size, symtab_type type, symtab * parent);
 void symtab_delete(symtab * tab);
@@ -88,6 +92,7 @@ void symtab_delete(symtab * tab);
 void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level);
 void symtab_add_bind(symtab * tab, bind * let_value, unsigned int syn_level);
 void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned int syn_level);
+void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_level);
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
 
 symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup);

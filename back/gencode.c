@@ -355,6 +355,10 @@ int expr_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                              value->listcomp_value, result);
         }
         break;
+    case EXPR_RECORD:
+    case EXPR_ATTR:
+        assert(0);
+        break;
     }
     return 0;
 }
@@ -679,6 +683,10 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
             func_gencode_freevars_listcomp(func_value, value->listcomp_value->stab,
                                            value->listcomp_value, result);
         }
+        break;
+    case EXPR_RECORD:
+    case EXPR_ATTR:
+        assert(0);
         break;
     }
 
@@ -2211,6 +2219,10 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             listcomp_emit(value->listcomp_value, stack_level, module_value,
                           list_weak, result);
         }
+        break;
+    case EXPR_RECORD:
+    case EXPR_ATTR:
+        assert(0);
         break;
     }
     return 0;

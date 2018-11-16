@@ -152,6 +152,9 @@
       <keyword>for</keyword>
       <keyword>if</keyword>
       <keyword>else</keyword>
+      <keyword>record</keyword>
+      <keyword>nil</keyword>
+      <keyword>new</keyword>
     </context>
 
     <context id="operators" style-ref="operator">

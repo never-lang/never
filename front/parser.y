@@ -77,6 +77,7 @@ int yyerror(never ** nev, char * str)
 %type <val.never_value> never
 
 %right TOK_IF TOK_ELSE TOK_FOR
+%right TOK_RET
 
 %right '='
 %right <val.str_value> '?' ':'
@@ -87,7 +88,8 @@ int yyerror(never ** nev, char * str)
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
 %right TOK_NOT /* %precedence NEG */
-%left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END
+%right TOK_NEW
+%left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END TOK_DOT
 
 %start never
 
@@ -406,6 +408,18 @@ expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
     $$->line_no = $<line_no>1;
 };
 
+expr: TOK_NEW TOK_ID
+{
+    $$ = expr_new_record($2);
+    $$->line_no = $<line_no>1;
+};
+
+expr: expr TOK_DOT TOK_ID
+{
+    $$ = expr_new_attr($1, $3);
+    $$->line_no = $<line_no>1;
+};
+
 expr_list: expr
 {
     $$ = expr_list_new();
@@ -466,15 +480,15 @@ param: TOK_ID TOK_RET TOK_STRING
     $$->line_no = $<line_no>2;
 };
 
-param: TOK_ID
+param: TOK_ID %prec TOK_RET
 {
-    $$ = param_new_id(NULL, $1);
+    $$ = param_new_record(NULL, $1);
     $$->line_no = $<line_no>1;
 };
 
 param: TOK_ID TOK_RET TOK_ID
 {
-    $$ = param_new_id($1, $3);
+    $$ = param_new_record($1, $3);
     $$->line_no = $<line_no>1;
 };
 

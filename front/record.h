@@ -1,12 +1,13 @@
 #ifndef __RECORD_H__
 #define __RECORD_H__
 
+typedef struct param param;
 typedef struct param_list param_list;
 
 typedef struct record
 {
     char * id;
-    param_list * list;
+    param_list * params;
     unsigned int line_no;
 } record;
 
@@ -25,6 +26,8 @@ typedef struct record_list
 
 record * record_new(char * id, param_list * list);
 void record_delete(record * value);
+
+param * record_find_param(record * value, char * id);
 
 record_list_node * record_list_node_new(record * value);
 void record_list_node_delete(record_list_node * node);

@@ -27,9 +27,9 @@ typedef enum param_type
     PARAM_INT = 1,
     PARAM_FLOAT,
     PARAM_STRING,
-    PARAM_RECORD,
     PARAM_DIM,
     PARAM_ARRAY,
+    PARAM_RECORD,
     PARAM_FUNC
 } param_type;
 
@@ -38,11 +38,12 @@ typedef struct param
     param_type type;
     int index;
     char * id;
-    char * record;
+    char * record_id;
     union {
         struct param * array;
         struct param_list * params;
         struct param_list * dims;
+        struct record * record_value;
     };
     struct param * ret;
     unsigned int line_no;
@@ -65,9 +66,9 @@ typedef struct param_list
 param * param_new_int(char * id);
 param * param_new_float(char * id);
 param * param_new_string(char * id);
-param * param_new_id(char * id, char * record);
 param * param_new_dim(char * id);
 param * param_new_array(char * id, param_list * dims, param * ret);
+param * param_new_record(char * id, char * record_id);
 param * param_new_func(char * id, param_list * params, param * ret);
 void param_delete(param * value);
 
@@ -79,6 +80,8 @@ void param_list_delete(param_list * list);
 
 void param_list_add_beg(param_list * list, param * value);
 void param_list_add_end(param_list * list, param * value);
+
+param * param_list_find(param_list * list, char * id);
 
 void param_dim_set_array(param_list * dims, param * array);
 

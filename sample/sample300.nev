@@ -7,10 +7,16 @@ record Node {
 
 record Tree {
     value -> int;
-    f(p -> int) -> Tree;
+    f(p -> int) -> (int) -> Tree;
+    left(int, Tree) -> (string, Tree) -> Tree;
     left -> Tree;
     right -> Tree;
 };
+
+func count(tab[D] -> Tree) -> Tree
+{
+    new Tree
+}
 
 func main() -> int
 {

@@ -57,6 +57,10 @@ int expr_set_return_type(expr * value, param * ret)
         value->comb.comb_dims = ret->dims->count;
         value->comb.comb_ret = ret->ret;
     }
+    else if (ret->type == PARAM_RECORD)
+    {
+        assert(0);
+    }
     else if (ret->type == PARAM_FUNC)
     {
         value->comb.comb = COMB_TYPE_FUNC;
@@ -97,6 +101,10 @@ int param_cmp(param * param_one, param * param_two)
     {
         return (param_one->dims->count == param_two->dims->count &&
                 param_cmp(param_one->ret, param_two->ret));
+    }
+    else if (param_one->type == PARAM_RECORD && param_two->type == PARAM_RECORD)
+    {
+        assert(0);
     }
     else if (param_one->type == PARAM_FUNC && param_two->type == PARAM_FUNC)
     {
@@ -246,6 +254,10 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     {
         return param_expr_array_cmp(param_value, expr_value);
     }
+    else if (param_value->type == PARAM_RECORD && expr_value->comb.comb == COMB_TYPE_RECORD)
+    {
+        assert(0);
+    }
     else if (param_value->type == PARAM_FUNC && expr_value->comb.comb == COMB_TYPE_FUNC)
     {
         return func_cmp(param_value->params, param_value->ret, expr_value->comb.comb_params,
@@ -294,6 +306,51 @@ int param_expr_list_cmp(param_list * params, expr_list * list)
 /*
  * Add symbols to symtab
  */
+int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
+{
+    if (entry->type == SYMTAB_FUNC)
+    {
+        func * al_func = entry->func_value;
+        print_error_msg(line_no,
+                        "function %s already defined at line %u\n",
+                         entry->id, al_func->line_no);
+    }
+    else if (entry->type == SYMTAB_PARAM)
+    {
+        param * al_param = entry->param_value;
+        print_error_msg(line_no,
+                        "parameter %s already defined at line %u\n",
+                        entry->id, al_param->line_no);
+    }
+    else if (entry->type == SYMTAB_BIND)
+    {
+        bind * al_bind = entry->bind_value;
+        print_error_msg(line_no,
+                        "bind %s already defined at line %u\n",
+                         entry->id, al_bind->line_no);
+    }
+    else if (entry->type == SYMTAB_QUALIFIER)
+    {
+        qualifier * al_qualifier = entry->qualifier_value;
+        print_error_msg(line_no,
+                        "qualifier %s already defined at line %u\n",
+                        entry->id, al_qualifier->line_no);
+    }
+    else if (entry->type == SYMTAB_RECORD)
+    {
+        record * al_record = entry->record_value;
+        print_error_msg(line_no,
+                        "record %s already defined at line %u\n",
+                        entry->id, al_record->line_no);
+    }
+    else
+    {
+        assert(0);
+    }
+
+    return 0;
+}
+  
 int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
                                   unsigned int syn_level, int * result)
 {
@@ -305,38 +362,7 @@ int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
     else
     {
         *result = TYPECHECK_FAIL;
-        if (entry->type == SYMTAB_FUNC)
-        {
-            func * al_func = entry->func_value;
-            print_error_msg(param_value->line_no,
-                            "function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
-        }
-        else if (entry->type == SYMTAB_PARAM)
-        {
-            param * al_param = entry->param_value;
-            print_error_msg(param_value->line_no,
-                            "parameter %s already defined at line %u\n",
-                            entry->id, al_param->line_no);
-        }
-        else if (entry->type == SYMTAB_BIND)
-        {
-            bind * al_bind = entry->bind_value;
-            print_error_msg(param_value->line_no,
-                            "bind %s already defined at line %u\n",
-                            entry->id, al_bind->line_no);
-        }
-        else if (entry->type == SYMTAB_QUALIFIER)
-        {
-            qualifier * al_qualifier = entry->qualifier_value;
-            print_error_msg(param_value->line_no,
-                            "qualifier %s already defined at line %u\n",
-                            entry->id, al_qualifier->line_no);
-        }
-        else
-        {
-            assert(0);
-        }
+        symtab_entry_exists(entry, param_value->line_no);
     }
     return 0;
 }
@@ -383,38 +409,7 @@ int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
     else
     {
         *result = TYPECHECK_FAIL;
-        if (entry->type == SYMTAB_FUNC)
-        {
-            func * al_func = entry->func_value;
-            print_error_msg(bind_value->line_no,
-                            "function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
-        }
-        else if (entry->type == SYMTAB_PARAM)
-        {
-            param * al_param = entry->param_value;
-            print_error_msg(bind_value->line_no,
-                            "parameter %s already defined at line %u\n",
-                            entry->id, al_param->line_no);
-        }
-        else if (entry->type == SYMTAB_BIND)
-        {
-            bind * al_bind = entry->bind_value;
-            print_error_msg(bind_value->line_no,
-                            "bind %s already defined at line %u\n",
-                            entry->id, al_bind->line_no);
-        }
-        else if (entry->type == SYMTAB_QUALIFIER)
-        {
-            qualifier * al_qualifier = entry->qualifier_value;
-            print_error_msg(bind_value->line_no,
-                            "qualifier %s already defined at line %u\n",
-                            entry->id, al_qualifier->line_no);
-        }
-        else
-        {
-            assert(0);
-        }
+        symtab_entry_exists(entry, bind_value->line_no);
     }
     return 0;
 }
@@ -445,39 +440,7 @@ int symtab_add_qualifier_from_qualifier(symtab * tab, qualifier * value,
     }
     else
     {
-        *result = TYPECHECK_FAIL;
-        if (entry->type == SYMTAB_FUNC)
-        {
-            func * al_func = entry->func_value;
-            print_error_msg(value->line_no,
-                            "function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
-        }
-        else if (entry->type == SYMTAB_PARAM)
-        {
-            param * al_param = entry->param_value;
-            print_error_msg(value->line_no,
-                            "parameter %s already defined at line %u\n",
-                            entry->id, al_param->line_no);
-        }
-        else if (entry->type == SYMTAB_BIND)
-        {
-            bind * al_bind = entry->bind_value;
-            print_error_msg(value->line_no,
-                            "bind %s already defined at line %u\n",
-                            entry->id, al_bind->line_no);
-        }
-        else if (entry->type == SYMTAB_QUALIFIER)
-        {
-            qualifier * al_qualifier = entry->qualifier_value;
-            print_error_msg(value->line_no,
-                            "qualifier %s already defined at line %u\n",
-                            entry->id, al_qualifier->line_no);
-        }
-        else
-        {
-            assert(0);
-        }
+        symtab_entry_exists(entry, value->line_no);
     }
 
     return 0;
@@ -495,38 +458,7 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
     else
     {
         *result = TYPECHECK_FAIL;
-        if (entry->type == SYMTAB_FUNC)
-        {
-            func * al_func = entry->func_value;
-            print_error_msg(func_value->line_no,
-                            "function %s already defined at line %u\n",
-                            entry->id, al_func->line_no);
-        }
-        else if (entry->type == SYMTAB_PARAM)
-        {
-            param * al_param = entry->param_value;
-            print_error_msg(func_value->line_no,
-                            "parameter %s already defined at line %u\n",
-                            entry->id, al_param->line_no);
-        }
-        else if (entry->type == SYMTAB_BIND)
-        {
-            bind * al_bind = entry->bind_value;
-            print_error_msg(func_value->line_no,
-                            "bind %s already defined at line %u\n",
-                            entry->id, al_bind->line_no);
-        }
-        else if (entry->type == SYMTAB_QUALIFIER)
-        {
-            qualifier * al_qualifier = entry->qualifier_value;
-            print_error_msg(func_value->line_no,
-                            "qualifier %s already defined at line %u\n",
-                            entry->id, al_qualifier->line_no);
-        }
-        else
-        {
-            assert(0);
-        }
+        symtab_entry_exists(entry, func_value->line_no);
     }
 
     return 0;
@@ -1183,6 +1115,7 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     case COMB_TYPE_UNKNOWN:
     case COMB_TYPE_ERR:
     case COMB_TYPE_VOID:
+    case COMB_TYPE_RECORD:
         {
             *result = TYPECHECK_FAIL;
             print_error_msg(value->line_no, "cannot execute function on type %s\n",
@@ -1279,6 +1212,33 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
     return 0;
 }
 
+int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level,
+                              int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(tab, value->record.id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry == NULL)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no, "cannot find record %s\n",
+                        value->record.id);
+    }
+    else if (entry->type != SYMTAB_RECORD)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no, "expected record but %s found\n",
+                        symtab_entry_type_str(entry->type));
+        
+    }
+    else
+    {
+        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb_record = entry->record_value; 
+    }   
+
+    return 0;
+}
 
 int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                     int * result)
@@ -1539,6 +1499,12 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
             print_error_msg(value->line_no, "list comprehension is not well formed\n");
         }
         break;
+    case EXPR_RECORD:
+        expr_record_check_type_id(tab, value, syn_level, result);
+        break;
+    case EXPR_ATTR:
+        assert(0);
+        break;
     }
     return 0;
 }
@@ -1798,14 +1764,47 @@ int never_check_type(never * nev, int * result)
 {
     unsigned int syn_level = 0;
     
-    if (nev->stab == NULL)
-    {
-        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
-    }
-
     symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
     func_list_check_type(nev->stab, nev->funcs, syn_level, result);
 
+    return 0;
+}
+
+int symtab_add_records(symtab * stab, record_list * list, int * result)
+{
+    record_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        record * record_value = node->value;
+        if (record_value != NULL)
+        {
+            symtab_entry * entry = NULL;
+
+            entry = symtab_lookup(stab, record_value->id, SYMTAB_LOOKUP_GLOBAL);
+            if (entry != NULL)
+            {
+                *result = TYPECHECK_FAIL;
+                symtab_entry_exists(entry, record_value->line_no);
+            }
+            else
+            {
+                symtab_add_record(stab, record_value, 0);
+            }
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int never_add_records(never * nev, int * result)
+{
+    if (nev->records != NULL && nev->stab != NULL)
+    {
+        symtab_add_records(nev->stab, nev->records, result);
+    }
+    
     return 0;
 }
 
@@ -1920,6 +1919,12 @@ int print_func_expr(expr * value, int depth)
         {
             print_func_listcomp(value->listcomp_value, depth);
         }
+        break;
+    case EXPR_RECORD:
+        assert(0);
+        break;
+    case EXPR_ATTR:
+        assert(0);
         break;
     }
     return 0;
@@ -2196,6 +2201,14 @@ int func_main_check_type(symtab * tab, int * result)
 int never_sem_check(never * nev)
 {
     int typecheck_res = TYPECHECK_SUCC;
+
+    if (nev->stab == NULL)
+    {
+        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
+    }
+
+    /* add types to symtab */
+    never_add_records(nev, &typecheck_res);
 
     /* printf("---- check types ---\n"); */
     never_check_type(nev, &typecheck_res);

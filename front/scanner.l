@@ -119,6 +119,12 @@ int {
     return TOK_INT;
 }
 
+new {
+    tokp->line_no = line_no;
+    scanner_printf("new\n");
+    return TOK_NEW;
+}
+
 float {
     tokp->line_no = line_no;
     scanner_printf("float\n");
@@ -128,7 +134,8 @@ float {
 record {
     tokp->line_no = line_no;
     scanner_printf("record\n");
-} return TOK_RECORD;
+    return TOK_RECORD;
+} 
 
 string {
     tokp->line_no = line_no;
@@ -242,6 +249,12 @@ string {
     tokp->line_no = line_no;
     scanner_printf("%s\n", yytext);
     return yytext[0];
+}
+
+"." {
+    tokp->line_no = line_no;
+    scanner_printf("%s\n", yytext);
+    return TOK_DOT;
 }
 
 {DIGIT}+ {

@@ -44,6 +44,7 @@ int param_expr_array_cmp(param * param_value, expr * expr_value);
 int param_expr_cmp(param * param_value, expr * expr_value);
 int param_expr_list_cmp(param_list * params, expr_list * list);
 
+int symtab_entry_exists(symtab_entry * entry, unsigned int line_no);
 int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
                                   unsigned int syn_level, int * result);
 int symtab_add_param_from_param(symtab * tab, param * param_value,
@@ -84,6 +85,8 @@ int qualifier_list_check_type(symtab * tab, qualifier_list * list,
                               unsigned int syn_level, int * result);
 int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
                              unsigned int syn_level, int * result);
+int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level,
+                           int * result);
 int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                     int * result);
 int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
@@ -105,6 +108,9 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result);
 int never_check_type(never * nev, int * result);
+
+int symtab_add_records(symtab * stab, record_list * list, int * result);
+int never_add_records(never * nev, int * result);
 
 int print_func_expr(expr * value, int depth);
 int print_func_expr_list(expr_list * list, int depth);

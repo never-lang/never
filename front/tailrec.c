@@ -166,6 +166,10 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
                              value->listcomp_value, TAILREC_OP_SKIP);
         }
         break;
+    case EXPR_RECORD:
+    case EXPR_ATTR:
+        assert(0);
+        break;
     }
 
     return 0;
