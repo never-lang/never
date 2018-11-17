@@ -65,6 +65,13 @@ int array_dims_check_type_expr(symtab * tab, expr * value, unsigned syn_level,
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
                                     unsigned int syn_level, int * result);
 
+int param_record_check_type(symtab * tab, param * param_value,
+                            unsigned int syn_level, int * result);
+int param_check_type(symtab * tab, param * param_value,
+                     unsigned int syn_level, int * result);
+int param_list_check_type(symtab * tab, param_list * list,
+                          unsigned int syn_level, int * result);                     
+
 int expr_id_check_type(symtab * tab, expr * value, int * result);
 int expr_neg_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result);
 int expr_add_sub_check_type(symtab * tab, expr * value, unsigned int syn_level,
@@ -87,6 +94,8 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
                              unsigned int syn_level, int * result);
 int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level,
                            int * result);
+int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
+                         int * result);
 int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                     int * result);
 int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
@@ -107,10 +116,13 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                     int * result);
 int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result);
-int never_check_type(never * nev, int * result);
 
-int symtab_add_records(symtab * stab, record_list * list, int * result);
-int never_add_records(never * nev, int * result);
+int never_add_record(symtab * stab, record * value, int * result);
+int never_add_record_list(symtab * stab, record_list * list, int * result);
+int record_check_type(symtab * stab, record * record_value, int * result);
+int record_list_check_type(symtab * stab, record_list * list, int * result);
+
+int never_check_type(never * nev, int * result);
 
 int print_func_expr(expr * value, int depth);
 int print_func_expr_list(expr_list * list, int depth);
@@ -122,6 +134,8 @@ int print_func_bind(bind * value, int depth);
 int print_func_bind_list(bind_list * list, int depth);
 int print_func_except(except * value, int depth);
 int print_func_except_list(except_list * list, int depth);
+int print_func_record(expr * value, int depth);
+int print_func_attr(expr * value, int depth);
 int print_func(func * value, int depth);
 int print_func_list(func_list * list, int depth);
 int print_functions(never * nev);

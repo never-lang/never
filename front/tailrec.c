@@ -167,8 +167,12 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         }
         break;
     case EXPR_RECORD:
+        break;
     case EXPR_ATTR:
-        assert(0);
+        if (value->attr.record_value != NULL)
+        {
+            expr_tailrec(syn_level, stab, value->attr.record_value, TAILREC_OP_SKIP);
+        }
         break;
     }
 

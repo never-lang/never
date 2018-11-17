@@ -59,7 +59,8 @@ int expr_set_return_type(expr * value, param * ret)
     }
     else if (ret->type == PARAM_RECORD)
     {
-        assert(0);
+        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb_record = ret->record_value;
     }
     else if (ret->type == PARAM_FUNC)
     {
@@ -104,7 +105,7 @@ int param_cmp(param * param_one, param * param_two)
     }
     else if (param_one->type == PARAM_RECORD && param_two->type == PARAM_RECORD)
     {
-        assert(0);
+        return (param_one->record_value == param_two->record_value);
     }
     else if (param_one->type == PARAM_FUNC && param_two->type == PARAM_FUNC)
     {
@@ -256,7 +257,14 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     }
     else if (param_value->type == PARAM_RECORD && expr_value->comb.comb == COMB_TYPE_RECORD)
     {
-        assert(0);
+        if (param_value->record_value == expr_value->comb.comb_record)
+        {
+            return TYPECHECK_SUCC;
+        }
+        else
+        {
+            return TYPECHECK_FAIL;
+        }
     }
     else if (param_value->type == PARAM_FUNC && expr_value->comb.comb == COMB_TYPE_FUNC)
     {
@@ -352,7 +360,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
 }
   
 int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
-                                  unsigned int syn_level, int * result)
+                                      unsigned int syn_level, int * result)
 {
     symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry == NULL)
@@ -368,7 +376,7 @@ int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
 }
 
 int symtab_add_param_from_param(symtab * tab, param * param_value,
-                            unsigned int syn_level, int * result)
+                                unsigned int syn_level, int * result)
 {
     if (param_value->type == PARAM_ARRAY)
     {
@@ -383,13 +391,13 @@ int symtab_add_param_from_param(symtab * tab, param * param_value,
 }
 
 int symtab_add_param_from_param_list(symtab * tab, param_list * list,
-                                 unsigned int syn_level, int * result)
+                                     unsigned int syn_level, int * result)
 {
     param_list_node * node = list->tail;
     while (node != NULL)
     {
         param * param_value = node->value;
-        if (param_value && param_value->id)
+        if (param_value && param_value->id != NULL)
         {
             symtab_add_param_from_param(tab, param_value, syn_level, result);
         }
@@ -483,6 +491,68 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list,
 /*
  * check types
  */
+int param_record_check_type(symtab * tab, param * param_value,
+                            unsigned int syn_level, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(tab, param_value->record_id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry == NULL)
+    {
+        *result = TYPECHECK_FAIL;
+        param_value->record_value = NULL;
+
+        print_error_msg(param_value->line_no, "cannot find record %s\n",
+                        param_value->record_id);
+    }
+    else if (entry->type != SYMTAB_RECORD)
+    {
+        *result = TYPECHECK_FAIL;
+        param_value->record_value = NULL;
+
+        print_error_msg(param_value->line_no, "expected record but %s found\n",
+                        symtab_entry_type_str(entry->type));
+        
+    }
+    else
+    {
+        param_value->record_value = entry->record_value; 
+    }
+
+    return 0;
+}                                       
+
+int param_check_type(symtab * tab, param * param_value,
+                     unsigned int syn_level, int * result)
+{
+    if (param_value->type == PARAM_ARRAY)
+    {
+        param_list_check_type(tab, param_value->dims, syn_level, result);
+    }
+    else if (param_value->type == PARAM_RECORD)
+    {
+        param_record_check_type(tab, param_value, syn_level, result);
+    }
+
+    return 0;
+}
+
+int param_list_check_type(symtab * tab, param_list * list,
+                          unsigned int syn_level, int * result)
+{
+    param_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        param * param_value = node->value;
+        if (param_value != NULL)
+        {
+            param_check_type(tab, param_value, syn_level, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+ 
 int expr_id_check_type(symtab * tab, expr * value, int * result)
 {
     symtab_entry * entry = NULL;
@@ -523,6 +593,11 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
                 value->comb.comb_dims = param_value->dims->count;
                 value->comb.comb_ret = param_value->ret;
             }
+            else if (param_value->type == PARAM_RECORD)
+            {
+                value->comb.comb = COMB_TYPE_RECORD;
+                value->comb.comb_record = param_value->record_value;
+            }
             else if (param_value->type == PARAM_FUNC)
             {
                 value->comb.comb = COMB_TYPE_FUNC;
@@ -536,14 +611,18 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         }
         else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
         {
-            value->comb.comb = entry->bind_value->expr_value->comb.comb;
-            value->comb.comb_params = entry->bind_value->expr_value->comb.comb_params;
-            value->comb.comb_ret = entry->bind_value->expr_value->comb.comb_ret;
-            value->comb.comb_dims = entry->bind_value->expr_value->comb.comb_dims;            
+            value->comb = entry->bind_value->expr_value->comb;
         }
         else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
         {
             expr_set_return_type(value, entry->qualifier_value->expr_value->comb.comb_ret);
+        }
+        else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(value->line_no,
+                            "expected id found record %s instead\n",
+                            entry->record_value->id);
         }
         else
         {
@@ -1221,12 +1300,18 @@ int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level
     if (entry == NULL)
     {
         *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb_record = NULL;
+
         print_error_msg(value->line_no, "cannot find record %s\n",
                         value->record.id);
     }
     else if (entry->type != SYMTAB_RECORD)
     {
         *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb_record = NULL;
+        
         print_error_msg(value->line_no, "expected record but %s found\n",
                         symtab_entry_type_str(entry->type));
         
@@ -1239,6 +1324,42 @@ int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level
 
     return 0;
 }
+
+int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
+                         int * result)
+{
+    if (value->attr.record_value != NULL)
+    {
+        expr_check_type(tab, value->attr.record_value, syn_level, result);
+    }
+
+    if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD)
+    {
+        record * record_value = value->attr.record_value->comb.comb_record;
+        if (record_value != NULL && value->attr.id != NULL)
+        {
+            param * param_value = record_find_param(record_value, value->attr.id);
+            if (param_value != NULL)
+            {
+                expr_set_return_type(value, param_value);
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                print_error_msg(value->line_no, "cannot find attribute %s in record %s\n",
+                                value->attr.id, record_value->id);
+            }
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no, "cannot get record attribute of type %s\n",
+                        comb_type_str(value->attr.record_value->comb.comb));
+    }
+
+    return 0;
+}        
 
 int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                     int * result)
@@ -1503,7 +1624,7 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         expr_record_check_type_id(tab, value, syn_level, result);
         break;
     case EXPR_ATTR:
-        assert(0);
+        expr_attr_check_type(tab, value, syn_level, result);
         break;
     }
     return 0;
@@ -1537,16 +1658,14 @@ int expr_seq_check_type(symtab * tab, expr * value, unsigned syn_level,
     if (node != NULL && node->value != NULL)
     {
         expr * expr_last = node->value;
-        
-        value->comb.comb = expr_last->comb.comb;
-        value->comb.comb_params = expr_last->comb.comb_params;
-        value->comb.comb_ret = expr_last->comb.comb_ret;
-        value->comb.comb_dims = expr_last->comb.comb_dims;
+
+        value->comb = expr_last->comb;
     }
     else
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
+
         print_error_msg(value->line_no,
                         "no type in sequence %s\n", expr_type_str(value->type));
     }
@@ -1699,6 +1818,15 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
         symtab_add_func_from_func(func_value->stab, func_value, syn_level - 1,
                                   result);
     }
+    if (func_value->decl->params != NULL)
+    {
+        param_list_check_type(func_value->stab, func_value->decl->params, syn_level,
+                              result);
+    }
+    if (func_value->decl->ret != NULL)
+    {
+        param_check_type(func_value->stab, func_value->decl->ret, syn_level, result);
+    }
     if (func_value->decl->params)
     {
         symtab_add_param_from_param_list(func_value->stab, func_value->decl->params,
@@ -1770,7 +1898,25 @@ int never_check_type(never * nev, int * result)
     return 0;
 }
 
-int symtab_add_records(symtab * stab, record_list * list, int * result)
+int never_add_record(symtab * stab, record * record_value, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(stab, record_value->id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry != NULL)
+    {
+        *result = TYPECHECK_FAIL;
+        symtab_entry_exists(entry, record_value->line_no);
+    }
+    else
+    {
+        symtab_add_record(stab, record_value, 0);
+    }
+
+    return 0;
+}
+
+int never_add_record_list(symtab * stab, record_list * list, int * result)
 {
     record_list_node * node = list->tail;
     
@@ -1779,18 +1925,7 @@ int symtab_add_records(symtab * stab, record_list * list, int * result)
         record * record_value = node->value;
         if (record_value != NULL)
         {
-            symtab_entry * entry = NULL;
-
-            entry = symtab_lookup(stab, record_value->id, SYMTAB_LOOKUP_GLOBAL);
-            if (entry != NULL)
-            {
-                *result = TYPECHECK_FAIL;
-                symtab_entry_exists(entry, record_value->line_no);
-            }
-            else
-            {
-                symtab_add_record(stab, record_value, 0);
-            }
+            never_add_record(stab, record_value, result);
         }
         node = node->next;
     }
@@ -1798,19 +1933,50 @@ int symtab_add_records(symtab * stab, record_list * list, int * result)
     return 0;
 }
 
-int never_add_records(never * nev, int * result)
+int record_check_type(symtab * stab, record * record_value, int * result)
 {
-    if (nev->records != NULL && nev->stab != NULL)
+    if (record_value->params != NULL)
     {
-        symtab_add_records(nev->stab, nev->records, result);
+        param_list_check_type(stab, record_value->params, 0, result);
     }
     
+    return 0;
+}
+
+int record_list_check_type(symtab * stab, record_list * list, int * result)
+{
+    record_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        record * record_value = node->value;
+        if (record_value != NULL)
+        {
+            record_check_type(stab, record_value, result);
+        }
+        node = node->next;
+    }
+
     return 0;
 }
 
 /**
  * print functions
  */
+int print_func_record(expr * value, int depth)
+{
+    return 0;
+}
+
+int print_func_attr(expr * value, int depth)
+{
+    if (value->attr.record_value != NULL)
+    {
+        print_func_expr(value->attr.record_value, depth);
+    }
+    return 0;
+}
+
 int print_func_expr(expr * value, int depth)
 {
     switch (value->type)
@@ -1921,10 +2087,10 @@ int print_func_expr(expr * value, int depth)
         }
         break;
     case EXPR_RECORD:
-        assert(0);
+        print_func_record(value, depth);
         break;
     case EXPR_ATTR:
-        assert(0);
+        print_func_attr(value, depth);
         break;
     }
     return 0;
@@ -2207,8 +2373,17 @@ int never_sem_check(never * nev)
         nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     }
 
-    /* add types to symtab */
-    never_add_records(nev, &typecheck_res);
+    /* add records to symtab */
+    if (nev->stab != NULL && nev->records != NULL)
+    {
+        never_add_record_list(nev->stab, nev->records, &typecheck_res);
+    }
+
+    /* check records */
+    if (nev->records != NULL)
+    {
+        record_list_check_type(nev->stab, nev->records, &typecheck_res);
+    }
 
     /* printf("---- check types ---\n"); */
     never_check_type(nev, &typecheck_res);

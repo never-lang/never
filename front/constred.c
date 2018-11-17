@@ -603,8 +603,12 @@ int expr_constred(expr * value, int * result)
         }
         break;
     case EXPR_RECORD:
+        break;
     case EXPR_ATTR:
-        assert(0);
+        if (value->attr.record_value != NULL)
+        {
+            expr_constred(value->attr.record_value, result);
+        }
         break;
     }
     return 0;

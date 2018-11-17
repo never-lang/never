@@ -2,20 +2,23 @@
 record Node {
     a -> int;
     f() -> int;
-    f -> float;
+    t -> Tree;
+    i -> Node;
 };
 
 record Tree {
     value -> int;
-    f(p -> int) -> (int) -> Tree;
-    left(int, Tree) -> (string, Tree) -> Tree;
+    f(p -> int) -> (int) -> int;
     left -> Tree;
-    right -> Tree;
+    right -> Node;
+    left(int, Tree) -> (string, Tree) -> Tree;
 };
 
-func count(tab[D] -> Tree) -> Tree
+func count(p -> Tree) -> Node
 {
-    new Tree
+    var t = new Tree;
+    
+    t.right.t.right
 }
 
 func main() -> int

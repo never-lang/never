@@ -185,8 +185,8 @@ typedef struct expr
         record;
         struct
         {
-            char * id;
             struct expr * record_value;
+            char * id;
         }
         attr;
     };
