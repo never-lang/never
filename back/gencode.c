@@ -2281,10 +2281,10 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_RECORD:
-        assert(0);
+        expr_record_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_ATTR:
-        assert(0);
+        expr_attr_emit(value, stack_level, module_value, list_weak, result);
         break;
     }
     return 0;
@@ -2662,6 +2662,49 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
 
     return 0;
 }
+
+int expr_record_emit(expr * value, int stack_level, module * module_value,
+                     func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    int size = -1;
+
+    if (value->record.id_record_value != NULL &&
+        value->record.id_record_value->params != NULL)
+    {
+        size = value->record.id_record_value->params->count;
+    }
+    assert(size != -1);
+
+    bc.type = BYTECODE_RECORD;
+    bc.record.size = size;
+    
+    bytecode_add(module_value->code, &bc);
+    
+    return 0;
+}
+
+int expr_attr_emit(expr * value, int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    int index = -1;
+    
+    expr_emit(value->attr.record_value, stack_level, module_value, list_weak, result);
+    
+    if (value->attr.id_param_value != NULL)
+    {
+        index = value->attr.id_param_value->index;
+    }
+    assert(index != -1);
+    
+    bc.type = BYTECODE_ATTR;
+    bc.attr.index = index;
+    
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}                   
 
 int bind_emit(bind * bind_value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result)

@@ -106,6 +106,9 @@ typedef enum bytecode_type
     BYTECODE_ARRAY_DEREF,
     BYTECODE_ARRAY_APPEND,
 
+    BYTECODE_RECORD,
+    BYTECODE_ATTR,
+
     BYTECODE_FUNC_DEF,
     BYTECODE_FUNC_OBJ,
     BYTECODE_GLOBAL_VEC,
@@ -215,6 +218,14 @@ typedef struct bytecode
         {
             unsigned int dims;
         } array_deref;
+        struct
+        {
+            unsigned int size;
+        } record;
+        struct
+        {
+            unsigned int index;
+        } attr;
     };
 } bytecode;
 
@@ -318,6 +329,9 @@ void bytecode_print_mk_array_float(bytecode * code);
 void bytecode_print_mk_init_array(bytecode * code);
 void bytecode_print_array_deref(bytecode * code);
 void bytecode_print_array_append(bytecode * code);
+
+void bytecode_print_record(bytecode * code);
+void bytecode_print_attr(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_func_obj(bytecode * code);

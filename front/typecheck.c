@@ -1319,7 +1319,8 @@ int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level
     else
     {
         value->comb.comb = COMB_TYPE_RECORD;
-        value->comb.comb_record = entry->record_value; 
+        value->comb.comb_record = entry->record_value;
+        value->record.id_record_value = entry->record_value;
     }   
 
     return 0;
@@ -1341,6 +1342,7 @@ int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
             param * param_value = record_find_param(record_value, value->attr.id);
             if (param_value != NULL)
             {
+                value->attr.id_param_value = param_value;
                 expr_set_return_type(value, param_value);
             }
             else

@@ -181,12 +181,14 @@ typedef struct expr
         struct
         {
             char * id;
+            struct record * id_record_value;
         }
         record;
         struct
         {
-            struct expr * record_value;
+            struct expr * record_value; /* record_value . id */
             char * id;
+            struct param * id_param_value;
         }
         attr;
     };

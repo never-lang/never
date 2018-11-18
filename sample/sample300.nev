@@ -11,17 +11,25 @@ record Tree {
     f(p -> int) -> (int) -> int;
     left -> Tree;
     right -> Tree;
+    attr1 -> float;
+    attr2 -> int;
+    attr3 -> string;
 };
 
 func count(p -> Tree) -> int
 {
     var t = new Tree;
+    var n = new Node;
     
-    t.right.value
+    t.right.attr2
 }
 
 func main() -> int
 {
-    0
+    var t = new Tree;
+    
+    t.value = 10 * 20;
+
+    t.value
 }
 

@@ -113,6 +113,9 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
     { BYTECODE_ARRAY_APPEND, vm_execute_array_append },
 
+    { BYTECODE_RECORD, vm_execute_record },
+    { BYTECODE_ATTR, vm_execute_attr },
+
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_FUNC_OBJ, vm_execute_func_obj },
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
@@ -1399,6 +1402,38 @@ void vm_execute_array_append(vm * machine, bytecode * code)
     mem_ptr obj = machine->stack[machine->sp--].addr;
     
     gc_append_arr_elem(machine->collector, array, obj);
+}
+
+void vm_execute_record(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr addr = gc_alloc_vec(machine->collector, code->record.size);
+    
+    /* TODO: to be removed */
+    mem_ptr i = gc_alloc_int(machine->collector, 0);
+    gc_set_vec(machine->collector, addr, 0, i);
+    /* TODO: end */
+    
+    machine->sp++;
+    vm_check_stack(machine);
+    
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+    
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_attr(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr record_value = machine->stack[machine->sp].addr;
+    mem_ptr addr =
+        gc_get_vec(machine->collector, record_value, code->attr.index);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_func_def(vm * machine, bytecode * code) { /* no op */ }

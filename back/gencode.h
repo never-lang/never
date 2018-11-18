@@ -196,6 +196,10 @@ int expr_array_emit(expr * value, int stack_level, module * module_value,
                     func_list_weak * list_weak, int * result);
 int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result);
+int expr_record_emit(expr * value, int stack_level, module * module_value,
+                     func_list_weak * list_weak, int * result);
+int expr_attr_emit(expr * value, int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result);
 int bind_emit(bind * bind_value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
 int bind_list_emit(bind_list * list, int stack_level, module * module_value,

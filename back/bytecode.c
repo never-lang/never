@@ -107,6 +107,9 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
     { BYTECODE_ARRAY_APPEND, bytecode_print_array_append },
 
+    { BYTECODE_RECORD, bytecode_print_record },
+    { BYTECODE_ATTR, bytecode_print_attr },
+
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_FUNC_OBJ, bytecode_print_func_obj },
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
@@ -475,6 +478,16 @@ void bytecode_print_array_append(bytecode * code)
     printf("%d: array append %d %d\n", code->addr, 
                                        code->id_local.stack_level,
                                        code->id_local.index);
+}
+
+void bytecode_print_record(bytecode * code)
+{
+    printf("%d: record size %u\n", code->addr, code->record.size);
+}
+
+void bytecode_print_attr(bytecode * code)
+{
+    printf("%d: attr index %u\n", code->addr, code->attr.index);
 }
 
 void bytecode_print_func_def(bytecode * code)

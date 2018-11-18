@@ -268,6 +268,7 @@ expr * expr_new_record(char * id)
     
     ret->type = EXPR_RECORD;
     ret->record.id = id;
+    ret->record.id_record_value = NULL;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     
@@ -281,6 +282,7 @@ expr * expr_new_attr(expr * record_value, char * id)
     ret->type = EXPR_ATTR;
     ret->attr.id = id;
     ret->attr.record_value = record_value;
+    ret->attr.id_param_value = NULL;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     
