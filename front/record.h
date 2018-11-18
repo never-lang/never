@@ -22,6 +22,7 @@
 #ifndef __RECORD_H__
 #define __RECORD_H__
 
+typedef struct symtab symtab;
 typedef struct param param;
 typedef struct param_list param_list;
 
@@ -29,6 +30,7 @@ typedef struct record
 {
     char * id;
     param_list * params;
+    symtab * stab;
     unsigned int line_no;
 } record;
 

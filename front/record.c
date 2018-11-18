@@ -21,7 +21,9 @@
  */
 #include "record.h"
 #include "param.h"
+#include "symtab.h"
 #include <stdlib.h>
+#include <assert.h>
 
 record * record_new(char * id, param_list * params)
 {
@@ -29,6 +31,7 @@ record * record_new(char * id, param_list * params)
     
     value->id = id;
     value->params = params;
+    value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     
     return value;
 }
@@ -39,18 +42,38 @@ void record_delete(record * value)
     {
         free(value->id);
     }
-
     if (value->params != NULL)
     {
         param_list_delete(value->params);
+    }
+    if (value->stab != NULL)
+    {
+        symtab_delete(value->stab);
     }
 
     free(value);
 }
 
-param * record_find_param(record * value, char * id)
+param * record_find_param(record * record_value, char * id)
 {
-    return param_list_find(value->params, id);
+    param * ret = NULL;
+    symtab_entry * entry = NULL;
+
+    if (record_value->stab != NULL && id != NULL)
+    {    
+        entry = symtab_lookup(record_value->stab, id, SYMTAB_LOOKUP_LOCAL);
+    }
+
+    if (entry != NULL && entry->type == SYMTAB_PARAM)
+    {
+        ret = entry->param_value;
+    }
+    else if (entry != NULL && entry->type != SYMTAB_PARAM)
+    {
+        assert(0);
+    }
+
+    return ret;
 }
 
 record_list_node * record_list_node_new(record * value)

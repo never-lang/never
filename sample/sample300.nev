@@ -3,22 +3,21 @@ record Node {
     a -> int;
     f() -> int;
     t -> Tree;
-    i -> Node;
+    left -> Node;
 };
 
 record Tree {
     value -> int;
     f(p -> int) -> (int) -> int;
     left -> Tree;
-    right -> Node;
-    left(int, Tree) -> (string, Tree) -> Tree;
+    right -> Tree;
 };
 
-func count(p -> Tree) -> Node
+func count(p -> Tree) -> int
 {
     var t = new Tree;
     
-    t.right.t.right
+    t.right.value
 }
 
 func main() -> int

@@ -29,6 +29,24 @@
 /* GP old, FP old, IP old, line_no */
 #define NUM_FRAME_PTRS 4
 
+int record_enum_param_list(param_list * params)
+{
+    int index = 0;
+    param_list_node * node = NULL;
+    
+    node = params->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
 int func_enum_param_list(param_list * params)
 {
     int index = 0;
@@ -356,8 +374,13 @@ int expr_gencode(unsigned int syn_level, func * func_value, symtab * stab,
         }
         break;
     case EXPR_RECORD:
+        /* no ids possible */
+        break;
     case EXPR_ATTR:
-        assert(0);
+        if (value->attr.record_value != NULL)
+        {
+            expr_gencode(syn_level, func_value, stab, value->attr.record_value, result);
+        }
         break;
     }
     return 0;
@@ -685,8 +708,13 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         }
         break;
     case EXPR_RECORD:
+        /* not possible */
+        break;
     case EXPR_ATTR:
-        assert(0);
+        if (value->attr.record_value != NULL)
+        {
+            func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
+        }
         break;
     }
 
@@ -978,12 +1006,44 @@ int func_list_gencode(unsigned int syn_level, func_list * list, int * result)
     return 0;
 }
 
+int record_gencode(unsigned int syn_level, record * value, int * result)
+{
+    if (value->params != NULL)
+    {
+        record_enum_param_list(value->params);
+    }
+
+    return 0;
+}
+
+int record_list_gencode(unsigned int syn_level, record_list * list, int * result)
+{
+    record_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        record * record_value = node->value;
+        if (record_value != NULL)
+        {
+            record_gencode(syn_level, record_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int never_gencode(never * nev)
 {
     int gencode_res = GENCODE_SUCC;
     unsigned int syn_level = 0;
 
-    if (nev->funcs)
+    if (nev->records != NULL)
+    {
+        record_list_gencode(0, nev->records, &gencode_res);
+    }
+
+    if (nev->funcs != NULL)
     {
         func_list_gencode(syn_level, nev->funcs, &gencode_res);
     }
@@ -2221,6 +2281,8 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_RECORD:
+        assert(0);
+        break;
     case EXPR_ATTR:
         assert(0);
         break;

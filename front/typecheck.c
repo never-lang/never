@@ -1940,6 +1940,12 @@ int record_check_type(symtab * stab, record * record_value, int * result)
         param_list_check_type(stab, record_value->params, 0, result);
     }
     
+    if (record_value->stab != NULL && record_value->params != NULL)
+    {
+        symtab_add_param_from_param_list(record_value->stab,
+                                         record_value->params, 0, result);
+    }
+    
     return 0;
 }
 
