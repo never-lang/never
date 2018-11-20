@@ -93,6 +93,16 @@ object * object_new_vec(unsigned int size)
     return obj;
 }
 
+object * object_new_vec_ref(mem_ptr vec_value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+    
+    obj->type = OBJECT_VEC_REF;
+    obj->vec_ref_value = vec_value;
+    
+    return obj;
+}
+
 object * object_new_arr(unsigned int dims, object_arr_dim * dv)
 {
     object * obj = (object *)malloc(sizeof(object));
@@ -167,6 +177,8 @@ void object_delete(object * obj)
         {
             free(obj->vec_value);
         }
+        break;
+    case OBJECT_VEC_REF:
         break;
     case OBJECT_ARRAY:
         if (obj->arr_value != NULL)
@@ -377,6 +389,9 @@ void object_print(object * obj)
         break;
     case OBJECT_VEC:
         printf("object_vec\n");
+        break;
+    case OBJECT_VEC_REF:
+        printf("object_vec_ref\n");
         break;
     case OBJECT_ARRAY:
         object_arr_print(obj->arr_value);

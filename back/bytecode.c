@@ -95,6 +95,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_ASS_FLOAT, bytecode_print_op_ass_float },
     { BYTECODE_OP_ASS_STRING, bytecode_print_op_ass_string },
     { BYTECODE_OP_ASS_ARRAY, bytecode_print_op_ass_array },
+    { BYTECODE_OP_ASS_RECORD, bytecode_print_op_ass_record },
     { BYTECODE_OP_ASS_FUNC, bytecode_print_op_ass_func },
 
     { BYTECODE_JUMPZ, bytecode_print_jumpz },
@@ -109,6 +110,10 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_RECORD, bytecode_print_record },
     { BYTECODE_ATTR, bytecode_print_attr },
+    { BYTECODE_NULL_STRING, bytecode_print_null_string },
+    { BYTECODE_NULL_ARRAY_REF, bytecode_print_null_array_ref },
+    { BYTECODE_NULL_RECORD_REF, bytecode_print_null_record_ref },
+    { BYTECODE_NULL_FUNC, bytecode_print_null_func },
 
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_FUNC_OBJ, bytecode_print_func_obj },
@@ -431,6 +436,11 @@ void bytecode_print_op_ass_array(bytecode * code)
     printf("%d: op ass array\n", code->addr);
 }
 
+void bytecode_print_op_ass_record(bytecode * code)
+{
+    printf("%d: op ass record\n", code->addr);
+}
+
 void bytecode_print_op_ass_func(bytecode * code)
 {
     printf("%d: op ass func\n", code->addr);
@@ -482,12 +492,32 @@ void bytecode_print_array_append(bytecode * code)
 
 void bytecode_print_record(bytecode * code)
 {
-    printf("%d: record size %u\n", code->addr, code->record.size);
+    printf("%d: record size %u\n", code->addr, code->record.count);
 }
 
 void bytecode_print_attr(bytecode * code)
 {
     printf("%d: attr index %u\n", code->addr, code->attr.index);
+}
+
+void bytecode_print_null_string(bytecode * code)
+{
+    printf("%d: null string\n", code->addr);
+}
+
+void bytecode_print_null_array_ref(bytecode * code)
+{
+    printf("%d: null array ref\n", code->addr);
+}
+
+void bytecode_print_null_record_ref(bytecode * code)
+{
+    printf("%d: null record ref\n", code->addr);
+}
+
+void bytecode_print_null_func(bytecode * code)
+{
+    printf("%d: null func\n", code->addr);
 }
 
 void bytecode_print_func_def(bytecode * code)

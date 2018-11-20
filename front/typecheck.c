@@ -952,6 +952,13 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = COMB_TYPE_STRING;
     }
+    else if (value->left->comb.comb == COMB_TYPE_RECORD &&
+             value->right->comb.comb == COMB_TYPE_RECORD &&
+             value->left->comb.comb_record == value->right->comb.comb_record)
+    {
+        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb_record = value->left->comb.comb_record;
+    }
     else if (value->left->comb.comb == COMB_TYPE_FUNC &&
              value->right->comb.comb == COMB_TYPE_FUNC &&
              func_cmp(value->left->comb.comb_params,

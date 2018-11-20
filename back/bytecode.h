@@ -94,6 +94,7 @@ typedef enum bytecode_type
     BYTECODE_OP_ASS_FLOAT,
     BYTECODE_OP_ASS_STRING,
     BYTECODE_OP_ASS_ARRAY,
+    BYTECODE_OP_ASS_RECORD,
     BYTECODE_OP_ASS_FUNC,
 
     BYTECODE_JUMPZ,
@@ -108,6 +109,10 @@ typedef enum bytecode_type
 
     BYTECODE_RECORD,
     BYTECODE_ATTR,
+    BYTECODE_NULL_STRING,
+    BYTECODE_NULL_ARRAY_REF,
+    BYTECODE_NULL_RECORD_REF,
+    BYTECODE_NULL_FUNC,
 
     BYTECODE_FUNC_DEF,
     BYTECODE_FUNC_OBJ,
@@ -220,7 +225,7 @@ typedef struct bytecode
         } array_deref;
         struct
         {
-            unsigned int size;
+            unsigned int count;
         } record;
         struct
         {
@@ -318,6 +323,7 @@ void bytecode_print_op_ass_int(bytecode * code);
 void bytecode_print_op_ass_float(bytecode * code);
 void bytecode_print_op_ass_string(bytecode * code);
 void bytecode_print_op_ass_array(bytecode * code);
+void bytecode_print_op_ass_record(bytecode * code);
 void bytecode_print_op_ass_func(bytecode * code);
 
 void bytecode_print_jumpz(bytecode * code);
@@ -332,6 +338,10 @@ void bytecode_print_array_append(bytecode * code);
 
 void bytecode_print_record(bytecode * code);
 void bytecode_print_attr(bytecode * code);
+void bytecode_print_null_string(bytecode * code);
+void bytecode_print_null_array_ref(bytecode * code);
+void bytecode_print_null_record_ref(bytecode * code);
+void bytecode_print_null_func(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_func_obj(bytecode * code);

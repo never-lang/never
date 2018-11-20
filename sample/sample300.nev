@@ -4,32 +4,56 @@ record Node {
     f() -> int;
     t -> Tree;
     left -> Node;
-};
+}
 
 record Tree {
     value -> int;
-    f(p -> int) -> (int) -> int;
+    f1(p -> int) -> int;
     left -> Tree;
     right -> Tree;
-    attr1 -> float;
+    str1 -> string;
     attr2 -> int;
-    attr3 -> string;
-};
+    attr3 -> float;
+    tab1[D1] -> int;
+}
 
-func count(p -> Tree) -> int
+func twice(a -> int) -> int
+{
+    2 * a 
+}
+
+func count() -> Tree
 {
     var t = new Tree;
-    var n = new Node;
     
-    t.right.attr2
+    t.value = 10;
+    t.attr2 = 30;
+    t.f1 = twice;
+    t.tab1 = [ 11, 12, 13, 14, 15, 16, 17 ] -> int;
+
+    t
 }
 
 func main() -> int
 {
-    var t = new Tree;
+    var t1 = new Tree;
     
-    t.value = 10 * 20;
+    t1.value = 100;
+    t1.left = new Tree;
+    t1.right = new Tree;
+    
+    t1.left.value = 200;
+    t1.right.value = 400;
 
-    t.value
+    print(t1.value);    
+    print(t1.left.value);
+    print(t1.right.value);
+    
+    0
+
+    /* prints(t.str1 + "\n"); */
+    /* t.value */
+    /* t.f1(t.value + t.attr2) */
+    /* t.tab1[2] */
 }
 

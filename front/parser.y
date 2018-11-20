@@ -722,7 +722,7 @@ func_list: func_list func
     $$ = $1;
 };
 
-record: TOK_RECORD TOK_ID '{' param_seq '}' ';'
+record: TOK_RECORD TOK_ID '{' param_seq '}'
 {
     $$ = record_new($2, $4);
     $$->line_no = $<line_no>1;

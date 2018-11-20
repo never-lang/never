@@ -1693,6 +1693,11 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
         bc.type = BYTECODE_OP_ASS_ARRAY;
         bytecode_add(module_value->code, &bc);
     }
+    else if (value->comb.comb == COMB_TYPE_RECORD)
+    {
+        bc.type = BYTECODE_OP_ASS_RECORD;
+        bytecode_add(module_value->code, &bc);
+    }
     else if (value->comb.comb == COMB_TYPE_FUNC)
     {
         bc.type = BYTECODE_OP_ASS_FUNC;
@@ -2663,21 +2668,80 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_record_init_param_emit(param * value, int stack_level, module * module_value,
+                                func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    switch (value->type)
+    {
+        case PARAM_INT:
+            bc.type = BYTECODE_INT;
+            bc.integer.value = 0;
+        break;
+        case PARAM_FLOAT:
+            bc.type = BYTECODE_FLOAT;
+            bc.real.value = 0;
+        break;
+        case PARAM_STRING:
+            bc.type = BYTECODE_NULL_STRING;
+        break;
+        case PARAM_DIM:
+            assert(0);
+        break;
+        case PARAM_ARRAY:
+            bc.type = BYTECODE_NULL_ARRAY_REF;
+        break;
+        case PARAM_RECORD:
+            bc.type = BYTECODE_NULL_RECORD_REF;
+        break;
+        case PARAM_FUNC:
+            bc.type = BYTECODE_NULL_FUNC;
+        break;
+    }
+
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}                                 
+
+int expr_record_init_param_list_emit(param_list * list, int stack_level,
+                                     module * module_value, func_list_weak * list_weak,
+                                     int * result)
+{
+    param_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL)
+        {
+            expr_record_init_param_emit(value, stack_level, module_value,
+                                        list_weak, result);
+        }        
+        node = node->next;
+    }
+
+    return 0;
+}                                
+
 int expr_record_emit(expr * value, int stack_level, module * module_value,
                      func_list_weak * list_weak, int * result)
 {
+    int count = -1;
     bytecode bc = { 0 };
-    int size = -1;
-
+    
     if (value->record.id_record_value != NULL &&
         value->record.id_record_value->params != NULL)
     {
-        size = value->record.id_record_value->params->count;
+        count = value->record.id_record_value->params->count;
+        expr_record_init_param_list_emit(value->record.id_record_value->params,
+                                         stack_level, module_value,
+                                         list_weak, result);
     }
-    assert(size != -1);
+    assert(count >= 0);
 
     bc.type = BYTECODE_RECORD;
-    bc.record.size = size;
+    bc.record.count = count;
     
     bytecode_add(module_value->code, &bc);
     

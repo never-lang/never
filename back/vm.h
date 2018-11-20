@@ -127,6 +127,7 @@ void vm_execute_op_ass_int(vm * machine, bytecode * code);
 void vm_execute_op_ass_float(vm * machine, bytecode * code);
 void vm_execute_op_ass_string(vm * machine, bytecode * code);
 void vm_execute_op_ass_array(vm * machine, bytecode * code);
+void vm_execute_op_ass_record(vm * machine, bytecode * code);
 void vm_execute_op_ass_func(vm * machine, bytecode * code);
 
 void vm_execute_jumpz(vm * machine, bytecode * code);
@@ -141,6 +142,10 @@ void vm_execute_array_append(vm * machine, bytecode * code);
 
 void vm_execute_record(vm * machine, bytecode * code);
 void vm_execute_attr(vm * machine, bytecode * code);
+void vm_execute_null_string(vm * machine, bytecode * code);
+void vm_execute_null_array_ref(vm * machine, bytecode * code);
+void vm_execute_null_record_ref(vm * machine, bytecode * code);
+void vm_execute_null_func(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_func_obj(vm * machine, bytecode * code);
