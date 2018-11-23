@@ -46,6 +46,12 @@ func main() -> int
 
     t0 = t1 = nil;
     
+    if (t0 == nil)
+    {
+        prints("t0 is nil");
+        0
+    };
+    
     print(t0.value);
     
     0

@@ -2171,6 +2171,46 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             bc.type = BYTECODE_OP_EQ_STRING;
             bytecode_add(module_value->code, &bc);
         }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_ARRAY)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_RECORD &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_RECORD)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_FUNC &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_FUNC)
+        {
+            assert(0);
+        }
         else
         {
             *result = GENCODE_FAIL;
@@ -2201,6 +2241,46 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_NEQ_STRING;
             bytecode_add(module_value->code, &bc);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_ARRAY)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_RECORD &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_RECORD)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_FUNC &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            assert(0);
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_FUNC)
+        {
+            assert(0);
         }
         else
         {
