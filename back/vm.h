@@ -130,6 +130,11 @@ void vm_execute_op_ass_array(vm * machine, bytecode * code);
 void vm_execute_op_ass_record(vm * machine, bytecode * code);
 void vm_execute_op_ass_func(vm * machine, bytecode * code);
 
+void vm_execute_op_ass_string_nil(vm * machine, bytecode * code);
+void vm_execute_op_ass_array_nil(vm * machine, bytecode * code);
+void vm_execute_op_ass_record_nil(vm * machine, bytecode * code);
+void vm_execute_op_ass_func_nil(vm * machine, bytecode * code);
+
 void vm_execute_jumpz(vm * machine, bytecode * code);
 void vm_execute_jump(vm * machine, bytecode * code);
 void vm_execute_label(vm * machine, bytecode * code);

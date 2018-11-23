@@ -105,6 +105,8 @@ int expr_int_emit(expr * value, int stack_level, module * module_value,
                   int * result);
 int expr_float_emit(expr * value, int stack_level, module * module_value,
                     int * result);
+int expr_nil_emit(expr * value, int stack_level, module * module_value,
+                  int * result);
 int expr_string_emit(expr * value, int stack_level, module * module_value,
                      int * result);
 

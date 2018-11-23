@@ -143,6 +143,12 @@ string {
     return TOK_STRING;
 }
 
+nil {
+    tokp->line_no = line_no;
+    scanner_printf("nil\n");
+    return TOK_NIL;
+}
+
 "+"|"-"|"/"|"*"|"%"|"=" {
     tokp->line_no = line_no;
     scanner_printf("operator %s\n", yytext);

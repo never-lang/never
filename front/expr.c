@@ -75,6 +75,17 @@ expr * expr_new_id(char * id)
     return ret;
 }
 
+expr * expr_new_nil()
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_NIL;
+    ret->comb.comb = COMB_TYPE_NIL;
+    ret->line_no = 0;
+    
+    return ret;
+}
+
 expr * expr_new_one(int type, expr * left)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -311,6 +322,7 @@ void expr_delete(expr * value)
     {
     case EXPR_INT:
     case EXPR_FLOAT:
+    case EXPR_NIL:
         break;
     case EXPR_STRING:
         if (value->string_value != NULL)
@@ -563,8 +575,8 @@ const char * comb_type_str(comb_type type)
         return "unknown";
     case COMB_TYPE_ERR:
         return "error";
-    case COMB_TYPE_VOID:
-        return "void";
+    case COMB_TYPE_NIL:
+        return "nil";
     case COMB_TYPE_BOOL:
         return "bool";
     case COMB_TYPE_INT:

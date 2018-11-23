@@ -64,14 +64,15 @@ typedef enum expr_type
     EXPR_FLOAT_TO_INT = 34,
     EXPR_LISTCOMP = 35,
     EXPR_RECORD = 36,
-    EXPR_ATTR = 37
+    EXPR_ATTR = 37,
+    EXPR_NIL = 38
 } expr_type;
 
 typedef enum comb_type
 {
     COMB_TYPE_UNKNOWN = 0,
     COMB_TYPE_ERR = 1,
-    COMB_TYPE_VOID = 2,
+    COMB_TYPE_NIL = 2,
     COMB_TYPE_BOOL = 3,
     COMB_TYPE_INT = 4,
     COMB_TYPE_FLOAT = 5,
@@ -212,6 +213,7 @@ expr * expr_new_int(int int_value);
 expr * expr_new_float(float float_value);
 expr * expr_new_string(char * string_value);
 expr * expr_new_id(char * id);
+expr * expr_new_nil();
 expr * expr_new_one(int type, expr * expr_left);
 expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle,

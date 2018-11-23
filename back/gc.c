@@ -469,7 +469,7 @@ mem_ptr gc_get_arr_elem(gc * collector, mem_ptr addr, unsigned int elem_index)
 }
 
 void gc_set_arr_elem(gc * collector, mem_ptr addr, unsigned int elem_index,
-                mem_ptr value)
+                     mem_ptr value)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_ARRAY);

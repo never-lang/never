@@ -104,6 +104,11 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_ASS_RECORD, vm_execute_op_ass_record },
     { BYTECODE_OP_ASS_FUNC, vm_execute_op_ass_func },
 
+    { BYTECODE_OP_ASS_STRING_NIL, vm_execute_op_ass_string_nil },
+    { BYTECODE_OP_ASS_ARRAY_NIL, vm_execute_op_ass_array_nil },
+    { BYTECODE_OP_ASS_FUNC_NIL, vm_execute_op_ass_func_nil },
+    { BYTECODE_OP_ASS_RECORD_NIL, vm_execute_op_ass_record_nil },
+
     { BYTECODE_JUMPZ, vm_execute_jumpz },
     { BYTECODE_JUMP, vm_execute_jump },
     { BYTECODE_LABEL, vm_execute_label },
@@ -1175,8 +1180,8 @@ void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
 void vm_execute_op_ass_int(vm * machine, bytecode * code)
 {
     int a = gc_get_int(machine->collector,
-                       machine->stack[machine->sp - 1].addr);
-    gc_set_int(machine->collector, machine->stack[machine->sp].addr, a);
+                       machine->stack[machine->sp].addr);
+    gc_set_int(machine->collector, machine->stack[machine->sp - 1].addr, a);
     
     machine->sp--;    
 }
@@ -1184,8 +1189,8 @@ void vm_execute_op_ass_int(vm * machine, bytecode * code)
 void vm_execute_op_ass_float(vm * machine, bytecode * code)
 {
     float a = gc_get_float(machine->collector,
-                           machine->stack[machine->sp - 1].addr);
-    gc_set_float(machine->collector, machine->stack[machine->sp].addr, a);
+                           machine->stack[machine->sp].addr);
+    gc_set_float(machine->collector, machine->stack[machine->sp - 1].addr, a);
 
     machine->sp--;    
 }
@@ -1193,8 +1198,18 @@ void vm_execute_op_ass_float(vm * machine, bytecode * code)
 void vm_execute_op_ass_string(vm * machine, bytecode * code)
 {
     char * a = gc_get_string(machine->collector,
-                             machine->stack[machine->sp - 1].addr);
-    gc_set_string(machine->collector, machine->stack[machine->sp].addr, a);
+                             machine->stack[machine->sp].addr);
+    gc_set_string(machine->collector, machine->stack[machine->sp - 1].addr, a);
+    
+    machine->sp--;
+}
+
+void vm_execute_op_ass_string_nil(vm * machine, bytecode * code)
+{
+    int i = gc_get_int(machine->collector,
+                       machine->stack[machine->sp].addr);
+    i = i;
+    gc_set_string(machine->collector, machine->stack[machine->sp - 1].addr, "(null)");
     
     machine->sp--;
 }
@@ -1202,8 +1217,17 @@ void vm_execute_op_ass_string(vm * machine, bytecode * code)
 void vm_execute_op_ass_array(vm * machine, bytecode * code)
 {
     mem_ptr array_1 = gc_get_arr(machine->collector,
-                                 machine->stack[machine->sp - 1].addr);
-    gc_set_arr(machine->collector, machine->stack[machine->sp].addr, array_1);
+                                 machine->stack[machine->sp].addr);
+    gc_set_arr(machine->collector, machine->stack[machine->sp - 1].addr, array_1);
+    
+    machine->sp--;
+}
+
+void vm_execute_op_ass_array_nil(vm * machine, bytecode * code)
+{
+    int i = gc_get_int(machine->collector,
+                       machine->stack[machine->sp].addr);
+    gc_set_arr(machine->collector, machine->stack[machine->sp - 1].addr, i);
     
     machine->sp--;
 }
@@ -1211,8 +1235,17 @@ void vm_execute_op_ass_array(vm * machine, bytecode * code)
 void vm_execute_op_ass_record(vm * machine, bytecode * code)
 {
     mem_ptr rec_1 = gc_get_vec_ref(machine->collector,
-                                      machine->stack[machine->sp - 1].addr);
-    gc_set_vec_ref(machine->collector, machine->stack[machine->sp].addr, rec_1);
+                                   machine->stack[machine->sp].addr);
+    gc_set_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr, rec_1);
+    
+    machine->sp--;
+}
+
+void vm_execute_op_ass_record_nil(vm * machine, bytecode * code)
+{
+    int i = gc_get_int(machine->collector,
+                       machine->stack[machine->sp].addr);
+    gc_set_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr, i);
     
     machine->sp--;
 }
@@ -1220,13 +1253,23 @@ void vm_execute_op_ass_record(vm * machine, bytecode * code)
 void vm_execute_op_ass_func(vm * machine, bytecode * code)
 {
     ip_ptr fptr = gc_get_func_addr(machine->collector,
-                                   machine->stack[machine->sp - 1].addr);
+                                   machine->stack[machine->sp].addr);
     mem_ptr mptr = gc_get_func_vec(machine->collector,
-                                   machine->stack[machine->sp - 1].addr);
+                                   machine->stack[machine->sp].addr);
 
-    gc_set_func_addr(machine->collector, machine->stack[machine->sp].addr, fptr);
-    gc_set_func_vec(machine->collector, machine->stack[machine->sp].addr, mptr);
+    gc_set_func_addr(machine->collector, machine->stack[machine->sp - 1].addr, fptr);
+    gc_set_func_vec(machine->collector, machine->stack[machine->sp - 1].addr, mptr);
 
+    machine->sp--;
+}
+
+void vm_execute_op_ass_func_nil(vm * machine, bytecode * code)
+{
+    int i = gc_get_int(machine->collector,
+                       machine->stack[machine->sp].addr);
+    gc_set_func_addr(machine->collector, machine->stack[machine->sp - 1].addr, i);
+    gc_set_func_vec(machine->collector, machine->stack[machine->sp - 1].addr, i);
+    
     machine->sp--;
 }
 

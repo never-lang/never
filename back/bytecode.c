@@ -98,6 +98,11 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_ASS_RECORD, bytecode_print_op_ass_record },
     { BYTECODE_OP_ASS_FUNC, bytecode_print_op_ass_func },
 
+    { BYTECODE_OP_ASS_STRING_NIL, bytecode_print_op_ass_string_nil },
+    { BYTECODE_OP_ASS_ARRAY_NIL, bytecode_print_op_ass_array_nil },
+    { BYTECODE_OP_ASS_FUNC_NIL, bytecode_print_op_ass_func_nil },
+    { BYTECODE_OP_ASS_RECORD_NIL, bytecode_print_op_ass_record_nil },
+
     { BYTECODE_JUMPZ, bytecode_print_jumpz },
     { BYTECODE_JUMP, bytecode_print_jump },
     { BYTECODE_LABEL, bytecode_print_label },
@@ -444,6 +449,26 @@ void bytecode_print_op_ass_record(bytecode * code)
 void bytecode_print_op_ass_func(bytecode * code)
 {
     printf("%d: op ass func\n", code->addr);
+}
+
+void bytecode_print_op_ass_string_nil(bytecode * code)
+{
+    printf("%d: op ass string nil\n", code->addr);
+}
+
+void bytecode_print_op_ass_array_nil(bytecode * code)
+{
+    printf("%d: op ass array nil\n", code->addr);
+}
+
+void bytecode_print_op_ass_func_nil(bytecode * code)
+{
+    printf("%d: op ass func nil\n", code->addr);
+}
+
+void bytecode_print_op_ass_record_nil(bytecode * code)
+{
+    printf("%d: op ass record nil\n", code->addr);
 }
 
 void bytecode_print_jumpz(bytecode * code)

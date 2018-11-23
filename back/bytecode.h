@@ -97,6 +97,11 @@ typedef enum bytecode_type
     BYTECODE_OP_ASS_RECORD,
     BYTECODE_OP_ASS_FUNC,
 
+    BYTECODE_OP_ASS_STRING_NIL,
+    BYTECODE_OP_ASS_ARRAY_NIL,
+    BYTECODE_OP_ASS_FUNC_NIL,
+    BYTECODE_OP_ASS_RECORD_NIL,
+
     BYTECODE_JUMPZ,
     BYTECODE_JUMP,
     BYTECODE_LABEL,
@@ -323,8 +328,13 @@ void bytecode_print_op_ass_int(bytecode * code);
 void bytecode_print_op_ass_float(bytecode * code);
 void bytecode_print_op_ass_string(bytecode * code);
 void bytecode_print_op_ass_array(bytecode * code);
-void bytecode_print_op_ass_record(bytecode * code);
 void bytecode_print_op_ass_func(bytecode * code);
+void bytecode_print_op_ass_record(bytecode * code);
+
+void bytecode_print_op_ass_string_nil(bytecode * code);
+void bytecode_print_op_ass_array_nil(bytecode * code);
+void bytecode_print_op_ass_func_nil(bytecode * code);
+void bytecode_print_op_ass_record_nil(bytecode * code);
 
 void bytecode_print_jumpz(bytecode * code);
 void bytecode_print_jump(bytecode * code);

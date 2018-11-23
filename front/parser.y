@@ -44,6 +44,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_THROW
 %token <val.str_value> TOK_IN
 %token <val.str_value> TOK_RECORD
+%token <val.str_value> TOK_NIL
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -149,6 +150,12 @@ expr: TOK_NUM_FLOAT
 expr: TOK_NUM_STRING
 {
     $$ = expr_new_string($1);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_NIL
+{
+    $$ = expr_new_nil();
     $$->line_no = $<line_no>1;
 };
 
