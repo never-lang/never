@@ -1808,6 +1808,10 @@ int except_check_id(except * value, int * result)
     {
         value->no = EXCEPT_NO_INEXACT;
     }
+    else if (strcmp(value->id, EXCEPT_NIL_POINTER_NAME) == 0)
+    {
+        value->no = EXCEPT_NIL_POINTER;
+    }
     else
     {
         value->no = EXCEPT_NO_UNKNOWN;

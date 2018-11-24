@@ -1,0 +1,35 @@
+
+record Tree {
+    value -> int;
+    left -> Tree;
+    right -> Tree;
+}
+
+func get_Tree(value -> int) -> Tree
+{
+    var t = new Tree;
+    t.value = value;
+    t
+}
+
+func print_Tree(t1 -> Tree) -> int
+{
+    print(t1.value);
+    0
+}
+catch (nil_pointer)
+{
+    prints("nil pointer exception\n");
+    0
+}
+
+func main() -> int
+{
+    var t = get_Tree(110);
+
+    print_Tree(t);
+    print_Tree(get_Tree(120)); 
+        
+    0
+}
+

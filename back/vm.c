@@ -1794,6 +1794,14 @@ void vm_execute_attr(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     mem_ptr record_ref = machine->stack[machine->sp].addr;
     mem_ptr record_value = gc_get_vec_ref(machine->collector, record_ref);
+
+    if (record_value == 0)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+    
     mem_ptr addr =
         gc_get_vec(machine->collector, record_value, code->attr.index);
 
@@ -2089,7 +2097,7 @@ void vm_execute_push_except(vm * machine, bytecode * code)
 
 void vm_execute_unhandled_exception(vm * machine, bytecode * code)
 {
-    printf("unhandled exception %d\n", machine->exception);
+    printf("unhandled %s exception\n", except_to_str(machine->exception));
     machine->running = VM_ERROR;
 }
 

@@ -40,7 +40,8 @@ typedef enum except_no
     EXCEPT_NO_INVALID = 4,
     EXCEPT_NO_OVERFLOW = 5,
     EXCEPT_NO_UNDERFLOW = 6,
-    EXCEPT_NO_INEXACT = 7
+    EXCEPT_NO_INEXACT = 7,
+    EXCEPT_NIL_POINTER = 8
 } except_no;
 
 #define EXCEPT_NO_UNKNOWN_NAME "unknown_exception"
@@ -51,6 +52,7 @@ typedef enum except_no
 #define EXCEPT_NO_OVERFLOW_NAME "overflow"
 #define EXCEPT_NO_UNDERFLOW_NAME "underflow"
 #define EXCEPT_NO_INEXACT_NAME "inexact"
+#define EXCEPT_NIL_POINTER_NAME "nil_pointer"
 
 typedef struct except
 {

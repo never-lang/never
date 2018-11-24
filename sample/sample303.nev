@@ -1,0 +1,47 @@
+
+record Node {
+    value -> int;
+    next -> Node;
+}
+
+func print_list(list -> Node) -> int
+{
+    var c = new Node;
+
+    c = list;
+    while (c != nil)
+    {
+        print(c.value);
+        c = c.next
+    };
+
+    0
+}
+catch (nil_pointer)
+{
+    0
+}
+
+func main() -> int
+{
+    var n0 = new Node;
+    var n1 = new Node;
+    var n2 = new Node;
+    var n3 = new Node;
+
+    n0.value = 10;
+    n1.value = 20;
+    n2.value = 30;
+    n3.value = 40;
+    
+    n0.next = n1;
+    n1.next = n2;
+    n2.next = n3;
+
+    print_list(n0);
+    print_list(n0);    
+    print_list(n0);
+        
+    0
+}
+
