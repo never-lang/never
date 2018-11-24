@@ -43,17 +43,13 @@ func main() -> int
     print(t1.value);    
     print(t1.left.value);
     print(t1.right.value);
-
-    t0 = t1 = nil;
     
-    if (t0 == nil)
+    if (t1.left.left == nil)
     {
-        prints("t0 is nil");
+        prints("t1.left.left is nil\n");
         0
     };
-    
-    print(t0.value);
-    
+        
     0
 }
 

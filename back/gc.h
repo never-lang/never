@@ -95,6 +95,9 @@ void gc_set_float(gc * collector, mem_ptr addr, float value);
 char * gc_get_string(gc * collector, mem_ptr addr);
 void gc_set_string(gc * collector, mem_ptr addr, char * value);
 
+mem_ptr gc_get_string_ref(gc * collector, mem_ptr addr);
+void gc_set_string_ref(gc * collector, mem_ptr addr, mem_ptr string_ref);
+
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
 void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
                 mem_ptr value);

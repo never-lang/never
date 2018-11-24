@@ -106,6 +106,30 @@ void vm_execute_op_neq_float(vm * machine, bytecode * code);
 void vm_execute_op_eq_string(vm * machine, bytecode * code);
 void vm_execute_op_neq_string(vm * machine, bytecode * code);
 
+void vm_execute_op_eq_nil(vm * machine, bytecode * code);
+
+void vm_execute_op_eq_string_nil(vm * machine, bytecode * code);
+void vm_execute_op_eq_array_nil(vm * machine, bytecode * code);
+void vm_execute_op_eq_record_nil(vm * machine, bytecode * code);
+void vm_execute_op_eq_func_nil(vm * machine, bytecode * code);
+
+void vm_execute_op_eq_nil_string(vm * machine, bytecode * code);
+void vm_execute_op_eq_nil_array(vm * machine, bytecode * code);
+void vm_execute_op_eq_nil_record(vm * machine, bytecode * code);
+void vm_execute_op_eq_nil_func(vm * machine, bytecode * code);
+
+void vm_execute_op_neq_nil(vm * machine, bytecode * code);
+
+void vm_execute_op_neq_string_nil(vm * machine, bytecode * code);
+void vm_execute_op_neq_array_nil(vm * machine, bytecode * code);
+void vm_execute_op_neq_record_nil(vm * machine, bytecode * code);
+void vm_execute_op_neq_func_nil(vm * machine, bytecode * code);
+
+void vm_execute_op_neq_nil_string(vm * machine, bytecode * code);
+void vm_execute_op_neq_nil_array(vm * machine, bytecode * code);
+void vm_execute_op_neq_nil_record(vm * machine, bytecode * code);
+void vm_execute_op_neq_nil_func(vm * machine, bytecode * code);
+
 void vm_execute_op_not_int(vm * machine, bytecode * code);
 void vm_execute_op_inc_int(vm * machine, bytecode * code);
 

@@ -72,6 +72,28 @@ typedef enum bytecode_type
     BYTECODE_OP_EQ_STRING,
     BYTECODE_OP_NEQ_STRING,
 
+    BYTECODE_OP_EQ_NIL,
+    BYTECODE_OP_EQ_STRING_NIL,
+    BYTECODE_OP_EQ_ARRAY_NIL,
+    BYTECODE_OP_EQ_RECORD_NIL,
+    BYTECODE_OP_EQ_FUNC_NIL,
+
+    BYTECODE_OP_EQ_NIL_STRING,
+    BYTECODE_OP_EQ_NIL_ARRAY,
+    BYTECODE_OP_EQ_NIL_RECORD,
+    BYTECODE_OP_EQ_NIL_FUNC,
+
+    BYTECODE_OP_NEQ_NIL,
+    BYTECODE_OP_NEQ_STRING_NIL,
+    BYTECODE_OP_NEQ_ARRAY_NIL,
+    BYTECODE_OP_NEQ_RECORD_NIL,
+    BYTECODE_OP_NEQ_FUNC_NIL,
+
+    BYTECODE_OP_NEQ_NIL_STRING,
+    BYTECODE_OP_NEQ_NIL_ARRAY,
+    BYTECODE_OP_NEQ_NIL_RECORD,
+    BYTECODE_OP_NEQ_NIL_FUNC,
+
     BYTECODE_OP_NOT_INT,
     
     BYTECODE_OP_INC_INT,
@@ -306,6 +328,30 @@ void bytecode_print_op_neq_float(bytecode * code);
 
 void bytecode_print_op_eq_string(bytecode * code);
 void bytecode_print_op_neq_string(bytecode * code);
+
+void bytecode_print_op_eq_nil(bytecode * code);
+
+void bytecode_print_op_eq_string_nil(bytecode * code);
+void bytecode_print_op_eq_array_nil(bytecode * code);
+void bytecode_print_op_eq_record_nil(bytecode * code);
+void bytecode_print_op_eq_func_nil(bytecode * code);
+
+void bytecode_print_op_eq_nil_string(bytecode * code);
+void bytecode_print_op_eq_nil_array(bytecode * code);
+void bytecode_print_op_eq_nil_record(bytecode * code);
+void bytecode_print_op_eq_nil_func(bytecode * code);
+
+void bytecode_print_op_neq_nil(bytecode * code);
+
+void bytecode_print_op_neq_string_nil(bytecode * code);
+void bytecode_print_op_neq_array_nil(bytecode * code);
+void bytecode_print_op_neq_record_nil(bytecode * code);
+void bytecode_print_op_neq_func_nil(bytecode * code);
+
+void bytecode_print_op_neq_nil_string(bytecode * code);
+void bytecode_print_op_neq_nil_array(bytecode * code);
+void bytecode_print_op_neq_nil_record(bytecode * code);
+void bytecode_print_op_neq_nil_func(bytecode * code);
 
 void bytecode_print_op_not_int(bytecode * code);
 void bytecode_print_op_inc_int(bytecode * code);

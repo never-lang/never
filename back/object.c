@@ -72,6 +72,16 @@ object * object_new_string_take(char * value)
     return obj;
 }
 
+object * object_new_string_ref(mem_ptr str_value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+    
+    obj->type = OBJECT_STRING_REF;
+    obj->string_ref_value = str_value;
+    
+    return obj;
+}
+
 object * object_new_vec(unsigned int size)
 {
     object * obj = (object *)malloc(sizeof(object));
@@ -167,6 +177,8 @@ void object_delete(object * obj)
         {
             free(obj->string_value);
         }
+        break;
+    case OBJECT_STRING_REF:
         break;
     case OBJECT_VEC:
         if (obj->vec_value != NULL && obj->vec_value->value != NULL)
@@ -386,6 +398,9 @@ void object_print(object * obj)
         break;
     case OBJECT_STRING:
         printf("object_string\n");
+        break;
+    case OBJECT_STRING_REF:
+        printf("object_string_ref\n");
         break;
     case OBJECT_VEC:
         printf("object_vec\n");

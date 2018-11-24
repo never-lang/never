@@ -74,6 +74,30 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_EQ_STRING, bytecode_print_op_eq_string },
     { BYTECODE_OP_NEQ_STRING, bytecode_print_op_neq_string },
 
+    { BYTECODE_OP_EQ_NIL, bytecode_print_op_eq_nil },
+
+    { BYTECODE_OP_EQ_STRING_NIL, bytecode_print_op_eq_string_nil },
+    { BYTECODE_OP_EQ_ARRAY_NIL, bytecode_print_op_eq_array_nil },
+    { BYTECODE_OP_EQ_RECORD_NIL, bytecode_print_op_eq_record_nil },
+    { BYTECODE_OP_EQ_FUNC_NIL, bytecode_print_op_eq_func_nil },
+
+    { BYTECODE_OP_EQ_NIL_STRING, bytecode_print_op_eq_nil_string },
+    { BYTECODE_OP_EQ_NIL_ARRAY, bytecode_print_op_eq_nil_array },
+    { BYTECODE_OP_EQ_NIL_RECORD, bytecode_print_op_eq_nil_record },
+    { BYTECODE_OP_EQ_NIL_FUNC, bytecode_print_op_eq_nil_func },
+
+    { BYTECODE_OP_NEQ_NIL, bytecode_print_op_neq_nil },
+
+    { BYTECODE_OP_NEQ_STRING_NIL, bytecode_print_op_neq_string_nil },
+    { BYTECODE_OP_NEQ_ARRAY_NIL, bytecode_print_op_neq_array_nil },
+    { BYTECODE_OP_NEQ_RECORD_NIL, bytecode_print_op_neq_record_nil },
+    { BYTECODE_OP_NEQ_FUNC_NIL, bytecode_print_op_neq_func_nil },
+
+    { BYTECODE_OP_NEQ_NIL_STRING, bytecode_print_op_neq_nil_string },
+    { BYTECODE_OP_NEQ_NIL_ARRAY, bytecode_print_op_neq_nil_array },
+    { BYTECODE_OP_NEQ_NIL_RECORD, bytecode_print_op_neq_nil_record },
+    { BYTECODE_OP_NEQ_NIL_FUNC, bytecode_print_op_neq_nil_func },
+
     { BYTECODE_OP_NOT_INT, bytecode_print_op_not_int },
     { BYTECODE_OP_INC_INT, bytecode_print_op_inc_int },
 
@@ -347,6 +371,96 @@ void bytecode_print_op_eq_string(bytecode * code)
 void bytecode_print_op_neq_string(bytecode * code)
 {
     printf("%d: op neq string\n", code->addr);
+}
+
+void bytecode_print_op_eq_nil(bytecode * code)
+{
+    printf("%d: op eq nil\n", code->addr);
+}
+
+void bytecode_print_op_eq_string_nil(bytecode * code)
+{
+    printf("%d: op eq string nil\n", code->addr);
+}
+
+void bytecode_print_op_eq_array_nil(bytecode * code)
+{
+    printf("%d: op eq array nil\n", code->addr);
+}
+
+void bytecode_print_op_eq_record_nil(bytecode * code)
+{
+    printf("%d: op eq record nil\n", code->addr);
+}
+
+void bytecode_print_op_eq_func_nil(bytecode * code)
+{
+    printf("%d: op eq func nil\n", code->addr);
+}
+
+void bytecode_print_op_eq_nil_string(bytecode * code)
+{
+    printf("%d: op eq nil string\n", code->addr);
+}
+
+void bytecode_print_op_eq_nil_array(bytecode * code)
+{
+    printf("%d: op eq nil array\n", code->addr);
+}
+
+void bytecode_print_op_eq_nil_record(bytecode * code)
+{
+    printf("%d: op eq nil record\n", code->addr);
+}
+
+void bytecode_print_op_eq_nil_func(bytecode * code)
+{
+    printf("%d: op eq nil func\n", code->addr);
+}
+
+void bytecode_print_op_neq_nil(bytecode * code)
+{
+    printf("%d: op neq nil\n", code->addr);
+}
+
+void bytecode_print_op_neq_string_nil(bytecode * code)
+{
+    printf("%d: op neq string nil\n", code->addr);
+}
+
+void bytecode_print_op_neq_array_nil(bytecode * code)
+{
+    printf("%d: op neq array nil\n", code->addr);
+}
+
+void bytecode_print_op_neq_record_nil(bytecode * code)
+{
+    printf("%d: op neq record nil\n", code->addr);
+}
+
+void bytecode_print_op_neq_func_nil(bytecode * code)
+{
+    printf("%d: op neq func nil\n", code->addr);
+}
+
+void bytecode_print_op_neq_nil_string(bytecode * code)
+{
+    printf("%d: op neq nil string\n", code->addr);
+}
+
+void bytecode_print_op_neq_nil_array(bytecode * code)
+{
+    printf("%d: op neq nil array\n", code->addr);
+}
+
+void bytecode_print_op_neq_nil_record(bytecode * code)
+{
+    printf("%d: op neq nil record\n", code->addr);
+}
+
+void bytecode_print_op_neq_nil_func(bytecode * code)
+{
+    printf("%d: op neq nil func\n", code->addr);
 }
 
 void bytecode_print_op_not_int(bytecode * code)

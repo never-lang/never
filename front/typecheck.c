@@ -1478,7 +1478,12 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         expr_check_type(tab, value->left, syn_level, result);
         expr_check_type(tab, value->right, syn_level, result);
         
-        if (value->left->comb.comb == COMB_TYPE_INT &&
+        if (value->left->comb.comb == COMB_TYPE_NIL &&
+            value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
         {
             value->comb.comb = COMB_TYPE_INT;

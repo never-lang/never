@@ -172,6 +172,9 @@ void gc_mark(gc * collector, mem_ptr addr)
         case OBJECT_STRING:
             collector->mem[addr].mark = 1;
             break;
+        case OBJECT_STRING_REF:
+            collector->mem[addr].mark = 1;
+            break;
         case OBJECT_VEC:
             gc_mark_vec(collector, addr);
             break;
@@ -364,6 +367,22 @@ void gc_set_string(gc * collector, mem_ptr addr, char * value)
         free(collector->mem[addr].object_value->string_value);
     }
     collector->mem[addr].object_value->string_value = strdup(value);
+}
+
+mem_ptr gc_get_string_ref(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_STRING_REF);
+    
+    return collector->mem[addr].object_value->string_ref_value;
+}
+
+void gc_set_string_ref(gc * collector, mem_ptr addr, mem_ptr string_ref)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_STRING_REF);
+    
+    collector->mem[addr].object_value->string_ref_value = string_ref;
 }
 
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index)
