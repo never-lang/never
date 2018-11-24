@@ -1569,11 +1569,7 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         break;
     case EXPR_SUP:
         expr_check_type(tab, value->left, syn_level, result);
-
-        value->comb.comb = value->left->comb.comb;
-        value->comb.comb_params = value->left->comb.comb_params;
-        value->comb.comb_ret = value->left->comb.comb_ret;
-        value->comb.comb_dims = value->left->comb.comb_dims;
+        value->comb = value->left->comb;
         break;
     case EXPR_COND:
         expr_cond_check_type(tab, value, syn_level, result);

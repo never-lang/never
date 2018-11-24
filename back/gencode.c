@@ -2822,19 +2822,19 @@ int expr_record_init_param_emit(param * value, int stack_level, module * module_
             bc.real.value = 0;
         break;
         case PARAM_STRING:
-            bc.type = BYTECODE_NULL_STRING;
+            bc.type = BYTECODE_NIL_STRING;
         break;
         case PARAM_DIM:
             assert(0);
         break;
         case PARAM_ARRAY:
-            bc.type = BYTECODE_NULL_ARRAY_REF;
+            bc.type = BYTECODE_NIL_ARRAY_REF;
         break;
         case PARAM_RECORD:
-            bc.type = BYTECODE_NULL_RECORD_REF;
+            bc.type = BYTECODE_NIL_RECORD_REF;
         break;
         case PARAM_FUNC:
-            bc.type = BYTECODE_NULL_FUNC;
+            bc.type = BYTECODE_NIL_FUNC;
         break;
     }
 

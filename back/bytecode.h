@@ -136,10 +136,10 @@ typedef enum bytecode_type
 
     BYTECODE_RECORD,
     BYTECODE_ATTR,
-    BYTECODE_NULL_STRING,
-    BYTECODE_NULL_ARRAY_REF,
-    BYTECODE_NULL_RECORD_REF,
-    BYTECODE_NULL_FUNC,
+    BYTECODE_NIL_STRING,
+    BYTECODE_NIL_ARRAY_REF,
+    BYTECODE_NIL_RECORD_REF,
+    BYTECODE_NIL_FUNC,
 
     BYTECODE_FUNC_DEF,
     BYTECODE_FUNC_OBJ,
@@ -394,10 +394,10 @@ void bytecode_print_array_append(bytecode * code);
 
 void bytecode_print_record(bytecode * code);
 void bytecode_print_attr(bytecode * code);
-void bytecode_print_null_string(bytecode * code);
-void bytecode_print_null_array_ref(bytecode * code);
-void bytecode_print_null_record_ref(bytecode * code);
-void bytecode_print_null_func(bytecode * code);
+void bytecode_print_nil_string(bytecode * code);
+void bytecode_print_nil_array_ref(bytecode * code);
+void bytecode_print_nil_record_ref(bytecode * code);
+void bytecode_print_nil_func(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_func_obj(bytecode * code);

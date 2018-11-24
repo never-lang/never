@@ -32,6 +32,8 @@ func main() -> int
 {
     var t1 = new Tree;
     var t0 = new Tree;
+    var tab0 = [ 1, 2 ] -> int;
+    var str1 = "ala ma kota";
 
     t1.value = 100;
     t1.left = new Tree;
@@ -43,6 +45,13 @@ func main() -> int
     print(t1.value);    
     print(t1.left.value);
     print(t1.right.value);
+    
+    str1 = nil;
+    if (nil == str1)
+    {
+        prints("str1 is nil\n");
+        0
+    };
     
     if (t1.left.left == nil)
     {

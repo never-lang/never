@@ -77,6 +77,7 @@ mem_ptr gc_alloc_int(gc * collector, int value);
 mem_ptr gc_alloc_float(gc * collector, float value);
 mem_ptr gc_alloc_string(gc * collector, char * value);
 mem_ptr gc_alloc_string_take(gc * collector, char * value);
+mem_ptr gc_alloc_string_ref(gc * collector, mem_ptr str);
 mem_ptr gc_alloc_vec(gc * collector, unsigned int size);
 mem_ptr gc_alloc_vec_ref(gc * collector, mem_ptr vec);
 mem_ptr gc_alloc_arr(gc * collector, unsigned int dims, object_arr_dim * dv);

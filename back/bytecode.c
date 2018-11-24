@@ -139,10 +139,10 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_RECORD, bytecode_print_record },
     { BYTECODE_ATTR, bytecode_print_attr },
-    { BYTECODE_NULL_STRING, bytecode_print_null_string },
-    { BYTECODE_NULL_ARRAY_REF, bytecode_print_null_array_ref },
-    { BYTECODE_NULL_RECORD_REF, bytecode_print_null_record_ref },
-    { BYTECODE_NULL_FUNC, bytecode_print_null_func },
+    { BYTECODE_NIL_STRING, bytecode_print_nil_string },
+    { BYTECODE_NIL_ARRAY_REF, bytecode_print_nil_array_ref },
+    { BYTECODE_NIL_RECORD_REF, bytecode_print_nil_record_ref },
+    { BYTECODE_NIL_FUNC, bytecode_print_nil_func },
 
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_FUNC_OBJ, bytecode_print_func_obj },
@@ -639,24 +639,24 @@ void bytecode_print_attr(bytecode * code)
     printf("%d: attr index %u\n", code->addr, code->attr.index);
 }
 
-void bytecode_print_null_string(bytecode * code)
+void bytecode_print_nil_string(bytecode * code)
 {
-    printf("%d: null string\n", code->addr);
+    printf("%d: nil string\n", code->addr);
 }
 
-void bytecode_print_null_array_ref(bytecode * code)
+void bytecode_print_nil_array_ref(bytecode * code)
 {
-    printf("%d: null array ref\n", code->addr);
+    printf("%d: nil array ref\n", code->addr);
 }
 
-void bytecode_print_null_record_ref(bytecode * code)
+void bytecode_print_nil_record_ref(bytecode * code)
 {
-    printf("%d: null record ref\n", code->addr);
+    printf("%d: nil record ref\n", code->addr);
 }
 
-void bytecode_print_null_func(bytecode * code)
+void bytecode_print_nil_func(bytecode * code)
 {
-    printf("%d: null func\n", code->addr);
+    printf("%d: nil func\n", code->addr);
 }
 
 void bytecode_print_func_def(bytecode * code)

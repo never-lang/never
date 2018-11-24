@@ -112,13 +112,15 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     case LIB_MATH_STR:
     {
         int x = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-        addr = gc_alloc_string_take(machine->collector, string_int(x));        
+        mem_ptr str_x = gc_alloc_string_take(machine->collector, string_int(x));        
+        addr = gc_alloc_string_ref(machine->collector, str_x);
     }
     break;
     case LIB_MATH_STRF:
     {
         float x = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
-        addr = gc_alloc_string_take(machine->collector, string_float(x));
+        mem_ptr str_x = gc_alloc_string_take(machine->collector, string_float(x));
+        addr = gc_alloc_string_ref(machine->collector, str_x);
     }
     break;
     case LIB_MATH_PRINT:
@@ -139,8 +141,8 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     break;
     case LIB_MATH_PRINTS:
     {
-        char * x =
-            gc_get_string(machine->collector, machine->stack[machine->sp].addr);
+        mem_ptr str_x = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
+        char * x = gc_get_string(machine->collector, str_x);
         string_print(x);
         addr = gc_alloc_string(machine->collector, x);
     }

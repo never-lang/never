@@ -171,10 +171,10 @@ void vm_execute_array_append(vm * machine, bytecode * code);
 
 void vm_execute_record(vm * machine, bytecode * code);
 void vm_execute_attr(vm * machine, bytecode * code);
-void vm_execute_null_string(vm * machine, bytecode * code);
-void vm_execute_null_array_ref(vm * machine, bytecode * code);
-void vm_execute_null_record_ref(vm * machine, bytecode * code);
-void vm_execute_null_func(vm * machine, bytecode * code);
+void vm_execute_nil_string(vm * machine, bytecode * code);
+void vm_execute_nil_array_ref(vm * machine, bytecode * code);
+void vm_execute_nil_record_ref(vm * machine, bytecode * code);
+void vm_execute_nil_func(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_func_obj(vm * machine, bytecode * code);

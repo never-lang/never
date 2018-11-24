@@ -156,7 +156,7 @@ void gc_mark_arr(gc * collector, mem_ptr addr)
 
 void gc_mark(gc * collector, mem_ptr addr)
 {
-    if (collector->mem[addr].object_value != NULL)
+    if (addr != 0 && collector->mem[addr].object_value != NULL)
     {
         switch (collector->mem[addr].object_value->type)
         {
@@ -174,6 +174,8 @@ void gc_mark(gc * collector, mem_ptr addr)
             break;
         case OBJECT_STRING_REF:
             collector->mem[addr].mark = 1;
+            gc_mark(collector,
+                    collector->mem[addr].object_value->string_ref_value);
             break;
         case OBJECT_VEC:
             gc_mark_vec(collector, addr);
@@ -273,6 +275,11 @@ mem_ptr gc_alloc_string(gc * collector, char * value)
 mem_ptr gc_alloc_string_take(gc * collector, char * value)
 {
     return gc_alloc_any(collector, object_new_string_take(value));
+}
+
+mem_ptr gc_alloc_string_ref(gc * collector, mem_ptr str)
+{
+    return gc_alloc_any(collector, object_new_string_ref(str));
 }
 
 mem_ptr gc_alloc_vec(gc * collector, unsigned int size)
