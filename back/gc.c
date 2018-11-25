@@ -427,7 +427,7 @@ mem_ptr gc_set_vec_ref(gc * collector, mem_ptr addr, mem_ptr vec_ref)
     return collector->mem[addr].object_value->vec_ref_value = vec_ref;
 }
 
-mem_ptr gc_get_arr(gc * collector, mem_ptr addr)
+mem_ptr gc_get_arr_ref(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_ARRAY_REF);
@@ -435,7 +435,7 @@ mem_ptr gc_get_arr(gc * collector, mem_ptr addr)
     return collector->mem[addr].object_value->arr_ref_value;
 }
 
-void gc_set_arr(gc * collector, mem_ptr addr, mem_ptr array)
+void gc_set_arr_ref(gc * collector, mem_ptr addr, mem_ptr array)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_ARRAY_REF);

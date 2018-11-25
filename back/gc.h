@@ -105,8 +105,8 @@ void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
 mem_ptr gc_get_vec_ref(gc * collector, mem_ptr addr);
 mem_ptr gc_set_vec_ref(gc * collector, mem_ptr addr, mem_ptr vec_ref);
 
-void gc_set_arr(gc * collector, mem_ptr addr, mem_ptr array);
-mem_ptr gc_get_arr(gc * collector, mem_ptr addr);
+mem_ptr gc_get_arr_ref(gc * collector, mem_ptr addr);
+void gc_set_arr_ref(gc * collector, mem_ptr addr, mem_ptr array);
 
 object_arr * gc_get_arr_obj(gc * collector, mem_ptr addr);
 unsigned int gc_get_arr_dim_elems(gc * collector, mem_ptr addr,
