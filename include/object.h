@@ -25,6 +25,7 @@
 typedef unsigned int ip_ptr;
 typedef unsigned int mem_ptr;
 typedef int stack_ptr;
+extern unsigned int nil_ptr;
 
 typedef enum object_type
 {

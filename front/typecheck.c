@@ -105,7 +105,14 @@ int param_cmp(param * param_one, param * param_two)
     }
     else if (param_one->type == PARAM_RECORD && param_two->type == PARAM_RECORD)
     {
-        return (param_one->record_value == param_two->record_value);
+         if (param_one->record_value == param_two->record_value)
+         {
+             return TYPECHECK_SUCC;
+         }
+         else
+         {
+             return TYPECHECK_FAIL;
+         }
     }
     else if (param_one->type == PARAM_FUNC && param_two->type == PARAM_FUNC)
     {
@@ -532,6 +539,11 @@ int param_check_type(symtab * tab, param * param_value,
     else if (param_value->type == PARAM_RECORD)
     {
         param_record_check_type(tab, param_value, syn_level, result);
+    }
+    else if (param_value->type == PARAM_FUNC)
+    {
+        param_list_check_type(tab, param_value->params, syn_level, result);
+        param_check_type(tab, param_value->ret, syn_level, result);
     }
 
     return 0;

@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+unsigned int nil_ptr = 0;
+
 object * object_new()
 {
     object * obj = (object *)malloc(sizeof(object));
