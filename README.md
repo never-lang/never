@@ -393,6 +393,35 @@ func main() -> int
 }
 ```
 
+## Records
+
+```swift
+record Tree
+{
+    value -> int;
+    left -> Tree;
+    right -> Tree;
+    print(t -> Tree) -> int;
+}
+
+func print_tree(t -> Tree) -> int
+{
+    print(t.value);
+    0
+}
+
+func main() -> int
+{
+    var t0 = new Tree;
+
+    t0.value = 100;
+    t0.print = print_tree;
+    t0.print(t0);
+
+    0
+}
+```
+
 ## Arrays
 Never supports arrays of any dimension. Array are also expressions and may be
 passed between functions. The following example declares an array and returns
