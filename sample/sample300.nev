@@ -50,17 +50,6 @@ func main() -> int
     print(t1.left.value);
     print(t1.right.value);
 
-    t0 = nil;
-    
-    print(t0.value);
-    print(t0.left.value);
-    print(t0.left.left.value);
-    print(t0.left.right.value);    
-    
     0
-    /* prints(t.str1 + "\n"); */
-    /* t.value */
-    /* t.f1(t.value + t.attr2) */
-    /* t.tab1[2] */
 }
 

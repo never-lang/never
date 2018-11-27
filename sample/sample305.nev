@@ -9,7 +9,7 @@ record Tree
 
 func print_tree(t -> Tree) -> int
 {
-    print(t.value);
+    prints("tree value = " + t.value + "\n");
     0
 }
 

@@ -534,7 +534,10 @@ int param_check_type(symtab * tab, param * param_value,
 {
     if (param_value->type == PARAM_ARRAY)
     {
-        param_list_check_type(tab, param_value->dims, syn_level, result);
+        if (param_value->dims != NULL)
+        {
+            param_list_check_type(tab, param_value->dims, syn_level, result);
+        }
     }
     else if (param_value->type == PARAM_RECORD)
     {
@@ -542,8 +545,14 @@ int param_check_type(symtab * tab, param * param_value,
     }
     else if (param_value->type == PARAM_FUNC)
     {
-        param_list_check_type(tab, param_value->params, syn_level, result);
-        param_check_type(tab, param_value->ret, syn_level, result);
+        if (param_value->params != NULL)
+        {
+            param_list_check_type(tab, param_value->params, syn_level, result);
+        }
+        if (param_value->ret != NULL)
+        {
+            param_check_type(tab, param_value->ret, syn_level, result);
+        }
     }
 
     return 0;
