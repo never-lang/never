@@ -139,6 +139,10 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_MK_ARRAY_INT, vm_execute_mk_array_int },
     { BYTECODE_MK_ARRAY_FLOAT, vm_execute_mk_array_float },
+    { BYTECODE_MK_ARRAY_STRING, vm_execute_mk_array_string },
+    { BYTECODE_MK_ARRAY_ARRAY, vm_execute_mk_array_array },
+    { BYTECODE_MK_ARRAY_RECORD, vm_execute_mk_array_record },
+    { BYTECODE_MK_ARRAY_FUNC, vm_execute_mk_array_func },
     { BYTECODE_MK_INIT_ARRAY, vm_execute_mk_init_array },
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
     { BYTECODE_ARRAY_APPEND, vm_execute_array_append },
@@ -1790,6 +1794,22 @@ void vm_execute_mk_array_num(vm * machine, bytecode * code, param_type value)
         {
             elem = gc_alloc_float(machine->collector, 0.0);
         }
+        else if (value == PARAM_STRING)
+        {
+            elem = gc_alloc_string_ref(machine->collector, nil_ptr);
+        }
+        else if (value == PARAM_ARRAY)
+        {
+            elem = gc_alloc_arr_ref(machine->collector, nil_ptr);
+        }
+        else if (value == PARAM_RECORD)
+        {
+            elem = gc_alloc_vec_ref(machine->collector, nil_ptr);
+        }
+        else if (value == PARAM_FUNC)
+        {
+            elem = gc_alloc_func(machine->collector, nil_ptr, nil_ptr);
+        }
         else
         {
             assert(0);
@@ -1814,6 +1834,26 @@ void vm_execute_mk_array_int(vm * machine, bytecode * code)
 void vm_execute_mk_array_float(vm * machine, bytecode * code)
 {
     vm_execute_mk_array_num(machine, code, PARAM_FLOAT);
+}
+
+void vm_execute_mk_array_string(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_STRING);
+}
+
+void vm_execute_mk_array_array(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_ARRAY);
+}
+
+void vm_execute_mk_array_record(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_RECORD);
+}
+
+void vm_execute_mk_array_func(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_FUNC);
 }
 
 void vm_execute_mk_init_array(vm * machine, bytecode * code)
@@ -1984,7 +2024,7 @@ void vm_execute_attr(vm * machine, bytecode * code)
 void vm_execute_nil_string(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_string_ref(machine->collector, 0);
+    mem_ptr addr = gc_alloc_string_ref(machine->collector, nil_ptr);
     
     machine->sp++;
     vm_check_stack(machine);
@@ -1998,7 +2038,7 @@ void vm_execute_nil_string(vm * machine, bytecode * code)
 void vm_execute_nil_array_ref(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_arr_ref(machine->collector, 0);
+    mem_ptr addr = gc_alloc_arr_ref(machine->collector, nil_ptr);
     
     machine->sp++;
     vm_check_stack(machine);
@@ -2012,7 +2052,7 @@ void vm_execute_nil_array_ref(vm * machine, bytecode * code)
 void vm_execute_nil_record_ref(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_vec_ref(machine->collector, 0);
+    mem_ptr addr = gc_alloc_vec_ref(machine->collector, nil_ptr);
     
     machine->sp++;
     vm_check_stack(machine);
@@ -2026,7 +2066,7 @@ void vm_execute_nil_record_ref(vm * machine, bytecode * code)
 void vm_execute_nil_func(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_func(machine->collector, 0, 0);
+    mem_ptr addr = gc_alloc_func(machine->collector, nil_ptr, nil_ptr);
     
     machine->sp++;
     vm_check_stack(machine);

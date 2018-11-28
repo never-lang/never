@@ -1,0 +1,42 @@
+
+record Point {
+    x -> int;
+    y -> int;
+}
+
+func print_point(p -> Point) -> int
+{
+    prints("[" + p.x + ", " + p.y + "]\n");
+
+    0
+}
+
+func arr_test() -> int
+{
+    var i = 0;
+    var arr = {[ 10 ]} -> Point;
+
+    for (i = 0; i < 10; i = i + 1)
+    {    
+        arr[i] = new Point;
+    
+        arr[i].x = i;
+        arr[i].y = 2 * i
+    };
+    
+    for (i = 0; i < 10; i = i + 1)
+        print_point(arr[i]);
+    
+    0
+}
+catch (nil_pointer)
+{
+    prints("nil_pointer\n");
+    0
+}
+
+func main() -> int
+{
+    arr_test()
+}
+

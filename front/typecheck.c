@@ -199,6 +199,18 @@ int param_is_num(param * value)
     return TYPECHECK_FAIL;
 }
 
+int param_is_dynamic_array(param * value)
+{
+    if (value->type == PARAM_INT || value->type == PARAM_FLOAT ||
+        value->type == PARAM_STRING || value->type == PARAM_ARRAY ||
+        value->type == PARAM_RECORD || value->type == PARAM_FUNC)
+    {
+        return TYPECHECK_SUCC;
+    }
+    
+    return TYPECHECK_FAIL;
+}
+
 int param_expr_array_cmp(param * param_value, expr * expr_value)
 {
     if (param_value->dims->count != expr_value->comb.comb_dims)

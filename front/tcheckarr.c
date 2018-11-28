@@ -41,17 +41,6 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
         expr * value = node->value;
         if (value != NULL)
         {
-#if 0
-            printf("depth expr type %s comb %s %d", expr_type_str(value->type),
-                                                    comb_type_str(value->comb),
-                                                    node->distance);
-            if (value->type == EXPR_ARRAY)
-            {
-                printf(" count %d", value->array.array_value->elements->count);
-            }
-            printf("\n");
-#endif
-
             if (node->distance == first_distance)
             {
                 if (param_expr_cmp(ret, value) == TYPECHECK_FAIL)
@@ -220,12 +209,15 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
                                             syn_level, result);
         }
 
-        if (param_is_num(value->array.array_value->ret) == TYPECHECK_FAIL)
+        if (param_is_dynamic_array(value->array.array_value->ret) == TYPECHECK_FAIL)
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "dynamic array of ints and floats supported\n");
+            print_error_msg(value->line_no, "dynamic array of %s is not supported\n",
+                            param_type_str(value->array.array_value->ret->type));
         }
+
+        param_check_type(tab, value->array.array_value->ret, syn_level, result);
 
         if (*result == TYPECHECK_SUCC)
         {

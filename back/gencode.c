@@ -2684,6 +2684,22 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     {
         bc.type = BYTECODE_MK_ARRAY_FLOAT;
     }
+    else if (array_value->ret->type == PARAM_STRING)
+    {
+        bc.type = BYTECODE_MK_ARRAY_STRING;
+    }
+    else if (array_value->ret->type == PARAM_ARRAY)
+    {
+        bc.type = BYTECODE_MK_ARRAY_ARRAY;
+    }
+    else if (array_value->ret->type == PARAM_RECORD)
+    {
+        bc.type = BYTECODE_MK_ARRAY_RECORD;
+    }
+    else if (array_value->ret->type == PARAM_FUNC)
+    {
+        bc.type = BYTECODE_MK_ARRAY_FUNC;
+    }
     else
     {
         assert(0);

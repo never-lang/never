@@ -130,6 +130,10 @@ typedef enum bytecode_type
 
     BYTECODE_MK_ARRAY_INT,
     BYTECODE_MK_ARRAY_FLOAT,
+    BYTECODE_MK_ARRAY_STRING,
+    BYTECODE_MK_ARRAY_ARRAY,
+    BYTECODE_MK_ARRAY_RECORD,
+    BYTECODE_MK_ARRAY_FUNC,
     BYTECODE_MK_INIT_ARRAY,
     BYTECODE_ARRAY_DEREF,
     BYTECODE_ARRAY_APPEND,
@@ -388,6 +392,10 @@ void bytecode_print_label(bytecode * code);
 
 void bytecode_print_mk_array_int(bytecode * code);
 void bytecode_print_mk_array_float(bytecode * code);
+void bytecode_print_mk_array_string(bytecode * code);
+void bytecode_print_mk_array_array(bytecode * code);
+void bytecode_print_mk_array_record(bytecode * code);
+void bytecode_print_mk_array_func(bytecode * code);
 void bytecode_print_mk_init_array(bytecode * code);
 void bytecode_print_array_deref(bytecode * code);
 void bytecode_print_array_append(bytecode * code);

@@ -1,0 +1,25 @@
+
+
+func arr_test() -> int
+{
+    var arr = {[ 10 ]} -> string;
+    
+    arr[0] = "one";
+    arr[1] = "two";
+    arr[2] = "three";
+    
+    prints(arr[0] + " " + arr[1] + " " + arr[2] + "\n");
+    
+    0
+}
+catch (nil_pointer)
+{
+    prints("nil_pointer\n");
+    0
+}
+
+func main() -> int
+{
+    arr_test()
+}
+

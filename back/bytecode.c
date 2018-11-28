@@ -133,6 +133,11 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_MK_ARRAY_INT, bytecode_print_mk_array_int },
     { BYTECODE_MK_ARRAY_FLOAT, bytecode_print_mk_array_float },
+    { BYTECODE_MK_ARRAY_STRING, bytecode_print_mk_array_string },
+    { BYTECODE_MK_ARRAY_ARRAY, bytecode_print_mk_array_array },
+    { BYTECODE_MK_ARRAY_RECORD, bytecode_print_mk_array_record },
+    { BYTECODE_MK_ARRAY_FUNC, bytecode_print_mk_array_func },
+
     { BYTECODE_MK_INIT_ARRAY, bytecode_print_mk_init_array },
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
     { BYTECODE_ARRAY_APPEND, bytecode_print_array_append },
@@ -610,6 +615,26 @@ void bytecode_print_mk_array_int(bytecode * code)
 void bytecode_print_mk_array_float(bytecode * code)
 {
     printf("%d: mk array float %d\n", code->addr, code->mk_array.dims);
+}
+
+void bytecode_print_mk_array_string(bytecode * code)
+{
+    printf("%d: mk array string %d\n", code->addr, code->mk_array.dims);
+}
+
+void bytecode_print_mk_array_array(bytecode * code)
+{
+    printf("%d: mk array array %d\n", code->addr, code->mk_array.dims);
+}
+
+void bytecode_print_mk_array_record(bytecode * code)
+{
+    printf("%d: mk array record %d\n", code->addr, code->mk_array.dims);
+}
+
+void bytecode_print_mk_array_func(bytecode * code)
+{
+    printf("%d: mk array func %d\n", code->addr, code->mk_array.dims);
 }
 
 void bytecode_print_mk_init_array(bytecode * code)

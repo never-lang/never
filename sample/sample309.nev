@@ -1,0 +1,29 @@
+
+func arr_test() -> int
+{
+    var i = 0;
+    var arr = {[ 10 ]} -> (int) -> int;
+
+    for (i = 0; i < 10; i = i + 1)
+    {    
+        arr[i] = let func (a -> int) -> int { a + i }
+    };
+    
+    for (i = 0; i < 10; i = i + 1)
+    {
+        prints(arr[i](10) + "\n")
+    };
+    
+    0
+}
+catch (nil_pointer)
+{
+    prints("nil_pointer\n");
+    0
+}
+
+func main() -> int
+{
+    arr_test()
+}
+
