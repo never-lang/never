@@ -519,7 +519,6 @@ int param_record_check_type(symtab * tab, param * param_value,
 
         print_error_msg(param_value->line_no, "expected record but %s found\n",
                         symtab_entry_type_str(entry->type));
-        
     }
     else
     {
@@ -532,27 +531,36 @@ int param_record_check_type(symtab * tab, param * param_value,
 int param_check_type(symtab * tab, param * param_value,
                      unsigned int syn_level, int * result)
 {
-    if (param_value->type == PARAM_ARRAY)
+    switch (param_value->type)
     {
-        if (param_value->dims != NULL)
-        {
-            param_list_check_type(tab, param_value->dims, syn_level, result);
-        }
-    }
-    else if (param_value->type == PARAM_RECORD)
-    {
-        param_record_check_type(tab, param_value, syn_level, result);
-    }
-    else if (param_value->type == PARAM_FUNC)
-    {
-        if (param_value->params != NULL)
-        {
-            param_list_check_type(tab, param_value->params, syn_level, result);
-        }
-        if (param_value->ret != NULL)
-        {
-            param_check_type(tab, param_value->ret, syn_level, result);
-        }
+        case PARAM_INT:
+        case PARAM_FLOAT:
+        case PARAM_STRING:
+        case PARAM_DIM:
+        break;
+        case PARAM_ARRAY:
+            if (param_value->dims != NULL)
+            {
+                param_list_check_type(tab, param_value->dims, syn_level, result);
+            }
+            if (param_value->ret != NULL)
+            {
+                param_check_type(tab, param_value->ret, syn_level, result);
+            }
+        break;
+        case PARAM_RECORD:
+            param_record_check_type(tab, param_value, syn_level, result);
+        break;
+        case PARAM_FUNC:
+            if (param_value->params != NULL)
+            {
+                param_list_check_type(tab, param_value->params, syn_level, result);
+            }
+            if (param_value->ret != NULL)
+            {
+                param_check_type(tab, param_value->ret, syn_level, result);
+            }
+        break;
     }
 
     return 0;
