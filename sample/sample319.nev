@@ -1,0 +1,25 @@
+
+record Rec {
+    x -> int;
+    y -> int;
+}
+
+func test() -> int
+{
+    var r1 = new Rec;
+    
+    r1 = nil;    
+    
+    assert(r1 == nil);
+    assert(nil == r1);
+    
+    0
+}
+
+func main() -> int
+{
+    test();
+
+    0
+}
+

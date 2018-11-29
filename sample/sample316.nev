@@ -1,0 +1,20 @@
+
+func test() -> int
+{
+    var str = "test test test";
+    
+    str = nil;
+    
+    assert(str == nil);
+    assert(nil == str);
+    
+    0
+}
+
+func main() -> int
+{
+    test();
+
+    0
+}
+
