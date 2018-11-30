@@ -121,6 +121,11 @@ void gc_mark_vec(gc * collector, mem_ptr addr)
     unsigned int i;
     object_vec * vec;
 
+    if (addr == 0)
+    {
+        return;
+    }
+
     if (collector->mem[addr].mark == 1)
     {
         return;
@@ -140,6 +145,11 @@ void gc_mark_arr(gc * collector, mem_ptr addr)
     unsigned int e;
     object_arr * array;
 
+    if (addr == 0)
+    {
+        return;
+    }
+
     if (collector->mem[addr].mark == 1)
     {
         return;
@@ -156,7 +166,12 @@ void gc_mark_arr(gc * collector, mem_ptr addr)
 
 void gc_mark(gc * collector, mem_ptr addr)
 {
-    if (addr != 0 && collector->mem[addr].object_value != NULL)
+    if (addr == 0)
+    {
+        return;
+    }
+
+    if (collector->mem[addr].object_value != NULL)
     {
         switch (collector->mem[addr].object_value->type)
         {

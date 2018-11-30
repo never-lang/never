@@ -1,0 +1,119 @@
+
+record Point
+{
+    x -> float;
+    y -> float;
+    z -> float;
+}
+
+func print_point(p -> Point) -> int
+{
+    prints("<" + p.x + ", " + p.y + ", " + p.z + ">");
+    0
+}
+
+func print_rect(data[D1, D2] -> Point, x -> int, y -> int) -> int
+{
+    prints("triangle { ");
+      print_point(data[x, y]);
+      prints(", ");
+      print_point(data[x + 1, y]);
+      prints(", ");
+      print_point(data[x + 1, y + 1]);
+    prints(" }\n");
+
+    prints("triangle { ");
+      print_point(data[x, y]);
+      prints(", ");
+      print_point(data[x + 1, y + 1]);
+      prints(", ");
+      print_point(data[x, y + 1]);
+    prints(" }\n");
+    
+    0
+}
+
+func print_wave(data[D1, D2] -> Point) -> int
+{
+    var x = 0;
+    var y = 0;
+    
+    for (x = 0; x < D1 - 1; x = x + 1)
+    {
+        for (y = 0; y < D2 - 1; y = y + 1)
+        {
+            print_rect(data, x, y)
+        }
+    };
+    
+    0
+}
+
+func get_wave(phi -> float, size -> int) -> [_, _] -> Point
+{
+    var x = 0;
+    var y = 0;
+    var x_v = 0.0;
+    var y_v = 0.0;
+    var tab = {[ size, size ]} -> Point;
+
+    for (x = 0; x < size; x = x + 1)
+    {
+        for (y = 0; y < size; y = y + 1)
+        {
+            tab[x, y] = new Point;
+            x_v = -2.0 * 3.141 + 4.0 * 3.141 / size * x;
+            y_v = -2.0 * 3.141 + 4.0 * 3.141 / size * y;
+            tab[x, y].x = x_v;
+            tab[x, y].y = y_v;
+            tab[x, y].z = sin(phi + sqrt(x_v * x_v + y_v * y_v))
+        }
+    };
+    
+    tab
+}
+
+func head() -> int
+{
+  prints("\
+  camera { \
+    location <0, -16, -12> \
+    look_at <0, 0, 0> \
+    rotate <0, 0, 30> \
+  } \
+  light_source { <0, 0, -32> color rgb<1, 1, 1> } \
+  mesh { \n");
+
+  0
+}
+
+func tail() -> int
+{
+  prints("\
+  texture { \
+      pigment { color rgb<0.9, 0.9, 0.9> } \
+      finish { ambient 0.2 diffuse 0.7 } \
+    } \
+  }\n");
+
+  0
+}
+
+func generate(phi -> float) -> int
+{
+    var data = get_wave(phi, 24);
+
+    head();
+    print_wave(data);
+    tail();
+
+    10
+}
+
+
+func main(phi -> int) -> int
+{
+    generate(2.0 * 3.141 / 32.0 * phi);
+    0
+}
+
