@@ -1,5 +1,4 @@
 
-/*
 record P {
     x -> int;
     y -> int;
@@ -10,7 +9,6 @@ func getP() -> P
 {
     nil
 }
-*/
 
 func main() -> int
 {

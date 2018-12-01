@@ -15,7 +15,7 @@ func arr_test() -> int
 catch (nil_pointer)
 {
     prints("nil_pointer\n");
-    0
+    -1
 }
 
 func main() -> int
