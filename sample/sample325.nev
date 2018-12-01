@@ -1,0 +1,24 @@
+
+func test() -> int
+{
+    var p = 0;
+    
+    10 / p;
+    20 / p;
+    30 / p;
+
+    0
+}
+catch (division_by_zero)
+{
+    prints("caught nil_pointer\n");
+    -111
+}
+
+func main() -> int
+{
+    test()
+}
+
+
+

@@ -1,0 +1,24 @@
+
+record P {
+    x -> int;
+    y -> int;
+    print(p -> P) -> int;
+}
+
+func pretty_P(p -> P) -> int
+{
+    prints("[" + p.x + ", " + p.y + "]\n");
+    0
+}
+
+func main() -> int
+{
+    var p = new P(10, 20, pretty_P);
+    
+    p.print(p);
+
+    0
+}
+
+
+

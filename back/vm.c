@@ -1458,13 +1458,6 @@ void vm_execute_op_ass_record(vm * machine, bytecode * code)
 {
     mem_ptr rec_1 = gc_get_vec_ref(machine->collector,
                                    machine->stack[machine->sp].addr);
-    if (rec_1 == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     gc_set_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr, rec_1);
     
     machine->sp--;
@@ -1830,6 +1823,7 @@ void vm_execute_mark(vm * machine, bytecode * code)
     gc_stack entry2 = { 0 };
     gc_stack entry3 = { 0 };
     gc_stack entryL = { 0 };
+    gc_stack entryP = { 0 };
 
     entry3.type = GC_MEM_IP;
     entry3.ip = code->mark.addr;
@@ -1843,12 +1837,16 @@ void vm_execute_mark(vm * machine, bytecode * code)
     entryL.type = GC_MEM_IP;
     entryL.ip = machine->line_no;
 
-    machine->stack[machine->sp + 4] = entry3;
-    machine->stack[machine->sp + 3] = entry2;
-    machine->stack[machine->sp + 2] = entry1;
-    machine->stack[machine->sp + 1] = entryL;
+    entryP.type = GC_MEM_STACK;
+    entryP.addr = machine->pp;
 
-    machine->fp = machine->sp = machine->sp + 4;
+    machine->stack[machine->sp + 5] = entry3;
+    machine->stack[machine->sp + 4] = entry2;
+    machine->stack[machine->sp + 3] = entry1;
+    machine->stack[machine->sp + 2] = entryL;
+    machine->stack[machine->sp + 1] = entryP;
+
+    machine->fp = machine->sp = machine->sp + 5;
     vm_check_stack(machine);
 }
 
@@ -1867,6 +1865,7 @@ void vm_execute_call(vm * machine, bytecode * code)
 
     machine->gp = gp;
     machine->ip = ip;
+    machine->pp = machine->fp;
     machine->sp--;
 }
 
@@ -1903,6 +1902,7 @@ void vm_execute_clear_stack(vm * machine, bytecode * code)
     /* when variadic parametes (...) are introduced machine->params_pointers */
     /* is likely needed  */
     unsigned int param_count = code->clear.count;
+    machine->fp = machine->pp;
     machine->sp = machine->fp + param_count;
 
     machine->running = VM_RUNNING;
@@ -1912,8 +1912,9 @@ void vm_execute_ret(vm * machine, bytecode * code)
 {
     machine->gp = machine->stack[machine->fp - 2].addr;
     machine->ip = machine->stack[machine->fp].ip;
-    machine->stack[machine->fp - 3] = machine->stack[machine->sp];
-    machine->sp = machine->fp - 3;
+    machine->pp = machine->stack[machine->fp - 4].addr;
+    machine->stack[machine->fp - 4] = machine->stack[machine->sp];
+    machine->sp = machine->fp - 4;
     machine->fp = machine->stack[machine->fp - 1].sp;
 
     gc_run(machine->collector, machine->stack, machine->sp + 1, machine->gp);
@@ -2085,6 +2086,7 @@ vm * vm_new(unsigned int mem_size, unsigned int stack_size)
 
     machine->sp = -1;
     machine->fp = -1;
+    machine->pp = -1;
     machine->gp = 0;
     machine->ip = 0;
 

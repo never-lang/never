@@ -1,0 +1,28 @@
+
+record P {
+    x -> int;
+    y -> int;
+    f -> float;
+}
+
+func getP() -> P
+{
+    nil
+}
+
+func main() -> int
+{
+    print(print(print(getP().x)));
+
+    assert(0);
+
+    0
+}
+catch (nil_pointer)
+{
+    prints("caught nil_pointer\n");
+    -111
+}
+
+
+

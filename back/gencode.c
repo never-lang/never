@@ -26,8 +26,8 @@
 #include <assert.h>
 #include <stdio.h>
 
-/* GP old, FP old, IP old, line_no */
-#define NUM_FRAME_PTRS 4
+/* GP old, FP old, IP old, line_no, PP old */
+#define NUM_FRAME_PTRS 5
 
 int record_enum_param_list(param_list * params)
 {
@@ -1903,7 +1903,6 @@ int expr_for_emit(expr * value, int stack_level, module * module_value,
 int expr_call_emit(expr * value, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result)
 {
-    int v = NUM_FRAME_PTRS;
     bytecode bc = { 0 };
     bytecode *mark, *label;
 
@@ -1914,6 +1913,7 @@ int expr_call_emit(expr * value, int stack_level, module * module_value,
     bc.type = BYTECODE_MARK;
     mark = bytecode_add(module_value->code, &bc);
 
+    int v = NUM_FRAME_PTRS;
     if (value->call.params)
     {
         expr_list_emit(value->call.params, stack_level + v, module_value, list_weak, result);

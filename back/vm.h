@@ -38,6 +38,7 @@ typedef struct vm
 {
     stack_ptr sp;
     stack_ptr fp;
+    stack_ptr pp;
     mem_ptr gp;
     ip_ptr ip;
 

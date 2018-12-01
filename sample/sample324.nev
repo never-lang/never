@@ -1,20 +1,22 @@
 
-
-func main() -> int
+func test() -> int
 {
     var p = 0;
     
     print(print(print(10 / p)));
     print(20 / p);
 
-    assert(0);
-
     0
 }
 catch (division_by_zero)
 {
-    prints("caught division_by_zero\n");
+    prints("caught nil_pointer\n");
     -111
+}
+
+func main() -> int
+{
+    test()
 }
 
 
