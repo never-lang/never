@@ -18,7 +18,7 @@ func twice(a -> int) -> int
 
 func count() -> Tree
 {
-    var t = new Tree;
+    var t = new Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
     
     t.value = 10;
     t.attr2 = 30;
@@ -30,14 +30,13 @@ func count() -> Tree
 
 func main() -> int
 {
-    var t1 = new Tree;
-    var t0 = new Tree;
+    var t1 = new Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
+    var t0 = new Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
     var tab0 = [ 1, 2 ] -> int;
-    var str1 = "ala ma kota";
 
     t1.value = 100;
-    t1.left = new Tree;
-    t1.right = new Tree;
+    t1.left = new Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
+    t1.right = new Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
     
     t1.left.value = 200;
     t1.right.value = 400;
@@ -45,14 +44,7 @@ func main() -> int
     print(t1.value);    
     print(t1.left.value);
     print(t1.right.value);
-    
-    str1 = nil;
-    if (nil == str1)
-    {
-        prints("str1 is nil\n");
-        0
-    };
-    
+        
     if (t1.left.left == nil)
     {
         prints("t1.left.left is nil\n");

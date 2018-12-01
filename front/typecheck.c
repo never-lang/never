@@ -285,6 +285,10 @@ int param_expr_cmp(param * param_value, expr * expr_value)
             return TYPECHECK_FAIL;
         }
     }
+    else if (param_value->type == PARAM_RECORD && expr_value->comb.comb == COMB_TYPE_NIL)
+    {
+        return TYPECHECK_SUCC;
+    }
     else if (param_value->type == PARAM_FUNC && expr_value->comb.comb == COMB_TYPE_FUNC)
     {
         return func_cmp(param_value->params, param_value->ret, expr_value->comb.comb_params,
@@ -993,11 +997,6 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = COMB_TYPE_STRING;
     }
-    else if (value->left->comb.comb == COMB_TYPE_STRING &&
-             value->right->comb.comb == COMB_TYPE_NIL)
-    {
-        value->comb.comb = COMB_TYPE_STRING;
-    }
     else if (value->left->comb.comb == COMB_TYPE_RECORD &&
              value->right->comb.comb == COMB_TYPE_RECORD &&
              value->left->comb.comb_record == value->right->comb.comb_record)
@@ -1022,26 +1021,12 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
         value->comb.comb_params = value->left->comb.comb_params;
         value->comb.comb_ret = value->left->comb.comb_ret;
     }
-    else if (value->left->comb.comb == COMB_TYPE_FUNC &&
-             value->right->comb.comb == COMB_TYPE_NIL)
-    {
-        value->comb.comb = COMB_TYPE_FUNC;
-        value->comb.comb_params = value->left->comb.comb_params;
-        value->comb.comb_ret = value->left->comb.comb_ret;
-    }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
              array_cmp(value->left->comb.comb_dims,
                        value->left->comb.comb_ret,
                        value->right->comb.comb_dims,
                        value->right->comb.comb_ret) == TYPECHECK_SUCC)
-    {
-        value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
-    }
-    else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb == COMB_TYPE_NIL)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
         value->comb.comb_dims = value->left->comb.comb_dims;
@@ -1249,7 +1234,7 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
     case COMB_TYPE_FUNC:
         if (param_expr_list_cmp(value->call.func_expr->comb.comb_params,
-                              value->call.params) == TYPECHECK_SUCC)
+                                value->call.params) == TYPECHECK_SUCC)
         {
             expr_set_return_type(value, value->call.func_expr->comb.comb_ret);
         }
@@ -1364,8 +1349,8 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
     return 0;
 }
 
-int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level,
-                              int * result)
+int expr_record_check_type(symtab * tab, expr * value, unsigned int syn_level,
+                           int * result)
 {
     symtab_entry * entry = NULL;
 
@@ -1373,7 +1358,7 @@ int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level
     if (entry == NULL)
     {
         *result = TYPECHECK_FAIL;
-        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb = COMB_TYPE_ERR;
         value->comb.comb_record = NULL;
 
         print_error_msg(value->line_no, "cannot find record %s\n",
@@ -1382,19 +1367,35 @@ int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level
     else if (entry->type != SYMTAB_RECORD)
     {
         *result = TYPECHECK_FAIL;
-        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb = COMB_TYPE_ERR;
         value->comb.comb_record = NULL;
         
         print_error_msg(value->line_no, "expected record but %s found\n",
                         symtab_entry_type_str(entry->type));
-        
     }
     else
     {
         value->comb.comb = COMB_TYPE_RECORD;
         value->comb.comb_record = entry->record_value;
-        value->record.id_record_value = entry->record_value;
     }   
+
+    if (value->record.params != NULL)
+    {
+        expr_list_check_type(tab, value->record.params, syn_level, result);
+    }
+
+    if (value->comb.comb_record->params != NULL)
+    {
+        if (param_expr_list_cmp(value->comb.comb_record->params,
+                                value->record.params) == TYPECHECK_FAIL)
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            value->comb.comb_record = NULL;            
+
+            print_error_msg(value->line_no, "record new type mismatch\n");
+        }
+    }
 
     return 0;
 }
@@ -1539,31 +1540,10 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         {
             value->comb.comb = COMB_TYPE_INT;
         }
-        else if ((value->left->comb.comb == COMB_TYPE_STRING &&
-                  value->right->comb.comb == COMB_TYPE_NIL) ||
-                 (value->left->comb.comb == COMB_TYPE_NIL &&
-                  value->right->comb.comb == COMB_TYPE_STRING))
-        {
-            value->comb.comb = COMB_TYPE_INT;
-        }
-        else if ((value->left->comb.comb == COMB_TYPE_ARRAY &&
-                  value->right->comb.comb == COMB_TYPE_NIL) ||
-                 (value->left->comb.comb == COMB_TYPE_NIL &&
-                  value->right->comb.comb == COMB_TYPE_ARRAY))
-        {
-            value->comb.comb = COMB_TYPE_INT;
-        }
         else if ((value->left->comb.comb == COMB_TYPE_RECORD &&
                   value->right->comb.comb == COMB_TYPE_NIL) ||
                  (value->left->comb.comb == COMB_TYPE_NIL &&
                   value->right->comb.comb == COMB_TYPE_RECORD))
-        {
-            value->comb.comb = COMB_TYPE_INT;
-        }
-        else if ((value->left->comb.comb == COMB_TYPE_FUNC &&
-                  value->right->comb.comb == COMB_TYPE_NIL) ||
-                 (value->left->comb.comb == COMB_TYPE_NIL &&
-                  value->right->comb.comb == COMB_TYPE_FUNC))
         {
             value->comb.comb = COMB_TYPE_INT;
         }
@@ -1729,7 +1709,7 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_RECORD:
-        expr_record_check_type_id(tab, value, syn_level, result);
+        expr_record_check_type(tab, value, syn_level, result);
         break;
     case EXPR_ATTR:
         expr_attr_check_type(tab, value, syn_level, result);
@@ -2083,6 +2063,10 @@ int record_list_check_type(symtab * stab, record_list * list, int * result)
  */
 int print_func_record(expr * value, int depth)
 {
+    if (value->record.params != NULL)
+    {
+        print_func_expr_list(value->record.params, depth);
+    }
     return 0;
 }
 

@@ -182,7 +182,8 @@ typedef struct expr
         struct
         {
             char * id;
-            struct record * id_record_value;
+            /* struct record * id_record_value; */
+            struct expr_list * params;
         }
         record;
         struct
@@ -229,7 +230,7 @@ expr * expr_new_do_while(expr * cond, expr * do_value);
 expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);
-expr * expr_new_record(char * id);
+expr * expr_new_record(char * id, expr_list * params);
 expr * expr_new_attr(expr * record_value, char * id);
 
 expr * expr_conv(expr * expr_value, expr_type conv);

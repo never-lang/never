@@ -19,9 +19,10 @@ catch (nil_pointer)
 
 func main() -> int
 {
-    var t1 = new Tree;
-    var t0 = new Tree;
+    var t0 = new Tree(30, nil, nil);
+    var t1 = new Tree(20, nil, nil);
 
+    t0 = nil;
     t1.value = 10;
 
     print_Tree(t1);    

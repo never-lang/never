@@ -1,0 +1,20 @@
+
+record P {
+    x -> int;
+    y -> int;
+    f -> float;
+}
+
+func main() -> int
+{
+    var p = new P(10, 20, 30.0);
+    
+    print(p.x);
+    print(p.y);
+    printf(p.f);
+
+    0
+}
+
+
+

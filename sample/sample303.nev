@@ -6,7 +6,7 @@ record Node {
 
 func print_list(list -> Node) -> int
 {
-    var c = new Node;
+    var c = new Node(1, nil);
 
     c = list;
     while (c != nil)
@@ -24,15 +24,10 @@ catch (nil_pointer)
 
 func main() -> int
 {
-    var n0 = new Node;
-    var n1 = new Node;
-    var n2 = new Node;
-    var n3 = new Node;
-
-    n0.value = 10;
-    n1.value = 20;
-    n2.value = 30;
-    n3.value = 40;
+    var n0 = new Node(10, nil);
+    var n1 = new Node(20, nil);
+    var n2 = new Node(30, nil);
+    var n3 = new Node(40, nil);
     
     n0.next = n1;
     n1.next = n2;

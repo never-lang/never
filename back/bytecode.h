@@ -73,26 +73,12 @@ typedef enum bytecode_type
     BYTECODE_OP_NEQ_STRING,
 
     BYTECODE_OP_EQ_NIL,
-    BYTECODE_OP_EQ_STRING_NIL,
-    BYTECODE_OP_EQ_ARRAY_NIL,
     BYTECODE_OP_EQ_RECORD_NIL,
-    BYTECODE_OP_EQ_FUNC_NIL,
-
-    BYTECODE_OP_EQ_NIL_STRING,
-    BYTECODE_OP_EQ_NIL_ARRAY,
     BYTECODE_OP_EQ_NIL_RECORD,
-    BYTECODE_OP_EQ_NIL_FUNC,
 
     BYTECODE_OP_NEQ_NIL,
-    BYTECODE_OP_NEQ_STRING_NIL,
-    BYTECODE_OP_NEQ_ARRAY_NIL,
     BYTECODE_OP_NEQ_RECORD_NIL,
-    BYTECODE_OP_NEQ_FUNC_NIL,
-
-    BYTECODE_OP_NEQ_NIL_STRING,
-    BYTECODE_OP_NEQ_NIL_ARRAY,
     BYTECODE_OP_NEQ_NIL_RECORD,
-    BYTECODE_OP_NEQ_NIL_FUNC,
 
     BYTECODE_OP_NOT_INT,
     
@@ -119,9 +105,6 @@ typedef enum bytecode_type
     BYTECODE_OP_ASS_RECORD,
     BYTECODE_OP_ASS_FUNC,
 
-    BYTECODE_OP_ASS_STRING_NIL,
-    BYTECODE_OP_ASS_ARRAY_NIL,
-    BYTECODE_OP_ASS_FUNC_NIL,
     BYTECODE_OP_ASS_RECORD_NIL,
 
     BYTECODE_JUMPZ,
@@ -140,10 +123,7 @@ typedef enum bytecode_type
 
     BYTECODE_RECORD,
     BYTECODE_ATTR,
-    BYTECODE_NIL_STRING,
-    BYTECODE_NIL_ARRAY_REF,
     BYTECODE_NIL_RECORD_REF,
-    BYTECODE_NIL_FUNC,
 
     BYTECODE_FUNC_DEF,
     BYTECODE_FUNC_OBJ,
@@ -334,28 +314,12 @@ void bytecode_print_op_eq_string(bytecode * code);
 void bytecode_print_op_neq_string(bytecode * code);
 
 void bytecode_print_op_eq_nil(bytecode * code);
-
-void bytecode_print_op_eq_string_nil(bytecode * code);
-void bytecode_print_op_eq_array_nil(bytecode * code);
 void bytecode_print_op_eq_record_nil(bytecode * code);
-void bytecode_print_op_eq_func_nil(bytecode * code);
-
-void bytecode_print_op_eq_nil_string(bytecode * code);
-void bytecode_print_op_eq_nil_array(bytecode * code);
 void bytecode_print_op_eq_nil_record(bytecode * code);
-void bytecode_print_op_eq_nil_func(bytecode * code);
 
 void bytecode_print_op_neq_nil(bytecode * code);
-
-void bytecode_print_op_neq_string_nil(bytecode * code);
-void bytecode_print_op_neq_array_nil(bytecode * code);
 void bytecode_print_op_neq_record_nil(bytecode * code);
-void bytecode_print_op_neq_func_nil(bytecode * code);
-
-void bytecode_print_op_neq_nil_string(bytecode * code);
-void bytecode_print_op_neq_nil_array(bytecode * code);
 void bytecode_print_op_neq_nil_record(bytecode * code);
-void bytecode_print_op_neq_nil_func(bytecode * code);
 
 void bytecode_print_op_not_int(bytecode * code);
 void bytecode_print_op_inc_int(bytecode * code);
@@ -402,10 +366,7 @@ void bytecode_print_array_append(bytecode * code);
 
 void bytecode_print_record(bytecode * code);
 void bytecode_print_attr(bytecode * code);
-void bytecode_print_nil_string(bytecode * code);
-void bytecode_print_nil_array_ref(bytecode * code);
 void bytecode_print_nil_record_ref(bytecode * code);
-void bytecode_print_nil_func(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_func_obj(bytecode * code);

@@ -21,7 +21,7 @@ func printr(r -> Point) -> int
 
 func test() -> int
 {
-    var r = new Point;
+    var r = new Point(0, 0);
 
     get(r);
     

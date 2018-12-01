@@ -24,10 +24,10 @@ func twice(a -> int) -> int
 
 func count() -> Tree
 {
-    var t = new Tree;
+    var t = new Tree(10, nil, nil, 20, 3.3, "", twice, [1, 2] -> int);
     
     t.value = 10;
-    t.attr2 = 30;
+    t.attr2 = 3.0;
     t.f1 = twice;
     t.tab1 = [ 11, 12, 13, 14, 15, 16, 17 ] -> int;
 
@@ -36,19 +36,7 @@ func count() -> Tree
 
 func main() -> int
 {
-    var t1 = new Tree;
-    var t0 = new Tree;
-    
-    t1.value = 100;
-    t1.left = new Tree;
-    t1.right = new Tree;
-    
-    t1.left.value = 200;
-    t1.right.value = 400;
-
-    print(t1.value);    
-    print(t1.left.value);
-    print(t1.right.value);
+    count();
 
     0
 }

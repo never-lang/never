@@ -273,13 +273,13 @@ expr * expr_new_listcomp(listcomp * listcomp_value)
     return ret;
 }
 
-expr * expr_new_record(char * id)
+expr * expr_new_record(char * id, expr_list * params)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_RECORD;
     ret->record.id = id;
-    ret->record.id_record_value = NULL;
+    ret->record.params = params;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     
@@ -454,6 +454,10 @@ void expr_delete(expr * value)
         if (value->record.id != NULL)
         {
             free(value->record.id);
+        }
+        if (value->record.params != NULL)
+        {
+            expr_list_delete(value->record.params);
         }
         break;
     case EXPR_ATTR:

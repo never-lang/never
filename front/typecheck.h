@@ -93,7 +93,7 @@ int qualifier_list_check_type(symtab * tab, qualifier_list * list,
                               unsigned int syn_level, int * result);
 int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
                              unsigned int syn_level, int * result);
-int expr_record_check_type_id(symtab * tab, expr * value, unsigned int syn_level,
+int expr_record_check_type(symtab * tab, expr * value, unsigned int syn_level,
                            int * result);
 int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                          int * result);

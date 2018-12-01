@@ -107,28 +107,12 @@ void vm_execute_op_eq_string(vm * machine, bytecode * code);
 void vm_execute_op_neq_string(vm * machine, bytecode * code);
 
 void vm_execute_op_eq_nil(vm * machine, bytecode * code);
-
-void vm_execute_op_eq_string_nil(vm * machine, bytecode * code);
-void vm_execute_op_eq_array_nil(vm * machine, bytecode * code);
 void vm_execute_op_eq_record_nil(vm * machine, bytecode * code);
-void vm_execute_op_eq_func_nil(vm * machine, bytecode * code);
-
-void vm_execute_op_eq_nil_string(vm * machine, bytecode * code);
-void vm_execute_op_eq_nil_array(vm * machine, bytecode * code);
 void vm_execute_op_eq_nil_record(vm * machine, bytecode * code);
-void vm_execute_op_eq_nil_func(vm * machine, bytecode * code);
 
 void vm_execute_op_neq_nil(vm * machine, bytecode * code);
-
-void vm_execute_op_neq_string_nil(vm * machine, bytecode * code);
-void vm_execute_op_neq_array_nil(vm * machine, bytecode * code);
 void vm_execute_op_neq_record_nil(vm * machine, bytecode * code);
-void vm_execute_op_neq_func_nil(vm * machine, bytecode * code);
-
-void vm_execute_op_neq_nil_string(vm * machine, bytecode * code);
-void vm_execute_op_neq_nil_array(vm * machine, bytecode * code);
 void vm_execute_op_neq_nil_record(vm * machine, bytecode * code);
-void vm_execute_op_neq_nil_func(vm * machine, bytecode * code);
 
 void vm_execute_op_not_int(vm * machine, bytecode * code);
 void vm_execute_op_inc_int(vm * machine, bytecode * code);
@@ -154,10 +138,7 @@ void vm_execute_op_ass_array(vm * machine, bytecode * code);
 void vm_execute_op_ass_record(vm * machine, bytecode * code);
 void vm_execute_op_ass_func(vm * machine, bytecode * code);
 
-void vm_execute_op_ass_string_nil(vm * machine, bytecode * code);
-void vm_execute_op_ass_array_nil(vm * machine, bytecode * code);
 void vm_execute_op_ass_record_nil(vm * machine, bytecode * code);
-void vm_execute_op_ass_func_nil(vm * machine, bytecode * code);
 
 void vm_execute_jumpz(vm * machine, bytecode * code);
 void vm_execute_jump(vm * machine, bytecode * code);
@@ -175,10 +156,7 @@ void vm_execute_array_append(vm * machine, bytecode * code);
 
 void vm_execute_record(vm * machine, bytecode * code);
 void vm_execute_attr(vm * machine, bytecode * code);
-void vm_execute_nil_string(vm * machine, bytecode * code);
-void vm_execute_nil_array_ref(vm * machine, bytecode * code);
 void vm_execute_nil_record_ref(vm * machine, bytecode * code);
-void vm_execute_nil_func(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_func_obj(vm * machine, bytecode * code);

@@ -415,9 +415,9 @@ expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
     $$->line_no = $<line_no>1;
 };
 
-expr: TOK_NEW TOK_ID
+expr: TOK_NEW TOK_ID '(' expr_list ')'
 {
-    $$ = expr_new_record($2);
+    $$ = expr_new_record($2, $4);
     $$->line_no = $<line_no>1;
 };
 

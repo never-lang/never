@@ -55,18 +55,22 @@ func get_wave(phi -> float, size -> int) -> [_, _] -> Point
     var y = 0;
     var x_v = 0.0;
     var y_v = 0.0;
+    var z_v = 0.0;
     var tab = {[ size, size ]} -> Point;
 
     for (x = 0; x < size; x = x + 1)
     {
         for (y = 0; y < size; y = y + 1)
         {
-            tab[x, y] = new Point;
+            tab[x, y] = new Point(0.0, 0.0, 0.0);
+
             x_v = -2.0 * 3.141 + 4.0 * 3.141 / size * x;
             y_v = -2.0 * 3.141 + 4.0 * 3.141 / size * y;
+            z_v = sin(phi + sqrt(x_v * x_v + y_v * y_v));
+
             tab[x, y].x = x_v;
             tab[x, y].y = y_v;
-            tab[x, y].z = sin(phi + sqrt(x_v * x_v + y_v * y_v))
+            tab[x, y].z = z_v
         }
     };
     

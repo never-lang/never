@@ -81,28 +81,12 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_NEQ_STRING, vm_execute_op_neq_string },
     
     { BYTECODE_OP_EQ_NIL, vm_execute_op_eq_nil },
-
-    { BYTECODE_OP_EQ_STRING_NIL, vm_execute_op_eq_string_nil },
-    { BYTECODE_OP_EQ_ARRAY_NIL, vm_execute_op_eq_array_nil },
     { BYTECODE_OP_EQ_RECORD_NIL, vm_execute_op_eq_record_nil },
-    { BYTECODE_OP_EQ_FUNC_NIL, vm_execute_op_eq_func_nil },
-
-    { BYTECODE_OP_EQ_NIL_STRING, vm_execute_op_eq_nil_string },
-    { BYTECODE_OP_EQ_NIL_ARRAY, vm_execute_op_eq_nil_array },
     { BYTECODE_OP_EQ_NIL_RECORD, vm_execute_op_eq_nil_record },
-    { BYTECODE_OP_EQ_NIL_FUNC, vm_execute_op_eq_nil_func },
 
     { BYTECODE_OP_NEQ_NIL, vm_execute_op_neq_nil },
-
-    { BYTECODE_OP_NEQ_STRING_NIL, vm_execute_op_neq_string_nil },
-    { BYTECODE_OP_NEQ_ARRAY_NIL, vm_execute_op_neq_array_nil },
     { BYTECODE_OP_NEQ_RECORD_NIL, vm_execute_op_neq_record_nil },
-    { BYTECODE_OP_NEQ_FUNC_NIL, vm_execute_op_neq_func_nil },
-
-    { BYTECODE_OP_NEQ_NIL_STRING, vm_execute_op_neq_nil_string },
-    { BYTECODE_OP_NEQ_NIL_ARRAY, vm_execute_op_neq_nil_array },
     { BYTECODE_OP_NEQ_NIL_RECORD, vm_execute_op_neq_nil_record },
-    { BYTECODE_OP_NEQ_NIL_FUNC, vm_execute_op_neq_nil_func },
 
     { BYTECODE_OP_NOT_INT, vm_execute_op_not_int },
     { BYTECODE_OP_INC_INT, vm_execute_op_inc_int },
@@ -128,9 +112,6 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_ASS_RECORD, vm_execute_op_ass_record },
     { BYTECODE_OP_ASS_FUNC, vm_execute_op_ass_func },
 
-    { BYTECODE_OP_ASS_STRING_NIL, vm_execute_op_ass_string_nil },
-    { BYTECODE_OP_ASS_ARRAY_NIL, vm_execute_op_ass_array_nil },
-    { BYTECODE_OP_ASS_FUNC_NIL, vm_execute_op_ass_func_nil },
     { BYTECODE_OP_ASS_RECORD_NIL, vm_execute_op_ass_record_nil },
 
     { BYTECODE_JUMPZ, vm_execute_jumpz },
@@ -149,10 +130,7 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_RECORD, vm_execute_record },
     { BYTECODE_ATTR, vm_execute_attr },
-    { BYTECODE_NIL_STRING, vm_execute_nil_string },
-    { BYTECODE_NIL_ARRAY_REF, vm_execute_nil_array_ref },
     { BYTECODE_NIL_RECORD_REF, vm_execute_nil_record_ref },
-    { BYTECODE_NIL_FUNC, vm_execute_nil_func },
 
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_FUNC_OBJ, vm_execute_func_obj },
@@ -520,12 +498,6 @@ void vm_execute_op_add_string(vm * machine, bytecode * code)
 
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (str_a == nil_ptr || str_b == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
     
     char * a = gc_get_string(machine->collector, str_a);
     char * b = gc_get_string(machine->collector, str_b);
@@ -543,15 +515,9 @@ void vm_execute_op_add_string(vm * machine, bytecode * code)
 void vm_execute_op_add_int_string(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
 
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (str_b == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
 
     char * b = gc_get_string(machine->collector, str_b);
     mem_ptr addr = 0;
@@ -570,13 +536,6 @@ void vm_execute_op_add_string_int(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
 
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    if (str_a == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     char * a = gc_get_string(machine->collector, str_a);
     int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = 0;
@@ -593,16 +552,9 @@ void vm_execute_op_add_string_int(vm * machine, bytecode * code)
 void vm_execute_op_add_float_string(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
+
     float a = gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
-
     mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (str_b == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     char * b = gc_get_string(machine->collector, str_b);
     mem_ptr addr = 0;
     
@@ -619,13 +571,6 @@ void vm_execute_op_add_string_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    if (str_a == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     char * a = gc_get_string(machine->collector, str_a);
     float b = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = 0;
@@ -831,13 +776,6 @@ void vm_execute_op_eq_string(vm * machine, bytecode * code)
     
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (str_a == nil_ptr || str_b == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     char * a = gc_get_string(machine->collector, str_a);
     char * b = gc_get_string(machine->collector, str_b);
     mem_ptr addr = gc_alloc_int(machine->collector, strcmp(a, b) ? 0 : 1);
@@ -855,13 +793,6 @@ void vm_execute_op_neq_string(vm * machine, bytecode * code)
     
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (str_a == nil_ptr || str_b == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     char * a = gc_get_string(machine->collector, str_a);
     char * b = gc_get_string(machine->collector, str_b);
     mem_ptr addr = gc_alloc_int(machine->collector, strcmp(a, b) ? 1 : 0);
@@ -888,88 +819,12 @@ void vm_execute_op_eq_nil(vm * machine, bytecode * code)
     machine->sp--;
 }
 
-void vm_execute_op_eq_string_nil(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    
-    mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, str_a == 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_eq_array_nil(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    
-    mem_ptr arr = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, arr == 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
 void vm_execute_op_eq_record_nil(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
     mem_ptr arr = gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, arr == 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_eq_func_nil(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-
-    ip_ptr fptr = gc_get_func_addr(machine->collector,
-                                   machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, fptr == 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_eq_nil_string(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
-    mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, str_a == 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_eq_nil_array(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
-    mem_ptr arr = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, arr == 0);
     
     entry.type = GC_MEM_ADDR;
@@ -983,25 +838,9 @@ void vm_execute_op_eq_nil_record(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr arr = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, arr == 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_eq_nil_func(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
-    ip_ptr fptr = gc_get_func_addr(machine->collector,
-                                   machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, fptr == 0);
     
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
@@ -1025,88 +864,12 @@ void vm_execute_op_neq_nil(vm * machine, bytecode * code)
     machine->sp--;
 }
 
-void vm_execute_op_neq_string_nil(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    
-    mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, str_a != 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_neq_array_nil(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    
-    mem_ptr arr = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, arr != 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
 void vm_execute_op_neq_record_nil(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
     mem_ptr arr = gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, arr != 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_neq_func_nil(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-
-    ip_ptr fptr = gc_get_func_addr(machine->collector,
-                                   machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, fptr != 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_neq_nil_string(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
-    mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, str_a != 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_neq_nil_array(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
-    mem_ptr arr = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, arr != 0);
     
     entry.type = GC_MEM_ADDR;
@@ -1120,25 +883,9 @@ void vm_execute_op_neq_nil_record(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr arr = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, arr != 0);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp - 1] = entry;
-    machine->sp--;
-}
-
-void vm_execute_op_neq_nil_func(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
-    ip_ptr fptr = gc_get_func_addr(machine->collector,
-                                   machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, fptr != 0);
     
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
@@ -1164,7 +911,6 @@ void vm_execute_op_inc_int(vm * machine, bytecode * code)
     mem_ptr addr = machine
                        ->stack[machine->sp - (code->id_local.stack_level -
                                               code->id_local.index)].addr;
-    
     gc_inc_int(machine->collector, addr);        
 }
 
@@ -1198,15 +944,7 @@ void vm_execute_op_neg_arr_int(vm * machine, bytecode * code)
 
     unsigned int e = 0;
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     object_arr * m1 = gc_get_arr_obj(machine->collector, array);
-
     mem_ptr mres = gc_copy_arr(machine->collector, array);
 
     for (e = 0; e < m1->elems; e++)
@@ -1227,13 +965,6 @@ void vm_execute_op_neg_arr_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     object_arr * m1 = gc_get_arr_obj(machine->collector, array);
     mem_ptr mres = gc_copy_arr(machine->collector, array);
 
@@ -1258,13 +989,6 @@ void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
 
     mem_ptr array_1 = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array_1 == nil_ptr || array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
     object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
@@ -1301,13 +1025,6 @@ void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
 
     mem_ptr array_1 = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array_1 == nil_ptr || array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
     object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
@@ -1344,13 +1061,6 @@ void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
 
     mem_ptr array_1 = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array_1 == nil_ptr || array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
     object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
@@ -1387,13 +1097,6 @@ void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
 
     mem_ptr array_1 = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array_1 == nil_ptr || array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
     object_arr * m2 = gc_get_arr_obj(machine->collector, array);
 
@@ -1430,13 +1133,6 @@ void vm_execute_op_mul_arr_int(vm * machine, bytecode * code)
 
     int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     object_arr * m1 = gc_get_arr_obj(machine->collector, array);
     mem_ptr mres = gc_copy_arr(machine->collector, array);
 
@@ -1463,13 +1159,6 @@ void vm_execute_op_mul_arr_float(vm * machine, bytecode * code)
     float a = gc_get_float(machine->collector,
                            machine->stack[machine->sp - 1].addr);
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     object_arr * m1 = gc_get_arr_obj(machine->collector, array);
 
     mem_ptr mres = gc_copy_arr(machine->collector, array);
@@ -1496,12 +1185,6 @@ void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code)
 
     mem_ptr array_1 = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array == nil_ptr || array_1 == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
 
     object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
     object_arr * m2 = gc_get_arr_obj(machine->collector, array);
@@ -1557,12 +1240,6 @@ void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
     
     mem_ptr array_1 = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
-    if (array == nil_ptr || array_1 == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
 
     object_arr * m1 = gc_get_arr_obj(machine->collector, array_1);
     object_arr * m2 = gc_get_arr_obj(machine->collector, array);
@@ -1634,23 +1311,7 @@ void vm_execute_op_ass_string(vm * machine, bytecode * code)
 {
     mem_ptr str_a = gc_get_string_ref(machine->collector,
                                       machine->stack[machine->sp].addr);
-    if (str_a == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     gc_set_string_ref(machine->collector, machine->stack[machine->sp - 1].addr, str_a);
-    
-    machine->sp--;
-}
-
-void vm_execute_op_ass_string_nil(vm * machine, bytecode * code)
-{
-    gc_get_int(machine->collector,
-                   machine->stack[machine->sp].addr);
-    gc_set_string_ref(machine->collector, machine->stack[machine->sp - 1].addr, 0);
     
     machine->sp--;
 }
@@ -1659,23 +1320,7 @@ void vm_execute_op_ass_array(vm * machine, bytecode * code)
 {
     mem_ptr array_1 = gc_get_arr_ref(machine->collector,
                                      machine->stack[machine->sp].addr);
-    if (array_1 == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     gc_set_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr, array_1);
-    
-    machine->sp--;
-}
-
-void vm_execute_op_ass_array_nil(vm * machine, bytecode * code)
-{
-    int i = gc_get_int(machine->collector,
-                       machine->stack[machine->sp].addr);
-    gc_set_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr, i);
     
     machine->sp--;
 }
@@ -1684,13 +1329,6 @@ void vm_execute_op_ass_record(vm * machine, bytecode * code)
 {
     mem_ptr rec_1 = gc_get_vec_ref(machine->collector,
                                    machine->stack[machine->sp].addr);
-    if (rec_1 == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     gc_set_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr, rec_1);
     
     machine->sp--;
@@ -1698,9 +1336,9 @@ void vm_execute_op_ass_record(vm * machine, bytecode * code)
 
 void vm_execute_op_ass_record_nil(vm * machine, bytecode * code)
 {
-    int i = gc_get_int(machine->collector,
-                       machine->stack[machine->sp].addr);
-    gc_set_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr, i);
+    mem_ptr nil = gc_get_vec_ref(machine->collector,
+                                 machine->stack[machine->sp].addr);
+    gc_set_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr, nil);
     
     machine->sp--;
 }
@@ -1711,26 +1349,9 @@ void vm_execute_op_ass_func(vm * machine, bytecode * code)
                                    machine->stack[machine->sp].addr);
     mem_ptr mptr = gc_get_func_vec(machine->collector,
                                    machine->stack[machine->sp].addr);
-    if (fptr == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     gc_set_func_addr(machine->collector, machine->stack[machine->sp - 1].addr, fptr);
     gc_set_func_vec(machine->collector, machine->stack[machine->sp - 1].addr, mptr);
 
-    machine->sp--;
-}
-
-void vm_execute_op_ass_func_nil(vm * machine, bytecode * code)
-{
-    int i = gc_get_int(machine->collector,
-                       machine->stack[machine->sp].addr);
-    gc_set_func_addr(machine->collector, machine->stack[machine->sp - 1].addr, i);
-    gc_set_func_vec(machine->collector, machine->stack[machine->sp - 1].addr, i);
-    
     machine->sp--;
 }
 
@@ -1921,14 +1542,6 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
 
     mem_ptr array = { 0 };
     array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp--].addr);
-    if (array == nil_ptr)
-    {
-        object_arr_dim_delete(addr);
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-    
     assert(gc_get_arr_dims(machine->collector, array) == dims);
 
     int oobounds = 0;
@@ -1966,13 +1579,6 @@ void vm_execute_array_append(vm * machine, bytecode * code)
                                               code->id_local.index)]
                        .addr;
     mem_ptr array = gc_get_arr_ref(machine->collector, addr);
-    if (array == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
-
     mem_ptr obj = machine->stack[machine->sp--].addr;
     
     gc_append_arr_elem(machine->collector, array, obj);
@@ -1980,11 +1586,11 @@ void vm_execute_array_append(vm * machine, bytecode * code)
 
 void vm_execute_record(vm * machine, bytecode * code)
 {
-    int c;
     gc_stack entry = { 0 };
     mem_ptr addr = gc_alloc_vec(machine->collector, code->record.count);
     
-    for (c = code->record.count - 1; c >= 0; c--)
+    unsigned int c;
+    for (c = 0; c < code->record.count; c++)
     {
         gc_set_vec(machine->collector, addr, c,
                    machine->stack[machine->sp--].addr);
@@ -2021,52 +1627,10 @@ void vm_execute_attr(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
-void vm_execute_nil_string(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_string_ref(machine->collector, nil_ptr);
-    
-    machine->sp++;
-    vm_check_stack(machine);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp] = entry;
-}
-
-void vm_execute_nil_array_ref(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_arr_ref(machine->collector, nil_ptr);
-    
-    machine->sp++;
-    vm_check_stack(machine);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp] = entry;
-}
-
 void vm_execute_nil_record_ref(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     mem_ptr addr = gc_alloc_vec_ref(machine->collector, nil_ptr);
-    
-    machine->sp++;
-    vm_check_stack(machine);
-    
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
-    
-    machine->stack[machine->sp] = entry;
-}
-
-void vm_execute_nil_func(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_func(machine->collector, nil_ptr, nil_ptr);
     
     machine->sp++;
     vm_check_stack(machine);
@@ -2136,12 +1700,6 @@ void vm_execute_call(vm * machine, bytecode * code)
         gc_get_func_vec(machine->collector, machine->stack[machine->sp].addr);
     ip_ptr ip =
         gc_get_func_addr(machine->collector, machine->stack[machine->sp].addr);
-    if (ip == nil_ptr)
-    {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NIL_POINTER;
-        return;
-    }
 
     machine->gp = gp;
     machine->ip = ip;

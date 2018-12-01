@@ -377,7 +377,10 @@ int expr_gencode(unsigned int syn_level, func * func_value, symtab * stab,
         }
         break;
     case EXPR_RECORD:
-        /* no ids possible */
+        if (value->record.params != NULL)
+        {
+            expr_list_gencode(syn_level, func_value, stab, value->record.params, result);
+        }
         break;
     case EXPR_ATTR:
         if (value->attr.record_value != NULL)
@@ -712,7 +715,10 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         }
         break;
     case EXPR_RECORD:
-        /* not possible */
+        if (value->record.params != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->record.params, result);
+        }
         break;
     case EXPR_ATTR:
         if (value->attr.record_value != NULL)
@@ -1089,8 +1095,7 @@ int expr_nil_emit(expr * value, int stack_level, module * module_value,
 {
     bytecode bc = { 0 };
     
-    bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.type = BYTECODE_NIL_RECORD_REF;
     
     bytecode_add(module_value->code, &bc);
     
@@ -1690,22 +1695,7 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     expr_emit(value->left, stack_level, module_value, list_weak, result);
     expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
 
-    if (value->left->comb.comb == COMB_TYPE_STRING &&
-        value->right->comb.comb == COMB_TYPE_NIL)
-    {
-        bc.type = BYTECODE_OP_ASS_STRING_NIL;
-    }
-    else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb == COMB_TYPE_NIL)
-    {
-        bc.type = BYTECODE_OP_ASS_ARRAY_NIL;
-    }
-    else if (value->left->comb.comb == COMB_TYPE_FUNC &&
-             value->right->comb.comb == COMB_TYPE_NIL)
-    {
-        bc.type = BYTECODE_OP_ASS_FUNC_NIL;
-    }
-    else if (value->left->comb.comb == COMB_TYPE_RECORD &&
+    if (value->left->comb.comb == COMB_TYPE_RECORD &&
              value->right->comb.comb == COMB_TYPE_NIL)
     {
         bc.type = BYTECODE_OP_ASS_RECORD_NIL;
@@ -2174,26 +2164,6 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_EQ_STRING;
         }
-        else if (value->left->comb.comb == COMB_TYPE_STRING &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_EQ_STRING_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_STRING)
-        {
-            bc.type = BYTECODE_OP_EQ_NIL_STRING;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_EQ_ARRAY_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_ARRAY)
-        {
-            bc.type = BYTECODE_OP_EQ_NIL_ARRAY;
-        }
         else if (value->left->comb.comb == COMB_TYPE_RECORD &&
                  value->right->comb.comb == COMB_TYPE_NIL)
         {
@@ -2203,16 +2173,6 @@ int expr_emit(expr * value, int stack_level, module * module_value,
                  value->right->comb.comb == COMB_TYPE_RECORD)
         {
             bc.type = BYTECODE_OP_EQ_NIL_RECORD;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_FUNC &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_EQ_FUNC_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_FUNC)
-        {
-            bc.type = BYTECODE_OP_EQ_NIL_FUNC;
         }
         else
         {
@@ -2248,26 +2208,6 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_NEQ_STRING;
         }
-        else if (value->left->comb.comb == COMB_TYPE_STRING &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_NEQ_STRING_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_STRING)
-        {
-            bc.type = BYTECODE_OP_NEQ_NIL_STRING;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_NEQ_ARRAY_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_ARRAY)
-        {
-            bc.type = BYTECODE_OP_NEQ_NIL_ARRAY;
-        }
         else if (value->left->comb.comb == COMB_TYPE_RECORD &&
                  value->right->comb.comb == COMB_TYPE_NIL)
         {
@@ -2277,16 +2217,6 @@ int expr_emit(expr * value, int stack_level, module * module_value,
                  value->right->comb.comb == COMB_TYPE_RECORD)
         {
             bc.type = BYTECODE_OP_NEQ_NIL_RECORD;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_FUNC &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_NEQ_FUNC_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_FUNC)
-        {
-            bc.type = BYTECODE_OP_NEQ_NIL_FUNC;
         }
         else
         {
@@ -2800,76 +2730,19 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
-int expr_record_init_param_emit(param * value, int stack_level, module * module_value,
-                                func_list_weak * list_weak, int * result)
-{
-    bytecode bc = { 0 };
-
-    switch (value->type)
-    {
-        case PARAM_INT:
-            bc.type = BYTECODE_INT;
-            bc.integer.value = 0;
-        break;
-        case PARAM_FLOAT:
-            bc.type = BYTECODE_FLOAT;
-            bc.real.value = 0;
-        break;
-        case PARAM_STRING:
-            bc.type = BYTECODE_NIL_STRING;
-        break;
-        case PARAM_DIM:
-            assert(0);
-        break;
-        case PARAM_ARRAY:
-            bc.type = BYTECODE_NIL_ARRAY_REF;
-        break;
-        case PARAM_RECORD:
-            bc.type = BYTECODE_NIL_RECORD_REF;
-        break;
-        case PARAM_FUNC:
-            bc.type = BYTECODE_NIL_FUNC;
-        break;
-    }
-
-    bytecode_add(module_value->code, &bc);
-
-    return 0;
-}                                 
-
-int expr_record_init_param_list_emit(param_list * list, int stack_level,
-                                     module * module_value, func_list_weak * list_weak,
-                                     int * result)
-{
-    param_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        param * value = node->value;
-        if (value != NULL)
-        {
-            expr_record_init_param_emit(value, stack_level, module_value,
-                                        list_weak, result);
-        }        
-        node = node->next;
-    }
-
-    return 0;
-}                                
-
 int expr_record_emit(expr * value, int stack_level, module * module_value,
                      func_list_weak * list_weak, int * result)
 {
     int count = -1;
     bytecode bc = { 0 };
     
-    if (value->record.id_record_value != NULL &&
-        value->record.id_record_value->params != NULL)
+    if (value->record.params != NULL)
     {
-        count = value->record.id_record_value->params->count;
-        expr_record_init_param_list_emit(value->record.id_record_value->params,
-                                         stack_level, module_value,
-                                         list_weak, result);
+        count = value->record.params->count;
+        expr_list_emit(value->record.params, stack_level, module_value,
+                       list_weak, result);
     }
+
     assert(count >= 0);
 
     bc.type = BYTECODE_RECORD;

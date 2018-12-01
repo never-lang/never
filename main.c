@@ -36,11 +36,11 @@ static void print_result(object * result)
 {
     if (result->type == OBJECT_INT)
     {
-        printf("%d\n", result->int_value);
+        fprintf(stderr, "%d\n", result->int_value);
     }
     else if (result->type == OBJECT_FLOAT)
     {
-        printf("%.2f\n", result->float_value);
+        fprintf(stderr, "%.2f\n", result->float_value);
     }
     else
     {
