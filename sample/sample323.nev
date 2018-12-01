@@ -1,0 +1,31 @@
+
+/*
+record P {
+    x -> int;
+    y -> int;
+    f -> float;
+}
+
+func getP() -> P
+{
+    nil
+}
+*/
+
+func main() -> int
+{
+    var p = 0;
+    
+    print(10 / p);
+    print(20 / p);
+
+    0
+}
+catch (division_by_zero)
+{
+    prints("caught nil_pointer\n");
+    10
+}
+
+
+
