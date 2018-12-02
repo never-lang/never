@@ -27,7 +27,8 @@ func one(d -> int) -> int
 
 func main() -> int
 {
-    one(0)
+    one(0);
+    assert(0)
 }
 catch (division_by_zero)
 {

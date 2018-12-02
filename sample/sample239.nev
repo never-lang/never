@@ -10,7 +10,7 @@ catch (division_by_zero)
 
 func main() -> int
 {
-    one(0)
+    assert(one(0) == 0)
 }
 
 

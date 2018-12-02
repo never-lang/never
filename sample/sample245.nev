@@ -13,6 +13,6 @@ func one(d -> int) -> int
 
 func main() -> int
 {
-    one(0)
+    assert(one(0) == 12)
 }
 

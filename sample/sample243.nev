@@ -1,7 +1,8 @@
 
 func main() -> int
 {
-    sqrt(-1)
+    sqrt(-1);
+    assert(0)
 }
 catch (invalid_domain)
 {
