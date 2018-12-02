@@ -1,0 +1,16 @@
+
+func main() -> int
+{
+    var t = {[ 10 ]} -> [_] -> int;
+    
+    print(t[0][0]);
+    assert(0);
+
+    0
+}
+catch (nil_pointer)
+{
+    prints("nil_pointer\n");
+    0
+}
+

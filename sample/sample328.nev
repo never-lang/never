@@ -1,0 +1,15 @@
+
+func main() -> int
+{
+    var t = {[ 10 ]} -> string;
+    
+    prints(t[0]);
+
+    0
+}
+catch (nil_pointer)
+{
+    prints("nil_pointer\n");
+    0
+}
+

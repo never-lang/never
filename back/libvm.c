@@ -142,6 +142,12 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     case LIB_MATH_PRINTS:
     {
         mem_ptr str_x = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
+        if (str_x == nil_ptr)
+        {
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NIL_POINTER;
+            return;
+        }
         char * x = gc_get_string(machine->collector, str_x);
         string_print(x);
         addr = gc_alloc_string(machine->collector, x);

@@ -1,0 +1,20 @@
+
+record P {
+    x -> int;
+}
+
+func main() -> int
+{
+    var t = {[ 10 ]} -> P;
+    
+    print(t[0].x);
+    assert(0);
+
+    0
+}
+catch (nil_pointer)
+{
+    prints("nil_pointer\n");
+    0
+}
+
