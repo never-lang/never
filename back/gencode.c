@@ -2179,6 +2179,26 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_EQ_STRING;
         }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            bc.type = BYTECODE_OP_EQ_STRING_NIL;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            bc.type = BYTECODE_OP_EQ_NIL_STRING;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            bc.type = BYTECODE_OP_EQ_ARRAY_NIL;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_ARRAY)
+        {
+            bc.type = BYTECODE_OP_EQ_NIL_ARRAY;
+        }
         else if (value->left->comb.comb == COMB_TYPE_RECORD &&
                  value->right->comb.comb == COMB_TYPE_NIL)
         {
@@ -2188,6 +2208,16 @@ int expr_emit(expr * value, int stack_level, module * module_value,
                  value->right->comb.comb == COMB_TYPE_RECORD)
         {
             bc.type = BYTECODE_OP_EQ_NIL_RECORD;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_FUNC &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            bc.type = BYTECODE_OP_EQ_FUNC_NIL;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_FUNC)
+        {
+            bc.type = BYTECODE_OP_EQ_NIL_FUNC;
         }
         else
         {
@@ -2223,6 +2253,26 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_NEQ_STRING;
         }
+        else if (value->left->comb.comb == COMB_TYPE_STRING &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            bc.type = BYTECODE_OP_NEQ_STRING_NIL;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_STRING)
+        {
+            bc.type = BYTECODE_OP_NEQ_NIL_STRING;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            bc.type = BYTECODE_OP_NEQ_ARRAY_NIL;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_ARRAY)
+        {
+            bc.type = BYTECODE_OP_NEQ_NIL_ARRAY;
+        }
         else if (value->left->comb.comb == COMB_TYPE_RECORD &&
                  value->right->comb.comb == COMB_TYPE_NIL)
         {
@@ -2232,6 +2282,16 @@ int expr_emit(expr * value, int stack_level, module * module_value,
                  value->right->comb.comb == COMB_TYPE_RECORD)
         {
             bc.type = BYTECODE_OP_NEQ_NIL_RECORD;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_FUNC &&
+                 value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            bc.type = BYTECODE_OP_NEQ_FUNC_NIL;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                 value->right->comb.comb == COMB_TYPE_FUNC)
+        {
+            bc.type = BYTECODE_OP_NEQ_NIL_FUNC;
         }
         else
         {

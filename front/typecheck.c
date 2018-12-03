@@ -1503,10 +1503,31 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         {
             value->comb.comb = COMB_TYPE_INT;
         }
+        else if ((value->left->comb.comb == COMB_TYPE_STRING &&
+                  value->right->comb.comb == COMB_TYPE_NIL) ||
+                 (value->left->comb.comb == COMB_TYPE_NIL &&
+                  value->right->comb.comb == COMB_TYPE_STRING))
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if ((value->left->comb.comb == COMB_TYPE_ARRAY &&
+                  value->right->comb.comb == COMB_TYPE_NIL) ||
+                 (value->left->comb.comb == COMB_TYPE_NIL &&
+                  value->right->comb.comb == COMB_TYPE_ARRAY))
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
         else if ((value->left->comb.comb == COMB_TYPE_RECORD &&
                   value->right->comb.comb == COMB_TYPE_NIL) ||
                  (value->left->comb.comb == COMB_TYPE_NIL &&
                   value->right->comb.comb == COMB_TYPE_RECORD))
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if ((value->left->comb.comb == COMB_TYPE_FUNC &&
+                  value->right->comb.comb == COMB_TYPE_NIL) ||
+                 (value->left->comb.comb == COMB_TYPE_NIL &&
+                  value->right->comb.comb == COMB_TYPE_FUNC))
         {
             value->comb.comb = COMB_TYPE_INT;
         }
