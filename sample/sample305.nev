@@ -15,7 +15,7 @@ func print_tree(t -> Tree) -> int
 
 func main() -> int
 {
-    var t0 = new Tree(100, nil, nil, print_tree);
+    var t0 = Tree(100, nil, nil, print_tree);
 
     t0.print(t0);
 

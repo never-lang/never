@@ -14,7 +14,7 @@ func get(r -> Point, x -> int, y -> int) -> int
 
 func addr(r1 -> Point, r2 -> Point) -> Point
 {
-    var r = new Point(r1.x + r2.x, r1.y + r2.y);
+    var r = Point(r1.x + r2.x, r1.y + r2.y);
     
     r
 }
@@ -27,9 +27,9 @@ func printr(r -> Point) -> int
 
 func test() -> int
 {
-    var r = new Point(0, 0);
-    var r1 = new Point(0, 0);
-    var r2 = new Point(0, 0);
+    var r = Point(0, 0);
+    var r1 = Point(0, 0);
+    var r2 = Point(0, 0);
 
     get(r1, 100, 200);
     get(r2, 200, 300);

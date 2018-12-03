@@ -24,7 +24,7 @@ func twice(a -> int) -> int
 
 func count() -> Tree
 {
-    var t = new Tree(10, nil, nil, 20, 3.3, "", twice, [1, 2] -> int);
+    var t = Tree(10, nil, nil, 20, 3.3, "", twice, [1, 2] -> int);
     
     t.value = 10;
     t.attr2 = 3.0;

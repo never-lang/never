@@ -7,7 +7,7 @@ record Tree {
 
 func get_Tree(value -> int) -> Tree
 {
-    var t = new Tree(value, nil, nil);
+    var t = Tree(value, nil, nil);
     t
 }
 

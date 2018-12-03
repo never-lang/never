@@ -6,7 +6,7 @@ record Rec {
 
 func test() -> int
 {
-    var r1 = new Rec(8, 9);
+    var r1 = Rec(8, 9);
     
     r1 = nil;    
     

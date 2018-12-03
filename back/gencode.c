@@ -242,6 +242,10 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 value->id.id_freevar_value = freevar_value;
             }
         }
+        else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
+        {
+            /* none */
+        }
         else
         {
             assert(0);
@@ -374,12 +378,6 @@ int expr_gencode(unsigned int syn_level, func * func_value, symtab * stab,
         {
             listcomp_gencode(syn_level, func_value, value->listcomp_value->stab,
                              value->listcomp_value, result);
-        }
-        break;
-    case EXPR_RECORD:
-        if (value->record.params != NULL)
-        {
-            expr_list_gencode(syn_level, func_value, stab, value->record.params, result);
         }
         break;
     case EXPR_ATTR:
@@ -712,12 +710,6 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         {
             func_gencode_freevars_listcomp(func_value, value->listcomp_value->stab,
                                            value->listcomp_value, result);
-        }
-        break;
-    case EXPR_RECORD:
-        if (value->record.params != NULL)
-        {
-            func_gencode_freevars_expr_list(func_value, stab, value->record.params, result);
         }
         break;
     case EXPR_ATTR:
@@ -1955,6 +1947,29 @@ int expr_last_call_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_record_emit(expr * value, int stack_level, module * module_value,
+                     func_list_weak * list_weak, int * result)
+{
+    int count = -1;
+    bytecode bc = { 0 };
+    
+    if (value->call.params != NULL)
+    {
+        count = value->call.params->count;
+        expr_list_emit(value->call.params, stack_level, module_value,
+                       list_weak, result);
+    }
+
+    assert(count >= 0);
+
+    bc.type = BYTECODE_RECORD;
+    bc.record.count = count;
+    
+    bytecode_add(module_value->code, &bc);
+    
+    return 0;
+}
+
 int expr_emit(expr * value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result)
 {
@@ -2254,7 +2269,14 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         expr_array_deref_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_CALL:
-        expr_call_emit(value, stack_level, module_value, list_weak, result);
+        if (value->call.func_expr->comb.comb == COMB_TYPE_RECORD_ID)
+        {
+            expr_record_emit(value, stack_level, module_value, list_weak, result);
+        }
+        else
+        {
+            expr_call_emit(value, stack_level, module_value, list_weak, result);
+        }
         break;
     case EXPR_LAST_CALL:
         expr_last_call_emit(value, stack_level, module_value, list_weak, result);
@@ -2330,9 +2352,6 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             listcomp_emit(value->listcomp_value, stack_level, module_value,
                           list_weak, result);
         }
-        break;
-    case EXPR_RECORD:
-        expr_record_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_ATTR:
         expr_attr_emit(value, stack_level, module_value, list_weak, result);
@@ -2727,29 +2746,6 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
 
     bytecode_add(module_value->code, &bc);
 
-    return 0;
-}
-
-int expr_record_emit(expr * value, int stack_level, module * module_value,
-                     func_list_weak * list_weak, int * result)
-{
-    int count = -1;
-    bytecode bc = { 0 };
-    
-    if (value->record.params != NULL)
-    {
-        count = value->record.params->count;
-        expr_list_emit(value->record.params, stack_level, module_value,
-                       list_weak, result);
-    }
-
-    assert(count >= 0);
-
-    bc.type = BYTECODE_RECORD;
-    bc.record.count = count;
-    
-    bytecode_add(module_value->code, &bc);
-    
     return 0;
 }
 

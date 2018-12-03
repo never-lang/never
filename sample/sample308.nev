@@ -18,7 +18,7 @@ func arr_test() -> int
 
     for (i = 0; i < 10; i = i + 1)
     {    
-        arr[i] = new Point(i, 2 * i)
+        arr[i] = Point(i, 2 * i)
     };
     
     for (i = 0; i < 10; i = i + 1)

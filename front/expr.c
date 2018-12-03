@@ -273,19 +273,6 @@ expr * expr_new_listcomp(listcomp * listcomp_value)
     return ret;
 }
 
-expr * expr_new_record(char * id, expr_list * params)
-{
-    expr * ret = (expr *)malloc(sizeof(expr));
-    
-    ret->type = EXPR_RECORD;
-    ret->record.id = id;
-    ret->record.params = params;
-    ret->line_no = 0;
-    ret->comb.comb = COMB_TYPE_UNKNOWN;
-    
-    return ret;
-}
-
 expr * expr_new_attr(expr * record_value, char * id)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -450,16 +437,6 @@ void expr_delete(expr * value)
     case EXPR_LISTCOMP:
         listcomp_delete(value->listcomp_value);
         break;
-    case EXPR_RECORD:
-        if (value->record.id != NULL)
-        {
-            free(value->record.id);
-        }
-        if (value->record.params != NULL)
-        {
-            expr_list_delete(value->record.params);
-        }
-        break;
     case EXPR_ATTR:
         if (value->attr.id != NULL)
         {
@@ -593,6 +570,8 @@ const char * comb_type_str(comb_type type)
         return "array";
     case COMB_TYPE_FUNC:
         return "func";
+    case COMB_TYPE_RECORD_ID:
+        return "record id";
     case COMB_TYPE_RECORD:
         return "record";
     }

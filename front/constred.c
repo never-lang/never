@@ -603,8 +603,6 @@ int expr_constred(expr * value, int * result)
             listcomp_constred(value->listcomp_value, result);
         }
         break;
-    case EXPR_RECORD:
-        break;
     case EXPR_ATTR:
         if (value->attr.record_value != NULL)
         {

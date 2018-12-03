@@ -62,7 +62,7 @@ func get_wave(phi -> float, size -> int) -> [_, _] -> Point
     {
         for (y = 0; y < size; y = y + 1)
         {
-            tab[x, y] = new Point(0.0, 0.0, 0.0);
+            tab[x, y] = Point(0.0, 0.0, 0.0);
 
             x_v = -2.0 * 3.141 + 4.0 * 3.141 / size * x;
             y_v = -2.0 * 3.141 + 4.0 * 3.141 / size * y;

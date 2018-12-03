@@ -7,7 +7,7 @@ record P {
 
 func main() -> int
 {
-    var p = new P(10, 20, 30.0);
+    var p = P(10, 20, 30.0);
     
     print(p.x);
     print(p.y);

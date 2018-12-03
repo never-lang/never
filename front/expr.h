@@ -63,9 +63,8 @@ typedef enum expr_type
     EXPR_INT_TO_FLOAT = 33,
     EXPR_FLOAT_TO_INT = 34,
     EXPR_LISTCOMP = 35,
-    EXPR_RECORD = 36,
-    EXPR_ATTR = 37,
-    EXPR_NIL = 38
+    EXPR_ATTR = 36,
+    EXPR_NIL = 37
 } expr_type;
 
 typedef enum comb_type
@@ -79,7 +78,8 @@ typedef enum comb_type
     COMB_TYPE_STRING = 6,
     COMB_TYPE_ARRAY = 7,
     COMB_TYPE_FUNC = 8,
-    COMB_TYPE_RECORD = 9
+    COMB_TYPE_RECORD = 9,
+    COMB_TYPE_RECORD_ID = 10
 } comb_type;
 
 typedef enum id_type
@@ -181,13 +181,6 @@ typedef struct expr
         listcomp * listcomp_value; /* EXPR_LISTCOMP */
         struct
         {
-            char * id;
-            /* struct record * id_record_value; */
-            struct expr_list * params;
-        }
-        record;
-        struct
-        {
             struct expr * record_value; /* record_value . id */
             char * id;
             struct param * id_param_value;
@@ -230,7 +223,6 @@ expr * expr_new_do_while(expr * cond, expr * do_value);
 expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);
-expr * expr_new_record(char * id, expr_list * params);
 expr * expr_new_attr(expr * record_value, char * id);
 
 expr * expr_conv(expr * expr_value, expr_type conv);

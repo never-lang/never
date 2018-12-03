@@ -6,7 +6,7 @@ record Rec {
 
 func test() -> int
 {
-    var r1 = new Rec(100, 200);
+    var r1 = Rec(100, 200);
     
     assert(r1 != nil);
     assert(nil != r1);

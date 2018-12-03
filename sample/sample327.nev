@@ -13,7 +13,7 @@ func pretty_P(p -> P) -> int
 
 func main() -> int
 {
-    var p = new P(10, 20, pretty_P);
+    var p = P(10, 20, pretty_P);
     
     p.print(p);
 

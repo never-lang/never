@@ -119,12 +119,6 @@ int {
     return TOK_INT;
 }
 
-new {
-    tokp->line_no = line_no;
-    scanner_printf("new\n");
-    return TOK_NEW;
-}
-
 float {
     tokp->line_no = line_no;
     scanner_printf("float\n");

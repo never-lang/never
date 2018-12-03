@@ -664,10 +664,8 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {
-            *result = TYPECHECK_FAIL;
-            print_error_msg(value->line_no,
-                            "expected id found record %s instead\n",
-                            entry->record_value->id);
+            value->comb.comb = COMB_TYPE_RECORD_ID;
+            value->comb.comb_record = entry->record_value;
         }
         else
         {
@@ -1244,6 +1242,22 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
             print_error_msg(value->line_no, "function call type mismatch\n");
         }
         break;
+    case COMB_TYPE_RECORD_ID:
+        if (param_expr_list_cmp(value->call.func_expr->comb.comb_record->params,
+                                value->call.params) == TYPECHECK_SUCC)
+        {
+            value->comb.comb = COMB_TYPE_RECORD;
+            value->comb.comb_record = value->call.func_expr->comb.comb_record;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            value->comb.comb_record = NULL;            
+            print_error_msg(value->line_no, "record create type mismatch\n");
+        }
+
+        break;
     case COMB_TYPE_INT:
     case COMB_TYPE_FLOAT:
     case COMB_TYPE_STRING:
@@ -1344,57 +1358,6 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
                         "incorrect return type in list comprehension %s %s\n",
                         comb_type_str(listcomp_value->expr_value->comb.comb),
                         param_type_str(listcomp_value->ret->type));
-    }
-
-    return 0;
-}
-
-int expr_record_check_type(symtab * tab, expr * value, unsigned int syn_level,
-                           int * result)
-{
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(tab, value->record.id, SYMTAB_LOOKUP_GLOBAL);
-    if (entry == NULL)
-    {
-        *result = TYPECHECK_FAIL;
-        value->comb.comb = COMB_TYPE_ERR;
-        value->comb.comb_record = NULL;
-
-        print_error_msg(value->line_no, "cannot find record %s\n",
-                        value->record.id);
-    }
-    else if (entry->type != SYMTAB_RECORD)
-    {
-        *result = TYPECHECK_FAIL;
-        value->comb.comb = COMB_TYPE_ERR;
-        value->comb.comb_record = NULL;
-        
-        print_error_msg(value->line_no, "expected record but %s found\n",
-                        symtab_entry_type_str(entry->type));
-    }
-    else
-    {
-        value->comb.comb = COMB_TYPE_RECORD;
-        value->comb.comb_record = entry->record_value;
-    }   
-
-    if (value->record.params != NULL)
-    {
-        expr_list_check_type(tab, value->record.params, syn_level, result);
-    }
-
-    if (value->comb.comb_record->params != NULL)
-    {
-        if (param_expr_list_cmp(value->comb.comb_record->params,
-                                value->record.params) == TYPECHECK_FAIL)
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            value->comb.comb_record = NULL;            
-
-            print_error_msg(value->line_no, "record new type mismatch\n");
-        }
     }
 
     return 0;
@@ -1707,9 +1670,6 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no, "list comprehension is not well formed\n");
         }
-        break;
-    case EXPR_RECORD:
-        expr_record_check_type(tab, value, syn_level, result);
         break;
     case EXPR_ATTR:
         expr_attr_check_type(tab, value, syn_level, result);
@@ -2061,15 +2021,6 @@ int record_list_check_type(symtab * stab, record_list * list, int * result)
 /**
  * print functions
  */
-int print_func_record(expr * value, int depth)
-{
-    if (value->record.params != NULL)
-    {
-        print_func_expr_list(value->record.params, depth);
-    }
-    return 0;
-}
-
 int print_func_attr(expr * value, int depth)
 {
     if (value->attr.record_value != NULL)
@@ -2190,9 +2141,6 @@ int print_func_expr(expr * value, int depth)
         {
             print_func_listcomp(value->listcomp_value, depth);
         }
-        break;
-    case EXPR_RECORD:
-        print_func_record(value, depth);
         break;
     case EXPR_ATTR:
         print_func_attr(value, depth);

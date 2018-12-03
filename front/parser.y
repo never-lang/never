@@ -89,7 +89,6 @@ int yyerror(never ** nev, char * str)
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
 %right TOK_NOT /* %precedence NEG */
-%right TOK_NEW
 %left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END TOK_DOT
 
 %start never
@@ -412,12 +411,6 @@ expr: TOK_DO expr TOK_WHILE '(' expr ')'
 expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
 {
     $$ = expr_new_for($3, $5, $7, $9);
-    $$->line_no = $<line_no>1;
-};
-
-expr: TOK_NEW TOK_ID '(' expr_list ')'
-{
-    $$ = expr_new_record($2, $4);
     $$->line_no = $<line_no>1;
 };
 

@@ -93,8 +93,6 @@ int qualifier_list_check_type(symtab * tab, qualifier_list * list,
                               unsigned int syn_level, int * result);
 int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
                              unsigned int syn_level, int * result);
-int expr_record_check_type(symtab * tab, expr * value, unsigned int syn_level,
-                           int * result);
 int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
                          int * result);
 int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
@@ -135,7 +133,6 @@ int print_func_bind(bind * value, int depth);
 int print_func_bind_list(bind_list * list, int depth);
 int print_func_except(except * value, int depth);
 int print_func_except_list(except_list * list, int depth);
-int print_func_record(expr * value, int depth);
 int print_func_attr(expr * value, int depth);
 int print_func(func * value, int depth);
 int print_func_list(func_list * list, int depth);
