@@ -871,8 +871,8 @@ void vm_execute_op_eq_nil(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
-    int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr a = gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr b = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a == b);
     
     entry.type = GC_MEM_ADDR;
@@ -887,7 +887,7 @@ void vm_execute_op_eq_string_nil(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, str_a == 0);
     
     entry.type = GC_MEM_ADDR;
@@ -902,7 +902,7 @@ void vm_execute_op_eq_array_nil(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     
     mem_ptr arr = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, arr == 0);
     
     entry.type = GC_MEM_ADDR;
@@ -933,7 +933,7 @@ void vm_execute_op_eq_func_nil(vm * machine, bytecode * code)
 
     ip_ptr fptr = gc_get_func_addr(machine->collector,
                                    machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, fptr == 0);
     
     entry.type = GC_MEM_ADDR;
@@ -947,7 +947,7 @@ void vm_execute_op_eq_nil_string(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, str_a == 0);
     
@@ -962,7 +962,7 @@ void vm_execute_op_eq_nil_array(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr arr = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, arr == 0);
     
@@ -992,7 +992,7 @@ void vm_execute_op_eq_nil_func(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
 
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     ip_ptr fptr = gc_get_func_addr(machine->collector,
                                    machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, fptr == 0);
@@ -1008,8 +1008,8 @@ void vm_execute_op_neq_nil(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
-    int b = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr a = gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr b = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a != b);
     
     entry.type = GC_MEM_ADDR;
@@ -1024,7 +1024,7 @@ void vm_execute_op_neq_string_nil(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, str_a != 0);
     
     entry.type = GC_MEM_ADDR;
@@ -1039,7 +1039,7 @@ void vm_execute_op_neq_array_nil(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     
     mem_ptr arr = gc_get_arr_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, arr != 0);
     
     entry.type = GC_MEM_ADDR;
@@ -1070,7 +1070,7 @@ void vm_execute_op_neq_func_nil(vm * machine, bytecode * code)
 
     ip_ptr fptr = gc_get_func_addr(machine->collector,
                                    machine->stack[machine->sp - 1].addr);
-    gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, fptr != 0);
     
     entry.type = GC_MEM_ADDR;
@@ -1084,7 +1084,7 @@ void vm_execute_op_neq_nil_string(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, str_a != 0);
     
@@ -1099,7 +1099,7 @@ void vm_execute_op_neq_nil_array(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr arr = gc_get_arr_ref(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, arr != 0);
     
@@ -1129,7 +1129,7 @@ void vm_execute_op_neq_nil_func(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
 
-    gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     ip_ptr fptr = gc_get_func_addr(machine->collector,
                                    machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, fptr != 0);

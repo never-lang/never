@@ -3,7 +3,11 @@ func main() -> int
 {
     var t = {[ 10 ]} -> string;
     
+    assert(t[0] == nil);
+    assert(nil == t[0]);
+    
     prints(t[0]);
+    assert(0);
 
     0
 }

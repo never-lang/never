@@ -1,0 +1,18 @@
+
+func test() -> int
+{
+    var arr = [ 1, 2, 3, 4 ] -> int;
+    
+    assert(arr != nil);
+    assert(nil != arr);
+    
+    0
+}
+
+func main() -> int
+{
+    test();
+
+    0
+}
+
