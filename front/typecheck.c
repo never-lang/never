@@ -1239,6 +1239,8 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
         else
         {
             *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+
             print_error_msg(value->line_no, "function call type mismatch\n");
         }
         break;
@@ -1254,6 +1256,7 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             value->comb.comb_record = NULL;            
+
             print_error_msg(value->line_no, "record create type mismatch\n");
         }
 
@@ -1269,6 +1272,8 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     case COMB_TYPE_RECORD:
         {
             *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            
             print_error_msg(value->line_no, "cannot execute function on type %s\n",
                             comb_type_str(value->call.func_expr->comb.comb));
         }

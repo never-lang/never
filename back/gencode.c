@@ -244,7 +244,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {
-            /* none */
+            record * record_value = entry->record_value;
+            value->id.id_type_value = ID_TYPE_RECORD;
+            value->id.id_record_value = record_value;
         }
         else
         {
@@ -1354,6 +1356,9 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
                                    result);
         }
         break;
+    case ID_TYPE_RECORD:
+        /* nothing generated */
+        break;
     }
     return 0;
 }
@@ -2329,7 +2334,8 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         expr_array_deref_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_CALL:
-        if (value->call.func_expr->comb.comb == COMB_TYPE_RECORD_ID)
+        if (value->call.func_expr->type == EXPR_ID &&
+            value->call.func_expr->id.id_type_value == ID_TYPE_RECORD)
         {
             expr_record_emit(value, stack_level, module_value, list_weak, result);
         }

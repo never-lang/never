@@ -91,7 +91,8 @@ typedef enum id_type
     ID_TYPE_QUALIFIER = 4,
     ID_TYPE_FUNC_TOP = 5,
     ID_TYPE_FUNC = 6,
-    ID_TYPE_FUNC_NEST = 7
+    ID_TYPE_FUNC_NEST = 7,
+    ID_TYPE_RECORD = 8
 } id_type;
 
 typedef struct array array;
@@ -100,6 +101,7 @@ typedef struct func func;
 typedef struct qualifier qualifier;
 typedef struct expr_list expr_list;
 typedef struct listcomp listcomp;
+typedef struct record record;
 
 typedef struct expr_comb
 {
@@ -129,6 +131,7 @@ typedef struct expr
                 bind * id_bind_value;
                 qualifier * id_qualifier_value;
                 func * id_func_value;
+                record * id_record_value;
             };
         } id;
         struct
