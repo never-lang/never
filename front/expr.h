@@ -78,8 +78,7 @@ typedef enum comb_type
     COMB_TYPE_STRING = 6,
     COMB_TYPE_ARRAY = 7,
     COMB_TYPE_FUNC = 8,
-    COMB_TYPE_RECORD = 9,
-    COMB_TYPE_RECORD_ID = 10
+    COMB_TYPE_RECORD = 9
 } comb_type;
 
 typedef enum id_type

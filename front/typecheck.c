@@ -664,7 +664,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {
-            value->comb.comb = COMB_TYPE_RECORD_ID;
+            value->comb.comb = COMB_TYPE_RECORD;
             value->comb.comb_record = entry->record_value;
         }
         else
@@ -1244,8 +1244,9 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
             print_error_msg(value->line_no, "function call type mismatch\n");
         }
         break;
-    case COMB_TYPE_RECORD_ID:
-        if (param_expr_list_cmp(value->call.func_expr->comb.comb_record->params,
+    case COMB_TYPE_RECORD:
+        if (value->call.func_expr->type == EXPR_ID &&
+            param_expr_list_cmp(value->call.func_expr->comb.comb_record->params,
                                 value->call.params) == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_RECORD;
@@ -1269,7 +1270,6 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     case COMB_TYPE_UNKNOWN:
     case COMB_TYPE_ERR:
     case COMB_TYPE_NIL:
-    case COMB_TYPE_RECORD:
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;

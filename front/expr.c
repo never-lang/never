@@ -570,8 +570,6 @@ const char * comb_type_str(comb_type type)
         return "array";
     case COMB_TYPE_FUNC:
         return "func";
-    case COMB_TYPE_RECORD_ID:
-        return "record id";
     case COMB_TYPE_RECORD:
         return "record";
     }

@@ -1357,7 +1357,7 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case ID_TYPE_RECORD:
-        /* nothing generated */
+        expr_nil_emit(value, stack_level, module_value, result);
         break;
     }
     return 0;
