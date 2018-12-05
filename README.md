@@ -406,21 +406,34 @@ record Tree
 
 func print_tree(t -> Tree) -> int
 {
-    print(t.value);
+    prints("tree value = " + t.value + "\n");
+
+    if (t.left != nil) { print_tree(t.left) };
+    if (t.right != nil) { print_tree(t.right) };
+    
     0
 }
 
 func main() -> int
 {
-    var t0 = new Tree;
+    var t1 = Tree(10, nil, nil, print_tree);
+    var t2 = Tree(200, nil, nil, print_tree);
+    var t0 = Tree(100, t1, t2, print_tree);
 
-    t0.value = 100;
-    t0.print = print_tree;
     t0.print(t0);
 
     0
 }
 ```
+
+Writing programs with only ```int``` and ```float``` types may be difficult.
+More complex data types are needed which can facilitate creation of programs.
+Never supports ```record``` type which can hold other types. Both simple
+such as ```int```, ```float```, function or table as well as complex data types.
+
+The above example shows ```Tree``` record which holds value, references to 
+other records and function. In the ```main``` three records are initialized.
+and then function ```print``` is used to recursively print the tree.
 
 ## Arrays
 Never supports arrays of any dimension. Array are also expressions and may be

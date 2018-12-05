@@ -10,12 +10,24 @@ record Tree
 func print_tree(t -> Tree) -> int
 {
     prints("tree value = " + t.value + "\n");
+
+    if (t.left != nil)
+    {
+        print_tree(t.left)
+    };
+    if (t.right != nil)
+    {
+        print_tree(t.right)
+    };
+    
     0
 }
 
 func main() -> int
 {
-    var t0 = Tree(100, nil, nil, print_tree);
+    var t1 = Tree(10, nil, nil, print_tree);
+    var t2 = Tree(200, nil, nil, print_tree);
+    var t0 = Tree(100, t1, t2, print_tree);
 
     t0.print(t0);
 
