@@ -152,7 +152,7 @@ To generate animation several frames need to be combined together.
 ```bash
 for f in {0..63}
 do
-never -m 50000 -f ../../sample/sample_wave.nev $f > wave_$f.pov
+never -m 50000 -f wave.nev $f > wave_$f.pov
 done
 ```
 
@@ -171,7 +171,7 @@ done
 And last they are combined together with convert tool.
 
 ```bash
-convert -delay 10 -loop 0 wave_{0..64}.png wave.gif
+convert -delay 10 -loop 0 wave_{0..63}.png wave.gif
 ```
 
 I hope you liked this tutorial!
