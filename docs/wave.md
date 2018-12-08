@@ -10,7 +10,7 @@ I will present how to create a small animation which uses several Linux utilitie
 
 ## Wave
 
-Animation uses well know [Povray][Povray] raytracing tool to generate 3D ```z = sin(x, y)```
+Animation uses well know [POV-Ray][Povray] raytracing tool to generate 3D ```z = sin(x, y)```
 function. First we need to generate a frame of the animation sequence.
 
 ```swift
@@ -178,9 +178,13 @@ I hope you liked this tutorial!
 
 ## Links
 
-[wave]: https://never-lang.github.io/never/wave_small.jpg  "Wave"
-[never-lang]: https://never-lang.github.io/never
-[Povray]: http://www.povray.org/ "Povray"
+* [Never][never-lang]
+* [POV-Ray][Povray]
+* [convert][convert]
 
+[wave]: https://never-lang.github.io/never/wave_small.gif  "Wave"
+[never-lang]: https://never-lang.github.io/never
+[Povray]: http://www.povray.org/ "POV-Ray"
+[Convert]: https://imagemagick.org/script/convert.php
 
 
