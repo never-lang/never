@@ -1,0 +1,29 @@
+
+record R {
+    x -> int;
+    y -> int;
+    z -> int;
+    v -> int;
+}
+
+func gc_test() -> int
+{
+    var i = 0;
+    var r = R;
+
+    for (i = 0; i < 100000; i = i + 1)
+    {
+        r = R(i, 1, 1, 1);
+        0
+    };
+
+    0    
+}
+
+func main() -> int
+{
+    gc_test();
+
+    0
+}
+
