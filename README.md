@@ -713,8 +713,14 @@ func print_tree(t -> Tree) -> int
 {
     prints("tree value = " + t.value + "\n");
 
-    if (t.left != nil) { print_tree(t.left) };
-    if (t.right != nil) { print_tree(t.right) };
+    if (t.left != nil)
+    {
+        t.left.print(t.left)
+    };
+    if (t.right != nil)
+    {
+        t.right.print(t.right)
+    };
     
     0
 }

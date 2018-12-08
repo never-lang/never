@@ -13,11 +13,11 @@ func print_tree(t -> Tree) -> int
 
     if (t.left != nil)
     {
-        print_tree(t.left)
+        t.left.print(t.left)
     };
     if (t.right != nil)
     {
-        print_tree(t.right)
+        t.right.print(t.right)
     };
     
     0
