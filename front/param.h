@@ -29,6 +29,7 @@ typedef enum param_type
     PARAM_STRING,
     PARAM_DIM,
     PARAM_ARRAY,
+    PARAM_ENUMTYPE,
     PARAM_RECORD,
     PARAM_FUNC
 } param_type;
@@ -44,6 +45,7 @@ typedef struct param
         struct param_list * params;
         struct param_list * dims;
         struct record * record_value;
+        struct enumtype * enumtype_value;
     };
     struct param * ret;
     unsigned int line_no;

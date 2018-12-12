@@ -564,6 +564,8 @@ const char * comb_type_str(comb_type type)
         return "int";
     case COMB_TYPE_FLOAT:
         return "float";
+    case COMB_TYPE_ENUMTYPE:
+        return "enum";
     case COMB_TYPE_STRING:
         return "string";
     case COMB_TYPE_ARRAY:

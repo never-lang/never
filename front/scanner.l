@@ -107,6 +107,12 @@ in {
     return TOK_IN;
 }
 
+enum {
+    tokp->line_no = line_no;
+    scanner_printf("enum\n");
+    return TOK_ENUM;
+}
+
 else {
     tokp->line_no = line_no;
     scanner_printf("if\n");

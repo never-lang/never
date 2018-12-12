@@ -150,7 +150,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         }
         char * x = gc_get_string(machine->collector, str_x);
         string_print(x);
-        addr = gc_alloc_string(machine->collector, x);
+        addr = gc_alloc_string_ref(machine->collector, str_x);
     }
     break;
     case LIB_MATH_ASSERT:

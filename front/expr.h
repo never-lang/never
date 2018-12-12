@@ -75,10 +75,11 @@ typedef enum comb_type
     COMB_TYPE_BOOL = 3,
     COMB_TYPE_INT = 4,
     COMB_TYPE_FLOAT = 5,
-    COMB_TYPE_STRING = 6,
-    COMB_TYPE_ARRAY = 7,
-    COMB_TYPE_FUNC = 8,
-    COMB_TYPE_RECORD = 9
+    COMB_TYPE_ENUMTYPE = 6,
+    COMB_TYPE_STRING = 7,
+    COMB_TYPE_ARRAY = 8,
+    COMB_TYPE_FUNC = 9,
+    COMB_TYPE_RECORD = 10
 } comb_type;
 
 typedef enum id_type
@@ -101,6 +102,7 @@ typedef struct qualifier qualifier;
 typedef struct expr_list expr_list;
 typedef struct listcomp listcomp;
 typedef struct record record;
+typedef struct enumtype enumtype;
 
 typedef struct expr_comb
 {
@@ -109,6 +111,7 @@ typedef struct expr_comb
     struct param * comb_ret;       /* function ret */
     int comb_dims;               /* array dimensions */
     struct record * comb_record; /* record */
+    struct enumtype * comb_enumtype; /* record */
 } expr_comb;
 
 typedef struct expr
@@ -131,6 +134,7 @@ typedef struct expr
                 qualifier * id_qualifier_value;
                 func * id_func_value;
                 record * id_record_value;
+                /* enumtype * id_enumtype_value; */
             };
         } id;
         struct

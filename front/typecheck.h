@@ -66,8 +66,8 @@ int array_dims_check_type_expr(symtab * tab, expr * value, unsigned syn_level,
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
                                     unsigned int syn_level, int * result);
 
-int param_record_check_type(symtab * tab, param * param_value,
-                            unsigned int syn_level, int * result);
+int param_enum_record_check_type(symtab * tab, param * param_value,
+                                 unsigned int syn_level, int * result);
 int param_check_type(symtab * tab, param * param_value,
                      unsigned int syn_level, int * result);
 int param_list_check_type(symtab * tab, param_list * list,
@@ -116,8 +116,17 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result);
 
+int never_add_enumtype(symtab * stab, enumtype * value, int * result);
+int never_add_enumtype_list(symtab * stab, enumtype_list * list, int * result);
+
+int tokid_check_type(symtab * stab, tokid * value, int * result);
+int tokid_list_check_type(symtab * stab, tokid_list * list, int * result);
+int enumtype_check_type(symtab * stab, enumtype * value, int * result);
+int enumtype_list_check_type(symtab * stab, enumtype_list * list, int * result);
+
 int never_add_record(symtab * stab, record * value, int * result);
 int never_add_record_list(symtab * stab, record_list * list, int * result);
+
 int record_check_type(symtab * stab, record * record_value, int * result);
 int record_list_check_type(symtab * stab, record_list * list, int * result);
 

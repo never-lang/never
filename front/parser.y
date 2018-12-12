@@ -45,6 +45,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_IN
 %token <val.str_value> TOK_RECORD
 %token <val.str_value> TOK_NIL
+%token <val.str_value> TOK_ENUM
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -73,6 +74,9 @@ int yyerror(never ** nev, char * str)
 %type <val.except_value> except_all
 %type <val.except_value> except
 %type <val.except_list_value> except_list
+%type <val.tokid_list_value> enum_list
+%type <val.enumtype_value> enumtype
+%type <val.enumtype_list_value> enumtype_list
 %type <val.record_value> record
 %type <val.record_list_value> record_list
 %type <val.never_value> never
@@ -119,6 +123,9 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) func_except_delete($$); } func_except
 %destructor { if ($$) except_delete($$); } except_all
 %destructor { if ($$) except_list_delete($$); } except_list
+%destructor { if ($$) tokid_list_delete($$); } enum_list
+%destructor { if ($$) enumtype_delete($$); } enumtype
+%destructor { if ($$) enumtype_list_delete($$); } enumtype_list
 %destructor { if ($$) record_delete($$); } record
 %destructor { if ($$) record_list_delete($$); } record_list
 %destructor {  } never
@@ -722,6 +729,36 @@ func_list: func_list func
     $$ = $1;
 };
 
+enum_list: TOK_ID
+{
+    $$ = tokid_list_new();
+    tokid_list_add_end($$, tokid_new($1));
+};
+
+enum_list: enum_list ',' TOK_ID
+{
+    tokid_list_add_end($1, tokid_new($3));
+    $$ = $1;
+};
+
+enumtype: TOK_ENUM TOK_ID '{' enum_list '}'
+{
+    $$ = enumtype_new($2, $4);
+    $$->line_no = $<line_no>1;
+};
+
+enumtype_list: enumtype
+{
+    $$ = enumtype_list_new();
+    enumtype_list_add_end($$, $1);
+};
+
+enumtype_list: enumtype_list enumtype
+{
+    enumtype_list_add_end($1, $2);
+    $$ = $1;
+};
+
 record: TOK_RECORD TOK_ID '{' param_seq '}'
 {
     $$ = record_new($2, $4);
@@ -740,14 +777,24 @@ record_list: record_list record
     $$ = $1;
 };
 
-never: record_list func_list
-{
-    $$ = *nev = never_new($1, $2);
-};
-
 never: func_list
 {
-    $$ = *nev = never_new(NULL, $1);
+    $$ = *nev = never_new(NULL, NULL, $1);
+};
+
+never: enumtype_list func_list
+{
+    $$ = *nev = never_new($1, NULL, $2);
+};
+
+never: record_list func_list
+{
+    $$ = *nev = never_new(NULL, $1, $2);
+};
+
+never: enumtype_list record_list func_list
+{
+    $$ = *nev = never_new($1, $2, $3);
 };
 
 %%

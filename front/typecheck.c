@@ -43,6 +43,11 @@ int expr_set_return_type(expr * value, param * ret)
     {
         value->comb.comb = COMB_TYPE_FLOAT;
     }
+    else if (ret->type == PARAM_ENUMTYPE)
+    {
+        value->comb.comb = COMB_TYPE_ENUMTYPE;
+        value->comb.comb_enumtype = ret->enumtype_value;
+    }
     else if (ret->type == PARAM_STRING)
     {
         value->comb.comb = COMB_TYPE_STRING;
@@ -93,6 +98,17 @@ int param_cmp(param * param_one, param * param_two)
     else if (param_one->type == PARAM_FLOAT && param_two->type == PARAM_FLOAT)
     {
         return TYPECHECK_SUCC;
+    }
+    else if (param_one->type == PARAM_ENUMTYPE && param_two->type == PARAM_ENUMTYPE)
+    {
+        if (param_one->enumtype_value == param_two->enumtype_value)
+        {
+            return TYPECHECK_SUCC;
+        }
+        else
+        {
+            return TYPECHECK_FAIL;
+        }
     }
     else if (param_one->type == PARAM_STRING && param_two->type == PARAM_STRING)
     {
@@ -202,6 +218,7 @@ int param_is_num(param * value)
 int param_is_dynamic_array(param * value)
 {
     if (value->type == PARAM_INT || value->type == PARAM_FLOAT ||
+        value->type == PARAM_ENUMTYPE ||
         value->type == PARAM_STRING || value->type == PARAM_ARRAY ||
         value->type == PARAM_RECORD || value->type == PARAM_FUNC)
     {
@@ -253,6 +270,17 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     else if (param_value->type == PARAM_FLOAT && expr_value->comb.comb == COMB_TYPE_FLOAT)
     {
         return TYPECHECK_SUCC;
+    }
+    else if (param_value->type == PARAM_ENUMTYPE && expr_value->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        if (param_value->enumtype_value == expr_value->comb.comb_enumtype)
+        {
+            return TYPECHECK_SUCC;
+        }
+        else
+        {
+            return TYPECHECK_FAIL;
+        }
     }
     else if (param_value->type == PARAM_STRING && expr_value->comb.comb == COMB_TYPE_STRING)
     {
@@ -366,6 +394,20 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         print_error_msg(line_no,
                         "qualifier %s already defined at line %u\n",
                         entry->id, al_qualifier->line_no);
+    }
+    else if (entry->type == SYMTAB_TOKID)
+    {
+        tokid * al_tokid = entry->tokid_value;
+        print_error_msg(line_no,
+                        "enum item %s already defined at line %u\n",
+                        entry->id, al_tokid->line_no);
+    }
+    else if (entry->type == SYMTAB_ENUMTYPE)
+    {
+        enumtype * al_enumtype = entry->enumtype_value;
+        print_error_msg(line_no,
+                        "enum %s already defined at line %u\n",
+                        entry->id, al_enumtype->line_no);
     }
     else if (entry->type == SYMTAB_RECORD)
     {
@@ -514,8 +556,8 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list,
 /*
  * check types
  */
-int param_record_check_type(symtab * tab, param * param_value,
-                            unsigned int syn_level, int * result)
+int param_enum_record_check_type(symtab * tab, param * param_value,
+                                 unsigned int syn_level, int * result)
 {
     symtab_entry * entry = NULL;
 
@@ -525,20 +567,25 @@ int param_record_check_type(symtab * tab, param * param_value,
         *result = TYPECHECK_FAIL;
         param_value->record_value = NULL;
 
-        print_error_msg(param_value->line_no, "cannot find record %s\n",
+        print_error_msg(param_value->line_no, "cannot find record or enum %s\n",
                         param_value->record_id);
     }
-    else if (entry->type != SYMTAB_RECORD)
+    else if (entry->type == SYMTAB_RECORD)
+    {
+        param_value->record_value = entry->record_value; 
+    }
+    else if (entry->type == SYMTAB_ENUMTYPE)
+    {
+        param_value->type = PARAM_ENUMTYPE;
+        param_value->enumtype_value = entry->enumtype_value;
+    }
+    else
     {
         *result = TYPECHECK_FAIL;
         param_value->record_value = NULL;
 
-        print_error_msg(param_value->line_no, "expected record but %s found\n",
+        print_error_msg(param_value->line_no, "expected record or enum but %s found\n",
                         symtab_entry_type_str(entry->type));
-    }
-    else
-    {
-        param_value->record_value = entry->record_value; 
     }
 
     return 0;
@@ -551,6 +598,10 @@ int param_check_type(symtab * tab, param * param_value,
     {
         case PARAM_INT:
         case PARAM_FLOAT:
+        break;
+        case PARAM_ENUMTYPE:
+            param_enum_record_check_type(tab, param_value, syn_level, result);
+        break;
         case PARAM_STRING:
         case PARAM_DIM:
         break;
@@ -565,7 +616,7 @@ int param_check_type(symtab * tab, param * param_value,
             }
         break;
         case PARAM_RECORD:
-            param_record_check_type(tab, param_value, syn_level, result);
+            param_enum_record_check_type(tab, param_value, syn_level, result);
         break;
         case PARAM_FUNC:
             if (param_value->params != NULL)
@@ -624,6 +675,11 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             {
                 value->comb.comb = COMB_TYPE_FLOAT;
             }
+            else if (param_value->type == PARAM_ENUMTYPE)
+            {
+                value->comb.comb = COMB_TYPE_ENUMTYPE;
+                value->comb.comb_enumtype = param_value->enumtype_value;
+            }
             else if (param_value->type == PARAM_STRING)
             {
                 value->comb.comb = COMB_TYPE_STRING;
@@ -661,6 +717,11 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
         {
             expr_set_return_type(value, entry->qualifier_value->expr_value->comb.comb_ret);
+        }
+        else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
+        {
+            value->comb.comb = COMB_TYPE_ENUMTYPE;
+            value->comb.comb_enumtype = entry->enumtype_value;
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {
@@ -990,6 +1051,12 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = COMB_TYPE_FLOAT;
     }
+    else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
+             value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
+             value->left->comb.comb_enumtype == value->right->comb.comb_enumtype)
+    {
+        value->comb.comb = COMB_TYPE_ENUMTYPE;
+    }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
@@ -1070,8 +1137,20 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = value->middle->comb.comb;
     }
+    else if (value->middle->comb.comb == COMB_TYPE_ENUMTYPE &&
+             value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
+             value->middle->comb.comb_enumtype == value->right->comb.comb_enumtype)
+    {
+        value->comb.comb = value->middle->comb.comb;
+    }
     else if (value->middle->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        value->comb.comb = value->middle->comb.comb;
+    }
+    else if (value->middle->comb.comb == COMB_TYPE_RECORD &&
+             value->right->comb.comb == COMB_TYPE_RECORD &&
+             value->middle->comb.comb_record == value->right->comb.comb_record)
     {
         value->comb.comb = value->middle->comb.comb;
     }
@@ -1264,6 +1343,7 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
         break;
     case COMB_TYPE_INT:
     case COMB_TYPE_FLOAT:
+    case COMB_TYPE_ENUMTYPE:
     case COMB_TYPE_STRING:
     case COMB_TYPE_ARRAY:
     case COMB_TYPE_BOOL:
@@ -1376,7 +1456,28 @@ int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         expr_check_type(tab, value->attr.record_value, syn_level, result);
     }
 
-    if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD)
+    if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        enumtype * enumtype_value = value->attr.record_value->comb.comb_enumtype;
+        if (enumtype_value != NULL && value->attr.id != NULL)
+        {
+            param * param_value = enumtype_find_tokid(enumtype_value, value->attr.id);
+            if (param_value != NULL)
+            {
+                value->comb.comb = COMB_TYPE_ENUMTYPE;
+                value->comb.comb_enumtype = value->attr.record_value->comb.comb_enumtype;
+
+                value->attr.id_param_value = param_value;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                print_error_msg(value->line_no, "cannot find enum %s.%s\n",
+                                enumtype_value->id, value->attr.id);
+            }
+        }
+    }
+    else if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD)
     {
         record * record_value = value->attr.record_value->comb.comb_record;
         if (record_value != NULL && value->attr.id != NULL)
@@ -1500,6 +1601,12 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
                  value->right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
+                 value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
+                 value->left->comb.comb_enumtype == value->right->comb.comb_enumtype)
         {
             value->comb.comb = COMB_TYPE_INT;
         }
@@ -1972,6 +2079,102 @@ int never_check_type(never * nev, int * result)
     
     symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
     func_list_check_type(nev->stab, nev->funcs, syn_level, result);
+
+    return 0;
+}
+
+int never_add_enumtype(symtab * stab, enumtype * value, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(stab, value->id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry != NULL)
+    {
+        *result = TYPECHECK_FAIL;
+        symtab_entry_exists(entry, value->line_no);
+    }
+    else
+    {
+        symtab_add_enumtype(stab, value, 0);
+    }
+
+    return 0;
+}
+
+int never_add_enumtype_list(symtab * stab, enumtype_list * list, int * result)
+{
+    enumtype_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        enumtype * value = node->value;
+        if (value != NULL)
+        {
+            never_add_enumtype(stab, value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int tokid_check_type(symtab * stab, tokid * value, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(stab, value->id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry != NULL)
+    {
+        *result = TYPECHECK_FAIL;
+        symtab_entry_exists(entry, value->line_no);
+    }
+    else
+    {
+        symtab_add_tokid(stab, value, 0);
+    }
+
+    return 0;
+}
+
+int tokid_list_check_type(symtab * stab, tokid_list * list, int * result)
+{
+    tokid_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        tokid * tokid_value = node->value;
+        if (tokid_value != NULL)
+        {
+            tokid_check_type(stab, tokid_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int enumtype_check_type(symtab * stab, enumtype * value, int * result)
+{
+    if (value->enums != NULL)
+    {
+        tokid_list_check_type(value->stab, value->enums, result);
+    }
+
+    return 0;
+}            
+
+int enumtype_list_check_type(symtab * stab, enumtype_list * list, int * result)
+{
+    enumtype_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        enumtype * value = node->value;
+        if (value != NULL)
+        {
+            enumtype_check_type(stab, value, result);
+        }
+        node = node->next;
+    }
 
     return 0;
 }
@@ -2452,6 +2655,18 @@ int never_sem_check(never * nev)
         nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     }
 
+    /* add enums to symtab */
+    if (nev->stab != NULL && nev->enums != NULL)
+    {
+        never_add_enumtype_list(nev->stab, nev->enums, &typecheck_res);
+    }
+    
+    /* check enums */
+    if (nev->enums != NULL)
+    {
+        enumtype_list_check_type(nev->stab, nev->enums, &typecheck_res);
+    }
+    
     /* add records to symtab */
     if (nev->stab != NULL && nev->records != NULL)
     {

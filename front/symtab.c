@@ -120,6 +120,14 @@ void symtab_entry_print(symtab_entry * entry)
             {
                 printf("[PF][%s][%d]\n", param_value->id, entry->syn_level);
             }
+            else if (param_value->type == PARAM_RECORD)
+            {
+                printf("[PR][%s][%d]\n", param_value->id, entry->syn_level);
+            }
+            else if (param_value->type == PARAM_ENUMTYPE)
+            {
+                printf("[PE][%s][%d]\n", param_value->id, entry->syn_level);
+            }
         }
         else
         {
@@ -138,6 +146,14 @@ void symtab_entry_print(symtab_entry * entry)
     {
         printf("[R][%s][%d]\n", entry->id, entry->syn_level);
     }
+    else if (entry->type == SYMTAB_TOKID)
+    {
+        printf("[I][%s][%d]\n", entry->id, entry->syn_level);
+    }
+    else if (entry->type == SYMTAB_ENUMTYPE)
+    {
+        printf("[E][%s][%d]\n", entry->id, entry->syn_level);
+    }
     else if (entry->type == SYMTAB_FUNC)
     {
         printf("[F][%s][%d]\n", entry->id, entry->syn_level);
@@ -151,6 +167,8 @@ char * symtab_entry_type_str(symtab_entry_type type)
         case SYMTAB_PARAM: return "param";
         case SYMTAB_BIND: return "bind";
         case SYMTAB_QUALIFIER: return "qualifier";
+        case SYMTAB_TOKID: return "enum entry";
+        case SYMTAB_ENUMTYPE: return "enum";
         case SYMTAB_RECORD: return "record";
         case SYMTAB_FUNC: return "func";
     }
@@ -230,6 +248,31 @@ void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned in
     
     symtab_entry_add_object(tab->entries, tab->size, SYMTAB_QUALIFIER, qualifier_value->id,
                             qualifier_value, syn_level);
+    tab->count++;
+    symtab_resize(tab);
+}
+
+void symtab_add_tokid(symtab * tab, tokid * tokid_value, unsigned int syn_level)
+{
+    if (tokid_value->id == NULL)
+    {
+        return;
+    }
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_TOKID, tokid_value->id,
+                            tokid_value, syn_level);
+    tab->count++;
+    symtab_resize(tab);
+}
+
+void symtab_add_enumtype(symtab * tab, enumtype * enumtype_value, unsigned int syn_level)
+{
+    if (enumtype_value->id == NULL)
+    {
+        return;
+    }
+    
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_ENUMTYPE, enumtype_value->id,
+                            enumtype_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }

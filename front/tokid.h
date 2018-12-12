@@ -19,42 +19,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef __TOK_ID_H__
+#define __TOK_ID_H__
 
-#include "never.h"
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-never * never_new(enumtype_list * enums, record_list * records, func_list * funcs)
+typedef struct tokid
 {
-    never * n = (never *)malloc(sizeof(never));
+    char * id;
+    int index;
+    unsigned int line_no;
+} tokid;
 
-    n->stab = NULL;
-    n->enums = enums;
-    n->records = records;
-    n->funcs = funcs;
-
-    return n;
-}
-
-void never_delete(never * nev)
+typedef struct tokid_list_node
 {
-    if (nev->enums)
-    {
-        enumtype_list_delete(nev->enums);
-    }
-    if (nev->records)
-    {
-        record_list_delete(nev->records);
-    }
-    if (nev->funcs)
-    {
-        func_list_delete(nev->funcs);
-    }
-    if (nev->stab)
-    {
-        symtab_delete(nev->stab);
-    }
-    free(nev);
-}
+    tokid * value;
+    struct tokid_list_node * prev;
+    struct tokid_list_node * next;
+} tokid_list_node;
+
+typedef struct tokid_list
+{
+    tokid_list_node * head;
+    tokid_list_node * tail;
+} tokid_list;
+
+tokid * tokid_new(char * id);
+void tokid_delete(tokid * value);
+
+tokid_list_node * tokid_list_node_new(tokid * value);
+void tokid_list_node_delete(tokid_list_node * node);
+
+tokid_list * tokid_list_new();
+void tokid_list_delete(tokid_list * list);
+
+void tokid_list_add_beg(tokid_list * list, tokid * value);
+void tokid_list_add_end(tokid_list * list, tokid * value);
+
+#endif /* __TOK_ID_H__ */
+
+

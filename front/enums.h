@@ -19,42 +19,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef __ENUMS_H__
+#define __ENUMS_H__
 
-#include "never.h"
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+typedef struct param param;
+typedef struct symtab symtab;
+typedef struct tokid_list tokid_list;
 
-never * never_new(enumtype_list * enums, record_list * records, func_list * funcs)
+typedef struct enumtype
 {
-    never * n = (never *)malloc(sizeof(never));
+    char * id;
+    tokid_list * enums;
+    symtab * stab;
+    unsigned int line_no;
+} enumtype;
 
-    n->stab = NULL;
-    n->enums = enums;
-    n->records = records;
-    n->funcs = funcs;
-
-    return n;
-}
-
-void never_delete(never * nev)
+typedef struct enumtype_list_node
 {
-    if (nev->enums)
-    {
-        enumtype_list_delete(nev->enums);
-    }
-    if (nev->records)
-    {
-        record_list_delete(nev->records);
-    }
-    if (nev->funcs)
-    {
-        func_list_delete(nev->funcs);
-    }
-    if (nev->stab)
-    {
-        symtab_delete(nev->stab);
-    }
-    free(nev);
-}
+    enumtype * value;
+    struct enumtype_list_node * prev;
+    struct enumtype_list_node * next;
+} enumtype_list_node;
+
+typedef struct enumtype_list
+{
+    enumtype_list_node * head;
+    enumtype_list_node * tail;
+} enumtype_list;
+
+enumtype * enumtype_new(char * id, tokid_list * enums);
+void enumtype_delete(enumtype * value);
+
+param * enumtype_find_tokid(enumtype * enumtype_value, char * id);
+
+enumtype_list_node * enumtype_list_node_new(enumtype * value);
+void enumtype_list_node_delete(enumtype_list_node * node);
+
+enumtype_list * enumtype_list_new();
+void enumtype_list_delete(enumtype_list * list);
+
+void enumtype_list_add_beg(enumtype_list * list, enumtype * value);
+void enumtype_list_add_end(enumtype_list * list, enumtype * value);
+
+#endif /* __ENUMS_H__ */
+
+

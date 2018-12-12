@@ -313,6 +313,8 @@ char * param_type_str(param_type type)
         return "PARAM_INT";
     case PARAM_FLOAT:
         return "PARAM_FLOAT";
+    case PARAM_ENUMTYPE:
+        return "PARAM_ENUMTYPE";
     case PARAM_STRING:
         return "PARAM_STRING";
     case PARAM_RECORD:

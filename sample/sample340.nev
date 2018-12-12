@@ -1,0 +1,34 @@
+
+enum EONE {
+    one,
+    two,
+    three,
+    four
+}
+
+enum ETWO {
+    one,
+    two,
+    three,
+    four
+}
+
+func e1(a -> EONE, b -> EONE) -> string
+{
+    if (a == b)
+    {
+       prints("OK\n")
+    }
+    else
+    {
+        prints("NOK\n")
+    }
+}
+
+func main() -> int
+{
+    prints(e1(EONE.three.four, EONE.two));
+    
+    0
+}
+
