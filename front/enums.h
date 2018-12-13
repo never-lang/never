@@ -24,13 +24,13 @@
 
 typedef struct param param;
 typedef struct symtab symtab;
-typedef struct tokid tokid;
-typedef struct tokid_list tokid_list;
+typedef struct enumerator enumerator;
+typedef struct enumerator_list enumerator_list;
 
 typedef struct enumtype
 {
     char * id;
-    tokid_list * enums;
+    enumerator_list * enums;
     symtab * stab;
     unsigned int line_no;
 } enumtype;
@@ -48,10 +48,10 @@ typedef struct enumtype_list
     enumtype_list_node * tail;
 } enumtype_list;
 
-enumtype * enumtype_new(char * id, tokid_list * enums);
+enumtype * enumtype_new(char * id, enumerator_list * enums);
 void enumtype_delete(enumtype * value);
 
-tokid * enumtype_find_tokid(enumtype * enumtype_value, char * id);
+enumerator * enumtype_find_enumerator(enumtype * enumtype_value, char * id);
 
 enumtype_list_node * enumtype_list_node_new(enumtype * value);
 void enumtype_list_node_delete(enumtype_list_node * node);

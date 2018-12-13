@@ -19,41 +19,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __TOK_ID_H__
-#define __TOK_ID_H__
+#ifndef __ENUMERATOR_ID_H__
+#define __ENUMERATOR_ID_H__
 
-typedef struct tokid
+typedef struct enumerator
 {
     char * id;
     int index;
     unsigned int line_no;
-} tokid;
+} enumerator;
 
-typedef struct tokid_list_node
+typedef struct enumerator_list_node
 {
-    tokid * value;
-    struct tokid_list_node * prev;
-    struct tokid_list_node * next;
-} tokid_list_node;
+    enumerator * value;
+    struct enumerator_list_node * prev;
+    struct enumerator_list_node * next;
+} enumerator_list_node;
 
-typedef struct tokid_list
+typedef struct enumerator_list
 {
-    tokid_list_node * head;
-    tokid_list_node * tail;
-} tokid_list;
+    enumerator_list_node * head;
+    enumerator_list_node * tail;
+} enumerator_list;
 
-tokid * tokid_new(char * id);
-void tokid_delete(tokid * value);
+enumerator * enumerator_new(char * id);
+void enumerator_delete(enumerator * value);
 
-tokid_list_node * tokid_list_node_new(tokid * value);
-void tokid_list_node_delete(tokid_list_node * node);
+enumerator_list_node * enumerator_list_node_new(enumerator * value);
+void enumerator_list_node_delete(enumerator_list_node * node);
 
-tokid_list * tokid_list_new();
-void tokid_list_delete(tokid_list * list);
+enumerator_list * enumerator_list_new();
+void enumerator_list_delete(enumerator_list * list);
 
-void tokid_list_add_beg(tokid_list * list, tokid * value);
-void tokid_list_add_end(tokid_list * list, tokid * value);
+void enumerator_list_add_beg(enumerator_list * list, enumerator * value);
+void enumerator_list_add_end(enumerator_list * list, enumerator * value);
 
-#endif /* __TOK_ID_H__ */
+#endif /* __ENUMERATOR_ID_H__ */
 
 

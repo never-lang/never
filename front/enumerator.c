@@ -19,12 +19,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "tokid.h"
+#include "enumerator.h"
 #include <stdlib.h>
 
-tokid * tokid_new(char * id)
+enumerator * enumerator_new(char * id)
 {
-    tokid * value = (tokid *)malloc(sizeof(tokid));
+    enumerator * value = (enumerator *)malloc(sizeof(enumerator));
     
     value->id = id;
     value->index = 0;
@@ -33,7 +33,7 @@ tokid * tokid_new(char * id)
     return value;
 }
 
-void tokid_delete(tokid * value)
+void enumerator_delete(enumerator * value)
 {
     if (value->id != NULL)
     {
@@ -42,10 +42,10 @@ void tokid_delete(tokid * value)
     free(value);
 }
 
-tokid_list_node * tokid_list_node_new(tokid * value)
+enumerator_list_node * enumerator_list_node_new(enumerator * value)
 {
-    tokid_list_node * node =
-        (tokid_list_node *)malloc(sizeof(tokid_list_node));
+    enumerator_list_node * node =
+        (enumerator_list_node *)malloc(sizeof(enumerator_list_node));
 
     node->value = value;
     node->prev = NULL;
@@ -54,18 +54,18 @@ tokid_list_node * tokid_list_node_new(tokid * value)
     return node;
 }
 
-void tokid_list_node_delete(tokid_list_node * node)
+void enumerator_list_node_delete(enumerator_list_node * node)
 {
     if (node->value)
     {
-        tokid_delete(node->value);
+        enumerator_delete(node->value);
     }
     free(node);
 }
 
-tokid_list * tokid_list_new()
+enumerator_list * enumerator_list_new()
 {
-    tokid_list * list = (tokid_list *)malloc(sizeof(tokid_list));
+    enumerator_list * list = (enumerator_list *)malloc(sizeof(enumerator_list));
 
     list->head = NULL;
     list->tail = NULL;
@@ -73,22 +73,22 @@ tokid_list * tokid_list_new()
     return list;
 }
 
-void tokid_list_delete(tokid_list * list)
+void enumerator_list_delete(enumerator_list * list)
 {
-    tokid_list_node * node = list->tail;
+    enumerator_list_node * node = list->tail;
 
     while (node != NULL)
     {
-        tokid_list_node * tmp = node->next;
-        tokid_list_node_delete(node);
+        enumerator_list_node * tmp = node->next;
+        enumerator_list_node_delete(node);
         node = tmp;
     }
     free(list);
 }
 
-void tokid_list_add_beg(tokid_list * list, tokid * value)
+void enumerator_list_add_beg(enumerator_list * list, enumerator * value)
 {
-    tokid_list_node * node = tokid_list_node_new(value);
+    enumerator_list_node * node = enumerator_list_node_new(value);
 
     if (list->head == NULL && list->tail == NULL)
     {
@@ -102,9 +102,9 @@ void tokid_list_add_beg(tokid_list * list, tokid * value)
     }
 }
 
-void tokid_list_add_end(tokid_list * list, tokid * value)
+void enumerator_list_add_end(enumerator_list * list, enumerator * value)
 {
-    tokid_list_node * node = tokid_list_node_new(value);
+    enumerator_list_node * node = enumerator_list_node_new(value);
 
     if (list->head == NULL && list->tail == NULL)
     {

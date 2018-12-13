@@ -32,7 +32,7 @@ enum
     GENCODE_FAIL = 1
 };
 
-int enumtype_enum_tokid_list(tokid_list * list);
+int enumtype_enum_enumerator_list(enumerator_list * list);
 int record_enum_param_list(param_list * params);
 int func_enum_param_list(param_list * params);
 int func_enum_bind_list(bind_list * list, int start);

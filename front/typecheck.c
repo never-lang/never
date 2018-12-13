@@ -395,12 +395,12 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
                         "qualifier %s already defined at line %u\n",
                         entry->id, al_qualifier->line_no);
     }
-    else if (entry->type == SYMTAB_TOKID)
+    else if (entry->type == SYMTAB_ENUMERATOR)
     {
-        tokid * al_tokid = entry->tokid_value;
+        enumerator * al_enumerator = entry->enumerator_value;
         print_error_msg(line_no,
                         "enum item %s already defined at line %u\n",
-                        entry->id, al_tokid->line_no);
+                        entry->id, al_enumerator->line_no);
     }
     else if (entry->type == SYMTAB_ENUMTYPE)
     {
@@ -1464,10 +1464,10 @@ int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         enumtype * enumtype_value = value->attr.record_value->comb.comb_enumtype;
         if (enumtype_value != NULL && value->attr.id != NULL)
         {
-            tokid * tokid_value = enumtype_find_tokid(enumtype_value, value->attr.id);
-            if (tokid_value != NULL)
+            enumerator * enumerator_value = enumtype_find_enumerator(enumtype_value, value->attr.id);
+            if (enumerator_value != NULL)
             {
-                value->attr.id_tokid_value = tokid_value;
+                value->attr.id_enumerator_value = enumerator_value;
 
                 value->comb.comb = COMB_TYPE_ENUMTYPE;
                 value->comb.comb_enumtype = value->attr.record_value->comb.comb_enumtype;
@@ -2122,7 +2122,7 @@ int never_add_enumtype_list(symtab * stab, enumtype_list * list, int * result)
     return 0;
 }
 
-int tokid_check_type(symtab * stab, tokid * value, int * result)
+int enumerator_check_type(symtab * stab, enumerator * value, int * result)
 {
     symtab_entry * entry = NULL;
 
@@ -2134,21 +2134,21 @@ int tokid_check_type(symtab * stab, tokid * value, int * result)
     }
     else
     {
-        symtab_add_tokid(stab, value, 0);
+        symtab_add_enumerator(stab, value, 0);
     }
 
     return 0;
 }
 
-int tokid_list_check_type(symtab * stab, tokid_list * list, int * result)
+int enumerator_list_check_type(symtab * stab, enumerator_list * list, int * result)
 {
-    tokid_list_node * node = list->tail;
+    enumerator_list_node * node = list->tail;
     while (node != NULL)
     {
-        tokid * tokid_value = node->value;
-        if (tokid_value != NULL)
+        enumerator * enumerator_value = node->value;
+        if (enumerator_value != NULL)
         {
-            tokid_check_type(stab, tokid_value, result);
+            enumerator_check_type(stab, enumerator_value, result);
         }
         node = node->next;
     }
@@ -2160,7 +2160,7 @@ int enumtype_check_type(symtab * stab, enumtype * value, int * result)
 {
     if (value->enums != NULL)
     {
-        tokid_list_check_type(value->stab, value->enums, result);
+        enumerator_list_check_type(value->stab, value->enums, result);
     }
 
     return 0;

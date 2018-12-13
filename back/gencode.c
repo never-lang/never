@@ -29,15 +29,15 @@
 /* GP old, FP old, IP old, line_no, PP old */
 #define NUM_FRAME_PTRS 5
 
-int enumtype_enum_tokid_list(tokid_list * list)
+int enumtype_enum_enumerator_list(enumerator_list * list)
 {
     int index = 0;
-    tokid_list_node * node = NULL;
+    enumerator_list_node * node = NULL;
     
     node = list->tail;
     while (node != NULL)
     {
-        tokid * value = node->value;
+        enumerator * value = node->value;
         if (value != NULL)
         {
             value->index = index++;
@@ -1041,7 +1041,7 @@ int enumtype_gencode(unsigned int syn_level, enumtype * value, int * result)
 {
     if (value->enums != NULL)
     {
-        enumtype_enum_tokid_list(value->enums);
+        enumtype_enum_enumerator_list(value->enums);
     }
     
     return 0;
@@ -2904,9 +2904,9 @@ int expr_enumtype_attr_emit(expr * value, int stack_level, module * module_value
     bytecode bc = { 0 };
     int index = -1;    
     
-    if (value->attr.id_tokid_value != NULL)
+    if (value->attr.id_enumerator_value != NULL)
     {
-        index = value->attr.id_tokid_value->index;
+        index = value->attr.id_enumerator_value->index;
     }
     assert(index != -1);
     

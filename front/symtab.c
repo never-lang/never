@@ -146,7 +146,7 @@ void symtab_entry_print(symtab_entry * entry)
     {
         printf("[R][%s][%d]\n", entry->id, entry->syn_level);
     }
-    else if (entry->type == SYMTAB_TOKID)
+    else if (entry->type == SYMTAB_ENUMERATOR)
     {
         printf("[I][%s][%d]\n", entry->id, entry->syn_level);
     }
@@ -167,7 +167,7 @@ char * symtab_entry_type_str(symtab_entry_type type)
         case SYMTAB_PARAM: return "param";
         case SYMTAB_BIND: return "bind";
         case SYMTAB_QUALIFIER: return "qualifier";
-        case SYMTAB_TOKID: return "enum entry";
+        case SYMTAB_ENUMERATOR: return "enumerator";
         case SYMTAB_ENUMTYPE: return "enum";
         case SYMTAB_RECORD: return "record";
         case SYMTAB_FUNC: return "func";
@@ -252,14 +252,14 @@ void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned in
     symtab_resize(tab);
 }
 
-void symtab_add_tokid(symtab * tab, tokid * tokid_value, unsigned int syn_level)
+void symtab_add_enumerator(symtab * tab, enumerator * enumerator_value, unsigned int syn_level)
 {
-    if (tokid_value->id == NULL)
+    if (enumerator_value->id == NULL)
     {
         return;
     }
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_TOKID, tokid_value->id,
-                            tokid_value, syn_level);
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_ENUMERATOR, enumerator_value->id,
+                            enumerator_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }

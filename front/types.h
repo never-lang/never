@@ -32,7 +32,7 @@
 #include "except.h"
 #include "listcomp.h"
 #include "record.h"
-#include "tokid.h"
+#include "enumerator.h"
 #include "enums.h"
 
 typedef union token_value {
@@ -61,7 +61,7 @@ typedef union token_value {
     func_except * func_except_value;
     except * except_value;
     except_list * except_list_value;
-    tokid_list * tokid_list_value;
+    enumerator_list * enumerator_list_value;
     enumtype * enumtype_value;
     enumtype_list * enumtype_list_value;
     record * record_value;

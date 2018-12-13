@@ -119,8 +119,8 @@ int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
 int never_add_enumtype(symtab * stab, enumtype * value, int * result);
 int never_add_enumtype_list(symtab * stab, enumtype_list * list, int * result);
 
-int tokid_check_type(symtab * stab, tokid * value, int * result);
-int tokid_list_check_type(symtab * stab, tokid_list * list, int * result);
+int enumerator_check_type(symtab * stab, enumerator * value, int * result);
+int enumerator_list_check_type(symtab * stab, enumerator_list * list, int * result);
 int enumtype_check_type(symtab * stab, enumtype * value, int * result);
 int enumtype_list_check_type(symtab * stab, enumtype_list * list, int * result);
 

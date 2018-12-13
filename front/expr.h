@@ -105,7 +105,7 @@ typedef struct expr_list expr_list;
 typedef struct listcomp listcomp;
 typedef struct record record;
 typedef struct enumtype enumtype;
-typedef struct tokid tokid;
+typedef struct enumerator enumerator;
 
 typedef struct expr_comb
 {
@@ -195,7 +195,7 @@ typedef struct expr
             union
             {
                 struct param * id_param_value;
-                struct tokid * id_tokid_value;
+                struct enumerator * id_enumerator_value;
             };
         }
         attr;

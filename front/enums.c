@@ -20,12 +20,12 @@
  * THE SOFTWARE.
  */
 #include "enums.h"
-#include "tokid.h"
+#include "enumerator.h"
 #include "symtab.h"
 #include <stdlib.h>
 #include <assert.h>
 
-enumtype * enumtype_new(char * id, tokid_list * enums)
+enumtype * enumtype_new(char * id, enumerator_list * enums)
 {
     enumtype * value = (enumtype *)malloc(sizeof(enumtype));
     
@@ -44,7 +44,7 @@ void enumtype_delete(enumtype * value)
     }
     if (value->enums != NULL)
     {
-        tokid_list_delete(value->enums);
+        enumerator_list_delete(value->enums);
     }
     if (value->stab != NULL)
     {
@@ -54,9 +54,9 @@ void enumtype_delete(enumtype * value)
     free(value);
 }
 
-tokid * enumtype_find_tokid(enumtype * enumtype_value, char * id)
+enumerator * enumtype_find_enumerator(enumtype * enumtype_value, char * id)
 {
-    tokid * ret = NULL;
+    enumerator * ret = NULL;
     symtab_entry * entry = NULL;
 
     if (enumtype_value->stab != NULL && id != NULL)
@@ -64,11 +64,11 @@ tokid * enumtype_find_tokid(enumtype * enumtype_value, char * id)
         entry = symtab_lookup(enumtype_value->stab, id, SYMTAB_LOOKUP_LOCAL);
     }
 
-    if (entry != NULL && entry->type == SYMTAB_TOKID)
+    if (entry != NULL && entry->type == SYMTAB_ENUMERATOR)
     {
-        ret = entry->tokid_value;
+        ret = entry->enumerator_value;
     }
-    else if (entry != NULL && entry->type != SYMTAB_TOKID)
+    else if (entry != NULL && entry->type != SYMTAB_ENUMERATOR)
     {
         assert(0);
     }

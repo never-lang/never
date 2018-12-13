@@ -28,7 +28,7 @@
 #include "record.h"
 #include "func.h"
 #include "listcomp.h"
-#include "tokid.h"
+#include "enumerator.h"
 #include "enums.h"
 
 typedef enum symtab_lookup_op
@@ -50,7 +50,7 @@ typedef enum symtab_entry_type
     SYMTAB_QUALIFIER = 3,
     SYMTAB_RECORD = 4,
     SYMTAB_ENUMTYPE = 5,
-    SYMTAB_TOKID = 6,
+    SYMTAB_ENUMERATOR = 6,
     SYMTAB_FUNC = 7
 } symtab_entry_type;
 
@@ -64,7 +64,7 @@ typedef struct symtab_entry
         qualifier * qualifier_value;
         record * record_value;
         enumtype * enumtype_value;
-        tokid * tokid_value;
+        enumerator * enumerator_value;
         func * func_value;
     };
     unsigned int syn_level;
@@ -98,7 +98,7 @@ void symtab_delete(symtab * tab);
 void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level);
 void symtab_add_bind(symtab * tab, bind * let_value, unsigned int syn_level);
 void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned int syn_level);
-void symtab_add_tokid(symtab * tab, tokid * tokid_value, unsigned int syn_level);
+void symtab_add_enumerator(symtab * tab, enumerator * enumerator_value, unsigned int syn_level);
 void symtab_add_enumtype(symtab * tab, enumtype * enumtype_value, unsigned int syn_level);
 void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_level);
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
