@@ -155,6 +155,7 @@
       <keyword>record</keyword>
       <keyword>nil</keyword>
       <keyword>new</keyword>
+      <keyword>enum</keyword>
     </context>
 
     <context id="operators" style-ref="operator">
