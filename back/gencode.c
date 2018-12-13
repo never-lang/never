@@ -29,6 +29,24 @@
 /* GP old, FP old, IP old, line_no, PP old */
 #define NUM_FRAME_PTRS 5
 
+int enumtype_enum_tokid_list(tokid_list * list)
+{
+    int index = 0;
+    tokid_list_node * node = NULL;
+    
+    node = list->tail;
+    while (node != NULL)
+    {
+        tokid * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
 int record_enum_param_list(param_list * params)
 {
     int index = 0;
@@ -158,6 +176,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
             if (param_value->type == PARAM_INT ||
                 param_value->type == PARAM_FLOAT ||
                 param_value->type == PARAM_STRING ||
+                param_value->type == PARAM_ENUMTYPE ||
                 param_value->type == PARAM_DIM ||
                 param_value->type == PARAM_ARRAY ||
                 param_value->type == PARAM_RECORD ||
@@ -242,9 +261,17 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 value->id.id_freevar_value = freevar_value;
             }
         }
+        else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
+        {
+            enumtype * enumtype_value = entry->enumtype_value;
+
+            value->id.id_type_value = ID_TYPE_ENUMTYPE;
+            value->id.id_enumtype_value = enumtype_value;
+        }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {
             record * record_value = entry->record_value;
+
             value->id.id_type_value = ID_TYPE_RECORD;
             value->id.id_record_value = record_value;
         }
@@ -1010,6 +1037,33 @@ int func_list_gencode(unsigned int syn_level, func_list * list, int * result)
     return 0;
 }
 
+int enumtype_gencode(unsigned int syn_level, enumtype * value, int * result)
+{
+    if (value->enums != NULL)
+    {
+        enumtype_enum_tokid_list(value->enums);
+    }
+    
+    return 0;
+}
+
+int enumtype_list_gencode(unsigned int syn_level, enumtype_list * list, int * result)
+{
+    enumtype_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        enumtype * enumtype_value = node->value;
+        if (enumtype_value != NULL)
+        {
+            enumtype_gencode(syn_level, enumtype_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int record_gencode(unsigned int syn_level, record * value, int * result)
 {
     if (value->params != NULL)
@@ -1041,6 +1095,11 @@ int never_gencode(never * nev)
 {
     int gencode_res = GENCODE_SUCC;
     unsigned int syn_level = 0;
+    
+    if (nev->enums != NULL)
+    {
+        enumtype_list_gencode(0, nev->enums, &gencode_res);
+    }
 
     if (nev->records != NULL)
     {
@@ -1358,6 +1417,9 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
         break;
     case ID_TYPE_RECORD:
         expr_nil_emit(value, stack_level, module_value, result);
+        break;
+    case ID_TYPE_ENUMTYPE:
+        assert(0);
         break;
     }
     return 0;
@@ -2179,6 +2241,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_EQ_FLOAT;
         }
+        else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
+                 value->right->comb.comb == COMB_TYPE_ENUMTYPE)
+        {
+            bc.type = BYTECODE_OP_EQ_INT;
+        }
         else if (value->left->comb.comb == COMB_TYPE_STRING &&
                  value->right->comb.comb == COMB_TYPE_STRING)
         {
@@ -2252,6 +2319,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
                  value->right->comb.comb == COMB_TYPE_FLOAT)
         {
             bc.type = BYTECODE_OP_NEQ_FLOAT;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
+                 value->right->comb.comb == COMB_TYPE_ENUMTYPE)
+        {
+            bc.type = BYTECODE_OP_NEQ_INT;
         }
         else if (value->left->comb.comb == COMB_TYPE_STRING &&
                  value->right->comb.comb == COMB_TYPE_STRING)
@@ -2420,7 +2492,18 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_ATTR:
-        expr_attr_emit(value, stack_level, module_value, list_weak, result);
+        if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD)
+        {
+            expr_record_attr_emit(value, stack_level, module_value, list_weak, result);
+        }
+        else if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE_ID)
+        {
+            expr_enumtype_attr_emit(value, stack_level, module_value, list_weak, result);
+        }
+        else
+        {
+            assert(0);
+        }
         break;
     }
     return 0;
@@ -2815,8 +2898,28 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
-int expr_attr_emit(expr * value, int stack_level, module * module_value,
-                   func_list_weak * list_weak, int * result)
+int expr_enumtype_attr_emit(expr * value, int stack_level, module * module_value,
+                            func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    int index = -1;    
+    
+    if (value->attr.id_tokid_value != NULL)
+    {
+        index = value->attr.id_tokid_value->index;
+    }
+    assert(index != -1);
+    
+    bc.type = BYTECODE_INT;
+    bc.integer.value = index;
+
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
+                          func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     int index = -1;

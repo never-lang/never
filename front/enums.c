@@ -54,9 +54,9 @@ void enumtype_delete(enumtype * value)
     free(value);
 }
 
-param * enumtype_find_tokid(enumtype * enumtype_value, char * id)
+tokid * enumtype_find_tokid(enumtype * enumtype_value, char * id)
 {
-    param * ret = NULL;
+    tokid * ret = NULL;
     symtab_entry * entry = NULL;
 
     if (enumtype_value->stab != NULL && id != NULL)
@@ -66,7 +66,7 @@ param * enumtype_find_tokid(enumtype * enumtype_value, char * id)
 
     if (entry != NULL && entry->type == SYMTAB_TOKID)
     {
-        ret = entry->param_value;
+        ret = entry->tokid_value;
     }
     else if (entry != NULL && entry->type != SYMTAB_TOKID)
     {

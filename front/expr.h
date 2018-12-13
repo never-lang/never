@@ -76,10 +76,11 @@ typedef enum comb_type
     COMB_TYPE_INT = 4,
     COMB_TYPE_FLOAT = 5,
     COMB_TYPE_ENUMTYPE = 6,
-    COMB_TYPE_STRING = 7,
-    COMB_TYPE_ARRAY = 8,
-    COMB_TYPE_FUNC = 9,
-    COMB_TYPE_RECORD = 10
+    COMB_TYPE_ENUMTYPE_ID = 7,
+    COMB_TYPE_STRING = 8,
+    COMB_TYPE_ARRAY = 9,
+    COMB_TYPE_FUNC = 10,
+    COMB_TYPE_RECORD = 11
 } comb_type;
 
 typedef enum id_type
@@ -92,7 +93,8 @@ typedef enum id_type
     ID_TYPE_FUNC_TOP = 5,
     ID_TYPE_FUNC = 6,
     ID_TYPE_FUNC_NEST = 7,
-    ID_TYPE_RECORD = 8
+    ID_TYPE_RECORD = 8,
+    ID_TYPE_ENUMTYPE = 9
 } id_type;
 
 typedef struct array array;
@@ -103,6 +105,7 @@ typedef struct expr_list expr_list;
 typedef struct listcomp listcomp;
 typedef struct record record;
 typedef struct enumtype enumtype;
+typedef struct tokid tokid;
 
 typedef struct expr_comb
 {
@@ -134,7 +137,7 @@ typedef struct expr
                 qualifier * id_qualifier_value;
                 func * id_func_value;
                 record * id_record_value;
-                /* enumtype * id_enumtype_value; */
+                enumtype * id_enumtype_value;
             };
         } id;
         struct
@@ -189,7 +192,11 @@ typedef struct expr
         {
             struct expr * record_value; /* record_value . id */
             char * id;
-            struct param * id_param_value;
+            union
+            {
+                struct param * id_param_value;
+                struct tokid * id_tokid_value;
+            };
         }
         attr;
     };

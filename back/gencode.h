@@ -32,6 +32,7 @@ enum
     GENCODE_FAIL = 1
 };
 
+int enumtype_enum_tokid_list(tokid_list * list);
 int record_enum_param_list(param_list * params);
 int func_enum_param_list(param_list * params);
 int func_enum_bind_list(bind_list * list, int start);
@@ -98,6 +99,12 @@ int func_gencode_freevars(func * func_value, symtab * stab, int * result);
 
 int func_gencode(unsigned int syn_level, func * func_value, int * result);
 int func_list_gencode(unsigned int syn_level, func_list * list, int * result);
+
+int enumtype_gencode(unsigned int syn_level, enumtype * value, int * result);
+int enumtype_list_gencode(unsigned int syn_level, enumtype_list * list, int * result);
+
+int record_gencode(unsigned int syn_level, record * value, int * result);
+int record_list_gencode(unsigned int syn_level, record_list * list, int * result);
 
 int never_gencode(never * nev);
 
@@ -200,8 +207,10 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result);
 int expr_record_emit(expr * value, int stack_level, module * module_value,
                      func_list_weak * list_weak, int * result);
-int expr_attr_emit(expr * value, int stack_level, module * module_value,
-                   func_list_weak * list_weak, int * result);
+int expr_enumtype_attr_emit(expr * value, int stack_level, module * module_value,
+                            func_list_weak * list_weak, int * result);
+int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
+                          func_list_weak * list_weak, int * result);
 int bind_emit(bind * bind_value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
 int bind_list_emit(bind_list * list, int stack_level, module * module_value,

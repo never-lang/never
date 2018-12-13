@@ -720,7 +720,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         }
         else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
         {
-            value->comb.comb = COMB_TYPE_ENUMTYPE;
+            value->comb.comb = COMB_TYPE_ENUMTYPE_ID;
             value->comb.comb_enumtype = entry->enumtype_value;
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
@@ -1344,6 +1344,7 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     case COMB_TYPE_INT:
     case COMB_TYPE_FLOAT:
     case COMB_TYPE_ENUMTYPE:
+    case COMB_TYPE_ENUMTYPE_ID:
     case COMB_TYPE_STRING:
     case COMB_TYPE_ARRAY:
     case COMB_TYPE_BOOL:
@@ -1456,18 +1457,18 @@ int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         expr_check_type(tab, value->attr.record_value, syn_level, result);
     }
 
-    if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE)
+    if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE_ID)
     {
         enumtype * enumtype_value = value->attr.record_value->comb.comb_enumtype;
         if (enumtype_value != NULL && value->attr.id != NULL)
         {
-            param * param_value = enumtype_find_tokid(enumtype_value, value->attr.id);
-            if (param_value != NULL)
+            tokid * tokid_value = enumtype_find_tokid(enumtype_value, value->attr.id);
+            if (tokid_value != NULL)
             {
+                value->attr.id_tokid_value = tokid_value;
+
                 value->comb.comb = COMB_TYPE_ENUMTYPE;
                 value->comb.comb_enumtype = value->attr.record_value->comb.comb_enumtype;
-
-                value->attr.id_param_value = param_value;
             }
             else
             {
@@ -1486,6 +1487,7 @@ int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
             if (param_value != NULL)
             {
                 value->attr.id_param_value = param_value;
+
                 expr_set_return_type(value, param_value);
             }
             else

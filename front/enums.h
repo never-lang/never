@@ -24,6 +24,7 @@
 
 typedef struct param param;
 typedef struct symtab symtab;
+typedef struct tokid tokid;
 typedef struct tokid_list tokid_list;
 
 typedef struct enumtype
@@ -50,7 +51,7 @@ typedef struct enumtype_list
 enumtype * enumtype_new(char * id, tokid_list * enums);
 void enumtype_delete(enumtype * value);
 
-param * enumtype_find_tokid(enumtype * enumtype_value, char * id);
+tokid * enumtype_find_tokid(enumtype * enumtype_value, char * id);
 
 enumtype_list_node * enumtype_list_node_new(enumtype * value);
 void enumtype_list_node_delete(enumtype_list_node * node);
