@@ -1767,6 +1767,10 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     {
         bc.type = BYTECODE_OP_ASS_FLOAT;
     }
+    else if (value->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        bc.type = BYTECODE_OP_ASS_INT;
+    }
     else if (value->comb.comb == COMB_TYPE_STRING)
     {
         bc.type = BYTECODE_OP_ASS_STRING;

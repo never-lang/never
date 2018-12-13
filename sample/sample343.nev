@@ -1,0 +1,20 @@
+
+enum A {
+    one,
+    two,
+    three
+}
+
+func getA() -> A
+{
+    var a = A.one;
+    a
+}
+
+func main() -> int
+{
+    assert(getA() == A.one);
+    
+    0
+}
+

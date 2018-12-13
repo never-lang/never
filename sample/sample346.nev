@@ -1,0 +1,23 @@
+
+enum A {
+    one,
+    two,
+    three
+}
+
+record R {
+    v -> A;
+}
+
+func getA(b -> A) -> R
+{
+    R(b)
+}
+
+func main() -> int
+{
+    assert(getA(A.two).v == A.two);
+
+    0
+}
+

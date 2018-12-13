@@ -1,0 +1,23 @@
+
+enum A {
+    one,
+    two,
+    three
+}
+
+func getA() -> A
+{
+    var a = A.one;
+
+    a = A.two;
+
+    a
+}
+
+func main() -> int
+{
+    assert(getA() == A.two);
+    
+    0
+}
+
