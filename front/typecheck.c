@@ -1141,7 +1141,8 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
              value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
              value->middle->comb.comb_enumtype == value->right->comb.comb_enumtype)
     {
-        value->comb.comb = value->middle->comb.comb;
+        value->comb.comb = COMB_TYPE_ENUMTYPE;
+        value->comb.comb_enumtype = value->middle->comb.comb_enumtype;
     }
     else if (value->middle->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_STRING)
@@ -1152,7 +1153,8 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
              value->right->comb.comb == COMB_TYPE_RECORD &&
              value->middle->comb.comb_record == value->right->comb.comb_record)
     {
-        value->comb.comb = value->middle->comb.comb;
+        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb_record = value->middle->comb.comb_record;
     }
     else if (value->middle->comb.comb == COMB_TYPE_FUNC &&
              value->right->comb.comb == COMB_TYPE_FUNC)

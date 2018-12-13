@@ -1,0 +1,19 @@
+
+record A {
+    x -> int;
+    y -> int;
+}
+
+func getA(a -> int) -> A
+{
+    if (a == 10) A(10, 20) else A(100, 200)
+}
+
+
+func main() -> int
+{
+    assert(getA(110).x == 100);
+    
+    0
+}
+
