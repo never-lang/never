@@ -2790,6 +2790,10 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     {
         bc.type = BYTECODE_MK_ARRAY_STRING;
     }
+    else if (array_value->ret->type == PARAM_ENUMTYPE)
+    {
+        bc.type = BYTECODE_MK_ARRAY_INT;
+    }
     else if (array_value->ret->type == PARAM_ARRAY)
     {
         bc.type = BYTECODE_MK_ARRAY_ARRAY;
@@ -2804,6 +2808,7 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     }
     else
     {
+        fprintf(stderr, "unknown param %d\n", array_value->ret->type);
         assert(0);
     }
 

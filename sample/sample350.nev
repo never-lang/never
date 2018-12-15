@@ -1,0 +1,57 @@
+
+enum V { one, two, three, four }
+
+func testRLC() -> [_] -> V
+{
+    [ v | v in [ V.one, V.four, V.two, V.four, V.three ] -> V ] -> V
+}
+
+func V2str(v -> V) -> string
+{
+    var str = "V.unknown";
+
+    if (v == V.one)
+    {
+        str = "V.one"
+    }
+    else if (v == V.two)
+    {
+        str = "V.two"
+    }
+    else if (v == V.three)
+    {
+        str = "V.three"
+    }
+    else if (v == V.four)
+    {
+        str = "V.four"
+    }
+    else
+    {
+        str = "V.unknown"
+    };
+    
+    str
+}
+
+func printRLC( RLC[D] -> V ) -> int
+{
+    var i = 0;
+    
+    for (i = 0; i < D; i = i + 1)
+    {
+        prints(V2str(RLC[i]) + "\n")
+    };
+    
+    0
+}
+
+func main() -> int
+{
+    var rlc = testRLC();
+
+    printRLC(rlc);
+
+    0
+}
+

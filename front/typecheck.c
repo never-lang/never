@@ -1438,6 +1438,11 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
     expr_check_type(listcomp_value->stab, listcomp_value->expr_value, syn_level,
                     result);
 
+    if (listcomp_value->ret != NULL)
+    {
+        param_check_type(listcomp_value->stab, listcomp_value->ret, syn_level, result);
+    }
+
     if (param_expr_cmp(listcomp_value->ret, listcomp_value->expr_value)
                        == TYPECHECK_FAIL)
     {

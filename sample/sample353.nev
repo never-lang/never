@@ -1,0 +1,22 @@
+
+
+record R {
+    x -> int;
+    y -> int;
+}
+
+func main() -> int
+{
+    var t = {[ 10 ]} -> R;
+    
+    t[0] = R(0, 0);
+    t[1] = R(1, 1);
+    t[2] = R(2, 2);
+
+    assert(t[0].x == 0 && t[0].y == 0);
+    assert(t[1].x == 1 && t[1].y == 1);
+    assert(t[2].x == 2 && t[2].y == 2);
+
+    0
+}
+

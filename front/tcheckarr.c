@@ -179,6 +179,11 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
                                  syn_level, result);
         }
 
+        if (value->array.array_value->ret != NULL)
+        {
+            param_check_type(tab, value->array.array_value->ret, syn_level, result);
+        }
+
         array_well_formed(value, &arr_result);
         if (arr_result == TYPECHECK_SUCC)
         {

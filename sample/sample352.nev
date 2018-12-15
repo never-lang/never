@@ -1,0 +1,19 @@
+
+
+enum E { one, two, three, four }
+
+func main() -> int
+{
+    var t = {[ 10 ]} -> E;
+    
+    t[0] = E.one;
+    t[1] = E.two;
+    t[2] = E.three;
+
+    assert(t[0] == E.one);
+    assert(t[1] == E.two);
+    assert(t[2] == E.three);
+
+    0
+}
+

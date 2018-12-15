@@ -1,0 +1,33 @@
+
+record P {
+    x -> int;
+    y -> int;
+}
+
+func testRLC() -> [_] -> P
+{
+    [ P(x, y) | x in [ 1, 2, 3 ] -> int; y in [ 10, 20, 30 ] -> int ] -> P
+}
+
+func printRLC( RLC[D] -> P ) -> int
+{
+    var i = 0;
+    
+    for (i = 0; i < D; i = i + 1)
+    {
+        prints(RLC[i].x + " " + RLC[i].y + "\n")
+    };
+    
+    0
+}
+
+
+func main() -> int
+{
+    var rlc = testRLC();
+
+    printRLC(rlc);
+
+    0
+}
+
