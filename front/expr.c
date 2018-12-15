@@ -546,7 +546,6 @@ const char * expr_type_str(expr_type type)
     case EXPR_FUNC:
         return "func";
     default:
-        fprintf(stderr, "%d\n", type);
         assert(0);
     }
 }

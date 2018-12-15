@@ -2808,7 +2808,6 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     }
     else
     {
-        fprintf(stderr, "unknown param %d\n", array_value->ret->type);
         assert(0);
     }
 
