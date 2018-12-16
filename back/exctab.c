@@ -25,7 +25,7 @@
 #include <limits.h>
 #include <assert.h>
 
-char exctab_between(exctab_entry * first, exctab_entry * second, unsigned int except_ip)
+int exctab_between(exctab_entry * first, exctab_entry * second, unsigned int except_ip)
 {
     if (except_ip < first->block_addr)
     {

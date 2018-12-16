@@ -33,7 +33,7 @@ typedef struct exctab {
     exctab_entry * tab;
 } exctab;
 
-char exctab_between(exctab_entry * first, exctab_entry * second, unsigned int except_ip);
+int exctab_between(exctab_entry * first, exctab_entry * second, unsigned int except_ip);
 exctab_entry * exctab_search(exctab_entry * tab, int tab_len, unsigned int except_ip);
 
 exctab * exception_tab_new(unsigned int size);
