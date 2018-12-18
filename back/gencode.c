@@ -1754,8 +1754,9 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     expr_emit(value->left, stack_level, module_value, list_weak, result);
     expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
 
-    if (value->left->comb.comb == COMB_TYPE_RECORD &&
-             value->right->comb.comb == COMB_TYPE_NIL)
+    if ((value->left->comb.comb == COMB_TYPE_RECORD ||
+         value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
+         value->right->comb.comb == COMB_TYPE_NIL)
     {
         bc.type = BYTECODE_OP_ASS_RECORD_NIL;
     }
@@ -2275,13 +2276,15 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_EQ_NIL_ARRAY;
         }
-        else if (value->left->comb.comb == COMB_TYPE_RECORD &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
+        else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
+                  value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
+                  value->right->comb.comb == COMB_TYPE_NIL)
         {
             bc.type = BYTECODE_OP_EQ_RECORD_NIL;
         }
         else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_RECORD)
+                (value->right->comb.comb == COMB_TYPE_RECORD ||
+                 value->right->comb.comb == COMB_TYPE_RECORD_ID))
         {
             bc.type = BYTECODE_OP_EQ_NIL_RECORD;
         }
@@ -2354,13 +2357,15 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_NEQ_NIL_ARRAY;
         }
-        else if (value->left->comb.comb == COMB_TYPE_RECORD &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
+        else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
+                  value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
+                  value->right->comb.comb == COMB_TYPE_NIL)
         {
             bc.type = BYTECODE_OP_NEQ_RECORD_NIL;
         }
         else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_RECORD)
+                (value->right->comb.comb == COMB_TYPE_RECORD ||
+                 value->right->comb.comb == COMB_TYPE_RECORD_ID))
         {
             bc.type = BYTECODE_OP_NEQ_NIL_RECORD;
         }
@@ -2410,8 +2415,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         expr_array_deref_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_CALL:
-        if (value->call.func_expr->type == EXPR_ID &&
-            value->call.func_expr->id.id_type_value == ID_TYPE_RECORD)
+        if (value->call.func_expr->id.id_type_value == ID_TYPE_RECORD)
         {
             expr_record_emit(value, stack_level, module_value, list_weak, result);
         }
@@ -2496,7 +2500,8 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_ATTR:
-        if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD)
+        if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD ||
+            value->attr.record_value->comb.comb == COMB_TYPE_RECORD_ID)
         {
             expr_record_attr_emit(value, stack_level, module_value, list_weak, result);
         }

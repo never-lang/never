@@ -302,7 +302,9 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     {
         return param_expr_array_cmp(param_value, expr_value);
     }
-    else if (param_value->type == PARAM_RECORD && expr_value->comb.comb == COMB_TYPE_RECORD)
+    else if (param_value->type == PARAM_RECORD &&
+            (expr_value->comb.comb == COMB_TYPE_RECORD ||
+             expr_value->comb.comb == COMB_TYPE_RECORD_ID))
     {
         if (param_value->record_value == expr_value->comb.comb_record)
         {
@@ -725,7 +727,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {
-            value->comb.comb = COMB_TYPE_RECORD;
+            value->comb.comb = COMB_TYPE_RECORD_ID;
             value->comb.comb_record = entry->record_value;
         }
         else
@@ -1062,14 +1064,17 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = COMB_TYPE_STRING;
     }
-    else if (value->left->comb.comb == COMB_TYPE_RECORD &&
-             value->right->comb.comb == COMB_TYPE_RECORD &&
+    else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
+              value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
+             (value->right->comb.comb == COMB_TYPE_RECORD || 
+              value->right->comb.comb == COMB_TYPE_RECORD_ID ) &&
              value->left->comb.comb_record == value->right->comb.comb_record)
     {
         value->comb.comb = COMB_TYPE_RECORD;
         value->comb.comb_record = value->left->comb.comb_record;
     }
-    else if (value->left->comb.comb == COMB_TYPE_RECORD &&
+    else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
+              value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
              value->right->comb.comb == COMB_TYPE_NIL)
     {
         value->comb.comb = COMB_TYPE_RECORD;
@@ -1149,8 +1154,10 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
     {
         value->comb.comb = value->middle->comb.comb;
     }
-    else if (value->middle->comb.comb == COMB_TYPE_RECORD &&
-             value->right->comb.comb == COMB_TYPE_RECORD &&
+    else if ((value->middle->comb.comb == COMB_TYPE_RECORD ||
+              value->middle->comb.comb == COMB_TYPE_RECORD_ID) &&
+             (value->right->comb.comb == COMB_TYPE_RECORD ||
+              value->right->comb.comb == COMB_TYPE_RECORD_ID) &&
              value->middle->comb.comb_record == value->right->comb.comb_record)
     {
         value->comb.comb = COMB_TYPE_RECORD;
@@ -1325,9 +1332,8 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
             print_error_msg(value->line_no, "function call type mismatch\n");
         }
         break;
-    case COMB_TYPE_RECORD:
-        if (value->call.func_expr->type == EXPR_ID &&
-            param_expr_list_cmp(value->call.func_expr->comb.comb_record->params,
+    case COMB_TYPE_RECORD_ID:
+        if (param_expr_list_cmp(value->call.func_expr->comb.comb_record->params,
                                 value->call.params) == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_RECORD;
@@ -1353,6 +1359,7 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     case COMB_TYPE_UNKNOWN:
     case COMB_TYPE_ERR:
     case COMB_TYPE_NIL:
+    case COMB_TYPE_RECORD:
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
@@ -1485,7 +1492,8 @@ int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
             }
         }
     }
-    else if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD)
+    else if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD ||
+             value->attr.record_value->comb.comb == COMB_TYPE_RECORD_ID)
     {
         record * record_value = value->attr.record_value->comb.comb_record;
         if (record_value != NULL && value->attr.id != NULL)
@@ -1638,10 +1646,15 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         {
             value->comb.comb = COMB_TYPE_INT;
         }
-        else if ((value->left->comb.comb == COMB_TYPE_RECORD &&
-                  value->right->comb.comb == COMB_TYPE_NIL) ||
-                 (value->left->comb.comb == COMB_TYPE_NIL &&
-                  value->right->comb.comb == COMB_TYPE_RECORD))
+        else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
+                  value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
+                  value->right->comb.comb == COMB_TYPE_NIL)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_NIL &&
+                (value->right->comb.comb == COMB_TYPE_RECORD ||
+                 value->right->comb.comb == COMB_TYPE_RECORD_ID))
         {
             value->comb.comb = COMB_TYPE_INT;
         }

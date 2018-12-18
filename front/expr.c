@@ -578,6 +578,8 @@ const char * comb_type_str(comb_type type)
         return "func";
     case COMB_TYPE_RECORD:
         return "record";
+    case COMB_TYPE_RECORD_ID:
+        return "record name";
     }
     return "unknown comb type!";
 }

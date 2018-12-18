@@ -1,0 +1,22 @@
+
+record R
+{
+    x -> int;
+    r -> R;
+}
+
+func getR() -> R
+{
+    R(110, R(130, R))
+}
+
+func main() -> int
+{
+    var r = getR();
+
+    assert(r.x == 110);
+    assert(r.r.x == 130);
+        
+    0
+}
+
