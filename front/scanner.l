@@ -119,6 +119,12 @@ else {
     return TOK_ELSE;
 }
 
+extern {
+    tokp->line_no = line_no;
+    scanner_printf("\n");
+    return TOK_EXTERN;
+}
+
 int {
     tokp->line_no = line_no;
     scanner_printf("int\n");

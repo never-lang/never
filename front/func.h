@@ -34,14 +34,29 @@ typedef struct func_list func_list;
 typedef struct func_decl func_decl;
 typedef struct func_except func_except;
 
+typedef enum func_type
+{
+    FUNC_TYPE_UNKNOWN = 0,
+    FUNC_TYPE_NATIVE = 1,
+    FUNC_TYPE_FFI = 2
+} func_type;
+
 typedef struct func
 {
+    func_type type;
     int index;
     func_decl * decl;
-    func_body * body;
-    func_except * except;
-    struct freevar_list * freevars;
-    struct symtab * stab;
+    union
+    {
+        struct
+        {
+            func_body * body;
+            func_except * except;
+            struct freevar_list * freevars;
+            struct symtab * stab;
+        };
+        char * libname;
+    };
     unsigned int addr;
     unsigned int line_no;
 } func;
@@ -82,6 +97,7 @@ typedef struct func_list
 
 func * func_new(func_decl * decl, func_body * body);
 func * func_new_except(func_decl * decl, func_body * body, func_except * except);
+func * func_new_ffi(char * libname, func_decl * decl);
 void func_delete(func * value);
 
 void func_print(func * value);

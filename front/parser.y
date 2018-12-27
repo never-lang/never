@@ -46,6 +46,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_RECORD
 %token <val.str_value> TOK_NIL
 %token <val.str_value> TOK_ENUM
+%token <val.str_value> TOK_EXTERN
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -705,6 +706,12 @@ func: TOK_FUNC func_decl func_body func_except
 {
     $$ = func_new_except($2, $3, $4);
     $$->line_no = $<line_no>1;
+};
+
+func: TOK_EXTERN TOK_NUM_STRING TOK_FUNC func_decl ';'
+{
+    $$ = func_new_ffi($2, $4);
+    $$->line_no = $<line_no>1;   
 };
 
 func: TOK_FUNC TOK_ID error

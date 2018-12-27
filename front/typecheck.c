@@ -2016,6 +2016,11 @@ int func_except_check_type(symtab * tab, func_except * value, func * func_value,
 int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                     int * result)
 {
+    if (func_value->type != FUNC_TYPE_NATIVE)
+    {
+        return 0;
+    }
+
     if (func_value->stab == NULL)
     {
         func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);

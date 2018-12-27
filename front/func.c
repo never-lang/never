@@ -22,6 +22,7 @@
 #include "func.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 func * func_new(func_decl * decl, func_body * body)
 {
@@ -31,25 +32,40 @@ func * func_new(func_decl * decl, func_body * body)
 func * func_new_except(func_decl * decl, func_body * body, func_except * except)
 {
     func * value = (func *)malloc(sizeof(func));
-
+    
+    value->type = FUNC_TYPE_NATIVE;
     value->index = 0;
     value->decl = decl;
+
     value->body = body;
     value->except = except;
     value->freevars = NULL;
     value->stab = NULL;
+
     value->addr = 0;
     value->line_no = 0;
 
     return value;
 }
 
-void func_delete(func * value)
+func * func_new_ffi(char * libname, func_decl * decl)
 {
-    if (value->decl)
-    {
-        func_decl_delete(value->decl);
-    }
+    func * value = (func *)malloc(sizeof(func));
+    
+    value->type = FUNC_TYPE_FFI;
+    value->index = 0;
+    value->decl = decl;
+
+    value->libname = libname;
+
+    value->addr = 0;
+    value->line_no = 0;
+
+    return value;
+}
+
+void func_delete_native(func * value)
+{
     if (value->body)
     {
         func_body_delete(value->body);
@@ -66,6 +82,35 @@ void func_delete(func * value)
     {
         symtab_delete(value->stab);
     }
+}
+
+void func_delete_ffi(func * value)
+{
+    if (value->libname)
+    {
+        free(value->libname);
+    }
+}
+
+void func_delete(func * value)
+{
+    if (value->decl)
+    {
+        func_decl_delete(value->decl);
+    }
+
+    switch (value->type)
+    {
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+        case FUNC_TYPE_NATIVE:
+            func_delete_native(value);
+        break;
+        case FUNC_TYPE_FFI:
+            func_delete_ffi(value);
+        break;
+    }    
 
     free(value);
 }

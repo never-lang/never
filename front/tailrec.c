@@ -360,6 +360,11 @@ int except_list_tailrec(unsigned int syn_level, symtab * stab,
 
 int func_tailrec(unsigned int syn_level, func * value)
 {
+    if (value->type != FUNC_TYPE_NATIVE)
+    {
+        return 0;
+    }
+
     if (value->body != NULL && value->body->binds != NULL)
     {
         bind_list_tailrec(syn_level, value->stab, value->body->binds, TAILREC_OP_SKIP);

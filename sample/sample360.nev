@@ -1,0 +1,8 @@
+
+extern "libm.so" func sinh(x -> float) -> float;
+
+func main() -> int
+{
+    0
+}
+

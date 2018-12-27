@@ -109,7 +109,7 @@ int func_enum_func_list(func_list * list, int start)
     while (node != NULL)
     {
         func * value = node->value;
-        if (value != NULL)
+        if (value != NULL && value->type == FUNC_TYPE_NATIVE)
         {
             value->index = index++;
         }
@@ -979,6 +979,11 @@ int func_gencode_freevars(func * func_value, symtab * stab, int * result)
 
 int func_gencode(unsigned int syn_level, func * func_value, int * result)
 {
+    if (func_value->type != FUNC_TYPE_NATIVE)
+    {
+        return 0;
+    }
+
     int start = 1;
     if (func_value->decl->params != NULL)
     {
@@ -3170,6 +3175,11 @@ int func_emit(func * func_value, int stack_level, module * module_value,
     bytecode bc = { 0 };
     int freevar_count = 0;
 
+    if (func_value->type != FUNC_TYPE_NATIVE)
+    {
+        return 0;
+    }
+
     bc.type = BYTECODE_FUNC_OBJ;
     bytecode_add(module_value->code, &bc);
 
@@ -3290,7 +3300,7 @@ int never_emit(never * nev, module * module_value)
     while (list_weak->count > 0)
     {
         func * value = func_list_weak_pop(list_weak);
-        if (value != NULL)
+        if (value != NULL && value->type == FUNC_TYPE_NATIVE)
         {
             func_body_emit(value, module_value, list_weak, &gencode_res);    
         }

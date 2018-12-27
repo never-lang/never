@@ -747,6 +747,11 @@ int except_list_constred(except_list * list, int * result)
 
 int func_constred(func * value, int * result)
 {
+    if (value->type != FUNC_TYPE_NATIVE)
+    {
+        return 0;
+    }
+
     if (value->body != NULL && value->body->binds != NULL)
     {
         bind_list_constred(value->body->binds, result);
