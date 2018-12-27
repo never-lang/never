@@ -1,0 +1,27 @@
+
+func twice(a -> int) -> int
+{
+    2 * a
+}
+
+func test(a -> int) -> int
+{
+    twice(twice(twice(32 / a)));
+    assert(0);
+
+    0
+}
+catch (division_by_zero)
+{
+    prints("division_by_zero\n");
+
+    0
+}
+
+func main() -> int
+{
+    test(0);
+
+    0
+}
+

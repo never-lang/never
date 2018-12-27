@@ -1,0 +1,48 @@
+
+
+func print_ints(tab[D] -> int) -> int
+{
+    var i = 0;
+    
+    for (i = 0; i < D; i = i + 1)
+    {
+        if (tab[i] == 0)
+        {
+            prints(i + " ");
+            0
+        }
+    };
+    prints("\n");
+
+    0
+}
+
+func get_primes(n -> int) -> [_] -> int
+{
+    var i = 0;
+    var j = 0;
+    var tab = {[ n ]} -> int;
+
+    tab[0] = 1;
+    tab[1] = 1;
+    
+    for (i = 2; i * i < n; i = i + 1)
+        if (tab[i] == 0)
+            for (j = i * i; j < n; j = j + i)
+            {
+                tab[j] = 1
+            };
+
+    tab    
+}
+
+func main() -> int
+{
+    var primes = get_primes(128);
+
+    print_ints(primes);
+
+    0
+}
+
+
