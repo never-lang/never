@@ -97,6 +97,8 @@ int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list 
                                     int * result);
 int func_gencode_freevars(func * func_value, symtab * stab, int * result);
 
+int func_gencode_ffi(unsigned int syn_level, func * func_value, int * result);
+int func_gencode_native(unsigned int syn_level, func * func_value, int * result);
 int func_gencode(unsigned int syn_level, func * func_value, int * result);
 int func_list_gencode(unsigned int syn_level, func_list * list, int * result);
 
@@ -225,8 +227,16 @@ int except_implicit_emit(func * func_value, int stack_level, module * module_val
                          func_list_weak * list_weak, int * result);
 int func_except_emit(func_except * value, func * func_value, int stack_level,
                      module * module_value, func_list_weak * list_weak, int * result);
+int func_body_emit_ffi(func * func_value, module * module_value,
+                       func_list_weak * list_weak, int * result);
+int func_body_emit_native(func * func_value, module * module_value,
+                          func_list_weak * list_weak, int * result);
 int func_body_emit(func * func_value, module * module_value,
                    func_list_weak * list_weak, int * result);
+int func_emit_ffi(func * func_value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result);
+int func_emit_native(func * func_value, int stack_level, module * module_value,
+                     func_list_weak * list_weak, int * result);
 int func_emit(func * func_value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
 int func_list_emit(func_list * list, int stack_level, module * module_value,

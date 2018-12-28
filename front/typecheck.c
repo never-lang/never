@@ -2013,14 +2013,15 @@ int func_except_check_type(symtab * tab, func_except * value, func * func_value,
     return 0;
 }
 
-int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
-                    int * result)
+int func_check_type_ffi(symtab * tab, func * func_value, unsigned int syn_level,
+                        int * result)
 {
-    if (func_value->type != FUNC_TYPE_NATIVE)
-    {
-        return 0;
-    }
+    return 0;
+}                           
 
+int func_check_type_native(symtab * tab, func * func_value, unsigned int syn_level,
+                           int * result)
+{
     if (func_value->stab == NULL)
     {
         func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);
@@ -2083,6 +2084,25 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
     return 0;
 }
 
+int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
+                    int * result)
+{
+    switch (func_value->type)
+    {
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+        case FUNC_TYPE_NATIVE:
+            func_check_type_native(tab, func_value, syn_level, result);
+        break;
+        case FUNC_TYPE_FFI:
+            func_check_type_ffi(tab, func_value, syn_level, result);
+        break;
+    }
+
+    return 0;
+}
+                    
 int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result)
 {
@@ -2544,7 +2564,18 @@ int print_func_except_list(except_list * list, int depth)
     return 0;
 }
 
-int print_func(func * value, int depth)
+int print_func_ffi(func * value, int depth)
+{
+    if (value->decl->id != NULL)
+    {
+        printf("\nextern function (%d): %d %s@%u\n", depth, value->index,
+               value->decl->id, value->addr);
+    }
+
+    return 0;
+}
+
+int print_func_native(func * value, int depth)
 {
     if (value->decl->id != NULL)
     {
@@ -2578,6 +2609,24 @@ int print_func(func * value, int depth)
     if (value->except != NULL && value->except->all != NULL)
     {
         print_func_except(value->except->all, depth);
+    }
+
+    return 0;
+}
+
+int print_func(func * value, int depth)
+{
+    switch (value->type)
+    {
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+        case FUNC_TYPE_NATIVE:
+            print_func_native(value, depth);
+        break;
+        case FUNC_TYPE_FFI:
+            print_func_ffi(value, depth);
+        break;
     }
 
     return 0;

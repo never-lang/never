@@ -55,7 +55,8 @@ int except_tailrec(unsigned int syn_level, symtab * stab,
                    except * value, tailrec_op op);
 int except_list_tailrec(unsigned int syn_level, symtab * stab,
                         except_list * list, tailrec_op op);
-
+int func_tailrec_ffi(unsigned int syn_level, func * value);
+int func_tailrec_native(unsigned int syn_level, func * value);
 int func_tailrec(unsigned int syn_level, func * value);
 int func_list_tailrec(unsigned int syn_level, func_list * list);
 

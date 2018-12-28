@@ -111,6 +111,10 @@ int except_list_check_type(symtab * tab, except_list * list, func * func_value,
                            unsigned int syn_level, int * result);                      
 int func_except_check_type(symtab * tab, func_except * value, func * func_value, 
                            unsigned int syn_level, int * result);
+int func_check_type_ffi(symtab * tab, func * func_value, unsigned int syn_level,
+                        int * result);
+int func_check_type_native(symtab * tab, func * func_value, unsigned int syn_level,
+                           int * result);
 int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                     int * result);
 int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
@@ -143,6 +147,8 @@ int print_func_bind_list(bind_list * list, int depth);
 int print_func_except(except * value, int depth);
 int print_func_except_list(except_list * list, int depth);
 int print_func_attr(expr * value, int depth);
+int print_func_ffi(func * value, int depth);
+int print_func_native(func * value, int depth);
 int print_func(func * value, int depth);
 int print_func_list(func_list * list, int depth);
 int print_functions(never * nev);

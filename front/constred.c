@@ -745,13 +745,13 @@ int except_list_constred(except_list * list, int * result)
     return 0;
 }
 
-int func_constred(func * value, int * result)
+int func_constred_ffi(func * value, int * result)
 {
-    if (value->type != FUNC_TYPE_NATIVE)
-    {
-        return 0;
-    }
+    return 0;
+}
 
+int func_constred_native(func * value, int * result)
+{
     if (value->body != NULL && value->body->binds != NULL)
     {
         bind_list_constred(value->body->binds, result);
@@ -773,6 +773,24 @@ int func_constred(func * value, int * result)
         except_constred(value->except->all, result);
     }
 
+    return 0;
+}
+
+int func_constred(func * value, int * result)
+{
+    switch (value->type)
+    {
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+        case FUNC_TYPE_NATIVE:
+            func_constred_native(value, result);
+        break;
+        case FUNC_TYPE_FFI:
+            func_constred_ffi(value, result);
+        break;
+    }
+    
     return 0;
 }
 

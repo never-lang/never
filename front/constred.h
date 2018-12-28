@@ -38,6 +38,8 @@ int listcomp_constred(listcomp * value, int * result);
 int array_constread(array * value, int * result);
 int bind_constred(bind * value, int * result);
 int bind_list_constred(bind_list * list, int * result);
+int func_constred_ffi(func * value, int * result);
+int func_constred_native(func * value, int * result);
 int func_constred(func * value, int * result);
 int func_list_constred(func_list * list, int * result);
 int never_constred(never * nev);

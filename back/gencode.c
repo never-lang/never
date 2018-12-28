@@ -109,7 +109,7 @@ int func_enum_func_list(func_list * list, int start)
     while (node != NULL)
     {
         func * value = node->value;
-        if (value != NULL && value->type == FUNC_TYPE_NATIVE)
+        if (value != NULL)
         {
             value->index = index++;
         }
@@ -977,14 +977,15 @@ int func_gencode_freevars(func * func_value, symtab * stab, int * result)
     return 0;
 }
 
-int func_gencode(unsigned int syn_level, func * func_value, int * result)
+int func_gencode_ffi(unsigned int syn_level, func * func_value, int * result)
 {
-    if (func_value->type != FUNC_TYPE_NATIVE)
-    {
-        return 0;
-    }
+    return 0;
+}
 
+int func_gencode_native(unsigned int syn_level, func * func_value, int * result)
+{
     int start = 1;
+
     if (func_value->decl->params != NULL)
     {
         func_enum_param_list(func_value->decl->params);
@@ -1023,6 +1024,24 @@ int func_gencode(unsigned int syn_level, func * func_value, int * result)
 
     /** set subfunction local/global indexes **/
     func_gencode_freevars(func_value, func_value->stab, result);
+
+    return 0;
+}
+
+int func_gencode(unsigned int syn_level, func * func_value, int * result)
+{
+    switch (func_value->type)
+    {
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+        case FUNC_TYPE_NATIVE:
+            func_gencode_native(syn_level, func_value, result);
+        break;
+        case FUNC_TYPE_FFI:
+            func_gencode_ffi(syn_level, func_value, result);
+        break;
+    }
 
     return 0;
 }
@@ -3119,8 +3138,14 @@ int func_except_emit(func_except * value, func * func_value, int stack_level,
     return 0;
 }
 
-int func_body_emit(func * func_value, module * module_value,
-                   func_list_weak * list_weak, int * result)
+int func_body_emit_ffi(func * func_value, module * module_value,
+                       func_list_weak * list_weak, int * result)
+{
+    return 0;
+}
+
+int func_body_emit_native(func * func_value, module * module_value,
+                          func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *labelA, *labelE = NULL;
@@ -3169,16 +3194,59 @@ int func_body_emit(func * func_value, module * module_value,
     return 0;
 }
 
-int func_emit(func * func_value, int stack_level, module * module_value,
-              func_list_weak * list_weak, int * result)
+int func_body_emit(func * func_value, module * module_value,
+                   func_list_weak * list_weak, int * result)
+{
+    switch (func_value->type)
+    {
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+        case FUNC_TYPE_NATIVE:
+            func_body_emit_native(func_value, module_value, list_weak, result);
+        break;
+        case FUNC_TYPE_FFI:
+            func_body_emit_ffi(func_value, module_value, list_weak, result);
+        break;
+    }
+    
+    return 0;
+}
+
+int func_emit_ffi(func * func_value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     int freevar_count = 0;
 
-    if (func_value->type != FUNC_TYPE_NATIVE)
+    bc.type = BYTECODE_FUNC_OBJ;
+    bytecode_add(module_value->code, &bc);
+
+    if (func_value->line_no > 0)
     {
-        return 0;
+        bc.type = BYTECODE_LINE;
+        bc.line.no = func_value->line_no;
+        bytecode_add(module_value->code, &bc);
     }
+
+    bc.type = BYTECODE_GLOBAL_VEC;
+    bc.global_vec.count = freevar_count;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_ID_FUNC_FUNC;
+    bc.id_func.func_value = func_value;
+    bytecode_add(module_value->code, &bc);
+
+    func_list_weak_add(list_weak, func_value);
+
+    return 0;
+}
+
+int func_emit_native(func * func_value, int stack_level, module * module_value,
+                     func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    int freevar_count = 0;
 
     bc.type = BYTECODE_FUNC_OBJ;
     bytecode_add(module_value->code, &bc);
@@ -3208,6 +3276,25 @@ int func_emit(func * func_value, int stack_level, module * module_value,
 
     return 0;
 }
+
+int func_emit(func * func_value, int stack_level, module * module_value,
+              func_list_weak * list_weak, int * result)
+{
+    switch (func_value->type)
+    {
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+        case FUNC_TYPE_NATIVE:
+            func_emit_native(func_value, stack_level, module_value, list_weak, result);
+        break;
+        case FUNC_TYPE_FFI:
+            func_emit_ffi(func_value, stack_level, module_value, list_weak, result);
+        break;
+    }
+
+    return 0;
+}              
 
 int func_main_emit(never * nev, int stack_level, module * module_value,
                    int * result)
@@ -3300,7 +3387,7 @@ int never_emit(never * nev, module * module_value)
     while (list_weak->count > 0)
     {
         func * value = func_list_weak_pop(list_weak);
-        if (value != NULL && value->type == FUNC_TYPE_NATIVE)
+        if (value != NULL)
         {
             func_body_emit(value, module_value, list_weak, &gencode_res);    
         }

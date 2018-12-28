@@ -358,13 +358,13 @@ int except_list_tailrec(unsigned int syn_level, symtab * stab,
     return 0;
 }
 
-int func_tailrec(unsigned int syn_level, func * value)
+int func_tailrec_ffi(unsigned int syn_level, func * value)
 {
-    if (value->type != FUNC_TYPE_NATIVE)
-    {
-        return 0;
-    }
+    return 0;
+}
 
+int func_tailrec_native(unsigned int syn_level, func * value)
+{
     if (value->body != NULL && value->body->binds != NULL)
     {
         bind_list_tailrec(syn_level, value->stab, value->body->binds, TAILREC_OP_SKIP);
@@ -387,6 +387,24 @@ int func_tailrec(unsigned int syn_level, func * value)
     {
         except_tailrec(syn_level, value->stab, value->except->all, TAILREC_OP_SKIP);
     }
+    return 0;
+}
+
+int func_tailrec(unsigned int syn_level, func * value)
+{
+    switch (value->type)
+    {
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+        case FUNC_TYPE_NATIVE:
+            func_tailrec_native(syn_level, value);
+        break;
+        case FUNC_TYPE_FFI:
+            func_tailrec_ffi(syn_level, value);
+        break;
+    }
+
     return 0;
 }
 
