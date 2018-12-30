@@ -3138,9 +3138,72 @@ int func_except_emit(func_except * value, func * func_value, int stack_level,
     return 0;
 }
 
+int func_body_emit_ffi_param(param * value, module * module_value, int * result)
+{
+    param_print(value);
+
+    switch (value->type)
+    {
+        case PARAM_INT:
+        break;
+        case PARAM_FLOAT:
+        break;
+        case PARAM_STRING:
+        break;
+        case PARAM_DIM:
+        case PARAM_ARRAY:
+        case PARAM_ENUMTYPE:
+        case PARAM_RECORD:
+        case PARAM_FUNC:
+        break;
+    }
+
+    return 0;
+}
+
+int func_body_emit_ffi_param_list(param_list * params, module * module_value, int * result)
+{
+    param_list_node * node = params->tail;
+    
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL)
+        {
+            func_body_emit_ffi_param(value, module_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int func_body_emit_ffi(func * func_value, module * module_value,
                        func_list_weak * list_weak, int * result)
 {
+    bytecode bc = { 0 };
+    bytecode * labelA = NULL;
+    
+    bc.type = BYTECODE_FUNC_DEF;
+    labelA = bytecode_add(module_value->code, &bc);
+    func_value->addr = labelA->addr;
+    
+    printf("extern func id %s\n", func_value->decl->id);
+    printf("extern func libname %s\n", func_value->libname);
+    printf("extern func param count %d\n", func_value->decl->params->count);
+    
+    if (func_value->decl != NULL && func_value->decl->params != NULL)
+    {
+        func_body_emit_ffi_param_list(func_value->decl->params, module_value, result);
+    }
+    if (func_value->decl != NULL && func_value->decl->ret != NULL)
+    {
+        param_print(func_value->decl->ret);
+    }
+    
+    bc.type = BYTECODE_RET;
+    bytecode_add(module_value->code, &bc);
+
     return 0;
 }
 
@@ -3170,7 +3233,7 @@ int func_body_emit_native(func * func_value, module * module_value,
     {
         expr_emit(func_value->body->ret, func_count, module_value, list_weak, result);
     }
-    if (func_value->body->ret->line_no > 0)
+    if (func_value->body && func_value->body->ret && func_value->body->ret->line_no > 0)
     {
         bc.type = BYTECODE_LINE;
         bc.line.no = func_value->body->ret->line_no;
