@@ -177,6 +177,11 @@ void vm_execute_nil_record_ref(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_func_obj(vm * machine, bytecode * code);
+void vm_execute_func_ffi(vm * machine, bytecode * code);
+void vm_execute_func_ffi_int(vm * machine, bytecode * code);
+void vm_execute_func_ffi_float(vm * machine, bytecode * code);
+void vm_execute_func_ffi_string(vm * machine, bytecode * code);
+
 void vm_execute_global_vec(vm * machine, bytecode * code);
 void vm_execute_mark(vm * machine, bytecode * code);
 void vm_execute_call(vm * machine, bytecode * code);

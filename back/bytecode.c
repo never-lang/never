@@ -145,6 +145,11 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_FUNC_OBJ, bytecode_print_func_obj },
+    { BYTECODE_FUNC_FFI, bytecode_print_func_ffi },
+    { BYTECODE_FUNC_FFI_INT, bytecode_print_func_ffi_int },
+    { BYTECODE_FUNC_FFI_FLOAT, bytecode_print_func_ffi_float },
+    { BYTECODE_FUNC_FFI_STRING, bytecode_print_func_ffi_string },
+        
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
 
     { BYTECODE_MARK, bytecode_print_mark },
@@ -658,6 +663,27 @@ void bytecode_print_func_obj(bytecode * code)
     printf("%d: func obj\n", code->addr);
 }
 
+void bytecode_print_func_ffi(bytecode * code)
+{
+    printf("%d: func ffi %d %d %d\n", code->addr, code->ffi.count,
+                                      code->ffi.fname_index, code->ffi.libname_index);
+}
+
+void bytecode_print_func_ffi_int(bytecode * code)
+{
+    printf("%d: ffi int\n", code->addr);
+}
+
+void bytecode_print_func_ffi_float(bytecode * code)
+{
+    printf("%d: ffi float\n", code->addr);
+}
+
+void bytecode_print_func_ffi_string(bytecode * code)
+{
+    printf("%d: ffi string\n", code->addr);
+}
+
 void bytecode_print_global_vec(bytecode * code)
 {
     printf("%d: global vec %d\n", code->addr, code->global_vec.count);
@@ -810,7 +836,12 @@ void bytecode_func_addr(bytecode_list * code)
     }
 }
 
-void bytecode_print(bytecode_list * code)
+void bytecode_print(bytecode * code)
+{
+    bytecode_op[code->type].print(code);
+}
+
+void bytecode_list_print(bytecode_list * code)
 {
     bytecode_list_node * node = code->tail;
 
@@ -821,7 +852,7 @@ void bytecode_print(bytecode_list * code)
         bytecode * code = &node->value;
         if (code != NULL)
         {
-            bytecode_op[code->type].print(code);
+            bytecode_print(code);
         }
         node = node->next;
     }

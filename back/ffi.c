@@ -21,7 +21,9 @@
  */
 #include "ffi.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
+#include <dlfcn.h>
 
 ffi_decl * ffi_decl_new(unsigned int count)
 {
@@ -86,9 +88,28 @@ int ffi_decl_prepare(ffi_decl * decl)
     return 0;
 }
 
-int ffi_decl_call(ffi_decl * decl)
+int ffi_decl_call(char * fname, char * libname, ffi_decl * decl)
 {
-    ffi_call(&decl->cif, FFI_FN(decl->func), &decl->ret, decl->param_values);
+    void (* func)(void) = NULL;
+    void * handle = NULL;
+    
+    handle = dlopen(libname, RTLD_LAZY);
+    if (handle == NULL)
+    {
+        fprintf(stderr, "cannot open library %s\n", libname);
+        return 1;
+    }
+
+    func = dlsym(handle, fname);
+    if (func == NULL)
+    {
+        fprintf(stderr, "cannot obtain address of a symbol %s\n", fname);
+        return 1;
+    }
+
+    ffi_call(&decl->cif, FFI_FN(func), &decl->ret, decl->param_values);
+
+    dlclose(handle);
 
     return 0;
 }

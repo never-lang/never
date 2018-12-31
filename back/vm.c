@@ -26,6 +26,7 @@
 #include "utils.h"
 #include "module.h"
 #include "strutil.h"
+#include "ffi.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -150,6 +151,12 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_FUNC_OBJ, vm_execute_func_obj },
+    
+    { BYTECODE_FUNC_FFI, vm_execute_func_ffi },
+    { BYTECODE_FUNC_FFI_INT, vm_execute_func_ffi_int },
+    { BYTECODE_FUNC_FFI_FLOAT, vm_execute_func_ffi_float },
+    { BYTECODE_FUNC_FFI_STRING, vm_execute_func_ffi_string },
+
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
     { BYTECODE_MARK, vm_execute_mark },
     { BYTECODE_CALL, vm_execute_call },
@@ -1995,6 +2002,84 @@ void vm_execute_nil_record_ref(vm * machine, bytecode * code)
 void vm_execute_func_def(vm * machine, bytecode * code) { /* no op */ }
 
 void vm_execute_func_obj(vm * machine, bytecode * code) { /* no op */ }
+
+void vm_execute_func_ffi(vm * machine, bytecode * code)
+{
+    bytecode bc = { 0 };
+    gc_stack entry = { 0 };
+    mem_ptr addr = { 0 };
+    unsigned int i = 0;
+    char ** strtab_array = NULL;
+    
+    if (machine->prog->module_value != NULL)
+    {
+        strtab_array = machine->prog->module_value->strtab_array;
+    }
+
+    printf("%s %d %d %d\n", __func__, code->ffi.count, code->ffi.fname_index,
+                                      code->ffi.libname_index);
+    if (strtab_array != NULL)
+    {
+        printf("%s %s %s\n", __func__, strtab_array[code->ffi.fname_index],
+                                       strtab_array[code->ffi.libname_index]);
+    }
+    
+    ffi_decl * fd = ffi_decl_new(code->ffi.count);
+
+    /* params */
+    for (i = 0; i < code->ffi.count; i++)
+    {
+        bc = machine->prog->module_value->code_arr[machine->ip + i];
+        bytecode_print(&bc);
+    }
+
+    /* return */
+    bc = machine->prog->module_value->code_arr[machine->ip + code->ffi.count];
+    bytecode_print(&bc);
+
+    switch (bc.type)
+    {
+        case BYTECODE_FUNC_FFI_INT:
+            addr = gc_alloc_int(machine->collector, 120);
+        break;
+        case BYTECODE_FUNC_FFI_FLOAT:
+            addr = gc_alloc_float(machine->collector, 120.0);
+        break;
+        case BYTECODE_FUNC_FFI_STRING:
+        {
+            mem_ptr str = gc_alloc_string(machine->collector, "one hundred twenty\n");
+            addr = gc_alloc_string_ref(machine->collector, str);
+        }
+        break;
+        default:
+            assert(0);
+    }
+
+    ffi_decl_delete(fd);
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_func_ffi_int(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
+
+void vm_execute_func_ffi_float(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
+
+void vm_execute_func_ffi_string(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
 
 void vm_execute_global_vec(vm * machine, bytecode * code)
 {

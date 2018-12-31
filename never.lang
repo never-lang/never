@@ -156,6 +156,8 @@
       <keyword>nil</keyword>
       <keyword>new</keyword>
       <keyword>enum</keyword>
+      <keyword>in</keyword>
+      <keyword>extern</keyword>
     </context>
 
     <context id="operators" style-ref="operator">

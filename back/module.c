@@ -85,7 +85,7 @@ void module_print(module * value)
     }
     if (value->code != NULL)
     {
-        bytecode_print(value->code);
+        bytecode_list_print(value->code);
     }
     if (value->exctab_value != NULL)
     {

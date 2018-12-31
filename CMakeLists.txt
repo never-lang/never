@@ -42,7 +42,7 @@ add_library(nev STATIC
 	${FLEX_scanner_OUTPUTS}
 	${SRC}
 )
-target_link_libraries(nev m)
+target_link_libraries(nev m dl ffi)
 
 add_executable(${CMAKE_PROJECT_NAME} main.c getopt.c)
 target_link_libraries(${CMAKE_PROJECT_NAME} nev)

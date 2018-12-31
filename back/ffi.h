@@ -29,7 +29,6 @@ typedef struct ffi_decl {
     ffi_type ** param_types;
     void ** param_values;
     ffi_type ret;
-    void (*func) (void);
     ffi_cif cif;
 } ffi_decl;
 
@@ -41,7 +40,7 @@ int ffi_decl_set_param_value(ffi_decl * decl, unsigned int index, void * param_v
 int ffi_decl_set_ret(ffi_decl * decl , ffi_type ret);
 
 int ffi_decl_prepare(ffi_decl * decl);
-int ffi_decl_call(ffi_decl * decl);
+int ffi_decl_call(char * fname, char * libname, ffi_decl * decl);
 
 #endif /* __FFI_H__ */
 

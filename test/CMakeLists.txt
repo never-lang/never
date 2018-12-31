@@ -6,7 +6,6 @@ if (MSVC)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MT")
 endif (MSVC)
 
-
 # test
 include_directories(".." "../include" "../front" "../back")
 add_executable(test_exec test_exec.c)
@@ -21,6 +20,7 @@ add_executable(test_vm test_vm.c)
 add_executable(test_exctab test_exctab.c)
 add_executable(test_strtab test_strtab.c)
 add_executable(test_strutil test_strutil.c)
+add_executable(test_ffi test_ffi.c)
 
 add_test(NAME test_vm COMMAND test_vm)
 add_test(NAME test_symtab COMMAND test_symtab)
@@ -33,6 +33,7 @@ add_test(NAME test_exec COMMAND test_exec)
 add_test(NAME test_exctab COMMAND test_exctab)
 add_test(NAME test_strtab COMMAND test_strtab)
 add_test(NAME test_strutil COMMAND test_strutil)
+add_test(NAME test_ffi COMMAND test_ffi)
 
 target_link_libraries(test_vm nev)
 # target_link_libraries(test_scanner nev)
@@ -45,4 +46,5 @@ target_link_libraries(test_exec nev)
 target_link_libraries(test_exctab nev)
 target_link_libraries(test_strtab nev)
 target_link_libraries(test_strutil nev)
+target_link_libraries(test_ffi nev)
 

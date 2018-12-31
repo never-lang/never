@@ -141,6 +141,12 @@ typedef enum bytecode_type
 
     BYTECODE_FUNC_DEF,
     BYTECODE_FUNC_OBJ,
+
+    BYTECODE_FUNC_FFI,
+    BYTECODE_FUNC_FFI_INT,
+    BYTECODE_FUNC_FFI_FLOAT,
+    BYTECODE_FUNC_FFI_STRING,
+
     BYTECODE_GLOBAL_VEC,
     BYTECODE_MARK,
     BYTECODE_CALL,
@@ -256,6 +262,12 @@ typedef struct bytecode
         {
             unsigned int index;
         } attr;
+        struct
+        {
+            unsigned int count;
+            unsigned int fname_index;
+            unsigned int libname_index;
+        } ffi;
     };
 } bytecode;
 
@@ -400,6 +412,10 @@ void bytecode_print_nil_record_ref(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_func_obj(bytecode * code);
+void bytecode_print_func_ffi(bytecode * code);
+void bytecode_print_func_ffi_int(bytecode * code);
+void bytecode_print_func_ffi_float(bytecode * code);
+void bytecode_print_func_ffi_string(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);
 void bytecode_print_mark(bytecode * code);
 void bytecode_print_call(bytecode * code);
@@ -426,7 +442,8 @@ void bytecode_delete(bytecode_list * code);
 
 bytecode * bytecode_add(bytecode_list * code, bytecode * value);
 void bytecode_func_addr(bytecode_list * code);
-void bytecode_print(bytecode_list * code);
+void bytecode_print(bytecode * code);
+void bytecode_list_print(bytecode_list * code);
 
 void bytecode_to_array(bytecode_list * code, bytecode ** code_arr,
                        unsigned int * code_size);

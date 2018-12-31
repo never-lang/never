@@ -3140,23 +3140,30 @@ int func_except_emit(func_except * value, func * func_value, int stack_level,
 
 int func_body_emit_ffi_param(param * value, module * module_value, int * result)
 {
-    param_print(value);
+    bytecode bc = { 0 };
 
     switch (value->type)
     {
         case PARAM_INT:
+            bc.type = BYTECODE_FUNC_FFI_INT;
         break;
         case PARAM_FLOAT:
+            bc.type = BYTECODE_FUNC_FFI_FLOAT;
         break;
         case PARAM_STRING:
+            bc.type = BYTECODE_FUNC_FFI_STRING;
         break;
         case PARAM_DIM:
         case PARAM_ARRAY:
         case PARAM_ENUMTYPE:
         case PARAM_RECORD:
         case PARAM_FUNC:
+            *result = GENCODE_FAIL;
+            print_error_msg(0, "ffi type not supported\n");
         break;
     }
+
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -3182,15 +3189,21 @@ int func_body_emit_ffi(func * func_value, module * module_value,
                        func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
+    unsigned int count = 0;
     bytecode * labelA = NULL;
     
-    bc.type = BYTECODE_FUNC_DEF;
+    if (func_value->decl != NULL && func_value->decl->params != NULL)
+    {
+        count = func_value->decl->params->count;
+    }
+
+    bc.type = BYTECODE_FUNC_FFI;
+    bc.ffi.count = count;
+    bc.ffi.fname_index = strtab_add_string(module_value->strtab_value, func_value->decl->id);
+    bc.ffi.libname_index = strtab_add_string(module_value->strtab_value, func_value->libname);
+
     labelA = bytecode_add(module_value->code, &bc);
     func_value->addr = labelA->addr;
-    
-    printf("extern func id %s\n", func_value->decl->id);
-    printf("extern func libname %s\n", func_value->libname);
-    printf("extern func param count %d\n", func_value->decl->params->count);
     
     if (func_value->decl != NULL && func_value->decl->params != NULL)
     {
@@ -3198,7 +3211,7 @@ int func_body_emit_ffi(func * func_value, module * module_value,
     }
     if (func_value->decl != NULL && func_value->decl->ret != NULL)
     {
-        param_print(func_value->decl->ret);
+        func_body_emit_ffi_param(func_value->decl->ret, module_value, result);
     }
     
     bc.type = BYTECODE_RET;
