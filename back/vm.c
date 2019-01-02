@@ -2006,16 +2006,83 @@ void vm_execute_func_obj(vm * machine, bytecode * code) { /* no op */ }
 void vm_execute_func_ffi(vm * machine, bytecode * code)
 {
     bytecode bc = { 0 };
-    gc_stack entry = { 0 };
-    mem_ptr addr = { 0 };
     unsigned int i = 0;
-    char ** strtab_array = NULL;
-    
-    if (machine->prog->module_value != NULL)
+        
+    ffi_decl * fd = ffi_decl_new(code->ffi.count);
+
+    /* prepare param types and values */
+    for (i = 0; i < code->ffi.count; i++)
     {
-        strtab_array = machine->prog->module_value->strtab_array;
+        bc = machine->prog->module_value->code_arr[machine->ip + i];
+        switch (bc.type)
+        {
+            case BYTECODE_FUNC_FFI_INT:
+            {
+                int * int_value;
+                int_value = gc_get_int_ptr(machine->collector, machine->stack[machine->sp - i].addr);
+
+                ffi_decl_set_param_type(fd, i, &ffi_type_sint);
+                ffi_decl_set_param_value(fd, i, int_value);
+
+                /* printf("ffi param int %d\n", *int_value); */
+            }
+            break;
+            case BYTECODE_FUNC_FFI_FLOAT:
+            {
+                float * float_value;
+                float_value = gc_get_float_ptr(machine->collector, machine->stack[machine->sp - i].addr);
+
+                ffi_decl_set_param_type(fd, i, &ffi_type_float);
+                ffi_decl_set_param_value(fd, i, float_value);
+
+                /* printf("ffi param float %f\n", *float_value); */
+            }
+            break;
+            case BYTECODE_FUNC_FFI_STRING:
+            {
+                mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp - i].addr);
+                char * str_value = gc_get_string(machine->collector, str_b);
+
+                ffi_decl_set_param_type(fd, i, &ffi_type_pointer);
+                ffi_decl_set_param_value(fd, i, str_value);
+
+                /* printf("ffi param string %s\n", str_value); */
+            }
+            break;
+            default:
+                assert(0);
+        }
     }
 
+    /* set return */
+    bc = machine->prog->module_value->code_arr[machine->ip + code->ffi.count];
+    switch (bc.type)
+    {
+        case BYTECODE_FUNC_FFI_INT:
+            ffi_decl_set_ret_type(fd, &ffi_type_sint);
+        break;
+        case BYTECODE_FUNC_FFI_FLOAT:
+            ffi_decl_set_ret_type(fd, &ffi_type_float);
+        break;
+        case BYTECODE_FUNC_FFI_STRING:
+            ffi_decl_set_ret_type(fd, &ffi_type_pointer);
+        break;
+        default:
+            assert(0);
+    }
+
+    /* prepare call */
+    ffi_decl_prepare(fd);
+    
+    /* call */
+    gc_stack entry = { 0 };
+    mem_ptr addr = { 0 };
+    char ** strtab_array = NULL;
+
+    assert(machine->prog->module_value != NULL);
+    strtab_array = machine->prog->module_value->strtab_array;
+
+#if 0
     printf("%s %d %d %d\n", __func__, code->ffi.count, code->ffi.fname_index,
                                       code->ffi.libname_index);
     if (strtab_array != NULL)
@@ -2023,31 +2090,23 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         printf("%s %s %s\n", __func__, strtab_array[code->ffi.fname_index],
                                        strtab_array[code->ffi.libname_index]);
     }
-    
-    ffi_decl * fd = ffi_decl_new(code->ffi.count);
+#endif
 
-    /* params */
-    for (i = 0; i < code->ffi.count; i++)
-    {
-        bc = machine->prog->module_value->code_arr[machine->ip + i];
-        bytecode_print(&bc);
-    }
+    ffi_decl_call(fd, strtab_array[code->ffi.fname_index],
+                      strtab_array[code->ffi.libname_index]);
 
-    /* return */
-    bc = machine->prog->module_value->code_arr[machine->ip + code->ffi.count];
-    bytecode_print(&bc);
-
+    /* get result */
     switch (bc.type)
     {
         case BYTECODE_FUNC_FFI_INT:
-            addr = gc_alloc_int(machine->collector, 120);
+            addr = gc_alloc_int(machine->collector, fd->ret_int_value);
         break;
         case BYTECODE_FUNC_FFI_FLOAT:
-            addr = gc_alloc_float(machine->collector, 120.0);
+            addr = gc_alloc_float(machine->collector, fd->ret_float_value);
         break;
         case BYTECODE_FUNC_FFI_STRING:
         {
-            mem_ptr str = gc_alloc_string(machine->collector, "one hundred twenty\n");
+            mem_ptr str = gc_alloc_string(machine->collector, fd->ret_string_value);
             addr = gc_alloc_string_ref(machine->collector, str);
         }
         break;

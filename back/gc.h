@@ -89,9 +89,11 @@ mem_ptr gc_copy_arr(gc * collector, mem_ptr addr);
 int gc_get_int(gc * collector, mem_ptr addr);
 void gc_set_int(gc * collector, mem_ptr addr, int value);
 void gc_inc_int(gc * collector, mem_ptr addr);
+int * gc_get_int_ptr(gc * collector, mem_ptr addr);
 
 float gc_get_float(gc * collector, mem_ptr addr);
 void gc_set_float(gc * collector, mem_ptr addr, float value);
+float * gc_get_float_ptr(gc * collector, mem_ptr addr);
 
 char * gc_get_string(gc * collector, mem_ptr addr);
 void gc_set_string(gc * collector, mem_ptr addr, char * value);

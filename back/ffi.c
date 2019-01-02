@@ -67,9 +67,9 @@ int ffi_decl_set_param_value(ffi_decl * decl, unsigned int index, void * param_v
     return 0;
 }
 
-int ffi_decl_set_ret(ffi_decl * decl, ffi_type ret)
+int ffi_decl_set_ret_type(ffi_decl * decl, ffi_type * ret_type)
 {
-    decl->ret = ret;
+    decl->ret_type = ret_type;
 
     return 0;
 }
@@ -79,16 +79,17 @@ int ffi_decl_prepare(ffi_decl * decl)
     ffi_status status;
 
     status = ffi_prep_cif(&decl->cif, FFI_DEFAULT_ABI, decl->count,
-                          &decl->ret, decl->param_types);
+                          decl->ret_type, decl->param_types);
     if (status != FFI_OK)
     {
+        fprintf(stderr, "ffi_prep_cif returned an error %d\n", status);
         return 1;
     }
 
     return 0;
 }
 
-int ffi_decl_call(char * fname, char * libname, ffi_decl * decl)
+int ffi_decl_call(ffi_decl * decl, char * fname, char * libname)
 {
     void (* func)(void) = NULL;
     void * handle = NULL;
@@ -103,11 +104,12 @@ int ffi_decl_call(char * fname, char * libname, ffi_decl * decl)
     func = dlsym(handle, fname);
     if (func == NULL)
     {
+        dlclose(handle);
         fprintf(stderr, "cannot obtain address of a symbol %s\n", fname);
         return 1;
     }
 
-    ffi_call(&decl->cif, FFI_FN(func), &decl->ret, decl->param_values);
+    ffi_call(&decl->cif, FFI_FN(func), &decl->ret_void_value, decl->param_values);
 
     dlclose(handle);
 

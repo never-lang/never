@@ -355,6 +355,15 @@ void gc_inc_int(gc * collector, mem_ptr addr)
     collector->mem[addr].object_value->int_value++;
 }
 
+int * gc_get_int_ptr(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_INT);
+    
+    return &collector->mem[addr].object_value->int_value;
+}
+
+
 float gc_get_float(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
@@ -369,6 +378,14 @@ void gc_set_float(gc * collector, mem_ptr addr, float value)
     assert(collector->mem[addr].object_value->type == OBJECT_FLOAT);
 
     collector->mem[addr].object_value->float_value = value;
+}
+
+float * gc_get_float_ptr(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_FLOAT);
+    
+    return &collector->mem[addr].object_value->float_value;
 }
 
 char * gc_get_string(gc * collector, mem_ptr addr)

@@ -19,35 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __FFI_H__
-#define __FFI_H__
+#include "ffi.h"
+#include <stdio.h>
 
-#include <x86_64-linux-gnu/ffi.h>
+void test_one()
+{
+    ffi_decl * fd = ffi_decl_new(20);
+    
+    ffi_decl_delete(fd);
+}
 
-typedef struct ffi_decl {
-    unsigned int count;
-    ffi_type ** param_types;
-    void ** param_values;
-    ffi_type * ret_type;
-    union
-    {
-        void * ret_void_value;
-        int ret_int_value;
-        float ret_float_value;
-        char * ret_string_value;
-    };
-    ffi_cif cif;
-} ffi_decl;
-
-ffi_decl * ffi_decl_new(unsigned int count);
-void ffi_decl_delete(ffi_decl * value);
-
-int ffi_decl_set_param_type(ffi_decl * decl, unsigned int index, ffi_type * param_type);
-int ffi_decl_set_param_value(ffi_decl * decl, unsigned int index, void * param_value);
-int ffi_decl_set_ret_type(ffi_decl * decl , ffi_type * ret_type);
-
-int ffi_decl_prepare(ffi_decl * decl);
-int ffi_decl_call(ffi_decl * decl, char * fname, char * libname);
-
-#endif /* __FFI_H__ */
+int main(int argc, char * argv[])
+{
+    test_one();
+}
 
