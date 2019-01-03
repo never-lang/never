@@ -917,7 +917,7 @@ int func_gencode_freevars_func_except(func * func_value, symtab * stab, func_exc
 int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_value,
                                int * result)
 {
-    if (subfunc_value->freevars)
+    if (subfunc_value->type == FUNC_TYPE_NATIVE && subfunc_value->freevars)
     {
         freevar_list_node * node = subfunc_value->freevars->tail;
         while (node != NULL)
@@ -3159,7 +3159,7 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
         case PARAM_RECORD:
         case PARAM_FUNC:
             *result = GENCODE_FAIL;
-            print_error_msg(0, "ffi type not supported\n");
+            print_error_msg(value->line_no, "ffi type not supported\n");
         break;
     }
 
@@ -3191,6 +3191,7 @@ int func_body_emit_ffi(func * func_value, module * module_value,
     bytecode bc = { 0 };
     unsigned int count = 0;
     bytecode * labelA = NULL;
+    bytecode * labelE = NULL;
     
     if (func_value->decl != NULL && func_value->decl->params != NULL)
     {
@@ -3216,6 +3217,13 @@ int func_body_emit_ffi(func * func_value, module * module_value,
     
     bc.type = BYTECODE_RET;
     bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+
+    exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr);
+
+    except_implicit_emit(func_value, 0, module_value, list_weak, result);
 
     return 0;
 }

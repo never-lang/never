@@ -152,6 +152,7 @@ char * except_to_str(except_no no)
         case EXCEPT_NO_UNDERFLOW: return EXCEPT_NO_UNDERFLOW_NAME;
         case EXCEPT_NO_INEXACT: return EXCEPT_NO_INEXACT_NAME;
         case EXCEPT_NIL_POINTER: return EXCEPT_NIL_POINTER_NAME;
+        case EXCEPT_FFI_FAIL: return EXCEPT_FFI_FAIL_NAME;
     }
     
     return EXCEPT_NO_UNKNOWN_NAME;

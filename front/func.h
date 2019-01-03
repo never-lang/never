@@ -46,6 +46,7 @@ typedef struct func
     func_type type;
     int index;
     func_decl * decl;
+    symtab * stab;
     union
     {
         struct
@@ -53,7 +54,6 @@ typedef struct func
             func_body * body;
             func_except * except;
             struct freevar_list * freevars;
-            struct symtab * stab;
         };
         char * libname;
     };

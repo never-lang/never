@@ -55,7 +55,7 @@ int ffi_decl_set_param_type(ffi_decl * decl, unsigned int index, ffi_type * para
     
     decl->param_types[index] = param_type;
 
-    return 0;
+    return FFI_SUCC;
 }
 
 int ffi_decl_set_param_value(ffi_decl * decl, unsigned int index, void * param_value)
@@ -64,14 +64,14 @@ int ffi_decl_set_param_value(ffi_decl * decl, unsigned int index, void * param_v
     
     decl->param_values[index] = param_value;
 
-    return 0;
+    return FFI_SUCC;
 }
 
 int ffi_decl_set_ret_type(ffi_decl * decl, ffi_type * ret_type)
 {
     decl->ret_type = ret_type;
 
-    return 0;
+    return FFI_SUCC;
 }
 
 int ffi_decl_prepare(ffi_decl * decl)
@@ -83,10 +83,10 @@ int ffi_decl_prepare(ffi_decl * decl)
     if (status != FFI_OK)
     {
         fprintf(stderr, "ffi_prep_cif returned an error %d\n", status);
-        return 1;
+        return FFI_FAIL;
     }
 
-    return 0;
+    return FFI_SUCC;
 }
 
 int ffi_decl_call(ffi_decl * decl, char * fname, char * libname)
@@ -98,7 +98,7 @@ int ffi_decl_call(ffi_decl * decl, char * fname, char * libname)
     if (handle == NULL)
     {
         fprintf(stderr, "cannot open library %s\n", libname);
-        return 1;
+        return FFI_FAIL;
     }
 
     func = dlsym(handle, fname);
@@ -106,14 +106,14 @@ int ffi_decl_call(ffi_decl * decl, char * fname, char * libname)
     {
         dlclose(handle);
         fprintf(stderr, "cannot obtain address of a symbol %s\n", fname);
-        return 1;
+        return FFI_FAIL;
     }
 
     ffi_call(&decl->cif, FFI_FN(func), &decl->ret_void_value, decl->param_values);
 
     dlclose(handle);
 
-    return 0;
+    return FFI_SUCC;
 }
 
 

@@ -24,6 +24,9 @@
 
 #include <x86_64-linux-gnu/ffi.h>
 
+#define FFI_SUCC 0
+#define FFI_FAIL 1
+
 typedef struct ffi_decl {
     unsigned int count;
     ffi_type ** param_types;

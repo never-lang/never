@@ -1948,6 +1948,10 @@ int except_check_id(except * value, int * result)
     {
         value->no = EXCEPT_NIL_POINTER;
     }
+    else if (strcmp(value->id, EXCEPT_FFI_FAIL_NAME) == 0)
+    {
+        value->no = EXCEPT_FFI_FAIL;
+    }
     else
     {
         value->no = EXCEPT_NO_UNKNOWN;
@@ -2016,6 +2020,21 @@ int func_except_check_type(symtab * tab, func_except * value, func * func_value,
 int func_check_type_ffi(symtab * tab, func * func_value, unsigned int syn_level,
                         int * result)
 {
+    if (func_value->stab == NULL)
+    {
+        func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);
+    }
+
+    if (func_value->decl->params != NULL)
+    {
+        param_list_check_type(func_value->stab, func_value->decl->params, syn_level,
+                              result);
+    }
+    if (func_value->decl->ret != NULL)
+    {
+        param_check_type(func_value->stab, func_value->decl->ret, syn_level, result);
+    }
+
     return 0;
 }                           
 

@@ -2003,9 +2003,16 @@ void vm_execute_func_def(vm * machine, bytecode * code) { /* no op */ }
 
 void vm_execute_func_obj(vm * machine, bytecode * code) { /* no op */ }
 
+int vm_str_print(char * str)
+{
+    printf("--- %s ---\n", str);
+    return 0;
+}
+
 void vm_execute_func_ffi(vm * machine, bytecode * code)
 {
     bytecode bc = { 0 };
+    int ret = FFI_SUCC;
     unsigned int i = 0;
         
     ffi_decl * fd = ffi_decl_new(code->ffi.count);
@@ -2023,8 +2030,6 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
 
                 ffi_decl_set_param_type(fd, i, &ffi_type_sint);
                 ffi_decl_set_param_value(fd, i, int_value);
-
-                /* printf("ffi param int %d\n", *int_value); */
             }
             break;
             case BYTECODE_FUNC_FFI_FLOAT:
@@ -2034,19 +2039,15 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
 
                 ffi_decl_set_param_type(fd, i, &ffi_type_float);
                 ffi_decl_set_param_value(fd, i, float_value);
-
-                /* printf("ffi param float %f\n", *float_value); */
             }
             break;
             case BYTECODE_FUNC_FFI_STRING:
             {
                 mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp - i].addr);
-                char * str_value = gc_get_string(machine->collector, str_b);
+                char * str_value = gc_get_string_ptr(machine->collector, str_b);
 
                 ffi_decl_set_param_type(fd, i, &ffi_type_pointer);
                 ffi_decl_set_param_value(fd, i, str_value);
-
-                /* printf("ffi param string %s\n", str_value); */
             }
             break;
             default:
@@ -2072,7 +2073,15 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     }
 
     /* prepare call */
-    ffi_decl_prepare(fd);
+    ret = ffi_decl_prepare(fd);
+    if (ret != FFI_SUCC)
+    {
+        ffi_decl_delete(fd);
+
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_FFI_FAIL;
+        return;
+    }
     
     /* call */
     gc_stack entry = { 0 };
@@ -2092,8 +2101,16 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     }
 #endif
 
-    ffi_decl_call(fd, strtab_array[code->ffi.fname_index],
-                      strtab_array[code->ffi.libname_index]);
+    ret = ffi_decl_call(fd, strtab_array[code->ffi.fname_index],
+                        strtab_array[code->ffi.libname_index]);
+    if (ret != FFI_SUCC)
+    {
+        ffi_decl_delete(fd);
+
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_FFI_FAIL;
+        return;
+    }
 
     /* get result */
     switch (bc.type)

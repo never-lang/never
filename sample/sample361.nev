@@ -1,0 +1,22 @@
+
+extern "libm.so.6" func sinhf(x -> float) -> float
+
+func s(x -> float) -> float { var z = 0; 10 / z; 1.0 }
+
+func main() -> int
+{
+    sinhf(1.0);
+
+    0
+}
+catch (division_by_zero)
+{
+    prints("division_by_zero\n");
+    0
+}
+catch (ffi_fail)
+{
+    prints("ffi_fail\n");
+    0
+}
+

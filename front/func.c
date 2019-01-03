@@ -36,11 +36,11 @@ func * func_new_except(func_decl * decl, func_body * body, func_except * except)
     value->type = FUNC_TYPE_NATIVE;
     value->index = 0;
     value->decl = decl;
+    value->stab = NULL;
 
     value->body = body;
     value->except = except;
     value->freevars = NULL;
-    value->stab = NULL;
 
     value->addr = 0;
     value->line_no = 0;
@@ -55,6 +55,7 @@ func * func_new_ffi(char * libname, func_decl * decl)
     value->type = FUNC_TYPE_FFI;
     value->index = 0;
     value->decl = decl;
+    value->stab = NULL;
 
     value->libname = libname;
 
@@ -86,6 +87,10 @@ void func_delete_native(func * value)
 
 void func_delete_ffi(func * value)
 {
+    if (value->stab)
+    {
+        symtab_delete(value->stab);
+    }
     if (value->libname)
     {
         free(value->libname);

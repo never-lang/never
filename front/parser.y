@@ -708,7 +708,7 @@ func: TOK_FUNC func_decl func_body func_except
     $$->line_no = $<line_no>1;
 };
 
-func: TOK_EXTERN TOK_NUM_STRING TOK_FUNC func_decl ';'
+func: TOK_EXTERN TOK_NUM_STRING TOK_FUNC func_decl
 {
     $$ = func_new_ffi($2, $4);
     $$->line_no = $<line_no>1;   
