@@ -2044,7 +2044,7 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
             case BYTECODE_FUNC_FFI_STRING:
             {
                 mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp - i].addr);
-                char * str_value = gc_get_string_ptr(machine->collector, str_b);
+                char ** str_value = gc_get_string_ptr(machine->collector, str_b);
 
                 ffi_decl_set_param_type(fd, i, &ffi_type_pointer);
                 ffi_decl_set_param_value(fd, i, str_value);
@@ -2090,16 +2090,6 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
 
     assert(machine->prog->module_value != NULL);
     strtab_array = machine->prog->module_value->strtab_array;
-
-#if 0
-    printf("%s %d %d %d\n", __func__, code->ffi.count, code->ffi.fname_index,
-                                      code->ffi.libname_index);
-    if (strtab_array != NULL)
-    {
-        printf("%s %s %s\n", __func__, strtab_array[code->ffi.fname_index],
-                                       strtab_array[code->ffi.libname_index]);
-    }
-#endif
 
     ret = ffi_decl_call(fd, strtab_array[code->ffi.fname_index],
                         strtab_array[code->ffi.libname_index]);

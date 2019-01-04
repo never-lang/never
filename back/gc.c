@@ -408,7 +408,7 @@ void gc_set_string(gc * collector, mem_ptr addr, char * value)
     collector->mem[addr].object_value->string_value = strdup(value);
 }
 
-char * gc_get_string_ptr(gc * collector, mem_ptr addr)
+char ** gc_get_string_ptr(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_STRING);
