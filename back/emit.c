@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "gencode.h"
+#include "emit.h"
 #include "freevar.h"
 #include "symtab.h"
 #include "utils.h"
@@ -28,1115 +28,6 @@
 
 /* GP old, FP old, IP old, line_no, PP old */
 #define NUM_FRAME_PTRS 5
-
-int enumtype_enum_enumerator_list(enumerator_list * list)
-{
-    int index = 0;
-    enumerator_list_node * node = NULL;
-    
-    node = list->tail;
-    while (node != NULL)
-    {
-        enumerator * value = node->value;
-        if (value != NULL)
-        {
-            value->index = index++;
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int record_enum_param_list(param_list * params)
-{
-    int index = 0;
-    param_list_node * node = NULL;
-    
-    node = params->tail;
-    while (node != NULL)
-    {
-        param * value = node->value;
-        if (value != NULL)
-        {
-            value->index = index++;
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int func_enum_param_list(param_list * params)
-{
-    int index = 0;
-    param_list_node * node = NULL;
-
-    node = params->tail;
-    while (node != NULL)
-    {
-        param * value = node->value;
-        if (value != NULL)
-        {
-            value->index = -(index++);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int func_enum_bind_list(bind_list * list, int start)
-{
-    int index = start;
-
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * value = node->value;
-        if (value != NULL)
-        {
-            value->index = index++;
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int func_enum_func_list(func_list * list, int start)
-{
-    int index = start;
-
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * value = node->value;
-        if (value != NULL)
-        {
-            value->index = index++;
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-/**
- * free variables
- */
-int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
-                    expr * value, int * result)
-{
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
-    if (entry != NULL)
-    {
-        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
-        {
-            func * sup_func_value = entry->func_value;
-            if (sup_func_value)
-            {
-                if (entry->syn_level == 0)
-                {
-                    value->id.id_type_value = ID_TYPE_FUNC_TOP;
-                    value->id.id_func_value = sup_func_value;
-                }
-                else if (syn_level - 1 == entry->syn_level &&
-                         func_value == sup_func_value) /* recursive call */
-                {
-                    value->id.id_type_value = ID_TYPE_FUNC_NEST;
-                    value->id.id_func_value = sup_func_value;
-                }
-                else if (syn_level == entry->syn_level)
-                {
-                    value->id.id_type_value = ID_TYPE_FUNC;
-                    value->id.id_func_value = sup_func_value;
-                }
-                else
-                {
-                    freevar * freevar_value = NULL;
-                    if (func_value->freevars == NULL)
-                    {
-                        func_value->freevars = freevar_list_new();
-                    }
-
-                    freevar_value =
-                        freevar_list_add(func_value->freevars, value->id.id);
-
-                    freevar_value->type = FREEVAR_FUNC;
-                    freevar_value->func_value = sup_func_value;
-
-                    value->id.id_type_value = ID_TYPE_GLOBAL;
-                    value->id.id_freevar_value = freevar_value;
-                }
-            }
-        }
-        else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
-        {
-            param * param_value = entry->param_value;
-            if (param_value->type == PARAM_INT ||
-                param_value->type == PARAM_FLOAT ||
-                param_value->type == PARAM_STRING ||
-                param_value->type == PARAM_ENUMTYPE ||
-                param_value->type == PARAM_DIM ||
-                param_value->type == PARAM_ARRAY ||
-                param_value->type == PARAM_RECORD ||
-                param_value->type == PARAM_FUNC)
-            {
-                if (syn_level == entry->syn_level)
-                {
-                    value->id.id_type_value = ID_TYPE_LOCAL;
-                    value->id.id_param_value = param_value;
-                }
-                else
-                {
-                    freevar * freevar_value = NULL;
-                    if (func_value->freevars == NULL)
-                    {
-                        func_value->freevars = freevar_list_new();
-                    }
-
-                    freevar_value =
-                        freevar_list_add(func_value->freevars, value->id.id);
-
-                    value->id.id_type_value = ID_TYPE_GLOBAL;
-                    value->id.id_freevar_value = freevar_value;
-                }
-            }
-            else
-            {
-                printf("unknown param type %s\n", param_type_str(param_value->type));
-                assert(0);
-            }
-        }
-        else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
-        {
-            bind * bind_value = entry->bind_value;
-            if (bind_value->type == BIND_LET || bind_value->type == BIND_VAR)
-            {
-                if (syn_level == entry->syn_level)
-                {
-                    value->id.id_type_value = ID_TYPE_BIND;
-                    value->id.id_bind_value = bind_value;
-                }
-                else
-                {
-                    freevar * freevar_value = NULL;
-                    if (func_value->freevars == NULL)
-                    {
-                        func_value->freevars = freevar_list_new();
-                    }
-                    
-                    freevar_value =
-                        freevar_list_add(func_value->freevars, value->id.id);
-                    
-                    value->id.id_type_value = ID_TYPE_GLOBAL;
-                    value->id.id_freevar_value = freevar_value;
-                }
-            }
-            else
-            {
-                fprintf(stderr, "unknown bind type %d\n", bind_value->type);
-            }            
-        }
-        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
-        {
-            qualifier * qualifier_value = entry->qualifier_value;
-            if (syn_level == entry->syn_level)
-            {
-                value->id.id_type_value = ID_TYPE_QUALIFIER;
-                value->id.id_qualifier_value = qualifier_value;
-            }
-            else
-            {
-                freevar * freevar_value = NULL;
-                if (func_value->freevars == NULL)
-                {
-                    func_value->freevars = freevar_list_new();
-                }
-                
-                freevar_value =
-                    freevar_list_add(func_value->freevars, value->id.id);
-                
-                value->id.id_type_value = ID_TYPE_GLOBAL;
-                value->id.id_freevar_value = freevar_value;
-            }
-        }
-        else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
-        {
-            enumtype * enumtype_value = entry->enumtype_value;
-
-            value->id.id_type_value = ID_TYPE_ENUMTYPE;
-            value->id.id_enumtype_value = enumtype_value;
-        }
-        else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
-        {
-            record * record_value = entry->record_value;
-
-            value->id.id_type_value = ID_TYPE_RECORD;
-            value->id.id_record_value = record_value;
-        }
-        else
-        {
-            assert(0);
-        }
-    }
-    else
-    {
-        *result = GENCODE_FAIL;
-        print_error_msg(
-            value->line_no,
-            "cannot find variable %s, at this stage it is very bad\n",
-            value->id.id);
-        assert(0);
-    }
-
-    return 0;
-}
-
-int expr_gencode(unsigned int syn_level, func * func_value, symtab * stab,
-                 expr * value, int * result)
-{
-    switch (value->type)
-    {
-    case EXPR_INT:
-        break;
-    case EXPR_FLOAT:
-        /* printf("gencode EXPR_FLOAT %f\n", value->float_value); */
-        break;
-    case EXPR_STRING:
-        break;
-    case EXPR_NIL:
-        break;
-    case EXPR_ID:
-        expr_id_gencode(syn_level, func_value, stab, value, result);
-        break;
-    case EXPR_NEG:
-        expr_gencode(syn_level, func_value, stab, value->left, result);
-        break;
-    case EXPR_ADD:
-    case EXPR_SUB:
-    case EXPR_MUL:
-    case EXPR_DIV:
-    case EXPR_MOD:
-    case EXPR_LT:
-    case EXPR_GT:
-    case EXPR_LTE:
-    case EXPR_GTE:
-    case EXPR_EQ:
-    case EXPR_NEQ:
-        expr_gencode(syn_level, func_value, stab, value->left, result);
-        expr_gencode(syn_level, func_value, stab, value->right, result);
-        break;
-    case EXPR_AND:
-    case EXPR_OR:
-        expr_gencode(syn_level, func_value, stab, value->left, result);
-        expr_gencode(syn_level, func_value, stab, value->right, result);
-        break;
-    case EXPR_NOT:
-        expr_gencode(syn_level, func_value, stab, value->left, result);
-        break;
-    case EXPR_SUP:
-        expr_gencode(syn_level, func_value, stab, value->left, result);
-        break;
-    case EXPR_COND:
-        expr_gencode(syn_level, func_value, stab, value->left, result);
-        expr_gencode(syn_level, func_value, stab, value->middle, result);
-        expr_gencode(syn_level, func_value, stab, value->right, result);
-        break;
-    case EXPR_ARRAY:
-        if (value->array.array_value)
-        {
-            array_gencode(syn_level, func_value, stab, value->array.array_value,
-                          result);
-        }
-        break;
-    case EXPR_ARRAY_DEREF:
-        expr_gencode(syn_level, func_value, stab, value->array_deref.array_expr,
-                     result);
-        if (value->array_deref.ref != NULL)
-        {
-            expr_list_gencode(syn_level, func_value, stab, value->array_deref.ref,
-                              result);
-        }
-        break;
-    case EXPR_CALL:
-    case EXPR_LAST_CALL:
-        expr_gencode(syn_level, func_value, stab, value->call.func_expr, result);
-        if (value->call.params != NULL)
-        {
-            expr_list_gencode(syn_level, func_value, stab, value->call.params, result);
-        }
-        break;
-    case EXPR_FUNC:
-        if (value->func_value != NULL)
-        {
-            func_gencode(syn_level + 2, value->func_value, result);
-        }
-        break;
-    case EXPR_SEQ:
-        if (value->seq.list != NULL)
-        {
-            expr_list_gencode(syn_level, func_value, stab, value->seq.list, result);
-        }
-        break;
-    case EXPR_ASS:
-        expr_gencode(syn_level, func_value, stab, value->left, result);
-        expr_gencode(syn_level, func_value, stab, value->right, result);
-        break;
-    case EXPR_WHILE:
-    case EXPR_DO_WHILE:
-        expr_gencode(syn_level, func_value, stab, value->whileloop.cond, result);
-        expr_gencode(syn_level, func_value, stab, value->whileloop.do_value, result);
-        break;
-    case EXPR_FOR:
-        expr_gencode(syn_level, func_value, stab, value->forloop.init, result);
-        expr_gencode(syn_level, func_value, stab, value->forloop.cond, result);
-        expr_gencode(syn_level, func_value, stab, value->forloop.incr, result);
-        expr_gencode(syn_level, func_value, stab, value->forloop.do_value, result);
-        break;
-    case EXPR_BUILD_IN:
-        expr_list_gencode(syn_level, func_value, stab, value->func_build_in.param,
-                          result);
-        break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
-        expr_gencode(syn_level, func_value, stab, value->left, result);
-        break;
-    case EXPR_LISTCOMP:
-        if (value->listcomp_value != NULL)
-        {
-            listcomp_gencode(syn_level, func_value, value->listcomp_value->stab,
-                             value->listcomp_value, result);
-        }
-        break;
-    case EXPR_ATTR:
-        if (value->attr.record_value != NULL)
-        {
-            expr_gencode(syn_level, func_value, stab, value->attr.record_value, result);
-        }
-        break;
-    }
-    return 0;
-}
-
-int expr_list_gencode(unsigned int syn_level, func * func_value,
-                      symtab * stab, expr_list * list, int * result)
-{
-    expr_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        expr * value = node->value;
-        if (value)
-        {
-            expr_gencode(syn_level, func_value, stab, value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int qualifier_gencode(unsigned int syn_level, func * func_value,
-                      symtab * stab, qualifier * value, int * result)
-{
-    switch (value->type)
-    {
-        case QUALIFIER_UNKNOWN:
-            assert(0);
-        break;
-        case QUALIFIER_GENERATOR:
-            if (value->expr_value != NULL)
-            {
-                expr_gencode(syn_level, func_value, stab, value->expr_value, result);
-            }
-        break;
-        case QUALIFIER_FILTER:
-            if (value->expr_value != NULL)
-            {
-                expr_gencode(syn_level, func_value, stab, value->expr_value, result);
-            }
-        break;
-    }
-
-    return 0;
-}
-
-int qualifier_list_gencode(unsigned int syn_level, func * func_value,
-                           symtab * stab, qualifier_list * list, int * result)
-{
-    qualifier_list_node * node = list->tail;
-
-    while (node != NULL)
-    {
-        qualifier * qualifier_value = node->value;
-        if (qualifier_value != NULL)
-        {
-            qualifier_gencode(syn_level, func_value, stab, qualifier_value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int listcomp_gencode(unsigned int syn_level, func * func_value,
-                     symtab * stab, listcomp * value, int * result)
-{
-    if (value->list != NULL)
-    {
-        qualifier_list_gencode(syn_level, func_value, stab, value->list, result);
-    }
-    if (value->expr_value != NULL)
-    {
-        expr_gencode(syn_level, func_value, stab, value->expr_value, result);
-    }
-
-    return 0;
-}
-
-int array_gencode(unsigned int syn_level, func * func_value,
-                  symtab * stab, array * array_value, int * result)
-{
-    if (array_value->type == ARRAY_INIT || array_value->type == ARRAY_SUB)
-    {
-        expr_list_gencode(syn_level, func_value, stab, array_value->elements, result);
-    }
-    else if (array_value->type == ARRAY_DIMS)
-    {
-        expr_list_gencode(syn_level, func_value, stab, array_value->dims, result);
-    }
-
-    return 0;
-}
-
-int bind_gencode(unsigned int syn_level, func * func_value, symtab * stab,
-                 bind * bind_value, int * result)
-{
-    switch (bind_value->type)
-    {
-        case BIND_UNKNOWN:
-            fprintf(stderr, "unknown bind type\n");
-            assert(0);
-        break;
-        case BIND_LET:
-        case BIND_VAR:
-            if (bind_value->expr_value != NULL)
-            {
-                expr_gencode(syn_level, func_value, stab, bind_value->expr_value, result);
-            }
-        break;
-    }
-
-    return 0;
-}
-
-int bind_list_gencode(unsigned int syn_level, func * func_value,
-                      symtab * stab, bind_list * list, int * result)
-{
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * bind_value = node->value;
-        if (bind_value)
-        {
-            bind_gencode(syn_level, func_value, stab, bind_value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int except_gencode(unsigned int syn_level, func * func_value,
-                   symtab * stab, except * value, int * result)
-{
-    if (value->expr_value != NULL)
-    {
-        expr_gencode(syn_level, func_value, stab, value->expr_value, result);
-    }
-
-    return 0;
-}
-
-int except_list_gencode(unsigned int syn_level, func * func_value,
-                        symtab * stab, except_list * list, int * result)
-{
-    except_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        except * value = node->value;
-        if (value != NULL)
-        {
-            except_gencode(syn_level, func_value, stab, value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-/**
- * free variables
- */
-int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * freevar_value,
-                                  int * result)
-{
-    /** search in symtab */
-    /** if found then mark as local */
-    /** otherwise mark as global and set index */
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(stab, freevar_value->id, SYMTAB_LOOKUP_LOCAL);
-    if (entry != NULL)
-    {
-        if (entry->type == SYMTAB_FUNC && entry->func_value)
-        {
-            freevar_value->type = FREEVAR_FUNC;
-            freevar_value->func_value = entry->func_value;
-        }
-        else if (entry->type == SYMTAB_PARAM && entry->param_value)
-        {
-            freevar_value->type = FREEVAR_LOCAL;
-            freevar_value->local_value = entry->param_value;
-        }
-        else if (entry->type == SYMTAB_BIND && entry->bind_value)
-        {
-            freevar_value->type = FREEVAR_BIND;
-            freevar_value->bind_value = entry->bind_value;
-        }
-        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value)
-        {
-            freevar_value->type = FREEVAR_QUALIFIER;
-            freevar_value->qualifier_value = entry->qualifier_value;
-        }
-        else
-        {
-            assert(0);
-        }
-    }
-    else
-    {
-        freevar * freevar_sup_value = NULL;
-        if (func_value->freevars == NULL)
-        {
-            func_value->freevars = freevar_list_new();
-        }
-
-        freevar_sup_value =
-            freevar_list_add(func_value->freevars, freevar_value->id);
-
-        freevar_value->type = FREEVAR_GLOBAL;
-        freevar_value->global_value = freevar_sup_value;
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result)
-{
-    switch (value->type)
-    {
-    case EXPR_INT:
-    case EXPR_FLOAT:
-    case EXPR_STRING:
-    case EXPR_ID:
-    case EXPR_NIL:
-        /* not possible */
-        break;
-    case EXPR_NEG:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_ADD:
-    case EXPR_SUB:
-    case EXPR_MUL:
-    case EXPR_DIV:
-    case EXPR_MOD:
-    case EXPR_LT:
-    case EXPR_GT:
-    case EXPR_LTE:
-    case EXPR_GTE:
-    case EXPR_EQ:
-    case EXPR_NEQ:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
-        break;
-    case EXPR_AND:
-    case EXPR_OR:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
-        break;
-    case EXPR_NOT:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_SUP:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_COND:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->middle, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
-        break;
-    case EXPR_ARRAY:
-        if (value->array.array_value != NULL)
-        {
-            func_gencode_freevars_array(func_value, stab, value->array.array_value, result);
-        }
-        break;
-    case EXPR_ARRAY_DEREF:
-        func_gencode_freevars_expr(func_value, stab, value->array_deref.array_expr,
-                                   result);
-        if (value->array_deref.ref != NULL)
-        {
-            func_gencode_freevars_expr_list(func_value, stab, value->array_deref.ref,
-                                            result);
-        }
-        break;
-    case EXPR_CALL:
-    case EXPR_LAST_CALL:
-        func_gencode_freevars_expr(func_value, stab, value->call.func_expr, result);
-        if (value->call.params)
-        {
-            func_gencode_freevars_expr_list(func_value, stab, value->call.params,
-                                            result);
-        }
-        break;
-    case EXPR_FUNC:
-        if (value->func_value)
-        {
-            func_gencode_freevars_func(func_value, stab, value->func_value, result);
-        }
-        break;
-    case EXPR_SEQ:
-        if (value->seq.list != NULL)
-        {
-            func_gencode_freevars_expr_list(func_value, stab, value->seq.list,
-                                            result);
-        }
-        break;
-    case EXPR_ASS:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
-        break;
-    case EXPR_WHILE:
-    case EXPR_DO_WHILE:
-        func_gencode_freevars_expr(func_value, stab, value->whileloop.cond, result);
-        func_gencode_freevars_expr(func_value, stab, value->whileloop.do_value, result);
-        break;
-    case EXPR_FOR:
-        func_gencode_freevars_expr(func_value, stab, value->forloop.init, result);
-        func_gencode_freevars_expr(func_value, stab, value->forloop.cond, result);
-        func_gencode_freevars_expr(func_value, stab, value->forloop.incr, result);
-        func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
-        break;
-    case EXPR_BUILD_IN:
-        func_gencode_freevars_expr_list(func_value, stab, value->func_build_in.param,
-                                        result);
-        break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_LISTCOMP:
-        if (value->listcomp_value != NULL)
-        {
-            func_gencode_freevars_listcomp(func_value, value->listcomp_value->stab,
-                                           value->listcomp_value, result);
-        }
-        break;
-    case EXPR_ATTR:
-        if (value->attr.record_value != NULL)
-        {
-            func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
-        }
-        break;
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
-                                    int * result)
-{
-    expr_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        expr * value = node->value;
-        if (value != NULL)
-        {
-            func_gencode_freevars_expr(func_value, stab, value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars_qualifier(func * func_value, symtab * stab,
-                                    qualifier * value, int * result)
-{
-    switch (value->type)
-    {
-        case QUALIFIER_UNKNOWN:
-            assert(0);
-        break;
-        case QUALIFIER_GENERATOR:
-            if (value->expr_value != NULL)
-            {
-                func_gencode_freevars_expr(func_value, stab, value->expr_value, result);
-            }
-        break;
-        case QUALIFIER_FILTER:
-            if (value->expr_value != NULL)
-            {
-                func_gencode_freevars_expr(func_value, stab, value->expr_value, result);
-            }
-        break;
-    }
-
-    return 0;
-}                                    
-
-int func_gencode_freevars_qualifier_list(func * func_value, symtab * stab,
-                                         qualifier_list * list, int * result)
-{
-    qualifier_list_node * node = list->tail;
-
-    while (node != NULL)
-    {
-        qualifier * qualifier_value = node->value;
-        if (qualifier_value != NULL)
-        {
-            func_gencode_freevars_qualifier(func_value, stab, qualifier_value, result);
-        }
-        node = node->next;
-    }
-
-
-    return 0;
-}
-
-int func_gencode_freevars_listcomp(func * func_value, symtab * stab,
-                                   listcomp * value, int * result)
-{
-    if (value->list != NULL)
-    {
-        func_gencode_freevars_qualifier_list(func_value, stab, value->list, result);
-    }
-    if (value->expr_value != NULL)
-    {
-        func_gencode_freevars_expr(func_value, stab, value->expr_value, result);
-    }
-
-    return 0;
-}                                   
-
-int func_gencode_freevars_array(func * func_value, symtab * stab, array * array_value,
-                                int * result)
-{
-    if (array_value->dims != NULL)
-    {
-        func_gencode_freevars_expr_list(
-            func_value, stab, array_value->dims, result);
-    }
-    if (array_value->elements != NULL)
-    {
-        func_gencode_freevars_expr_list(
-            func_value, stab, array_value->elements, result);
-    }
-
-    return 0;
-}                                
-
-int func_gencode_freevars_bind(func * func_value, symtab * stab, bind * bind_value,
-                               int * result)
-{
-    if (bind_value->expr_value)
-    {
-        func_gencode_freevars_expr(func_value, stab, bind_value->expr_value, result);
-    }
-    return 0;
-}
-
-int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
-                                    int * result)
-{
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * bind_value = node->value;
-        if (bind_value != NULL)
-        {
-            func_gencode_freevars_bind(func_value, stab, bind_value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int func_gencode_freevars_except(func * func_value, symtab * stab, except * except_value,
-                                 int * result)
-{
-    if (except_value->expr_value != NULL)
-    {
-        func_gencode_freevars_expr(func_value, stab, except_value->expr_value, result);
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars_except_list(func * func_value, symtab * stab, except_list * list,
-                                      int * result)
-{
-    except_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        except * value = node->value;
-        if (value != NULL)
-        {
-            func_gencode_freevars_except(func_value, stab, value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars_func_except(func * func_value, symtab * stab, func_except * value,
-                                      int * result)
-{
-    if (value->list != NULL)
-    {
-        func_gencode_freevars_except_list(func_value, stab, value->list, result);
-    }
-    if (value->all != NULL)
-    {
-        func_gencode_freevars_except(func_value, stab, value->all, result);
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_value,
-                               int * result)
-{
-    if (subfunc_value->type == FUNC_TYPE_NATIVE && subfunc_value->freevars)
-    {
-        freevar_list_node * node = subfunc_value->freevars->tail;
-        while (node != NULL)
-        {
-            freevar * freevar_value = node->value;
-            if (freevar_value != NULL)
-            {
-                func_gencode_freevars_freevar(func_value, stab, freevar_value,
-                                              result);
-            }
-            node = node->next;
-        }
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list * list,
-                                    int * result)
-{
-    func_list_node * node = list->tail;
-
-    while (node != NULL)
-    {
-        func * subfunc_value = node->value;
-        if (subfunc_value != NULL)
-        {
-            func_gencode_freevars_func(func_value, stab, subfunc_value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars(func * func_value, symtab * stab, int * result)
-{
-    if (func_value->body && func_value->body->binds)
-    {
-        func_gencode_freevars_bind_list(func_value, stab, func_value->body->binds,
-                                        result);
-    }
-    if (func_value->body && func_value->body->funcs)
-    {
-        func_gencode_freevars_func_list(func_value, stab, func_value->body->funcs,
-                                        result);
-    }
-    if (func_value->body && func_value->body->ret)
-    {
-        func_gencode_freevars_expr(func_value, stab, func_value->body->ret, result);
-    }
-    if (func_value->except)
-    {
-        func_gencode_freevars_func_except(func_value, stab, func_value->except, result);
-    }
-
-    return 0;
-}
-
-int func_gencode_ffi(unsigned int syn_level, func * func_value, int * result)
-{
-    return 0;
-}
-
-int func_gencode_native(unsigned int syn_level, func * func_value, int * result)
-{
-    int start = 1;
-
-    if (func_value->decl->params != NULL)
-    {
-        func_enum_param_list(func_value->decl->params);
-    }
-    if (func_value->body && func_value->body->binds != NULL)
-    {
-        func_enum_bind_list(func_value->body->binds, start);
-        start += func_value->body->binds->count;
-    }
-    if (func_value->body && func_value->body->funcs != NULL)
-    {
-        func_enum_func_list(func_value->body->funcs, start);
-    }
-
-    if (func_value->body && func_value->body->binds)
-    {
-        bind_list_gencode(syn_level, func_value, func_value->stab, func_value->body->binds,
-                          result);
-    }
-    if (func_value->body && func_value->body->funcs)
-    {
-        func_list_gencode(syn_level, func_value->body->funcs, result);
-    }
-    if (func_value->body && func_value->body->ret)
-    {
-        expr_gencode(syn_level, func_value, func_value->stab, func_value->body->ret, result);
-    }
-    if (func_value->except && func_value->except->list)
-    {
-        except_list_gencode(syn_level, func_value, func_value->stab, func_value->except->list, result);
-    }
-    if (func_value->except && func_value->except->all)
-    {
-        except_gencode(syn_level, func_value, func_value->stab, func_value->except->all, result);
-    }
-
-    /** set subfunction local/global indexes **/
-    func_gencode_freevars(func_value, func_value->stab, result);
-
-    return 0;
-}
-
-int func_gencode(unsigned int syn_level, func * func_value, int * result)
-{
-    switch (func_value->type)
-    {
-        case FUNC_TYPE_UNKNOWN:
-            assert(0);
-        break;
-        case FUNC_TYPE_NATIVE:
-            func_gencode_native(syn_level, func_value, result);
-        break;
-        case FUNC_TYPE_FFI:
-            func_gencode_ffi(syn_level, func_value, result);
-        break;
-    }
-
-    return 0;
-}
-
-int func_list_gencode(unsigned int syn_level, func_list * list, int * result)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * func_value = node->value;
-        if (func_value)
-        {
-            func_gencode(syn_level + 1, func_value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-
-int enumtype_gencode(unsigned int syn_level, enumtype * value, int * result)
-{
-    if (value->enums != NULL)
-    {
-        enumtype_enum_enumerator_list(value->enums);
-    }
-    
-    return 0;
-}
-
-int enumtype_list_gencode(unsigned int syn_level, enumtype_list * list, int * result)
-{
-    enumtype_list_node * node = list->tail;
-    
-    while (node != NULL)
-    {
-        enumtype * enumtype_value = node->value;
-        if (enumtype_value != NULL)
-        {
-            enumtype_gencode(syn_level, enumtype_value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int record_gencode(unsigned int syn_level, record * value, int * result)
-{
-    if (value->params != NULL)
-    {
-        record_enum_param_list(value->params);
-    }
-
-    return 0;
-}
-
-int record_list_gencode(unsigned int syn_level, record_list * list, int * result)
-{
-    record_list_node * node = list->tail;
-    
-    while (node != NULL)
-    {
-        record * record_value = node->value;
-        if (record_value != NULL)
-        {
-            record_gencode(syn_level, record_value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int never_gencode(never * nev)
-{
-    int gencode_res = GENCODE_SUCC;
-    unsigned int syn_level = 0;
-    
-    if (nev->enums != NULL)
-    {
-        enumtype_list_gencode(0, nev->enums, &gencode_res);
-    }
-
-    if (nev->records != NULL)
-    {
-        record_list_gencode(0, nev->records, &gencode_res);
-    }
-
-    if (nev->funcs != NULL)
-    {
-        func_list_gencode(syn_level, nev->funcs, &gencode_res);
-    }
-
-    return gencode_res;
-}
 
 /**
  * emit code
@@ -1480,7 +371,7 @@ int expr_neg_emit(expr * value, int stack_level, module * module_value,
     }
     else
     {
-        *result = GENCODE_FAIL;
+        *result = EMIT_FAIL;
         print_error_msg(value->line_no, "cannot neg type %s\n",
                         comb_type_str(value->comb.comb));
         assert(0);
@@ -1551,7 +442,7 @@ int expr_add_emit(expr * value, int stack_level, module * module_value,
     }
     else
     {
-        *result = GENCODE_FAIL;
+        *result = EMIT_FAIL;
         print_error_msg(value->line_no, "cannot add type %s\n",
                         comb_type_str(value->comb.comb));
         assert(0);
@@ -1592,7 +483,7 @@ int expr_sub_emit(expr * value, int stack_level, module * module_value,
     }
     else
     {
-        *result = GENCODE_FAIL;
+        *result = EMIT_FAIL;
         print_error_msg(value->line_no, "cannot sub type %s\n",
                         comb_type_str(value->comb.comb));
         assert(0);
@@ -1649,7 +540,7 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
     }
     else
     {
-        *result = GENCODE_FAIL;
+        *result = EMIT_FAIL;
         print_error_msg(value->line_no, "cannot mul type %s\n",
                         comb_type_str(value->comb.comb));
         assert(0);
@@ -1761,7 +652,7 @@ int expr_not_emit(expr * value, int stack_level, module * module_value,
     }
     else
     {
-        *result = GENCODE_FAIL;
+        *result = EMIT_FAIL;
         print_error_msg(value->line_no, "cannot not type %s\n",
                         comb_type_str(value->comb.comb));
         assert(0);
@@ -1814,7 +705,7 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     }
     else
     {
-        *result = GENCODE_FAIL;
+        *result = EMIT_FAIL;
         print_error_msg(value->line_no, "cannot assign type %s\n",
                         comb_type_str(value->comb.comb));
         assert(0);
@@ -2120,7 +1011,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no, "cannot div type %s\n",
                             comb_type_str(value->comb.comb));
             assert(0);
@@ -2142,7 +1033,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no, "cannot mod type %s %s\n",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
@@ -2167,7 +1058,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no, "cannot lt different types %s %s\n",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
@@ -2192,7 +1083,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no, "cannot gt different types %s %s\n",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
@@ -2217,7 +1108,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no,
                             "cannot lte different types %s %s\n",
                             comb_type_str(value->left->comb.comb),
@@ -2243,7 +1134,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no,
                             "cannot gte different types %s %s\n",
                             comb_type_str(value->left->comb.comb),
@@ -2324,7 +1215,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no, "cannot eq different types %s %s\n",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
@@ -2405,7 +1296,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no,
                             "cannot neq different types %s %s\n",
                             comb_type_str(value->left->comb.comb),
@@ -2493,7 +1384,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no, "cannot convert type %s to float\n",
                             comb_type_str(value->left->comb.comb));
             assert(0);
@@ -2510,7 +1401,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         else
         {
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no, "cannot convert type %s to int\n",
                             comb_type_str(value->left->comb.comb));
             assert(0);
@@ -3158,7 +2049,7 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
         case PARAM_ENUMTYPE:
         case PARAM_RECORD:
         case PARAM_FUNC:
-            *result = GENCODE_FAIL;
+            *result = EMIT_FAIL;
             print_error_msg(value->line_no, "ffi type not supported\n");
         break;
     }
@@ -3425,7 +2316,7 @@ int func_main_emit(never * nev, int stack_level, module * module_value,
     }
     else
     {
-        *result = GENCODE_FAIL;
+        *result = EMIT_FAIL;
         print_error_msg(0, "no main function defined\n");
     }
     return 0;

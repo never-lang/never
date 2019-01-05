@@ -19,8 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __GENCODE_H__
-#define __GENCODE_H__
+#ifndef __EMIT_H__
+#define __EMIT_H__
 
 #include "module.h"
 #include "never.h"
@@ -28,87 +28,9 @@
 
 enum
 {
-    GENCODE_SUCC = 0,
-    GENCODE_FAIL = 1
+    EMIT_SUCC = 0,
+    EMIT_FAIL = 1
 };
-
-int enumtype_enum_enumerator_list(enumerator_list * list);
-int record_enum_param_list(param_list * params);
-int func_enum_param_list(param_list * params);
-int func_enum_bind_list(bind_list * list, int start);
-int func_enum_func_list(func_list * list, int start);
-
-int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * tab,
-                    expr * value, int * result);
-int expr_gencode(unsigned int syn_level, func * func_value, symtab * tab,
-                 expr * value, int * result);
-int expr_list_gencode(unsigned int syn_level, func * func_value,
-                      symtab * tab, expr_list * list, int * result);
-
-int qualifier_gencode(unsigned int syn_level, func * func_value,
-                      symtab * stab, qualifier * value, int * result);
-int qualifier_list_gencode(unsigned int syn_level, func * func_value,
-                           symtab * stab, qualifier_list * list, int * result);
-
-int listcomp_gencode(unsigned int syn_level, func * func_value,
-                     symtab * stab, listcomp * value, int * result);
-
-int array_gencode(unsigned int syn_level, func * func_value,
-                  symtab * stab, array * array_value, int * result);
-
-int bind_gencode(unsigned int syn_level, func * func_value, symtab * stab,
-                 bind * bind_value, int * result);
-int bind_list_gencode(unsigned int syn_level, func * func_value, symtab * stab,
-                      bind_list * list, int * result);                 
-
-int except_gencode(unsigned int syn_level, func * func_value, symtab * stab,
-                   except * value, int * result);
-int except_list_gencode(unsigned int syn_levl, func * func_value, symtab * stab,
-                        except_list * list, int * result);
-
-int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * freevar_value,
-                                  int * result);
-int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result);
-int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
-                                    int * result);
-int func_gencode_freevars_qualifier(func * func_value, symtab * stab,
-                                    qualifier * value, int * result);
-int func_gencode_freevars_qualifier_list(func * func_value, symtab * stab,
-                                         qualifier_list * list, int * result);
-int func_gencode_freevars_listcomp(func * func_value, symtab * stab,
-                                   listcomp * value, int * result);
-int func_gencode_freevars_array(func * func_value, symtab * stab, array * array_value,
-                                int * result);
-int func_gencode_freevars_bind(func * func_value, symtab * stab, bind * bind_value,
-                               int * result);
-int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
-                                    int * result);
-int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
-                                    int * result);
-int func_gencode_freevars_except(func * func_value, symtab * stab, except * except_value,
-                                 int * result);
-int func_gencode_freevars_except_list(func * func_value, symtab * stab, except_list * list,
-                                      int * result);
-int func_gencode_freevars_func_except(func * func_value, symtab * stab, func_except * value,
-                                 int * result);
-int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_value,
-                               int * result);
-int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list * list,
-                                    int * result);
-int func_gencode_freevars(func * func_value, symtab * stab, int * result);
-
-int func_gencode_ffi(unsigned int syn_level, func * func_value, int * result);
-int func_gencode_native(unsigned int syn_level, func * func_value, int * result);
-int func_gencode(unsigned int syn_level, func * func_value, int * result);
-int func_list_gencode(unsigned int syn_level, func_list * list, int * result);
-
-int enumtype_gencode(unsigned int syn_level, enumtype * value, int * result);
-int enumtype_list_gencode(unsigned int syn_level, enumtype_list * list, int * result);
-
-int record_gencode(unsigned int syn_level, record * value, int * result);
-int record_list_gencode(unsigned int syn_level, record_list * list, int * result);
-
-int never_gencode(never * nev);
 
 int expr_int_emit(expr * value, int stack_level, module * module_value,
                   int * result);
@@ -248,4 +170,6 @@ int never_emit(never * nev, module * module_value);
 int func_main_emit(never * nev, int stack_level, module * module_value,
                    int * result);
 
-#endif /* __GENCODE_H__ */
+#endif /* __EMIT_H__ */
+
+

@@ -21,6 +21,7 @@
  */
 #include "bytecode.h"
 #include "gencode.h"
+#include "emit.h"
 #include "libmath.h"
 #include "never.h"
 #include "optimize.h"
@@ -101,8 +102,7 @@ int nev_compile_prog(program * prog)
             ret = never_optimize(nev);
             if (ret == 0)
             {
-                ret = never_gencode(nev);
-                never_tailrec(nev);
+                ret = never_tailrec(nev);
                 if (ret == 0)
                 {
                     ret = never_emit(nev, prog->module_value);

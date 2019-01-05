@@ -166,7 +166,7 @@ int array_well_formed(expr * value, int * result)
     return 0;
 }
 
-int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                      int * result)
 {
     if (value->array.array_value->type == ARRAY_INIT)
@@ -176,7 +176,7 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
         if (value->array.array_value->elements != NULL)
         {
             expr_list_check_type(tab, value->array.array_value->elements,
-                                 syn_level, result);
+                                 func_value, syn_level, result);
         }
 
         if (value->array.array_value->ret != NULL)
@@ -203,7 +203,7 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
         if (value->array.array_value->elements != NULL)
         {
             expr_list_check_type(tab, value->array.array_value->elements,
-                                 syn_level, result);
+                                 func_value, syn_level, result);
         }
     }
     else if (value->array.array_value->type == ARRAY_DIMS)
@@ -211,7 +211,7 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
         if (value->array.array_value->dims != NULL)
         {
             array_dims_check_type_expr_list(tab, value->array.array_value->dims,
-                                            syn_level, result);
+                                            func_value, syn_level, result);
         }
 
         if (param_is_dynamic_array(value->array.array_value->ret) == TYPECHECK_FAIL)
@@ -240,10 +240,10 @@ int array_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-int expr_array_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_array_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                           int * result)
 {
-    array_check_type(tab, value, syn_level, result);
+    array_check_type(tab, value, func_value, syn_level, result);
 
     return 0;
 }

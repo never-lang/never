@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include "typecheck.h"
+#include "gencode.h"
 #include "symtab.h"
 #include "tailrec.h"
 #include "tcheckarr.h"
@@ -28,6 +29,96 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+
+int enumtype_enum_enumerator_list(enumerator_list * list)
+{
+    int index = 0;
+    enumerator_list_node * node = NULL;
+    
+    node = list->tail;
+    while (node != NULL)
+    {
+        enumerator * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+int record_enum_param_list(param_list * params)
+{
+    int index = 0;
+    param_list_node * node = NULL;
+    
+    node = params->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+int func_enum_param_list(param_list * params)
+{
+    int index = 0;
+    param_list_node * node = NULL;
+
+    node = params->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL)
+        {
+            value->index = -(index++);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+int func_enum_bind_list(bind_list * list, int start)
+{
+    int index = start;
+
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_enum_func_list(func_list * list, int start)
+{
+    int index = start;
+
+    func_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        func * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
 
 int expr_set_return_type(expr * value, param * ret)
 {
@@ -744,10 +835,10 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     return 0;
 }
 
-int expr_neg_check_type(symtab * tab, expr * value, unsigned int syn_level,
-                        int * result)
+int expr_neg_check_type(symtab * tab, expr * value, func * func_value, 
+                        unsigned int syn_level, int * result)
 {
-    expr_check_type(tab, value->left, syn_level, result);
+    expr_check_type(tab, value->left, func_value, syn_level, result);
     if (value->left->comb.comb == COMB_TYPE_INT)
     {
         value->comb.comb = COMB_TYPE_INT;
@@ -781,11 +872,11 @@ int expr_neg_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-int expr_add_sub_check_type(symtab * tab, expr * value, unsigned int syn_level,
-                            int * result)
+int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value, 
+                            unsigned int syn_level, int * result)
 {
-    expr_check_type(tab, value->left, syn_level, result);
-    expr_check_type(tab, value->right, syn_level, result);
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    expr_check_type(tab, value->right, func_value, syn_level, result);
     if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
     {
@@ -870,11 +961,11 @@ int expr_add_sub_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-int expr_mul_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                         int * result)
 {
-    expr_check_type(tab, value->left, syn_level, result);
-    expr_check_type(tab, value->right, syn_level, result);
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    expr_check_type(tab, value->right, func_value, syn_level, result);
     if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
     {
@@ -976,11 +1067,11 @@ int expr_mul_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-int expr_div_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_div_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                         int * result)
 {
-    expr_check_type(tab, value->left, syn_level, result);
-    expr_check_type(tab, value->right, syn_level, result);
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    expr_check_type(tab, value->right, func_value, syn_level, result);
     
     if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
@@ -1021,11 +1112,11 @@ int expr_div_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                         int * result)
 {
-    expr_check_type(tab, value->left, syn_level, result);
-    expr_check_type(tab, value->right, syn_level, result);
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    expr_check_type(tab, value->right, func_value, syn_level, result);
 
     if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
@@ -1115,12 +1206,12 @@ int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_cond_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                          int * result)
 {
-    expr_check_type(tab, value->left, syn_level, result);
-    expr_check_type(tab, value->middle, syn_level, result);
-    expr_check_type(tab, value->right, syn_level, result);
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    expr_check_type(tab, value->middle, func_value, syn_level, result);
+    expr_check_type(tab, value->right, func_value, syn_level, result);
 
     if (value->left->comb.comb != COMB_TYPE_INT)
     {
@@ -1216,12 +1307,12 @@ int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-int array_dims_check_type_expr(symtab * tab, expr * value, unsigned int syn_level,
+int array_dims_check_type_expr(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                                int * result)
 {
     int res = TYPECHECK_SUCC;
 
-    expr_check_type(tab, value, syn_level, result);
+    expr_check_type(tab, value, func_value, syn_level, result);
     if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         expr_conv(value, EXPR_FLOAT_TO_INT);
@@ -1238,7 +1329,7 @@ int array_dims_check_type_expr(symtab * tab, expr * value, unsigned int syn_leve
 }
 
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
-                                    unsigned int syn_level, int * result)
+                                    func * func_value, unsigned int syn_level, int * result)
 {
     int res = TYPECHECK_SUCC;
     
@@ -1248,7 +1339,7 @@ int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
         expr * value = node->value;
         if (value != NULL)
         {
-            if (array_dims_check_type_expr(tab, value, syn_level, result) == TYPECHECK_FAIL)
+            if (array_dims_check_type_expr(tab, value, func_value, syn_level, result) == TYPECHECK_FAIL)
             {
                 res = TYPECHECK_FAIL;
             }
@@ -1260,12 +1351,12 @@ int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
 }
 
 int expr_array_deref_check_type(symtab * tab, expr * value,
-                                unsigned int syn_level, int * result)
+                                func * func_value, unsigned int syn_level, int * result)
 {
-    expr_check_type(tab, value->array_deref.array_expr, syn_level, result);
+    expr_check_type(tab, value->array_deref.array_expr, func_value, syn_level, result);
     if (value->array_deref.ref != NULL)
     {
-        expr_list_check_type(tab, value->array_deref.ref, syn_level, result);
+        expr_list_check_type(tab, value->array_deref.ref, func_value, syn_level, result);
     }
 
     if (value->array_deref.array_expr->comb.comb == COMB_TYPE_ARRAY)
@@ -1282,7 +1373,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
         else
         {
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
-                                                syn_level, result) == TYPECHECK_SUCC)
+                                                func_value, syn_level, result) == TYPECHECK_SUCC)
             {
                 expr_set_return_type(value,
                                      value->array_deref.array_expr->comb.comb_ret);
@@ -1307,13 +1398,13 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
     return 0;
 }
 
-int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                          int * result)
 {
-    expr_check_type(tab, value->call.func_expr, syn_level, result);
+    expr_check_type(tab, value->call.func_expr, func_value, syn_level, result);
     if (value->call.params != NULL)
     {
-        expr_list_check_type(tab, value->call.params, syn_level, result);
+        expr_list_check_type(tab, value->call.params, func_value, syn_level, result);
     }
 
     switch (value->call.func_expr->comb.comb)
@@ -1373,7 +1464,7 @@ int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }
 
-int qualifier_check_type(symtab * tab, qualifier * value, unsigned int syn_level, 
+int qualifier_check_type(symtab * tab, qualifier * value, func * func_value, unsigned int syn_level, 
                          int * result)
 {
     switch (value->type)
@@ -1384,7 +1475,7 @@ int qualifier_check_type(symtab * tab, qualifier * value, unsigned int syn_level
         case QUALIFIER_GENERATOR:
             if (value->expr_value != NULL)
             {
-                expr_check_type(tab, value->expr_value, syn_level, result);
+                expr_check_type(tab, value->expr_value, func_value, syn_level, result);
                 if (value->expr_value->comb.comb != COMB_TYPE_ARRAY ||
                     value->expr_value->comb.comb_dims != 1)
                 {
@@ -1398,7 +1489,7 @@ int qualifier_check_type(symtab * tab, qualifier * value, unsigned int syn_level
         case QUALIFIER_FILTER:
             if (value->expr_value != NULL)
             {
-                expr_check_type(tab, value->expr_value, syn_level, result);
+                expr_check_type(tab, value->expr_value, func_value, syn_level, result);
                 if (value->expr_value->comb.comb != COMB_TYPE_INT)
                 {
                     *result = TYPECHECK_FAIL;
@@ -1414,7 +1505,7 @@ int qualifier_check_type(symtab * tab, qualifier * value, unsigned int syn_level
 }
 
 int qualifier_list_check_type(symtab * tab, qualifier_list * list,
-                              unsigned int syn_level, int * result)
+                              func * func_value, unsigned int syn_level, int * result)
 {
     qualifier_list_node * node = list->tail;
 
@@ -1423,7 +1514,7 @@ int qualifier_list_check_type(symtab * tab, qualifier_list * list,
         qualifier * qualifier_value = node->value;
         if (qualifier_value != NULL)
         {
-            qualifier_check_type(tab, qualifier_value, syn_level, result);
+            qualifier_check_type(tab, qualifier_value, func_value, syn_level, result);
         }
         node = node->next;
     }
@@ -1432,7 +1523,7 @@ int qualifier_list_check_type(symtab * tab, qualifier_list * list,
 }
 
 int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
-                             unsigned int syn_level, int * result)
+                             func * func_value, unsigned int syn_level, int * result)
 {
     if (listcomp_value->stab == NULL)
     {
@@ -1440,9 +1531,9 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
     }
 
     qualifier_list_check_type(listcomp_value->stab, listcomp_value->list,
-                              syn_level, result);
+                              func_value, syn_level, result);
 
-    expr_check_type(listcomp_value->stab, listcomp_value->expr_value, syn_level,
+    expr_check_type(listcomp_value->stab, listcomp_value->expr_value, func_value, syn_level,
                     result);
 
     if (listcomp_value->ret != NULL)
@@ -1463,12 +1554,12 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
     return 0;
 }
 
-int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                          int * result)
 {
     if (value->attr.record_value != NULL)
     {
-        expr_check_type(tab, value->attr.record_value, syn_level, result);
+        expr_check_type(tab, value->attr.record_value, func_value, syn_level, result);
     }
 
     if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE_ID)
@@ -1523,7 +1614,7 @@ int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
     return 0;
 }        
 
-int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                     int * result)
 {
     switch (value->type)
@@ -1539,26 +1630,27 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         break;
     case EXPR_ID:
         expr_id_check_type(tab, value, result);
+        expr_id_gencode(syn_level, func_value, tab, value, result);
         break;
     case EXPR_NIL:
         value->comb.comb = COMB_TYPE_NIL;
         break;
     case EXPR_NEG:
-        expr_neg_check_type(tab, value, syn_level, result);
+        expr_neg_check_type(tab, value, func_value, syn_level, result);
     break;
     case EXPR_ADD:
     case EXPR_SUB:
-        expr_add_sub_check_type(tab, value, syn_level, result);
+        expr_add_sub_check_type(tab, value, func_value, syn_level, result);
     break;
     case EXPR_MUL:
-        expr_mul_check_type(tab, value, syn_level, result);
+        expr_mul_check_type(tab, value, func_value, syn_level, result);
     break;
     case EXPR_DIV:
-        expr_div_check_type(tab, value, syn_level, result);
+        expr_div_check_type(tab, value, func_value, syn_level, result);
     break;
     case EXPR_MOD:
-        expr_check_type(tab, value->left, syn_level, result);
-        expr_check_type(tab, value->right, syn_level, result);
+        expr_check_type(tab, value->left, func_value, syn_level, result);
+        expr_check_type(tab, value->right, func_value, syn_level, result);
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
         {
@@ -1579,8 +1671,8 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
     case EXPR_LTE:
     case EXPR_GTE:
     {
-        expr_check_type(tab, value->left, syn_level, result);
-        expr_check_type(tab, value->right, syn_level, result);
+        expr_check_type(tab, value->left, func_value, syn_level, result);
+        expr_check_type(tab, value->right, func_value, syn_level, result);
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
         {
@@ -1603,8 +1695,8 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
     break;
     case EXPR_EQ:
     case EXPR_NEQ:
-        expr_check_type(tab, value->left, syn_level, result);
-        expr_check_type(tab, value->right, syn_level, result);
+        expr_check_type(tab, value->left, func_value, syn_level, result);
+        expr_check_type(tab, value->right, func_value, syn_level, result);
         
         if (value->left->comb.comb == COMB_TYPE_NIL &&
             value->right->comb.comb == COMB_TYPE_NIL)
@@ -1676,8 +1768,8 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         break;
     case EXPR_AND:
     case EXPR_OR:
-        expr_check_type(tab, value->left, syn_level, result);
-        expr_check_type(tab, value->right, syn_level, result);
+        expr_check_type(tab, value->left, func_value, syn_level, result);
+        expr_check_type(tab, value->right, func_value, syn_level, result);
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
         {
@@ -1693,7 +1785,7 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_NOT:
-        expr_check_type(tab, value->left, syn_level, result);
+        expr_check_type(tab, value->left, func_value, syn_level, result);
         if (value->left->comb.comb == COMB_TYPE_INT)
         {
             value->comb.comb = COMB_TYPE_INT;
@@ -1707,21 +1799,21 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_SUP:
-        expr_check_type(tab, value->left, syn_level, result);
+        expr_check_type(tab, value->left, func_value, syn_level, result);
         value->comb = value->left->comb;
         break;
     case EXPR_COND:
-        expr_cond_check_type(tab, value, syn_level, result);
+        expr_cond_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_ARRAY:
-        expr_array_check_type(tab, value, syn_level, result);
+        expr_array_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_ARRAY_DEREF:
-        expr_array_deref_check_type(tab, value, syn_level, result);
+        expr_array_deref_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
-        expr_call_check_type(tab, value, syn_level, result);
+        expr_call_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_FUNC:
         if (value->func_value)
@@ -1736,16 +1828,16 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
-            expr_seq_check_type(tab, value, syn_level, result);
+            expr_seq_check_type(tab, value, func_value, syn_level, result);
         }
         break;
     case EXPR_ASS:
-        expr_ass_check_type(tab, value, syn_level, result);
+        expr_ass_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_WHILE:
     case EXPR_DO_WHILE:
-        expr_check_type(tab, value->whileloop.cond, syn_level, result);
-        expr_check_type(tab, value->whileloop.do_value, syn_level, result);
+        expr_check_type(tab, value->whileloop.cond, func_value, syn_level, result);
+        expr_check_type(tab, value->whileloop.do_value, func_value, syn_level, result);
         
         if (value->whileloop.cond->comb.comb == COMB_TYPE_INT)
         {
@@ -1761,10 +1853,10 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_FOR:
-        expr_check_type(tab, value->forloop.init, syn_level, result);
-        expr_check_type(tab, value->forloop.cond, syn_level, result);
-        expr_check_type(tab, value->forloop.incr, syn_level, result);
-        expr_check_type(tab, value->forloop.do_value, syn_level, result);
+        expr_check_type(tab, value->forloop.init, func_value, syn_level, result);
+        expr_check_type(tab, value->forloop.cond, func_value, syn_level, result);
+        expr_check_type(tab, value->forloop.incr, func_value, syn_level, result);
+        expr_check_type(tab, value->forloop.do_value, func_value, syn_level, result);
         
         if (value->forloop.cond->comb.comb == COMB_TYPE_INT)
         {
@@ -1780,11 +1872,11 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_BUILD_IN:
-        expr_list_check_type(tab, value->func_build_in.param, syn_level, result);
+        expr_list_check_type(tab, value->func_build_in.param, func_value, syn_level, result);
         expr_set_return_type(value, value->func_build_in.ret);
         break;
     case EXPR_INT_TO_FLOAT:
-        expr_check_type(tab, value->left, syn_level, result);
+        expr_check_type(tab, value->left, func_value, syn_level, result);
         if (value->left->comb.comb == COMB_TYPE_INT)
         {
             value->comb.comb = COMB_TYPE_FLOAT;
@@ -1798,7 +1890,7 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_FLOAT_TO_INT:
-        expr_check_type(tab, value->left, syn_level, result);
+        expr_check_type(tab, value->left, func_value, syn_level, result);
         if (value->left->comb.comb == COMB_TYPE_FLOAT)
         {
             value->comb.comb = COMB_TYPE_INT;
@@ -1812,7 +1904,7 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_LISTCOMP:
-        expr_listcomp_check_type(tab, value->listcomp_value, syn_level, result);
+        expr_listcomp_check_type(tab, value->listcomp_value, func_value, syn_level, result);
         if (*result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;
@@ -1827,13 +1919,13 @@ int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
         }
         break;
     case EXPR_ATTR:
-        expr_attr_check_type(tab, value, syn_level, result);
+        expr_attr_check_type(tab, value, func_value, syn_level, result);
         break;
     }
     return 0;
 }
 
-int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
+int expr_list_check_type(symtab * tab, expr_list * list, func * func_value, unsigned int syn_level,
                          int * result)
 {
     expr_list_node * node = list->tail;
@@ -1842,7 +1934,7 @@ int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
         expr * value = node->value;
         if (value != NULL)
         {
-            expr_check_type(tab, value, syn_level, result);
+            expr_check_type(tab, value, func_value, syn_level, result);
         }
         node = node->next;
     }
@@ -1850,12 +1942,12 @@ int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
     return 0;
 }
 
-int expr_seq_check_type(symtab * tab, expr * value, unsigned syn_level,
+int expr_seq_check_type(symtab * tab, expr * value, func * func_value, unsigned syn_level,
                         int * result)
 {
     expr_list_node * node = NULL;
 
-    expr_list_check_type(tab, value->seq.list, syn_level, result);
+    expr_list_check_type(tab, value->seq.list, func_value, syn_level, result);
 
     node = value->seq.list->head;
     if (node != NULL && node->value != NULL)
@@ -1876,7 +1968,7 @@ int expr_seq_check_type(symtab * tab, expr * value, unsigned syn_level,
     return 0;
 }
 
-int bind_check_type(symtab * tab, bind * value, unsigned int syn_level, 
+int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int syn_level, 
                     int * result)
 {
     switch (value->type)
@@ -1888,7 +1980,7 @@ int bind_check_type(symtab * tab, bind * value, unsigned int syn_level,
         case BIND_VAR:
             if (value->expr_value != NULL)
             {
-                expr_check_type(tab, value->expr_value, syn_level, result);
+                expr_check_type(tab, value->expr_value, func_value, syn_level, result);
                 symtab_add_bind_from_bind(tab, value, syn_level, result);
             }
         break;
@@ -1897,7 +1989,7 @@ int bind_check_type(symtab * tab, bind * value, unsigned int syn_level,
     return 0;
 }
 
-int bind_list_check_type(symtab * tab, bind_list * list, unsigned int syn_level,
+int bind_list_check_type(symtab * tab, bind_list * list, func * func_value, unsigned int syn_level,
                          int * result)
 {
     bind_list_node * node = list->tail;
@@ -1906,7 +1998,7 @@ int bind_list_check_type(symtab * tab, bind_list * list, unsigned int syn_level,
         bind * bind_value = node->value;
         if (bind_value != NULL)
         {
-            bind_check_type(tab, bind_value, syn_level, result);
+            bind_check_type(tab, bind_value, func_value, syn_level, result);
         }
         node = node->next;
     }
@@ -1962,8 +2054,8 @@ int except_check_id(except * value, int * result)
     return 0;
 }
 
-int except_check_type(symtab * tab, except * value, func * func_value,
-                      unsigned int syn_level, int * result)
+int except_check_type(symtab * tab, except * value,
+                      func * func_value, unsigned int syn_level, int * result)
 {
     if (value->id != NULL)
     {
@@ -1972,7 +2064,7 @@ int except_check_type(symtab * tab, except * value, func * func_value,
 
     if (value->expr_value != NULL)
     {
-        expr_check_type(tab, value->expr_value, syn_level, result);
+        expr_check_type(tab, value->expr_value, func_value, syn_level, result);
     }
     if (param_expr_cmp(func_value->decl->ret, value->expr_value) == TYPECHECK_FAIL)
     {
@@ -2017,7 +2109,7 @@ int func_except_check_type(symtab * tab, func_except * value, func * func_value,
     return 0;
 }
 
-int func_check_type_ffi(symtab * tab, func * func_value, unsigned int syn_level,
+int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                         int * result)
 {
     if (func_value->stab == NULL)
@@ -2038,9 +2130,11 @@ int func_check_type_ffi(symtab * tab, func * func_value, unsigned int syn_level,
     return 0;
 }                           
 
-int func_check_type_native(symtab * tab, func * func_value, unsigned int syn_level,
+int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                            int * result)
 {
+    int start = 1;
+
     if (func_value->stab == NULL)
     {
         func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);
@@ -2049,6 +2143,10 @@ int func_check_type_native(symtab * tab, func * func_value, unsigned int syn_lev
     {
         symtab_add_func_from_func(func_value->stab, func_value, syn_level - 1,
                                   result);
+    }
+    if (func_value->decl->params != NULL)
+    {
+        func_enum_param_list(func_value->decl->params);
     }
     if (func_value->decl->params != NULL)
     {
@@ -2064,15 +2162,19 @@ int func_check_type_native(symtab * tab, func * func_value, unsigned int syn_lev
         symtab_add_param_from_param_list(func_value->stab, func_value->decl->params,
                                          syn_level, result);
     }
-    if (func_value->except)
+    if (func_value->body && func_value->body->binds != NULL)
     {
-        func_except_check_type(func_value->stab, func_value->except, func_value,
-                               syn_level, result);
+        func_enum_bind_list(func_value->body->binds, start);
+        start += func_value->body->binds->count;
     }
     if (func_value->body && func_value->body->binds)
     {
         bind_list_check_type(func_value->stab, func_value->body->binds,
-                             syn_level, result);
+                             func_value, syn_level, result);
+    }
+    if (func_value->body && func_value->body->funcs != NULL)
+    {
+        func_enum_func_list(func_value->body->funcs, start);
     }
     if (func_value->body && func_value->body->funcs)
     {
@@ -2087,7 +2189,7 @@ int func_check_type_native(symtab * tab, func * func_value, unsigned int syn_lev
     }
     if (func_value->body && func_value->body->ret)
     {
-        expr_check_type(func_value->stab, func_value->body->ret, syn_level,
+        expr_check_type(func_value->stab, func_value->body->ret, func_value, syn_level,
                         result);
 
         if (param_expr_cmp(func_value->decl->ret, func_value->body->ret) ==
@@ -2099,6 +2201,14 @@ int func_check_type_native(symtab * tab, func * func_value, unsigned int syn_lev
                             func_value->decl->id);
         }
     }
+    if (func_value->except)
+    {
+        func_except_check_type(func_value->stab, func_value->except, func_value,
+                               syn_level, result);
+    }
+
+    /** set subfunction local/global indexes **/
+    func_gencode_freevars(func_value, func_value->stab, result);
 
     return 0;
 }
@@ -2112,10 +2222,10 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
             assert(0);
         break;
         case FUNC_TYPE_NATIVE:
-            func_check_type_native(tab, func_value, syn_level, result);
+            func_native_check_type(tab, func_value, syn_level, result);
         break;
         case FUNC_TYPE_FFI:
-            func_check_type_ffi(tab, func_value, syn_level, result);
+            func_ffi_check_type(tab, func_value, syn_level, result);
         break;
     }
 
@@ -2222,6 +2332,11 @@ int enumtype_check_type(symtab * stab, enumtype * value, int * result)
 {
     if (value->enums != NULL)
     {
+        enumtype_enum_enumerator_list(value->enums);
+    }
+
+    if (value->enums != NULL)
+    {
         enumerator_list_check_type(value->stab, value->enums, result);
     }
 
@@ -2284,6 +2399,11 @@ int record_check_type(symtab * stab, record * record_value, int * result)
 {
     if (record_value->params != NULL)
     {
+        record_enum_param_list(record_value->params);
+    }
+
+    if (record_value->params != NULL)
+    {
         param_list_check_type(stab, record_value->params, 0, result);
     }
     
@@ -2311,6 +2431,114 @@ int record_list_check_type(symtab * stab, record_list * list, int * result)
     }
 
     return 0;
+}
+
+
+int func_main_check_num_params(param_list * params)
+{
+    param_list_node * node = params->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value->type != PARAM_INT && value->type != PARAM_FLOAT)
+        {
+            return 0;
+        }
+        node = node->next;
+    }
+    return 1;
+}
+
+int func_main_check_type(symtab * tab, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(tab, "main", SYMTAB_LOOKUP_LOCAL);
+    if (entry != NULL)
+    {
+        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
+        {
+            func * func_value = entry->func_value;
+            if (func_value->decl->params != NULL &&
+                func_main_check_num_params(func_value->decl->params) == 0)
+            {
+                *result = TYPECHECK_FAIL;
+                print_error_msg(
+                    func_value->line_no,
+                    "function main can take only numerical parameters\n",
+                    func_value->decl->params->count);
+            }
+            if (func_value->decl->ret == NULL)
+            {
+                *result = TYPECHECK_FAIL;
+                print_error_msg(func_value->line_no,
+                                "incorrect function main return type\n");
+            }
+            else
+            {
+                if (param_is_num(func_value->decl->ret) == TYPECHECK_FAIL)
+                {
+                    *result = TYPECHECK_FAIL;
+                    print_error_msg(func_value->line_no,
+                                    "incorrect function main return type\n");
+                }
+            }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(0, "incorrect function main, expected function\n");
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(0, "function main is not defined\n");
+    }
+
+    return 0;
+}
+
+int never_sem_check(never * nev)
+{
+    int typecheck_res = TYPECHECK_SUCC;
+
+    if (nev->stab == NULL)
+    {
+        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
+    }
+
+    /* add enums to symtab */
+    if (nev->stab != NULL && nev->enums != NULL)
+    {
+        never_add_enumtype_list(nev->stab, nev->enums, &typecheck_res);
+    }
+    
+    /* check enums */
+    if (nev->enums != NULL)
+    {
+        enumtype_list_check_type(nev->stab, nev->enums, &typecheck_res);
+    }
+    
+    /* add records to symtab */
+    if (nev->stab != NULL && nev->records != NULL)
+    {
+        never_add_record_list(nev->stab, nev->records, &typecheck_res);
+    }
+
+    /* check records */
+    if (nev->records != NULL)
+    {
+        record_list_check_type(nev->stab, nev->records, &typecheck_res);
+    }
+
+    /* printf("---- check types ---\n"); */
+    never_check_type(nev, &typecheck_res);
+
+    /* printf("---- check function main\n"); */
+    func_main_check_type(nev->stab, &typecheck_res);
+
+    return typecheck_res;
 }
 
 /**
@@ -2674,112 +2902,5 @@ int print_functions(never * nev)
         print_func_list(nev->funcs, 1);
     }
     return 0;
-}
-
-int func_main_check_num_params(param_list * params)
-{
-    param_list_node * node = params->tail;
-    while (node != NULL)
-    {
-        param * value = node->value;
-        if (value->type != PARAM_INT && value->type != PARAM_FLOAT)
-        {
-            return 0;
-        }
-        node = node->next;
-    }
-    return 1;
-}
-
-int func_main_check_type(symtab * tab, int * result)
-{
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(tab, "main", SYMTAB_LOOKUP_LOCAL);
-    if (entry != NULL)
-    {
-        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
-        {
-            func * func_value = entry->func_value;
-            if (func_value->decl->params != NULL &&
-                func_main_check_num_params(func_value->decl->params) == 0)
-            {
-                *result = TYPECHECK_FAIL;
-                print_error_msg(
-                    func_value->line_no,
-                    "function main can take only numerical parameters\n",
-                    func_value->decl->params->count);
-            }
-            if (func_value->decl->ret == NULL)
-            {
-                *result = TYPECHECK_FAIL;
-                print_error_msg(func_value->line_no,
-                                "incorrect function main return type\n");
-            }
-            else
-            {
-                if (param_is_num(func_value->decl->ret) == TYPECHECK_FAIL)
-                {
-                    *result = TYPECHECK_FAIL;
-                    print_error_msg(func_value->line_no,
-                                    "incorrect function main return type\n");
-                }
-            }
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            print_error_msg(0, "incorrect function main, expected function\n");
-        }
-    }
-    else
-    {
-        *result = TYPECHECK_FAIL;
-        print_error_msg(0, "function main is not defined\n");
-    }
-
-    return 0;
-}
-
-int never_sem_check(never * nev)
-{
-    int typecheck_res = TYPECHECK_SUCC;
-
-    if (nev->stab == NULL)
-    {
-        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
-    }
-
-    /* add enums to symtab */
-    if (nev->stab != NULL && nev->enums != NULL)
-    {
-        never_add_enumtype_list(nev->stab, nev->enums, &typecheck_res);
-    }
-    
-    /* check enums */
-    if (nev->enums != NULL)
-    {
-        enumtype_list_check_type(nev->stab, nev->enums, &typecheck_res);
-    }
-    
-    /* add records to symtab */
-    if (nev->stab != NULL && nev->records != NULL)
-    {
-        never_add_record_list(nev->stab, nev->records, &typecheck_res);
-    }
-
-    /* check records */
-    if (nev->records != NULL)
-    {
-        record_list_check_type(nev->stab, nev->records, &typecheck_res);
-    }
-
-    /* printf("---- check types ---\n"); */
-    never_check_type(nev, &typecheck_res);
-
-    /* printf("---- check function main\n"); */
-    func_main_check_type(nev->stab, &typecheck_res);
-
-    return typecheck_res;
 }
 

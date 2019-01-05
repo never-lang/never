@@ -30,6 +30,12 @@
 typedef struct qualifier qualifier;
 typedef struct qualifier_list qualifier_list;
 
+int enumtype_enum_enumerator_list(enumerator_list * list);
+int record_enum_param_list(param_list * params);
+int func_enum_param_list(param_list * params);
+int func_enum_bind_list(bind_list * list, int start);
+int func_enum_func_list(func_list * list, int start);
+
 int expr_set_return_type(expr * value, param * ret);
 
 int param_cmp(param * param_one, param * param_two);
@@ -61,10 +67,10 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
 int symtab_add_func_from_func_list(symtab * tab, func_list * list,
                                    unsigned int syn_level, int * result);
 
-int array_dims_check_type_expr(symtab * tab, expr * value, unsigned syn_level,
-                               int * result);
+int array_dims_check_type_expr(symtab * tab, expr * value, func * func_value,
+                               unsigned syn_level, int * result);
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
-                                    unsigned int syn_level, int * result);
+                                    func * func_value, unsigned int syn_level, int * result);
 
 int param_enum_record_check_type(symtab * tab, param * param_value,
                                  unsigned int syn_level, int * result);
@@ -74,36 +80,36 @@ int param_list_check_type(symtab * tab, param_list * list,
                           unsigned int syn_level, int * result);                     
 
 int expr_id_check_type(symtab * tab, expr * value, int * result);
-int expr_neg_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result);
-int expr_add_sub_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_neg_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
+int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                             int * result);
-int expr_mul_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result);
-int expr_div_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result);
-int expr_ass_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
+int expr_div_check_type(symtab * tab, expr * value, func * func_valeu, unsigned int syn_level, int * result);
+int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                         int * result);
-int expr_array_deref_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_array_deref_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                                 int * result);
-int expr_call_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                          int * result);
-int expr_cond_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_cond_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                          int * result);
-int qualifier_check_type(symtab * tab, qualifier * value, unsigned int syn_level, 
+int qualifier_check_type(symtab * tab, qualifier * value, func * func_value, unsigned int syn_level, 
                          int * result);
-int qualifier_list_check_type(symtab * tab, qualifier_list * list,
+int qualifier_list_check_type(symtab * tab, qualifier_list * list, func * func_value,
                               unsigned int syn_level, int * result);
 int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
-                             unsigned int syn_level, int * result);
-int expr_attr_check_type(symtab * tab, expr * value, unsigned int syn_level,
+                              func * func_value, unsigned int syn_level,int * result);
+int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                          int * result);
-int expr_check_type(symtab * tab, expr * value, unsigned int syn_level,
+int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                     int * result);
-int expr_list_check_type(symtab * tab, expr_list * list, unsigned int syn_level,
+int expr_list_check_type(symtab * tab, expr_list * list, func * func_value, unsigned int syn_level,
                          int * result);
-int expr_seq_check_type(symtab * tab, expr * value, unsigned syn_level,
+int expr_seq_check_type(symtab * tab, expr * value, func * func_value, unsigned syn_level,
                         int * result);
-int bind_check_type(symtab * tab, bind * value, unsigned int syn_level,
+int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int syn_level,
                     int * result);
-int bind_list_check_type(symtab * tab, bind_list * list, unsigned int syn_level,
+int bind_list_check_type(symtab * tab, bind_list * list, func * func_value, unsigned int syn_level,
                          int * result);
 int except_check_type(symtab * tab, except * value, func * func_value,
                       unsigned int syn_level, int * result);
@@ -111,9 +117,9 @@ int except_list_check_type(symtab * tab, except_list * list, func * func_value,
                            unsigned int syn_level, int * result);                      
 int func_except_check_type(symtab * tab, func_except * value, func * func_value, 
                            unsigned int syn_level, int * result);
-int func_check_type_ffi(symtab * tab, func * func_value, unsigned int syn_level,
+int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                         int * result);
-int func_check_type_native(symtab * tab, func * func_value, unsigned int syn_level,
+int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                            int * result);
 int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                     int * result);
@@ -159,3 +165,4 @@ int func_main_check_type(symtab * tab, int * result);
 int never_sem_check(never * nev);
 
 #endif /* __TYPECHECK_H__ */
+
