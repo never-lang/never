@@ -105,8 +105,8 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     freevar_value =
                         freevar_list_add(func_value->freevars, value->id.id);
 
-                    freevar_value->orig.type = FREEVAR_LOCAL;
-                    freevar_value->orig.local_value = param_value;
+                    freevar_value->orig.type = FREEVAR_PARAM;
+                    freevar_value->orig.param_value = param_value;
 
                     value->id.id_type_value = ID_TYPE_GLOBAL;
                     value->id.id_freevar_value = freevar_value;
@@ -205,7 +205,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
             value->line_no,
             "cannot find variable %s, at this stage it is very bad\n",
             value->id.id);
-        /* assert(0); */
+        assert(0);
     }
 
     return 0;
@@ -228,8 +228,8 @@ int func_gencode_freevars_add_global_freevar(func * func_value, freevar * freeva
 
     freevar_sup_value->orig = freevar_value->orig;
 
-    freevar_value->src.type = FREEVAR_GLOBAL;
-    freevar_value->src.global_value = freevar_sup_value;
+    freevar_value->src.type = FREEVAR_FREEVAR;
+    freevar_value->src.freevar_value = freevar_sup_value;
 
     return 0;
 } 
@@ -251,11 +251,11 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
             freevar_value->src.type = FREEVAR_FUNC;
             freevar_value->src.func_value = entry->func_value;
         }
-        else if (entry->type == SYMTAB_PARAM && freevar_value->orig.type == FREEVAR_LOCAL &&
-                 entry->param_value == freevar_value->orig.local_value)
+        else if (entry->type == SYMTAB_PARAM && freevar_value->orig.type == FREEVAR_PARAM &&
+                 entry->param_value == freevar_value->orig.param_value)
         {
-            freevar_value->src.type = FREEVAR_LOCAL;
-            freevar_value->src.local_value = entry->param_value;
+            freevar_value->src.type = FREEVAR_PARAM;
+            freevar_value->src.param_value = entry->param_value;
         }
         else if (entry->type == SYMTAB_BIND && freevar_value->orig.type == FREEVAR_BIND &&
                  entry->bind_value == freevar_value->orig.bind_value)

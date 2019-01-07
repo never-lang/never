@@ -1,0 +1,22 @@
+
+func test() -> () -> int
+{
+    var x = 10;
+    func nested() -> () -> int {
+        var f1 = let func () -> int { x };
+        var x = 20;
+        var f2 = let func () -> int { x };
+                
+        f1
+    }
+    
+    nested()
+}
+
+func main() -> int
+{
+    print(test()());
+
+    0
+}
+

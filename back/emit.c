@@ -88,18 +88,18 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
 {
     bytecode bc = { 0 };
 
-    if (value->src.local_value->type == PARAM_DIM)
+    if (value->src.param_value->type == PARAM_DIM)
     {
         bc.type = BYTECODE_ID_DIM_LOCAL;
         bc.id_dim_local.stack_level = stack_level;
-        bc.id_dim_local.index = value->src.local_value->array->index;
-        bc.id_dim_local.dim_index = value->src.local_value->index;
+        bc.id_dim_local.index = value->src.param_value->array->index;
+        bc.id_dim_local.dim_index = value->src.param_value->index;
     }
     else
     {
         bc.type = BYTECODE_ID_LOCAL;
         bc.id_local.stack_level = stack_level;
-        bc.id_local.index = value->src.local_value->index;
+        bc.id_local.index = value->src.param_value->index;
     }
 
     bytecode_add(module_value->code, &bc);
@@ -146,7 +146,7 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
         print_error_msg(0, "unknown freevar %s during emit\n", value->id);
         assert(0);
         break;
-    case FREEVAR_LOCAL:
+    case FREEVAR_PARAM:
         func_freevar_id_local_emit(value, stack_level, module_value, result);
         break;
     case FREEVAR_QUALIFIER:
@@ -155,9 +155,9 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
     case FREEVAR_BIND:
         func_freevar_id_bind_emit(value, stack_level, module_value, result);
         break;
-    case FREEVAR_GLOBAL:
+    case FREEVAR_FREEVAR:
         bc.type = BYTECODE_ID_GLOBAL;
-        bc.id_global.index = value->src.global_value->index;
+        bc.id_global.index = value->src.freevar_value->index;
 
         bytecode_add(module_value->code, &bc);
         break;

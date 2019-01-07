@@ -1630,7 +1630,10 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         break;
     case EXPR_ID:
         expr_id_check_type(tab, value, result);
-        expr_id_gencode(syn_level, func_value, tab, value, result);
+        if (*result == TYPECHECK_SUCC)
+        {
+            expr_id_gencode(syn_level, func_value, tab, value, result);
+        }
         break;
     case EXPR_NIL:
         value->comb.comb = COMB_TYPE_NIL;

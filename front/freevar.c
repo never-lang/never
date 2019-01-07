@@ -33,9 +33,9 @@ freevar * freevar_new(char * id, int index)
     value->id = id;
     value->index = index;
     value->orig.type = FREEVAR_UNKNOWN;
-    value->orig.local_value = NULL;
+    value->orig.param_value = NULL;
     value->src.type = FREEVAR_UNKNOWN;
-    value->src.local_value = NULL;
+    value->src.param_value = NULL;
 
     return value;
 }
@@ -149,10 +149,10 @@ void freevar_loc_print(freevar_loc * value)
     case FREEVAR_UNKNOWN:
         assert(0);
         break;
-    case FREEVAR_LOCAL:
-        if (value->local_value)
+    case FREEVAR_PARAM:
+        if (value->param_value)
         {
-            param_print(value->local_value);
+            param_print(value->param_value);
         }
         break;
     case FREEVAR_QUALIFIER:
@@ -167,10 +167,10 @@ void freevar_loc_print(freevar_loc * value)
             bind_print(value->bind_value);
         }
         break;
-    case FREEVAR_GLOBAL:
-        if (value->global_value)
+    case FREEVAR_FREEVAR:
+        if (value->freevar_value)
         {
-            freevar_print(value->global_value);
+            freevar_print(value->freevar_value);
         }
         break;
     case FREEVAR_FUNC:
@@ -213,14 +213,14 @@ char * freevar_type_str(freevar_type type)
     {
     case FREEVAR_UNKNOWN:
         return "FREEVAR_UNKNOWN";
-    case FREEVAR_LOCAL:
-        return "FREEVAR_LOCAL";
+    case FREEVAR_PARAM:
+        return "FREEVAR_PARAM";
     case FREEVAR_QUALIFIER:
         return "FREEVAR_QUALIFIER";
     case FREEVAR_BIND:
         return "FREEVAR_BIND";
-    case FREEVAR_GLOBAL:
-        return "FREEVAR_GLOBAL";
+    case FREEVAR_FREEVAR:
+        return "FREEVAR_FREEVAR";
     case FREEVAR_FUNC:
         return "FREEVAR_FUNC";
     }

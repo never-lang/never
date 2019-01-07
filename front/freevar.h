@@ -27,10 +27,10 @@
 typedef enum freevar_type
 {
     FREEVAR_UNKNOWN = 0,
-    FREEVAR_LOCAL = 1,
-    FREEVAR_QUALIFIER = 2,
-    FREEVAR_BIND = 3,
-    FREEVAR_GLOBAL = 4,
+    FREEVAR_PARAM = 1,
+    FREEVAR_BIND = 2,
+    FREEVAR_QUALIFIER = 3,
+    FREEVAR_FREEVAR = 4,
     FREEVAR_FUNC = 5
 } freevar_type;
 
@@ -38,10 +38,10 @@ typedef struct freevar_loc
 {
     freevar_type type;
     union {
-        struct param * local_value;
+        struct param * param_value;
         struct bind * bind_value;
         struct qualifier * qualifier_value;
-        struct freevar * global_value;
+        struct freevar * freevar_value;
         struct func * func_value;
     };
 } freevar_loc;

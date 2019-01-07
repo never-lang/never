@@ -9,6 +9,9 @@ func test() -> int
         
         print(v1);
         print(v2);
+        
+        assert(v1 == 10);
+        assert(v2 == 20);
 
         0
     }
