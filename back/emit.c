@@ -88,18 +88,18 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
 {
     bytecode bc = { 0 };
 
-    if (value->local_value->type == PARAM_DIM)
+    if (value->src.local_value->type == PARAM_DIM)
     {
         bc.type = BYTECODE_ID_DIM_LOCAL;
         bc.id_dim_local.stack_level = stack_level;
-        bc.id_dim_local.index = value->local_value->array->index;
-        bc.id_dim_local.dim_index = value->local_value->index;
+        bc.id_dim_local.index = value->src.local_value->array->index;
+        bc.id_dim_local.dim_index = value->src.local_value->index;
     }
     else
     {
         bc.type = BYTECODE_ID_LOCAL;
         bc.id_local.stack_level = stack_level;
-        bc.id_local.index = value->local_value->index;
+        bc.id_local.index = value->src.local_value->index;
     }
 
     bytecode_add(module_value->code, &bc);
@@ -114,7 +114,7 @@ int func_freevar_id_bind_emit(freevar * value, int stack_level,
 
     bc.type = BYTECODE_ID_LOCAL;
     bc.id_local.stack_level = stack_level;
-    bc.id_local.index = value->bind_value->index;
+    bc.id_local.index = value->src.bind_value->index;
 
     bytecode_add(module_value->code, &bc);
 
@@ -127,7 +127,7 @@ int func_freevar_id_qualifier_emit(freevar * value, int stack_level,
     bytecode bc = { 0 };
 
     bc.type = BYTECODE_ID_LOCAL;
-    bc.id_local.stack_level = stack_level - value->qualifier_value->stack_level - 3;
+    bc.id_local.stack_level = stack_level - value->src.qualifier_value->stack_level - 3;
     bc.id_local.index = 0;
     
     bytecode_add(module_value->code, &bc);
@@ -140,7 +140,7 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
 {
     bytecode bc = { 0 };
 
-    switch (value->type)
+    switch (value->src.type)
     {
     case FREEVAR_UNKNOWN:
         print_error_msg(0, "unknown freevar %s during emit\n", value->id);
@@ -157,14 +157,14 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
         break;
     case FREEVAR_GLOBAL:
         bc.type = BYTECODE_ID_GLOBAL;
-        bc.id_global.index = value->global_value->index;
+        bc.id_global.index = value->src.global_value->index;
 
         bytecode_add(module_value->code, &bc);
         break;
     case FREEVAR_FUNC:
         bc.type = BYTECODE_ID_LOCAL;
         bc.id_local.stack_level = stack_level;
-        bc.id_local.index = value->func_value->index;
+        bc.id_local.index = value->src.func_value->index;
 
         bytecode_add(module_value->code, &bc);
         break;
@@ -1330,7 +1330,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         expr_array_deref_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_CALL:
-        if (value->call.func_expr->id.id_type_value == ID_TYPE_RECORD)
+        if (value->call.func_expr->comb.comb == COMB_TYPE_RECORD_ID)
         {
             expr_record_emit(value, stack_level, module_value, list_weak, result);
         }

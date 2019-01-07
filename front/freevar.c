@@ -30,11 +30,12 @@ freevar * freevar_new(char * id, int index)
 {
     freevar * value = malloc(sizeof(freevar));
 
-    value->type = FREEVAR_UNKNOWN;
     value->id = id;
     value->index = index;
-    value->local_value = NULL;
-    value->global_value = NULL;
+    value->orig.type = FREEVAR_UNKNOWN;
+    value->orig.local_value = NULL;
+    value->src.type = FREEVAR_UNKNOWN;
+    value->src.local_value = NULL;
 
     return value;
 }
@@ -141,11 +142,8 @@ void freevar_list_add_end(freevar_list * list, freevar * value)
     }
 }
 
-void freevar_print(freevar * value)
+void freevar_loc_print(freevar_loc * value)
 {
-    printf("freevar %s %d %s\n", freevar_type_str(value->type), value->index,
-           value->id);
-
     switch (value->type)
     {
     case FREEVAR_UNKNOWN:
@@ -182,6 +180,17 @@ void freevar_print(freevar * value)
         }
         break;
     }
+}
+
+void freevar_print(freevar * value)
+{
+    printf("freevar %s %s %d %s\n",
+           freevar_type_str(value->orig.type),
+           freevar_type_str(value->src.type),
+           value->index, value->id);
+
+    freevar_loc_print(&value->orig);
+    freevar_loc_print(&value->src);
 }
 
 void freevar_list_print(freevar_list * list)

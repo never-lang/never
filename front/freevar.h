@@ -34,11 +34,9 @@ typedef enum freevar_type
     FREEVAR_FUNC = 5
 } freevar_type;
 
-typedef struct freevar
+typedef struct freevar_loc
 {
     freevar_type type;
-    char * id;
-    int index;
     union {
         struct param * local_value;
         struct bind * bind_value;
@@ -46,6 +44,14 @@ typedef struct freevar
         struct freevar * global_value;
         struct func * func_value;
     };
+} freevar_loc;
+
+typedef struct freevar
+{
+    char * id;
+    int index;
+    freevar_loc orig;
+    freevar_loc src;
 } freevar;
 
 typedef struct freevar_list_node
@@ -76,6 +82,7 @@ freevar * freevar_list_add(freevar_list * list, char * id);
 void freevar_list_add_beg(freevar_list * list, freevar * value);
 void freevar_list_add_end(freevar_list * list, freevar * value);
 
+void freevar_loc_print(freevar_loc * value);
 void freevar_print(freevar * value);
 void freevar_list_print(freevar_list * list);
 

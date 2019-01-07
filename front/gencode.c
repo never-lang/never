@@ -69,8 +69,8 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     freevar_value =
                         freevar_list_add(func_value->freevars, value->id.id);
 
-                    freevar_value->type = FREEVAR_FUNC;
-                    freevar_value->func_value = sup_func_value;
+                    freevar_value->orig.type = FREEVAR_FUNC;
+                    freevar_value->orig.func_value = sup_func_value;
 
                     value->id.id_type_value = ID_TYPE_GLOBAL;
                     value->id.id_freevar_value = freevar_value;
@@ -105,6 +105,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     freevar_value =
                         freevar_list_add(func_value->freevars, value->id.id);
 
+                    freevar_value->orig.type = FREEVAR_LOCAL;
+                    freevar_value->orig.local_value = param_value;
+
                     value->id.id_type_value = ID_TYPE_GLOBAL;
                     value->id.id_freevar_value = freevar_value;
                 }
@@ -135,6 +138,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     
                     freevar_value =
                         freevar_list_add(func_value->freevars, value->id.id);
+
+                    freevar_value->orig.type = FREEVAR_BIND;
+                    freevar_value->orig.bind_value = bind_value;
                     
                     value->id.id_type_value = ID_TYPE_GLOBAL;
                     value->id.id_freevar_value = freevar_value;
@@ -143,6 +149,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
             else
             {
                 fprintf(stderr, "unknown bind type %d\n", bind_value->type);
+                assert(0);
             }            
         }
         else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
@@ -163,6 +170,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 
                 freevar_value =
                     freevar_list_add(func_value->freevars, value->id.id);
+
+                freevar_value->orig.type = FREEVAR_QUALIFIER;
+                freevar_value->orig.qualifier_value = qualifier_value;
                 
                 value->id.id_type_value = ID_TYPE_GLOBAL;
                 value->id.id_freevar_value = freevar_value;
@@ -184,6 +194,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
         }
         else
         {
+            fprintf(stderr, "unknown record type\n");
             assert(0);
         }
     }
@@ -194,7 +205,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
             value->line_no,
             "cannot find variable %s, at this stage it is very bad\n",
             value->id.id);
-        assert(0);
+        /* assert(0); */
     }
 
     return 0;
@@ -203,6 +214,26 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
 /**
  * free variables
  */
+int func_gencode_freevars_add_global_freevar(func * func_value, freevar * freevar_value)
+{
+    freevar * freevar_sup_value = NULL;
+
+    if (func_value->freevars == NULL)
+    {
+         func_value->freevars = freevar_list_new();
+    }
+
+    freevar_sup_value =
+            freevar_list_add(func_value->freevars, freevar_value->id);
+
+    freevar_sup_value->orig = freevar_value->orig;
+
+    freevar_value->src.type = FREEVAR_GLOBAL;
+    freevar_value->src.global_value = freevar_sup_value;
+
+    return 0;
+} 
+ 
 int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * freevar_value,
                                   int * result)
 {
@@ -214,44 +245,38 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
     entry = symtab_lookup(stab, freevar_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL)
     {
-        if (entry->type == SYMTAB_FUNC && entry->func_value)
+        if (entry->type == SYMTAB_FUNC && freevar_value->orig.type == FREEVAR_FUNC &&
+            entry->func_value == freevar_value->orig.func_value)
         {
-            freevar_value->type = FREEVAR_FUNC;
-            freevar_value->func_value = entry->func_value;
+            freevar_value->src.type = FREEVAR_FUNC;
+            freevar_value->src.func_value = entry->func_value;
         }
-        else if (entry->type == SYMTAB_PARAM && entry->param_value)
+        else if (entry->type == SYMTAB_PARAM && freevar_value->orig.type == FREEVAR_LOCAL &&
+                 entry->param_value == freevar_value->orig.local_value)
         {
-            freevar_value->type = FREEVAR_LOCAL;
-            freevar_value->local_value = entry->param_value;
+            freevar_value->src.type = FREEVAR_LOCAL;
+            freevar_value->src.local_value = entry->param_value;
         }
-        else if (entry->type == SYMTAB_BIND && entry->bind_value)
+        else if (entry->type == SYMTAB_BIND && freevar_value->orig.type == FREEVAR_BIND &&
+                 entry->bind_value == freevar_value->orig.bind_value)
         {
-            freevar_value->type = FREEVAR_BIND;
-            freevar_value->bind_value = entry->bind_value;
+            freevar_value->src.type = FREEVAR_BIND;
+            freevar_value->src.bind_value = entry->bind_value;
         }
-        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value)
+        else if (entry->type == SYMTAB_QUALIFIER && freevar_value->orig.type == FREEVAR_QUALIFIER &&
+                 entry->qualifier_value == freevar_value->orig.qualifier_value)
         {
-            freevar_value->type = FREEVAR_QUALIFIER;
-            freevar_value->qualifier_value = entry->qualifier_value;
+            freevar_value->src.type = FREEVAR_QUALIFIER;
+            freevar_value->src.qualifier_value = entry->qualifier_value;
         }
         else
         {
-            assert(0);
+            func_gencode_freevars_add_global_freevar(func_value, freevar_value);
         }
     }
     else
     {
-        freevar * freevar_sup_value = NULL;
-        if (func_value->freevars == NULL)
-        {
-            func_value->freevars = freevar_list_new();
-        }
-
-        freevar_sup_value =
-            freevar_list_add(func_value->freevars, freevar_value->id);
-
-        freevar_value->type = FREEVAR_GLOBAL;
-        freevar_value->global_value = freevar_sup_value;
+        func_gencode_freevars_add_global_freevar(func_value, freevar_value);
     }
 
     return 0;
