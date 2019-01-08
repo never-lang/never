@@ -1,0 +1,19 @@
+
+func test(arr[D] -> int) -> () -> int
+{
+    func getD() -> int {
+        D
+    }
+    
+    getD
+}
+
+func main() -> int
+{
+    var dim = test([1, 2, 3, 4, 5] -> int);
+    
+    assert(dim() == 5);
+
+    0
+}
+

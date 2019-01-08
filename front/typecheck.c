@@ -2165,6 +2165,11 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
         symtab_add_param_from_param_list(func_value->stab, func_value->decl->params,
                                          syn_level, result);
     }
+    if (func_value->except)
+    {
+        func_except_check_type(func_value->stab, func_value->except, func_value,
+                               syn_level, result);
+    }
     if (func_value->body && func_value->body->binds != NULL)
     {
         func_enum_bind_list(func_value->body->binds, start);
@@ -2203,11 +2208,6 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
                             "incorrect return type in function %s\n",
                             func_value->decl->id);
         }
-    }
-    if (func_value->except)
-    {
-        func_except_check_type(func_value->stab, func_value->except, func_value,
-                               syn_level, result);
     }
 
     /** set subfunction local/global indexes **/
