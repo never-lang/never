@@ -1018,8 +1018,4 @@ You can find more information about Never at the following pages:
 * [Neural Network in Never](https://never-lang.github.io/never/perceptron.html)
 * [3D Sin Function Animation](https://never-lang.github.io/never/wave.html)
 
-## Contact
-If you find it useful for any purpose I will be glad to hear from you.
-
-If you need help to develop a programming or domain specific language please contact me.
 

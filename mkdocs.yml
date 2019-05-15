@@ -1,0 +1,14 @@
+site_name: never-lang
+site_author: Sławomir Maludziński
+repo_url: https://github.com/never-lang/never
+repo_name: GitHub
+theme: readthedocs
+
+nav:
+   - Documentation: index.md
+   - Tutorials:
+       - Tail Recursion: tailrec.md
+       - Neural Network: perceptron.md
+       - Wave: wave.md
+   - Contact: contact.md
+
