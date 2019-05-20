@@ -1,8 +1,4 @@
 # Never - Functional Programming Language
-[![Build Status](https://travis-ci.org/never-lang/never.svg?branch=master)](https://travis-ci.org/never-lang/never)
-[![Version](https://img.shields.io/github/release/never-lang/never.svg)](https://github.com/never-lang/never/releases)
-[![Codecov](https://codecov.io/gh/never-lang/never/branch/master/graph/badge.svg)](https://codecov.io/gh/never-lang/never)
-
 Never is a simple functional programming language. Technically it may be
 classified as syntactically scoped, strongly typed, call by value, functional programming language.
 
@@ -962,7 +958,6 @@ $ ./sample81.nevs 10 20
 result is 31
 ```
 
-
 Also nev can be executed with ```-e``` parameter followed by program.
 
 ### C language
@@ -1009,6 +1004,45 @@ header is included. Then a new program ```prog``` is created and parsed with
 note that the program can be executed with different input parameters many times.
 Return value is set in ```result``` object which then can be used. In this
 example ```assert``` function assures that calculations are as expected.
+
+### Foreign Function Interface
+
+Never can also invoke functions in dynamically loaded libraries. The following
+code snippets demonstrate how to invoke function in math and system libraries.
+Right now only basic types can be passed.
+
+```swift
+extern "libm.so.6" func sinhf(x -> float) -> float
+extern "libm.so.6" func coshf(x -> float) -> float
+extern "libm.so.6" func powf(base -> float, exp -> float) -> float
+extern "libm.so.6" func atanf(x -> float) -> float
+
+func main() -> int
+{
+    var v1 = sinhf(1.0);
+    var v2 = coshf(1.0);
+    var v3 = powf(10.0, 2.0);
+    var pi = 4.0 * atanf(1.0);
+
+    printf(v1);
+    printf(v2);
+    printf(v3);
+    printf(pi);
+    printf(sinhf(1.0));
+
+    0
+}
+```
+
+```swift
+func main() -> int
+{
+    var system = let extern "libc.so.6" func system(cmd -> string) -> float;
+    var v = system("uname -a");
+
+    0
+}
+```
 
 ## More Information
 
