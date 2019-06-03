@@ -1,0 +1,94 @@
+/**
+ * Quick sort in never
+ */
+func print_tab(tab[D] -> int) -> int
+{
+    var i = 0;
+    
+    for (i = 0; i < D; i = i + 1)
+        prints(tab[i] + " ");
+        
+    prints("\n");
+
+    0
+}
+
+func swap(a -> int, b -> int) -> int
+{
+    var t = 0;
+    
+    t = a;
+    a = b;
+    b = t;
+    
+    0
+}
+
+func randomize(seed -> int) -> () -> int
+{
+    let v = seed;
+    func rand() -> int
+    {
+        v = (v * 11 + 12) % 21474
+    }
+    rand
+}
+
+func qsort_rec(tab[D] -> int,
+               beg -> int, end -> int,
+               rand() -> int) -> int
+{
+    var i = 0;
+    var j = beg - 1;
+    var p = 0;
+    
+    if (beg < end - 1)
+    {
+    p = beg + rand() % (end - beg);
+    swap(tab[p], tab[end - 1]);
+
+    prints(beg + " " + end + " " + p + "\n");
+        
+    for (i = beg; i < end; i = i + 1)
+    {
+        if (tab[i] < tab[end - 1])
+        {
+            j = j + 1;
+            swap(tab[j], tab[i])
+        }
+    };
+    
+    j = j + 1;
+    swap(tab[j], tab[end - 1]);
+    
+    qsort_rec(tab, beg, j, rand);
+    qsort_rec(tab, j + 1, end, rand)
+    
+    }
+    else
+    {
+        0
+    };
+    
+    0
+}
+
+func qsort(tab[D] -> int, rand() -> int) -> int
+{
+    qsort_rec(tab, 0, D, rand)
+}
+
+func main() -> int
+{
+    var rand = randomize(6);
+    var tab = [ 4, 2, 5, 3, 1 ] -> int;
+    
+    print_tab(tab);
+    
+    qsort(tab, rand);
+    
+    print_tab(tab);
+    
+    0
+}
+
