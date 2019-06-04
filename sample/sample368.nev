@@ -1,0 +1,8 @@
+
+func main() -> int
+{
+    prints("one" + "two\n");
+    
+    0
+}
+
