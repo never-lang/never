@@ -13,14 +13,14 @@ title: Rod Cutting
 ### Recursive Algorithm
 
 
-```swing
+```swift
 func max(a -> int, b -> int) -> int
 {
     a > b ? a : b
 }
 ```
 
-```swing
+```swift
 func cutrod(price[_] -> int, len -> int) -> int
 {
     var i = 0;
@@ -43,7 +43,7 @@ func cutrod(price[_] -> int, len -> int) -> int
 }
 ```
 
-```swing
+```swift
 func main() -> int
 {
     let price = [ 1, 5, 8, 9, 10, 17, 17, 20 ] -> int;
@@ -54,7 +54,7 @@ func main() -> int
 
 ### Memoization
 
-```swing
+```swift
 func cutrod(price[P] -> int, memo[M] -> int, len -> int) -> int
 {
     var i = 0;
@@ -77,7 +77,7 @@ func cutrod(price[P] -> int, memo[M] -> int, len -> int) -> int
 }
 ```
 
-```swing
+```swift
 func main() -> int
 {
     let price = [ 1, 5, 8, 9, 10, 17, 17, 20 ] -> int;

@@ -1,6 +1,14 @@
-/**
- * Quick sort in never
- */
+---
+title: Quick Sort
+---
+
+# Sorting - Quick Sort
+
+## Introduction
+
+## Algorithm
+
+```swift
 func print_tab(tab[D] -> int) -> int
 {
     var i = 0;
@@ -33,7 +41,9 @@ func randomize(seed -> int) -> () -> int
     }
     rand
 }
+```
 
+```swift
 func qsort_rec(tab[D] -> int,
                beg -> int, end -> int,
                rand() -> int) -> int
@@ -78,7 +88,9 @@ func qsort(tab[D] -> int) -> int
 
     qsort_rec(tab, 0, D, rand)
 }
+```
 
+```swift
 func main() -> int
 {
     var tab = [ 4, 9, 2, 7, 5, 6, 8, 3, 10, 1 ] -> int;
@@ -91,4 +103,8 @@ func main() -> int
     
     0
 }
+```
+
+## Summary
+
 
