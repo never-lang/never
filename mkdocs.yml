@@ -7,6 +7,7 @@ theme: readthedocs
 nav:
    - Documentation: index.md
    - Tutorials:
+       - Sorting - Quick Sort: qsort.md
        - Tail Recursion: tailrec.md
        - Neural Network: perceptron.md
        - Wave: wave.md
