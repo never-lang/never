@@ -1,0 +1,132 @@
+
+record Node
+{
+    value -> int;
+    left -> Node;
+    right -> Node;
+}
+
+func btree_add(tree -> Node, value -> int) -> Node
+{
+    if (tree == nil)
+    {
+        Node(value, nil, nil)
+    }
+    else if (value < tree.value)
+    {
+        tree.left = btree_add(tree.left, value);
+        tree
+    }
+    else if (value >= tree.value)
+    {
+        tree.right = btree_add(tree.right, value);
+        tree
+    }
+    else
+    {
+        Node
+    }
+}
+
+func btree_min(tree -> Node) -> Node
+{
+    var min = Node;
+    
+    min = tree;
+    while (min != nil && min.left != nil)
+    {
+        min = min.left
+    };
+    
+    min
+}
+
+func btree_delete(tree -> Node, value -> int) -> Node
+{
+    if (tree != nil)
+    {
+        if (value < tree.value)
+        {
+            tree.left = btree_delete(tree.left, value);
+            tree
+        }
+        else if (value > tree.value)
+        {
+            tree.right = btree_delete(tree.right, value);
+            tree
+        }
+        else
+        {
+            if (tree.left == nil && tree.right == nil)
+            {
+                Node
+            }
+            else if (tree.left == nil)
+            {
+                tree.right
+            }
+            else if (tree.right == nil)
+            {
+                tree.left
+            }
+            else
+            {
+                tree.value = btree_min(tree.right).value;
+                tree.right = btree_delete(tree.right, tree.value);
+                tree
+            }
+        }
+    }
+    else
+    {
+        Node(value, nil, nil)
+    }
+}
+
+func btree_print(tree -> Node, depth -> int) -> string
+{
+    if (tree != nil)
+    {
+        if (tree.left != nil)
+        {
+            btree_print(tree.left, depth + 1)
+        }
+        else
+        {
+            prints("nil\n")
+        };
+
+        prints("value = " + tree.value + " at depth " + depth + "\n");
+
+        if (tree.right != nil)
+        {
+            btree_print(tree.right, depth + 1)
+        }
+        else
+        {
+            prints("nil\n")
+        }
+    }
+    else
+    {
+        prints("nil\n")
+    }
+}
+
+func main() -> int
+{
+    var btree = Node;
+    
+    btree = btree_add(btree, 10);
+    btree = btree_add(btree, 5);
+    btree = btree_add(btree, 20);
+    btree = btree_add(btree, 1);
+    btree = btree_add(btree, 12);
+    btree_print(btree, 0);
+    
+    btree = btree_delete(btree, 10);
+    btree_print(btree, 0);
+
+    0
+}
+
