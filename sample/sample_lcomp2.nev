@@ -1,0 +1,22 @@
+
+
+func main() -> int
+{
+    var i = 0;
+    var texts = [ "one", "two", "three" ] -> string;
+    var decors = [ let func () -> int
+                   { 
+                       prints("###" + txt + "###\n");
+                       0
+                   } 
+                   | txt in texts
+                 ] -> () -> int;
+
+    for (i = 0; i < 3; i = i + 1)
+    {
+        decors[i]()
+    };
+    
+    0
+}
+
