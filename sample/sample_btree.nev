@@ -122,6 +122,7 @@ func main() -> int
     btree = btree_add(btree, 20);
     btree = btree_add(btree, 1);
     btree = btree_add(btree, 12);
+    btree = btree_add(btree, 25);
     btree_print(btree, 0);
     
     btree = btree_delete(btree, 10);
