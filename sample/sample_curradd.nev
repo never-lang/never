@@ -1,0 +1,23 @@
+
+func add(x -> int, y -> int) -> int
+{
+    x + y
+}
+
+func cadd(x -> int) -> (int) -> int
+{
+    let func (y -> int) -> int
+    {
+        x + y
+    }
+}
+
+func main() -> int
+{
+    print(add(5, 7));
+    print(cadd(5)(7));
+    print(cadd(2)(cadd(3)(7)));
+
+    0
+}
+
