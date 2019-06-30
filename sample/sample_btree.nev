@@ -6,7 +6,7 @@ record Node
     right -> Node;
 }
 
-func btree_add(tree -> Node, value -> int) -> Node
+func btree_insert(tree -> Node, value -> int) -> Node
 {
     if (tree == nil)
     {
@@ -14,12 +14,12 @@ func btree_add(tree -> Node, value -> int) -> Node
     }
     else if (value < tree.value)
     {
-        tree.left = btree_add(tree.left, value);
+        tree.left = btree_insert(tree.left, value);
         tree
     }
     else if (value >= tree.value)
     {
-        tree.right = btree_add(tree.right, value);
+        tree.right = btree_insert(tree.right, value);
         tree
     }
     else
@@ -117,12 +117,12 @@ func main() -> int
 {
     var btree = Node;
     
-    btree = btree_add(btree, 10);
-    btree = btree_add(btree, 5);
-    btree = btree_add(btree, 20);
-    btree = btree_add(btree, 1);
-    btree = btree_add(btree, 12);
-    btree = btree_add(btree, 25);
+    btree = btree_insert(btree, 10);
+    btree = btree_insert(btree, 5);
+    btree = btree_insert(btree, 20);
+    btree = btree_insert(btree, 1);
+    btree = btree_insert(btree, 12);
+    btree = btree_insert(btree, 25);
     btree_print(btree, 0);
     
     btree = btree_delete(btree, 10);
