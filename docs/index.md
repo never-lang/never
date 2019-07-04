@@ -694,6 +694,94 @@ func cl() -> [_] -> (float) -> float
 }
 ```
 
+The following code snippets present other examples:
+
+```swift
+func decor(str -> string) -> string
+{
+    "###" + str + "###\n"
+}
+
+func main() -> int
+{
+    var i = 0;
+    var texts = [ "one", "two", "three" ] -> string;
+    var decors = [ decor(txt) | txt in texts ] -> string;
+
+    for (i = 0; i < 3; i = i + 1)
+    {
+        prints(decors[i])
+    };
+    
+    0
+}
+```
+
+```
+###one###
+###two###
+###three###
+0
+```
+
+```swift
+func main() -> int
+{
+    var i = 0;
+    var texts = [ "one", "two", "three" ] -> string;
+    var decors = [ let func () -> int
+                   { 
+                       prints("###" + txt + "###\n");
+                       0
+                   } 
+                   | txt in texts
+                 ] -> () -> int;
+
+    for (i = 0; i < 3; i = i + 1)
+    {
+        decors[i]()
+    };
+    
+    0
+}
+```
+
+```
+###one###
+###two###
+###three###
+0
+```
+
+```swift
+func main() -> int
+{
+    var i = 0;
+    var texts = [ "one", "two", "three" ] -> string;
+    var decors = [ let func (d -> string) -> int
+                   { 
+                       prints(d + txt + d + "\n");
+                       0
+                   } 
+                   | txt in texts
+                 ] -> (string) -> int;
+
+    for (i = 0; i < 3; i = i + 1)
+    {
+        decors[i]("#@#")
+    };
+    
+    0
+}
+```
+
+```
+#@#one#@#
+#@#two#@#
+#@#three#@#
+0
+```
+
 ## Records
 
 ```swift
