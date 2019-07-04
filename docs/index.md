@@ -782,6 +782,41 @@ func main() -> int
 0
 ```
 
+## Enums
+
+```swift
+enum EONE { one, two, three, four }
+
+enum ETWO { one, two, three, four }
+
+func g1() -> EONE
+{
+    EONE.four
+}
+
+func e1(a -> EONE, b -> EONE) -> string
+{
+    if (a == g1())
+    {
+       prints("OK\n")
+    }
+    else
+    {
+        prints("NOK\n")
+    }
+}
+
+func main() -> int
+{
+    prints(e1(EONE.four, EONE.three));
+    
+    0
+}
+```
+
+Enums are first class objects in Never. The above example presents how
+they can be defined and used.
+
 ## Records
 
 ```swift
