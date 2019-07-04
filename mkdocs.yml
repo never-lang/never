@@ -9,6 +9,7 @@ nav:
    - Tutorials:
        - Sorting - Quick Sort: qsort.md
        - Data Structures - Binary Tree: btree.md
+       - Dynamic Programming - Rod Cutting : rodcut.md
        - Tribute to Alonso C.: curradd.md
        - Tail Recursion: tailrec.md
        - Neural Network: perceptron.md
