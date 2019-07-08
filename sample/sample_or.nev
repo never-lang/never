@@ -1,0 +1,12 @@
+
+func main() -> int
+{
+    let i = 0;
+    
+    let z = { i } || { prints("false\n"); 0 };
+
+    print(z);
+
+    0
+}
+

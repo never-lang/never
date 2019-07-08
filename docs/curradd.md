@@ -42,6 +42,7 @@ Curried ```add``` is presented in Never programming language in the above listin
 func main() -> int
 {
     print(add(5, 7));
+    print(add(2, add(3, 7)));
 
     print(cadd(5)(7));
     print(cadd(2)(cadd(3)(7)));
