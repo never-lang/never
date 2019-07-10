@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    func loop(i -> int) -> int
+    func loop(i : int) -> int
     {
         if (i < 10)
         {

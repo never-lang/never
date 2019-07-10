@@ -1,13 +1,13 @@
 
-func three(d -> int, c -> int) -> int
+func three(d : int, c : int) -> int
 {
-    let t = [ 1, 2, 3 ] -> int;
+    let t = [ 1, 2, 3 ] : int;
 
     t[0] = d;
     17770 / d
 }
 
-func two(d -> int) -> int
+func two(d : int) -> int
 {
     three(d, 199)
 }
@@ -20,7 +20,7 @@ catch (index_out_of_bounds)
     d + 102
 }
 
-func one(d -> int) -> int
+func one(d : int) -> int
 {
     two(d)
 }

@@ -1,7 +1,7 @@
 
-func printtab( tab[n] -> float ) -> int
+func printtab( tab[n] : float ) -> int
 {
-    func __print( i -> int, tab[n] -> float, val -> float ) -> int
+    func __print( i : int, tab[n] : float, val : float ) -> int
     {
         i < n ? __print( i + 1, tab, printf(tab[i]) ) : 0
     }
@@ -10,6 +10,6 @@ func printtab( tab[n] -> float ) -> int
 
 func main() -> int
 {
-    printtab( [ 1.5, 2.5, 3.5 ] -> float + [ 3.0, 4.0, 7.0 ] -> float )
+    printtab( [ 1.5, 2.5, 3.5 ] : float + [ 3.0, 4.0, 7.0 ] : float )
 }
 

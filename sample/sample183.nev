@@ -1,4 +1,4 @@
-func outer(to -> int) -> () -> int
+func outer(to : int) -> () -> int
 {
     let p = 2 * to;
     let f = let func () -> int

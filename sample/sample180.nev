@@ -1,5 +1,5 @@
 
-func f1(a -> int, b -> int, c -> int) -> () -> int
+func f1(a : int, b : int, c : int) -> () -> int
 {
     let func f2() -> int { a + b + c }
 }

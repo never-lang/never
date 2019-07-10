@@ -1,14 +1,14 @@
 
-func three(d -> int, c -> int) -> int
+func three(d : int, c : int) -> int
 {
-    let t = [ 1, 2, 3 ] -> int;
+    let t = [ 1, 2, 3 ] : int;
 
     t[0] = d;
     17770 / d
 }
 catch (division_by_zero)
 {
-    let func(a -> int) -> int { a * 100 }(7);
+    let func(a : int) -> int { a * 100 }(7);
     c + 100
 }
 catch (wrong_array_size)
@@ -24,12 +24,12 @@ catch
     1090
 }
 
-func two(d -> int) -> int
+func two(d : int) -> int
 {
     three(d, 199)
 }
 
-func one(d -> int) -> int
+func one(d : int) -> int
 {
     two(d)
 }

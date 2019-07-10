@@ -1,5 +1,5 @@
 
-func f1(a -> int, b -> int, c -> int) -> [D,D,D] -> int
+func f1(a : int, b : int, c : int) -> [D,D,D] : int
 {
     [ [[ 1, 2, 3 ],
        [ 3, 4, 5 ],
@@ -9,7 +9,7 @@ func f1(a -> int, b -> int, c -> int) -> [D,D,D] -> int
       [[ 7, 8, 9 ],
        [ 6, 3, 1 ],
        [ 2, 4, 2 ],
-       [ 1, 0, 4 ]]] -> int
+       [ 1, 0, 4 ]]] : int
 }
 
 func main() -> int

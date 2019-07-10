@@ -1,11 +1,11 @@
 
-func f1(a -> int, tab[row, col] -> int) -> int
+func f1(a : int, tab[row, col] : int) -> int
 {
     tab[row - 1, col - 1]
 }
 
 func main() -> int
 {
-    assert(f1(10 * 10, [[ 10, 20, 30 ], [ 30, 40, 50 ]] -> int) == 50)
+    assert(f1(10 * 10, [[ 10, 20, 30 ], [ 30, 40, 50 ]] : int) == 50)
 }
 

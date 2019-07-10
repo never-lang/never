@@ -1,14 +1,14 @@
 
-func call(tab[row, col] -> int) -> int
+func call(tab[row, col] : int) -> int
 {
     tab[row - 1, col - 1]
 }
 
-func f1(a -> int) -> int
+func f1(a : int) -> int
 {
     call( [[ a, 2, 3 ],
            [ 4, a, 6 ],
-           [ 9, 8, a + 1 ]] -> int)
+           [ 9, 8, a + 1 ]] : int)
 }
 
 func main() -> int

@@ -292,19 +292,19 @@ expr: expr '[' expr_list ']' /* array dereference */
     $$->line_no = $<line_no>2;
 };
 
-array: ARR_DIM_BEG expr_list ARR_DIM_END TOK_RET param
+array: ARR_DIM_BEG expr_list ARR_DIM_END ':' param
 {
     $$ = array_new_dims($2, $5);
     $$->line_no = $<line_no>1;
 };
 
-array: '[' expr_list ']' TOK_RET param
+array: '[' expr_list ']' ':' param
 {
     $$ = array_new($2, $5);
     $$->line_no = $<line_no>1;
 };
 
-array: '[' array_sub_list ']' TOK_RET param
+array: '[' array_sub_list ']' ':' param
 {
     $$ = array_new($2, $5);
     $$->line_no = $<line_no>1;
@@ -369,7 +369,7 @@ qualifier_list: qualifier_list ';' qualifier
     $$ = $1;
 };
 
-listcomp: '[' expr '|' qualifier_list ']' TOK_RET param
+listcomp: '[' expr '|' qualifier_list ']' ':' param
 {
     $$ = listcomp_new($2, $4, $7);
     $$->line_no = $<line_no>1;
@@ -458,7 +458,7 @@ param: TOK_INT
     $$->line_no = $<line_no>1;
 };
 
-param: TOK_ID TOK_RET TOK_INT
+param: TOK_ID ':' TOK_INT
 {
     $$ = param_new_int($1);
     $$->line_no = $<line_no>2;
@@ -470,7 +470,7 @@ param: TOK_FLOAT
     $$->line_no = $<line_no>1;
 };
 
-param: TOK_ID TOK_RET TOK_FLOAT 
+param: TOK_ID ':' TOK_FLOAT 
 {
     $$ = param_new_float($1);
     $$->line_no = $<line_no>2;
@@ -482,7 +482,7 @@ param: TOK_STRING
     $$->line_no = $<line_no>1;
 };
 
-param: TOK_ID TOK_RET TOK_STRING
+param: TOK_ID ':' TOK_STRING
 {
     $$ = param_new_string($1);
     $$->line_no = $<line_no>2;
@@ -500,13 +500,13 @@ param: TOK_ID TOK_RET TOK_ID
     $$->line_no = $<line_no>1;
 };
 
-param: '[' dim_list ']' TOK_RET param
+param: '[' dim_list ']' ':' param
 {
     $$ = param_new_array(NULL, $2, $5);
     $$->line_no = $<line_no>1;
 };
 
-param: TOK_ID '[' dim_list ']' TOK_RET param
+param: TOK_ID '[' dim_list ']' ':' param
 {
     $$ = param_new_array($1, $3, $6);
     $$->line_no = $<line_no>1;

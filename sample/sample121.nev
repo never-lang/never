@@ -1,8 +1,8 @@
 
-func f1(a -> int) -> int
+func f1(a : int) -> int
 {
-    ([ [ a, 2, 3, 4, 5 ] -> int,
-       [ a + 10, 12, 13 ] -> int ] -> [_] -> int)[1][0]
+    ([ [ a, 2, 3, 4, 5 ] : int,
+       [ a + 10, 12, 13 ] : int ] : [_] : int)[1][0]
 }
 
 func main() -> int

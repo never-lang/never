@@ -1,13 +1,13 @@
 
-func exec( f[dim] -> (int) -> int ) -> int
+func exec( f[dim] : (int) -> int ) -> int
 {
     f[dim - 1](200)
 }
 
 func main() -> int
 {
-    exec( [ let func X(a -> int) -> int { 2 * a },
-            let func X(a -> int) -> int { 220 + a } ] -> (int) -> int )
+    exec( [ let func X(a : int) -> int { 2 * a },
+            let func X(a : int) -> int { 220 + a } ] : (int) -> int )
 }
 
 

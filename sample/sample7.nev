@@ -1,16 +1,16 @@
 /**
  * Passing function and calling returned function.
  */
-func twice(c1 -> float, c2 -> float) -> (float, float) -> float
+func twice(c1 : float, c2 : float) -> (float, float) -> float
 {
     func mult() -> float
     {
          c2 == 0.0 ? 0.0 : c1 / c2
     }
 
-    func twice_func(a -> float, b -> float) -> float
+    func twice_func(a : float, b : float) -> float
     {
-        func twice_func_nest(a -> float, b -> float) -> float
+        func twice_func_nest(a : float, b : float) -> float
         {
             mult()
         }

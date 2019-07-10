@@ -1,7 +1,7 @@
 
-func fun(a -> float) -> float
+func fun(a : float) -> float
 {
-    let f1 = let func (a -> float) -> float { 2.0 * a };
+    let f1 = let func (a : float) -> float { 2.0 * a };
 
     let f2 = let func () -> float
     {

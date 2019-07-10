@@ -1,7 +1,7 @@
 
-func rodCut( rod -> int ) -> int
+func rodCut( rod : int ) -> int
 {
-    func __rodCut( rod -> int ) -> int
+    func __rodCut( rod : int ) -> int
     {
         rod < 10 ? rodCut( rod + 1 ) : 0
     }

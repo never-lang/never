@@ -1,10 +1,10 @@
 
-func f1(a -> int, b -> int, c -> int) -> [D] -> () -> int
+func f1(a : int, b : int, c : int) -> [D] : () -> int
 {
     [
         let func () -> int { a + b + c },
         let func () -> int { a + b - c }  
-    ] -> () -> int
+    ] : () -> int
 }
 
 func main() -> int

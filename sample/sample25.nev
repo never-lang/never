@@ -1,14 +1,14 @@
-func A(n -> float) -> float
+func A(n : float) -> float
 {
     (n == 1.0) ? B(1.0) : 40.0
 }
     
-func B(n -> float) -> float
+func B(n : float) -> float
 {
     (n == 1.0) ? A(10.0) : 12.0
 }
     
-func C(n -> float) -> float
+func C(n : float) -> float
 {
     A(n)
 }

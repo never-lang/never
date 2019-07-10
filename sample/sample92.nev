@@ -1,10 +1,10 @@
 
-func f1(a -> int) -> [D, D] -> int
+func f1(a : int) -> [D, D] : int
 {
     [[ a, 0, 0, 0 ],
      [ 0, a, 0, 0 ],
      [ 0, 0, a, 0 ],
-     [ 0, 0, 0, a ]] -> int
+     [ 0, 0, 0, a ]] : int
 }
 
 func main() -> int

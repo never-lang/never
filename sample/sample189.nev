@@ -1,9 +1,9 @@
 
-func outer(a -> float, b -> float) -> (float) -> float
+func outer(a : float, b : float) -> (float) -> float
 {
     let p = (a + b) / 2.0;
     
-    let func inner(c -> float) -> float
+    let func inner(c : float) -> float
     {
         c * p
     }

@@ -1,13 +1,13 @@
-func calc(coeff -> int, n -> int) -> int
+func calc(coeff : int, n : int) -> int
 {
     func C() -> int 
     {
         coeff
     }
 
-    func help(n -> int) -> int 
+    func help(n : int) -> int 
     {
-        func fib(n -> int) -> int 
+        func fib(n : int) -> int 
         {
             ((n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)) * C()
         }

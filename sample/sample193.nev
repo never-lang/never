@@ -1,6 +1,6 @@
-func f(a -> int) -> [_] -> int
+func f(a : int) -> [_] : int
 {
-    (a == 0) ? [ 10, 11, 12 ] -> int : [ 1, 2, 3 ] -> int
+    (a == 0) ? [ 10, 11, 12 ] : int : [ 1, 2, 3 ] : int
 }
 
 func main() -> int

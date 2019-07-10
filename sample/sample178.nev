@@ -1,8 +1,8 @@
 
-func outer(a -> float, b -> float) -> float
+func outer(a : float, b : float) -> float
 {
     let p = a + b;
-    func inner(c -> float) -> float
+    func inner(c : float) -> float
     {
         p * c
     }

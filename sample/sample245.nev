@@ -1,6 +1,6 @@
-func one(d -> int) -> int
+func one(d : int) -> int
 {
-    let f = let func two(d -> int) -> int
+    let f = let func two(d : int) -> int
             {
                 12 / d
             }

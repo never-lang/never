@@ -1,7 +1,7 @@
 
-func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
+func tforeach( t[elems] : int, each(e : int) -> int) -> int
 {
-	func __tforeach( val -> int, i -> int, t[elems] -> int ) -> int
+	func __tforeach( val : int, i : int, t[elems] : int ) -> int
 	{
 	    i < elems ? __tforeach( each(t[i]), i + 1, t ) : 0
 	}
@@ -10,7 +10,7 @@ func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
 
 func main() -> int
 {
-	tforeach( [ 10, 20, 50, 30, 80, 99 ] -> int, print )
+	tforeach( [ 10, 20, 50, 30, 80, 99 ] : int, print )
 }
 
 

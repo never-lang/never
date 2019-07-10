@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    func loop(i -> int) -> int
+    func loop(i : int) -> int
     {
         let val = i > 10 ? loop(5) : 5;
 

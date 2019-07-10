@@ -1,11 +1,11 @@
 
-func three(d -> int, c -> int) -> int
+func three(d : int, c : int) -> int
 {
     let t = 12 + 17 / d;
     17
 }
 
-func two(d -> int) -> int
+func two(d : int) -> int
 {
     three(d, 199);
     assert(0)
@@ -23,7 +23,7 @@ catch (division_by_zero)
     155
 }
 
-func one(d -> int) -> int
+func one(d : int) -> int
 {
     two(d)
 }

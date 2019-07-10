@@ -1,10 +1,10 @@
 
-func f1(a -> int, b -> int, tab[FD1, FD2] -> int) -> int
+func f1(a : int, b : int, tab[FD1, FD2] : int) -> int
 {
     2 * FD1 * FD2
 }
 
-func f2(tab2[D1, D2] -> int) -> int
+func f2(tab2[D1, D2] : int) -> int
 {
     f1(10, 20, tab2)
 }
@@ -12,7 +12,7 @@ func f2(tab2[D1, D2] -> int) -> int
 func main() -> int
 {
     f2([[ 1, 2 ],
-        [ 3, 4 ]] -> int)
+        [ 3, 4 ]] : int)
 }
 
 

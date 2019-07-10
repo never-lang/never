@@ -1,19 +1,19 @@
 
-func mul(a -> float, b -> float) -> float
+func mul(a : float, b : float) -> float
 {
     a * b
 }
 
-func funGen1(a -> float, b -> float) -> float
+func funGen1(a : float, b : float) -> float
 {
-    func funInt(a -> float, b -> float) -> float
+    func funInt(a : float, b : float) -> float
     {
         a * b
     }
     funInt(a, b + 2.0)
 }
 
-func funGen2(a -> float, b -> float) -> float
+func funGen2(a : float, b : float) -> float
 {
     mul(a, b + 2.0)
 }

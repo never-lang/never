@@ -1,6 +1,6 @@
 
 
-func min(a -> float, b -> float) -> float
+func min(a : float, b : float) -> float
 {
     (a < b) ? a : b
 }

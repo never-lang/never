@@ -1,7 +1,7 @@
 
-func tmin( t[elems] -> int ) -> int
+func tmin( t[elems] : int ) -> int
 {
-	func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
+	func __tmin( min : int, i : int, t[elems] : int ) -> int
 	{
         i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min
 	}
@@ -10,6 +10,6 @@ func tmin( t[elems] -> int ) -> int
 
 func main() -> int
 {
-	tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int )
+	tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] : int )
 }
 

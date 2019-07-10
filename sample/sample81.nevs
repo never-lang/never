@@ -1,11 +1,11 @@
 #!../debug/never -f
 
-func add(a -> int, b -> int, c -> int) -> int
+func add(a : int, b : int, c : int) -> int
 {
     a + b + c
 }
 
-func main(a -> int, b -> int) -> int
+func main(a : int, b : int) -> int
 {
     add(a, b, 1)
 }

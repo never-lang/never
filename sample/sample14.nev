@@ -1,13 +1,13 @@
 /**
  * loads of global variables
  */
-func fun0(a0 -> float, b0 -> float) -> float
+func fun0(a0 : float, b0 : float) -> float
 {
-    func fun1(a1 -> float, b1 -> float) -> float
+    func fun1(a1 : float, b1 : float) -> float
     {
-        func fun2(a2 -> float, b2 -> float) -> float
+        func fun2(a2 : float, b2 : float) -> float
         {
-            func fun3(a3 -> float, b3 -> float) -> float
+            func fun3(a3 : float, b3 : float) -> float
             {
                 a0 + a1 + a2 + a3 + b0 + b1 + b2 + b3
             }

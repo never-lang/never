@@ -1,7 +1,7 @@
 
-func power(a -> int, n -> int) -> int
+func power(a : int, n : int) -> int
 {
-    func powrec(a -> int, n -> int, val -> int) -> int
+    func powrec(a : int, n : int, val : int) -> int
     {
         n == 0 ? val : powrec(a, n - 1, a * val)
     }

@@ -1,11 +1,11 @@
 
-func printtab(tab[dim1, dim2] -> int) -> int
+func printtab(tab[dim1, dim2] : int) -> int
 {
     print(tab[dim1 - 1, dim2 - 1])
 }
 
 func main() -> int
 {
-    printtab( {[10, 20]} -> int )
+    printtab( {[10, 20]} : int )
 }
 

@@ -1,5 +1,5 @@
 
-func one(d -> int) -> int
+func one(d : int) -> int
 {
     if (d == 1) { 0 } else { 10 / d }
 }

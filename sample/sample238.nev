@@ -1,15 +1,15 @@
 
-func fallback(d -> int) -> int
+func fallback(d : int) -> int
 {
     170 / d
 }
 
-func three(d -> int, c -> int) -> int
+func three(d : int, c : int) -> int
 {
     170 / (d + c)
 }
 
-func two(d -> int) -> int
+func two(d : int) -> int
 {
     three(d, 0)
 }
@@ -18,7 +18,7 @@ catch(division_by_zero)
     fallback(d)
 }
 
-func one(d -> int) -> int
+func one(d : int) -> int
 {
     two(d)
 }

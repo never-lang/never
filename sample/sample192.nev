@@ -1,7 +1,7 @@
-func f(a -> int) -> int
+func f(a : int) -> int
 {
-    let t = [ 1, 2, 3, 4, 5 ] -> int;
-    let i = [ 4, 3, 2, 1, 0 ] -> int;
+    let t = [ 1, 2, 3, 4, 5 ] : int;
+    let i = [ 4, 3, 2, 1, 0 ] : int;
     
     t[i[a]] = 20;
     t[i[a]] = 30;

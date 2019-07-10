@@ -1,20 +1,20 @@
 
-func odd( e -> int ) -> int
+func odd( e : int ) -> int
 {
     e % 2
 }
-func do_func( e -> int ) -> int
+func do_func( e : int ) -> int
 {
     print(e + 1)
 }
 
-func filter( t[elems] -> int, if_func( int ) -> int, do_func( int ) -> int ) -> int
+func filter( t[elems] : int, if_func( int ) -> int, do_func( int ) -> int ) -> int
 {
-	func __filter( val -> int,
-	               i -> int,
-	               t[elems] -> int,
-	               if_func( e -> int) -> int,
-	               do_func( e -> int ) -> int ) -> int
+	func __filter( val : int,
+	               i : int,
+	               t[elems] : int,
+	               if_func( e : int) -> int,
+	               do_func( e : int ) -> int ) -> int
 	{
 	    i < elems ? __filter( if_func(t[i]) ? do_func(t[i]) : 0, i + 1, t, if_func, do_func ) : 0
 	}
@@ -22,7 +22,7 @@ func filter( t[elems] -> int, if_func( int ) -> int, do_func( int ) -> int ) -> 
 }
 func main() -> int
 {
-	filter( [ 61, 22, 11, 34, 58, 41, 83, 92, 101 ] -> int,
+	filter( [ 61, 22, 11, 34, 58, 41, 83, 92, 101 ] : int,
             odd, do_func )
 }
 

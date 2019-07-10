@@ -1,4 +1,4 @@
-func f(i -> int) -> int
+func f(i : int) -> int
 {
     let a = i * i;
     let b = i * i * i;

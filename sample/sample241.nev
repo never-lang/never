@@ -1,5 +1,5 @@
 
-func divisors(n -> int) -> int
+func divisors(n : int) -> int
 {
     var i = 1;
 

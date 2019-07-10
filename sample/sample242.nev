@@ -1,5 +1,5 @@
 
-func factorize(n -> int) -> int
+func factorize(n : int) -> int
 {
     var i = 1;
 

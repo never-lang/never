@@ -1,5 +1,5 @@
 
-func area(a -> float, b -> float, c -> float) -> float
+func area(a : float, b : float, c : float) -> float
 {
     let p = (a + b + c) / 2.0;
     func coeff() -> float { 100.0 }

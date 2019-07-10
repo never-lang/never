@@ -1,4 +1,4 @@
-func rec(i -> int) -> int
+func rec(i : int) -> int
 {
     print(i) > 0
         ? 

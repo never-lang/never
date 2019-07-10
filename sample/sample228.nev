@@ -1,5 +1,5 @@
 
-func ass(v -> int) -> int
+func ass(v : int) -> int
 {
     v = 10
 }

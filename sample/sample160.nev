@@ -1,7 +1,7 @@
 
-func printtab( tab[row, col] -> int ) -> int
+func printtab( tab[row, col] : int ) -> int
 {
-    func __printtab( i -> int, tab[row, col] -> int, val -> int ) -> int
+    func __printtab( i : int, tab[row, col] : int, val : int ) -> int
     {
         i < row * col ?
           __printtab( i + 1, tab, print( tab[i / col, i % col] )) : 0
@@ -12,10 +12,10 @@ func printtab( tab[row, col] -> int ) -> int
 func main() -> int
 {
     printtab( [[ 1, 2, 3 ],
-               [ 3, 4, 5 ]] -> int
+               [ 3, 4, 5 ]] : int
                     *
               [[ 3, 4, 1, 1 ],
                [ 6, 7, 1, 1 ],
-               [ 8, 2, 1, 1 ]] -> int )
+               [ 8, 2, 1, 1 ]] : int )
 }
 

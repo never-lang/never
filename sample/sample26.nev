@@ -1,21 +1,21 @@
-func no(n -> float) -> float
+func no(n : float) -> float
 {
     n
 }
 
-func mutrec(n -> float, no(float) -> float) -> float
+func mutrec(n : float, no(float) -> float) -> float
 {
-    func A(no(float) -> float, n -> float) -> float
+    func A(no(float) -> float, n : float) -> float
     {
         (n == 1.0) ? B(1.0, no) : 87.0
     }
     
-    func B(n -> float, no(float) -> float) -> float
+    func B(n : float, no(float) -> float) -> float
     {
         (n == 1.0) ? A(no, 10.0) : 12.0
     }
     
-    func C(n -> float) -> float
+    func C(n : float) -> float
     {
         A(no, n)
     }

@@ -1,7 +1,7 @@
 
-func printtab( tab[n] -> int ) -> int
+func printtab( tab[n] : int ) -> int
 {
-    func __print( i -> int, tab[n] -> int, val -> int ) -> int
+    func __print( i : int, tab[n] : int, val : int ) -> int
     {
         i < n ? __print( i + 1, tab, print(tab[i]) ) : 0
     }
@@ -10,6 +10,6 @@ func printtab( tab[n] -> int ) -> int
 
 func main() -> int
 {
-    printtab( 2 * [ 3, 5, 7, 9 ] -> int )
+    printtab( 2 * [ 3, 5, 7, 9 ] : int )
 }
 

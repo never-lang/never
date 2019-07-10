@@ -1,5 +1,5 @@
 
-func outer(a -> float, b -> float) -> float
+func outer(a : float, b : float) -> float
 {
     let q = 10.0;
     let p = a + q;

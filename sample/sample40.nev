@@ -1,15 +1,15 @@
 
-func sub(a -> int, b -> int) -> int
+func sub(a : int, b : int) -> int
 {
     a - b
 }
 
-func add(a -> int, b -> int) -> int
+func add(a : int, b : int) -> int
 {
     a + b
 }
 
-func execute(f(int, int) -> int, a -> int, b -> int) -> int
+func execute(f(int, int) -> int, a : int, b : int) -> int
 {
     f(a, b)
 }

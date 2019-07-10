@@ -1,5 +1,5 @@
 
-func one(a -> int, b -> int, c -> int) -> int
+func one(a : int, b : int, c : int) -> int
 {
     let d = a + b + c + 10;
     let e = a + b + c + 20;

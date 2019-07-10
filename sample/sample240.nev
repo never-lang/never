@@ -1,5 +1,5 @@
 
-func one(d -> int) -> int
+func one(d : int) -> int
 {
     d < 10 ? { print(d); one(d + 1) } : 0
 }

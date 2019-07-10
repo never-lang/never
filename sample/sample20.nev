@@ -1,17 +1,17 @@
 
-func min(a -> float, b -> float) -> float
+func min(a : float, b : float) -> float
 {
     (a < b) ? a : b
 }
 
-func funGen(a -> float, b -> float, f1(a -> float, b -> float) -> float) -> float
+func funGen(a : float, b : float, f1(a : float, b : float) -> float) -> float
 {
     2.0 * f1(a, b)
 }
 
-func funGen2(f1(a -> float, b -> float) -> float) -> (a -> float, b -> float) -> float
+func funGen2(f1(a : float, b : float) -> float) -> (a : float, b : float) -> float
 {
-    func twice(a -> float, b -> float) -> float
+    func twice(a : float, b : float) -> float
     {
         2.0 * f1(a, b)
     }

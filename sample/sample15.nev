@@ -1,12 +1,12 @@
 /**
  * Crazy level max
  */
-func min(a -> float, b -> float) -> float
+func min(a : float, b : float) -> float
 { 
     a < b ? a : b
 } 
  
-func max(a -> float, b -> float) -> float
+func max(a : float, b : float) -> float
 {
     a > b ? a : b
 }

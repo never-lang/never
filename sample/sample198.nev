@@ -1,6 +1,6 @@
-func f(i -> int) -> [_] -> int
+func f(i : int) -> [_] : int
 {
-    let t2 = i * [ 11, 12, 13, 14 ] -> int;
+    let t2 = i * [ 11, 12, 13, 14 ] : int;
     
     t2
 }

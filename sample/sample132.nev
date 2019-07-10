@@ -1,12 +1,12 @@
 
-func sum_mapi(i -> int, e -> int) -> int
+func sum_mapi(i : int, e : int) -> int
 {
     print(i + e)
 }
 
-func tmapi( t[elems] -> int, mapi(i -> int, e -> int) -> int) -> int
+func tmapi( t[elems] : int, mapi(i : int, e : int) -> int) -> int
 {
-	func __tmapi( val -> int, i -> int, t[elems] -> int ) -> int
+	func __tmapi( val : int, i : int, t[elems] : int ) -> int
 	{
 		i < elems ? __tmapi( mapi(i, t[i]), i + 1, t ) : 0
 	}
@@ -15,7 +15,7 @@ func tmapi( t[elems] -> int, mapi(i -> int, e -> int) -> int) -> int
 
 func main() -> int
 {
-	tmapi( [ 10, 20, 50, 30, 40 ] -> int, sum_mapi )
+	tmapi( [ 10, 20, 50, 30, 40 ] : int, sum_mapi )
 }
 
 

@@ -1,7 +1,7 @@
 
-func f1(a -> int, b -> int, c -> int) -> [D] -> int
+func f1(a : int, b : int, c : int) -> [D] : int
 {
-    [ a, b, a + c, b ] -> int
+    [ a, b, a + c, b ] : int
 }
 
 func main() -> int

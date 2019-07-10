@@ -1,21 +1,21 @@
-func g_no(n -> float) -> float
+func g_no(n : float) -> float
 {
     -2.0 * n
 }
 
-func mutrec(n -> float) -> float
+func mutrec(n : float) -> float
 {
-    func A(no(float) -> float, n -> float) -> float
+    func A(no(float) -> float, n : float) -> float
     {
         (n == 1.0) ? B(1.0, no) : no(n)
     }
     
-    func B(n -> float, no(float) -> float) -> float
+    func B(n : float, no(float) -> float) -> float
     {
         (n == 1.0) ? A(no, 10.0) : 12.0
     }
     
-    func C(n -> float) -> float
+    func C(n : float) -> float
     {
         A(g_no, n)
     }
