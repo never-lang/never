@@ -14,7 +14,7 @@ to a function which takes only one argument is called currying.
 ## Function Currying
 
 ```swift
-func add(x -> int, y -> int) -> int
+func add(x : int, y : int) -> int
 {
     x + y
 }
@@ -24,9 +24,9 @@ The above code snippet presents function ```add``` which returns sum of its
 arguments.
 
 ```swift
-func cadd(x -> int) -> (int) -> int
+func cadd(x : int) -> (int) -> int
 {
-    let func (y -> int) -> int
+    let func (y : int) -> int
     {
         x + y
     }

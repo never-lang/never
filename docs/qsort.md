@@ -52,7 +52,7 @@ In the beginning lets perpare some utility functions. Which will be needed to
 visualize and implement workings of the algorithm.
 
 ```swift
-func print_tab(tab[D] -> int) -> int
+func print_tab(tab[D] : int) -> int
 {
     var i = 0;
     
@@ -64,7 +64,7 @@ func print_tab(tab[D] -> int) -> int
     0
 }
 
-func swap(a -> int, b -> int) -> int
+func swap(a : int, b : int) -> int
 {
     var t = 0;
     
@@ -75,7 +75,7 @@ func swap(a -> int, b -> int) -> int
     0
 }
 
-func randomize(seed -> int) -> () -> int
+func randomize(seed : int) -> () -> int
 {
     let v = seed;
     func rand() -> int
@@ -92,8 +92,8 @@ which is used to generate random values. Quick sort algorithm uses random
 places to choose pivot. This way we can try to avoid O(n^2) algorithm complexity.
 
 ```swift
-func qsort_rec(tab[D] -> int,
-               beg -> int, end -> int,
+func qsort_rec(tab[D] : int,
+               beg : int, end : int,
                rand() -> int) -> int
 {
     var i = 0;
@@ -130,7 +130,7 @@ func qsort_rec(tab[D] -> int,
     0
 }
 
-func qsort(tab[D] -> int) -> int
+func qsort(tab[D] : int) -> int
 {
     var rand = randomize(6);
 
@@ -153,7 +153,7 @@ position. Then sorting continues in left and right subsequences.
 ```swift
 func main() -> int
 {
-    var tab = [ 4, 9, 2, 7, 5, 6, 8, 3, 10, 1 ] -> int;
+    var tab = [ 4, 9, 2, 7, 5, 6, 8, 3, 10, 1 ] : int;
     
     print_tab(tab);
     

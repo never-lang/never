@@ -16,9 +16,9 @@ programming language.
 ```swift
 record Node
 {
-    value -> int;
-    left -> Node;
-    right -> Node;
+    value : int;
+    left : Node;
+    right : Node;
 }
 ```
 
@@ -27,7 +27,7 @@ Each node in binary tree consists of value and left and right subtrees.
 ## Insert
 
 ```swift
-func btree_insert(tree -> Node, value -> int) -> Node
+func btree_insert(tree : Node, value : int) -> Node
 {
     if (tree == nil)
     {
@@ -77,7 +77,7 @@ is created.
 ## Delete
 
 ```swift
-func btree_min(tree -> Node) -> Node
+func btree_min(tree : Node) -> Node
 {
     var min = Node;
     
@@ -92,7 +92,7 @@ func btree_min(tree -> Node) -> Node
 ```
 
 ```swift
-func btree_delete(tree -> Node, value -> int) -> Node
+func btree_delete(tree : Node, value : int) -> Node
 {
     if (tree != nil)
     {
@@ -170,7 +170,7 @@ deleted is shown above.
 ## Print
 
 ```swift
-func btree_print(tree -> Node, depth -> int) -> string
+func btree_print(tree : Node, depth : int) -> string
 {
     if (tree != nil)
     {

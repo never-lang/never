@@ -16,7 +16,7 @@ I will try to explain everything step by step so you can follow the article easi
 ## Sigmoid
 
 ```
-func sigmoid(x -> float) -> float
+func sigmoid(x : float) -> float
 {
     1.0 / (1.0 + exp(-x))
 }
@@ -31,7 +31,7 @@ to have zero-one results for parameters.
 ## Linear Congruential Generator
 
 ```
-func randomize(seed -> int) -> () -> int
+func randomize(seed : int) -> () -> int
 {
     let v = seed;
     func rand() -> int
@@ -61,7 +61,7 @@ to initialize neural network.
 ## Matrix Algebra
 
 ```
-func print_matrix(W[D1, D2] -> float) -> int
+func print_matrix(W[D1, D2] : float) -> int
 {
     let r = 0;
     let c = 0;
@@ -89,7 +89,7 @@ takes string as parameter and prints it on console. Addition operator is overloa
 float and string parameter by changing float into its string representation.
 
 ```
-func one_matrix(W[D1, D2] -> float) -> int
+func one_matrix(W[D1, D2] : float) -> int
 {
     let r = 0;
     let c = 0;
@@ -109,7 +109,7 @@ all matrix elements to one. Later this matrix will be used to perform matrix
 subtraction.
 
 ```
-func rand_matrix(W[D1, D2] -> float, rand() -> int) -> int
+func rand_matrix(W[D1, D2] : float, rand() -> int) -> int
 {
     let r = 0;
     let c = 0;
@@ -125,11 +125,11 @@ func rand_matrix(W[D1, D2] -> float, rand() -> int) -> int
 ```
 
 ```
-func sigmoid_matrix(W[D1, D2] -> float) -> [_,_] -> float
+func sigmoid_matrix(W[D1, D2] : float) -> [_,_] : float
 {
     let r = 0;
     let c = 0;
-    let S = {[ D1, D2 ]} -> float;
+    let S = {[ D1, D2 ]} : float;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -149,11 +149,11 @@ shows how function ```sigmoid_matrix``` calculates sigmoid values for each
 matrix elements.
 
 ```
-func T_matrix(W[D1, D2] -> float) -> [_,_] -> float
+func T_matrix(W[D1, D2] : float) -> [_,_] : float
 {
     let r = 0;
     let c = 0;
-    let T = {[ D2, D1 ]} -> float;
+    let T = {[ D2, D1 ]} : float;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -171,11 +171,11 @@ returns matrix whose element at index ```[r, c]``` is placed at index ```[c, r]`
 in the returned matrix.
 
 ```
-func Hadamard_matrix(W1[D1, D2] -> float, W2[D3, D4] -> float) -> [_,_] -> float
+func Hadamard_matrix(W1[D1, D2] : float, W2[D3, D4] : float) -> [_,_] : float
 {
     let r = 0;
     let c = 0;
-    let H = {[ D1, D2 ]} -> float;
+    let H = {[ D1, D2 ]} : float;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -213,11 +213,11 @@ expressed in Never as follows:
     let x = [ [0, 1, 0],
               [1, 0, 0],
               [1, 1, 1],
-              [0, 0, 1] ] -> float;
+              [0, 0, 1] ] : float;
 ```
 
 ```
-    let y = [ [1, 0, 1, 0] ] -> float;
+    let y = [ [1, 0, 1, 0] ] : float;
     let yT = T_matrix(y);
 ```
 
@@ -231,7 +231,7 @@ Input weights ```W``` are first initialized to random values. The following code
 can set ```[3, 1]``` matrix.
 
 ```
-    let W = {[ 3, 1 ]} -> float;
+    let W = {[ 3, 1 ]} : float;
     let rand = randomize(165);
     rand_matrix(W, rand);
 ```
@@ -240,8 +240,8 @@ Now output calculation formula is simple. What is also worth noticing is that
 array ```s``` contains four values for each input sample.
 
 ```
-    let z = {[ 4, 1 ]} -> float;
-    let s = {[ 4, 1 ]} -> float;
+    let z = {[ 4, 1 ]} : float;
+    let s = {[ 4, 1 ]} : float;
 
     z = x * W;
     s = sigmoid_matrix(z);
@@ -262,7 +262,7 @@ Error can be calculated by subtracting each element of ```yT``` from ```s```.
 Of course we keep these values in a matrix.
 
 ```
-    let err = {[ 4, 1 ]} -> float;
+    let err = {[ 4, 1 ]} : float;
     err = yT - s;
 ``` 
 
@@ -282,8 +282,8 @@ corresponding elements matrix Hadamard multiplication is used.
 Value ```1``` is replaced by matrix with all elements initialized to ```1```.
 
 ```
-    let sD = {[ 4, 1 ]} -> float;
-    let one = {[ 4, 1 ]} -> float;
+    let sD = {[ 4, 1 ]} : float;
+    let one = {[ 4, 1 ]} : float;
 
     sD = Hadamard_matrix(s, one - s);
     W = W + xT * Hadamard_matrix(err, sD)
@@ -305,16 +305,16 @@ func nn() -> int
     let x = [ [0, 1, 0],
               [1, 0, 0],
               [1, 1, 1],
-              [0, 0, 1] ] -> float;
+              [0, 0, 1] ] : float;
     let xT = T_matrix(x);
-    let y = [ [1, 0, 1, 0] ] -> float;
+    let y = [ [1, 0, 1, 0] ] : float;
     let yT = T_matrix(y);
-    let W = {[ 3, 1 ]} -> float;
-    let z = {[ 4, 1 ]} -> float;
-    let s = {[ 4, 1 ]} -> float;
-    let sD = {[ 4, 1 ]} -> float;
-    let err = {[ 4, 1 ]} -> float;
-    let one = {[ 4, 1 ]} -> float;
+    let W = {[ 3, 1 ]} : float;
+    let z = {[ 4, 1 ]} : float;
+    let s = {[ 4, 1 ]} : float;
+    let sD = {[ 4, 1 ]} : float;
+    let err = {[ 4, 1 ]} : float;
+    let one = {[ 4, 1 ]} : float;
     let rand = randomize(165);
     let i = 0;
 
@@ -331,11 +331,11 @@ func nn() -> int
         W = W + xT * Hadamard_matrix(err, sD)
     };
     
-    z = ([[ 0, 1, 0 ]] -> float) * W;
+    z = ([[ 0, 1, 0 ]] : float) * W;
     s = sigmoid_matrix(z);
     print_matrix(s);
 
-    z = ([[ 0, 1, 1 ]] -> float) * W;
+    z = ([[ 0, 1, 1 ]] : float) * W;
     s = sigmoid_matrix(z);
     print_matrix(s);
     

@@ -21,7 +21,7 @@ The function may only return value of one expression. In the above example tempe
 of boiling water given in Celsius degrees is converted to Fahrenheit degrees.
 
 ```swift
-func cel2fah(c -> float) -> float
+func cel2fah(c : float) -> float
 {
     c * 1.8 + 32.0
 }
@@ -39,7 +39,7 @@ In particular, functions may invoke themselves. The Fibonacci function is
 a classic example:
 
 ```swift
-func fib(n -> int) -> int
+func fib(n : int) -> int
 {
     (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
 }
@@ -53,7 +53,7 @@ func main() -> int
 or greatest common divisor:
 
 ```swift
-func gcd(x -> int, y -> int) -> int
+func gcd(x : int, y : int) -> int
 {
     (y == 0) ? x : gcd(y, x % y)
 }
@@ -82,17 +82,17 @@ ability to accept and return functions. The following code demonstrates this
 feature.
 
 ```swift
-func fah2cel(f -> float) -> float
+func fah2cel(f : float) -> float
 {
     (f - 32.0) / 1.8
 }
 
-func cel2fah(c -> float) -> float
+func cel2fah(c : float) -> float
 {
     c * 1.8 + 32.0
 }
 
-func dir_deg(d -> int) -> (float) -> float
+func dir_deg(d : int) -> (float) -> float
 {
     d == 0 ? fah2cel : cel2fah
 }
@@ -110,17 +110,17 @@ degrees. As Never is strongly typed the function specifies its return type as
 
 Functions may also take other functions as arguments.
 ```swift
-func fah2cel(f -> float) -> float
+func fah2cel(f : float) -> float
 {
     (f - 32.0) / 1.8
 }
 
-func cel2fah(c -> float) -> float
+func cel2fah(c : float) -> float
 {
     c * 1.8 + 32.0
 }
 
-func degrees(conv(float) -> float, degree -> float) -> float
+func degrees(conv(float) -> float, degree : float) -> float
 {
     conv(degree)
 }
@@ -140,13 +140,13 @@ Never supports any degree of function nesting. As result it is not needed to
 define all functions in programs top level.
 
 ```swift
-func dir_deg(d -> int) -> (float) -> float
+func dir_deg(d : int) -> (float) -> float
 {
-    func fah2cel(f -> float) -> float
+    func fah2cel(f : float) -> float
     {
         (f - 32) / 1.8
     }
-    func cel2fah(c -> float) -> float
+    func cel2fah(c : float) -> float
     {
         c * 1.8 + 32
     }
@@ -167,13 +167,13 @@ which are defined above or at the same level in the structure of a program
 can be used.
 
 ```swift
-func dir_deg(d -> float, coeff -> float) -> (float) -> float
+func dir_deg(d : float, coeff : float) -> (float) -> float
 {
-    func fah2cel(f -> float) -> float
+    func fah2cel(f : float) -> float
     {
         coeff * ((f - 32.0) / 1.8)
     }
-    func cel2fah(c -> float) -> float
+    func cel2fah(c : float) -> float
     {
         coeff * (c * 1.8 + 32.0)
     }
@@ -198,14 +198,14 @@ Functions in functional programming languages are also expressions.
 This leads to very interesting syntax which is supported by Never.
 
 ```swift
-func degrees(conv(float) -> float, degree -> float) -> float
+func degrees(conv(float) -> float, degree : float) -> float
 {
     conv(degree)
 }
 
 func main() -> float
 {
-    degrees(let func rea2cel(d -> float) -> float
+    degrees(let func rea2cel(d : float) -> float
             {
                  d * 4.0 / 5.0
             }, 100.0)
@@ -231,7 +231,7 @@ func main() -> float
 ... and a little step further.
 
 ```swift
-func dir_deg(d -> int) -> (float) -> float
+func dir_deg(d : int) -> (float) -> float
 {
     d == 0 ? let func fah2cel(f -> float) -> float { (f - 32.0) / 1.8 }
            : let func cel2fah(c -> float) -> float { c * 1.8 + 32.0 }
@@ -248,7 +248,7 @@ func main() -> float
 Functions let to define bindings with local values.
 
 ```swift
-func area(a -> float, b -> float, c -> float) -> float
+func area(a : float, b : float, c : float) -> float
 {
     let p = (a + b + c) / 2.0;
     sqrt(p * (p - a) * (p - b) * (p - c))
@@ -261,7 +261,7 @@ variables ```q``` and ```p``` are declared in correct order. When reversed
 compilation error will be displayed.
 
 ```swift
-func outer(a -> float, b -> float) -> float
+func outer(a : float, b : float) -> float
 {
     let q = 10.0;
     let p = a + q;
@@ -273,7 +273,7 @@ func outer(a -> float, b -> float) -> float
 Bindings can hold any expressions. Thus the following code is also possible...
 
 ```swift
-func outer(to -> int) -> () -> int
+func outer(to : int) -> () -> int
 {
     let p = 2 * to;
     let f = let func rec() -> int
@@ -288,9 +288,9 @@ func outer(to -> int) -> () -> int
 ... or even
 
 ```swift
-func outer(to -> int) -> (int) -> int
+func outer(to : int) -> (int) -> int
 {
-    let f = let func rec(start -> int) -> int
+    let f = let func rec(start : int) -> int
     {
         start < to ? rec(print(start) + 1) : 0
     };
@@ -339,7 +339,7 @@ expressions. The following factorizes a number using ```for```
 and ```while``` expressions.
 
 ```swift
-func divisors(n -> int) -> int
+func divisors(n : int) -> int
 {
     var i = 1;
 
@@ -368,7 +368,7 @@ func main() -> int
 ```
 
 ```swift
-func factorize(n -> int) -> int
+func factorize(n : int) -> int
 {
     var i = 1;
 
@@ -395,12 +395,12 @@ passed between functions. The following example declares an array and returns
 value of its element.
 
 ```swift
-func f1(a -> int) -> [D, D] -> int
+func f1(a -> int) -> [D, D] : int
 {
      [ [ a, 0, 0, 0 ],
        [ 0, a, 0, 0 ],
        [ 0, 0, a, 0 ],
-       [ 0, 0, 0, a ] ] -> int
+       [ 0, 0, 0, a ] ] : int
 }
 
 func main() -> int
@@ -413,15 +413,15 @@ Arrays may contain elements of any type. In particular these may be other
 arrays...
 
 ```swift
-func call(tab[row] -> [D] -> int) -> int
+func call(tab[row] : [D] : int) -> int
 {
     tab[row - 1][1]
 }
 
 func f1() -> int
 {
-    call([ [ 9, 8, 7, 6, 5 ] -> int,
-           [ 9, 7, 5 ] -> int        ] -> [_] -> int)
+    call([ [ 9, 8, 7, 6, 5 ] : int,
+           [ 9, 7, 5 ] : int        ] : [_] : int)
 }
 
 func main() -> int
@@ -431,12 +431,12 @@ func main() -> int
 ```
 ...or even functions.
 ```swift
-func f1(a -> int, b -> int, c -> int) -> [D] -> () -> int
+func f1(a : int, b : int, c : int) -> [D] : () -> int
 {
      [
         let func f1() -> int { a + b + c },
         let func f2() -> int { a + b - c }  
-     ] -> () -> int
+     ] : () -> int
 }
 
 func main() -> int
@@ -449,14 +449,14 @@ func main() -> int
 When arrays are passed to functions their dimensions are also passed as function
 arguments. This type of array passing type is called conformant arrays.
 ```swift
-func f1(tab[row, col] -> int) -> int
+func f1(tab[row, col] : int) -> int
 {
     row * col
 }
 
 func main() -> int
 {
-    f1( [ [10, 20, 30], [30, 40, 50] ] -> int )
+    f1( [ [10, 20, 30], [30, 40, 50] ] : int )
 }
 ```
 
@@ -464,9 +464,9 @@ Conformat arrays let to iterate over array elements. The following listing
 demonstrates how conformant arrays and tail recursion are used to determine
 lowest element in an array.
 ```swift
-func tmin( t[elems] -> int ) -> int
+func tmin( t[elems] : int ) -> int
 {
-    func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
+    func __tmin( min : int, i : int, t[elems] : int ) -> int
     {
         i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min
     }
@@ -475,7 +475,7 @@ func tmin( t[elems] -> int ) -> int
 
 func main() -> int
 {
-    tmin( [ 20, 10, 30, 50, 40 ] -> int )
+    tmin( [ 20, 10, 30, 50, 40 ] : int )
 }
 ```
 
@@ -483,14 +483,14 @@ The following example presents how to pass any function which is executed over
 all elements of an array. This program uses arrays, first class functions
 and tail recursion.
 ```swift
-func add_five(e -> int) -> int
+func add_five(e : int) -> int
 {
     print(e + 5)
 }
 
-func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
+func tforeach( t[elems] : int, each(e : int) -> int) -> int
 {
-    func __tforeach( val -> int, i -> int, t[elems] -> int ) -> int
+    func __tforeach( val : int, i : int, t[elems] : int ) -> int
     {
         i < elems ? __tforeach( each(t[i]), i + 1, t ) : 0
     }
@@ -499,25 +499,25 @@ func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
 
 func main() -> int
 {
-    tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five )
+    tforeach( [ 10, 20, 50, 30, 40 ] : int, add_five )
 }
 ```
 
 Arrays may contain other arrays. This feature lets us to define vectors
 of arrays.
 ```swift
-func printTab( tab[dim] -> int ) -> int
+func printTab( tab[dim] : int ) -> int
 {
-    func __printTab( val -> int, i -> int, tab[dim] -> int ) -> int
+    func __printTab( val : int, i : int, tab[dim] : int ) -> int
     {
         i < dim ? __printTab( print(2 * tab[i]), i + 1, tab) : i
     }
     __printTab(0, 0, tab)
 }
 
-func print2Tab( tab[dim] -> [D] -> int ) -> int
+func print2Tab( tab[dim] : [D] : int ) -> int
 {
-    func __print2Tab( val -> int, i -> int, tab[dim] -> [D] -> int ) -> int
+    func __print2Tab( val : int, i : int, tab[dim] : [D] : int ) -> int
     {
         i < dim ? __print2Tab( printTab(tab[i]), i + 1, tab ) : i
     }
@@ -526,8 +526,8 @@ func print2Tab( tab[dim] -> [D] -> int ) -> int
 
 func main() -> int
 {
-    print2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
-                 [ 16, 17, 18 ] -> int ] -> [D] -> int )
+    print2Tab( [ [ 1, 2, 3, 4, 5, 6 ] : int,
+                 [ 16, 17, 18 ] : int ] : [D] : int )
 }
 ```
 
@@ -538,18 +538,18 @@ func twice(e -> int) -> int
     print(2 * e)
 }
 
-func foreachTab( tab[dim] -> int, each(e -> int) -> int ) -> int
+func foreachTab( tab[dim] : int, each(e : int) -> int ) -> int
 {
-    func __foreachTab( val -> int, i -> int, tab[dim] -> int ) -> int
+    func __foreachTab( val : int, i : int, tab[dim] : int ) -> int
     {
         i < dim ? __foreachTab( each(tab[i]), i + 1, tab) : i
     }
     __foreachTab(0, 0, tab)
 }
 
-func foreach2Tab( tab[dim] -> [D] -> int, eachTab(t[D] -> int, (int) -> int) -> int, each(e -> int) -> int ) -> int
+func foreach2Tab( tab[dim] : [D] : int, eachTab(t[D] : int, (int) -> int) -> int, each(e : int) -> int ) -> int
 {
-    func __foreach2Tab( val -> int, i -> int, tab[dim] -> [D] -> int ) -> int
+    func __foreach2Tab( val : int, i : int, tab[dim] : [D] : int ) -> int
     {
         i < dim ? __foreach2Tab( eachTab(tab[i], each), i + 1, tab ) : i
     }
@@ -558,8 +558,8 @@ func foreach2Tab( tab[dim] -> [D] -> int, eachTab(t[D] -> int, (int) -> int) -> 
 
 func main() -> int
 {
-    foreach2Tab( [ [ 1, 2, 3, 4, 5, 6 ] -> int,
-                   [ 16, 17, 18 ] -> int ] -> [D] -> int,
+    foreach2Tab( [ [ 1, 2, 3, 4, 5, 6 ] : int,
+                   [ 16, 17, 18 ] : int ] : [D] : int,
                    foreachTab, twice )
 }
 ```
@@ -568,9 +568,9 @@ Arrays can be used to memorize sub-problem results in dynamic programming.
 The following example solves rod cutting dynamic problem.
 
 ```swift
-func max(a -> int, b -> int) -> int { a > b ? a : b }
+func max(a : int, b : int) -> int { a > b ? a : b }
 
-func cutrod(price[P] -> int, memo[M] -> int, len -> int) -> int
+func cutrod(price[P] : int, memo[M] : int, len : int) -> int
 {
     var i = 0;
     var max_p = -1;
@@ -593,8 +593,8 @@ func cutrod(price[P] -> int, memo[M] -> int, len -> int) -> int
 
 func main() -> int
 {
-    let price = [ 2, 7, 9, 10, 10, 14, 17, 21 ] -> int;
-    let memo = [ 0, -1, -1, -1, -1, -1, -1, -1, -1 ] -> int; 
+    let price = [ 2, 7, 9, 10, 10, 14, 17, 21 ] : int;
+    let memo = [ 0, -1, -1, -1, -1, -1, -1, -1, -1 ] : int; 
     
     cutrod(price, memo, 8)
 }
@@ -606,28 +606,28 @@ Never lets to add, subtract and multiply int and float arrays.
 ```swift
 func main() -> int
 {
-    printtab( 2 * [ 3, 5, 7, 9 ] -> int )
+    printtab( 2 * [ 3, 5, 7, 9 ] : int )
 }
 ```
 
 ```swift
 func main() -> int
 {
-    printtab( - [ 1, -2, 3, -4, 5, -6 ] -> int )
+    printtab( - [ 1, -2, 3, -4, 5, -6 ] : int )
 }
 ```
 
 ```swift
 func main() -> int
 {
-    printtab( [ 3.5, 5.5, 7.5 ] -> float - [ 3.0, 4.0, 7.0 ] -> float )
+    printtab( [ 3.5, 5.5, 7.5 ] : float - [ 3.0, 4.0, 7.0 ] : float )
 }
 ```
 
 ```swift
 func main() -> int
 {
-    printtab( [ 1.5, 2.5, 3.5 ] -> float + [ 3.0, 4.0, 7.0 ] -> float )
+    printtab( [ 1.5, 2.5, 3.5 ] : float + [ 3.0, 4.0, 7.0 ] : float )
 }
 ```
 
@@ -635,11 +635,11 @@ func main() -> int
 func main() -> int
 {
     printtab( [ [ 1.0, 2.0, 3.0 ],
-                [ 3.0, 4.0, 5.0 ] ] -> float
+                [ 3.0, 4.0, 5.0 ] ] : float
                         *
               [ [ 3.0, 4.0, 1.0, 1.0 ],
                 [ 6.0, 7.0, 1.0, 1.0 ],
-                [ 8.0, 2.0, 1.0, 1.0 ] ] -> float )
+                [ 8.0, 2.0, 1.0, 1.0 ] ] : float )
 }
 ```
 
@@ -649,55 +649,55 @@ Never supports list comprehension. Each list consists of a series of
 generators and filers and expression which yields list elements.
 
 ```swift
-func cl() -> [_] -> int
+func cl() -> [_] : int
 {
-    [ x * x | x in [10, 20, 30, 40, 50] -> int ] -> int
+    [ x * x | x in [10, 20, 30, 40, 50] : int ] : int
 }
 ```
 
 The following example presents both generators and filters.
 
 ```swift
-func cl() -> [_] -> int
+func cl() -> [_] : int
 {
-    [ x * x | x in [1, 2, 3, 4, 5, 6, 7, 8] -> int; (x * x % 2) == 0 ] -> int
+    [ x * x | x in [1, 2, 3, 4, 5, 6, 7, 8] : int; (x * x % 2) == 0 ] : int
 }
 ```
 
 List comprehension may also invoke other functions.
 
 ```swift
-func cl() -> [_] -> float
+func cl() -> [_] : float
 {
-    func grad(d -> float) -> float
+    func grad(d : float) -> float
     {
         d * 2.0 * 3.14159265 / 360.0
     }
     
-    [ f(y) | f in [ sin, cos ] -> (float) -> float;
-             y in [ grad(0.0), grad(30.0), grad(45.0), grad(60.0), grad(90.0) ] -> float ] -> float
+    [ f(y) | f in [ sin, cos ] : (float) -> float;
+             y in [ grad(0.0), grad(30.0), grad(45.0), grad(60.0), grad(90.0) ] : float ] : float
 }
 ```
 
 or even return list of closures.
 
 ```swift
-func cl() -> [_] -> (float) -> float
+func cl() -> [_] : (float) -> float
 {
-    func grad(d -> float) -> float
+    func grad(d : float) -> float
     {
         d * 2.0 * 3.14159265 / 360.0
     }
     
-    [ g | f in [ sin, cos ] -> (float) -> float;
-          g in [ let func(x -> float) -> float { f(grad(x)) } ] -> (float) -> float ] -> (float) -> float
+    [ g | f in [ sin, cos ] : (float) -> float;
+          g in [ let func(x : float) -> float { f(grad(x)) } ] : (float) -> float ] : (float) -> float
 }
 ```
 
 The following code snippets present other examples:
 
 ```swift
-func decor(str -> string) -> string
+func decor(str : string) -> string
 {
     "###" + str + "###\n"
 }
@@ -705,8 +705,8 @@ func decor(str -> string) -> string
 func main() -> int
 {
     var i = 0;
-    var texts = [ "one", "two", "three" ] -> string;
-    var decors = [ decor(txt) | txt in texts ] -> string;
+    var texts = [ "one", "two", "three" ] : string;
+    var decors = [ decor(txt) | txt in texts ] : string;
 
     for (i = 0; i < 3; i = i + 1)
     {
@@ -728,14 +728,14 @@ func main() -> int
 func main() -> int
 {
     var i = 0;
-    var texts = [ "one", "two", "three" ] -> string;
+    var texts = [ "one", "two", "three" ] : string;
     var decors = [ let func () -> int
                    { 
                        prints("###" + txt + "###\n");
                        0
                    } 
                    | txt in texts
-                 ] -> () -> int;
+                 ] : () -> int;
 
     for (i = 0; i < 3; i = i + 1)
     {
@@ -757,14 +757,14 @@ func main() -> int
 func main() -> int
 {
     var i = 0;
-    var texts = [ "one", "two", "three" ] -> string;
-    var decors = [ let func (d -> string) -> int
+    var texts = [ "one", "two", "three" ] : string;
+    var decors = [ let func (d : string) -> int
                    { 
                        prints(d + txt + d + "\n");
                        0
                    } 
                    | txt in texts
-                 ] -> (string) -> int;
+                 ] : (string) -> int;
 
     for (i = 0; i < 3; i = i + 1)
     {
@@ -794,7 +794,7 @@ func g1() -> EONE
     EONE.four
 }
 
-func e1(a -> EONE, b -> EONE) -> string
+func e1(a : EONE, b : EONE) -> string
 {
     if (a == g1())
     {
@@ -822,13 +822,13 @@ they can be defined and used.
 ```swift
 record Tree
 {
-    value -> int;
-    left -> Tree;
-    right -> Tree;
-    print(t -> Tree) -> int;
+    value : int;
+    left : Tree;
+    right : Tree;
+    print(t : Tree) -> int;
 }
 
-func print_tree(t -> Tree) -> int
+func print_tree(t : Tree) -> int
 {
     prints("tree value = " + t.value + "\n");
 
@@ -872,7 +872,7 @@ and ```pow(x,y)```. These functions are also first class so they may be passed
 in between functions as any other function.
 
 ```swift
-func deg2rad(deg -> float) -> float
+func deg2rad(deg : float) -> float
 {
     deg * 3.14159 / 180
 }
@@ -893,17 +893,17 @@ vector rotations. Code snippet included below rotates vector ```[[ 10.0, 0.0 ]]`
 by 0, 45, 90, 180, 270 and 360 degrees.
 
 ```swift
-func print_vect(vect[D1, D2] -> float) -> int
+func print_vect(vect[D1, D2] : float) -> int
 {
     printf(vect[0, 0]);
     printf(vect[0, 1]);
     0
 }
 
-func rotate_matrix(alpha -> float) -> [_,_] -> float
+func rotate_matrix(alpha : float) -> [_,_] : float
 {
     [ [ cos(alpha), -sin(alpha) ],
-      [ sin(alpha), cos(alpha)  ] ] -> float
+      [ sin(alpha), cos(alpha)  ] ] : float
 }
 
 func main() -> int
@@ -947,15 +947,15 @@ are passed down call stack. First function which defines exception handler
 is used. Also any exception can be caught by parameterless exception handler.
 
 ```swift
-func three(d -> int, c -> int) -> int
+func three(d : int, c : int) -> int
 {
-    let t = [ 1, 2, 3 ] -> int;
+    let t = [ 1, 2, 3 ] : int;
 
     t[0] = d;
     170 / d
 }
 
-func two(d -> int) -> int
+func two(d : int) -> int
 {
     three(d, 199)
 }
@@ -968,7 +968,7 @@ catch (index_out_of_bounds)
     d + 102
 }
 
-func one(d -> int) -> int
+func one(d : int) -> int
 {
     two(d)
 }
@@ -1018,7 +1018,7 @@ func main() -> int
 They may be concatenated with integers or floats.
 
 ```swift
-func print_vect(vect[D1, D2] -> float) -> int
+func print_vect(vect[D1, D2] : float) -> int
 {
     prints("[" + vect[0, 0] + "," + vect[0, 1] + "]\n");
     0
@@ -1061,12 +1061,12 @@ Never language can be embedded in Unix shell and C code.
 ```swift
 #!/usr/bin/nev
 
-func add(a -> int, b -> int, c -> int) -> int
+func add(a : int, b : int, c : int) -> int
 {
     a + b + c
 }
 
-func main(a -> int, b -> int) -> int
+func main(a : int, b : int) -> int
 {
     add(a, b, 1)
 }
@@ -1094,7 +1094,7 @@ void test_one()
     int ret = 0;
     object result = { 0 };
     program * prog = program_new();
-    const char * prog_str = "func main(a -> int, b -> int) -> int { 10 * (a + b) }";
+    const char * prog_str = "func main(a : int, b : int) -> int { 10 * (a + b) }";
 
     ret = nev_compile_str(prog_str, prog);
     if (ret == 0)
@@ -1135,10 +1135,10 @@ code snippets demonstrate how to invoke function in math and system libraries.
 Right now only basic types can be passed.
 
 ```swift
-extern "libm.so.6" func sinhf(x -> float) -> float
-extern "libm.so.6" func coshf(x -> float) -> float
-extern "libm.so.6" func powf(base -> float, exp -> float) -> float
-extern "libm.so.6" func atanf(x -> float) -> float
+extern "libm.so.6" func sinhf(x : float) -> float
+extern "libm.so.6" func coshf(x : float) -> float
+extern "libm.so.6" func powf(base : float, exp : float) -> float
+extern "libm.so.6" func atanf(x : float) -> float
 
 func main() -> int
 {
@@ -1160,7 +1160,7 @@ func main() -> int
 ```swift
 func main() -> int
 {
-    var system = let extern "libc.so.6" func system(cmd -> string) -> float;
+    var system = let extern "libc.so.6" func system(cmd : string) -> float;
     var v = system("uname -a");
 
     0

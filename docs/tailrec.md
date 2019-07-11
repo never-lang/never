@@ -15,7 +15,7 @@ Many problems are expressed using themselves as subproblems. This leads to an in
 The following code listing presents Fibonacci function expressed in [Never][never-lang] language. It is expressed almost in the same way as its mathematical definition. To calculate ```fib(20)``` function ```fib``` is called 21891 times. When executed on a typical laptop it takes approximately 0.6s to execute (unsing Never language).
 
 ```
-func fib(n -> int) -> int 
+func fib(n : int) -> int 
 {
     (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
 }
@@ -26,7 +26,7 @@ Mathematicians and computer scientists began to think how this situation could b
 First, it needs to be the last call. Second, it needs parameter ```n```. Also we may notice that result is a sum of two previous values, lets name them ```a``` and ```b```.
 
 ```
-func fib(n -> int, a -> int, b -> int) -> int
+func fib(n : int, a : int, b : int) -> int
 {
     (n == 0) ? a : (n == 1) ? b : fib(n - 1, b, a + b)
 }
@@ -38,7 +38,7 @@ The above listing presents tail recursive definition of the Fibonacci function. 
 Other functions can be turned into tail recursive as well.
 
 ```
-func gcd(x -> int, y -> int) -> int
+func gcd(x : int, y : int) -> int
 {
     (y == 0) ? x : gcd(y, x % y)
 }
@@ -47,13 +47,13 @@ func gcd(x -> int, y -> int) -> int
 The above function present greatest common divisor function.
 
 ```
-func factorial(n -> int, val -> int) -> int
+func factorial(n : int, val : int) -> int
 {
     n == 0 ? val : factorial(n - 1, n * val)
 }
 ```
 ```
-func power(a -> int, n -> int, val -> int) -> int
+func power(a : int, n : int, val : int) -> int
 {
     n == 0 ? val : power(a, n - 1, a * val)
 }
@@ -67,9 +67,9 @@ Tail recursive functions can be used to create programs. When evaluating mathema
 To illustrate this technique lets have a look at the following examples. Different functions are executed over elements of an array. [Never][never-lang] language declares an array of four integers as ```{ 1, 2, 3, 4 } -> int``` and gets value of its elements using ```t[i]``` syntax. When an array is passed to a function its size is given in ```t[elems] -> int``` parameter.
 
 ```
-func tprint( t[elems] -> int ) -> int
+func tprint( t[elems] : int ) -> int
 {
-	func __tprint( val -> int, i -> int, t[elems] -> int ) -> int
+	func __tprint( val : int, i : int, t[elems] : int ) -> int
 	{
         i < elems - 1 ? __tprint( print(t[i]), i + 1, t ) : t[i]
 	}
@@ -78,16 +78,16 @@ func tprint( t[elems] -> int ) -> int
 }
 func main() -> int
 {
-	tprint( [ 10, 20, 30, 40, 50, 60 ] -> int )
+	tprint( [ 10, 20, 30, 40, 50, 60 ] : int )
 }
 ```
 
 The above function ```__tprint``` is invoked for every element of an array. Each element of the array is printed using ```print(t[i])``` function. Next the ```__tprint``` is invoked again to print the next value. To make program more readable function ```__tprint``` is defined within function ```tprint``` which takes the array as its parameter. This technique will recur in following examples.
 
 ```
-func tsum( t[elems] -> int) -> int
+func tsum( t[elems] : int) -> int
 {
-	func __tsum( sum -> int, i -> int, t[elems] -> int ) -> int
+	func __tsum( sum : int, i : int, t[elems] : int ) -> int
 	{
 		i < elems ? __tsum( sum + t[i], i + 1, t ) : sum
 	}
@@ -95,15 +95,15 @@ func tsum( t[elems] -> int) -> int
 }
 func main() -> int
 {
-	tsum( [ 10, 20, 30, 40, 50, 60 ] -> int )
+	tsum( [ 10, 20, 30, 40, 50, 60 ] : int )
 }
 ```
 To calculate sum of array elements in each recursive call sum is increased. Finally sum of all elements is returned.
 
 ```
-func tmin( t[elems] -> int ) -> int
+func tmin( t[elems] : int ) -> int
 {
-	func __tmin( min -> int, i -> int, t[elems] -> int ) -> int
+	func __tmin( min : int, i : int, t[elems] : int ) -> int
 	{
 		i < elems ? __tmin( t[i] < min ? t[i] : min, i + 1, t ) : min
 	}
@@ -111,15 +111,15 @@ func tmin( t[elems] -> int ) -> int
 }
 func main() -> int
 {
-	tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int )
+	tmin( [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] : int )
 }
 ```
 Similar idea can be used to determine the lowest value within an array...
 
 ```
-func exists( e -> int, t[elems] -> int ) -> int
+func exists( e : int, t[elems] : int ) -> int
 {
-	func __exists( i -> int, e -> int, t[elems] -> int ) -> int
+	func __exists( i : int, e : int, t[elems] : int ) -> int
 	{
 	    i < elems ? ( e == t[i] ? 1 : __exists( i + 1, e, t ) ) : 0
 	}
@@ -127,20 +127,20 @@ func exists( e -> int, t[elems] -> int ) -> int
 }
 func main() -> int
 {
-	exists( 100, [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] -> int )
+	exists( 100, [ 60, 20, 10, 30, 50, 40, 80, 90, 100 ] : int )
 }
 ```
 ...or used to determine if given value exists with an array. Recursive calls stop when sought after value is found.
 
 ```
-func add_five(e -> int) -> int
+func add_five(e : int) -> int
 {
 	print(e + 5)
 }
 
-func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
+func tforeach( t[elems] : int, each(e : int) -> int) -> int
 {
-	func __tforeach( val -> int, i -> int, t[elems] -> int ) -> int
+	func __tforeach( val : int, i : int, t[elems] : int ) -> int
 	{
         i < elems ? __tforeach( each(t[i]), i + 1, t ) : 0
 	}
@@ -148,20 +148,20 @@ func tforeach( t[elems] -> int, each(e -> int) -> int) -> int
 }
 func main() -> int
 {
-	tforeach( [ 10, 20, 50, 30, 40 ] -> int, add_five )
+	tforeach( [ 10, 20, 50, 30, 40 ] : int, add_five )
 }
 ```
 [Never][never-lang] supports first-call functions which can be passed to other functions. This property can be used to execute arbitrary function over all elements. In the above example function ```add_five``` is passed to ```tforeach``` function.
 
 ```
-func sum_mapi(i -> int, e -> int) -> int
+func sum_mapi(i : int, e : int) -> int
 {
     print(i + e)
 }
 
-func tmapi( t[elems] -> int, mapi(i -> int, e -> int) -> int) -> int
+func tmapi( t[elems] : int, mapi(i : int, e : int) -> int) -> int
 {
-	func __tmapi( val -> int, i -> int, t[elems] -> int ) -> int
+	func __tmapi( val : int, i : int, t[elems] : int ) -> int
 	{
 	    i < elems ? __tmapi( mapi(i, t[i]), i + 1, t ) : 0
 	}
@@ -169,24 +169,24 @@ func tmapi( t[elems] -> int, mapi(i -> int, e -> int) -> int) -> int
 }
 func main() -> int
 {
-	tmapi( [ 10, 20, 50, 30, 40 ] -> int, sum_mapi )
+	tmapi( [ 10, 20, 50, 30, 40 ] : int, sum_mapi )
 }
 ```
 The above listing presents ```mapi``` function which is invoked with element index and its value.
 
 ```
-func odd( e -> int ) -> int
+func odd( e : int ) -> int
 {
     e % 2
 }
-func do( e -> int ) -> int
+func do( e : int ) -> int
 {
     print(e + 1)
 }
 
-func filter( t[elems] -> int, if( int ) -> int, do( int ) -> int ) -> int
+func filter( t[elems] : int, if( int ) -> int, do( int ) -> int ) -> int
 {
-	func __filter( val -> int, i -> int, t[elems] -> int, if( e -> int) -> int, do( e -> int ) -> int ) -> int
+	func __filter( val : int, i : int, t[elems] : int, if( e : int ) -> int, do( e : int ) -> int ) -> int
 	{
 		i < elems ? __filter( if(t[i]) ? do(t[i]) : 0,  i + 1, t, if, do ) : 0
 	}
@@ -194,7 +194,7 @@ func filter( t[elems] -> int, if( int ) -> int, do( int ) -> int ) -> int
 }
 func main() -> int
 {
-	filter( [ 61, 22, 11, 34, 58, 41, 83, 92, 101 ] -> int,
+	filter( [ 61, 22, 11, 34, 58, 41, 83, 92, 101 ] : int,
             odd, do )
 }
 ```

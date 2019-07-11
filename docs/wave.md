@@ -16,18 +16,18 @@ function. First we need to generate a frame of the animation sequence.
 ```swift
 record Point
 {
-    x -> float;
-    y -> float;
-    z -> float;
+    x : float;
+    y : float;
+    z : float;
 }
 
-func print_point(p -> Point) -> int
+func print_point(p : Point) -> int
 {
     prints("<" + p.x + ", " + p.y + ", " + p.z + ">");
     0
 }
 
-func print_rect(data[D1, D2] -> Point, x -> int, y -> int) -> int
+func print_rect(data[D1, D2] : Point, x : int, y : int) -> int
 {
     prints("triangle { ");
       print_point(data[x, y]);
@@ -48,7 +48,7 @@ func print_rect(data[D1, D2] -> Point, x -> int, y -> int) -> int
     0
 }
 
-func print_wave(data[D1, D2] -> Point) -> int
+func print_wave(data[D1, D2] : Point) -> int
 {
     var x = 0;
     var y = 0;
@@ -90,14 +90,14 @@ func tail() -> int
   0
 }
 
-func get_wave(phi -> float, size -> int) -> [_, _] -> Point
+func get_wave(phi : float, size : int) -> [_, _] : Point
 {
     var x = 0;
     var y = 0;
     var x_v = 0.0;
     var y_v = 0.0;
     var z_v = 0.0;
-    var tab = {[ size, size ]} -> Point;
+    var tab = {[ size, size ]} : Point;
 
     for (x = 0; x < size; x = x + 1)
     {
@@ -118,7 +118,7 @@ func get_wave(phi -> float, size -> int) -> [_, _] -> Point
     tab
 }
 
-func generate(phi -> float) -> int
+func generate(phi : float) -> int
 {
     var data = get_wave(phi, 24);
 
@@ -130,7 +130,7 @@ func generate(phi -> float) -> int
 }
 
 
-func main(phi -> int) -> int
+func main(phi : int) -> int
 {
     generate(2.0 * 3.141 / 32.0 * phi);
     0
