@@ -1,7 +1,7 @@
 
 record Rec {
-    x -> int;
-    y -> int;
+    x : int;
+    y : int;
 }
 
 func test() -> int

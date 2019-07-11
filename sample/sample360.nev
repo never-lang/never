@@ -1,13 +1,13 @@
 
 record R {
-    x -> int;
-    y -> int;
+    x : int;
+    y : int;
 }
 
-extern "libm.so.6" func sinhf(x -> float) -> float
-extern "libm.so.6" func coshf(x -> float) -> float
-extern "libm.so.6" func powf(base -> float, exp -> float) -> float
-extern "libm.so.6" func atanf(x -> float) -> float
+extern "libm.so.6" func sinhf(x : float) -> float
+extern "libm.so.6" func coshf(x : float) -> float
+extern "libm.so.6" func powf(base : float, exp : float) -> float
+extern "libm.so.6" func atanf(x : float) -> float
 
 func main() -> int
 {

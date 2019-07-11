@@ -1,9 +1,9 @@
 
 record R {
-    x -> int;
-    y -> int;
-    z -> int;
-    v -> int;
+    x : int;
+    y : int;
+    z : int;
+    v : int;
 }
 
 func gc_test() -> int

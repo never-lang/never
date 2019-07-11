@@ -1,10 +1,10 @@
 
 record Point {
-    x -> int;
-    y -> int;
+    x : int;
+    y : int;
 }
 
-func get(r -> Point, x -> int, y -> int) -> int
+func get(r : Point, x : int, y : int) -> int
 {
     r.x = x;
     r.y = y;
@@ -12,14 +12,14 @@ func get(r -> Point, x -> int, y -> int) -> int
     0
 }
 
-func addr(r1 -> Point, r2 -> Point) -> Point
+func addr(r1 : Point, r2 : Point) -> Point
 {
     var r = Point(r1.x + r2.x, r1.y + r2.y);
     
     r
 }
 
-func printr(r -> Point) -> int
+func printr(r : Point) -> int
 {
     prints("[" + r.x + ", " + r.y + "]\n");
     0

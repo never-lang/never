@@ -18,7 +18,7 @@ func g1() -> EONE
     EONE.four
 }
 
-func e1(a -> EONE, b -> EONE) -> string
+func e1(a : EONE, b : EONE) -> string
 {
     if (a == g1())
     {

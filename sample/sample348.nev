@@ -1,9 +1,9 @@
 
 enum A { one, two, three }
 
-record R { v -> A; }
+record R { v : A; }
 
-func getA(b -> A) -> R
+func getA(b : A) -> R
 {
     var r = R(b);
     r

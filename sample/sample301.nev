@@ -1,42 +1,42 @@
 
 
 record Tree {
-    value -> int;
-    left -> Tree;
-    right -> Tree;
-    attr1 -> int;
-    attr2 -> float;
-    str1 -> string;
-    f1(p -> int) -> int;
-    tab1[D1] -> int;
+    value : int;
+    left : Tree;
+    right : Tree;
+    attr1 : int;
+    attr2 : float;
+    str1 : string;
+    f1(p : int) -> int;
+    tab1[D1] : int;
 }
 
-func twice(a -> int) -> int
+func twice(a : int) -> int
 {
     2 * a 
 }
 
 func count() -> Tree
 {
-    var t = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
+    var t = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] : int);
     
     t.value = 10;
     t.attr2 = 30;
     t.f1 = twice;
-    t.tab1 = [ 11, 12, 13, 14, 15, 16, 17 ] -> int;
+    t.tab1 = [ 11, 12, 13, 14, 15, 16, 17 ] : int;
 
     t
 }
 
 func main() -> int
 {
-    var t1 = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
-    var t0 = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
-    var tab0 = [ 1, 2 ] -> int;
+    var t1 = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] : int);
+    var t0 = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] : int);
+    var tab0 = [ 1, 2 ] : int;
 
     t1.value = 100;
-    t1.left = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
-    t1.right = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] -> int);
+    t1.left = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] : int);
+    t1.right = Tree(2, nil, nil, 3, 3.2, "", twice, [1, 2] : int);
     
     t1.left.value = 200;
     t1.right.value = 400;

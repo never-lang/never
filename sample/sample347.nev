@@ -6,10 +6,10 @@ enum A {
 }
 
 record R {
-    v -> A;
+    v : A;
 }
 
-func getA(b -> A) -> R
+func getA(b : A) -> R
 {
     var r = R(b);
     r

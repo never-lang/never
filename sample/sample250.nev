@@ -5,18 +5,18 @@
  *  4   5
  *    6
  */
-func sigm(x -> float) -> float
+func sigm(x : float) -> float
 {
     1.0 / (1.0 + exp(-x))
 }
 
-func dsigm(x -> float) -> float
+func dsigm(x : float) -> float
 {
     let s = sigm(x);
     s * (1.0 - s)
 }
 
-func print_vec(in_vec[D1, D2] -> float) -> int
+func print_vec(in_vec[D1, D2] : float) -> int
 {
     let i = 0;
     
@@ -28,10 +28,10 @@ func print_vec(in_vec[D1, D2] -> float) -> int
     0
 }
 
-func sigm_vec(in_vec[D1, D2] -> float) -> [D, D] -> float
+func sigm_vec(in_vec[D1, D2] : float) -> [D, D] : float
 {
     let i = 0;
-    let out_vec = {[ D1, D2 ]} -> float;
+    let out_vec = {[ D1, D2 ]} : float;
     
     for (i = 0; i < D2; i = i + 1)
     {
@@ -41,7 +41,7 @@ func sigm_vec(in_vec[D1, D2] -> float) -> [D, D] -> float
     out_vec
 }
 
-func in_hidden(in_vec[D1, D2] -> float, w1[D3, D4] -> float) -> [D, D] -> float
+func in_hidden(in_vec[D1, D2] : float, w1[D3, D4] : float) -> [D, D] : float
 {
     in_vec * w1
 }
@@ -49,17 +49,17 @@ func in_hidden(in_vec[D1, D2] -> float, w1[D3, D4] -> float) -> [D, D] -> float
 func main() -> int
 {
     /* print_vec(sigm_vec([[-9.0, -0.5, 0.0, 0.5, 9.0]] -> float)); */
-    let win = [[ 0.1, 0.2, 0.7 ]] -> float;
+    let win = [[ 0.1, 0.2, 0.7 ]] : float;
     
     let w1 = [[ 0.1, 0.2, 0.3 ],
               [ 0.3, 0.2, 0.7 ],
-              [ 0.4, 0.3, 0.9 ]] -> float;
+              [ 0.4, 0.3, 0.9 ]] : float;
 
     let w2 = [[ 0.1, 0.4, 0.8 ],
               [ 0.3, 0.7, 0.2 ],
-              [ 0.5, 0.2, 0.9 ]] -> float;
+              [ 0.5, 0.2, 0.9 ]] : float;
 
-    let tmp = {[ 1, 1 ]} -> float;
+    let tmp = {[ 1, 1 ]} : float;
     
     tmp = win * w1;
     print_vec(tmp);

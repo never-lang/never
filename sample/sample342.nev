@@ -6,7 +6,7 @@ enum A {
 }
 
 
-func getA(a -> int) -> A
+func getA(a : int) -> A
 {
     if (a == 10) A.two else A.three
 }

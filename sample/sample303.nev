@@ -1,10 +1,10 @@
 
 record Node {
-    value -> int;
-    next -> Node;
+    value : int;
+    next : Node;
 }
 
-func print_list(list -> Node) -> int
+func print_list(list : Node) -> int
 {
     var c = Node;
 

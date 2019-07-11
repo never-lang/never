@@ -5,7 +5,7 @@ enum A {
     three
 }
 
-func getA(b -> A) -> A
+func getA(b : A) -> A
 {
     var a = A.one;
 

@@ -1,20 +1,20 @@
 
 record Point {
-    x -> int;
-    y -> int;
+    x : int;
+    y : int;
 }
 
-func print_point(p -> Point) -> int
+func print_point(p : Point) -> int
 {
     prints("[" + p.x + ", " + p.y + "]\n");
 
     0
 }
 
-func get_arr() -> [_] -> Point
+func get_arr() -> [_] : Point
 {
     var i = 0;
-    var arr = {[ 10 ]} -> Point;
+    var arr = {[ 10 ]} : Point;
     
     for (i = 0; i < 10; i = i + 1)
     {
@@ -24,7 +24,7 @@ func get_arr() -> [_] -> Point
     arr
 }
 
-func arr_test(arr[D] -> Point) -> int
+func arr_test(arr[D] : Point) -> int
 {
     var i = 0;
     

@@ -1,12 +1,12 @@
 
 enum V { one, two, three, four }
 
-func testRLC() -> [_] -> V
+func testRLC() -> [_] : V
 {
-    [ v | v in [ V.one, V.four, V.two, V.four, V.three ] -> V ] -> V
+    [ v | v in [ V.one, V.four, V.two, V.four, V.three ] : V ] : V
 }
 
-func V2str(v -> V) -> string
+func V2str(v : V) -> string
 {
     var str = "V.unknown";
 
@@ -34,7 +34,7 @@ func V2str(v -> V) -> string
     str
 }
 
-func printRLC( RLC[D] -> V ) -> int
+func printRLC( RLC[D] : V ) -> int
 {
     var i = 0;
     

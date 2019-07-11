@@ -1,17 +1,17 @@
 
 record Tree {
-    value -> int;
-    left -> Tree;
-    right -> Tree;
+    value : int;
+    left : Tree;
+    right : Tree;
 }
 
-func get_Tree(value -> int) -> Tree
+func get_Tree(value : int) -> Tree
 {
     var t = Tree(value, nil, nil);
     t
 }
 
-func print_Tree(t1 -> Tree) -> int
+func print_Tree(t1 : Tree) -> int
 {
     print(t1.value);
     0

@@ -2,11 +2,11 @@
 func arr_test() -> int
 {
     var i = 0;
-    var arr = {[ 10 ]} -> (int) -> int;
+    var arr = {[ 10 ]} : (int) -> int;
 
     for (i = 0; i < 10; i = i + 1)
     {    
-        arr[i] = let func (a -> int) -> int { a + i }
+        arr[i] = let func (a : int) -> int { a + i }
     };
     
     for (i = 0; i < 10; i = i + 1)

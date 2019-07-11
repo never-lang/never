@@ -1,7 +1,7 @@
 
-extern "libm.so.6" func sinhf(x -> float) -> float
+extern "libm.so.6" func sinhf(x : float) -> float
 
-func s(x -> float) -> float { var z = 0; 10 / z; 1.0 }
+func s(x : float) -> float { var z = 0; 10 / z; 1.0 }
 
 func main() -> int
 {

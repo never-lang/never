@@ -1,18 +1,18 @@
 
-func get_arr(c -> int) -> [_] -> (int) -> int
+func get_arr(c : int) -> [_] : (int) -> int
 {
     var i = 0;
-    var arr = {[ 10 ]} -> (int) -> int;
+    var arr = {[ 10 ]} : (int) -> int;
 
     for (i = 0; i < 10; i = i + 1)
     {    
-        arr[i] = let func (a -> int) -> int { c * a }
+        arr[i] = let func (a : int) -> int { c * a }
     };
 
     arr    
 }
 
-func arr_test(arr[D] -> (int) -> int) -> int
+func arr_test(arr[D] : (int) -> int) -> int
 {
     var i = 0;
 

@@ -1,5 +1,5 @@
 
-func print_cl(cl[D] -> (int) -> int) -> int
+func print_cl(cl[D] : (int) -> int) -> int
 {
     var i = 0;
     
@@ -11,11 +11,11 @@ func print_cl(cl[D] -> (int) -> int) -> int
     0
 }
 
-func cl() -> [_] -> (int) -> int
+func cl() -> [_] : (int) -> int
 {
     let z = 10000;
 
-    [ let func(v -> int) -> int
+    [ let func(v : int) -> int
       {
           let c = z;
           c + v * u
@@ -23,9 +23,9 @@ func cl() -> [_] -> (int) -> int
 
       | 
 
-      u in [ 1, 10, 100, 1000 ] -> int
+      u in [ 1, 10, 100, 1000 ] : int
 
-    ] -> (int) -> int
+    ] : (int) -> int
 }
     
 func main() -> int

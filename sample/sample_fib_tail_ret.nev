@@ -1,6 +1,6 @@
 func get_fib() -> (int, int, int) -> int
 {
-    func fib(n -> int, a -> int, b -> int) -> int
+    func fib(n : int, a : int, b : int) -> int
     {
         (n == 0) ? a : (n == 1) ? b : fib(n - 1, b, a + b)
     }

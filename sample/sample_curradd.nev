@@ -1,12 +1,12 @@
 
-func add(x -> int, y -> int) -> int
+func add(x : int, y : int) -> int
 {
     x + y
 }
 
-func cadd(x -> int) -> (int) -> int
+func cadd(x : int) -> (int) -> int
 {
-    let func (y -> int) -> int
+    let func (y : int) -> int
     {
         x + y
     }

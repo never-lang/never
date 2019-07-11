@@ -4,7 +4,7 @@ func f1() -> string
     prints("test test test very very\nlong long string\nwhich should be reallocated\n")
 }
 
-func f2(txt -> string) -> string
+func f2(txt : string) -> string
 {
     prints(txt)
 }

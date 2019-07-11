@@ -1,7 +1,7 @@
 
 func calc() -> (float) -> float
 {
-    let func fah2cel(f -> float) -> float { (f - 32.0) / 1.8 }
+    let func fah2cel(f : float) -> float { (f - 32.0) / 1.8 }
 }
 
 func main() -> float

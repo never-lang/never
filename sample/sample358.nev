@@ -1,6 +1,6 @@
 
 
-func print_ints(tab[D] -> int) -> int
+func print_ints(tab[D] : int) -> int
 {
     var i = 0;
     
@@ -17,11 +17,11 @@ func print_ints(tab[D] -> int) -> int
     0
 }
 
-func get_primes(n -> int) -> [_] -> int
+func get_primes(n : int) -> [_] : int
 {
     var i = 0;
     var j = 0;
-    var tab = {[ n ]} -> int;
+    var tab = {[ n ]} : int;
 
     tab[0] = 1;
     tab[1] = 1;

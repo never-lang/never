@@ -2,7 +2,7 @@
 
 func arr_test() -> int
 {
-    var arr = {[ 10 ]} -> string;
+    var arr = {[ 10 ]} : string;
     
     arr[0] = "one";
     arr[1] = "two";

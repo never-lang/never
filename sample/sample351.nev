@@ -2,16 +2,16 @@
 enum V { one, two, three, four }
 
 record P {
-    x -> V;
-    y -> V;
+    x : V;
+    y : V;
 }
 
-func testRLC() -> [_] -> P
+func testRLC() -> [_] : P
 {
-    [ P(x, y) | x in [ V.one, V.two, V.three ] -> V; y in [ V.one, V.two, V.three ] -> V ] -> P
+    [ P(x, y) | x in [ V.one, V.two, V.three ] : V; y in [ V.one, V.two, V.three ] : V ] : P
 }
 
-func V2str(v -> V) -> string
+func V2str(v : V) -> string
 {
     var str = "V.unknown";
 
@@ -39,7 +39,7 @@ func V2str(v -> V) -> string
     str
 }
 
-func printRLC( RLC[D] -> P ) -> int
+func printRLC( RLC[D] : P ) -> int
 {
     var i = 0;
     

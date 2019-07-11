@@ -1,10 +1,10 @@
 
 record A {
-    x -> int;
-    y -> int;
+    x : int;
+    y : int;
 }
 
-func getA(a -> int) -> A
+func getA(a : int) -> A
 {
     if (a == 10) A(10, 20) else A(100, 200)
 }

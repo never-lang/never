@@ -1,11 +1,11 @@
 
 record Tree {
-    value -> int;
-    left -> Tree;
-    right -> Tree;
+    value : int;
+    left : Tree;
+    right : Tree;
 }
 
-func print_Tree(t1 -> Tree) -> int
+func print_Tree(t1 : Tree) -> int
 {
     print(t1.value);
     print(t1.left.value);

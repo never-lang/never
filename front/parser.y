@@ -494,7 +494,7 @@ param: TOK_ID %prec TOK_RET
     $$->line_no = $<line_no>1;
 };
 
-param: TOK_ID TOK_RET TOK_ID
+param: TOK_ID ':' TOK_ID
 {
     $$ = param_new_record($1, $3);
     $$->line_no = $<line_no>1;

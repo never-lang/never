@@ -1,5 +1,5 @@
 
-func print_cl(cl[D] -> int) -> int
+func print_cl(cl[D] : int) -> int
 {
     var i = 0;
     
@@ -11,14 +11,14 @@ func print_cl(cl[D] -> int) -> int
     0
 }
 
-func cl(z -> int) -> [_] -> int
+func cl(z : int) -> [_] : int
 {
-    func d(x -> int) -> int
+    func d(x : int) -> int
     {
         2 * x
     }
 
-    [ y + z| x in [10, 20, 30, 40, 50] -> int; y in [d(x + 1), d(x + 2), d(x + 3)] -> int ] -> int
+    [ y + z| x in [10, 20, 30, 40, 50] : int; y in [d(x + 1), d(x + 2), d(x + 3)] : int ] : int
 }
     
 func main() -> int

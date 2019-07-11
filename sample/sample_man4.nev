@@ -1,11 +1,11 @@
 
-func dir_deg(d -> int) -> (float) -> float
+func dir_deg(d : int) -> (float) -> float
 {
-    func fah2cel(f -> float) -> float
+    func fah2cel(f : float) -> float
     {
         (f - 32.0) / 1.8
     }
-    func cel2fah(c -> float) -> float
+    func cel2fah(c : float) -> float
     {
         c * 1.8 + 32.0
     }

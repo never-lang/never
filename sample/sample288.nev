@@ -1,5 +1,5 @@
 
-func print_cl(cl[D] -> int) -> int
+func print_cl(cl[D] : int) -> int
 {
     var i = 0;
     
@@ -11,9 +11,9 @@ func print_cl(cl[D] -> int) -> int
     0
 }
 
-func cl(v -> int) -> [_] -> int
+func cl(v : int) -> [_] : int
 {
-    [ y + 300 | y in [ z + 20 | z in [ 1, 2, 3, 4, 5 ] -> int ] -> int ] -> int
+    [ y + 300 | y in [ z + 20 | z in [ 1, 2, 3, 4, 5 ] : int ] : int ] : int
 }
     
 func main() -> int

@@ -1,11 +1,11 @@
 
 record P {
-    x -> int;
-    y -> int;
-    print(p -> P) -> int;
+    x : int;
+    y : int;
+    print(p : P) -> int;
 }
 
-func pretty_P(p -> P) -> int
+func pretty_P(p : P) -> int
 {
     prints("[" + p.x + ", " + p.y + "]\n");
     0

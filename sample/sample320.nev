@@ -1,10 +1,10 @@
 
 record Point {
-    x -> int;
-    y -> int;
+    x : int;
+    y : int;
 }
 
-func get(r -> Point) -> int
+func get(r : Point) -> int
 {
     r.x = 100;
     r.y = 200;
@@ -12,7 +12,7 @@ func get(r -> Point) -> int
     0
 }
 
-func printr(r -> Point) -> int
+func printr(r : Point) -> int
 {
     prints("[" + r.x + ", " + r.y + "]\n");
 

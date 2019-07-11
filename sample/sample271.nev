@@ -1,5 +1,5 @@
 
-func adder(start -> int) -> () -> int
+func adder(start : int) -> () -> int
 {
     let v = start;
     func add() -> int

@@ -1,5 +1,5 @@
 
-func test(arr[D] -> int) -> () -> int
+func test(arr[D] : int) -> () -> int
 {
     func getD() -> int {
         D
@@ -10,7 +10,7 @@ func test(arr[D] -> int) -> () -> int
 
 func main() -> int
 {
-    var dim = test([1, 2, 3, 4, 5] -> int);
+    var dim = test([1, 2, 3, 4, 5] : int);
     
     assert(dim() == 5);
 
