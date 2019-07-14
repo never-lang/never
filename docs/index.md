@@ -220,7 +220,7 @@ The idea of in-lining functions may be taken into extreme...
 ```swift
 func calc() -> (float) -> float
 {
-    func fah2cel(float f) -> float { (f - 32.0) / 1.8 }
+    func fah2cel(f : float) -> float { (f - 32.0) / 1.8 }
 }
 
 func main() -> float
@@ -233,8 +233,8 @@ func main() -> float
 ```swift
 func dir_deg(d : int) -> (float) -> float
 {
-    d == 0 ? let func fah2cel(f -> float) -> float { (f - 32.0) / 1.8 }
-           : let func cel2fah(c -> float) -> float { c * 1.8 + 32.0 }
+    d == 0 ? let func fah2cel(f : float) -> float { (f - 32.0) / 1.8 }
+           : let func cel2fah(c : float) -> float { c * 1.8 + 32.0 }
 }
 
 func main() -> float
