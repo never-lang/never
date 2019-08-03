@@ -1,4 +1,9 @@
 # Never - Functional Programming Language
+
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<a class="github-button" href="https://github.com/never-lang/never" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star never-lang/never on GitHub">Star me!</a>
+
 Never is a simple functional programming language. Technically it may be
 classified as syntactically scoped, strongly typed, call by value, functional programming language.
 
