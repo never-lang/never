@@ -2457,11 +2457,11 @@ int func_main_check_num_params(param_list * params)
     return 1;
 }
 
-int func_main_check_type(symtab * tab, int * result)
+int func_main_check_type(const char * main_name, symtab * tab, int * result)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(tab, "main", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(tab, main_name, SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
@@ -2501,13 +2501,13 @@ int func_main_check_type(symtab * tab, int * result)
     else
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(0, "function main is not defined\n");
+        print_error_msg(0, "function %s is not defined\n", main_name);
     }
 
     return 0;
 }
 
-int never_sem_check(never * nev)
+int never_sem_check(const char * main_name, never * nev)
 {
     int typecheck_res = TYPECHECK_SUCC;
 
@@ -2544,7 +2544,7 @@ int never_sem_check(never * nev)
     never_check_type(nev, &typecheck_res);
 
     /* printf("---- check function main\n"); */
-    func_main_check_type(nev->stab, &typecheck_res);
+    func_main_check_type(main_name, nev->stab, &typecheck_res);
 
     return typecheck_res;
 }

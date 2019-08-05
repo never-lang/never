@@ -157,18 +157,20 @@ int func_body_emit_native(func * func_value, module * module_value,
                           func_list_weak * list_weak, int * result);
 int func_body_emit(func * func_value, module * module_value,
                    func_list_weak * list_weak, int * result);
+
 int func_emit_ffi(func * func_value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int func_emit_native(func * func_value, int stack_level, module * module_value,
                      func_list_weak * list_weak, int * result);
 int func_emit(func * func_value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
+int func_main_emit(const char * main_name,
+                   never * nev, int stack_level, module * module_value,
+                   int * result);
 int func_list_emit(func_list * list, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
-int never_emit(never * nev, module * module_value);
 
-int func_main_emit(never * nev, int stack_level, module * module_value,
-                   int * result);
+int never_emit(const char * main_name, never * nev, module * module_value);
 
 #endif /* __EMIT_H__ */
 

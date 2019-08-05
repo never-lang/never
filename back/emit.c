@@ -2271,12 +2271,16 @@ int func_emit(func * func_value, int stack_level, module * module_value,
     return 0;
 }              
 
-int func_main_emit(never * nev, int stack_level, module * module_value,
-                   int * result)
+int func_main_emit(
+    const char * main_name,
+    never * nev,
+    int stack_level,
+    module * module_value,
+    int * result)
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(nev->stab, "main", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(nev->stab, main_name, SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL && entry->type == SYMTAB_FUNC)
     {
         bytecode bc = { 0 };
@@ -2317,7 +2321,7 @@ int func_main_emit(never * nev, int stack_level, module * module_value,
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(0, "no main function defined\n");
+        print_error_msg(0, "no %s function defined\n", main_name);
     }
     return 0;
 }
@@ -2350,14 +2354,14 @@ int func_list_emit(func_list * list, int stack_level, module * module_value,
     return 0;
 }
 
-int never_emit(never * nev, module * module_value)
+int never_emit(const char * main_name, never * nev, module * module_value)
 {
     int stack_level = 0;
     int gencode_res = 0;
     func_list_weak * list_weak = func_list_weak_new();
 
     func_list_emit(nev->funcs, stack_level, module_value, list_weak, &gencode_res);
-    func_main_emit(nev, stack_level, module_value, &gencode_res);
+    func_main_emit(main_name, nev, stack_level, module_value, &gencode_res);
         
     while (list_weak->count > 0)
     {
@@ -2372,3 +2376,4 @@ int never_emit(never * nev, module * module_value)
 
     return gencode_res;
 }
+

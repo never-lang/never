@@ -31,6 +31,20 @@
 #define PATH_MAX 255
 #endif
 
+char * readall(const char * file)
+{
+    FILE * f = fopen(file, "r");
+    fseek(f, 0L, SEEK_END);
+    long fsize = ftell(f);
+    fseek(f, 0L, SEEK_SET);
+
+    char * src = (char *)calloc(fsize + 1, sizeof(char));
+    fread(src, sizeof(char), fsize, f);
+    fclose(f);
+
+    return src;
+}
+
 void run(int param1, int param2, program * prog)
 {
     int ret;
@@ -48,20 +62,6 @@ void run(int param1, int param2, program * prog)
     }
 }
 
-char * readall(const char * file)
-{
-    FILE * f = fopen(file, "r");
-    fseek(f, 0L, SEEK_END);
-    long fsize = ftell(f);
-    fseek(f, 0L, SEEK_SET);
-
-    char * src = (char *)calloc(fsize + 1, sizeof(char));
-    fread(src, sizeof(char), fsize, f);
-    fclose(f);
-
-    return src;
-}
-
 void test_one()
 {
     int ret = 0;
@@ -76,32 +76,56 @@ void test_one()
         int param2 = 1;
 
         for (param1 = 1; param1 < 10; param1++)
+        {
             for (param2 = 1; param2 < 10; param2++)
             {
                 run(param1, param2, prog);
             }
+        }
     }
 
     program_delete(prog);
 }
 
-void test_sample(const char * samplepath)
+void test_two()
 {
     int ret = 0;
-    object result = { 0 };
+    program * prog = program_new();
+    const char * prog_str = 
+        "func on_event(x : int, y : int) -> int { 10 * (x + y) }";
+        
+    ret = nev_compile_str_main(prog_str, "on_event", prog);
+    if (ret == 0)
+    {
+        int param1 = 10;
+        int param2 = 20;
+        
+        run(param1, param2, prog);
+    }
+    
+    program_delete(prog);
+}
+
+void test_sample(const char * samplepath)
+{
     program * prog = program_new();
     char * prog_str = readall(samplepath);
-    if (NULL != prog_str)
+
+    if (prog_str != NULL)
     {
-        ret = nev_compile_str(prog_str, prog);
-        if (ret != 0) {
+        object result = { 0 };
+
+        int ret = nev_compile_str(prog_str, prog);
+        if (ret != 0)
+        {
             printf("path: %s\nprog_str: %s\n", samplepath, prog_str);
         }
         assert(ret == 0);
 
         ret = nev_execute(prog, &result, DEFAULT_VM_MEM_SIZE,
                           DEFAULT_VM_STACK_SIZE);
-        if (ret != 0) {
+        if (ret != 0)
+        {
             printf("path: %s\nprog_str: %s\n", samplepath, prog_str);
         }
 
@@ -109,6 +133,8 @@ void test_sample(const char * samplepath)
 
         free(prog_str);
     }
+    
+    program_delete(prog);
 }
 
 void test_samples(const char * dirpath)
@@ -140,6 +166,7 @@ int main(int argc, char * argv[])
     }
 
     test_one();
+    test_two();
     test_samples((const char *)"../sample\0");
 
     return 0;

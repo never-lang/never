@@ -44,8 +44,9 @@
 extern FILE * yyin;
 extern int parse_result;
 
-int never_func_main_params(never * nev, object ** params,
-                           unsigned int * param_count)
+int never_func_main_params(
+    const char * main_name, never * nev,
+    object ** params, unsigned int * param_count)
 {
     object * object_param = NULL;
     symtab_entry * entry = NULL;
@@ -53,7 +54,7 @@ int never_func_main_params(never * nev, object ** params,
     *params = NULL;
     *param_count = 0;
 
-    entry = symtab_lookup(nev->stab, "main", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(nev->stab, main_name, SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL && entry->type == SYMTAB_FUNC &&
         entry->func_value != NULL)
     {
@@ -85,7 +86,7 @@ int never_func_main_params(never * nev, object ** params,
     return 0;
 }
 
-int nev_compile_prog(program * prog)
+int nev_compile_prog(const char * main_name, program * prog)
 {
     int ret = 0;
     never * nev = NULL;
@@ -96,7 +97,7 @@ int nev_compile_prog(program * prog)
     {
         libmath_add_funcs(nev->funcs);
 
-        ret = never_sem_check(nev);
+        ret = never_sem_check(main_name, nev);
         if (ret == 0)
         {
             ret = never_optimize(nev);
@@ -105,10 +106,10 @@ int nev_compile_prog(program * prog)
                 ret = never_tailrec(nev);
                 if (ret == 0)
                 {
-                    ret = never_emit(nev, prog->module_value);
+                    ret = never_emit(main_name, nev, prog->module_value);
                     if (ret == 0)
                     {
-                        never_func_main_params(nev, &prog->params, &prog->param_count);
+                        never_func_main_params(main_name, nev, &prog->params, &prog->param_count);
                         module_close(prog->module_value);
                     }
 
@@ -127,7 +128,7 @@ int nev_compile_prog(program * prog)
     return ret;
 }
 
-int nev_compile(const char * input, program * prog, int type)
+int nev_compile(const char * input, const char * main_name, program * prog, int type)
 {
     int ret;
 
@@ -147,7 +148,7 @@ int nev_compile(const char * input, program * prog, int type)
         }
     }
 
-    ret = nev_compile_prog(prog);
+    ret = nev_compile_prog(main_name, prog);
 
     if (type == PARSE_FILE)
     {
@@ -161,12 +162,22 @@ int nev_compile(const char * input, program * prog, int type)
 
 int nev_compile_str(const char * str, program * prog)
 {
-    return nev_compile(str, prog, PARSE_STR);
+    return nev_compile(str, "main", prog, PARSE_STR);
+}
+
+int nev_compile_str_main(const char * str, const char * main_name, program * prog)
+{
+    return nev_compile(str, main_name, prog, PARSE_STR);
 }
 
 int nev_compile_file(const char * file_name, program * prog)
 {
-    return nev_compile(file_name, prog, PARSE_FILE);
+    return nev_compile(file_name, "main", prog, PARSE_FILE);
+}
+
+int nev_compile_file_main(const char * file_name, const char * main_name, program * prog)
+{
+    return nev_compile(file_name, main_name, prog, PARSE_FILE);
 }
 
 int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
@@ -224,7 +235,7 @@ int nev_compile_and_exec(const char * input, int argc, char * argv[],
     int ret = 0;
     program * prog = program_new();
 
-    ret = nev_compile(input, prog, type);
+    ret = nev_compile(input, "main", prog, type);
     if (ret == 0)
     {
         ret = argc_to_program(prog, argc, argv);

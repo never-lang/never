@@ -29,7 +29,10 @@
 #include "program.h"
 
 int nev_compile_str(const char * str, program * prog);
+int nev_compile_str_main(const char * str, const char * main_name, program * prog);
 int nev_compile_file(const char * file_name, program * prog);
+int nev_compile_file_main(const char * file_name, const char * main_name, program * prog);
+
 int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
                 unsigned int vm_stack_size);
 
@@ -41,3 +44,4 @@ int nev_compile_str_and_exec(const char * src, unsigned int argc, char * argv[],
                              unsigned int stack_size);
 
 #endif /* __NEV_H__ */
+

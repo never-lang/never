@@ -160,9 +160,9 @@ int print_func_list(func_list * list, int depth);
 int print_functions(never * nev);
 
 int func_main_check_num_params(param_list * params);
-int func_main_check_type(symtab * tab, int * result);
+int func_main_check_type(const char * main_name, symtab * tab, int * result);
 
-int never_sem_check(never * nev);
+int never_sem_check(const char * main_name, never * nev);
 
 #endif /* __TYPECHECK_H__ */
 
