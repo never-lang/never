@@ -15,5 +15,6 @@ nav:
        - Tail Recursion: tailrec.md
        - Neural Network: perceptron.md
        - Wave: wave.md
+       - FFI: ffi.md
    - Contact: contact.md
 

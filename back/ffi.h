@@ -52,5 +52,7 @@ int ffi_decl_set_ret_type(ffi_decl * decl , ffi_type * ret_type);
 int ffi_decl_prepare(ffi_decl * decl);
 int ffi_decl_call(ffi_decl * decl, char * fname, char * libname);
 
+int test_print_str(const char * str);
+
 #endif /* __FFI_H__ */
 

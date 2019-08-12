@@ -1,0 +1,11 @@
+
+extern "host" func test_print_str(str : string) -> int
+
+func main() -> int
+{
+    test_print_str("0123456789\n");
+    test_print_str("987" + "123\n");
+
+    0
+}
+

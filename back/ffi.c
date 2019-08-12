@@ -22,6 +22,7 @@
 #include "ffi.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <dlfcn.h>
 
@@ -93,6 +94,12 @@ int ffi_decl_call(ffi_decl * decl, char * fname, char * libname)
 {
     void (* func)(void) = NULL;
     void * handle = NULL;
+
+    /* open for main program */    
+    if (strcmp(libname, "host") == 0)
+    {
+        libname = NULL;
+    }
     
     handle = dlopen(libname, RTLD_LAZY);
     if (handle == NULL)
@@ -116,4 +123,10 @@ int ffi_decl_call(ffi_decl * decl, char * fname, char * libname)
     return FFI_SUCC;
 }
 
+int test_print_str(const char * str)
+{
+    printf("test print str %s", str);
+    
+    return 0;
+}
 
