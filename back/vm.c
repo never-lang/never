@@ -26,7 +26,7 @@
 #include "utils.h"
 #include "module.h"
 #include "strutil.h"
-#include "ffi.h"
+#include "fficall.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

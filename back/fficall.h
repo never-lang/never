@@ -19,10 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __FFI_H__
-#define __FFI_H__
+#ifndef __FFICALL_H__
+#define __FFICALL_H__
 
-#include <x86_64-linux-gnu/ffi.h>
+#include <ffi.h>
 
 #define FFI_SUCC 0
 #define FFI_FAIL 1
@@ -54,5 +54,5 @@ int ffi_decl_call(ffi_decl * decl, char * fname, char * libname);
 
 int test_print_str(const char * str);
 
-#endif /* __FFI_H__ */
+#endif /* __FFICALL_H__ */
 
