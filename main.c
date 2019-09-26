@@ -98,22 +98,38 @@ int main(int argc, char * argv[])
 
     if (eflag)
     {
-        int ret = 0;
+        int ret;
         object result = { 0 };
 
         ret = nev_compile_str_and_exec(arg, argc, argv, &result, vm_mem_size,
                                        vm_stack_size);
-        return ret;
+
+        if (ret == 0)
+        {
+            return get_result(&result);
+        }
+        else
+        {
+            return 1;
+        }
     }
 
     if (fflag)
     {
-        int ret = 0;
+        int ret;
         object result = { 0 };
 
         ret = nev_compile_file_and_exec(arg, argc, argv, &result, vm_mem_size,
                                         vm_stack_size);
-        return ret;
+
+        if (ret == 0)
+        {
+            return get_result(&result);
+        }
+        else
+        {
+            return 1;
+        }
     }
 
     printf("%s: no input files\n", exe);
@@ -121,3 +137,5 @@ int main(int argc, char * argv[])
 
     return 1;
 }
+
+

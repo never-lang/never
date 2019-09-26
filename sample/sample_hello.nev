@@ -2,6 +2,6 @@
 func main() -> int
 {
     prints("Hello World!\n");
-    0
+    10
 }
 
