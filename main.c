@@ -25,38 +25,40 @@
 #include <stdio.h>
 #include <string.h>
 
-static void usage(const char * exe)
+static void print_usage(const char * exe)
 {
     printf("usage: %s [-m memory size (default: %u)] [-s stack size (default: "
            "%u)] -f file name | -e \"one line of program\"\n",
            exe, DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
 }
 
-static void print_result(object * result)
+static int get_result(object * result)
 {
+    int ret = 0;
+
     if (result->type == OBJECT_INT)
     {
-        fprintf(stderr, "%d\n", result->int_value);
+        ret = result->int_value;
     }
     else if (result->type == OBJECT_FLOAT)
     {
-        fprintf(stderr, "%.2f\n", result->float_value);
+        ret = (int)result->float_value;
     }
     else
     {
-        printf("unknown result type\n");
+        fprintf(stderr, "unknown result type %d\n", result->type);
     }
+    
+    return ret;
 }
 
 int main(int argc, char * argv[])
 {
-    int ret = -1;
-    object result = { 0 };
-
     const char * exe = argv[0];
     const char * arg = NULL;
     int fflag = 0, eflag = 0;
     unsigned int vm_mem_size = 0, vm_stack_size = 0;
+
     while (getopt(argc, argv, "f:e:m:s:") != -1)
     {
         switch (optopt)
@@ -77,7 +79,7 @@ int main(int argc, char * argv[])
             break;
         case '?':
         default:
-            usage(exe);
+            print_usage(exe);
             return -1;
         }
     }
@@ -96,22 +98,26 @@ int main(int argc, char * argv[])
 
     if (eflag)
     {
+        int ret = 0;
+        object result = { 0 };
+
         ret = nev_compile_str_and_exec(arg, argc, argv, &result, vm_mem_size,
                                        vm_stack_size);
-        print_result(&result);
         return ret;
     }
 
     if (fflag)
     {
+        int ret = 0;
+        object result = { 0 };
 
         ret = nev_compile_file_and_exec(arg, argc, argv, &result, vm_mem_size,
                                         vm_stack_size);
-        print_result(&result);
         return ret;
     }
 
     printf("%s: no input files\n", exe);
-    usage(exe);
-    return 0;
+    print_usage(exe);
+
+    return 1;
 }
