@@ -26,6 +26,7 @@ void scanner_printf(const char * format, ...)
 %}
 
 DIGIT [0-9]
+HEX_DIGIT[0-9a-fA-F]
 ID [a-zA-Z_][a-zA-Z0-9_]*
 
 %option pointer
@@ -275,6 +276,15 @@ nil {
     sscanf(yytext, "%d", &result);
     tokp->val.int_value = result;
     scanner_printf("num_int %d\n", result);
+    return TOK_NUM_INT;
+}
+
+0x{HEX_DIGIT}+|0X{HEX_DIGIT}+ {
+    int result;
+    tokp->line_no = line_no;
+    sscanf(yytext, "%x", &result);
+    tokp->val.int_value = result;
+    scanner_printf("num_int %x\n", result);
     return TOK_NUM_INT;
 }
 
