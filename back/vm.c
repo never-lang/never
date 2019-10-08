@@ -2121,6 +2121,7 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
             assert(0);
     }
 
+    ffi_decl_close(fd);
     ffi_decl_delete(fd);
 
     machine->sp++;

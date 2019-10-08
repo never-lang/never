@@ -40,10 +40,12 @@ typedef struct ffi_decl {
         char * ret_string_value;
     };
     ffi_cif cif;
+    void * handle;
 } ffi_decl;
 
 ffi_decl * ffi_decl_new(unsigned int count);
 void ffi_decl_delete(ffi_decl * value);
+void ffi_decl_close(ffi_decl * value);
 
 int ffi_decl_set_param_type(ffi_decl * decl, unsigned int index, ffi_type * param_type);
 int ffi_decl_set_param_value(ffi_decl * decl, unsigned int index, void * param_value);
@@ -53,6 +55,9 @@ int ffi_decl_prepare(ffi_decl * decl);
 int ffi_decl_call(ffi_decl * decl, char * fname, char * libname);
 
 int test_print_str(const char * str);
+
+char * test_conc_str(const char * a, const char * b);
+char * test_conc_int_str(int d, const char * s);
 
 #endif /* __FFICALL_H__ */
 

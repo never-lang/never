@@ -33,6 +33,7 @@ ffi_decl * ffi_decl_new(unsigned int count)
     value->count = count;
     value->param_types = (ffi_type **)malloc(count * sizeof(ffi_type *));
     value->param_values = (void **)malloc(count * sizeof(void *));
+    value->handle = NULL;
     
     return value;
 }
@@ -93,7 +94,6 @@ int ffi_decl_prepare(ffi_decl * decl)
 int ffi_decl_call(ffi_decl * decl, char * fname, char * libname)
 {
     void (* func)(void) = NULL;
-    void * handle = NULL;
 
     /* open for main program */    
     if (strcmp(libname, "host") == 0)
@@ -101,26 +101,34 @@ int ffi_decl_call(ffi_decl * decl, char * fname, char * libname)
         libname = NULL;
     }
     
-    handle = dlopen(libname, RTLD_LAZY);
-    if (handle == NULL)
+    decl->handle = dlopen(libname, RTLD_LAZY);
+    if (decl->handle == NULL)
     {
         fprintf(stderr, "cannot open library %s\n", libname);
         return FFI_FAIL;
     }
 
-    func = dlsym(handle, fname);
+    func = dlsym(decl->handle, fname);
     if (func == NULL)
     {
-        dlclose(handle);
+        dlclose(decl->handle);
+        decl->handle = NULL;
         fprintf(stderr, "cannot obtain address of a symbol %s\n", fname);
         return FFI_FAIL;
     }
 
     ffi_call(&decl->cif, FFI_FN(func), &decl->ret_void_value, decl->param_values);
 
-    dlclose(handle);
-
     return FFI_SUCC;
+}
+
+void ffi_decl_close(ffi_decl * value)
+{
+    if (value->handle != NULL)
+    {
+        dlclose(value->handle);
+        value->handle = NULL;
+    }
 }
 
 int test_print_str(const char * str)
@@ -129,4 +137,23 @@ int test_print_str(const char * str)
     
     return 0;
 }
+
+char * test_conc_str(const char * a, const char * b)
+{
+    static char c[20];
+    
+    sprintf(c, "%s%s", a, b);
+    
+    return c;
+}
+
+char * test_conc_int_str(int d, const char * s)
+{
+    static char c[20];
+    
+    sprintf(c, "%d:%s", d, s);
+
+    return c;
+}
+
 
