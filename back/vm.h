@@ -45,6 +45,7 @@ typedef struct vm
     int stack_size;
     struct gc_stack * stack;
     struct gc * collector;
+    struct dlcache * dlib_cache;
 
     except_no exception;
     unsigned int line_no;

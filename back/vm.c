@@ -27,6 +27,7 @@
 #include "module.h"
 #include "strutil.h"
 #include "fficall.h"
+#include "dlcache.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -2087,12 +2088,22 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     gc_stack entry = { 0 };
     mem_ptr addr = { 0 };
     char ** strtab_array = NULL;
+    void * handle = NULL;
 
     assert(machine->prog->module_value != NULL);
     strtab_array = machine->prog->module_value->strtab_array;
 
-    ret = ffi_decl_call(fd, strtab_array[code->ffi.fname_index],
-                        strtab_array[code->ffi.libname_index]);
+    handle = dlcache_get_handle(machine->dlib_cache, strtab_array[code->ffi.libname_index]);
+    if (handle == NULL)
+    {
+        ffi_decl_delete(fd);
+
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_FFI_FAIL;
+        return;
+    }
+    
+    ret = ffi_decl_call(fd, strtab_array[code->ffi.fname_index], handle);
     if (ret != FFI_SUCC)
     {
         ffi_decl_delete(fd);
@@ -2121,7 +2132,6 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
             assert(0);
     }
 
-    ffi_decl_close(fd);
     ffi_decl_delete(fd);
 
     machine->sp++;
@@ -2445,6 +2455,7 @@ vm * vm_new(unsigned int mem_size, unsigned int stack_size)
     machine->stack_size = stack_size;
     machine->stack = gc_stack_new(stack_size);
     machine->collector = gc_new(mem_size);
+    machine->dlib_cache = dlcache_new(DEFAULT_DLCACHE_SIZE);
     machine->exception = EXCEPT_NO_UNKNOWN;
     machine->line_no = 0;
 
@@ -2462,6 +2473,10 @@ void vm_delete(vm * machine)
     if (machine->collector != NULL)
     {
         gc_delete(machine->collector);
+    }
+    if (machine->dlib_cache != NULL)
+    {
+        dlcache_delete(machine->dlib_cache);
     }
     free(machine);
 }

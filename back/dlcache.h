@@ -1,6 +1,8 @@
 #ifndef __DLCACHE_H__
 #define __DLCACHE_H__
 
+#define DEFAULT_DLCACHE_SIZE 16
+
 typedef struct dlcache_entry
 {
     const char * dl_name;
@@ -29,8 +31,10 @@ void dlcache_entry_print(dlcache_entry * entry);
 dlcache * dlcache_new(unsigned int size);
 void dlcache_delete(dlcache * cache);
 
-void dlcache_open_dl(dlcache * cache, const char * dl_name);
+void dlcache_add_dl(dlcache * cache, const char * dl_name, void * handle);
 dlcache_entry * dlcache_lookup(dlcache * cache, const char * dl_name);
+
+void * dlcache_get_handle(dlcache * cache, const char * dl_name);
 
 void dlcache_resize(dlcache * cache);
 

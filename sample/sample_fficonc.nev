@@ -1,6 +1,6 @@
 
-#extern "../../dyntest/dyntest.so" func test_conc_str(a : string, b : string) -> string
-#extern "../../dyntest/dyntest.so" func test_conc_int_str(d : int, str : string) -> string
+#extern "../dyntest/dyntest.so" func test_conc_str(a : string, b : string) -> string
+#extern "../dyntest/dyntest.so" func test_conc_int_str(d : int, str : string) -> string
 
 extern "host" func test_conc_str(a : string, b : string) -> string
 extern "host" func test_conc_int_str(d : int, str : string) -> string

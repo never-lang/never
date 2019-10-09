@@ -1,9 +1,11 @@
 #include "dlcache.h"
+#include "fficall.h"
 #include "hash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <dlfcn.h>
 
 dlcache_entry * dlcache_entry_new(unsigned int size)
 {
@@ -94,10 +96,14 @@ dlcache * dlcache_new(unsigned int size)
 {
     dlcache * cache = (dlcache *)malloc(sizeof(dlcache));
     dlcache_entry * entries = dlcache_entry_new(size);
+    void * host_handle = NULL;
     
-    cache->size = 0;
+    cache->size = size;
     cache->count = 0;
     cache->entries = entries;
+
+    host_handle = ffi_decl_get_handle("host");
+    dlcache_add_dl(cache, "host", host_handle);
     
     return cache;
 }
@@ -106,15 +112,23 @@ void dlcache_delete(dlcache * cache)
 {
     if (cache->entries != NULL)
     {
+        unsigned int i = 0;
+        
+        for (i = 0; i < cache->size; i++)
+        {
+            if (cache->entries[i].handle != NULL)
+            {
+                dlclose(cache->entries[i].handle);
+            }
+        }
+    
         dlcache_entry_delete(cache->entries);
     }
     free(cache);
 }
 
-void dlcache_open_dl(dlcache * cache, const char * dl_name)
+void dlcache_add_dl(dlcache * cache, const char * dl_name, void * handle)
 {
-    void * handle = NULL;
-
     if (dl_name == NULL)
     {
         return;
@@ -133,6 +147,29 @@ dlcache_entry * dlcache_lookup(dlcache * cache, const char * dl_name)
     entry = dlcache_entry_lookup(cache->entries, cache->size, dl_name);
 
     return entry;
+}
+
+void * dlcache_get_handle(dlcache * cache, const char * dl_name)
+{
+    void * handle = NULL;
+
+    dlcache_entry * entry = dlcache_lookup(cache, dl_name);
+    if (entry != NULL)
+    {
+        handle = entry->handle;
+    }
+    else
+    {
+        handle = ffi_decl_get_handle(dl_name);
+        if (handle == NULL)
+        {
+            fprintf(stderr, "cannot open library %s\n", dl_name);
+            return NULL;
+        }
+        dlcache_add_dl(cache, dl_name, handle);
+    }
+    
+    return handle;
 }
 
 void dlcache_resize(dlcache * cache)

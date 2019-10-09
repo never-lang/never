@@ -40,19 +40,20 @@ typedef struct ffi_decl {
         char * ret_string_value;
     };
     ffi_cif cif;
-    void * handle;
 } ffi_decl;
 
 ffi_decl * ffi_decl_new(unsigned int count);
 void ffi_decl_delete(ffi_decl * value);
-void ffi_decl_close(ffi_decl * value);
 
 int ffi_decl_set_param_type(ffi_decl * decl, unsigned int index, ffi_type * param_type);
 int ffi_decl_set_param_value(ffi_decl * decl, unsigned int index, void * param_value);
 int ffi_decl_set_ret_type(ffi_decl * decl , ffi_type * ret_type);
 
+void * ffi_decl_get_handle(const char * libname);
+void ffi_decl_close_handle(void * handle);
+
 int ffi_decl_prepare(ffi_decl * decl);
-int ffi_decl_call(ffi_decl * decl, char * fname, char * libname);
+int ffi_decl_call(ffi_decl * decl, char * fname, void * handle);
 
 int test_print_str(const char * str);
 

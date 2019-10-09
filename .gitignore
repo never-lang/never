@@ -1,5 +1,6 @@
 *~
 *.o
+*.so
 
 # generated
 nev
@@ -12,6 +13,7 @@ test_object
 test_scanner
 test_symtab
 test_vm
+test_dlcache
 
 # build
 build/
