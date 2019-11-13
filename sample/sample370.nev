@@ -1,0 +1,13 @@
+
+func get_char(str : string, i : int) -> char
+{
+    str[i]
+}
+
+func main() -> int
+{
+    get_char("texttexttex", 0);
+    
+    0
+}
+

@@ -1,5 +1,6 @@
 
 %{
+#include <unistd.h>
 #include <stdio.h>
 #include "utils.h"
 #include "types.h"
@@ -27,6 +28,8 @@ int yyerror(never ** nev, char * str)
 %token <val.float_value> TOK_NUM_FLOAT
 %token <val.int_value> TOK_NUM_INT
 %token <val.str_value> TOK_NUM_STRING
+%token <val.char_value> TOK_NUM_CHAR
+%token <val.str_value> TOK_CHAR
 %token <val.str_value> TOK_STRING
 %token <val.str_value> TOK_FLOAT
 %token <val.str_value> TOK_INT
@@ -151,6 +154,12 @@ expr: TOK_NUM_INT
 expr: TOK_NUM_FLOAT
 {
     $$ = expr_new_float($1);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_NUM_CHAR
+{
+    $$ = expr_new_char($1);
     $$->line_no = $<line_no>1;
 };
 
@@ -461,7 +470,7 @@ param: TOK_INT
 param: TOK_ID ':' TOK_INT
 {
     $$ = param_new_int($1);
-    $$->line_no = $<line_no>2;
+    $$->line_no = $<line_no>1;
 };
 
 param: TOK_FLOAT
@@ -473,7 +482,19 @@ param: TOK_FLOAT
 param: TOK_ID ':' TOK_FLOAT 
 {
     $$ = param_new_float($1);
-    $$->line_no = $<line_no>2;
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_CHAR
+{
+    $$ = param_new_char(NULL);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID ':' TOK_CHAR
+{
+    $$ = param_new_char($1);
+    $$->line_no = $<line_no>1;
 };
 
 param: TOK_STRING

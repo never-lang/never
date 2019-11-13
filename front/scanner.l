@@ -2,6 +2,7 @@
  * a scanner for never programming language
  */
 %{
+#include <unistd.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include "types.h"
@@ -143,6 +144,12 @@ record {
     scanner_printf("record\n");
     return TOK_RECORD;
 } 
+
+char {
+    tokp->line_no = line_no;
+    scanner_printf("char\n");
+    return TOK_CHAR;
+}
 
 string {
     tokp->line_no = line_no;
@@ -302,6 +309,13 @@ nil {
     tokp->val.str_value = strdup(yytext);
     scanner_printf("id %s\n", yytext);
     return TOK_ID;
+}
+
+\'{ID}\' {
+    tokp->line_no = line_no;
+    tokp->val.char_value = yytext[1];
+    scanner_printf("char %c\n", yytext[1]);
+    return TOK_NUM_CHAR;
 }
 
 \" {

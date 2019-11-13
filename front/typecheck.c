@@ -139,6 +139,10 @@ int expr_set_return_type(expr * value, param * ret)
         value->comb.comb = COMB_TYPE_ENUMTYPE;
         value->comb.comb_enumtype = ret->enumtype_value;
     }
+    else if (ret->type == PARAM_CHAR)
+    {
+        value->comb.comb = COMB_TYPE_CHAR;
+    }
     else if (ret->type == PARAM_STRING)
     {
         value->comb.comb = COMB_TYPE_STRING;
@@ -200,6 +204,10 @@ int param_cmp(param * param_one, param * param_two)
         {
             return TYPECHECK_FAIL;
         }
+    }
+    else if (param_one->type == PARAM_CHAR && param_two->type == PARAM_CHAR)
+    {
+        return TYPECHECK_SUCC;
     }
     else if (param_one->type == PARAM_STRING && param_two->type == PARAM_STRING)
     {
@@ -308,10 +316,14 @@ int param_is_num(param * value)
 
 int param_is_dynamic_array(param * value)
 {
-    if (value->type == PARAM_INT || value->type == PARAM_FLOAT ||
+    if (value->type == PARAM_INT ||
+        value->type == PARAM_FLOAT ||
         value->type == PARAM_ENUMTYPE ||
-        value->type == PARAM_STRING || value->type == PARAM_ARRAY ||
-        value->type == PARAM_RECORD || value->type == PARAM_FUNC)
+        value->type == PARAM_CHAR ||
+        value->type == PARAM_STRING ||
+        value->type == PARAM_ARRAY ||
+        value->type == PARAM_RECORD ||
+        value->type == PARAM_FUNC)
     {
         return TYPECHECK_SUCC;
     }
@@ -372,6 +384,10 @@ int param_expr_cmp(param * param_value, expr * expr_value)
         {
             return TYPECHECK_FAIL;
         }
+    }
+    else if (param_value->type == PARAM_CHAR && expr_value->comb.comb == COMB_TYPE_CHAR)
+    {
+        return TYPECHECK_SUCC;
     }
     else if (param_value->type == PARAM_STRING && expr_value->comb.comb == COMB_TYPE_STRING)
     {
@@ -695,6 +711,7 @@ int param_check_type(symtab * tab, param * param_value,
         case PARAM_ENUMTYPE:
             param_enum_record_check_type(tab, param_value, syn_level, result);
         break;
+        case PARAM_CHAR:
         case PARAM_STRING:
         case PARAM_DIM:
         break;
@@ -772,6 +789,10 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             {
                 value->comb.comb = COMB_TYPE_ENUMTYPE;
                 value->comb.comb_enumtype = param_value->enumtype_value;
+            }
+            else if (param_value->type == PARAM_CHAR)
+            {
+                value->comb.comb = COMB_TYPE_CHAR;
             }
             else if (param_value->type == PARAM_STRING)
             {
@@ -1155,6 +1176,11 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     {
         value->comb.comb = COMB_TYPE_ENUMTYPE;
     }
+    else if (value->left->comb.comb == COMB_TYPE_CHAR &&
+             value->right->comb.comb == COMB_TYPE_CHAR)
+    {
+        value->comb.comb = COMB_TYPE_CHAR;
+    }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
@@ -1235,6 +1261,11 @@ int expr_cond_check_type(symtab * tab, expr * value, func * func_value, unsigned
     }
     else if (value->middle->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        value->comb.comb = value->middle->comb.comb;
+    }
+    else if (value->middle->comb.comb == COMB_TYPE_CHAR &&
+             value->right->comb.comb == COMB_TYPE_CHAR)
     {
         value->comb.comb = value->middle->comb.comb;
     }
@@ -1392,6 +1423,32 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
             }
         }
     }
+    else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_STRING)
+    {
+        if (value->array_deref.ref->count != 1)
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(
+                value->line_no,
+                "strings can be deref only using one dimesion\n");
+        }
+        else
+        {
+            if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
+                                                func_value, syn_level, result) == TYPECHECK_SUCC)
+            {
+                value->comb.comb = COMB_TYPE_CHAR;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "incorrect types to deref string\n");
+            }
+        }
+    }
     else
     {
         *result = TYPECHECK_FAIL;
@@ -1449,6 +1506,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
     case COMB_TYPE_FLOAT:
     case COMB_TYPE_ENUMTYPE:
     case COMB_TYPE_ENUMTYPE_ID:
+    case COMB_TYPE_CHAR:
     case COMB_TYPE_STRING:
     case COMB_TYPE_ARRAY:
     case COMB_TYPE_BOOL:
@@ -1630,6 +1688,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
     case EXPR_FLOAT:
         value->comb.comb = COMB_TYPE_FLOAT;
         break;
+    case EXPR_CHAR:
+        value->comb.comb = COMB_TYPE_CHAR;
+        break;
     case EXPR_STRING:
         value->comb.comb = COMB_TYPE_STRING;
         break;
@@ -1691,6 +1752,11 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         {
             value->comb.comb = COMB_TYPE_INT;
         }
+        else if (value->left->comb.comb == COMB_TYPE_CHAR &&
+                 value->right->comb.comb == COMB_TYPE_CHAR)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
         else
         {
             *result = TYPECHECK_FAIL;
@@ -1724,6 +1790,11 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
                  value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
                  value->left->comb.comb_enumtype == value->right->comb.comb_enumtype)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_CHAR &&
+                 value->right->comb.comb == COMB_TYPE_CHAR)
         {
             value->comb.comb = COMB_TYPE_INT;
         }
@@ -2567,6 +2638,7 @@ int print_func_expr(expr * value, int depth)
     {
     case EXPR_INT:
     case EXPR_FLOAT:
+    case EXPR_CHAR:
     case EXPR_STRING:
         /* no symtabs possible */
         break;

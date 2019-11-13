@@ -39,6 +39,18 @@ expr * expr_new_int(int int_value)
     return ret;
 }
 
+expr * expr_new_char(char char_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_CHAR;
+    ret->char_value = char_value;
+    ret->comb.comb = COMB_TYPE_CHAR;
+    ret->line_no = 0;
+    
+    return ret;
+}
+
 expr * expr_new_float(float float_value)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -309,6 +321,7 @@ void expr_delete(expr * value)
     {
     case EXPR_INT:
     case EXPR_FLOAT:
+    case EXPR_CHAR:
     case EXPR_NIL:
         break;
     case EXPR_STRING:
@@ -537,6 +550,8 @@ const char * expr_type_str(expr_type type)
         return "int";
     case EXPR_FLOAT:
         return "float";
+    case EXPR_CHAR:
+        return "char";
     case EXPR_ATTR:
         return "attr";
     case EXPR_ID:
@@ -570,6 +585,8 @@ const char * comb_type_str(comb_type type)
         return "enum";
     case COMB_TYPE_ENUMTYPE_ID:
         return "enum name";
+    case COMB_TYPE_CHAR:
+        return "char";
     case COMB_TYPE_STRING:
         return "string";
     case COMB_TYPE_ARRAY:
