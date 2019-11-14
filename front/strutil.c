@@ -165,7 +165,8 @@ void string_print_float(float val)
     printf("%.2f\n", val);
 }
 
-
-
-
+void string_print_char(char val)
+{
+    printf("%c", val);
+}
 

@@ -184,6 +184,9 @@ void gc_mark(gc * collector, mem_ptr addr)
         case OBJECT_FLOAT:
             collector->mem[addr].mark = 1;
             break;
+        case OBJECT_CHAR:
+            collector->mem[addr].mark = 1;
+            break;
         case OBJECT_STRING:
             collector->mem[addr].mark = 1;
             break;
@@ -280,6 +283,11 @@ mem_ptr gc_alloc_int(gc * collector, int value)
 mem_ptr gc_alloc_float(gc * collector, float value)
 {
     return gc_alloc_any(collector, object_new_float(value));
+}
+
+mem_ptr gc_alloc_char(gc * collector, char value)
+{
+    return gc_alloc_any(collector, object_new_char(value));
 }
 
 mem_ptr gc_alloc_string(gc * collector, char * value)
@@ -386,6 +394,30 @@ float * gc_get_float_ptr(gc * collector, mem_ptr addr)
     assert(collector->mem[addr].object_value->type == OBJECT_FLOAT);
     
     return &collector->mem[addr].object_value->float_value;
+}
+
+char gc_get_char(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_CHAR);
+    
+    return collector->mem[addr].object_value->char_value;
+}
+
+void gc_set_char(gc * collector, mem_ptr addr, char value)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_CHAR);
+    
+    collector->mem[addr].object_value->char_value = value;
+}
+
+char * gc_get_char_ptr(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_CHAR);
+    
+    return &collector->mem[addr].object_value->char_value;
 }
 
 char * gc_get_string(gc * collector, mem_ptr addr)

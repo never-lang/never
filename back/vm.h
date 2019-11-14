@@ -64,6 +64,7 @@ void vm_execute_unknown(vm * machine, bytecode * code);
 
 void vm_execute_int(vm * machine, bytecode * code);
 void vm_execute_float(vm * machine, bytecode * code);
+void vm_execute_char(vm * machine, bytecode * code);
 void vm_execute_string(vm * machine, bytecode * code);
 
 void vm_execute_id_local(vm * machine, bytecode * code);
@@ -104,6 +105,13 @@ void vm_execute_op_lte_float(vm * machine, bytecode * code);
 void vm_execute_op_gte_float(vm * machine, bytecode * code);
 void vm_execute_op_eq_float(vm * machine, bytecode * code);
 void vm_execute_op_neq_float(vm * machine, bytecode * code);
+
+void vm_execute_op_lt_char(vm * machine, bytecode * code);
+void vm_execute_op_gt_char(vm * machine, bytecode * code);
+void vm_execute_op_lte_char(vm * machine, bytecode * code);
+void vm_execute_op_gte_char(vm * machine, bytecode * code);
+void vm_execute_op_eq_char(vm * machine, bytecode * code);
+void vm_execute_op_neq_char(vm * machine, bytecode * code);
 
 void vm_execute_op_eq_string(vm * machine, bytecode * code);
 void vm_execute_op_neq_string(vm * machine, bytecode * code);
@@ -151,6 +159,7 @@ void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code);
 
 void vm_execute_op_ass_int(vm * machine, bytecode * code);
 void vm_execute_op_ass_float(vm * machine, bytecode * code);
+void vm_execute_op_ass_char(vm * machine, bytecode * code);
 void vm_execute_op_ass_string(vm * machine, bytecode * code);
 void vm_execute_op_ass_array(vm * machine, bytecode * code);
 void vm_execute_op_ass_record(vm * machine, bytecode * code);
@@ -164,11 +173,13 @@ void vm_execute_label(vm * machine, bytecode * code);
 
 void vm_execute_mk_array_int(vm * machine, bytecode * code);
 void vm_execute_mk_array_float(vm * machine, bytecode * code);
+void vm_execute_mk_array_char(vm * machine, bytecode * code);
 void vm_execute_mk_array_string(vm * machine, bytecode * code);
 void vm_execute_mk_array_array(vm * machine, bytecode * code);
 void vm_execute_mk_array_record(vm * machine, bytecode * code);
 void vm_execute_mk_array_func(vm * machine, bytecode * code);
 void vm_execute_mk_init_array(vm * machine, bytecode * code);
+void vm_execute_string_deref(vm * machine, bytecode * code);
 void vm_execute_array_deref(vm * machine, bytecode * code);
 void vm_execute_array_append(vm * machine, bytecode * code);
 
@@ -181,6 +192,7 @@ void vm_execute_func_obj(vm * machine, bytecode * code);
 void vm_execute_func_ffi(vm * machine, bytecode * code);
 void vm_execute_func_ffi_int(vm * machine, bytecode * code);
 void vm_execute_func_ffi_float(vm * machine, bytecode * code);
+void vm_execute_func_ffi_char(vm * machine, bytecode * code);
 void vm_execute_func_ffi_string(vm * machine, bytecode * code);
 
 void vm_execute_global_vec(vm * machine, bytecode * code);

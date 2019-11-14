@@ -38,6 +38,7 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_INT, vm_execute_int },
     { BYTECODE_FLOAT, vm_execute_float },
+    { BYTECODE_CHAR, vm_execute_char },
     { BYTECODE_STRING, vm_execute_string },
 
     { BYTECODE_ID_LOCAL, vm_execute_id_local },
@@ -78,6 +79,13 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_GTE_FLOAT, vm_execute_op_gte_float },
     { BYTECODE_OP_EQ_FLOAT, vm_execute_op_eq_float },
     { BYTECODE_OP_NEQ_FLOAT, vm_execute_op_neq_float },
+
+    { BYTECODE_OP_LT_CHAR, vm_execute_op_lt_char },
+    { BYTECODE_OP_GT_CHAR, vm_execute_op_gt_char },
+    { BYTECODE_OP_LTE_CHAR, vm_execute_op_lte_char },
+    { BYTECODE_OP_GTE_CHAR, vm_execute_op_gte_char },
+    { BYTECODE_OP_EQ_CHAR, vm_execute_op_eq_char },
+    { BYTECODE_OP_NEQ_CHAR, vm_execute_op_neq_char },
 
     { BYTECODE_OP_EQ_STRING, vm_execute_op_eq_string },
     { BYTECODE_OP_NEQ_STRING, vm_execute_op_neq_string },
@@ -125,6 +133,7 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_OP_ASS_INT, vm_execute_op_ass_int },
     { BYTECODE_OP_ASS_FLOAT, vm_execute_op_ass_float },
+    { BYTECODE_OP_ASS_CHAR, vm_execute_op_ass_char },
     { BYTECODE_OP_ASS_STRING, vm_execute_op_ass_string },
     { BYTECODE_OP_ASS_ARRAY, vm_execute_op_ass_array },
     { BYTECODE_OP_ASS_RECORD, vm_execute_op_ass_record },
@@ -138,11 +147,13 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_MK_ARRAY_INT, vm_execute_mk_array_int },
     { BYTECODE_MK_ARRAY_FLOAT, vm_execute_mk_array_float },
+    { BYTECODE_MK_ARRAY_CHAR, vm_execute_mk_array_char },
     { BYTECODE_MK_ARRAY_STRING, vm_execute_mk_array_string },
     { BYTECODE_MK_ARRAY_ARRAY, vm_execute_mk_array_array },
     { BYTECODE_MK_ARRAY_RECORD, vm_execute_mk_array_record },
     { BYTECODE_MK_ARRAY_FUNC, vm_execute_mk_array_func },
     { BYTECODE_MK_INIT_ARRAY, vm_execute_mk_init_array },
+    { BYTECODE_STRING_DEREF, vm_execute_string_deref },
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
     { BYTECODE_ARRAY_APPEND, vm_execute_array_append },
 
@@ -156,6 +167,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_FUNC_FFI, vm_execute_func_ffi },
     { BYTECODE_FUNC_FFI_INT, vm_execute_func_ffi_int },
     { BYTECODE_FUNC_FFI_FLOAT, vm_execute_func_ffi_float },
+    { BYTECODE_FUNC_FFI_CHAR, vm_execute_func_ffi_char },
     { BYTECODE_FUNC_FFI_STRING, vm_execute_func_ffi_string },
 
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
@@ -227,6 +239,20 @@ void vm_execute_float(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
 
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_char(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr addr = gc_alloc_char(machine->collector, code->chr.value);
+    
+    machine->sp++;
+    vm_check_stack(machine);
+    
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+    
     machine->stack[machine->sp] = entry;
 }
 
@@ -818,6 +844,102 @@ void vm_execute_op_neq_float(vm * machine, bytecode * code)
         gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
     float b =
         gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a != b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_lt_char(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char a =
+        gc_get_char(machine->collector, machine->stack[machine->sp - 1].addr);
+    char b =
+        gc_get_char(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a < b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_gt_char(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char a =
+        gc_get_char(machine->collector, machine->stack[machine->sp - 1].addr);
+    char b =
+        gc_get_char(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a > b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_lte_char(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char a =
+        gc_get_char(machine->collector, machine->stack[machine->sp - 1].addr);
+    char b =
+        gc_get_char(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a <= b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_gte_char(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char a =
+        gc_get_char(machine->collector, machine->stack[machine->sp - 1].addr);
+    char b =
+        gc_get_char(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a >= b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_eq_char(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char a =
+        gc_get_char(machine->collector, machine->stack[machine->sp - 1].addr);
+    char b =
+        gc_get_char(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a == b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_neq_char(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char a =
+        gc_get_char(machine->collector, machine->stack[machine->sp - 1].addr);
+    char b =
+        gc_get_char(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a != b);
 
     entry.type = GC_MEM_ADDR;
@@ -1630,6 +1752,15 @@ void vm_execute_op_ass_float(vm * machine, bytecode * code)
     machine->sp--;    
 }
 
+void vm_execute_op_ass_char(vm * machine, bytecode * code)
+{
+    char a = gc_get_char(machine->collector,
+                         machine->stack[machine->sp].addr);
+    gc_set_char(machine->collector, machine->stack[machine->sp - 1].addr, a);
+
+    machine->sp--;    
+}
+
 void vm_execute_op_ass_string(vm * machine, bytecode * code)
 {
     mem_ptr str_a = gc_get_string_ref(machine->collector,
@@ -1759,6 +1890,10 @@ void vm_execute_mk_array_num(vm * machine, bytecode * code, param_type value)
         {
             elem = gc_alloc_float(machine->collector, 0.0);
         }
+        else if (value == PARAM_CHAR)
+        {
+            elem = gc_alloc_char(machine->collector, 0);
+        }
         else if (value == PARAM_STRING)
         {
             elem = gc_alloc_string_ref(machine->collector, nil_ptr);
@@ -1799,6 +1934,11 @@ void vm_execute_mk_array_int(vm * machine, bytecode * code)
 void vm_execute_mk_array_float(vm * machine, bytecode * code)
 {
     vm_execute_mk_array_num(machine, code, PARAM_FLOAT);
+}
+
+void vm_execute_mk_array_char(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_CHAR);
 }
 
 void vm_execute_mk_array_string(vm * machine, bytecode * code)
@@ -1853,6 +1993,39 @@ void vm_execute_mk_init_array(vm * machine, bytecode * code)
 
     entry.type = GC_MEM_ADDR;
     entry.addr = gc_alloc_arr_ref(machine->collector, array);
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_string_deref(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char c = 0;
+
+    mem_ptr str_ptr = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    int index = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    if (str_ptr == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    char * str = gc_get_string(machine->collector, str_ptr);
+    if (index >= (int)strlen(str))
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_INDEX_OOB;
+        return;
+    }
+
+    c = str[index];
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_char(machine->collector, c);
 
     machine->stack[machine->sp] = entry;
 }
@@ -2042,6 +2215,15 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
                 ffi_decl_set_param_value(fd, i, float_value);
             }
             break;
+            case BYTECODE_FUNC_FFI_CHAR:
+            {
+                char * char_value;
+                char_value = gc_get_char_ptr(machine->collector, machine->stack[machine->sp - i].addr);
+                
+                ffi_decl_set_param_type(fd, i, &ffi_type_float);
+                ffi_decl_set_param_value(fd, i, char_value);
+            }
+            break;
             case BYTECODE_FUNC_FFI_STRING:
             {
                 mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp - i].addr);
@@ -2065,6 +2247,9 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         break;
         case BYTECODE_FUNC_FFI_FLOAT:
             ffi_decl_set_ret_type(fd, &ffi_type_float);
+        break;
+        case BYTECODE_FUNC_FFI_CHAR:
+            ffi_decl_set_ret_type(fd, &ffi_type_schar);
         break;
         case BYTECODE_FUNC_FFI_STRING:
             ffi_decl_set_ret_type(fd, &ffi_type_pointer);
@@ -2122,6 +2307,9 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         case BYTECODE_FUNC_FFI_FLOAT:
             addr = gc_alloc_float(machine->collector, fd->ret_float_value);
         break;
+        case BYTECODE_FUNC_FFI_CHAR:
+            addr = gc_alloc_char(machine->collector, fd->ret_char_value);
+        break;
         case BYTECODE_FUNC_FFI_STRING:
         {
             mem_ptr str = gc_alloc_string(machine->collector, fd->ret_string_value);
@@ -2149,6 +2337,11 @@ void vm_execute_func_ffi_int(vm * machine, bytecode * code)
 }
 
 void vm_execute_func_ffi_float(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
+
+void vm_execute_func_ffi_char(vm * machine, bytecode * code)
 {
     /* func_ffi reads it */
 }

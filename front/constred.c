@@ -33,6 +33,7 @@ int expr_constred(expr * value, int * result)
     {
     case EXPR_INT:
     case EXPR_FLOAT:
+    case EXPR_CHAR:
     case EXPR_STRING:
     case EXPR_NIL:
     case EXPR_ID:

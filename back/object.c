@@ -54,6 +54,16 @@ object * object_new_float(float value)
     return obj;
 }
 
+object * object_new_char(float value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+
+    obj->type = OBJECT_CHAR;
+    obj->char_value = value;
+
+    return obj;
+}
+
 object * object_new_string(char * value)
 {
     object * obj = (object *)malloc(sizeof(object));
@@ -173,6 +183,7 @@ void object_delete(object * obj)
         break;
     case OBJECT_INT:
     case OBJECT_FLOAT:
+    case OBJECT_CHAR:
         break;
     case OBJECT_STRING:
         if (obj->string_value != NULL)
@@ -397,6 +408,9 @@ void object_print(object * obj)
         break;
     case OBJECT_FLOAT:
         printf("object_float\n");
+        break;
+    case OBJECT_CHAR:
+        printf("object_char\n");
         break;
     case OBJECT_STRING:
         printf("object_string\n");

@@ -28,6 +28,7 @@ typedef enum bytecode_type
 
     BYTECODE_INT,
     BYTECODE_FLOAT,
+    BYTECODE_CHAR,
     BYTECODE_STRING,
 
     BYTECODE_ID_LOCAL,
@@ -68,6 +69,13 @@ typedef enum bytecode_type
     BYTECODE_OP_GTE_FLOAT,
     BYTECODE_OP_EQ_FLOAT,
     BYTECODE_OP_NEQ_FLOAT,
+
+    BYTECODE_OP_LT_CHAR,
+    BYTECODE_OP_GT_CHAR,
+    BYTECODE_OP_LTE_CHAR,
+    BYTECODE_OP_GTE_CHAR,
+    BYTECODE_OP_EQ_CHAR,
+    BYTECODE_OP_NEQ_CHAR,
 
     BYTECODE_OP_EQ_STRING,
     BYTECODE_OP_NEQ_STRING,
@@ -114,6 +122,7 @@ typedef enum bytecode_type
 
     BYTECODE_OP_ASS_INT,
     BYTECODE_OP_ASS_FLOAT,
+    BYTECODE_OP_ASS_CHAR,
     BYTECODE_OP_ASS_STRING,
     BYTECODE_OP_ASS_ARRAY,
     BYTECODE_OP_ASS_RECORD,
@@ -127,12 +136,14 @@ typedef enum bytecode_type
 
     BYTECODE_MK_ARRAY_INT,
     BYTECODE_MK_ARRAY_FLOAT,
+    BYTECODE_MK_ARRAY_CHAR,
     BYTECODE_MK_ARRAY_STRING,
     BYTECODE_MK_ARRAY_ARRAY,
     BYTECODE_MK_ARRAY_RECORD,
     BYTECODE_MK_ARRAY_FUNC,
     BYTECODE_MK_INIT_ARRAY,
-    BYTECODE_ARRAY_DEREF,
+    BYTECODE_STRING_DEREF,
+    BYTECODE_ARRAY_DEREF,    
     BYTECODE_ARRAY_APPEND,
 
     BYTECODE_RECORD,
@@ -145,6 +156,7 @@ typedef enum bytecode_type
     BYTECODE_FUNC_FFI,
     BYTECODE_FUNC_FFI_INT,
     BYTECODE_FUNC_FFI_FLOAT,
+    BYTECODE_FUNC_FFI_CHAR,
     BYTECODE_FUNC_FFI_STRING,
 
     BYTECODE_GLOBAL_VEC,
@@ -180,6 +192,10 @@ typedef struct bytecode
         {
             float value; /* BYTECODE_FLOAT */
         } real;
+        struct
+        {
+            char value; /* BYTECODE_CHAR */
+        } chr;
         struct
         {
             unsigned int index; /* BYTECODE_STRING */
@@ -295,6 +311,7 @@ void bytecode_print_unknown(bytecode * code);
 
 void bytecode_print_int(bytecode * code);
 void bytecode_print_float(bytecode * code);
+void bytecode_print_char(bytecode * code);
 void bytecode_print_string(bytecode * code);
 
 void bytecode_print_id_local(bytecode * code);
@@ -335,6 +352,13 @@ void bytecode_print_op_lte_float(bytecode * code);
 void bytecode_print_op_gte_float(bytecode * code);
 void bytecode_print_op_eq_float(bytecode * code);
 void bytecode_print_op_neq_float(bytecode * code);
+
+void bytecode_print_op_lt_char(bytecode * code);
+void bytecode_print_op_gt_char(bytecode * code);
+void bytecode_print_op_lte_char(bytecode * code);
+void bytecode_print_op_gte_char(bytecode * code);
+void bytecode_print_op_eq_char(bytecode * code);
+void bytecode_print_op_neq_char(bytecode * code);
 
 void bytecode_print_op_eq_string(bytecode * code);
 void bytecode_print_op_neq_string(bytecode * code);
@@ -382,6 +406,7 @@ void bytecode_print_op_mul_arr_arr_float(bytecode * code);
 
 void bytecode_print_op_ass_int(bytecode * code);
 void bytecode_print_op_ass_float(bytecode * code);
+void bytecode_print_op_ass_char(bytecode * code);
 void bytecode_print_op_ass_string(bytecode * code);
 void bytecode_print_op_ass_array(bytecode * code);
 void bytecode_print_op_ass_func(bytecode * code);
@@ -398,11 +423,14 @@ void bytecode_print_label(bytecode * code);
 
 void bytecode_print_mk_array_int(bytecode * code);
 void bytecode_print_mk_array_float(bytecode * code);
+void bytecode_print_mk_array_char(bytecode * code);
 void bytecode_print_mk_array_string(bytecode * code);
 void bytecode_print_mk_array_array(bytecode * code);
 void bytecode_print_mk_array_record(bytecode * code);
 void bytecode_print_mk_array_func(bytecode * code);
 void bytecode_print_mk_init_array(bytecode * code);
+
+void bytecode_print_string_deref(bytecode * code);
 void bytecode_print_array_deref(bytecode * code);
 void bytecode_print_array_append(bytecode * code);
 
@@ -412,10 +440,13 @@ void bytecode_print_nil_record_ref(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);
 void bytecode_print_func_obj(bytecode * code);
+
 void bytecode_print_func_ffi(bytecode * code);
 void bytecode_print_func_ffi_int(bytecode * code);
 void bytecode_print_func_ffi_float(bytecode * code);
+void bytecode_print_func_ffi_char(bytecode * code);
 void bytecode_print_func_ffi_string(bytecode * code);
+
 void bytecode_print_global_vec(bytecode * code);
 void bytecode_print_mark(bytecode * code);
 void bytecode_print_call(bytecode * code);

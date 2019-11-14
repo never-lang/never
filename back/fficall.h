@@ -37,6 +37,7 @@ typedef struct ffi_decl {
         void * ret_void_value;
         int ret_int_value;
         float ret_float_value;
+        char ret_char_value;
         char * ret_string_value;
     };
     ffi_cif cif;

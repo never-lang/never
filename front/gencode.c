@@ -82,6 +82,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
             param * param_value = entry->param_value;
             if (param_value->type == PARAM_INT ||
                 param_value->type == PARAM_FLOAT ||
+                param_value->type == PARAM_CHAR ||
                 param_value->type == PARAM_STRING ||
                 param_value->type == PARAM_ENUMTYPE ||
                 param_value->type == PARAM_DIM ||
@@ -288,6 +289,7 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
     {
     case EXPR_INT:
     case EXPR_FLOAT:
+    case EXPR_CHAR:
     case EXPR_STRING:
     case EXPR_ID:
     case EXPR_NIL:

@@ -26,6 +26,7 @@
 #include "strutil.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <fenv.h>
 #include <assert.h>
@@ -139,6 +140,13 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         addr = gc_alloc_float(machine->collector, x);
     }
     break;
+    case LIB_MATH_PRINTC:
+    {
+        char x = gc_get_char(machine->collector, machine->stack[machine->sp].addr);
+        string_print_char(x);
+        addr = gc_alloc_char(machine->collector, x);
+    }
+    break;
     case LIB_MATH_PRINTS:
     {
         mem_ptr str_x = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
@@ -151,6 +159,28 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         char * x = gc_get_string(machine->collector, str_x);
         string_print(x);
         addr = gc_alloc_string_ref(machine->collector, str_x);
+    }
+    break;
+    case LIB_MATH_LENGTH:
+    {
+        mem_ptr str_x = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
+        if (str_x == nil_ptr)
+        {
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NIL_POINTER;
+            return;
+        }
+
+        char * x = gc_get_string(machine->collector, str_x);
+        if (x == 0)
+        {
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NIL_POINTER;
+            return;
+        }
+        
+        int length = (int)strlen(x);
+        addr = gc_alloc_int(machine->collector, length);
     }
     break;
     case LIB_MATH_ASSERT:

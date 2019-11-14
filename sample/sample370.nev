@@ -1,12 +1,18 @@
 
-func get_char(str : string, i : int) -> char
+func get_char(str : string, i : int, c : char) -> char
 {
-    str[i]
+    print(length(str));
+
+    printc('X');
+    printc(c);
+    printc(str[i]);
+
+    'Z'
 }
 
 func main() -> int
 {
-    get_char("texttexttex", 0);
+    get_char("texttexttex", 2, 'Y');
     
     0
 }
