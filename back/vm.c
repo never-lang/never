@@ -2021,13 +2021,11 @@ void vm_execute_string_deref(vm * machine, bytecode * code)
 
     c = str[index];
 
-    machine->sp++;
-    vm_check_stack(machine);
-
     entry.type = GC_MEM_ADDR;
     entry.addr = gc_alloc_char(machine->collector, c);
 
-    machine->stack[machine->sp] = entry;
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_array_deref(vm * machine, bytecode * code)

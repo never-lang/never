@@ -1,0 +1,30 @@
+
+func test(a : char, b : char, c : char) -> int
+{
+    var str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n";
+    
+    assert(a == 'A');
+    assert(b == 'B');
+    assert(c == 'C');
+    
+    assert(str[0] == 'A');
+    assert(str[1] == 'B');
+    assert(str[2] == 'C');
+    assert(str[25] == 'Z');
+
+    str[0] = 'X';
+    
+    prints(str);
+
+    0
+}
+
+func main() -> int
+{
+    var s = "ABC";
+
+    test(s[0], s[1], s[2]);
+    
+    0
+}
+
