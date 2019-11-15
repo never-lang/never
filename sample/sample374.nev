@@ -1,0 +1,44 @@
+
+func print_str(c[D] : char) -> int
+{
+    var i = 0;
+
+    for (i = 0; i < D; i = i + 1)
+    {
+        printc(c[i])
+    };
+    
+    0
+}
+
+func test(c : char) -> int
+{
+    var str = {[ 5 ]} : char;
+    
+    str[0] = 'A';
+    str[1] = 'B';
+    str[2] = 'C';
+    str[3] = 'D';
+    str[4] = 'E';
+    
+    assert(str[0] == 'A');
+    assert(str[1] == 'B');
+    assert(str[2] == 'C');
+    assert(str[3] == 'D');
+    assert(str[4] == 'E');
+
+    print_str(str);
+
+    0
+}
+
+func main() -> int
+{
+    var c = 'X';
+
+    test(c);
+    
+    0
+}
+
+

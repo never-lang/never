@@ -1,0 +1,30 @@
+
+func test(c : char) -> int
+{
+    var i = 'A';
+    
+    assert(i == 'A');
+    assert(c == 'X');
+    
+    i = 'Z';
+    c = 'Y';
+    
+    assert(i == 'Z');
+    assert(c == 'Y');
+
+    printc(i);
+    printc(c);
+
+    0
+}
+
+func main() -> int
+{
+    var c = 'X';
+
+    test(c);
+    
+    0
+}
+
+

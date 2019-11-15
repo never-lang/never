@@ -24,6 +24,13 @@
 #include <stdio.h>
 #include <assert.h>
 
+void test_zero()
+{
+    assert(test_char('A') == 'B');
+    assert(test_char('B') == 'C');
+    assert(test_char('Z') == 'A');
+}
+
 void test_one()
 {
     ffi_decl * fd = ffi_decl_new(20);
@@ -148,6 +155,7 @@ void test_two()
 
 int main(int argc, char * argv[])
 {
+    test_zero();
     test_one();
     test_two();
     

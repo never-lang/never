@@ -1,0 +1,26 @@
+
+func test(c : char) -> int
+{
+    var str = [ 'A', 'B', 'C' ] : char;
+    
+    assert(str[0] == 'A');
+    assert(str[1] == 'B');
+    assert(str[2] == 'C');
+
+    printc(str[0]);
+    printc(str[1]);
+    printc(str[2]);
+
+    0
+}
+
+func main() -> int
+{
+    var c = 'X';
+
+    test(c);
+    
+    0
+}
+
+

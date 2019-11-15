@@ -1,0 +1,25 @@
+
+func test() -> int
+{
+    assert('A' < 'Z');
+    assert('A' <= 'Z');
+    assert('A' <= 'A');
+    
+    assert('Z' > 'A');
+    assert('Z' >= 'A');
+    assert('A' >= 'A');
+
+    assert('A' == 'A');
+    assert('A' != 'Z');
+
+    0
+}
+
+func main() -> int
+{
+    test();
+    
+    0
+}
+
+

@@ -1,0 +1,23 @@
+
+extern "host" func test_char(c : char) -> char
+
+func test() -> int
+{
+    printc(test_char('A'));
+    printc(test_char('B'));
+    printc(test_char('Z'));
+
+    assert(test_char('A') == 'B');
+    assert(test_char('B') == 'C');
+    assert(test_char('Z') == 'A');
+
+    0
+}
+
+func main() -> int
+{
+    test();
+
+    0
+}
+
