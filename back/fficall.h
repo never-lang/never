@@ -56,6 +56,7 @@ void ffi_decl_close_handle(void * handle);
 int ffi_decl_prepare(ffi_decl * decl);
 int ffi_decl_call(ffi_decl * decl, char * fname, void * handle);
 
+char test_char(char c);
 int test_print_str(const char * str);
 
 char * test_conc_str(const char * a, const char * b);

@@ -2220,7 +2220,7 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
                 char * char_value;
                 char_value = gc_get_char_ptr(machine->collector, machine->stack[machine->sp - i].addr);
                 
-                ffi_decl_set_param_type(fd, i, &ffi_type_float);
+                ffi_decl_set_param_type(fd, i, &ffi_type_schar);
                 ffi_decl_set_param_value(fd, i, char_value);
             }
             break;

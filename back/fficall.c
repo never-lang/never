@@ -134,6 +134,11 @@ int ffi_decl_call(ffi_decl * decl, char * fname, void * handle)
     return FFI_SUCC;
 }
 
+char test_char(char c)
+{
+    return ((c - 'A' + 1) % ('Z' - 'A' + 1)) + 'A';
+}
+
 int test_print_str(const char * str)
 {
     printf("test print str %s", str);

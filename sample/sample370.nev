@@ -10,9 +10,16 @@ func get_char(str : string, i : int, c : char) -> char
     'Z'
 }
 
+func get_W() -> char
+{
+    'W'
+}
+
 func main() -> int
 {
     get_char("texttexttex", 2, 'Y');
+    
+    printc(get_W());
     
     0
 }
