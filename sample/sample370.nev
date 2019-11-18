@@ -17,7 +17,7 @@ func get_W() -> char
 
 func main() -> int
 {
-    get_char("texttexttex", 2, 'Y');
+    get_char("texttexttex", 2, ',');
     
     printc(get_W());
     

@@ -1,0 +1,22 @@
+
+func reverse(prog : string) -> int
+{
+    var i = 0;
+
+    for (i = length(prog) - 1; i >= 0; i = i - 1)
+    {
+        printc(prog[i])
+    };
+    
+    prints("\n");
+
+    0
+}
+
+func main() -> int
+{
+    reverse("Hello World!");
+
+    0
+}
+

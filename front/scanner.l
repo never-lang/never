@@ -311,7 +311,7 @@ nil {
     return TOK_ID;
 }
 
-\'{ID}\' {
+\'[[:print:]]\' {
     tokp->line_no = line_no;
     tokp->val.char_value = yytext[1];
     scanner_printf("char %c\n", yytext[1]);

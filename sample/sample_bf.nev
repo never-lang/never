@@ -1,0 +1,145 @@
+
+
+record BFI
+{
+    cmd : char;
+    next : BFI;
+    jmp : BFI;
+}
+
+record MEM
+{
+    val : int;
+    next : MEM;
+    prev : MEM;
+}
+
+extern "libc.so.6" func getchar() -> int
+
+func exec(prog : string) -> int
+{
+    var i = 0;
+    var n = BFI;
+    var p = BFI;
+    var j = BFI;
+    var pgm = BFI;
+    var m = MEM(0, nil, nil);
+    
+    for (i = 0; i < length(prog); i = i + 1)
+    {
+        printc(prog[i]);
+    
+        n = BFI('0', nil, nil);
+    
+        if (p != nil)
+        {
+            p.next = n
+        }
+        else
+        {
+            pgm = n
+        };
+        
+        n.cmd = prog[i];
+        p = n;
+    
+        if (prog[i] == '[')
+        {
+            n.jmp = j;
+            j = n;
+            0
+        }
+        else if (prog[i] == ']')
+        {
+            n.jmp = j;
+            j = j.jmp;
+            n.jmp.jmp = n;
+            0
+        }
+        else
+        {
+            0
+        }
+    };
+
+    prints("\nexec\n");
+
+    for (n = pgm; n != nil; n = n.next)
+    {
+        if (n.cmd == '+')
+        {
+            m.val = m.val + 1
+        }
+        else if (n.cmd == '-')
+        {
+            m.val = m.val - 1
+        }
+        else if (n.cmd == '.')
+        {
+            print(m.val)
+        }
+        else if (n.cmd == ',')
+        {
+            i = getchar() - 48; getchar();
+            m.val = i
+        }
+        else if (n.cmd == '[')
+        {
+            if (m.val == 0)
+            {
+                n = n.jmp;
+                0
+            }
+            else
+            {
+                0
+            }
+        }
+        else if (n.cmd == ']')
+        {
+            if (m.val != 0)
+            {
+                n = n.jmp;
+                0
+            }
+            else
+            {
+                0
+            }
+        }
+        else if (n.cmd == '<')
+        {
+            m = m.prev;
+            0
+        }
+        else if (n.cmd == '>')
+        {
+            if (m.next == nil)
+            {
+                m.next = MEM(0, nil, nil);
+                m.next.prev = m;
+                0
+            }
+            else
+            {
+                0
+            };
+
+            m = m.next;
+            0
+        }
+        else
+        {
+            0
+        }
+    }
+}
+
+func main() -> int
+{
+    #prints("Adds two digits\n"); exec(",>,[<+>-]<.");
+    #exec(",>,.<.");
+
+    0
+}
+
