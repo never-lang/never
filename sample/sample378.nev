@@ -1,0 +1,17 @@
+
+func main() -> int
+{
+    var c = 'X';
+    var i = 0;
+    
+    i = ord('A');
+    print(i);
+    
+    c = chr(65);
+    printc(c);
+        
+    prints("\n");
+    
+    0
+}
+
