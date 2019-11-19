@@ -1951,7 +1951,10 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         }
         break;
     case EXPR_BUILD_IN:
-        expr_list_check_type(tab, value->func_build_in.param, func_value, syn_level, result);
+        if (value->func_build_in.param != NULL)
+        {
+            expr_list_check_type(tab, value->func_build_in.param, func_value, syn_level, result);
+        }
         expr_set_return_type(value, value->func_build_in.ret);
         break;
     case EXPR_INT_TO_FLOAT:

@@ -1436,8 +1436,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         expr_for_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_BUILD_IN:
-        expr_list_emit(value->func_build_in.param, stack_level, module_value,
-                       list_weak, result);
+        if (value->func_build_in.param != NULL)
+        {
+            expr_list_emit(value->func_build_in.param, stack_level, module_value,
+                           list_weak, result);
+        }
 
         bc.type = BYTECODE_BUILD_IN;
         bc.build_in.id = value->func_build_in.id;

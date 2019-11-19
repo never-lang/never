@@ -16,6 +16,7 @@ record MEM
 
 extern "libc.so.6" func getchar() -> int
 
+
 func exec(prog : string) -> int
 {
     var i = 0;
@@ -76,12 +77,12 @@ func exec(prog : string) -> int
         }
         else if (n.cmd == '.')
         {
-            print(m.val)
+            printc(chr(m.val));
+            0
         }
         else if (n.cmd == ',')
         {
-            i = getchar() - 48; getchar();
-            m.val = i
+            m.val = read()
         }
         else if (n.cmd == '[')
         {
@@ -137,6 +138,8 @@ func exec(prog : string) -> int
 
 func main() -> int
 {
+    /* Hello World! */
+    exec("++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.");
     #prints("Adds two digits\n"); exec(",>,[<+>-]<.");
     #exec(",>,.<.");
 

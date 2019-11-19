@@ -159,6 +159,24 @@ func * libmath_func_float_x_float_y_int_new(libmath_func math_id)
                                  params_x_y(), param_new_int(NULL));
 }
 
+func * libmath_func_char_x_int_new(libmath_func math_id)
+{
+    return lib_math_func_any_new(math_id, params_char_x(), params_x(),
+                                 param_new_int(NULL));
+}
+
+func * libmath_func_int_x_char_new(libmath_func math_id)
+{
+    return lib_math_func_any_new(math_id, params_int_x(), params_x(),
+                                 param_new_char(NULL));
+}
+
+func * libmath_func_void_int_new(libmath_func math_id)
+{
+    return lib_math_func_any_new(math_id, NULL, NULL,
+                                 param_new_int(NULL));
+}
+
 func * libmath_func_int_x_string_new(libmath_func math_id)
 {
     return lib_math_func_any_new(math_id, params_int_x(), params_x(),
@@ -234,6 +252,21 @@ func * libmath_func_str_float_new()
     return libmath_func_float_x_string_new(LIB_MATH_STRF);
 }
 
+func * libmath_func_ord_new()
+{
+    return libmath_func_char_x_int_new(LIB_MATH_ORD);
+}
+
+func * libmath_func_chr_new()
+{
+    return libmath_func_int_x_char_new(LIB_MATH_CHR);
+}
+
+func * libmath_func_read_new()
+{
+    return libmath_func_void_int_new(LIB_MATH_READ);
+}
+
 func * libmath_func_print_int_new()
 {
     return libmath_func_int_x_new(LIB_MATH_PRINT);
@@ -280,6 +313,9 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_pow_new());
     func_list_add_end(funcs, libmath_func_str_int_new());
     func_list_add_end(funcs, libmath_func_str_float_new());
+    func_list_add_end(funcs, libmath_func_ord_new());
+    func_list_add_end(funcs, libmath_func_chr_new());
+    func_list_add_end(funcs, libmath_func_read_new());
     func_list_add_end(funcs, libmath_func_print_int_new());
     func_list_add_end(funcs, libmath_func_print_float_new());
     func_list_add_end(funcs, libmath_func_print_char_new());
@@ -313,6 +349,12 @@ const char * libmath_func_to_str(libmath_func math_id)
         return "str";
     case LIB_MATH_STRF:
         return "strf";
+    case LIB_MATH_ORD:
+        return "ord";
+    case LIB_MATH_CHR:
+        return "chr";
+    case LIB_MATH_READ:
+        return "read";
     case LIB_MATH_PRINT:
         return "print";
     case LIB_MATH_PRINTF:

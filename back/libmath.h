@@ -36,6 +36,9 @@ typedef enum libmath_func
     LIB_MATH_POW,
     LIB_MATH_STR,
     LIB_MATH_STRF,
+    LIB_MATH_ORD,
+    LIB_MATH_CHR,
+    LIB_MATH_READ,
     LIB_MATH_PRINT,
     LIB_MATH_PRINTF,
     LIB_MATH_PRINTC,
@@ -59,6 +62,9 @@ func * libmath_func_int_x_new(libmath_func math_id);
 func * libmath_func_float_x_new(libmath_func math_id);
 func * libmath_func_float_x_float_y_new(libmath_func math_id);
 func * libmath_func_float_x_float_y_int_new(libmath_func math_id);
+func * libmath_func_char_x_int_new(libmath_func math_id);
+func * libmath_func_int_x_char_new(libmath_func math_id);
+func * libmath_func_void_int_new(libmath_func math_id);
 func * libmath_func_string_x_new(libmath_func math_id);
 func * libmath_func_string_x_int_new(libmath_func math_id);
 
@@ -71,6 +77,9 @@ func * libmath_func_sqrt_new();
 func * libmath_func_pow_new();
 func * libmath_func_str_int_new();
 func * libmath_func_str_float_new();
+func * libmath_func_ord_new();
+func * libmath_func_chr_new();
+func * libmath_func_read_new();
 func * libmath_func_print_int_new();
 func * libmath_func_print_float_new();
 func * libmath_func_print_char_new();

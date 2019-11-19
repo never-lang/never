@@ -154,8 +154,11 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         expr_tailrec(syn_level, stab, value->forloop.do_value, TAILREC_OP_SKIP);
     break;
     case EXPR_BUILD_IN:
-        expr_list_tailrec(syn_level, stab,
-                          value->func_build_in.param, TAILREC_OP_SKIP);
+        if (value->func_build_in.param != NULL)
+        {
+            expr_list_tailrec(syn_level, stab,
+                              value->func_build_in.param, TAILREC_OP_SKIP);
+        }
     break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:

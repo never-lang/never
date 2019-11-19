@@ -570,7 +570,10 @@ int expr_constred(expr * value, int * result)
         expr_constred(value->forloop.do_value, result);
         break;
     case EXPR_BUILD_IN:
-        expr_list_constred(value->func_build_in.param, result);
+        if (value->func_build_in.param != NULL)
+        {
+            expr_list_constred(value->func_build_in.param, result);
+        }
         break;
     case EXPR_INT_TO_FLOAT:
         expr_constred(value->left, result);

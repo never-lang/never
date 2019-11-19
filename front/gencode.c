@@ -381,8 +381,11 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
         break;
     case EXPR_BUILD_IN:
-        func_gencode_freevars_expr_list(func_value, stab, value->func_build_in.param,
-                                        result);
+        if (value->func_build_in.param != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->func_build_in.param,
+                                            result);
+        }
         break;
     case EXPR_INT_TO_FLOAT:
     case EXPR_FLOAT_TO_INT:
