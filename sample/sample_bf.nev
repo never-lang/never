@@ -104,13 +104,13 @@ func exec(pgm : BFI) -> int
     0
 }
 
-func execute(prog : string) -> int
+func run(prog : string) -> int
 {
     var pgm = BFI;
 
     pgm = compile(prog);
 
-    prints("\nexec\n");
+    prints("\n");
 
     exec(pgm);
     
@@ -120,9 +120,10 @@ func execute(prog : string) -> int
 func main() -> int
 {
     /* Hello World! */
-    execute("++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.");
-    #prints("Adds two digits\n"); execute(",>,[<+>-]<.");
-    #execute(",>,.<.");
+    run("++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.");
+    #run("++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.");
+    #prints("Adds two digits\n"); run(",>,[<+>-]<.");
+    #run(",>,.<.");
 
     0
 }

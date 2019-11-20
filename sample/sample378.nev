@@ -1,4 +1,9 @@
 
+func test(i : int) -> int
+{
+    print(i)
+}
+
 func main() -> int
 {
     var c = 'X';
@@ -11,6 +16,11 @@ func main() -> int
     printc(c);
         
     prints("\n");
+    
+    /*i = read();
+    print(i);
+    
+    print(read());*/
     
     0
 }
