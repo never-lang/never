@@ -1,0 +1,48 @@
+
+func printa(a[D] : int) -> int
+{
+    var i = 0;
+    
+    for (i = 0; i < D; i = i + 1) print(a[i]);
+
+    0
+}
+
+func set(c : char, i : int, f : float, s : string, a[D] : int) -> int
+{
+    c = 'B';
+    i = 11;
+    f = 11.0;
+    s = "eleven\n";
+    
+    a = [ 4, 5, 6, 7 ] : int;
+    
+    0
+}
+
+func main() -> int
+{
+    var c = 'A';
+    var i = 10;
+    var f = 10.0;
+    var s = "ten\n";
+    var a = [ 1, 2, 3 ] : int;
+    
+    printc(c);
+    print(i);
+    printf(f);
+    prints(s);
+    printa(a);
+    
+    set(c, i, f, s, a);
+
+    printc(c);
+    print(i);
+    printf(f);
+    prints(s);
+    printa(a);
+
+    0
+}
+
+
