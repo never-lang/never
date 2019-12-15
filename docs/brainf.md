@@ -1,5 +1,37 @@
+---
+title: Brain F\*\*\*
+---
 
+# Brain F\*\*\*
 
+## Introduction
+
+Brain F\*\*\* language was created in 1990s by Urban Müller. Its notable feature
+is its extreme minimalism. Each Brain F\*\*\* program consists of just eight instructions!
+Primary purpose of the language was to amaze other programmers rather than
+write any useful programs in it. Surprisingly it found its usage to demonstrate
+expresiveness of other programming languages. This article presents Brain F\*\*\*
+interpreter implemented in Never programming language. Compiler and interpreter
+implementation is based on C implementation by Robert de Bath found on [RosettaCode site][1].
+
+The following table lists Brain F\*\*\* instructions:
+
+| Command  | Description  |
+|----|---|
+| >  | Move the memory pointer to the right |
+| <  | Move the memory pointer to the left  |
+| +  | Increment the memory cell under the memory pointer |
+| -  | Decrement the memory cell under the memory pointer |
+| .  | Print the character signified by the memory cell at the memory pointer |
+| ,  | Read a character and store it in the memory cell at the memory pointer  |
+| [  | Jump past the matchin \] if the memory cell under the memory pointer is 0  |
+| ]  | Jump back to the mating \[ if the memory cell under the memory pointer is not 0 |
+
+## Implementation
+
+### Data Structures
+
+```swift
 record BFI
 {
     cmd : char;
@@ -13,7 +45,17 @@ record MEM
     next : MEM;
     prev : MEM;
 }
+```
 
+Brain F\*\*\*\* compiler and interpreter uses ```BFI``` record to store
+list of instuctions linked with ```next``` attribute. ```jmp``` attribute
+is used to point where a jump should be executed when \[ or \] instruction
+is executed. ```MEM``` record is a double linked list through ```next``` and
+```prev``` attributes which stores memory values.
+
+### Algorithms
+
+```swift
 func compile(prog : string) -> BFI
 {
     var i = 0;
@@ -65,7 +107,9 @@ func compile(prog : string) -> BFI
     
     pgm
 }
+```
 
+```swift
 func exec(pgm : BFI) -> int
 {
     var m = MEM(0, nil, nil);
@@ -124,7 +168,9 @@ func exec(pgm : BFI) -> int
     
     0
 }
+```
 
+```swift
 func run(prog : string) -> int
 {
     var pgm = BFI;
@@ -137,7 +183,9 @@ func run(prog : string) -> int
     
     0
 }
+```
 
+```swift
 func main() -> int
 {
     /* Hello World! */
@@ -148,4 +196,17 @@ func main() -> int
 
     0
 }
+```
+
+Brain F\*\*\*\* compiler and interpreter is implemeneted using two major
+functions - ```compile``` and ```exec```. Former function creates a list of instructions
+and marks jumps which should be executed when \[ or \] instruction is executed.
+Later function executes instructions according to their specifiction.
+
+## Summary
+
+I hope you liked this entry!
+
+[1]: https://rosettacode.org/wiki/Execute_Brain****/C "Rosetta Code BF"
+
 
