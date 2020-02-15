@@ -163,6 +163,12 @@ nil {
     return TOK_NIL;
 }
 
+match {
+    tokp->line_no = line_no;
+    scanner_printf("match\n");
+    return TOK_MATCH;
+}
+
 "+"|"-"|"/"|"*"|"%"|"=" {
     tokp->line_no = line_no;
     scanner_printf("operator %s\n", yytext);

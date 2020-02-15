@@ -23,6 +23,7 @@
 #include "array.h"
 #include "func.h"
 #include "listcomp.h"
+#include "match.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -273,6 +274,18 @@ expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value)
     return ret;
 }
 
+expr * expr_new_match(expr * expr_value, match_guard_list * match_guards)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_MATCH;
+    ret->line_no = 0;
+    ret->match.expr_value = expr_value;
+    ret->match.match_guards = match_guards;
+
+    return ret;
+}
+
 expr * expr_new_listcomp(listcomp * listcomp_value)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -441,6 +454,16 @@ void expr_delete(expr * value)
         if (value->forloop.do_value != NULL)
         {
             expr_delete(value->forloop.do_value);
+        }
+        break;
+    case EXPR_MATCH:
+        if (value->match.expr_value != NULL)
+        {
+            expr_delete(value->match.expr_value);
+        }
+        if (value->match.match_guards != NULL)
+        {
+            match_guard_list_delete(value->match.match_guards);
         }
         break;
     case EXPR_INT_TO_FLOAT:

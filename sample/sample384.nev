@@ -1,0 +1,15 @@
+
+enum E { one, two, three, four, five }
+
+func main() -> int
+{
+    match E.two
+    {
+        E.one -> 1;
+        E.two -> 2;
+        E.three -> 3;
+        else -> 4
+    }
+    
+}
+

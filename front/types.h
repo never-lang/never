@@ -34,6 +34,7 @@
 #include "record.h"
 #include "enumerator.h"
 #include "enums.h"
+#include "match.h"
 
 typedef union token_value {
     int int_value;
@@ -55,6 +56,8 @@ typedef union token_value {
     bind * var_value;
     bind * bind_value;
     bind_list * bind_list_value;
+    match_guard * match_guard_value;
+    match_guard_list * match_guard_list_value;
     func_decl * func_decl_value;
     func * func_value;
     func_list * func_list_value;

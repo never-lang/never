@@ -60,12 +60,13 @@ typedef enum expr_type
     EXPR_WHILE = 30,
     EXPR_DO_WHILE = 31,
     EXPR_FOR = 32,
-    EXPR_BUILD_IN = 33,
-    EXPR_INT_TO_FLOAT = 34,
-    EXPR_FLOAT_TO_INT = 35,
-    EXPR_LISTCOMP = 36,
-    EXPR_ATTR = 37,
-    EXPR_NIL = 38
+    EXPR_MATCH = 33,
+    EXPR_BUILD_IN = 34,
+    EXPR_INT_TO_FLOAT = 35,
+    EXPR_FLOAT_TO_INT = 36,
+    EXPR_LISTCOMP = 37,
+    EXPR_ATTR = 38,
+    EXPR_NIL = 39
 } expr_type;
 
 typedef enum comb_type
@@ -109,6 +110,7 @@ typedef struct listcomp listcomp;
 typedef struct record record;
 typedef struct enumtype enumtype;
 typedef struct enumerator enumerator;
+typedef struct match_guard_list match_guard_list;
 
 typedef struct expr_comb
 {
@@ -171,6 +173,11 @@ typedef struct expr
             struct expr * incr;
             struct expr * do_value;
         } forloop;
+        struct
+        {
+            struct expr * expr_value;
+            struct match_guard_list * match_guards;
+        } match;
         struct
         {
             struct expr * func_expr; /* EXPR_CALL, EXPR_LAST_CALL */
@@ -239,6 +246,7 @@ expr * expr_new_ass(expr * left, expr * right);
 expr * expr_new_while(expr * cond, expr * do_value);
 expr * expr_new_do_while(expr * cond, expr * do_value);
 expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value);
+expr * expr_new_match(expr * expr_value, match_guard_list * match_guards);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);
 expr * expr_new_attr(expr * record_value, char * id);

@@ -158,6 +158,7 @@
       <keyword>enum</keyword>
       <keyword>in</keyword>
       <keyword>extern</keyword>
+      <keyword>match</keyword>
     </context>
 
     <context id="operators" style-ref="operator">

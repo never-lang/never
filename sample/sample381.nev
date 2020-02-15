@@ -1,0 +1,12 @@
+enum E { one, two, three }
+
+func main() -> int
+{
+    let e = E.one;
+    let s = if (e == E.one) { "E.one\n" } else { "other\n" };
+    
+    prints(s);
+
+    0
+}
+

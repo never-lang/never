@@ -50,6 +50,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_NIL
 %token <val.str_value> TOK_ENUM
 %token <val.str_value> TOK_EXTERN
+%token <val.str_value> TOK_MATCH
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -62,10 +63,12 @@ int yyerror(never ** nev, char * str)
 %type <val.array_value> array;
 %type <val.array_value> array_sub;
 %type <val.listcomp_value> listcomp
+%type <val.expr_list_value> array_sub_list
 %type <val.qualifier_value> generator
 %type <val.qualifier_value> qualifier
 %type <val.qualifier_list_value> qualifier_list
-%type <val.expr_list_value> array_sub_list
+%type <val.match_guard_value> match_guard
+%type <val.match_guard_list_value> match_guard_list
 %type <val.let_value> let
 %type <val.var_value> var
 %type <val.bind_value> bind
@@ -428,6 +431,42 @@ expr: TOK_DO expr TOK_WHILE '(' expr ')'
 expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
 {
     $$ = expr_new_for($3, $5, $7, $9);
+    $$->line_no = $<line_no>1;
+};
+
+match_guard: TOK_ID TOK_DOT TOK_ID TOK_RET expr
+{
+    $$ = match_guard_new($1, $3, $5);
+    $$->line_no = $<line_no>1;
+};
+
+match_guard: TOK_ELSE TOK_RET expr
+{
+    $$ = match_guard_new_else($3);
+    $$->line_no = $<line_no>1;
+};
+
+match_guard_list: match_guard
+{
+    $$ = match_guard_list_new();
+    match_guard_list_add_end($$, $1);
+};
+
+match_guard_list: match_guard_list ';' match_guard
+{
+    match_guard_list_add_end($1, $3);
+    $$ = $1;
+};
+
+expr: TOK_MATCH expr '{' '}'
+{
+    $$ = expr_new_match($2, NULL);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_MATCH expr '{' match_guard_list '}'
+{
+    $$ = expr_new_match($2, $4);
     $$->line_no = $<line_no>1;
 };
 

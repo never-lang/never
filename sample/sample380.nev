@@ -1,0 +1,26 @@
+record R { a : int; b : int; }
+
+func get_func() -> () -> int
+{
+    let r = R(10, 20);
+
+    func f() -> int {
+        prints("a " + r.a + " b " + r.b + "\n");
+        0
+    }
+    
+    r.a = 20;
+    r.b = 40;
+    
+    f
+}
+
+func main() -> int
+{
+    let f = get_func();
+    
+    f();
+
+    0
+}
+
