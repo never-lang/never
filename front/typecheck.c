@@ -26,6 +26,7 @@
 #include "tcheckarr.h"
 #include "utils.h"
 #include "listcomp.h"
+#include "match.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -1677,6 +1678,68 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
     return 0;
 }        
 
+int expr_match_guard_item_check_type(symtab * tab, match_guard_item * value, func * func_value,
+                                     unsigned int syn_level, int * result)
+{
+    printf("match %s %s\n", value->enum_id, value->item_id);
+
+    return 0;
+}                                     
+
+int expr_match_guard_check_type(symtab * tab, match_guard * value, func * func_value,
+                                unsigned int syn_level, int * result)
+{
+    switch (value->type)
+    {
+    case MATCH_GUARD_ITEM:
+        expr_match_guard_item_check_type(tab, &value->guard_item, func_value, syn_level, result);
+        expr_check_type(tab, value->guard_item.expr_value, func_value, syn_level, result);
+    break;
+    case MATCH_GUARD_ELSE:
+        expr_check_type(tab, value->guard_else.expr_value, func_value, syn_level, result);
+    break;
+    }
+
+    return 0;
+}
+
+int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list, func * func_value,
+                                     unsigned int syn_level, int * result)
+{
+    match_guard_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        match_guard * value = node->value;
+        if (value != NULL)
+        {
+            expr_match_guard_check_type(tab, value, func_value, syn_level, result);
+        }
+        node = node->next;
+    }
+
+    /* TODO: exhaustive guards */
+    /* TODO: not repeated values (warning) */
+    /* TODO: not double else (warning) */
+    /* TODO: else as last if present */
+    /* TODO: right guard types are the same */
+
+    return 0;
+}                                     
+
+int expr_match_check_type(symtab * tab, expr * value, func * func_value,
+                          unsigned int syn_level, int * result)
+{
+    expr_check_type(tab, value->match.expr_value, func_value, syn_level, result);
+    expr_match_guard_list_check_type(tab, value->match.match_guards, func_value, syn_level, result);
+
+    /* TODO: expr_check is enum */
+    /* TODO: expr_check matches expr_match_guard_list type */
+    /* TODO: whole type is of one of right hand side */
+
+    return 0;
+}                              
+
 int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                     int * result)
 {
@@ -1949,6 +2012,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
                             "for loop condition is %s\n",
                             comb_type_str(value->forloop.cond->comb.comb));
         }
+        break;
+    case EXPR_MATCH:
+        expr_match_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)
@@ -2635,6 +2701,46 @@ int print_func_attr(expr * value, int depth)
     return 0;
 }
 
+int print_func_match_guard(match_guard * value, int depth)
+{
+    switch (value->type)
+    {
+    case MATCH_GUARD_ITEM:
+        print_func_expr(value->guard_item.expr_value, depth);
+    break;
+    case MATCH_GUARD_ELSE:
+        print_func_expr(value->guard_else.expr_value, depth);
+    break;
+    }
+
+    return 0;
+}
+
+int print_func_match_guard_list(match_guard_list * list, int depth)
+{
+    match_guard_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        match_guard * value = node->value;
+        if (value != NULL)
+        {
+            print_func_match_guard(value, depth);
+        }
+        node = node->next;
+    }
+    
+    return 0;
+}
+
+int print_func_match_expr(expr * value, int depth)
+{
+    print_func_expr(value->match.expr_value, depth);
+    print_func_match_guard_list(value->match.match_guards, depth);
+
+    return 0;
+}
+
 int print_func_expr(expr * value, int depth)
 {
     switch (value->type)
@@ -2728,6 +2834,9 @@ int print_func_expr(expr * value, int depth)
         print_func_expr(value->forloop.cond, depth);
         print_func_expr(value->forloop.incr, depth);
         print_func_expr(value->forloop.do_value, depth);
+        break;
+    case EXPR_MATCH:
+        print_func_match_expr(value, depth);
         break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)

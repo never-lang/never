@@ -9,7 +9,7 @@ func main() -> int
     {
         E.one -> 1;
         E.two -> 2;
-        else -> 3
+        else -> 3;
     }
     
 }

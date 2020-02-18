@@ -15,7 +15,7 @@ func main() -> int
         E.one -> 1;
         E.two -> 2;
         E.three -> 3;
-        else -> 4
+        else -> 4;
     }
     
 }

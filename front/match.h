@@ -30,19 +30,25 @@ typedef enum match_guard_type
 
 typedef struct expr expr;
 
+typedef struct match_guard_item
+{
+    char * enum_id;
+    char * item_id;
+    expr * expr_value;
+} match_guard_item;
+
+typedef struct match_guard_else
+{
+    expr * expr_value;
+} match_guard_else;
+
 typedef struct match_guard
 {
     match_guard_type type;
     unsigned int line_no;
     union {
-        struct {
-            char * enum_id;
-            char * item_id;
-            expr * expr_value;
-        } guard_item;
-        struct {
-            expr * expr_value;
-        } guard_else;
+        match_guard_item guard_item;
+        match_guard_else guard_else;
     };
 } match_guard;
 

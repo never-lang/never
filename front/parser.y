@@ -446,15 +446,15 @@ match_guard: TOK_ELSE TOK_RET expr
     $$->line_no = $<line_no>1;
 };
 
-match_guard_list: match_guard
+match_guard_list: match_guard ';'
 {
     $$ = match_guard_list_new();
     match_guard_list_add_end($$, $1);
 };
 
-match_guard_list: match_guard_list ';' match_guard
+match_guard_list: match_guard_list match_guard ';'
 {
-    match_guard_list_add_end($1, $3);
+    match_guard_list_add_end($1, $2);
     $$ = $1;
 };
 
