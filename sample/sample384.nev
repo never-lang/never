@@ -9,7 +9,8 @@ func main() -> int
         E.two -> 2;
         E.three -> 3;
         else -> 4;
-    }
+    };
     
+    0
 }
 

@@ -75,6 +75,23 @@ void match_guard_delete(match_guard * value)
     free(value);
 }
 
+expr * match_guard_get_expr(match_guard * value)
+{
+    expr * ret = NULL;
+    
+    switch (value->type)
+    {
+        case MATCH_GUARD_ITEM:
+            ret = value->guard_item.expr_value;
+        break;
+        case MATCH_GUARD_ELSE:
+            ret = value->guard_else.expr_value;
+        break;
+    }
+    
+    return ret;
+}
+
 match_guard_list_node * match_guard_list_node_new(match_guard * value)
 {
     match_guard_list_node * node = (match_guard_list_node *)malloc(sizeof(match_guard_list_node));

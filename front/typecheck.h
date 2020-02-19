@@ -47,12 +47,13 @@ int func_cmp(param_list * param_list_one, param * ret_one,
              param_list * param_list_two, param * ret_two);
 int array_cmp(int comb_dims_one, param * ret_one,
               int comb_dims_two, param * ret_two); 
-
 int param_is_num(param * value);
 int param_is_dynamic_array(param * value);
 int param_expr_array_cmp(param * param_value, expr * expr_value);
 int param_expr_cmp(param * param_value, expr * expr_value);
 int param_expr_list_cmp(param_list * params, expr_list * list);
+
+int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result);
 
 int symtab_entry_exists(symtab_entry * entry, unsigned int line_no);
 int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
@@ -118,6 +119,7 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard_item * value, fun
                                      unsigned int syn_level, int * result);
 int expr_match_guard_check_type(symtab * tab, match_guard * value, func * func_value,
                                 unsigned int syn_level, int * result);
+int expr_match_guard_list_right_cmp(expr * value, match_guard_list * list, int * result);
 int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list, func * func_value,
                                      unsigned int syn_level, int * result);
 int expr_match_check_type(symtab * tab, expr * value, func * func_value,

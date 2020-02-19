@@ -472,6 +472,100 @@ int param_expr_list_cmp(param_list * params, expr_list * list)
     return TYPECHECK_SUCC;
 }
 
+int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
+{
+    if (left->comb.comb == COMB_TYPE_INT &&
+        right->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = left->comb.comb;
+    }
+    else if (left->comb.comb == COMB_TYPE_FLOAT &&
+             right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        value->comb.comb = left->comb.comb;
+    }
+    else if (left->comb.comb == COMB_TYPE_CHAR &&
+             right->comb.comb == COMB_TYPE_CHAR)
+    {
+        value->comb.comb = left->comb.comb;
+    }
+    else if (left->comb.comb == COMB_TYPE_ENUMTYPE &&
+             right->comb.comb == COMB_TYPE_ENUMTYPE &&
+             left->comb.comb_enumtype == right->comb.comb_enumtype)
+    {
+        value->comb.comb = COMB_TYPE_ENUMTYPE;
+        value->comb.comb_enumtype = left->comb.comb_enumtype;
+    }
+    else if (left->comb.comb == COMB_TYPE_STRING &&
+             right->comb.comb == COMB_TYPE_STRING)
+    {
+        value->comb.comb = left->comb.comb;
+    }
+    else if ((left->comb.comb == COMB_TYPE_RECORD ||
+              left->comb.comb == COMB_TYPE_RECORD_ID) &&
+             (right->comb.comb == COMB_TYPE_RECORD ||
+              right->comb.comb == COMB_TYPE_RECORD_ID) &&
+             left->comb.comb_record == right->comb.comb_record)
+    {
+        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb_record = left->comb.comb_record;
+    }
+    else if (left->comb.comb == COMB_TYPE_FUNC &&
+             right->comb.comb == COMB_TYPE_FUNC)
+    {
+        if (func_cmp(left->comb.comb_params,
+                     left->comb.comb_ret,
+                     right->comb.comb_params,
+                     right->comb.comb_ret) == TYPECHECK_SUCC)
+        {
+            value->comb.comb = COMB_TYPE_FUNC;
+            value->comb.comb_params = left->comb.comb_params;
+            value->comb.comb_ret = left->comb.comb_ret;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "functions are different %s:%u %s:%u\n",
+                            left->id, left->line_no,
+                            right->id, right->line_no);
+        }
+    }
+    else if (left->comb.comb == COMB_TYPE_ARRAY)
+    {
+         if (array_cmp(left->comb.comb_dims,
+                       left->comb.comb_ret,
+                       right->comb.comb_dims,
+                       right->comb.comb_ret) == TYPECHECK_SUCC)
+         {
+             value->comb.comb = COMB_TYPE_ARRAY;
+             value->comb.comb_dims = left->comb.comb_dims;
+             value->comb.comb_ret = left->comb.comb_ret;
+         }
+         else
+         {
+             *result = TYPECHECK_FAIL;
+             value->comb.comb = COMB_TYPE_ERR;
+             print_error_msg(value->line_no,
+                             "arrays are different first line %u second line %u\n",
+                             left->line_no,
+                             right->line_no);
+         }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "types on conditional expression do not match %s %s\n",
+                        comb_type_str(left->comb.comb),
+                        comb_type_str(right->comb.comb));
+    }
+
+    return 0;
+}
+
 /*
  * Add symbols to symtab
  */
@@ -1254,93 +1348,9 @@ int expr_cond_check_type(symtab * tab, expr * value, func * func_value, unsigned
                         comb_type_str(value->left->comb.comb));
         return 0;
     }
-    
-    if (value->middle->comb.comb == COMB_TYPE_INT &&
-        value->right->comb.comb == COMB_TYPE_INT)
-    {
-        value->comb.comb = value->middle->comb.comb;
-    }
-    else if (value->middle->comb.comb == COMB_TYPE_FLOAT &&
-             value->right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        value->comb.comb = value->middle->comb.comb;
-    }
-    else if (value->middle->comb.comb == COMB_TYPE_CHAR &&
-             value->right->comb.comb == COMB_TYPE_CHAR)
-    {
-        value->comb.comb = value->middle->comb.comb;
-    }
-    else if (value->middle->comb.comb == COMB_TYPE_ENUMTYPE &&
-             value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
-             value->middle->comb.comb_enumtype == value->right->comb.comb_enumtype)
-    {
-        value->comb.comb = COMB_TYPE_ENUMTYPE;
-        value->comb.comb_enumtype = value->middle->comb.comb_enumtype;
-    }
-    else if (value->middle->comb.comb == COMB_TYPE_STRING &&
-             value->right->comb.comb == COMB_TYPE_STRING)
-    {
-        value->comb.comb = value->middle->comb.comb;
-    }
-    else if ((value->middle->comb.comb == COMB_TYPE_RECORD ||
-              value->middle->comb.comb == COMB_TYPE_RECORD_ID) &&
-             (value->right->comb.comb == COMB_TYPE_RECORD ||
-              value->right->comb.comb == COMB_TYPE_RECORD_ID) &&
-             value->middle->comb.comb_record == value->right->comb.comb_record)
-    {
-        value->comb.comb = COMB_TYPE_RECORD;
-        value->comb.comb_record = value->middle->comb.comb_record;
-    }
-    else if (value->middle->comb.comb == COMB_TYPE_FUNC &&
-             value->right->comb.comb == COMB_TYPE_FUNC)
-    {
-        if (func_cmp(value->middle->comb.comb_params,
-                     value->middle->comb.comb_ret,
-                     value->right->comb.comb_params,
-                     value->right->comb.comb_ret) == TYPECHECK_SUCC)
-        {
-            value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.comb_params = value->middle->comb.comb_params;
-            value->comb.comb_ret = value->middle->comb.comb_ret;
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            print_error_msg(value->line_no,
-                            "functions are different %s:%u %s:%u\n",
-                            value->middle->id, value->middle->line_no,
-                            value->right->id, value->right->line_no);
-        }
-    }
-    else if (value->middle->comb.comb == COMB_TYPE_ARRAY)
-    {
-         if (array_cmp(value->middle->comb.comb_dims,
-                       value->middle->comb.comb_ret,
-                       value->right->comb.comb_dims,
-                       value->right->comb.comb_ret) == TYPECHECK_SUCC)
-         {
-             value->comb.comb = COMB_TYPE_ARRAY;
-             value->comb.comb_dims = value->middle->comb.comb_dims;
-             value->comb.comb_ret = value->middle->comb.comb_ret;
-         }
-         else
-         {
-             *result = TYPECHECK_FAIL;
-             print_error_msg(value->line_no,
-                             "arrays are different first line %u second line %u\n",
-                             value->middle->line_no,
-                             value->right->line_no);
-         }
-    }
-    else
-    {
-        *result = TYPECHECK_FAIL;
-        print_error_msg(value->line_no,
-                        "types on conditional expression do not match %s %s\n",
-                        comb_type_str(value->middle->comb.comb),
-                        comb_type_str(value->right->comb.comb));
-    }
 
+    expr_comb_cmp_and_set(value->middle, value->right, value, result);
+    
     return 0;
 }
 
@@ -1703,6 +1713,45 @@ int expr_match_guard_check_type(symtab * tab, match_guard * value, func * func_v
     return 0;
 }
 
+int expr_match_guard_list_right_cmp(expr * value, match_guard_list * list, int * result)
+{
+    match_guard_list_node * node = list->tail;
+
+    if (node != NULL)
+    {
+        match_guard * first_guard = node->value;
+        expr * first_expr = NULL;
+
+        if (first_guard != NULL)
+        {
+            first_expr = match_guard_get_expr(first_guard);
+        }
+        
+        value->comb = first_expr->comb;
+        node = node->next;
+
+        while (node != NULL && first_expr != NULL)
+        {
+            match_guard * second_guard = node->value;
+            expr * second_expr = NULL;
+            
+            if (second_guard != NULL)
+            {
+                second_expr = match_guard_get_expr(second_guard);
+            }
+        
+            if (second_expr != NULL)
+            {
+                expr_comb_cmp_and_set(first_expr, second_expr, value, result);
+            }
+        
+            node = node->next;
+        }
+    }
+
+    return 0;
+}                                    
+
 int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list, func * func_value,
                                      unsigned int syn_level, int * result)
 {
@@ -1718,12 +1767,6 @@ int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list, func
         node = node->next;
     }
 
-    /* TODO: exhaustive guards */
-    /* TODO: not repeated values (warning) */
-    /* TODO: not double else (warning) */
-    /* TODO: else as last if present */
-    /* TODO: right guard types are the same */
-
     return 0;
 }                                     
 
@@ -1733,9 +1776,15 @@ int expr_match_check_type(symtab * tab, expr * value, func * func_value,
     expr_check_type(tab, value->match.expr_value, func_value, syn_level, result);
     expr_match_guard_list_check_type(tab, value->match.match_guards, func_value, syn_level, result);
 
+    /* check if guard right sides are the same and set match type */
+    expr_match_guard_list_right_cmp(value, value->match.match_guards, result);
+
     /* TODO: expr_check is enum */
     /* TODO: expr_check matches expr_match_guard_list type */
-    /* TODO: whole type is of one of right hand side */
+    /* TODO: exhaustive guards */
+    /* TODO: not repeated values (warning) */
+    /* TODO: not double else (warning) */
+    /* TODO: else as last if present (warning) */
 
     return 0;
 }                              

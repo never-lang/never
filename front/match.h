@@ -70,6 +70,8 @@ match_guard * match_guard_new(char * enum_id, char * item_id, expr * expr_value)
 match_guard * match_guard_new_else(expr * expr_value);
 void match_guard_delete(match_guard * value);
 
+expr * match_guard_get_expr(match_guard * value);
+
 match_guard_list_node * match_guard_list_node_new(match_guard * value);
 void match_guard_list_node_delete(match_guard_list_node * node);
 
