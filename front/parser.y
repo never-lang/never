@@ -436,7 +436,7 @@ expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
 
 match_guard: TOK_ID TOK_DOT TOK_ID TOK_RET expr
 {
-    $$ = match_guard_new($1, $3, $5);
+    $$ = match_guard_new_item($1, $3, $5);
     $$->line_no = $<line_no>1;
 };
 

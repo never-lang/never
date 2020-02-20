@@ -1688,25 +1688,94 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
     return 0;
 }        
 
-int expr_match_guard_item_check_type(symtab * tab, match_guard_item * value, func * func_value,
-                                     unsigned int syn_level, int * result)
+int expr_match_guard_item_check_type(symtab * tab, match_guard * match_value,
+                                     expr * value, func * func_value, unsigned int syn_level,
+                                     int * result)
 {
-    printf("match %s %s\n", value->enum_id, value->item_id);
+    symtab_entry * entry = NULL;
+
+    printf("match %s %s\n", match_value->guard_item.enum_id, match_value->guard_item.item_id);
+
+    entry = symtab_lookup(tab, match_value->guard_item.enum_id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry != NULL)
+    {
+        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(match_value->line_no, "found function %s at line %d instead of enum\n",
+                            entry->func_value->decl->id, entry->func_value->line_no);
+        }
+        else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(match_value->line_no, "found symtab %s at line %d instead of enum\n",
+                            entry->param_value->id, entry->param_value->line_no);
+        }
+        else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(match_value->line_no, "found binding %s at line %d instead of enum\n",
+                            entry->bind_value->id, entry->bind_value->line_no);
+        }
+        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(match_value->line_no, "found qualifier %s at line %d instead of enum\n",
+                            entry->qualifier_value->id, entry->qualifier_value->line_no);
+        }
+        else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(match_value->line_no, "found record %s at line %d instead of enum\n",
+                            entry->record_value->id, entry->record_value->line_no);
+        }
+        else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
+        {
+            enumerator * enumerator_value = enumtype_find_enumerator(entry->enumtype_value, match_value->guard_item.item_id);
+            if (enumerator_value != NULL)
+            {
+                match_value->guard_item.enumtype_value = entry->enumtype_value;
+                match_value->guard_item.enumerator_value = enumerator_value;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                print_error_msg(match_value->line_no, "cannot find enum item %s.%s\n",
+                                match_value->guard_item.enum_id, match_value->guard_item.item_id);
+            }
+        }
+        else
+        {
+            assert(0);
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(match_value->line_no, "cannot find enum %s\n",
+                        match_value->guard_item.enum_id);
+    }
 
     return 0;
 }                                     
 
-int expr_match_guard_check_type(symtab * tab, match_guard * value, func * func_value,
-                                unsigned int syn_level, int * result)
+int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
+                                expr * value, func * func_value, unsigned int syn_level,
+                                int * result)
 {
-    switch (value->type)
+    switch (match_value->type)
     {
     case MATCH_GUARD_ITEM:
-        expr_match_guard_item_check_type(tab, &value->guard_item, func_value, syn_level, result);
-        expr_check_type(tab, value->guard_item.expr_value, func_value, syn_level, result);
+        expr_match_guard_item_check_type(tab, match_value, value, func_value, syn_level, result);
+        expr_check_type(tab, match_value->guard_item.expr_value, func_value, syn_level, result);
     break;
     case MATCH_GUARD_ELSE:
-        expr_check_type(tab, value->guard_else.expr_value, func_value, syn_level, result);
+        expr_check_type(tab, match_value->guard_else.expr_value, func_value, syn_level, result);
     break;
     }
 
@@ -1752,17 +1821,18 @@ int expr_match_guard_list_right_cmp(expr * value, match_guard_list * list, int *
     return 0;
 }                                    
 
-int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list, func * func_value,
+int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list,
+                                     expr * value, func * func_value,
                                      unsigned int syn_level, int * result)
 {
     match_guard_list_node * node = list->tail;
 
     while (node != NULL)
     {
-        match_guard * value = node->value;
+        match_guard * match_value = node->value;
         if (value != NULL)
         {
-            expr_match_guard_check_type(tab, value, func_value, syn_level, result);
+            expr_match_guard_check_type(tab, match_value, value, func_value, syn_level, result);
         }
         node = node->next;
     }
@@ -1774,7 +1844,7 @@ int expr_match_check_type(symtab * tab, expr * value, func * func_value,
                           unsigned int syn_level, int * result)
 {
     expr_check_type(tab, value->match.expr_value, func_value, syn_level, result);
-    expr_match_guard_list_check_type(tab, value->match.match_guards, func_value, syn_level, result);
+    expr_match_guard_list_check_type(tab, value->match.match_guards, value, func_value, syn_level, result);
 
     /* check if guard right sides are the same and set match type */
     expr_match_guard_list_right_cmp(value, value->match.match_guards, result);

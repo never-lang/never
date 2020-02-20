@@ -8,7 +8,7 @@ func main() -> int
     match e
     {
         E.one -> 1;
-        E.two -> 2;
+        e.six -> 2;
         else -> 3;
     }
     

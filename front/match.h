@@ -29,11 +29,15 @@ typedef enum match_guard_type
 } match_guard_type;
 
 typedef struct expr expr;
+typedef struct enumtype enumtype;
+typedef struct enumerator enumerator;
 
 typedef struct match_guard_item
 {
     char * enum_id;
     char * item_id;
+    enumtype * enumtype_value;
+    enumerator * enumerator_value;
     expr * expr_value;
 } match_guard_item;
 
@@ -66,7 +70,7 @@ typedef struct match_guard_list
     match_guard_list_node * tail;
 } match_guard_list;
 
-match_guard * match_guard_new(char * enum_id, char * item_id, expr * expr_value);
+match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_value);
 match_guard * match_guard_new_else(expr * expr_value);
 void match_guard_delete(match_guard * value);
 

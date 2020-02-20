@@ -23,7 +23,7 @@
 #include "expr.h"
 #include <stdlib.h>
 
-match_guard * match_guard_new(char * enum_id, char * item_id, expr * expr_value)
+match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_value)
 {
     match_guard * ret = malloc(sizeof(match_guard));
     
@@ -31,6 +31,8 @@ match_guard * match_guard_new(char * enum_id, char * item_id, expr * expr_value)
     ret->line_no = 0;
     ret->guard_item.enum_id = enum_id;
     ret->guard_item.item_id = item_id;
+    ret->guard_item.enumtype_value = NULL;
+    ret->guard_item.enumerator_value = NULL;
     ret->guard_item.expr_value = expr_value;
         
     return ret;
