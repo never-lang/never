@@ -1,14 +1,17 @@
 
 enum E { one, two, three, four, five }
+enum F { eight, nine, ten }
 
 func main() -> int
 {
     let e = E.one;
     
-    match e
+    match E {};
+    
+    match E.one
     {
         E.one -> 1;
-        e.six -> 2;
+        E.two -> 2;
         else -> 3;
     }
     

@@ -3,14 +3,23 @@ enum E { one, two, three, four, five }
 
 func main() -> int
 {
+    /* let e = E.two;
+
+    if (E.one == e)
+    {
+        print(20)
+    }
+    else
+    {
+        print(10)
+    }; */
+
     match E.two
     {
         E.one -> 1;
         E.two -> 2;
         E.three -> 3;
         else -> 4;
-    };
-    
-    0
+    }
 }
 

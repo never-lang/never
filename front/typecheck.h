@@ -29,9 +29,6 @@
 
 typedef struct qualifier qualifier;
 typedef struct qualifier_list qualifier_list;
-typedef struct match_guard_item match_guard_item;
-typedef struct match_guard match_guard;
-typedef struct match_guard_list match_guard_list;
 
 int enumtype_enum_enumerator_list(enumerator_list * list);
 int record_enum_param_list(param_list * params);
@@ -115,15 +112,6 @@ int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int 
                     int * result);
 int bind_list_check_type(symtab * tab, bind_list * list, func * func_value, unsigned int syn_level,
                          int * result);
-int expr_match_guard_item_check_type(symtab * tab, match_guard * match_value,
-                                     expr * value, func * func_value, unsigned int syn_level, int * result);
-int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
-                                expr * value, func * func_value, unsigned int syn_level, int * result);
-int expr_match_guard_list_right_cmp(expr * value, match_guard_list * list, int * result);
-int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list, expr * value,
-                                     func * func_value, unsigned int syn_level, int * result);
-int expr_match_check_type(symtab * tab, expr * value, func * func_value,
-                          unsigned int syn_level, int * result);
 int except_check_type(symtab * tab, except * value, func * func_value,
                       unsigned int syn_level, int * result);
 int except_list_check_type(symtab * tab, except_list * list, func * func_value,
@@ -154,26 +142,6 @@ int record_check_type(symtab * stab, record * record_value, int * result);
 int record_list_check_type(symtab * stab, record_list * list, int * result);
 
 int never_check_type(never * nev, int * result);
-
-int print_func_expr(expr * value, int depth);
-int print_func_expr_list(expr_list * list, int depth);
-int print_func_qualifier(qualifier * value, int depth);
-int print_func_qualifier_list(qualifier_list * list, int depth);
-int print_func_listcomp(listcomp * value, int depth);
-int print_func_array(array * value, int depth);
-int print_func_bind(bind * value, int depth);
-int print_func_bind_list(bind_list * list, int depth);
-int print_func_except(except * value, int depth);
-int print_func_except_list(except_list * list, int depth);
-int print_func_attr(expr * value, int depth);
-int print_func_ffi(func * value, int depth);
-int print_func_match_guard(match_guard * value, int depth);
-int print_func_match_guard_list(match_guard_list * list, int depth);
-int print_func_match_expr(expr * value, int depth);
-int print_func_native(func * value, int depth);
-int print_func(func * value, int depth);
-int print_func_list(func_list * list, int depth);
-int print_functions(never * nev);
 
 int func_main_check_num_params(param_list * params);
 int func_main_check_type(const char * main_name, symtab * tab, int * result);

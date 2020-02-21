@@ -607,7 +607,7 @@ const char * comb_type_str(comb_type type)
     case COMB_TYPE_ENUMTYPE:
         return "enum";
     case COMB_TYPE_ENUMTYPE_ID:
-        return "enum name";
+        return "enum id";
     case COMB_TYPE_CHAR:
         return "char";
     case COMB_TYPE_STRING:
@@ -619,7 +619,7 @@ const char * comb_type_str(comb_type type)
     case COMB_TYPE_RECORD:
         return "record";
     case COMB_TYPE_RECORD_ID:
-        return "record name";
+        return "record id";
     }
     return "unknown comb type!";
 }
