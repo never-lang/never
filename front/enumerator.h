@@ -25,6 +25,7 @@
 typedef struct enumerator
 {
     char * id;
+    char mark;
     int index;
     unsigned int line_no;
 } enumerator;
@@ -53,6 +54,8 @@ void enumerator_list_delete(enumerator_list * list);
 
 void enumerator_list_add_beg(enumerator_list * list, enumerator * value);
 void enumerator_list_add_end(enumerator_list * list, enumerator * value);
+
+void enumerator_list_unmark(enumerator_list * list);
 
 #endif /* __ENUMERATOR_ID_H__ */
 

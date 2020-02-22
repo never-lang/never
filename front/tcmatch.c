@@ -11,8 +11,6 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard * match_value,
 {
     symtab_entry * entry = NULL;
 
-    printf("match %s %s\n", match_value->guard_item.enum_id, match_value->guard_item.item_id);
-
     entry = symtab_lookup(tab, match_value->guard_item.enum_id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
@@ -160,17 +158,22 @@ int expr_match_guard_list_left_cmp(expr * value, match_guard_list * list, int * 
     return 0;
 }
 
-int expr_match_guard_exhaustive_item(match_guard * match_value, int * result)
+unsigned int expr_match_gaurd_list_last_cnt(match_guard_list * list)
 {
-    switch (match_value->type)
+    unsigned int cnt = 0;
+    match_guard_list_node * node = list->tail;
+    
+    while (node != NULL)
     {
-        case MATCH_GUARD_ITEM:
-        break;
-        case MATCH_GUARD_ELSE:
-        break;
+        match_guard * match_value = node->value;
+        if (match_value != NULL && match_value->type == MATCH_GUARD_ELSE)
+        {
+            cnt++; 
+        }
+        node = node->next;
     }
-
-    return 0;
+    
+    return cnt;
 }
 
 int expr_match_guard_list_last_else(match_guard_list * list)
@@ -182,7 +185,6 @@ int expr_match_guard_list_last_else(match_guard_list * list)
         match_guard * match_value = node->value;
         if (match_value != NULL && match_value->type == MATCH_GUARD_ELSE)
         {
-            printf("last match guard is else type\n");
             return TYPECHECK_SUCC;
         }
     }
@@ -190,7 +192,35 @@ int expr_match_guard_list_last_else(match_guard_list * list)
     return TYPECHECK_FAIL;
 }
 
-int expr_match_guard_list_exhaustive_items(match_guard_list * list, int * result)
+int expr_match_guard_mark_item(match_guard * match_value)
+{
+    switch (match_value->type)
+    {
+        case MATCH_GUARD_ITEM:
+        {
+            enumerator * enumerator_value = match_value->guard_item.enumerator_value;
+            if (enumerator_value != NULL)
+            {
+                /* not repeated values (warning) */
+                if (enumerator_value->mark == 1)
+                {
+                    print_warning_msg(match_value->line_no,
+                                      "repeated enum name %s.%s in match expression\n",
+                                      match_value->guard_item.enum_id,
+                                      match_value->guard_item.item_id);
+                }
+                enumerator_value->mark = 1;
+            }
+        }
+        break;
+        case MATCH_GUARD_ELSE:
+        break;
+    }
+
+    return 0;
+}
+
+int expr_match_guard_list_mark_items(expr * value, match_guard_list * list)
 {
     match_guard_list_node * node = list->tail;
 
@@ -199,7 +229,7 @@ int expr_match_guard_list_exhaustive_items(match_guard_list * list, int * result
         match_guard * match_value = node->value;
         if (match_value != NULL)
         {
-            expr_match_guard_exhaustive_item(match_value, result);
+            expr_match_guard_mark_item(match_value);
         }
         node = node->next;
     }
@@ -207,14 +237,97 @@ int expr_match_guard_list_exhaustive_items(match_guard_list * list, int * result
     return 0;
 }
 
-int expr_match_guard_list_exhaustive(match_guard_list * list, int * result)
+int expr_match_guard_unmark_items(expr * value)
 {
-    if (expr_match_guard_list_last_else(list) == TYPECHECK_SUCC)
+    expr * match_expr = value->match.expr_value;
+
+    if (match_expr != NULL && match_expr->comb.comb == COMB_TYPE_ENUMTYPE)
     {
-        return 0;
+        enumtype * enum_value = match_expr->comb.comb_enumtype;
+        if (enum_value != NULL && enum_value->enums != NULL)
+        {
+            enumerator_list_unmark(enum_value->enums);
+        }
     }
 
-    expr_match_guard_list_exhaustive_items(list, result);
+    return 0;
+}
+
+int expr_match_guard_are_all_mark_items(expr * value, int * result)
+{
+    expr * match_expr = value->match.expr_value;
+
+    if (match_expr != NULL && match_expr->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        enumtype * enum_value = match_expr->comb.comb_enumtype;
+        if (enum_value != NULL && enum_value->enums != NULL)
+        {
+            enumerator_list * list = enum_value->enums;
+            if (list == NULL)
+            {
+                *result = TYPECHECK_SUCC;
+                return 0;
+            }
+
+            enumerator_list_node * node = list->tail;
+            while (node != NULL)
+            {
+                enumerator * enumerator_value = node->value;
+                if (enumerator_value != NULL && enumerator_value->mark == 0)
+                {
+                    print_error_msg(value->line_no,
+                                    "match expression does not cover %s.%s enum\n",
+                                    enum_value->id, enumerator_value->id);
+                    *result = TYPECHECK_FAIL;
+                }
+                node = node->next;
+            }
+        }
+        else
+        {
+            *result = TYPECHECK_SUCC;
+        }
+    }
+    else if (match_expr != NULL)
+    {
+        print_error_msg(value->line_no,
+                        "match expression wrong type %s\n",
+                        comb_type_str(match_expr->comb.comb));
+        *result = TYPECHECK_FAIL;
+    }
+
+    return 0;
+}
+
+int expr_match_guard_list_exhaustive(expr * value, match_guard_list * list, int * result)
+{
+    unsigned int match_else_cnt = 0;
+    
+    match_else_cnt = expr_match_gaurd_list_last_cnt(list);
+    if (match_else_cnt > 0)
+    {
+        /* not double else (warning) */
+        if (match_else_cnt > 1)
+        {
+            print_warning_msg(value->line_no,
+                              "match expression contains more than one else guard\n");
+        }
+        
+        /* else as last guard present (warning) */
+        if (expr_match_guard_list_last_else(list) == TYPECHECK_FAIL)
+        {
+            print_warning_msg(value->line_no,
+                              "match expression else guard is not last\n");
+        }
+    }
+    else
+    {
+        expr_match_guard_unmark_items(value);
+    
+        expr_match_guard_list_mark_items(value, list);
+        
+        expr_match_guard_are_all_mark_items(value, result);
+    }
 
     return 0;
 }
@@ -266,7 +379,7 @@ int expr_comb_is_enum(expr * value, int * result)
 
     *result = TYPECHECK_FAIL;
     print_error_msg(value->line_no,
-                    "expression is %s not enum id\n",
+                    "expression is %s not enum name\n",
                     comb_type_str(value->comb.comb));
 
     return TYPECHECK_FAIL;
@@ -290,8 +403,8 @@ int expr_match_check_type(symtab * tab, expr * value, func * func_value,
         /* expr_check matches expr_match_guard_list type */
         expr_match_guard_list_left_cmp(value->match.expr_value, value->match.match_guards, result);
 
-        /* TODO: exhaustive guards */
-        expr_match_guard_list_exhaustive(value->match.match_guards, result);
+        /* exhaustive guards */
+        expr_match_guard_list_exhaustive(value, value->match.match_guards, result);
 
         /* check if guard right sides are the same and set match type */
         expr_match_guard_list_right_cmp(value, value->match.match_guards, result);
@@ -301,12 +414,6 @@ int expr_match_check_type(symtab * tab, expr * value, func * func_value,
     {
         value->comb.comb = COMB_TYPE_ERR;
     }
-
-    printf("%s\n", comb_type_str(value->comb.comb));
-
-    /* TODO: not repeated values (warning) */
-    /* TODO: not double else (warning) */
-    /* TODO: else as last if present (warning) */
 
     return 0;
 }                              

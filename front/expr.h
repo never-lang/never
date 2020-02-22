@@ -119,7 +119,7 @@ typedef struct expr_comb
     struct param * comb_ret;       /* function ret */
     int comb_dims;               /* array dimensions */
     struct record * comb_record; /* record */
-    struct enumtype * comb_enumtype; /* record */
+    struct enumtype * comb_enumtype; /* enum */
 } expr_comb;
 
 typedef struct expr

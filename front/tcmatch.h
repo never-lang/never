@@ -19,10 +19,14 @@ int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list,
 int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * result);
 int expr_match_guard_list_left_cmp(expr * value, match_guard_list * list, int * result);
 
-int expr_match_guard_exhaustive_item(match_guard * match_value, int * result);
+unsigned int expr_match_gaurd_list_last_cnt(match_guard_list * list);
 int expr_match_guard_list_last_else(match_guard_list * list);
-int expr_match_guard_list_exhaustive_items(match_guard_list * list, int * result);
-int expr_match_guard_list_exhaustive(match_guard_list * list, int * result);
+
+int expr_match_guard_mark_item(match_guard * match_value);
+int expr_match_guard_list_mark_items(expr * value, match_guard_list * list);
+int expr_match_guard_unmark_items(expr * value);
+int expr_match_guard_are_all_mark_items(expr * value, int * result);
+int expr_match_guard_list_exhaustive(expr * value, match_guard_list * list, int * result);
 
 int expr_match_guard_list_right_cmp(expr * value, match_guard_list * list, int * result);
 

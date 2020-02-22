@@ -27,6 +27,7 @@ enumerator * enumerator_new(char * id)
     enumerator * value = (enumerator *)malloc(sizeof(enumerator));
     
     value->id = id;
+    value->mark = 0;
     value->index = 0;
     value->line_no = 0;
     
@@ -117,4 +118,20 @@ void enumerator_list_add_end(enumerator_list * list, enumerator * value)
         list->head = node;
     }
 }
+
+void enumerator_list_unmark(enumerator_list * list)
+{
+    enumerator_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        enumerator * value = node->value;
+        if (value != NULL)
+        {
+            value->mark = 0;
+        }
+        node = node->next;
+    }
+}
+
 
