@@ -21,6 +21,7 @@
  */
 #include "tailrec.h"
 #include "symtab.h"
+#include "match.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -43,6 +44,52 @@ int expr_id_tailrec(unsigned int syn_level, symtab * stab,
     }
     return 0;
 }
+
+int expr_match_guard_tailrec(unsigned int syn_level, symtab * stab,
+                             match_guard * match_value, tailrec_op op)
+{
+    switch (match_value->type)
+    {
+        case MATCH_GUARD_ITEM:
+            expr_tailrec(syn_level, stab, match_value->guard_item.expr_value, op);
+        break;
+        case MATCH_GUARD_ELSE:
+            expr_tailrec(syn_level, stab, match_value->guard_else.expr_value, op);
+        break;
+    }
+    
+    return 0;
+}
+
+int expr_match_guard_list_tailrec(unsigned int syn_level, symtab * stab,
+                                  match_guard_list * list, tailrec_op op)
+{
+    match_guard_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        match_guard * match_value = node->value;
+        if (match_value != NULL)
+        {
+            expr_match_guard_tailrec(syn_level, stab, match_value, op);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int expr_match_tailrec(unsigned int syn_level, symtab * stab,
+                       expr * value, tailrec_op op)
+{
+    expr_tailrec(syn_level, stab, value->match.expr_value, op);
+    if (value->match.match_guards != NULL)
+    {
+        expr_match_guard_list_tailrec(syn_level, stab, value->match.match_guards, op);
+    }
+
+    return 0;
+}        
 
 int expr_tailrec(unsigned int syn_level, symtab * stab,
                  expr * value, tailrec_op op)
@@ -152,6 +199,9 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         expr_tailrec(syn_level, stab, value->forloop.cond, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->forloop.incr, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->forloop.do_value, TAILREC_OP_SKIP);
+    break;
+    case EXPR_MATCH:
+        expr_match_tailrec(syn_level, stab, value, TAILREC_OP_SKIP);
     break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)

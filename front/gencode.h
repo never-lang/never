@@ -32,11 +32,20 @@ enum
     GENCODE_FAIL = 1
 };
 
+typedef struct match_guard match_guard;
+typedef struct match_guard_list match_guard_list;
+
 int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * tab,
                     expr * value, int * result);
 
 int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * freevar_value,
                                   int * result);
+int func_gencode_freevars_match_guard(func * func_value, symtab * stab,
+                                      match_guard * match_value, int * result);
+int func_gencode_freevars_match_guard_list(func * func_value, symtab * stab,
+                                           match_guard_list * list, int * result);
+int func_gencode_freevars_match_expr(func * func_value, symtab * stab,
+                                     expr * value, int * result);
 int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result);
 int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
                                     int * result);

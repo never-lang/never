@@ -22,10 +22,53 @@
 #include "constred.h"
 #include "strutil.h"
 #include "utils.h"
+#include "match.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+
+int expr_match_guard_constred(match_guard * match_value, int * result)
+{
+    switch (match_value->type)
+    {
+        case MATCH_GUARD_ITEM:
+            expr_constred(match_value->guard_item.expr_value, result);
+        break;
+        case MATCH_GUARD_ELSE:
+            expr_constred(match_value->guard_else.expr_value, result);
+        break;
+    }
+    
+    return 0;
+}
+
+int expr_match_guard_list_constred(match_guard_list * list, int * result)
+{
+    match_guard_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        match_guard * match_value = node->value;
+        if (match_value != NULL)
+        {
+            expr_match_guard_constred(match_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int expr_match_constred(expr * value, int * result)
+{
+    expr_constred(value->match.expr_value, result);
+    if (value->match.match_guards != NULL)
+    {
+        expr_match_guard_list_constred(value->match.match_guards, result);
+    }
+    return 0;
+}
 
 int expr_constred(expr * value, int * result)
 {
@@ -568,6 +611,9 @@ int expr_constred(expr * value, int * result)
         expr_constred(value->forloop.cond, result);
         expr_constred(value->forloop.incr, result);
         expr_constred(value->forloop.do_value, result);
+        break;
+    case EXPR_MATCH:
+        expr_match_constred(value, result);
         break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)

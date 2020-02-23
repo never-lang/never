@@ -23,6 +23,7 @@
 #include "freevar.h"
 #include "symtab.h"
 #include "utils.h"
+#include "match.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -283,6 +284,52 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
     return 0;
 }
 
+int func_gencode_freevars_match_guard(func * func_value, symtab * stab,
+                                      match_guard * match_value, int * result)
+{
+    switch (match_value->type)
+    {
+        case MATCH_GUARD_ITEM:
+            func_gencode_freevars_expr(func_value, stab, match_value->guard_item.expr_value, result);
+        break;
+        case MATCH_GUARD_ELSE:
+            func_gencode_freevars_expr(func_value, stab, match_value->guard_else.expr_value, result);
+        break;
+    }
+    
+    return 0;
+}
+
+int func_gencode_freevars_match_guard_list(func * func_value, symtab * stab,
+                                           match_guard_list * list, int * result)
+{
+    match_guard_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        match_guard * match_value = node->value;
+        if (match_value != NULL)
+        {
+            func_gencode_freevars_match_guard(func_value, stab, match_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_gencode_freevars_match_expr(func * func_value, symtab * stab,
+                                     expr * value, int * result)
+{
+    func_gencode_freevars_expr(func_value, stab, value->match.expr_value, result);
+    if (value->match.match_guards != NULL)
+    {
+        func_gencode_freevars_match_guard_list(func_value, stab, value->match.match_guards, result);
+    }
+
+    return 0;
+}
+
 int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result)
 {
     switch (value->type)
@@ -379,6 +426,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->forloop.cond, result);
         func_gencode_freevars_expr(func_value, stab, value->forloop.incr, result);
         func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
+        break;
+    case EXPR_MATCH:
+        func_gencode_freevars_match_expr(func_value, stab, value, result);
         break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)

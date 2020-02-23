@@ -1,4 +1,7 @@
 #include "tcprint.h"
+#include "match.h"
+#include <assert.h>
+#include <stdio.h>
 
 /**
  * print functions

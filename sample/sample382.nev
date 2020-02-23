@@ -12,6 +12,7 @@ func main() -> int
         E.two -> 2;
         E.three -> 3;
         E.four -> 4;
+        E.five -> 5;
     }
     
 }

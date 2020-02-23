@@ -31,8 +31,17 @@ typedef enum tailrec_op
     TAILREC_OP_ADD = 1
 } tailrec_op;
 
+typedef struct match_guard match_guard;
+typedef struct match_guard_list match_guard_list;
+
 int expr_id_tailrec(unsigned int syn_level, symtab * stab,
                     expr * value, tailrec_op op);
+int expr_match_guard_tailrec(unsigned int syn_level, symtab * stab,
+                             match_guard * match_value, tailrec_op op);
+int expr_match_guard_list_tailrec(unsigned int syn_level, symtab * stab,
+                                  match_guard_list * list, tailrec_op op);
+int expr_match_tailrec(unsigned int syn_level, symtab * stab,
+                       expr * value, tailrec_op op);
 int expr_tailrec(unsigned int syn_level, symtab * stab,
                  expr * value, tailrec_op op);
 int expr_list_tailrec(unsigned int syn_level, symtab * stab,

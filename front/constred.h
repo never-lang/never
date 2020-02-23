@@ -30,6 +30,12 @@ enum
     CONSTRED_FAIL = 1
 };
 
+typedef struct match_guard match_guard;
+typedef struct match_guard_list match_guard_list;
+
+int expr_match_guard_constred(match_guard * match_value, int * result);
+int expr_match_guard_list_constred(match_guard_list * list, int * result);
+int expr_match_constred(expr * value, int * result);
 int expr_constred(expr * value, int * result);
 int expr_list_constred(expr_list * list, int * result);
 int qualifier_constred(qualifier * value, int * result);

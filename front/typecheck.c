@@ -1270,6 +1270,7 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
              value->left->comb.comb_enumtype == value->right->comb.comb_enumtype)
     {
         value->comb.comb = COMB_TYPE_ENUMTYPE;
+        value->comb.comb_enumtype = value->left->comb.comb_enumtype;
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
              value->right->comb.comb == COMB_TYPE_CHAR)
