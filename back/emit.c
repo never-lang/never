@@ -22,6 +22,7 @@
 #include "emit.h"
 #include "freevar.h"
 #include "symtab.h"
+#include "match.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdio.h>
@@ -896,6 +897,60 @@ int expr_for_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_match_guard_emit(match_guard * match_value, int stack_level,
+                          module * module_value, func_list_weak * list_weak,
+                          int * result)
+{
+    switch (match_value->type)
+    {
+        case MATCH_GUARD_ITEM:
+            /* TODO: generate code */
+            printf("item index %d\n", match_value->guard_item.enumerator_value->index);
+            expr_emit(match_value->guard_item.expr_value, stack_level,
+                      module_value, list_weak, result);
+        break;
+        case MATCH_GUARD_ELSE:
+            expr_emit(match_value->guard_else.expr_value, stack_level,
+                      module_value, list_weak, result);
+        break;
+    }
+
+    return 0;
+}                          
+
+int expr_match_guard_list_emit(match_guard_list * list, int stack_level,
+                               module * module_value, func_list_weak * list_weak,
+                               int * result)
+{
+    match_guard_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        match_guard * match_value = node->value;
+        if (match_value != NULL)
+        {
+            expr_match_guard_emit(match_value, stack_level, module_value,
+                                  list_weak, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}                                   
+
+int expr_match_emit(expr * value, int stack_level, module * module_value,
+                    func_list_weak * list_weak, int * result)
+{
+    expr_emit(value->match.expr_value, stack_level, module_value, list_weak, result);
+    if (value->match.match_guards != NULL)
+    {
+        expr_match_guard_list_emit(value->match.match_guards, stack_level,
+                                   module_value, list_weak, result);
+    }
+
+    return 0;
+}                    
+
 int expr_call_emit(expr * value, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result)
 {
@@ -1434,6 +1489,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         break;
     case EXPR_FOR:
         expr_for_emit(value, stack_level, module_value, list_weak, result);
+        break;
+    case EXPR_MATCH:
+        expr_match_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)

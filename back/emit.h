@@ -32,6 +32,9 @@ enum
     EMIT_FAIL = 1
 };
 
+typedef struct match_guard match_guard;
+typedef struct match_guard_list match_guard_list;
+
 int expr_int_emit(expr * value, int stack_level, module * module_value,
                   int * result);
 int expr_float_emit(expr * value, int stack_level, module * module_value,
@@ -42,7 +45,6 @@ int expr_char_emit(expr * value, int stack_level, module * module_value,
                    int * result);
 int expr_string_emit(expr * value, int stack_level, module * module_value,
                      int * result);
-
 int func_freevar_id_local_emit(freevar * value, int stack_level,
                                module * module_value, int * result);
 int func_freevar_id_bind_emit(freevar * value, int stack_level,
@@ -94,6 +96,14 @@ int expr_do_while_emit(expr * value, int stack_level, module * module_value,
                        func_list_weak * list_weak, int * result);
 int expr_for_emit(expr * value, int stack_level, module * module_value, 
                   func_list_weak * list_weak, int * result);
+int expr_match_guard_emit(match_guard * match_value, int stack_level,
+                          module * module_value, func_list_weak * list_weak,
+                          int * result);
+int expr_match_guard_list_emit(match_guard_list * list, int stack_level,
+                               module * module_value, func_list_weak * list_weak,
+                               int * result);
+int expr_match_emit(expr * value, int stack_level, module * module_value,
+                    func_list_weak * list_weak, int * result);
 int expr_call_emit(expr * value, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
 int expr_last_call_emit(expr * value, int stack_level, module * module_value,
