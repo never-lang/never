@@ -170,6 +170,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_FUNC_FFI_CHAR, vm_execute_func_ffi_char },
     { BYTECODE_FUNC_FFI_STRING, vm_execute_func_ffi_string },
 
+    { BYTECODE_DUP, vm_execute_dup },
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
     { BYTECODE_MARK, vm_execute_mark },
     { BYTECODE_CALL, vm_execute_call },
@@ -2347,6 +2348,12 @@ void vm_execute_func_ffi_char(vm * machine, bytecode * code)
 void vm_execute_func_ffi_string(vm * machine, bytecode * code)
 {
     /* func_ffi reads it */
+}
+
+void vm_execute_dup(vm * machine, bytecode * code)
+{
+    machine->sp++;
+    machine->stack[machine->sp] = machine->stack[machine->sp - 1];
 }
 
 void vm_execute_global_vec(vm * machine, bytecode * code)

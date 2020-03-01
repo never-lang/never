@@ -1,9 +1,9 @@
 
-enum E { one, two, three, four, five }
+enum E { one, two, three, four, five, six }
 
 func getE() -> E
 {
-    E.two
+    E.six
 }
 
 func main() -> int

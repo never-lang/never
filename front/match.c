@@ -172,6 +172,26 @@ void match_guard_list_add_end(match_guard_list * list, match_guard * value)
     }
 }
 
+char match_guard_list_is_first(match_guard_list * list, match_guard_list_node * node)
+{
+    if (node == list->tail)
+    {
+        return 1;
+    }
+    
+    return 0;
+}
+
+char match_guard_list_is_last(match_guard_list * list, match_guard_list_node * node)
+{
+    if (node == list->head)
+    {
+        return 1;
+    }
+    
+    return 0;
+}
+
 const char * match_guard_type_str(match_guard_type type)
 {
     switch (type)

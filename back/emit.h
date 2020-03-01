@@ -32,6 +32,8 @@ enum
     EMIT_FAIL = 1
 };
 
+typedef struct match_guard_item match_guard_item;
+typedef struct match_guard_else match_guard_else;
 typedef struct match_guard match_guard;
 typedef struct match_guard_list match_guard_list;
 
@@ -96,7 +98,14 @@ int expr_do_while_emit(expr * value, int stack_level, module * module_value,
                        func_list_weak * list_weak, int * result);
 int expr_for_emit(expr * value, int stack_level, module * module_value, 
                   func_list_weak * list_weak, int * result);
-int expr_match_guard_emit(match_guard * match_value, int stack_level,
+int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
+                               int stack_level, module * module_value,
+                               func_list_weak * list_weak, int * result);
+int expr_match_guard_else_emit(match_guard_else * else_value, bytecode * label,
+                               int stack_level, module * module_value,
+                               func_list_weak * list_weak, int * result);
+int expr_match_guard_emit(match_guard * match_value,
+                          bytecode * label, int stack_level,
                           module * module_value, func_list_weak * list_weak,
                           int * result);
 int expr_match_guard_list_emit(match_guard_list * list, int stack_level,

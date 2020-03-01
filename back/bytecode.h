@@ -159,6 +159,7 @@ typedef enum bytecode_type
     BYTECODE_FUNC_FFI_CHAR,
     BYTECODE_FUNC_FFI_STRING,
 
+    BYTECODE_DUP,
     BYTECODE_GLOBAL_VEC,
     BYTECODE_MARK,
     BYTECODE_CALL,
@@ -447,6 +448,7 @@ void bytecode_print_func_ffi_float(bytecode * code);
 void bytecode_print_func_ffi_char(bytecode * code);
 void bytecode_print_func_ffi_string(bytecode * code);
 
+void bytecode_print_dup(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);
 void bytecode_print_mark(bytecode * code);
 void bytecode_print_call(bytecode * code);

@@ -1,20 +1,9 @@
 
-enum E { one, two, three, four, five }
+enum E { one, two, three, four, five, six }
 
 func main() -> int
 {
-    /* let e = E.two;
-
-    if (E.one == e)
-    {
-        print(20)
-    }
-    else
-    {
-        print(10)
-    }; */
-
-    match E.two
+    match E.five
     {
         E.one -> 1;
         E.two -> 2;

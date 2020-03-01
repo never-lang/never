@@ -897,43 +897,137 @@ int expr_for_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
-int expr_match_guard_emit(match_guard * match_value, int stack_level,
+int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
+                               int stack_level, module * module_value,
+                               func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode *cond, *condz;
+    bytecode *labelN;
+
+    printf("item index %d\n", 
+           item_value->enumerator_value->index);
+
+    bc.type = BYTECODE_DUP;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_INT;
+    bc.integer.value = item_value->enumerator_value->index;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_OP_EQ_INT;
+    bytecode_add(module_value->code, &bc);
+            
+    bc.type = BYTECODE_JUMPZ;
+    condz = bytecode_add(module_value->code, &bc);
+
+    expr_emit(item_value->expr_value, stack_level, module_value, list_weak, result);
+
+    bc.type = BYTECODE_JUMP;
+    cond = bytecode_add(module_value->code, &bc);
+    cond->jump.offset = label->addr - cond->addr;                      
+            
+    bc.type = BYTECODE_LABEL;          
+    labelN = bytecode_add(module_value->code, &bc);
+    condz->jump.offset = labelN->addr - condz->addr;
+
+    return 0;
+}
+
+int expr_match_guard_else_emit(match_guard_else * else_value, bytecode * label,
+                               int stack_level, module * module_value,
+                               func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode *cond;
+
+    expr_emit(else_value->expr_value, stack_level, module_value, list_weak, result);
+
+    bc.type = BYTECODE_JUMP;
+    cond = bytecode_add(module_value->code, &bc);
+    cond->jump.offset = label->addr - cond->addr;                      
+
+    return 0;
+}                                                    
+
+int expr_match_guard_emit(match_guard * match_value, bytecode * label,
+                          int stack_level,
                           module * module_value, func_list_weak * list_weak,
                           int * result)
 {
     switch (match_value->type)
     {
         case MATCH_GUARD_ITEM:
-            /* TODO: generate code */
-            printf("item index %d\n", match_value->guard_item.enumerator_value->index);
-            expr_emit(match_value->guard_item.expr_value, stack_level,
-                      module_value, list_weak, result);
+            expr_match_guard_item_emit(&match_value->guard_item, label,
+                                       stack_level, module_value, list_weak,
+                                       result);
         break;
         case MATCH_GUARD_ELSE:
-            expr_emit(match_value->guard_else.expr_value, stack_level,
-                      module_value, list_weak, result);
+            expr_match_guard_else_emit(&match_value->guard_else, label,
+                                       stack_level, module_value, list_weak,
+                                       result);
         break;
     }
 
     return 0;
 }                          
 
+/**
+ * match.expr_value
+ * match.match_guards
+ * jump labelA
+ * :labelB
+ *    jump labelE
+ * :labelA
+ *    #match guard item
+ *    dup
+ *    push item_value
+ *    eq
+ *    jumpz labelN
+ *        expr
+ *        jump labelB
+ *    labelN:
+ *    #match guard else
+ *        expr
+ *        jump labelB
+ * :labelE
+ */
 int expr_match_guard_list_emit(match_guard_list * list, int stack_level,
                                module * module_value, func_list_weak * list_weak,
                                int * result)
 {
-    match_guard_list_node * node = list->tail;
+    bytecode bc = { 0 };
+    bytecode *labelA, *labelB, *labelE;
+    bytecode *condA, *condE;
 
+    bc.type = BYTECODE_JUMP;
+    condA = bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelB = bytecode_add(module_value->code, &bc);
+    
+    bc.type = BYTECODE_JUMP;
+    condE = bytecode_add(module_value->code, &bc);
+    
+    bc.type = BYTECODE_LABEL;
+    labelA = bytecode_add(module_value->code, &bc);
+    condA->jump.offset = labelA->addr - condA->addr;
+
+    match_guard_list_node * node = node = list->tail;
     while (node != NULL)
     {
         match_guard * match_value = node->value;
         if (match_value != NULL)
         {
-            expr_match_guard_emit(match_value, stack_level, module_value,
-                                  list_weak, result);
+            expr_match_guard_emit(match_value, labelB,
+                                  stack_level, module_value, list_weak, result);
         }
         node = node->next;
     }
+
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+    condE->jump.offset = labelE->addr - condE->addr;
 
     return 0;
 }                                   
@@ -941,7 +1035,14 @@ int expr_match_guard_list_emit(match_guard_list * list, int stack_level,
 int expr_match_emit(expr * value, int stack_level, module * module_value,
                     func_list_weak * list_weak, int * result)
 {
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_LINE;
+    bc.line.no = value->line_no;
+    bytecode_add(module_value->code, &bc);
+
     expr_emit(value->match.expr_value, stack_level, module_value, list_weak, result);
+
     if (value->match.match_guards != NULL)
     {
         expr_match_guard_list_emit(value->match.match_guards, stack_level,

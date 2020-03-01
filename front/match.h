@@ -84,6 +84,8 @@ void match_guard_list_delete(match_guard_list * list);
 
 void match_guard_list_add_beg(match_guard_list * list, match_guard * value);
 void match_guard_list_add_end(match_guard_list * list, match_guard * value);
+char match_guard_list_is_first(match_guard_list * list, match_guard_list_node * node);
+char match_guard_list_is_last(match_guard_list * list, match_guard_list_node * node);
 
 const char * match_guard_type_str(match_guard_type type);
 

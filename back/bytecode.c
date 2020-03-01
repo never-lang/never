@@ -161,7 +161,8 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_FUNC_FFI_FLOAT, bytecode_print_func_ffi_float },
     { BYTECODE_FUNC_FFI_CHAR, bytecode_print_func_ffi_char },
     { BYTECODE_FUNC_FFI_STRING, bytecode_print_func_ffi_string },
-        
+    
+    { BYTECODE_DUP, bytecode_print_dup },    
     { BYTECODE_GLOBAL_VEC, bytecode_print_global_vec },
 
     { BYTECODE_MARK, bytecode_print_mark },
@@ -749,6 +750,11 @@ void bytecode_print_func_ffi_char(bytecode * code)
 void bytecode_print_func_ffi_string(bytecode * code)
 {
     printf("%d: ffi string\n", code->addr);
+}
+
+void bytecode_print_dup(bytecode * code)
+{
+    printf("%d: dup\n", code->addr);
 }
 
 void bytecode_print_global_vec(bytecode * code)
