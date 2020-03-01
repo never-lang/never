@@ -1,0 +1,20 @@
+enum E { one }
+
+func getE(e : E) -> int
+{
+    let v = 1;
+    
+    v = match e
+    {
+        else -> 4;
+    };
+
+    v
+}
+
+func main() -> int
+{
+    assert(getE(E.one) == 4);
+    
+    0
+}

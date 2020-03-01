@@ -532,7 +532,8 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
                             right->id, right->line_no);
         }
     }
-    else if (left->comb.comb == COMB_TYPE_ARRAY)
+    else if (left->comb.comb == COMB_TYPE_ARRAY &&
+             right->comb.comb == COMB_TYPE_ARRAY)
     {
          if (array_cmp(left->comb.comb_dims,
                        left->comb.comb_ret,

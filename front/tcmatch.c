@@ -344,6 +344,7 @@ int expr_match_guard_list_right_cmp(expr * value, match_guard_list * list, int *
         if (first_guard != NULL)
         {
             first_expr = match_guard_get_expr(first_guard);
+            value->comb = first_expr->comb;
         }
         
         node = node->next;
