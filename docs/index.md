@@ -790,9 +790,9 @@ func main() -> int
 ## Enums
 
 ```swift
-enum EONE { one, two, three, four }
+enum EONE { one, two, three, four, five }
 
-enum ETWO { one, two, three, four }
+enum ETWO { one, two, three, four, five }
 
 func g1() -> EONE
 {
@@ -820,7 +820,22 @@ func main() -> int
 ```
 
 Enums are first class objects in Never. The above example presents how
-they can be defined and used.
+they can be defined and used. Enums can also be used in match expression
+to convert their values. Match expression is exhaustive which means that
+all possibile enum values should be covered.
+
+```swift
+func main() -> int
+{
+    match EONE.five
+    {
+        E.one -> 1;
+        E.two -> 2;
+        E.three -> 3;
+        else -> 4;
+    }
+}
+```
 
 ## Records
 
