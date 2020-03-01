@@ -1,0 +1,14 @@
+
+enum E { one, two, three, four, five, six }
+
+func main() -> int
+{
+    match E.six
+    {
+        E.three -> print(3);
+        E.two -> print(2);
+        E.one -> print(1);
+        else -> print(4);
+    }
+}
+

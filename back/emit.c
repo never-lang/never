@@ -905,8 +905,7 @@ int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
     bytecode *cond, *condz;
     bytecode *labelN;
 
-    printf("item index %d\n", 
-           item_value->enumerator_value->index);
+    /*printf("item index %d\n", item_value->enumerator_value->index); */
 
     bc.type = BYTECODE_DUP;
     bytecode_add(module_value->code, &bc);
