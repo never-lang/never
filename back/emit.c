@@ -920,6 +920,12 @@ int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
     bc.type = BYTECODE_JUMPZ;
     condz = bytecode_add(module_value->code, &bc);
 
+    /* pop previous value of stack */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 1;            
+    bytecode_add(module_value->code, &bc);
+
     expr_emit(item_value->expr_value, stack_level, module_value, list_weak, result);
 
     bc.type = BYTECODE_JUMP;
@@ -939,6 +945,12 @@ int expr_match_guard_else_emit(match_guard_else * else_value, bytecode * label,
 {
     bytecode bc = { 0 };
     bytecode *cond;
+
+    /* pop previous value of stack */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 1;            
+    bytecode_add(module_value->code, &bc);
 
     expr_emit(else_value->expr_value, stack_level, module_value, list_weak, result);
 

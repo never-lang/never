@@ -1,0 +1,29 @@
+
+enum E { one, two, three, four, five, six }
+enum F { ONE, TWO, THREE, FOUR, FIVE, SIX }
+
+func getF(e : E) -> F
+{
+    match e
+    {
+        E.six -> F.SIX;
+        E.three -> F.THREE;
+        E.four -> F.FOUR;
+        E.two -> F.TWO;
+        E.five -> F.FIVE;
+        E.one -> F.ONE;
+    }
+}
+
+func main() -> int
+{
+    assert(getF(E.one) == F.ONE);
+    assert(getF(E.two) == F.TWO);
+    assert(getF(E.three) == F.THREE);
+    assert(getF(E.four) == F.FOUR);
+    assert(getF(E.five) == F.FIVE);
+    assert(getF(E.six) == F.SIX);
+    
+    0
+}
+

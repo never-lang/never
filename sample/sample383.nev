@@ -1,22 +1,30 @@
 
 enum E { one, two, three, four, five, six }
 
-func getE() -> E
+func getE(e : E) -> int
 {
-    E.six
+    let v = 1;
+    
+    v = match e
+    {
+        E.three -> 3;
+        E.two -> 2;
+        E.one -> 1;
+        else -> 4;
+    };
+
+    v
 }
 
 func main() -> int
 {
-    let e = E.one;
+    assert(getE(E.one) == 1);
+    assert(getE(E.two) == 2);
+    assert(getE(E.three) == 3);
+    assert(getE(E.four) == 4);
+    assert(getE(E.five) == 4);
+    assert(getE(E.six) == 4);
     
-    match e = getE()
-    {
-        E.one -> 1;
-        E.two -> 2;
-        E.three -> 3;
-        else -> 4;
-    }
-    
+    0
 }
 
