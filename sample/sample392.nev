@@ -1,0 +1,24 @@
+
+enum E { one, two, three, four }
+
+func test(e : E, i : int, j : int) -> int
+{
+    match e
+    {
+        E.one -> 100 + i + j;
+        E.two -> 200 + i + j;
+        E.three -> 300 + i + j;
+        E.four -> 400 + i + j;
+    }
+}
+
+func main() -> int
+{
+    assert(test(E.one, 10, 20) == 130);
+    assert(test(E.two, 10, 20) == 230);
+    assert(test(E.three, 10, 20) == 330);
+    assert(test(E.four, 10, 20) == 430);
+
+    0
+}
+

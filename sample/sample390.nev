@@ -1,0 +1,21 @@
+
+enum E { one, two, three, four, five, six }
+
+func callE(i : int) -> int
+{
+    assert(i == 10);
+    0
+}
+
+func main() -> int
+{
+    let e = E.one;
+
+    callE(match(e) {
+             E.one -> 10;
+             else -> 20;
+         });
+
+    0
+}
+

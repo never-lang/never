@@ -1,0 +1,40 @@
+
+enum E { one, two }
+
+func test(e : E) -> (int) -> int
+{
+    match e
+    {
+        E.one -> let func one(n : int) -> int
+                 {
+                     if (n == 0)
+                     {
+                        10
+                     }
+                     else
+                     {
+                        one(n - 1)
+                     }
+                 };
+        E.two -> let func two(n : int) -> int
+                 {
+                     if (n == 0)
+                     {
+                        20
+                     }
+                     else
+                     {
+                        two(n - 1)
+                     }
+                 };
+    }
+}
+
+func main() -> int
+{
+    assert(test(E.one)(5) == 10);
+    assert(test(E.two)(5) == 20);
+
+    0
+}
+

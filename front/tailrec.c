@@ -165,6 +165,8 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             expr_id_tailrec(syn_level, stab, value->call.func_expr, op))
         {
             value->type = EXPR_LAST_CALL;
+            
+            /* printf("tailrec %s\n", value->call.func_expr->id.id); */
         }
         
         if (value->call.params != NULL)
