@@ -20,13 +20,29 @@
  * THE SOFTWARE.
  */
 #include "enumerator.h"
+#include "record.h"
 #include <stdlib.h>
 
 enumerator * enumerator_new(char * id)
 {
     enumerator * value = (enumerator *)malloc(sizeof(enumerator));
     
+    value->type = ENUMERATOR_TYPE_ITEM;
     value->id = id;
+    value->mark = 0;
+    value->index = 0;
+    value->line_no = 0;
+    
+    return value;
+}
+
+enumerator * enumerator_new_record(char * id, record * record_value)
+{
+    enumerator * value = (enumerator *)malloc(sizeof(enumerator));
+    
+    value->type = ENUMERATOR_TYPE_RECORD;
+    value->id = id;
+    value->record_value = record_value;
     value->mark = 0;
     value->index = 0;
     value->line_no = 0;
@@ -39,6 +55,17 @@ void enumerator_delete(enumerator * value)
     if (value->id != NULL)
     {
         free(value->id);
+    }
+    switch (value->type)
+    {
+        case ENUMERATOR_TYPE_ITEM:
+        break;
+        case ENUMERATOR_TYPE_RECORD:
+            if (value->record_value != NULL)
+            {
+                record_delete(value->record_value);
+            }
+        break;
     }
     free(value);
 }

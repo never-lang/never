@@ -1,0 +1,16 @@
+
+enum A { one, two, three }
+enum B { one { i : int; j : int; k : int; }, two, three }
+enum Optional_char { Some { value : char; }, None }
+enum Optional_int { Some { value : int; }, None }
+enum Optional_string { Some { value : string; }, None }
+
+func main() -> int
+{
+    let a = A.one;
+    
+    
+
+    0
+}
+

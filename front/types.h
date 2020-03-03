@@ -65,6 +65,7 @@ typedef union token_value {
     func_except * func_except_value;
     except * except_value;
     except_list * except_list_value;
+    enumerator * enumerator_value;
     enumerator_list * enumerator_list_value;
     enumtype * enumtype_value;
     enumtype_list * enumtype_list_value;

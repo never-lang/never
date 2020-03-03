@@ -81,6 +81,7 @@ int yyerror(never ** nev, char * str)
 %type <val.except_value> except_all
 %type <val.except_value> except
 %type <val.except_list_value> except_list
+%type <val.enumerator_value> enum_item
 %type <val.enumerator_list_value> enum_list
 %type <val.enumtype_value> enumtype
 %type <val.enumtype_list_value> enumtype_list
@@ -130,6 +131,7 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) func_except_delete($$); } func_except
 %destructor { if ($$) except_delete($$); } except_all
 %destructor { if ($$) except_list_delete($$); } except_list
+%destructor { if ($$) enumerator_delete($$); } enum_item
 %destructor { if ($$) enumerator_list_delete($$); } enum_list
 %destructor { if ($$) enumtype_delete($$); } enumtype
 %destructor { if ($$) enumtype_list_delete($$); } enumtype_list
@@ -796,15 +798,25 @@ func_list: func_list func
     $$ = $1;
 };
 
-enum_list: TOK_ID
+enum_item: TOK_ID '{' param_seq '}'
 {
-    $$ = enumerator_list_new();
-    enumerator_list_add_end($$, enumerator_new($1));
+    $$ = enumerator_new_record($1, record_new(NULL, $3));
 };
 
-enum_list: enum_list ',' TOK_ID
+enum_item: TOK_ID
 {
-    enumerator_list_add_end($1, enumerator_new($3));
+    $$ = enumerator_new($1);
+};
+
+enum_list: enum_item
+{
+    $$ = enumerator_list_new();
+    enumerator_list_add_end($$, $1);
+};
+
+enum_list: enum_list ',' enum_item
+{
+    enumerator_list_add_end($1, $3);
     $$ = $1;
 };
 
