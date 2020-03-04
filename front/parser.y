@@ -84,9 +84,9 @@ int yyerror(never ** nev, char * str)
 %type <val.enumerator_value> enum_item
 %type <val.enumerator_list_value> enum_list
 %type <val.enumtype_value> enumtype
-%type <val.enumtype_list_value> enumtype_list
 %type <val.record_value> record
-%type <val.record_list_value> record_list
+%type <val.decl_value> decl
+%type <val.decl_list_value> decl_list
 %type <val.never_value> never
 
 %right TOK_IF TOK_ELSE TOK_FOR
@@ -134,9 +134,9 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) enumerator_delete($$); } enum_item
 %destructor { if ($$) enumerator_list_delete($$); } enum_list
 %destructor { if ($$) enumtype_delete($$); } enumtype
-%destructor { if ($$) enumtype_list_delete($$); } enumtype_list
+%destructor { if ($$) decl_delete($$); } decl
+%destructor { if ($$) decl_list_delete($$); } decl_list
 %destructor { if ($$) record_delete($$); } record
-%destructor { if ($$) record_list_delete($$); } record_list
 %destructor {  } never
 
 %pure-parser
@@ -643,13 +643,13 @@ param_seq: param_seq param ';'
 let: TOK_LET TOK_ID '=' expr
 {
     $$ = bind_new_let($2, $4);
-    $$->line_no = $<line_no>2;
+    $$->line_no = $<line_no>1;
 };
 
 var: TOK_VAR TOK_ID '=' expr
 {
     $$ = bind_new_var($2, $4);
-    $$->line_no = $<line_no>2;
+    $$->line_no = $<line_no>1;
 };
 
 bind: let
@@ -801,11 +801,13 @@ func_list: func_list func
 enum_item: TOK_ID '{' param_seq '}'
 {
     $$ = enumerator_new_record($1, record_new(NULL, $3));
+    $$->line_no = $<line_no>1;
 };
 
 enum_item: TOK_ID
 {
     $$ = enumerator_new($1);
+    $$->line_no = $<line_no>1;
 };
 
 enum_list: enum_item
@@ -826,54 +828,42 @@ enumtype: TOK_ENUM TOK_ID '{' enum_list '}'
     $$->line_no = $<line_no>1;
 };
 
-enumtype_list: enumtype
-{
-    $$ = enumtype_list_new();
-    enumtype_list_add_end($$, $1);
-};
-
-enumtype_list: enumtype_list enumtype
-{
-    enumtype_list_add_end($1, $2);
-    $$ = $1;
-};
-
 record: TOK_RECORD TOK_ID '{' param_seq '}'
 {
     $$ = record_new($2, $4);
     $$->line_no = $<line_no>1;
 };
 
-record_list: record
+decl: enumtype
 {
-    $$ = record_list_new();
-    record_list_add_end($$, $1);
+    $$ = decl_new_enumtype($1);
 };
 
-record_list: record_list record
+decl: record
 {
-    record_list_add_end($1, $2);
+    $$ = decl_new_record($1);
+};
+
+decl_list: decl
+{
+    $$ = decl_list_new();
+    decl_list_add_end($$, $1);
+};
+
+decl_list: decl_list decl
+{
+    decl_list_add_end($1, $2);
     $$ = $1;
 };
 
 never: func_list
 {
-    $$ = *nev = never_new(NULL, NULL, $1);
+    $$ = *nev = never_new(NULL, $1);
 };
 
-never: enumtype_list func_list
+never: decl_list func_list
 {
-    $$ = *nev = never_new($1, NULL, $2);
-};
-
-never: record_list func_list
-{
-    $$ = *nev = never_new(NULL, $1, $2);
-};
-
-never: enumtype_list record_list func_list
-{
-    $$ = *nev = never_new($1, $2, $3);
+    $$ = *nev = never_new($1, $2);
 };
 
 %%

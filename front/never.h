@@ -24,18 +24,16 @@
 
 #include "func.h"
 #include "symtab.h"
-#include "record.h"
-#include "enums.h"
+#include "decl.h"
 
 typedef struct never
 {
     symtab * stab;
-    enumtype_list * enums;
-    record_list * records;
+    decl_list * decls;
     func_list * funcs;
 } never;
 
-never * never_new(enumtype_list * enums, record_list * records, func_list * funcs);
+never * never_new(decl_list * decls, func_list * funcs);
 void never_delete(never * nev);
 
 #endif /* __NEVER_H__ */

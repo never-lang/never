@@ -1,15 +1,36 @@
 
+record V
+{
+    a : Optional_char;
+}
+
 enum A { one, two, three }
 enum B { one { i : int; j : int; k : int; }, two, three }
 enum Optional_char { Some { value : char; }, None }
 enum Optional_int { Some { value : int; }, None }
 enum Optional_string { Some { value : string; }, None }
 
+record R
+{
+    a : int;
+    b : int;
+}
+
+/* recursive */
+enum Optional_R { Some { value : Optional_R; }, None }
+
+/* mutually recursive */
+record Mut { x : Optional_Mut; }
+enum Optional_Mut { Some { value : Mut; }, None }
+
+/* mutually recursive, second order */
+record Goo { x : Boo; }
+record Boo { x : Foo; }
+enum Foo { Some { value : Goo; }, None }
+
 func main() -> int
 {
     let a = A.one;
-    
-    
 
     0
 }

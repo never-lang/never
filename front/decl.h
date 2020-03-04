@@ -22,7 +22,50 @@
 #ifndef __DECL_H__
 #define __DECL_H__
 
+typedef enum decl_type
+{
+    DECL_TYPE_ENUMTYPE = 1,
+    DECL_TYPE_RECORD = 2
+} decl_type;
 
+typedef struct enumtype enumtype;
+typedef struct record record;
+
+typedef struct decl
+{
+    decl_type type;
+    union
+    {
+        enumtype * enumtype_value;
+        record * record_value;
+    };
+} decl;
+
+typedef struct decl_list_node
+{
+    decl * value;
+    struct decl_list_node * prev;
+    struct decl_list_node * next;
+} decl_list_node;
+
+typedef struct decl_list
+{
+    decl_list_node * head;
+    decl_list_node * tail;
+} decl_list;
+
+decl * decl_new_enumtype(enumtype * value);
+decl * decl_new_record(record * value);
+void decl_delete(decl * value);
+
+decl_list_node * decl_list_node_new(decl * value);
+void decl_list_node_delete(decl_list_node * node);
+
+decl_list * decl_list_new();
+void decl_list_delete(decl_list * list);
+
+void decl_list_add_beg(decl_list * list, decl * value);
+void decl_list_add_end(decl_list * list, decl * value);
 
 #endif /* __DECL_H__ */
 

@@ -718,6 +718,7 @@ int symtab_add_qualifier_from_qualifier(symtab * tab, qualifier * value,
     }
     else
     {
+        *result = TYPECHECK_FAIL;
         symtab_entry_exists(entry, value->line_no);
     }
 
@@ -2347,16 +2348,6 @@ int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
     return 0;
 }
 
-int never_check_type(never * nev, int * result)
-{
-    unsigned int syn_level = 0;
-    
-    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
-    func_list_check_type(nev->stab, nev->funcs, syn_level, result);
-
-    return 0;
-}
-
 int never_add_enumtype(symtab * stab, enumtype * value, int * result)
 {
     symtab_entry * entry = NULL;
@@ -2370,89 +2361,6 @@ int never_add_enumtype(symtab * stab, enumtype * value, int * result)
     else
     {
         symtab_add_enumtype(stab, value, 0);
-    }
-
-    return 0;
-}
-
-int never_add_enumtype_list(symtab * stab, enumtype_list * list, int * result)
-{
-    enumtype_list_node * node = list->tail;
-    
-    while (node != NULL)
-    {
-        enumtype * value = node->value;
-        if (value != NULL)
-        {
-            never_add_enumtype(stab, value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int enumerator_check_type(symtab * stab, enumerator * value, int * result)
-{
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(stab, value->id, SYMTAB_LOOKUP_GLOBAL);
-    if (entry != NULL)
-    {
-        *result = TYPECHECK_FAIL;
-        symtab_entry_exists(entry, value->line_no);
-    }
-    else
-    {
-        symtab_add_enumerator(stab, value, 0);
-    }
-
-    return 0;
-}
-
-int enumerator_list_check_type(symtab * stab, enumerator_list * list, int * result)
-{
-    enumerator_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        enumerator * enumerator_value = node->value;
-        if (enumerator_value != NULL)
-        {
-            enumerator_check_type(stab, enumerator_value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int enumtype_check_type(symtab * stab, enumtype * value, int * result)
-{
-    if (value->enums != NULL)
-    {
-        enumtype_enum_enumerator_list(value->enums);
-    }
-
-    if (value->enums != NULL)
-    {
-        enumerator_list_check_type(value->stab, value->enums, result);
-    }
-
-    return 0;
-}            
-
-int enumtype_list_check_type(symtab * stab, enumtype_list * list, int * result)
-{
-    enumtype_list_node * node = list->tail;
-    
-    while (node != NULL)
-    {
-        enumtype * value = node->value;
-        if (value != NULL)
-        {
-            enumtype_check_type(stab, value, result);
-        }
-        node = node->next;
     }
 
     return 0;
@@ -2476,22 +2384,122 @@ int never_add_record(symtab * stab, record * record_value, int * result)
     return 0;
 }
 
-int never_add_record_list(symtab * stab, record_list * list, int * result)
+int never_add_decl(symtab * stab, decl * value, int * result)
 {
-    record_list_node * node = list->tail;
+    switch (value->type)
+    {
+        case DECL_TYPE_ENUMTYPE:
+            if (value->enumtype_value != NULL)
+            {
+                never_add_enumtype(stab, value->enumtype_value, result);
+            }
+        break;
+        case DECL_TYPE_RECORD:
+            if (value->record_value != NULL)
+            {
+                never_add_record(stab, value->record_value, result);
+            }
+        break;
+    }
+    
+    return 0;
+}
+
+int never_add_decl_list(symtab * stab, decl_list * list, int * result)
+{
+    decl_list_node * node = list->tail;
     
     while (node != NULL)
     {
-        record * record_value = node->value;
-        if (record_value != NULL)
+        decl * value = node->value;
+        if (value != NULL)
         {
-            never_add_record(stab, record_value, result);
+            never_add_decl(stab, value, result);
         }
         node = node->next;
     }
 
     return 0;
 }
+
+int enumerator_item_check_type(symtab * stab, enumerator * value, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(stab, value->id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry != NULL)
+    {
+        *result = TYPECHECK_FAIL;
+        symtab_entry_exists(entry, value->line_no);
+    }
+    else
+    {
+        symtab_add_enumerator(stab, value, 0);
+    }
+
+    return 0;
+}
+
+int enumerator_record_check_type(symtab * gtab, symtab * stab, 
+                                 enumerator * value, int * result)
+{
+    enumerator_item_check_type(stab, value, result);
+    
+    if (value->record_value != NULL)
+    {
+        record_check_type(gtab, value->record_value, result);
+    }
+
+    return 0;
+}
+
+int enumerator_check_type(symtab * gtab, symtab * stab, enumerator * value,
+                          int * result)
+{
+    switch (value->type)
+    {
+        case ENUMERATOR_TYPE_ITEM:
+            enumerator_item_check_type(stab, value, result);
+        break;
+        case ENUMERATOR_TYPE_RECORD:
+            enumerator_record_check_type(gtab, stab, value, result);
+        break;
+    }
+
+    return 0;
+}
+
+int enumerator_list_check_type(symtab * gtab, symtab * stab,
+                               enumerator_list * list, int * result)
+{
+    enumerator_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        enumerator * enumerator_value = node->value;
+        if (enumerator_value != NULL)
+        {
+            enumerator_check_type(gtab, stab, enumerator_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int enumtype_check_type(symtab * stab, enumtype * value, int * result)
+{
+    if (value->enums != NULL)
+    {
+        enumtype_enum_enumerator_list(value->enums);
+    }
+
+    if (value->enums != NULL)
+    {
+        enumerator_list_check_type(stab, value->stab, value->enums, result);
+    }
+
+    return 0;
+}            
 
 int record_check_type(symtab * stab, record * record_value, int * result)
 {
@@ -2514,16 +2522,37 @@ int record_check_type(symtab * stab, record * record_value, int * result)
     return 0;
 }
 
-int record_list_check_type(symtab * stab, record_list * list, int * result)
+int decl_check_type(symtab * stab, decl * value, int * result)
 {
-    record_list_node * node = list->tail;
+    switch (value->type)
+    {
+        case DECL_TYPE_ENUMTYPE:
+            if (value->enumtype_value != NULL)
+            {
+                enumtype_check_type(stab, value->enumtype_value, result);
+            }
+        break;
+        case DECL_TYPE_RECORD:
+            if (value->record_value != NULL)
+            {
+                record_check_type(stab, value->record_value, result);
+            }
+        break;
+    }
+
+    return 0;
+}
+
+int decl_list_check_type(symtab * stab, decl_list * list, int * result)
+{
+    decl_list_node * node = list->tail;
     
     while (node != NULL)
     {
-        record * record_value = node->value;
-        if (record_value != NULL)
+        decl * decl_value = node->value;
+        if (decl_value != NULL)
         {
-            record_check_type(stab, record_value, result);
+            decl_check_type(stab, decl_value, result);
         }
         node = node->next;
     }
@@ -2531,6 +2560,15 @@ int record_list_check_type(symtab * stab, record_list * list, int * result)
     return 0;
 }
 
+int never_check_type(never * nev, int * result)
+{
+    unsigned int syn_level = 0;
+    
+    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
+    func_list_check_type(nev->stab, nev->funcs, syn_level, result);
+
+    return 0;
+}
 
 int func_main_check_num_params(param_list * params)
 {
@@ -2606,30 +2644,15 @@ int never_sem_check(const char * main_name, never * nev)
         nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     }
 
-    /* add enums to symtab */
-    if (nev->stab != NULL && nev->enums != NULL)
+    if (nev->stab != NULL && nev->decls != NULL)
     {
-        never_add_enumtype_list(nev->stab, nev->enums, &typecheck_res);
+        /* add decls to symtab */
+        never_add_decl_list(nev->stab, nev->decls, &typecheck_res);
+
+        /* check decls */
+        decl_list_check_type(nev->stab, nev->decls, &typecheck_res);
     }
     
-    /* check enums */
-    if (nev->enums != NULL)
-    {
-        enumtype_list_check_type(nev->stab, nev->enums, &typecheck_res);
-    }
-    
-    /* add records to symtab */
-    if (nev->stab != NULL && nev->records != NULL)
-    {
-        never_add_record_list(nev->stab, nev->records, &typecheck_res);
-    }
-
-    /* check records */
-    if (nev->records != NULL)
-    {
-        record_list_check_type(nev->stab, nev->records, &typecheck_res);
-    }
-
     /* printf("---- check types ---\n"); */
     never_check_type(nev, &typecheck_res);
 

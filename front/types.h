@@ -68,9 +68,9 @@ typedef union token_value {
     enumerator * enumerator_value;
     enumerator_list * enumerator_list_value;
     enumtype * enumtype_value;
-    enumtype_list * enumtype_list_value;
     record * record_value;
-    record_list * record_list_value;
+    decl * decl_value;
+    decl_list * decl_list_value;
     never * never_value;
 } token_value;
 

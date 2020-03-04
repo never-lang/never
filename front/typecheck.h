@@ -128,18 +128,20 @@ int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result);
 
 int never_add_enumtype(symtab * stab, enumtype * value, int * result);
-int never_add_enumtype_list(symtab * stab, enumtype_list * list, int * result);
-
-int enumerator_check_type(symtab * stab, enumerator * value, int * result);
-int enumerator_list_check_type(symtab * stab, enumerator_list * list, int * result);
-int enumtype_check_type(symtab * stab, enumtype * value, int * result);
-int enumtype_list_check_type(symtab * stab, enumtype_list * list, int * result);
-
 int never_add_record(symtab * stab, record * value, int * result);
-int never_add_record_list(symtab * stab, record_list * list, int * result);
+int never_add_decl(symtab * stab, decl * value, int * result);
+int never_add_decl_list(symtab * stab, decl_list * list, int * result);
+
+int enumerator_item_check_type(symtab * stab, enumerator * value, int * result);
+int enumerator_record_check_type(symtab * gtab, symtab * stab, enumerator * value, int * result);
+int enumerator_check_type(symtab * gtab, symtab * stab, enumerator * value, int * result);
+int enumerator_list_check_type(symtab * gtab, symtab * stab, enumerator_list * list, int * result);
+int enumtype_check_type(symtab * stab, enumtype * value, int * result);
 
 int record_check_type(symtab * stab, record * record_value, int * result);
-int record_list_check_type(symtab * stab, record_list * list, int * result);
+
+int decl_check_type(symtab * stab, decl * value, int * result);
+int decl_list_check_type(symtab * stab, decl_list * list, int * result);
 
 int never_check_type(never * nev, int * result);
 

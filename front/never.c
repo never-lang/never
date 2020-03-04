@@ -26,13 +26,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-never * never_new(enumtype_list * enums, record_list * records, func_list * funcs)
+never * never_new(decl_list * decls, func_list * funcs)
 {
     never * n = (never *)malloc(sizeof(never));
 
     n->stab = NULL;
-    n->enums = enums;
-    n->records = records;
+    n->decls = decls;
     n->funcs = funcs;
 
     return n;
@@ -40,13 +39,9 @@ never * never_new(enumtype_list * enums, record_list * records, func_list * func
 
 void never_delete(never * nev)
 {
-    if (nev->enums)
+    if (nev->decls)
     {
-        enumtype_list_delete(nev->enums);
-    }
-    if (nev->records)
-    {
-        record_list_delete(nev->records);
+        decl_list_delete(nev->decls);
     }
     if (nev->funcs)
     {

@@ -35,32 +35,10 @@ typedef struct enumtype
     unsigned int line_no;
 } enumtype;
 
-typedef struct enumtype_list_node
-{
-    enumtype * value;
-    struct enumtype_list_node * prev;
-    struct enumtype_list_node * next;
-} enumtype_list_node;
-
-typedef struct enumtype_list
-{
-    enumtype_list_node * head;
-    enumtype_list_node * tail;
-} enumtype_list;
-
 enumtype * enumtype_new(char * id, enumerator_list * enums);
 void enumtype_delete(enumtype * value);
 
 enumerator * enumtype_find_enumerator(enumtype * enumtype_value, char * id);
-
-enumtype_list_node * enumtype_list_node_new(enumtype * value);
-void enumtype_list_node_delete(enumtype_list_node * node);
-
-enumtype_list * enumtype_list_new();
-void enumtype_list_delete(enumtype_list * list);
-
-void enumtype_list_add_beg(enumtype_list * list, enumtype * value);
-void enumtype_list_add_end(enumtype_list * list, enumtype * value);
 
 #endif /* __ENUMS_H__ */
 
