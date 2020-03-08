@@ -569,23 +569,48 @@ const char * expr_type_str(expr_type type)
 {
     switch (type)
     {
-    case EXPR_INT:
-        return "int";
-    case EXPR_FLOAT:
-        return "float";
-    case EXPR_CHAR:
-        return "char";
-    case EXPR_ATTR:
-        return "attr";
-    case EXPR_ID:
-        return "id";
-    case EXPR_ARRAY:
-        return "array";
-    case EXPR_FUNC:
-        return "func";
-    default:
-        assert(0);
+    case EXPR_INT: return "int";
+    case EXPR_FLOAT: return "float";
+    case EXPR_CHAR: return "char";
+    case EXPR_STRING: return "string";
+    case EXPR_ID: return "id";
+    case EXPR_NEG: return "neg";
+    case EXPR_ADD: return "add";
+    case EXPR_SUB: return "sub";
+    case EXPR_MUL: return "mul";
+    case EXPR_DIV: return "div";
+    case EXPR_MOD: return "mod";
+    case EXPR_LT: return "lt";
+    case EXPR_GT: return "gt";
+    case EXPR_LTE: return "lte";
+    case EXPR_GTE: return "gte";
+    case EXPR_EQ: return "eq";
+    case EXPR_NEQ: return "neq";
+    case EXPR_AND: return "and";
+    case EXPR_OR: return "or";
+    case EXPR_NOT: return "not";
+    case EXPR_SUP: return "sup";
+    case EXPR_COND: return "cond";
+    case EXPR_ARRAY: return "array";
+    case EXPR_ARRAY_DEREF: return "array deref";
+    case EXPR_CALL: return "call";
+    case EXPR_LAST_CALL: return "last call";
+    case EXPR_FUNC: return "func";
+    case EXPR_SEQ: return "seq";
+    case EXPR_ASS: return "ass";
+    case EXPR_WHILE: return "while";
+    case EXPR_DO_WHILE: return "do while";
+    case EXPR_FOR: return "for";
+    case EXPR_MATCH: return "match";
+    case EXPR_BUILD_IN: return "build id";
+    case EXPR_INT_TO_FLOAT: return "int to float";
+    case EXPR_FLOAT_TO_INT: return "float to int";
+    case EXPR_LISTCOMP: return "listcomp";
+    case EXPR_ATTR: return "attr";
+    case EXPR_NIL: return "nil";
     }
+    
+    return "unknown";
 }
 
 const char * comb_type_str(comb_type type)

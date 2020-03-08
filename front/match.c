@@ -21,11 +21,12 @@
  */
 #include "match.h"
 #include "expr.h"
+#include "ids.h"
 #include <stdlib.h>
 
 match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_value)
 {
-    match_guard * ret = malloc(sizeof(match_guard));
+    match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
     
     ret->type = MATCH_GUARD_ITEM;
     ret->line_no = 0;
@@ -38,9 +39,25 @@ match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_v
     return ret;
 }
 
+match_guard * match_guard_new_record(char * enum_id, char * item_id, id_list * ids, expr * expr_value)
+{
+    match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
+    
+    ret->type = MATCH_GUARD_RECORD;
+    ret->line_no = 0;
+    ret->guard_record.enum_id = enum_id;
+    ret->guard_record.item_id = item_id;
+    ret->guard_record.ids = ids;
+    ret->guard_record.enumtype_value = NULL;
+    ret->guard_record.enumerator_value = NULL;
+    ret->guard_record.expr_value = expr_value;
+    
+    return ret;
+}
+
 match_guard * match_guard_new_else(expr * expr_value)
 {
-    match_guard * ret = malloc(sizeof(match_guard));
+    match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
     
     ret->type = MATCH_GUARD_ELSE;
     ret->line_no = 0;
@@ -67,6 +84,24 @@ void match_guard_delete(match_guard * value)
                 expr_delete(value->guard_item.expr_value);
             }
         break;
+        case MATCH_GUARD_RECORD:
+            if (value->guard_record.enum_id != NULL)
+            {
+                free(value->guard_record.enum_id);
+            }
+            if (value->guard_record.item_id != NULL)
+            {
+                free(value->guard_record.item_id);
+            }
+            if (value->guard_record.ids != NULL)
+            {
+                id_list_delete(value->guard_record.ids);
+            }
+            if (value->guard_record.expr_value != NULL)
+            {
+                expr_delete(value->guard_record.expr_value);
+            }
+        break;
         case MATCH_GUARD_ELSE:
             if (value->guard_else.expr_value != NULL)
             {
@@ -85,6 +120,9 @@ expr * match_guard_get_expr(match_guard * value)
     {
         case MATCH_GUARD_ITEM:
             ret = value->guard_item.expr_value;
+        break;
+        case MATCH_GUARD_RECORD:
+            ret = value->guard_record.expr_value;
         break;
         case MATCH_GUARD_ELSE:
             ret = value->guard_else.expr_value;
@@ -197,6 +235,7 @@ const char * match_guard_type_str(match_guard_type type)
     switch (type)
     {
         case MATCH_GUARD_ITEM: return "MATCH_GUARD_ITEM";
+        case MATCH_GUARD_RECORD: return "MATCH_GUARD_RECORD";
         case MATCH_GUARD_ELSE: return "MATCH_GUARD_ELSE";
     }
     return "MATCH_GUARD_UNKNOWN";

@@ -120,6 +120,7 @@ typedef struct expr_comb
     int comb_dims;               /* array dimensions */
     struct record * comb_record; /* record */
     struct enumtype * comb_enumtype; /* enum */
+    struct enumerator * comb_enumerator; /* enum record */
 } expr_comb;
 
 typedef struct expr

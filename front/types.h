@@ -35,12 +35,14 @@
 #include "enumerator.h"
 #include "enums.h"
 #include "match.h"
+#include "ids.h"
 
 typedef union token_value {
     int int_value;
     float float_value;
     char char_value;
     char * str_value;
+    id_list * id_list_value;
     expr * expr_value;
     expr_list * expr_list_value;
     expr_list * expr_seq_value;

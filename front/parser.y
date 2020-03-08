@@ -55,6 +55,7 @@ int yyerror(never ** nev, char * str)
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
 %type <val.expr_seq_value> expr_seq
+%type <val.id_list_value> id_list
 %type <val.param_value> dim
 %type <val.param_list_value> dim_list
 %type <val.param_value> param
@@ -106,6 +107,7 @@ int yyerror(never ** nev, char * str)
 %start never
 
 %destructor { if ($$) free($$); } TOK_ID
+%destructor { if ($$) id_list_delete($$); } id_list
 %destructor { if ($$) param_delete($$); } dim
 %destructor { if ($$) param_list_delete($$); } dim_list
 %destructor { if ($$) param_delete($$); } param
@@ -436,9 +438,27 @@ expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
     $$->line_no = $<line_no>1;
 };
 
+id_list: TOK_ID
+{
+    $$ = id_list_new();
+    id_list_add_end($$, id_new($1));
+};
+
+id_list: id_list ',' TOK_ID
+{
+    id_list_add_end($1, id_new($3));
+    $$ = $1;
+};
+
 match_guard: TOK_ID TOK_DOT TOK_ID TOK_RET expr
 {
     $$ = match_guard_new_item($1, $3, $5);
+    $$->line_no = $<line_no>1;
+};
+
+match_guard: TOK_ID TOK_DOT TOK_ID '(' id_list ')' TOK_RET expr
+{
+    $$ = match_guard_new_record($1, $3, $5, $8);
     $$->line_no = $<line_no>1;
 };
 

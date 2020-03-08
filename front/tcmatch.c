@@ -11,6 +11,8 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard * match_value,
 {
     symtab_entry * entry = NULL;
 
+    assert(match_value->type == MATCH_GUARD_ITEM);
+
     entry = symtab_lookup(tab, match_value->guard_item.enum_id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
@@ -84,6 +86,11 @@ int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
         expr_match_guard_item_check_type(tab, match_value, result);
         expr_check_type(tab, match_value->guard_item.expr_value, func_value, syn_level, result);
     break;
+    case MATCH_GUARD_RECORD:
+        /* TODO: check types and number of params */
+        expr_match_guard_item_check_type(tab, match_value, result);
+        expr_check_type(tab, match_value->guard_record.expr_value, func_value, syn_level, result);
+    break;
     case MATCH_GUARD_ELSE:
         expr_check_type(tab, match_value->guard_else.expr_value, func_value, syn_level, result);
     break;
@@ -116,14 +123,6 @@ int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * res
     switch (match_value->type)
     {
     case MATCH_GUARD_ITEM:
-        if (value->comb.comb != COMB_TYPE_ENUMTYPE)
-        {
-            *result = TYPECHECK_FAIL;
-            print_error_msg(value->line_no,
-                            "expression is %s not enum id\n",
-                            comb_type_str(value->comb.comb));
-            return 0;
-        }
         if (value->comb.comb_enumtype != match_value->guard_item.enumtype_value)
         {
             *result = TYPECHECK_FAIL;
@@ -131,6 +130,17 @@ int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * res
                             "enums are different %s and %s\n",
                             value->comb.comb_enumtype->id,
                             match_value->guard_item.enumtype_value->id);
+            return 0;
+        }
+    break;
+    case MATCH_GUARD_RECORD:
+        if (value->comb.comb_enumtype != match_value->guard_record.enumtype_value)
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(match_value->line_no,
+                            "enums are different %s and %s\n",
+                            value->comb.comb_enumtype->id,
+                            match_value->guard_record.enumtype_value->id);
             return 0;
         }
     break;
@@ -144,6 +154,14 @@ int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * res
 int expr_match_guard_list_left_cmp(expr * value, match_guard_list * list, int * result)
 {
     match_guard_list_node * node = list->tail;
+
+    if (value->comb.comb != COMB_TYPE_ENUMTYPE)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no,
+                        "match expression is %s not enum\n", comb_type_str(value->comb.comb));
+        return 0;
+    }
 
     while (node != NULL)
     {
@@ -208,6 +226,23 @@ int expr_match_guard_mark_item(match_guard * match_value)
                                       "repeated enum name %s.%s in match expression\n",
                                       match_value->guard_item.enum_id,
                                       match_value->guard_item.item_id);
+                }
+                enumerator_value->mark = 1;
+            }
+        }
+        break;
+        case MATCH_GUARD_RECORD:
+        {
+            enumerator * enumerator_value = match_value->guard_record.enumerator_value;
+            if (enumerator_value != NULL)
+            {
+                /* not repeated values (warning) */
+                if (enumerator_value->mark == 1)
+                {
+                    print_warning_msg(match_value->line_no,
+                                      "repeated enum name %s.%s in match expression\n",
+                                      match_value->guard_record.enum_id,
+                                      match_value->guard_record.item_id);
                 }
                 enumerator_value->mark = 1;
             }

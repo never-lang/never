@@ -1,0 +1,16 @@
+
+enum Optional { Some { value : int; }, None }
+
+func main() -> int
+{
+    let o = Optional.Some(10);
+    
+    match o
+    {
+        Optional.Some(value) -> print(value);
+        Optional.None -> print(10);
+    };
+    
+    0
+}
+

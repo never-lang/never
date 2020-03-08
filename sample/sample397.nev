@@ -1,0 +1,42 @@
+
+/*
+enum Optional { Some, None }
+
+func calc() -> Optional
+{
+    Optional.Some
+}
+
+func main() -> int
+{
+    match (calc())
+    {
+        Optional.Some -> 10;
+        Optional.None -> 0;
+    }
+}
+*/
+
+record R { value : int; }
+ 
+enum Optional { Some { r : R; }, None }
+
+func f() -> Optional
+{
+    Optional.Some(R(10))
+}
+
+func main() -> int
+{
+    let o = Optional.Some(R(10));
+    let n = Optional.None;
+
+    /*match o
+    {
+        Optional.Some(r) -> print(20);
+        Optional.None -> print(10);
+    };*/
+    
+    0
+}
+
