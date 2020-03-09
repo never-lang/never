@@ -61,7 +61,7 @@ typedef struct param_list_node
 
 typedef struct param_list
 {
-    int count;
+    unsigned int count;
     param_list_node * head;
     param_list_node * tail;
 } param_list;

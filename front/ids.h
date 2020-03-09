@@ -37,6 +37,7 @@ typedef struct id_list_node
 
 typedef struct id_list
 {
+    unsigned int count;
     id_list_node * head;
     id_list_node * tail;
 } id_list;

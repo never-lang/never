@@ -139,7 +139,6 @@ int expr_set_return_type(expr * value, param * ret)
     {
         value->comb.comb = COMB_TYPE_ENUMTYPE;
         value->comb.comb_enumtype = ret->enumtype_value;
-        value->comb.comb_enumerator = NULL;
     }
     else if (ret->type == PARAM_CHAR)
     {
@@ -496,7 +495,6 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
     {
         value->comb.comb = COMB_TYPE_ENUMTYPE;
         value->comb.comb_enumtype = left->comb.comb_enumtype;
-        value->comb.comb_enumerator = left->comb.comb_enumerator;
     }
     else if (left->comb.comb == COMB_TYPE_STRING &&
              right->comb.comb == COMB_TYPE_STRING)
@@ -888,7 +886,6 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             {
                 value->comb.comb = COMB_TYPE_ENUMTYPE;
                 value->comb.comb_enumtype = param_value->enumtype_value;
-                value->comb.comb_enumerator = NULL;
             }
             else if (param_value->type == PARAM_CHAR)
             {
@@ -936,7 +933,6 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         {
             value->comb.comb = COMB_TYPE_ENUMTYPE_ID;
             value->comb.comb_enumtype = entry->enumtype_value;
-            value->comb.comb_enumerator = NULL;
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {
@@ -1277,7 +1273,6 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     {
         value->comb.comb = COMB_TYPE_ENUMTYPE;
         value->comb.comb_enumtype = value->right->comb.comb_enumtype;
-        value->comb.comb_enumerator = value->right->comb.comb_enumerator;
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
              value->right->comb.comb == COMB_TYPE_CHAR)
@@ -1522,10 +1517,11 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
 
         break;
     case COMB_TYPE_ENUMTYPE:
-        if (value->call.func_expr->comb.comb_enumerator != NULL &&
-            value->call.func_expr->comb.comb_enumerator->type == ENUMERATOR_TYPE_RECORD &&
-            value->call.func_expr->comb.comb_enumerator->record_value != NULL &&
-            param_expr_list_cmp(value->call.func_expr->comb.comb_enumerator->record_value->params,
+        if (value->call.func_expr->type == EXPR_ATTR &&
+            value->call.func_expr->attr.id_enumerator_value != NULL &&
+            value->call.func_expr->attr.id_enumerator_value->type == ENUMERATOR_TYPE_RECORD &&
+            value->call.func_expr->attr.id_enumerator_value->record_value != NULL &&
+            param_expr_list_cmp(value->call.func_expr->attr.id_enumerator_value->record_value->params,
                                 value->call.params) == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ENUMTYPE;
@@ -1674,7 +1670,6 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
 
                 value->comb.comb = COMB_TYPE_ENUMTYPE;
                 value->comb.comb_enumtype = value->attr.record_value->comb.comb_enumtype;
-                value->comb.comb_enumerator = enumerator_value;
             }
             else
             {

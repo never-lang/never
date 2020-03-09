@@ -219,8 +219,13 @@ void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level)
     {
         return;
     }
+    
+    symtab_add_param_id(tab, param_value->id, param_value, syn_level);
+}
 
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_PARAM, param_value->id,
+void symtab_add_param_id(symtab * tab, const char * id, param * param_value, unsigned int syn_level)
+{
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_PARAM, id,
                             param_value, syn_level);
     tab->count++;
     symtab_resize(tab);
@@ -233,7 +238,12 @@ void symtab_add_bind(symtab * tab, bind * bind_value, unsigned int syn_level)
         return;
     }
 
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_BIND, bind_value->id,
+    symtab_add_bind_id(tab, bind_value->id, bind_value, syn_level);
+}
+
+void symtab_add_bind_id(symtab * tab, const char * id, bind * bind_value, unsigned int syn_level)
+{
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_BIND, id,
                             bind_value, syn_level);
     tab->count++;
     symtab_resize(tab);
@@ -245,8 +255,13 @@ void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned in
     {
         return;
     }
-    
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_QUALIFIER, qualifier_value->id,
+ 
+    symtab_add_qualifier_id(tab, qualifier_value->id, qualifier_value, syn_level);   
+}
+
+void symtab_add_qualifier_id(symtab * tab, const char * id, qualifier * qualifier_value, unsigned int syn_level)
+{
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_QUALIFIER, id,
                             qualifier_value, syn_level);
     tab->count++;
     symtab_resize(tab);
@@ -258,7 +273,13 @@ void symtab_add_enumerator(symtab * tab, enumerator * enumerator_value, unsigned
     {
         return;
     }
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_ENUMERATOR, enumerator_value->id,
+
+    symtab_add_enumerator_id(tab, enumerator_value->id, enumerator_value, syn_level);
+}
+
+void symtab_add_enumerator_id(symtab * tab, const char * id, enumerator * enumerator_value, unsigned int syn_level)
+{
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_ENUMERATOR, id,
                             enumerator_value, syn_level);
     tab->count++;
     symtab_resize(tab);
@@ -270,8 +291,13 @@ void symtab_add_enumtype(symtab * tab, enumtype * enumtype_value, unsigned int s
     {
         return;
     }
-    
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_ENUMTYPE, enumtype_value->id,
+
+    symtab_add_enumtype_id(tab, enumtype_value->id, enumtype_value, syn_level);    
+}
+
+void symtab_add_enumtype_id(symtab * tab, const char * id, enumtype * enumtype_value, unsigned int syn_level)
+{
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_ENUMTYPE, id,
                             enumtype_value, syn_level);
     tab->count++;
     symtab_resize(tab);
@@ -284,7 +310,12 @@ void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_lev
         return;
     }
     
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_RECORD, record_value->id,
+    symtab_add_record_id(tab, record_value->id, record_value, syn_level);
+}
+
+void symtab_add_record_id(symtab * tab, const char * id, record * record_value, unsigned int syn_level)
+{
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_RECORD, id,
                             record_value, syn_level);
                             
     tab->count++;
@@ -298,8 +329,13 @@ void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level)
         return;
     }
 
+    symtab_add_func_id(tab, func_value->decl->id, func_value, syn_level);
+}
+
+void symtab_add_func_id(symtab * tab, const char * id, func * func_value, unsigned int syn_level)
+{
     symtab_entry_add_object(tab->entries, tab->size, SYMTAB_FUNC,
-                            func_value->decl->id, func_value, syn_level);
+                            id, func_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }

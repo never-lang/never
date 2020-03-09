@@ -33,6 +33,7 @@ typedef struct expr expr;
 typedef struct enumtype enumtype;
 typedef struct enumerator enumerator;
 typedef struct id_list id_list;
+typedef struct symtab symtab;
 
 typedef struct match_guard_item
 {
@@ -45,6 +46,7 @@ typedef struct match_guard_item
 
 typedef struct match_guard_record
 {
+    symtab * stab;
     char * enum_id;
     char * item_id;
     id_list * ids;
@@ -61,12 +63,12 @@ typedef struct match_guard_else
 typedef struct match_guard
 {
     match_guard_type type;
-    unsigned int line_no;
     union {
         match_guard_item guard_item;
         match_guard_record guard_record;
         match_guard_else guard_else;
     };
+    unsigned int line_no;
 } match_guard;
 
 typedef struct match_guard_list_node

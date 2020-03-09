@@ -96,12 +96,25 @@ symtab * symtab_new(unsigned int size, symtab_type type, symtab * parent);
 void symtab_delete(symtab * tab);
 
 void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level);
+void symtab_add_param_id(symtab * tab, const char * id, param * param_value, unsigned int syn_level);
+
 void symtab_add_bind(symtab * tab, bind * let_value, unsigned int syn_level);
+void symtab_add_bind_id(symtab * tab, const char * id, bind * let_value, unsigned int syn_level);
+
 void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned int syn_level);
+void symtab_add_qualifier_id(symtab * tab, const char * id, qualifier * qualifier_value, unsigned int syn_level);
+
 void symtab_add_enumerator(symtab * tab, enumerator * enumerator_value, unsigned int syn_level);
+void symtab_add_enumerator_id(symtab * tab, const char * id, enumerator * enumerator_value, unsigned int syn_level);
+
 void symtab_add_enumtype(symtab * tab, enumtype * enumtype_value, unsigned int syn_level);
+void symtab_add_enumtype_id(symtab * tab, const char * id, enumtype * enumtype_value, unsigned int syn_level);
+
 void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_level);
+void symtab_add_record_id(symtab * tab, const char * id, record * record_value, unsigned int syn_level);
+
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
+void symtab_add_func_id(symtab * tab, const char * id, func * func_value, unsigned int syn_level);
 
 symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup);
 

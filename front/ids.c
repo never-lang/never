@@ -66,6 +66,7 @@ id_list * id_list_new()
 {
     id_list * list = (id_list *)malloc(sizeof(id_list));
 
+    list->count = 0;
     list->head = NULL;
     list->tail = NULL;
 
@@ -89,6 +90,8 @@ void id_list_add_beg(id_list * list, id * value)
 {
     id_list_node * node = id_list_node_new(value);
 
+    list->count++;
+
     if (list->head == NULL && list->tail == NULL)
     {
         list->head = list->tail = node;
@@ -105,6 +108,8 @@ void id_list_add_end(id_list * list, id * value)
 {
     id_list_node * node = id_list_node_new(value);
 
+    list->count++;
+
     if (list->head == NULL && list->tail == NULL)
     {
         list->head = list->tail = node;
@@ -116,5 +121,4 @@ void id_list_add_end(id_list * list, id * value)
         list->head = node;
     }
 }
-
 

@@ -35,6 +35,9 @@ int expr_match_guard_constred(match_guard * match_value, int * result)
         case MATCH_GUARD_ITEM:
             expr_constred(match_value->guard_item.expr_value, result);
         break;
+        case MATCH_GUARD_RECORD:
+            expr_constred(match_value->guard_record.expr_value, result);
+        break;
         case MATCH_GUARD_ELSE:
             expr_constred(match_value->guard_else.expr_value, result);
         break;

@@ -22,6 +22,9 @@ int print_func_match_guard(match_guard * value, int depth)
     case MATCH_GUARD_ITEM:
         print_func_expr(value->guard_item.expr_value, depth);
     break;
+    case MATCH_GUARD_RECORD:
+        print_func_expr(value->guard_record.expr_value, depth);
+    break;
     case MATCH_GUARD_ELSE:
         print_func_expr(value->guard_else.expr_value, depth);
     break;

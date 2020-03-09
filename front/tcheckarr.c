@@ -31,7 +31,7 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
 {
     int first_distance = -1;
     int curr_distance = -1;
-    int first_comb_elems = 0;
+    unsigned int first_comb_elems = 0;
     param * ret = array_value->ret;
 
     expr_list_weak_node * node = depth_list->tail;

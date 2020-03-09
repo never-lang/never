@@ -117,10 +117,9 @@ typedef struct expr_comb
     comb_type comb;
     struct param_list * comb_params; /* function arguments */
     struct param * comb_ret;       /* function ret */
-    int comb_dims;               /* array dimensions */
+    unsigned int comb_dims;               /* array dimensions */
     struct record * comb_record; /* record */
     struct enumtype * comb_enumtype; /* enum */
-    struct enumerator * comb_enumerator; /* enum record */
 } expr_comb;
 
 typedef struct expr
@@ -223,7 +222,7 @@ typedef struct expr_list_node
 
 typedef struct expr_list
 {
-    int count;
+    unsigned int count;
     expr_list_node * head;
     expr_list_node * tail;
 } expr_list;

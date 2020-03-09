@@ -53,6 +53,9 @@ int expr_match_guard_tailrec(unsigned int syn_level, symtab * stab,
         case MATCH_GUARD_ITEM:
             expr_tailrec(syn_level, stab, match_value->guard_item.expr_value, op);
         break;
+        case MATCH_GUARD_RECORD:
+            expr_tailrec(syn_level, stab, match_value->guard_record.expr_value, op);
+        break;
         case MATCH_GUARD_ELSE:
             expr_tailrec(syn_level, stab, match_value->guard_else.expr_value, op);
         break;
@@ -203,7 +206,7 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         expr_tailrec(syn_level, stab, value->forloop.do_value, TAILREC_OP_SKIP);
     break;
     case EXPR_MATCH:
-        expr_match_tailrec(syn_level, stab, value, TAILREC_OP_SKIP);
+        expr_match_tailrec(syn_level, stab, value, op);
     break;
     case EXPR_BUILD_IN:
         if (value->func_build_in.param != NULL)

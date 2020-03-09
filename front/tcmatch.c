@@ -2,6 +2,7 @@
 #include "match.h"
 #include "utils.h"
 #include "typecheck.h"
+#include "ids.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
@@ -76,6 +77,118 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard * match_value,
     return 0;
 }                                     
 
+int expr_match_guard_record_check_type(symtab * tab, match_guard * match_value,
+                                       int * result)
+{
+    symtab_entry * entry = NULL;
+
+    assert(match_value->type == MATCH_GUARD_RECORD);
+
+    entry = symtab_lookup(tab, match_value->guard_record.enum_id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry != NULL)
+    {
+        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(match_value->line_no, "found function %s at line %d instead of enum\n",
+                            entry->func_value->decl->id, entry->func_value->line_no);
+        }
+        else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(match_value->line_no, "found symtab %s at line %d instead of enum\n",
+                            entry->param_value->id, entry->param_value->line_no);
+        }
+        else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(match_value->line_no, "found binding %s at line %d instead of enum\n",
+                            entry->bind_value->id, entry->bind_value->line_no);
+        }
+        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(match_value->line_no, "found qualifier %s at line %d instead of enum\n",
+                            entry->qualifier_value->id, entry->qualifier_value->line_no);
+        }
+        else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(match_value->line_no, "found record %s at line %d instead of enum\n",
+                            entry->record_value->id, entry->record_value->line_no);
+        }
+        else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
+        {
+            enumerator * enumerator_value = enumtype_find_enumerator(entry->enumtype_value, match_value->guard_record.item_id);
+            if (enumerator_value != NULL)
+            {
+                match_value->guard_record.enumtype_value = entry->enumtype_value;
+                match_value->guard_record.enumerator_value = enumerator_value;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                print_error_msg(match_value->line_no, "cannot find enum item %s.%s\n",
+                                match_value->guard_record.enum_id, match_value->guard_record.item_id);
+            }
+        }
+        else
+        {
+            assert(0);
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(match_value->line_no, "cannot find enum %s\n",
+                        match_value->guard_record.enum_id);
+    }
+
+    return 0;
+}                                     
+
+int expr_match_guard_record_add_param_list(symtab * tab, match_guard * match_value,
+    func * func_value, unsigned int syn_level, int * result)
+{
+    assert(match_value->type == MATCH_GUARD_RECORD);
+
+    id_list * ids = match_value->guard_record.ids;
+    enumerator * enumerator_value = match_value->guard_record.enumerator_value;
+
+    if (enumerator_value->record_value->params->count != ids->count)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(match_value->line_no, "enum record %s.%s takes %d params while guard has %d\n",
+                        match_value->guard_record.enum_id,
+                        match_value->guard_record.item_id,
+                        enumerator_value->record_value->params->count,
+                        ids->count);
+        return 0;
+    }
+
+    if (match_value->guard_record.stab == NULL)
+    {
+        match_value->guard_record.stab = symtab_new(8, SYMTAB_TYPE_BLOCK, tab);
+    }
+
+    id_list_node * id_node = ids->tail;
+    param_list_node * param_node = enumerator_value->record_value->params->tail;
+    while (param_node != NULL || id_node != NULL)
+    {
+        param * param_value = param_node->value;
+        id * id_value = id_node->value;
+        if (param_value != NULL || id_value != NULL)
+        {
+            symtab_add_param_id(match_value->guard_record.stab, id_value->id,
+                                param_value, syn_level);
+        }
+        param_node = param_node->next;
+        id_node = id_node->next;
+    }
+    
+    return 0;
+}
+
 int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
                                 func * func_value, unsigned int syn_level,
                                 int * result)
@@ -87,9 +200,9 @@ int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
         expr_check_type(tab, match_value->guard_item.expr_value, func_value, syn_level, result);
     break;
     case MATCH_GUARD_RECORD:
-        /* TODO: check types and number of params */
-        expr_match_guard_item_check_type(tab, match_value, result);
-        expr_check_type(tab, match_value->guard_record.expr_value, func_value, syn_level, result);
+        expr_match_guard_record_check_type(tab, match_value, result);
+        expr_match_guard_record_add_param_list(tab, match_value, func_value, syn_level, result);
+        expr_check_type(match_value->guard_record.stab, match_value->guard_record.expr_value, func_value, syn_level, result);
     break;
     case MATCH_GUARD_ELSE:
         expr_check_type(tab, match_value->guard_else.expr_value, func_value, syn_level, result);

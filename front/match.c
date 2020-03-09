@@ -22,6 +22,7 @@
 #include "match.h"
 #include "expr.h"
 #include "ids.h"
+#include "symtab.h"
 #include <stdlib.h>
 
 match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_value)
@@ -29,12 +30,12 @@ match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_v
     match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
     
     ret->type = MATCH_GUARD_ITEM;
-    ret->line_no = 0;
     ret->guard_item.enum_id = enum_id;
     ret->guard_item.item_id = item_id;
     ret->guard_item.enumtype_value = NULL;
     ret->guard_item.enumerator_value = NULL;
     ret->guard_item.expr_value = expr_value;
+    ret->line_no = 0;
         
     return ret;
 }
@@ -44,13 +45,14 @@ match_guard * match_guard_new_record(char * enum_id, char * item_id, id_list * i
     match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
     
     ret->type = MATCH_GUARD_RECORD;
-    ret->line_no = 0;
+    ret->guard_record.stab = NULL;
     ret->guard_record.enum_id = enum_id;
     ret->guard_record.item_id = item_id;
     ret->guard_record.ids = ids;
     ret->guard_record.enumtype_value = NULL;
     ret->guard_record.enumerator_value = NULL;
     ret->guard_record.expr_value = expr_value;
+    ret->line_no = 0;
     
     return ret;
 }
@@ -60,8 +62,8 @@ match_guard * match_guard_new_else(expr * expr_value)
     match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
     
     ret->type = MATCH_GUARD_ELSE;
-    ret->line_no = 0;
     ret->guard_else.expr_value = expr_value;
+    ret->line_no = 0;
     
     return ret;
 }
@@ -85,6 +87,10 @@ void match_guard_delete(match_guard * value)
             }
         break;
         case MATCH_GUARD_RECORD:
+            if (value->guard_record.stab != NULL)
+            {
+                symtab_delete(value->guard_record.stab);
+            }
             if (value->guard_record.enum_id != NULL)
             {
                 free(value->guard_record.enum_id);

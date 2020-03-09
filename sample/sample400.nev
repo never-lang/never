@@ -1,18 +1,19 @@
 
-enum Optional { Some { value : int; }, None }
+enum Optional { Some { value : int; s : int; }, None }
 
 func calc() -> Optional
 {
-    Optional.Some(10)
+    Optional.Some(10, 1)
 }
 
 func main() -> int
 {
+    let V = 10;
     let c = calc();
 
     match c
     {
-        Optional.Some(value) -> print(value);
+        Optional.Some(v, x) -> print(v + x + V);
         Optional.None -> print(0);
     };
     
