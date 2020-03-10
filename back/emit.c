@@ -973,6 +973,10 @@ int expr_match_guard_emit(match_guard * match_value, bytecode * label,
                                        stack_level, module_value, list_weak,
                                        result);
         break;
+        case MATCH_GUARD_RECORD:
+            /* TODO */
+            assert(0);
+        break;
         case MATCH_GUARD_ELSE:
             expr_match_guard_else_emit(&match_value->guard_else, label,
                                        stack_level, module_value, list_weak,

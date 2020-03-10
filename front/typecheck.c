@@ -121,58 +121,59 @@ int func_enum_func_list(func_list * list, int start)
     return 0;
 }
 
-int expr_set_return_type(expr * value, param * ret)
+int expr_set_comb_type(expr * value, param * param_value)
 {
-    if (ret == NULL)
+    if (value == NULL || param_value == NULL)
     {
         value->comb.comb = COMB_TYPE_ERR;
     }
-    else if (ret->type == PARAM_INT)
+    if (param_value->type == PARAM_INT)
     {
         value->comb.comb = COMB_TYPE_INT;
     }
-    else if (ret->type == PARAM_FLOAT)
+    else if (param_value->type == PARAM_FLOAT)
     {
         value->comb.comb = COMB_TYPE_FLOAT;
     }
-    else if (ret->type == PARAM_ENUMTYPE)
+    else if (param_value->type == PARAM_ENUMTYPE)
     {
         value->comb.comb = COMB_TYPE_ENUMTYPE;
-        value->comb.comb_enumtype = ret->enumtype_value;
+        value->comb.comb_enumtype = param_value->enumtype_value;
     }
-    else if (ret->type == PARAM_CHAR)
+    else if (param_value->type == PARAM_CHAR)
     {
         value->comb.comb = COMB_TYPE_CHAR;
     }
-    else if (ret->type == PARAM_STRING)
+    else if (param_value->type == PARAM_STRING)
     {
         value->comb.comb = COMB_TYPE_STRING;
     }
-    else if (ret->type == PARAM_DIM)
+    else if (param_value->type == PARAM_DIM)
     {
         value->comb.comb = COMB_TYPE_INT;
     }
-    else if (ret->type == PARAM_ARRAY)
+    else if (param_value->type == PARAM_ARRAY)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = ret->dims->count;
-        value->comb.comb_ret = ret->ret;
+        value->comb.comb_dims = param_value->dims->count;
+        value->comb.comb_ret = param_value->ret;
     }
-    else if (ret->type == PARAM_RECORD)
+    else if (param_value->type == PARAM_RECORD)
     {
         value->comb.comb = COMB_TYPE_RECORD;
-        value->comb.comb_record = ret->record_value;
+        value->comb.comb_record = param_value->record_value;
     }
-    else if (ret->type == PARAM_FUNC)
+    else if (param_value->type == PARAM_FUNC)
     {
         value->comb.comb = COMB_TYPE_FUNC;
-        value->comb.comb_params = ret->params;
-        value->comb.comb_ret = ret->ret;
+        value->comb.comb_params = param_value->params;
+        value->comb.comb_ret = param_value->ret;
     }
     else
     {
         value->comb.comb = COMB_TYPE_ERR;
     }
+
     return 0;
 }
 
@@ -593,6 +594,13 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
                         "bind %s already defined at line %u\n",
                          entry->id, al_bind->line_no);
     }
+    else if (entry->type == SYMTAB_MATCHBIND)
+    {
+        matchbind * al_matchbind = entry->matchbind_value;
+        print_error_msg(line_no,
+                        "match bind %s already defined at line %u\n",
+                        entry->id, al_matchbind->line_no);
+    }
     else if (entry->type == SYMTAB_QUALIFIER)
     {
         qualifier * al_qualifier = entry->qualifier_value;
@@ -873,61 +881,19 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         }
         else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
         {
-            param * param_value = entry->param_value;
-            if (param_value->type == PARAM_INT)
-            {
-                value->comb.comb = COMB_TYPE_INT;
-            }
-            else if (param_value->type == PARAM_FLOAT)
-            {
-                value->comb.comb = COMB_TYPE_FLOAT;
-            }
-            else if (param_value->type == PARAM_ENUMTYPE)
-            {
-                value->comb.comb = COMB_TYPE_ENUMTYPE;
-                value->comb.comb_enumtype = param_value->enumtype_value;
-            }
-            else if (param_value->type == PARAM_CHAR)
-            {
-                value->comb.comb = COMB_TYPE_CHAR;
-            }
-            else if (param_value->type == PARAM_STRING)
-            {
-                value->comb.comb = COMB_TYPE_STRING;
-            }
-            else if (param_value->type == PARAM_DIM)
-            {
-                value->comb.comb = COMB_TYPE_INT;
-            }
-            else if (param_value->type == PARAM_ARRAY)
-            {
-                value->comb.comb = COMB_TYPE_ARRAY;
-                value->comb.comb_dims = param_value->dims->count;
-                value->comb.comb_ret = param_value->ret;
-            }
-            else if (param_value->type == PARAM_RECORD)
-            {
-                value->comb.comb = COMB_TYPE_RECORD;
-                value->comb.comb_record = param_value->record_value;
-            }
-            else if (param_value->type == PARAM_FUNC)
-            {
-                value->comb.comb = COMB_TYPE_FUNC;
-                value->comb.comb_params = param_value->params;
-                value->comb.comb_ret = param_value->ret;
-            }
-            else
-            {
-                assert(0);
-            }
+            expr_set_comb_type(value, entry->param_value);
         }
         else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
         {
             value->comb = entry->bind_value->expr_value->comb;
         }
+        else if (entry->type == SYMTAB_MATCHBIND && entry->matchbind_value != NULL)
+        {
+            expr_set_comb_type(value, entry->matchbind_value->param_value);
+        }
         else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
         {
-            expr_set_return_type(value, entry->qualifier_value->expr_value->comb.comb_ret);
+            expr_set_comb_type(value, entry->qualifier_value->expr_value->comb.comb_ret);
         }
         else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
         {
@@ -1425,7 +1391,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
             {
-                expr_set_return_type(value,
+                expr_set_comb_type(value,
                                      value->array_deref.array_expr->comb.comb_ret);
             }
             else
@@ -1489,7 +1455,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
         if (param_expr_list_cmp(value->call.func_expr->comb.comb_params,
                                 value->call.params) == TYPECHECK_SUCC)
         {
-            expr_set_return_type(value, value->call.func_expr->comb.comb_ret);
+            expr_set_comb_type(value, value->call.func_expr->comb.comb_ret);
         }
         else
         {
@@ -1690,7 +1656,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
             {
                 value->attr.id_param_value = param_value;
 
-                expr_set_return_type(value, param_value);
+                expr_set_comb_type(value, param_value);
             }
             else
             {
@@ -1991,7 +1957,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         {
             expr_list_check_type(tab, value->func_build_in.param, func_value, syn_level, result);
         }
-        expr_set_return_type(value, value->func_build_in.ret);
+        expr_set_comb_type(value, value->func_build_in.ret);
         break;
     case EXPR_INT_TO_FLOAT:
         expr_check_type(tab, value->left, func_value, syn_level, result);
@@ -2472,7 +2438,7 @@ int enumerator_record_check_type(symtab * gtab, symtab * stab,
     return 0;
 }
 
-int enumerator_check_type(symtab * gtab, symtab * stab, enumerator * value,
+int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, enumerator * value,
                           int * result)
 {
     switch (value->type)
@@ -2481,6 +2447,7 @@ int enumerator_check_type(symtab * gtab, symtab * stab, enumerator * value,
             enumerator_item_check_type(stab, value, result);
         break;
         case ENUMERATOR_TYPE_RECORD:
+            enumtype_value->type = ENUMTYPE_TYPE_TAGGED;
             enumerator_record_check_type(gtab, stab, value, result);
         break;
     }
@@ -2489,15 +2456,15 @@ int enumerator_check_type(symtab * gtab, symtab * stab, enumerator * value,
 }
 
 int enumerator_list_check_type(symtab * gtab, symtab * stab,
-                               enumerator_list * list, int * result)
+                               enumtype * enumtype_value, int * result)
 {
-    enumerator_list_node * node = list->tail;
+    enumerator_list_node * node = enumtype_value->enums->tail;
     while (node != NULL)
     {
         enumerator * enumerator_value = node->value;
         if (enumerator_value != NULL)
         {
-            enumerator_check_type(gtab, stab, enumerator_value, result);
+            enumerator_check_type(gtab, stab, enumtype_value, enumerator_value, result);
         }
         node = node->next;
     }
@@ -2514,7 +2481,7 @@ int enumtype_check_type(symtab * stab, enumtype * value, int * result)
 
     if (value->enums != NULL)
     {
-        enumerator_list_check_type(stab, value->stab, value->enums, result);
+        enumerator_list_check_type(stab, value->stab, value, result);
     }
 
     return 0;

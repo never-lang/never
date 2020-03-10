@@ -21,7 +21,7 @@
  */
 #include "match.h"
 #include "expr.h"
-#include "ids.h"
+#include "matchbind.h"
 #include "symtab.h"
 #include <stdlib.h>
 
@@ -40,7 +40,8 @@ match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_v
     return ret;
 }
 
-match_guard * match_guard_new_record(char * enum_id, char * item_id, id_list * ids, expr * expr_value)
+match_guard * match_guard_new_record(char * enum_id, char * item_id,
+                                     matchbind_list * matchbinds, expr * expr_value)
 {
     match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
     
@@ -48,7 +49,7 @@ match_guard * match_guard_new_record(char * enum_id, char * item_id, id_list * i
     ret->guard_record.stab = NULL;
     ret->guard_record.enum_id = enum_id;
     ret->guard_record.item_id = item_id;
-    ret->guard_record.ids = ids;
+    ret->guard_record.matchbinds = matchbinds;
     ret->guard_record.enumtype_value = NULL;
     ret->guard_record.enumerator_value = NULL;
     ret->guard_record.expr_value = expr_value;
@@ -99,9 +100,9 @@ void match_guard_delete(match_guard * value)
             {
                 free(value->guard_record.item_id);
             }
-            if (value->guard_record.ids != NULL)
+            if (value->guard_record.matchbinds != NULL)
             {
-                id_list_delete(value->guard_record.ids);
+                matchbind_list_delete(value->guard_record.matchbinds);
             }
             if (value->guard_record.expr_value != NULL)
             {

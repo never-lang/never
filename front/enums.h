@@ -27,8 +27,15 @@ typedef struct symtab symtab;
 typedef struct enumerator enumerator;
 typedef struct enumerator_list enumerator_list;
 
+typedef enum enumtype_type
+{
+    ENUMTYPE_TYPE_PLAIN = 1,
+    ENUMTYPE_TYPE_TAGGED = 2
+} enumtype_type;
+
 typedef struct enumtype
 {
+    enumtype_type type;
     char * id;
     enumerator_list * enums;
     symtab * stab;

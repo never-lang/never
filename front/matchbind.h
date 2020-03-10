@@ -19,40 +19,46 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __IDS_H__
-#define __IDS_H__
+#ifndef __MATCHBIND_H__
+#define __MATCHBIND_H__
 
-typedef struct id
+typedef struct param param;
+
+typedef struct matchbind
 {
     char * id;
+    param * param_value;
+    int stack_level;
     unsigned int line_no;
-} id;
+} matchbind;
 
-typedef struct id_list_node
+typedef struct matchbind_list_node
 {
-    id * value;
-    struct id_list_node * prev;
-    struct id_list_node * next;
-} id_list_node;
+    matchbind * value;
+    struct matchbind_list_node * prev;
+    struct matchbind_list_node * next;
+} matchbind_list_node;
 
-typedef struct id_list
+typedef struct matchbind_list
 {
     unsigned int count;
-    id_list_node * head;
-    id_list_node * tail;
-} id_list;
+    matchbind_list_node * head;
+    matchbind_list_node * tail;
+} matchbind_list;
 
-id * id_new(char * value);
-void id_delete(id * value);
+matchbind * matchbind_new(char * value);
+void matchbind_delete(matchbind * value);
 
-id_list_node * id_list_node_new(id * value);
-void id_list_node_delete(id_list_node * node);
+void matchbind_print(matchbind * value);
 
-id_list * id_list_new();
-void id_list_delete(id_list * list);
+matchbind_list_node * matchbind_list_node_new(matchbind * value);
+void matchbind_list_node_delete(matchbind_list_node * node);
 
-void id_list_add_beg(id_list * list, id * value);
-void id_list_add_end(id_list * list, id * value);
+matchbind_list * matchbind_list_new();
+void matchbind_list_delete(matchbind_list * list);
 
-#endif /* __IDS_H__ */
+void matchbind_list_add_beg(matchbind_list * list, matchbind * value);
+void matchbind_list_add_end(matchbind_list * list, matchbind * value);
+
+#endif /* __MATCHBIND_H__ */
 

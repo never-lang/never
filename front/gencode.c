@@ -154,6 +154,32 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 assert(0);
             }            
         }
+        else if (entry->type == SYMTAB_MATCHBIND && entry->matchbind_value != NULL)
+        {
+            matchbind * matchbind_value = entry->matchbind_value;
+            if (syn_level == entry->syn_level)
+            {
+                value->id.id_type_value = ID_TYPE_MATCHBIND;
+                value->id.id_matchbind_value = matchbind_value;
+            }
+            else
+            {
+                freevar * freevar_value = NULL;
+                if (func_value->freevars == NULL)
+                {
+                    func_value->freevars = freevar_list_new();
+                }
+                
+                freevar_value =
+                    freevar_list_add(func_value->freevars, value->id.id);
+
+                freevar_value->orig.type = FREEVAR_MATCHBIND;
+                freevar_value->orig.matchbind_value = matchbind_value;
+                
+                value->id.id_type_value = ID_TYPE_GLOBAL;
+                value->id.id_freevar_value = freevar_value;
+            }
+        }
         else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
         {
             qualifier * qualifier_value = entry->qualifier_value;
@@ -291,6 +317,9 @@ int func_gencode_freevars_match_guard(func * func_value, symtab * stab,
     {
         case MATCH_GUARD_ITEM:
             func_gencode_freevars_expr(func_value, stab, match_value->guard_item.expr_value, result);
+        break;
+        case MATCH_GUARD_RECORD:
+            func_gencode_freevars_expr(func_value, match_value->guard_record.stab, match_value->guard_record.expr_value, result);
         break;
         case MATCH_GUARD_ELSE:
             func_gencode_freevars_expr(func_value, stab, match_value->guard_else.expr_value, result);

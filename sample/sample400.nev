@@ -13,7 +13,7 @@ func main() -> int
 
     match c
     {
-        Optional.Some(v, x) -> print(v + x + V);
+        Optional.Some(x, v) -> print(2 * x + v + V);
         Optional.None -> print(0);
     };
     

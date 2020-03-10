@@ -36,7 +36,7 @@ int func_enum_param_list(param_list * params);
 int func_enum_bind_list(bind_list * list, int start);
 int func_enum_func_list(func_list * list, int start);
 
-int expr_set_return_type(expr * value, param * ret);
+int expr_set_comb_type(expr * value, param * param_value);
 
 int param_cmp(param * param_one, param * param_two);
 int param_list_cmp(param_list * param_one, param_list * param_two);
@@ -134,8 +134,8 @@ int never_add_decl_list(symtab * stab, decl_list * list, int * result);
 
 int enumerator_item_check_type(symtab * stab, enumerator * value, int * result);
 int enumerator_record_check_type(symtab * gtab, symtab * stab, enumerator * value, int * result);
-int enumerator_check_type(symtab * gtab, symtab * stab, enumerator * value, int * result);
-int enumerator_list_check_type(symtab * gtab, symtab * stab, enumerator_list * list, int * result);
+int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_list_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, int * result);
 int enumtype_check_type(symtab * stab, enumtype * value, int * result);
 
 int record_check_type(symtab * stab, record * record_value, int * result);

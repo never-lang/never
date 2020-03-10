@@ -22,14 +22,15 @@
 #ifndef __SYMTAB_H__
 #define __SYMTAB_H__
 
-#include "array.h"
 #include "param.h"
 #include "bind.h"
-#include "record.h"
-#include "func.h"
+#include "matchbind.h"
 #include "listcomp.h"
-#include "enumerator.h"
+#include "record.h"
 #include "enums.h"
+#include "enumerator.h"
+#include "func.h"
+#include "array.h"
 
 typedef enum symtab_lookup_op
 {
@@ -47,11 +48,12 @@ typedef enum symtab_entry_type
 {
     SYMTAB_PARAM = 1,
     SYMTAB_BIND = 2,
-    SYMTAB_QUALIFIER = 3,
-    SYMTAB_RECORD = 4,
-    SYMTAB_ENUMTYPE = 5,
-    SYMTAB_ENUMERATOR = 6,
-    SYMTAB_FUNC = 7
+    SYMTAB_MATCHBIND = 3,
+    SYMTAB_QUALIFIER = 4,
+    SYMTAB_RECORD = 5,
+    SYMTAB_ENUMTYPE = 6,
+    SYMTAB_ENUMERATOR = 7,
+    SYMTAB_FUNC = 8
 } symtab_entry_type;
 
 typedef struct symtab_entry
@@ -59,8 +61,9 @@ typedef struct symtab_entry
     symtab_entry_type type;
     const char * id;
     union {
-        bind * bind_value;
         param * param_value;
+        bind * bind_value;
+        matchbind * matchbind_value;
         qualifier * qualifier_value;
         record * record_value;
         enumtype * enumtype_value;
@@ -96,25 +99,13 @@ symtab * symtab_new(unsigned int size, symtab_type type, symtab * parent);
 void symtab_delete(symtab * tab);
 
 void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level);
-void symtab_add_param_id(symtab * tab, const char * id, param * param_value, unsigned int syn_level);
-
 void symtab_add_bind(symtab * tab, bind * let_value, unsigned int syn_level);
-void symtab_add_bind_id(symtab * tab, const char * id, bind * let_value, unsigned int syn_level);
-
+void symtab_add_matchbind(symtab * tab, matchbind * matchbind_value, unsigned int syn_level);
 void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned int syn_level);
-void symtab_add_qualifier_id(symtab * tab, const char * id, qualifier * qualifier_value, unsigned int syn_level);
-
 void symtab_add_enumerator(symtab * tab, enumerator * enumerator_value, unsigned int syn_level);
-void symtab_add_enumerator_id(symtab * tab, const char * id, enumerator * enumerator_value, unsigned int syn_level);
-
 void symtab_add_enumtype(symtab * tab, enumtype * enumtype_value, unsigned int syn_level);
-void symtab_add_enumtype_id(symtab * tab, const char * id, enumtype * enumtype_value, unsigned int syn_level);
-
 void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_level);
-void symtab_add_record_id(symtab * tab, const char * id, record * record_value, unsigned int syn_level);
-
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
-void symtab_add_func_id(symtab * tab, const char * id, func * func_value, unsigned int syn_level);
 
 symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup);
 

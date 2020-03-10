@@ -84,7 +84,7 @@ typedef enum comb_type
     COMB_TYPE_ARRAY = 10,
     COMB_TYPE_FUNC = 11,
     COMB_TYPE_RECORD = 12,
-    COMB_TYPE_RECORD_ID = 13
+    COMB_TYPE_RECORD_ID = 13,
 } comb_type;
 
 typedef enum id_type
@@ -93,12 +93,13 @@ typedef enum id_type
     ID_TYPE_LOCAL = 1,
     ID_TYPE_GLOBAL = 2,
     ID_TYPE_BIND = 3,
-    ID_TYPE_QUALIFIER = 4,
-    ID_TYPE_FUNC_TOP = 5,
-    ID_TYPE_FUNC = 6,
-    ID_TYPE_FUNC_NEST = 7,
-    ID_TYPE_RECORD = 8,
-    ID_TYPE_ENUMTYPE = 9
+    ID_TYPE_MATCHBIND = 4,
+    ID_TYPE_QUALIFIER = 5,
+    ID_TYPE_FUNC_TOP = 6,
+    ID_TYPE_FUNC = 7,
+    ID_TYPE_FUNC_NEST = 8,
+    ID_TYPE_RECORD = 9,
+    ID_TYPE_ENUMTYPE = 10
 } id_type;
 
 typedef struct array array;
@@ -110,6 +111,7 @@ typedef struct listcomp listcomp;
 typedef struct record record;
 typedef struct enumtype enumtype;
 typedef struct enumerator enumerator;
+typedef struct matchbind matchbind;
 typedef struct match_guard_list match_guard_list;
 
 typedef struct expr_comb
@@ -120,6 +122,7 @@ typedef struct expr_comb
     unsigned int comb_dims;               /* array dimensions */
     struct record * comb_record; /* record */
     struct enumtype * comb_enumtype; /* enum */
+    struct matchbind * comb_matchbind; /* match bind (id in record match guard) */
 } expr_comb;
 
 typedef struct expr
@@ -140,6 +143,7 @@ typedef struct expr
                 freevar * id_freevar_value;
                 param * id_param_value;
                 bind * id_bind_value;
+                matchbind * id_matchbind_value;
                 qualifier * id_qualifier_value;
                 func * id_func_value;
                 record * id_record_value;

@@ -167,6 +167,12 @@ void freevar_loc_print(freevar_loc * value)
             bind_print(value->bind_value);
         }
         break;
+    case FREEVAR_MATCHBIND:
+        if (value->matchbind_value)
+        {
+            matchbind_print(value->matchbind_value);
+        }
+        break;
     case FREEVAR_FREEVAR:
         if (value->freevar_value)
         {
@@ -219,6 +225,8 @@ char * freevar_type_str(freevar_type type)
         return "FREEVAR_QUALIFIER";
     case FREEVAR_BIND:
         return "FREEVAR_BIND";
+    case FREEVAR_MATCHBIND:
+        return "FREEVAR_MATCHBIND";
     case FREEVAR_FREEVAR:
         return "FREEVAR_FREEVAR";
     case FREEVAR_FUNC:

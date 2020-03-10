@@ -19,20 +19,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "ids.h"
+#include "matchbind.h"
 #include <stdlib.h>
+#include <stdio.h>
 
-id * id_new(char * value)
+matchbind * matchbind_new(char * value)
 {
-    id * ret = (id *)malloc(sizeof(id));
+    matchbind * ret = (matchbind *)malloc(sizeof(matchbind));
     
     ret->id = value;
+    ret->param_value = NULL;
+    ret->stack_level = 0;
     ret->line_no = 0;
     
     return ret;
 }
 
-void id_delete(id * value)
+void matchbind_delete(matchbind * value)
 {
     if (value->id != NULL)
     {
@@ -41,10 +44,15 @@ void id_delete(id * value)
     free(value);
 }
 
-id_list_node * id_list_node_new(id * value)
+void matchbind_print(matchbind * value)
 {
-    id_list_node * node =
-        (id_list_node *)malloc(sizeof(id_list_node));
+    printf("matchbind %s\n", value->id);
+}
+
+matchbind_list_node * matchbind_list_node_new(matchbind * value)
+{
+    matchbind_list_node * node =
+        (matchbind_list_node *)malloc(sizeof(matchbind_list_node));
 
     node->value = value;
     node->prev = NULL;
@@ -53,18 +61,18 @@ id_list_node * id_list_node_new(id * value)
     return node;
 }
 
-void id_list_node_delete(id_list_node * node)
+void matchbind_list_node_delete(matchbind_list_node * node)
 {
     if (node->value)
     {
-        id_delete(node->value);
+        matchbind_delete(node->value);
     }
     free(node);
 }
 
-id_list * id_list_new()
+matchbind_list * matchbind_list_new()
 {
-    id_list * list = (id_list *)malloc(sizeof(id_list));
+    matchbind_list * list = (matchbind_list *)malloc(sizeof(matchbind_list));
 
     list->count = 0;
     list->head = NULL;
@@ -73,22 +81,22 @@ id_list * id_list_new()
     return list;
 }
 
-void id_list_delete(id_list * list)
+void matchbind_list_delete(matchbind_list * list)
 {
-    id_list_node * node = list->tail;
+    matchbind_list_node * node = list->tail;
 
     while (node != NULL)
     {
-        id_list_node * tmp = node->next;
-        id_list_node_delete(node);
+        matchbind_list_node * tmp = node->next;
+        matchbind_list_node_delete(node);
         node = tmp;
     }
     free(list);
 }
 
-void id_list_add_beg(id_list * list, id * value)
+void matchbind_list_add_beg(matchbind_list * list, matchbind * value)
 {
-    id_list_node * node = id_list_node_new(value);
+    matchbind_list_node * node = matchbind_list_node_new(value);
 
     list->count++;
 
@@ -104,9 +112,9 @@ void id_list_add_beg(id_list * list, id * value)
     }
 }
 
-void id_list_add_end(id_list * list, id * value)
+void matchbind_list_add_end(matchbind_list * list, matchbind * value)
 {
-    id_list_node * node = id_list_node_new(value);
+    matchbind_list_node * node = matchbind_list_node_new(value);
 
     list->count++;
 

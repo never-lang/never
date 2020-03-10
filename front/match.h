@@ -32,7 +32,7 @@ typedef enum match_guard_type
 typedef struct expr expr;
 typedef struct enumtype enumtype;
 typedef struct enumerator enumerator;
-typedef struct id_list id_list;
+typedef struct matchbind_list matchbind_list;
 typedef struct symtab symtab;
 
 typedef struct match_guard_item
@@ -49,7 +49,7 @@ typedef struct match_guard_record
     symtab * stab;
     char * enum_id;
     char * item_id;
-    id_list * ids;
+    matchbind_list * matchbinds;
     enumtype * enumtype_value;
     enumerator * enumerator_value;
     expr * expr_value;
@@ -86,7 +86,7 @@ typedef struct match_guard_list
 } match_guard_list;
 
 match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_value);
-match_guard * match_guard_new_record(char * enum_id, char * item_id, id_list * ids, expr * expr_value);
+match_guard * match_guard_new_record(char * enum_id, char * item_id, matchbind_list * matchbinds, expr * expr_value);
 match_guard * match_guard_new_else(expr * expr_value);
 void match_guard_delete(match_guard * value);
 
