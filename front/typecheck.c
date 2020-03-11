@@ -937,6 +937,53 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     return 0;
 }
 
+int expr_enumtype_check_type(symtab * tab, expr * value, int * result)
+{
+    symtab_entry * entry = NULL;
+
+    entry = symtab_lookup(tab, value->enumtype.enum_id, SYMTAB_LOOKUP_GLOBAL);
+    if (entry != NULL)
+    {
+        if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
+        {
+            enumerator * enumerator_value = enumtype_find_enumerator(entry->enumtype_value, value->enumtype.item_id);
+            if (enumerator_value != NULL)
+            {
+                value->comb.comb = COMB_TYPE_ENUMTYPE;
+                value->comb.comb_enumtype = entry->enumtype_value;
+                
+                value->enumtype.id_enumerator_value = enumerator_value;
+                value->enumtype.id_enumtype_value = entry->enumtype_value;
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no, "cannot find enum %s::%s\n",
+                                value->enumtype.enum_id,
+                                value->enumtype.item_id);
+            }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "expected enumtype %s but found %s\n",
+                            value->enumtype.enum_id,
+                            symtab_entry_type_str(entry->type));
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot find enumtype %s\n",
+                        value->enumtype.enum_id);
+    }
+
+    return 0;
+}
+
 int expr_neg_check_type(symtab * tab, expr * value, func * func_value, 
                         unsigned int syn_level, int * result)
 {
@@ -1501,11 +1548,11 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
 
         break;
     case COMB_TYPE_ENUMTYPE:
-        if (value->call.func_expr->type == EXPR_ATTR &&
-            value->call.func_expr->attr.id_enumerator_value != NULL &&
-            value->call.func_expr->attr.id_enumerator_value->type == ENUMERATOR_TYPE_RECORD &&
-            value->call.func_expr->attr.id_enumerator_value->record_value != NULL &&
-            param_expr_list_cmp(value->call.func_expr->attr.id_enumerator_value->record_value->params,
+        if (value->call.func_expr->type == EXPR_ENUMTYPE &&
+            value->call.func_expr->enumtype.id_enumerator_value != NULL &&
+            value->call.func_expr->enumtype.id_enumerator_value->type == ENUMERATOR_TYPE_RECORD &&
+            value->call.func_expr->enumtype.id_enumerator_value->record_value != NULL &&
+            param_expr_list_cmp(value->call.func_expr->enumtype.id_enumerator_value->record_value->params,
                                 value->call.params) == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ENUMTYPE;
@@ -1642,30 +1689,8 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
         expr_check_type(tab, value->attr.record_value, func_value, syn_level, result);
     }
 
-    if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE_ID)
-    {
-        enumtype * enumtype_value = value->attr.record_value->comb.comb_enumtype;
-        if (enumtype_value != NULL && value->attr.id != NULL)
-        {
-            enumerator * enumerator_value = enumtype_find_enumerator(enumtype_value, value->attr.id);
-            if (enumerator_value != NULL)
-            {
-                value->attr.id_enumerator_value = enumerator_value;
-                value->attr.id_enumtype_value = enumtype_value;
-
-                value->comb.comb = COMB_TYPE_ENUMTYPE;
-                value->comb.comb_enumtype = value->attr.record_value->comb.comb_enumtype;
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                print_error_msg(value->line_no, "cannot find enum %s.%s\n",
-                                enumtype_value->id, value->attr.id);
-            }
-        }
-    }
-    else if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD ||
-             value->attr.record_value->comb.comb == COMB_TYPE_RECORD_ID)
+    if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD ||
+        value->attr.record_value->comb.comb == COMB_TYPE_RECORD_ID)
     {
         record * record_value = value->attr.record_value->comb.comb_record;
         if (record_value != NULL && value->attr.id != NULL)
@@ -1711,6 +1736,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         break;
     case EXPR_STRING:
         value->comb.comb = COMB_TYPE_STRING;
+        break;
+    case EXPR_ENUMTYPE:
+        expr_enumtype_check_type(tab, value, result);
         break;
     case EXPR_ID:
         expr_id_check_type(tab, value, result);

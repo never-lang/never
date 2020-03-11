@@ -154,8 +154,7 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result);
 int expr_record_emit(expr * value, int stack_level, module * module_value,
                      func_list_weak * list_weak, int * result);
-int expr_enumtype_attr_emit(expr * value, int stack_level, module * module_value,
-                            func_list_weak * list_weak, int * result);
+int expr_enumtype_attr_emit(expr * value, int stack_level, module * module_value, int * result);
 int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result);
 int bind_emit(bind * bind_value, int stack_level, module * module_value,

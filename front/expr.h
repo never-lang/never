@@ -32,6 +32,7 @@ typedef enum expr_type
     EXPR_FLOAT = 2,
     EXPR_CHAR = 3,
     EXPR_STRING = 4,
+    EXPR_ENUMTYPE = 40,
     EXPR_ID = 5,
     EXPR_NEG = 6,
     EXPR_ADD = 7,
@@ -135,6 +136,13 @@ typedef struct expr
         float float_value;   /* EXPR_FLOAT */
         char char_value;     /* EXPR_CHAR */
         char * string_value; /* EXPR_STRING */
+        struct
+        {
+            char * enum_id;
+            char * item_id;
+            enumerator * id_enumerator_value;
+            enumtype * id_enumtype_value;
+        } enumtype;
         struct               /* EXPR_ID */
         {
             char * id;
@@ -207,15 +215,7 @@ typedef struct expr
         {
             struct expr * record_value; /* record_value . id */
             char * id;
-            union
-            {
-                struct param * id_param_value;
-                struct
-                {
-                    struct enumerator * id_enumerator_value;
-                    struct enumtype * id_enumtype_value;
-                };
-            };
+            param * id_param_value;
         }
         attr;
     };
@@ -239,6 +239,7 @@ expr * expr_new_int(int int_value);
 expr * expr_new_float(float float_value);
 expr * expr_new_char(char char_value);
 expr * expr_new_string(char * string_value);
+expr * expr_new_enumtype(char * enum_id, char * item_id);
 expr * expr_new_id(char * id);
 expr * expr_new_nil();
 expr * expr_new_one(int type, expr * expr_left);

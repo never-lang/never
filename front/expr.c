@@ -76,6 +76,21 @@ expr * expr_new_string(char * string_value)
     return ret;
 }
 
+expr * expr_new_enumtype(char * enum_id, char * item_id)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_ENUMTYPE;
+    ret->enumtype.enum_id = enum_id;
+    ret->enumtype.item_id = item_id;
+    ret->enumtype.id_enumerator_value = NULL;
+    ret->enumtype.id_enumtype_value = NULL;
+    ret->comb.comb = COMB_TYPE_ENUMTYPE;
+    ret->line_no = 0;
+    
+    return ret;
+}
+
 expr * expr_new_id(char * id)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -343,6 +358,15 @@ void expr_delete(expr * value)
             free(value->string_value);
         }
         break;
+    case EXPR_ENUMTYPE:
+        if (value->enumtype.enum_id != NULL)
+        {
+            free(value->enumtype.enum_id);
+        }
+        if (value->enumtype.item_id != NULL)
+        {
+            free(value->enumtype.item_id);
+        }
     case EXPR_ID:
         free(value->id.id);
         break;
@@ -573,6 +597,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_FLOAT: return "float";
     case EXPR_CHAR: return "char";
     case EXPR_STRING: return "string";
+    case EXPR_ENUMTYPE: return "enumtype";
     case EXPR_ID: return "id";
     case EXPR_NEG: return "neg";
     case EXPR_ADD: return "add";

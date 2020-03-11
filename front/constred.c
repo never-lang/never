@@ -81,6 +81,7 @@ int expr_constred(expr * value, int * result)
     case EXPR_FLOAT:
     case EXPR_CHAR:
     case EXPR_STRING:
+    case EXPR_ENUMTYPE:
     case EXPR_NIL:
     case EXPR_ID:
         /* cannot be reduced */

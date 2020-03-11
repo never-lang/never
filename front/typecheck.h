@@ -83,6 +83,7 @@ int param_list_check_type(symtab * tab, param_list * list,
                           unsigned int syn_level, int * result);                     
 
 int expr_id_check_type(symtab * tab, expr * value, int * result);
+int expr_enumtype_check_type(symtab * tab, expr * value, int * result);
 int expr_neg_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
 int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                             int * result);

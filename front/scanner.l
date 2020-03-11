@@ -169,6 +169,12 @@ match {
     return TOK_MATCH;
 }
 
+"::" {
+    tokp->line_no = line_no;
+    scanner_printf("::\n");
+    return TOK_DDOT;
+}
+
 "+"|"-"|"/"|"*"|"%"|"=" {
     tokp->line_no = line_no;
     scanner_printf("operator %s\n", yytext);

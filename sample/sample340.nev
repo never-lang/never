@@ -15,7 +15,7 @@ enum ETWO {
 
 func g1() -> EONE
 {
-    EONE.four
+    EONE::four
 }
 
 func e1(a : EONE, b : EONE) -> string
@@ -32,7 +32,7 @@ func e1(a : EONE, b : EONE) -> string
 
 func main() -> int
 {
-    prints(e1(EONE.four, EONE.three));
+    prints(e1(EONE::four, EONE::three));
     
     0
 }

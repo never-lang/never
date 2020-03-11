@@ -66,6 +66,7 @@ int print_func_expr(expr * value, int depth)
     case EXPR_FLOAT:
     case EXPR_CHAR:
     case EXPR_STRING:
+    case EXPR_ENUMTYPE:
         /* no symtabs possible */
         break;
     case EXPR_ID:

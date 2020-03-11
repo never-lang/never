@@ -51,6 +51,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_ENUM
 %token <val.str_value> TOK_EXTERN
 %token <val.str_value> TOK_MATCH
+%token <val.str_value> TOK_DDOT
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -175,6 +176,12 @@ expr: TOK_NUM_CHAR
 expr: TOK_NUM_STRING
 {
     $$ = expr_new_string($1);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_ID TOK_DDOT TOK_ID
+{
+    $$ = expr_new_enumtype($1, $3);
     $$->line_no = $<line_no>1;
 };
 
@@ -458,13 +465,13 @@ matchbind_list: matchbind_list ',' matchbind
     $$ = $1;
 };
 
-match_guard: TOK_ID TOK_DOT TOK_ID TOK_RET expr
+match_guard: TOK_ID TOK_DDOT TOK_ID TOK_RET expr
 {
     $$ = match_guard_new_item($1, $3, $5);
     $$->line_no = $<line_no>1;
 };
 
-match_guard: TOK_ID TOK_DOT TOK_ID '(' matchbind_list ')' TOK_RET expr
+match_guard: TOK_ID TOK_DDOT TOK_ID '(' matchbind_list ')' TOK_RET expr
 {
     $$ = match_guard_new_record($1, $3, $5, $8);
     $$->line_no = $<line_no>1;
