@@ -29,12 +29,14 @@
 
 typedef struct qualifier qualifier;
 typedef struct qualifier_list qualifier_list;
+typedef struct matchbind_list matchbind_list;
 
 int enumtype_enum_enumerator_list(enumerator_list * list);
 int record_enum_param_list(param_list * params);
 int func_enum_param_list(param_list * params);
 int func_enum_bind_list(bind_list * list, int start);
 int func_enum_func_list(func_list * list, int start);
+int enum_matchbind_list(matchbind_list * list);
 
 int expr_set_comb_type(expr * value, param * param_value);
 

@@ -210,7 +210,11 @@ typedef struct expr
             union
             {
                 struct param * id_param_value;
-                struct enumerator * id_enumerator_value;
+                struct
+                {
+                    struct enumerator * id_enumerator_value;
+                    struct enumtype * id_enumtype_value;
+                };
             };
         }
         attr;

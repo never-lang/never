@@ -23,11 +23,16 @@
 #define __MATCHBIND_H__
 
 typedef struct param param;
+typedef struct enumerator enumerator;
+typedef struct enumtype enumtype;
 
 typedef struct matchbind
 {
     char * id;
     param * param_value;
+    enumerator * enumerator_value;
+    enumtype * enumtype_value;
+    int index;
     int stack_level;
     unsigned int line_no;
 } matchbind;

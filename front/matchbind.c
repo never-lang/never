@@ -29,6 +29,9 @@ matchbind * matchbind_new(char * value)
     
     ret->id = value;
     ret->param_value = NULL;
+    ret->enumerator_value = NULL;
+    ret->enumtype_value = NULL;
+    ret->index = -1;
     ret->stack_level = 0;
     ret->line_no = 0;
     

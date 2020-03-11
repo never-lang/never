@@ -5,6 +5,7 @@
 
 typedef struct match_guard_item match_guard_item;
 typedef struct match_guard match_guard;
+typedef struct match_guard_record match_guard_record;
 typedef struct match_guard_list match_guard_list;
 
 int expr_comb_is_enum(expr * value, int * result);
@@ -13,6 +14,11 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard * match_value,
                                      int * result);
 int expr_match_guard_record_check_type(symtab * tab, match_guard * match_value,
                                        int * result);
+int symtab_add_matchbind_from_matchbind(symtab * tab, matchbind * matchbind_value,
+                                        param * param_value, enumerator * enumerator_value,
+                                        enumtype * enumtype_value, unsigned int syn_level, int * result);
+int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard * match_value,
+                                             unsigned int syn_level, int * result);
 int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
                                 func * func_value, unsigned int syn_level, int * result);
 int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list,

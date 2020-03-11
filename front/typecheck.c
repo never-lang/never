@@ -121,6 +121,24 @@ int func_enum_func_list(func_list * list, int start)
     return 0;
 }
 
+int enum_matchbind_list(matchbind_list * list)
+{
+    int index = 0;
+    
+    matchbind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        matchbind * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int expr_set_comb_type(expr * value, param * param_value)
 {
     if (value == NULL || param_value == NULL)
@@ -1633,6 +1651,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
             if (enumerator_value != NULL)
             {
                 value->attr.id_enumerator_value = enumerator_value;
+                value->attr.id_enumtype_value = enumtype_value;
 
                 value->comb.comb = COMB_TYPE_ENUMTYPE;
                 value->comb.comb_enumtype = value->attr.record_value->comb.comb_enumtype;

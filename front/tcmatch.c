@@ -94,12 +94,15 @@ int expr_match_guard_record_check_type(symtab * tab, match_guard * match_value,
 }                                     
 
 int symtab_add_matchbind_from_matchbind(symtab * tab, matchbind * matchbind_value,
-                                        param * param_value, unsigned int syn_level, int * result)
+                                        param * param_value, enumerator * enumerator_value,
+                                        enumtype * enumtype_value, unsigned int syn_level, int * result)
 {
     symtab_entry * entry = symtab_lookup(tab, matchbind_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry == NULL)
     {
         matchbind_value->param_value = param_value;
+        matchbind_value->enumerator_value = enumerator_value;
+        matchbind_value->enumtype_value = enumtype_value;
         symtab_add_matchbind(tab, matchbind_value, syn_level);
     }
     else
@@ -117,6 +120,7 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard * match_v
     assert(match_value->type == MATCH_GUARD_RECORD);
 
     matchbind_list * matchbinds = match_value->guard_record.matchbinds;
+    enumtype * enumtype_value = match_value->guard_record.enumtype_value;
     enumerator * enumerator_value = match_value->guard_record.enumerator_value;
 
     if (enumerator_value->record_value->params->count != matchbinds->count)
@@ -144,8 +148,12 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard * match_v
         if (param_value != NULL || matchbind_value != NULL)
         {
             symtab_add_matchbind_from_matchbind(match_value->guard_record.stab,
-                                                matchbind_value, param_value, 
-                                                syn_level, result);
+                                                matchbind_value,
+                                                param_value,
+                                                enumerator_value,
+                                                enumtype_value,
+                                                syn_level,
+                                                result);
         }
         param_node = param_node->next;
         matchbind_node = matchbind_node->next;
@@ -166,7 +174,11 @@ int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
     break;
     case MATCH_GUARD_RECORD:
         expr_match_guard_record_check_type(tab, match_value, result);
-        symtab_add_matchbind_from_matchbind_list(tab, match_value, syn_level, result);
+        if (match_value->guard_record.matchbinds != NULL)
+        {
+            enum_matchbind_list(match_value->guard_record.matchbinds);
+            symtab_add_matchbind_from_matchbind_list(tab, match_value, syn_level, result);
+        }
         expr_check_type(match_value->guard_record.stab, match_value->guard_record.expr_value, func_value, syn_level, result);
     break;
     case MATCH_GUARD_ELSE:

@@ -1060,7 +1060,7 @@ int expr_match_emit(expr * value, int stack_level, module * module_value,
 
     if (value->match.match_guards != NULL)
     {
-        expr_match_guard_list_emit(value->match.match_guards, stack_level,
+        expr_match_guard_list_emit(value->match.match_guards, stack_level + 1,
                                    module_value, list_weak, result);
     }
 
