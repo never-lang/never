@@ -7,9 +7,25 @@ func test(e : E, i : int, j : int) -> int
     {
         E::one -> 100 + i + j;
         E::two -> 200 + i + j;
-        E::three -> 300 + i + j;
+        E::three -> 300 + i +j;
         E::four -> 400 + i + j;
     }
+    /*if (e == E::one)
+    {
+        100 + i + j
+    } else if (e == E::two)
+    {
+        200 + i + j
+    } else if (e == E::three)
+    {
+        300 + i + j
+    } else if (e == E::four)
+    {
+        400 + i + j
+    } else
+    {
+        0
+    }*/
 }
 
 func main() -> int

@@ -1060,7 +1060,7 @@ int expr_match_emit(expr * value, int stack_level, module * module_value,
 
     if (value->match.match_guards != NULL)
     {
-        expr_match_guard_list_emit(value->match.match_guards, stack_level + 1,
+        expr_match_guard_list_emit(value->match.match_guards, stack_level,
                                    module_value, list_weak, result);
     }
 
@@ -2080,7 +2080,7 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
 
     expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
-    expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result);
+    expr_list_emit(value->array_deref.ref, stack_level, module_value, list_weak, result);
 
     bc.type = BYTECODE_ARRAY_DEREF;
     bc.array_deref.dims = value->array_deref.ref->count;
