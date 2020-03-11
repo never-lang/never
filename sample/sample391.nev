@@ -5,15 +5,15 @@ func hello(n : Name) -> string
 {
     match (n)
     {
-        Name.Max -> "Hi Max!\n";
-        Name.Jacob -> "Hi Jacob!\n";
+        Name::Max -> "Hi Max!\n";
+        Name::Jacob -> "Hi Jacob!\n";
         else -> "Hi Unknown!\n";
     }
 }
 
 func main() -> int
 {
-    prints(hello(Name.Max));
+    prints(hello(Name::Max));
 
     0
 }

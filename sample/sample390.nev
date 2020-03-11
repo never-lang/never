@@ -9,10 +9,10 @@ func callE(i : int) -> int
 
 func main() -> int
 {
-    let e = E.one;
+    let e = E::one;
 
     callE(match(e) {
-             E.one -> 10;
+             E::one -> 10;
              else -> 20;
          });
 

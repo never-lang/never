@@ -1165,7 +1165,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         expr_string_emit(value, stack_level, module_value, result);
         break;
     case EXPR_ENUMTYPE:
-        expr_enumtype_attr_emit(value, stack_level, module_value, result);
+        expr_enumtype_emit(value, stack_level, module_value, result);
         break;
     case EXPR_NIL:
         expr_nil_emit(value, stack_level, module_value, result);
@@ -2090,7 +2090,7 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
-int expr_enumtype_attr_emit(expr * value, int stack_level, module * module_value, int * result)
+int expr_enumtype_emit(expr * value, int stack_level, module * module_value, int * result)
 {
     bytecode bc = { 0 };
     int index = -1;    

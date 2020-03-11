@@ -16,7 +16,7 @@ func getA(b : A) -> R
 
 func main() -> int
 {
-    assert(getA(A.two).v == A.two);
+    assert(getA(A::two).v == A::two);
 
     0
 }

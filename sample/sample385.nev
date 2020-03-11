@@ -5,21 +5,21 @@ func getE(e : E) -> int
 {
     match e
     {
-        E.three -> 3;
-        E.two -> 2;
-        E.one -> 1;
+        E::three -> 3;
+        E::two -> 2;
+        E::one -> 1;
         else -> 4;
     }
 }
 
 func main() -> int
 {
-    assert(getE(E.one) == 1);
-    assert(getE(E.two) == 2);
-    assert(getE(E.three) == 3);
-    assert(getE(E.four) == 4);
-    assert(getE(E.five) == 4);
-    assert(getE(E.six) == 4);
+    assert(getE(E::one) == 1);
+    assert(getE(E::two) == 2);
+    assert(getE(E::three) == 3);
+    assert(getE(E::four) == 4);
+    assert(getE(E::five) == 4);
+    assert(getE(E::six) == 4);
 
     0
 }

@@ -14,7 +14,7 @@ func getA(a : int) -> A
 
 func main() -> int
 {
-    assert(getA(10) == A.two);
+    assert(getA(10) == A::two);
     
     0
 }

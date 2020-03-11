@@ -6,7 +6,7 @@ func getE(e : E) -> int
     
     v = match e
     {
-        E.one -> 4;
+        E::one -> 4;
     };
 
     v
@@ -14,7 +14,7 @@ func getE(e : E) -> int
 
 func main() -> int
 {
-    assert(getE(E.one) == 4);
+    assert(getE(E::one) == 4);
     
     0
 }

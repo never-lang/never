@@ -3,7 +3,7 @@ enum Optional { Some { value : int; s : int; }, None }
 
 func calc() -> Optional
 {
-    Optional.Some(10, 1)
+    Optional::Some(10, 1)
 }
 
 func main() -> int
@@ -13,8 +13,8 @@ func main() -> int
 
     match c
     {
-        Optional.Some(x, v) -> print(2 * x + v + V);
-        Optional.None -> print(0);
+        Optional::Some(x, v) -> print(2 * x + v + V);
+        Optional::None -> print(0);
     };
     
     0

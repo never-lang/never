@@ -4,15 +4,15 @@ enum F { eight, nine, ten }
 
 func main() -> int
 {
-    let e = E.six;
+    let e = E::six;
             
     match e
     {
-        E.one -> { assert(0); 1 };
-        E.two -> { assert(0); 2 };
-        E.three -> { assert(0); 3 };
-        E.four -> { assert(0); 4 };
-        E.five -> { assert(0); 5 };
+        E::one -> { assert(0); 1 };
+        E::two -> { assert(0); 2 };
+        E::three -> { assert(0); 3 };
+        E::four -> { assert(0); 4 };
+        E::five -> { assert(0); 5 };
         else -> { assert(1); 6 };
     }
     

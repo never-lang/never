@@ -367,6 +367,7 @@ void expr_delete(expr * value)
         {
             free(value->enumtype.item_id);
         }
+        break;
     case EXPR_ID:
         free(value->id.id);
         break;

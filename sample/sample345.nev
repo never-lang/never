@@ -7,7 +7,7 @@ enum A {
 
 func getA(b : A) -> A
 {
-    var a = A.one;
+    var a = A::one;
 
     a = b;
 
@@ -16,7 +16,7 @@ func getA(b : A) -> A
 
 func main() -> int
 {
-    assert(getA(A.two) == A.two);
+    assert(getA(A::two) == A::two);
     
     0
 }

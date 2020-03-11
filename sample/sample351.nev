@@ -8,32 +8,32 @@ record P {
 
 func testRLC() -> [_] : P
 {
-    [ P(x, y) | x in [ V.one, V.two, V.three ] : V; y in [ V.one, V.two, V.three ] : V ] : P
+    [ P(x, y) | x in [ V::one, V::two, V::three ] : V; y in [ V::one, V::two, V::three ] : V ] : P
 }
 
 func V2str(v : V) -> string
 {
-    var str = "V.unknown";
+    var str = "V::unknown";
 
-    if (v == V.one)
+    if (v == V::one)
     {
-        str = "V.one"
+        str = "V::one"
     }
-    else if (v == V.two)
+    else if (v == V::two)
     {
-        str = "V.two"
+        str = "V::two"
     }
-    else if (v == V.three)
+    else if (v == V::three)
     {
-        str = "V.three"
+        str = "V::three"
     }
-    else if (v == V.four)
+    else if (v == V::four)
     {
-        str = "V.four"
+        str = "V::four"
     }
     else
     {
-        str = "V.unknown"
+        str = "V::unknown"
     };
     
     str

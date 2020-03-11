@@ -30,7 +30,7 @@ enum Foo { Some { value : Goo; }, None }
 
 func main() -> int
 {
-    let a = A.one;
+    let a = A::one;
 
     0
 }
