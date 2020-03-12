@@ -657,8 +657,6 @@ const char * comb_type_str(comb_type type)
         return "float";
     case COMB_TYPE_ENUMTYPE:
         return "enum";
-    case COMB_TYPE_ENUMTYPE_ID:
-        return "enum id";
     case COMB_TYPE_CHAR:
         return "char";
     case COMB_TYPE_STRING:

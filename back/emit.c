@@ -1081,7 +1081,7 @@ int expr_call_emit(expr * value, int stack_level, module * module_value,
     mark = bytecode_add(module_value->code, &bc);
 
     int v = NUM_FRAME_PTRS;
-    if (value->call.params)
+    if (value->call.params != NULL)
     {
         expr_list_emit(value->call.params, stack_level + v, module_value, list_weak, result);
         v += value->call.params->count;
@@ -1104,7 +1104,7 @@ int expr_last_call_emit(expr * value, int stack_level, module * module_value,
     int v = 0;
     bytecode bc = { 0 };
 
-    if (value->call.params)
+    if (value->call.params != NULL)
     {
         expr_list_emit(value->call.params, stack_level + v, module_value, list_weak, result);
         v += value->call.params->count;
@@ -1142,6 +1142,34 @@ int expr_record_emit(expr * value, int stack_level, module * module_value,
     
     bytecode_add(module_value->code, &bc);
     
+    return 0;
+}
+
+int expr_enumtype_record_emit(expr * value, int stack_level, module * module_value,
+                              func_list_weak * list_weak, int * result)
+{
+    int count = 0;
+    unsigned int index = 0;
+    bytecode bc = { 0 };
+
+    assert(value->call.func_expr->type == EXPR_ENUMTYPE);
+    assert(value->call.func_expr->enumtype.id_enumtype_value->type == ENUMTYPE_TYPE_TAGGED);
+    
+    if (value->call.params != NULL)
+    {
+        count = value->call.params->count;
+        expr_list_emit(value->call.params, stack_level, module_value,
+                       list_weak, result);
+    }
+
+    index = value->call.func_expr->enumtype.id_enumerator_value->index;
+    
+    bc.type = BYTECODE_ENUMTYPE_RECORD;
+    bc.enumtype.index = index;
+    bc.enumtype.count = count;
+    
+    bytecode_add(module_value->code, &bc);
+
     return 0;
 }
 
@@ -1576,6 +1604,10 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         if (value->call.func_expr->comb.comb == COMB_TYPE_RECORD_ID)
         {
             expr_record_emit(value, stack_level, module_value, list_weak, result);
+        }
+        else if (value->call.func_expr->comb.comb == COMB_TYPE_ENUMTYPE)
+        {
+            expr_enumtype_record_emit(value, stack_level, module_value, list_weak, result);
         }
         else
         {
@@ -2080,7 +2112,7 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
 
     expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
-    expr_list_emit(value->array_deref.ref, stack_level, module_value, list_weak, result);
+    expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result);
 
     bc.type = BYTECODE_ARRAY_DEREF;
     bc.array_deref.dims = value->array_deref.ref->count;

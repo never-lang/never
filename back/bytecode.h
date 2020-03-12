@@ -147,6 +147,7 @@ typedef enum bytecode_type
     BYTECODE_ARRAY_APPEND,
 
     BYTECODE_RECORD,
+    BYTECODE_ENUMTYPE_RECORD,
     BYTECODE_ATTR,
     BYTECODE_NIL_RECORD_REF,
 
@@ -279,6 +280,11 @@ typedef struct bytecode
         {
             unsigned int index;
         } attr;
+        struct
+        {
+            unsigned int index;
+            unsigned int count;
+        } enumtype;
         struct
         {
             unsigned int count;
@@ -436,6 +442,7 @@ void bytecode_print_array_deref(bytecode * code);
 void bytecode_print_array_append(bytecode * code);
 
 void bytecode_print_record(bytecode * code);
+void bytecode_print_enumtype_record(bytecode * code);
 void bytecode_print_attr(bytecode * code);
 void bytecode_print_nil_record_ref(bytecode * code);
 

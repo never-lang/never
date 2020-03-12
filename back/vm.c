@@ -158,6 +158,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_ARRAY_APPEND, vm_execute_array_append },
 
     { BYTECODE_RECORD, vm_execute_record },
+    { BYTECODE_ENUMTYPE_RECORD, vm_execute_enumtype_record },
     { BYTECODE_ATTR, vm_execute_attr },
     { BYTECODE_NIL_RECORD_REF, vm_execute_nil_record_ref },
 
@@ -2134,6 +2135,11 @@ void vm_execute_record(vm * machine, bytecode * code)
     entry.addr = gc_alloc_vec_ref(machine->collector, addr);
     
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_enumtype_record(vm * machine, bytecode * code)
+{
+    assert(0);
 }
 
 void vm_execute_attr(vm * machine, bytecode * code)

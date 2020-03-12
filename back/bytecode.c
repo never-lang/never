@@ -151,6 +151,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_ARRAY_APPEND, bytecode_print_array_append },
 
     { BYTECODE_RECORD, bytecode_print_record },
+    { BYTECODE_ENUMTYPE_RECORD, bytecode_print_enumtype_record },
     { BYTECODE_ATTR, bytecode_print_attr },
     { BYTECODE_NIL_RECORD_REF, bytecode_print_nil_record_ref },
 
@@ -703,7 +704,12 @@ void bytecode_print_array_append(bytecode * code)
 
 void bytecode_print_record(bytecode * code)
 {
-    printf("%d: record size %u\n", code->addr, code->record.count);
+    printf("%d: record count %u\n", code->addr, code->record.count);
+}
+
+void bytecode_print_enumtype_record(bytecode * code)
+{
+    printf("%d: enumtype record size index %u count %u\n", code->addr, code->enumtype.index, code->enumtype.count);
 }
 
 void bytecode_print_attr(bytecode * code)

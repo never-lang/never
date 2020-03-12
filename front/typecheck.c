@@ -915,8 +915,13 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         }
         else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
         {
-            value->comb.comb = COMB_TYPE_ENUMTYPE_ID;
-            value->comb.comb_enumtype = entry->enumtype_value;
+            /*value->comb.comb = COMB_TYPE_ENUMTYPE;
+            value->comb.comb_enumtype = entry->enumtype_value;*/
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+
+            print_error_msg(value->line_no, "found enum id %s\n",
+                            value->id.id);
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {
@@ -1577,7 +1582,6 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
     case COMB_TYPE_ERR:
     case COMB_TYPE_NIL:
     case COMB_TYPE_RECORD:
-    case COMB_TYPE_ENUMTYPE_ID:
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;

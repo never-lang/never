@@ -79,7 +79,6 @@ typedef enum comb_type
     COMB_TYPE_INT = 4,
     COMB_TYPE_FLOAT = 5,
     COMB_TYPE_ENUMTYPE = 6,
-    COMB_TYPE_ENUMTYPE_ID = 7,
     COMB_TYPE_CHAR = 8,
     COMB_TYPE_STRING = 9,
     COMB_TYPE_ARRAY = 10,

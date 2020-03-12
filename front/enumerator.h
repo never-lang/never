@@ -36,7 +36,7 @@ typedef struct enumerator
     char * id;
     record * record_value;
     char mark;
-    int index;
+    unsigned int index;
     unsigned int line_no;
 } enumerator;
 
