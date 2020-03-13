@@ -277,6 +277,7 @@ typedef struct bytecode
         } record;
         struct
         {
+            int stack_level;
             unsigned int index;
         } attr;
         struct

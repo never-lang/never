@@ -1,5 +1,8 @@
 
 enum Optional { Some { x : int; y : int; }, None }
+enum Optional_S { Some, None }
+
+record Some { x : int; y : int; }
 
 func calc() -> Optional
 {
@@ -12,12 +15,12 @@ func main() -> int
     let c = calc();
     let z = 1000;
 
-    match c
+    match calc()
     {
-        Optional::Some(x, y) -> print(2 + x * y);
-        Optional::None -> print(0);
-    };
+        Optional::Some(x, y) -> print(x + y);
+        Optional::None -> 30;
+    }
     
-    0
+    /* Some(10, 20).y */
 }
 

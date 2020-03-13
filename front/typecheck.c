@@ -2500,7 +2500,7 @@ int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_valu
             enumerator_item_check_type(stab, value, result);
         break;
         case ENUMERATOR_TYPE_RECORD:
-            enumtype_value->type = ENUMTYPE_TYPE_TAGGED;
+            enumtype_value->type = ENUMTYPE_TYPE_INDEXED;
             enumerator_record_check_type(gtab, stab, value, result);
         break;
     }

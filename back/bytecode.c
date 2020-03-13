@@ -708,7 +708,7 @@ void bytecode_print_record(bytecode * code)
 
 void bytecode_print_attr(bytecode * code)
 {
-    printf("%d: attr index %u\n", code->addr, code->attr.index);
+    printf("%d: attr index %d %u\n", code->addr, code->attr.stack_level, code->attr.index);
 }
 
 void bytecode_print_nil_record_ref(bytecode * code)

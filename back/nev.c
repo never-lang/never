@@ -191,7 +191,7 @@ int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
         return 0;
     }
 
-    /* bytecode_array_print(prog->module_value->code_arr,
+    /*bytecode_array_print(prog->module_value->code_arr,
                             prog->module_value->code_size); */
 
     machine = vm_new(vm_mem_size, vm_stack_size);

@@ -2143,8 +2143,10 @@ void vm_execute_record(vm * machine, bytecode * code)
 void vm_execute_attr(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
+    
+    /* printf("execute attr sl %d index %d \n", code->attr.stack_level, code->attr.index); */
 
-    mem_ptr record_ref = machine->stack[machine->sp].addr;
+    mem_ptr record_ref = machine->stack[machine->sp - code->attr.stack_level].addr;
     mem_ptr record_value = gc_get_vec_ref(machine->collector, record_ref);
     if (record_value == nil_ptr)
     {
@@ -2155,6 +2157,9 @@ void vm_execute_attr(vm * machine, bytecode * code)
     
     mem_ptr addr =
         gc_get_vec(machine->collector, record_value, code->attr.index);
+
+    machine->sp++;
+    vm_check_stack(machine);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;

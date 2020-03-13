@@ -30,7 +30,7 @@ typedef struct enumerator_list enumerator_list;
 typedef enum enumtype_type
 {
     ENUMTYPE_TYPE_PLAIN = 1,
-    ENUMTYPE_TYPE_TAGGED = 2
+    ENUMTYPE_TYPE_INDEXED = 2
 } enumtype_type;
 
 typedef struct enumtype
