@@ -209,7 +209,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
         else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
         {
             *result = GENCODE_FAIL;
-            print_error_msg(value->line_no, "founf enum %s, at this stage it is very bad\n",
+            print_error_msg(value->line_no, "found enum %s, at this stage it is very bad\n",
                             value->id.id);
             assert(0);
         }
@@ -273,13 +273,7 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
     entry = symtab_lookup(stab, freevar_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL)
     {
-        if (entry->type == SYMTAB_FUNC && freevar_value->orig.type == FREEVAR_FUNC &&
-            entry->func_value == freevar_value->orig.func_value)
-        {
-            freevar_value->src.type = FREEVAR_FUNC;
-            freevar_value->src.func_value = entry->func_value;
-        }
-        else if (entry->type == SYMTAB_PARAM && freevar_value->orig.type == FREEVAR_PARAM &&
+        if (entry->type == SYMTAB_PARAM && freevar_value->orig.type == FREEVAR_PARAM &&
                  entry->param_value == freevar_value->orig.param_value)
         {
             freevar_value->src.type = FREEVAR_PARAM;
@@ -291,11 +285,23 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
             freevar_value->src.type = FREEVAR_BIND;
             freevar_value->src.bind_value = entry->bind_value;
         }
+        else if (entry->type == SYMTAB_MATCHBIND && freevar_value->orig.type == FREEVAR_MATCHBIND &&
+                 entry->matchbind_value == freevar_value->orig.matchbind_value)
+        {
+            freevar_value->src.type = FREEVAR_MATCHBIND;
+            freevar_value->src.matchbind_value = entry->matchbind_value;
+        }
         else if (entry->type == SYMTAB_QUALIFIER && freevar_value->orig.type == FREEVAR_QUALIFIER &&
                  entry->qualifier_value == freevar_value->orig.qualifier_value)
         {
             freevar_value->src.type = FREEVAR_QUALIFIER;
             freevar_value->src.qualifier_value = entry->qualifier_value;
+        }
+        else if (entry->type == SYMTAB_FUNC && freevar_value->orig.type == FREEVAR_FUNC &&
+            entry->func_value == freevar_value->orig.func_value)
+        {
+            freevar_value->src.type = FREEVAR_FUNC;
+            freevar_value->src.func_value = entry->func_value;
         }
         else
         {

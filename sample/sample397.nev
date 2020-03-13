@@ -23,16 +23,16 @@ enum Optional { Some { r : R; }, None }
 
 func f() -> Optional
 {
-    Optional::Some(R(10))
+    Optional::Some(R(100))
 }
 
 func main() -> int
 {
-    let o = Optional::Some(R(10));
+    let o = Optional::Some(R(100));
 
     match o
     {
-        Optional::Some(r1) -> print(20);
+        Optional::Some(r1) -> print(r1.value);
         Optional::None -> print(10);
     };
         

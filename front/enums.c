@@ -29,7 +29,7 @@ enumtype * enumtype_new(char * id, enumerator_list * enums)
 {
     enumtype * value = (enumtype *)malloc(sizeof(enumtype));
     
-    value->type = ENUMTYPE_TYPE_PLAIN;
+    value->type = ENUMTYPE_TYPE_ITEM;
     value->id = id;
     value->enums = enums;
     value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);

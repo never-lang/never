@@ -1840,8 +1840,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         }
         else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
                  value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
-                 value->left->comb.comb_enumtype == value->right->comb.comb_enumtype &&
-                 value->left->comb.comb_enumtype->type == ENUMTYPE_TYPE_PLAIN)
+                 value->left->comb.comb_enumtype == value->right->comb.comb_enumtype)
         {
             value->comb.comb = COMB_TYPE_INT;
         }
@@ -2500,7 +2499,7 @@ int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_valu
             enumerator_item_check_type(stab, value, result);
         break;
         case ENUMERATOR_TYPE_RECORD:
-            enumtype_value->type = ENUMTYPE_TYPE_INDEXED;
+            enumtype_value->type = ENUMTYPE_TYPE_RECORD;
             enumerator_record_check_type(gtab, stab, value, result);
         break;
     }

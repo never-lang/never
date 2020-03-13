@@ -146,9 +146,6 @@ int func_freevar_id_matchbind_emit(freevar * value, int stack_level,
     
     bytecode_add(module_value->code, &bc);
 
-    /* TODO */
-    assert(0);
-
     return 0;
 }
 
@@ -267,10 +264,6 @@ int expr_id_matchbind_emit(expr * value, int stack_level, module * module_value,
                            int * result)
 {
     bytecode bc = { 0 };
-
-    /*printf("id matchbind sl %d id sl %d index %d \n", stack_level,
-           value->id.id_matchbind_value->stack_level,
-           value->id.id_matchbind_value->index); */
 
     bc.type = BYTECODE_ATTR;
     bc.attr.stack_level = stack_level - value->id.id_matchbind_value->stack_level - 1;
@@ -737,7 +730,15 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     }
     else if (value->comb.comb == COMB_TYPE_ENUMTYPE)
     {
-        bc.type = BYTECODE_OP_ASS_INT;
+        switch (value->comb.comb_enumtype->type)
+        {
+        case ENUMTYPE_TYPE_ITEM:
+            bc.type = BYTECODE_OP_ASS_INT;
+        break;
+        case ENUMTYPE_TYPE_RECORD:
+            bc.type = BYTECODE_OP_ASS_RECORD;
+        break;
+        }
     }
     else if (value->comb.comb == COMB_TYPE_CHAR)
     {
@@ -943,16 +944,13 @@ int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
     bytecode *cond, *condz;
     bytecode *labelN;
 
-    /*printf("item index %d\n", item_value->enumerator_value->index); */
-    /* printf("match item stack level %d\n", stack_level); */
-    
     switch (item_value->enumtype_value->type)
     {
-        case ENUMTYPE_TYPE_PLAIN:
+        case ENUMTYPE_TYPE_ITEM:
             bc.type = BYTECODE_DUP;
             bytecode_add(module_value->code, &bc);
         break;
-        case ENUMTYPE_TYPE_INDEXED:
+        case ENUMTYPE_TYPE_RECORD:
             bc.type = BYTECODE_ATTR;
             bc.attr.stack_level = 0;
             bc.attr.index = 0;
@@ -996,15 +994,13 @@ int expr_match_guard_record_emit(match_guard_record * record_value, bytecode * l
         matchbind_list_set_stack_level(record_value->matchbinds, stack_level - 1);
     }
 
-    /* printf("match record stack level %d\n", stack_level - 1); */
-
     switch (record_value->enumtype_value->type)
     {
-        case ENUMTYPE_TYPE_PLAIN:
+        case ENUMTYPE_TYPE_ITEM:
             bc.type = BYTECODE_DUP;
             bytecode_add(module_value->code, &bc);
         break;
-        case ENUMTYPE_TYPE_INDEXED:
+        case ENUMTYPE_TYPE_RECORD:
             bc.type = BYTECODE_ATTR;
             bc.attr.stack_level = 0;
             bc.attr.index = 0;
@@ -1153,8 +1149,6 @@ int expr_match_emit(expr * value, int stack_level, module * module_value,
     bc.line.no = value->line_no;
     bytecode_add(module_value->code, &bc);
 
-    /* printf("match expr stack_level %d\n", stack_level); */
-
     expr_emit(value->match.expr_value, stack_level, module_value, list_weak, result);
 
     if (value->match.match_guards != NULL)
@@ -1251,7 +1245,7 @@ int expr_enumtype_record_emit(expr * value, int stack_level, module * module_val
     bytecode bc = { 0 };
 
     assert(value->call.func_expr->type == EXPR_ENUMTYPE);
-    assert(value->call.func_expr->enumtype.id_enumtype_value->type == ENUMTYPE_TYPE_INDEXED);
+    assert(value->call.func_expr->enumtype.id_enumtype_value->type == ENUMTYPE_TYPE_RECORD);
     
     if (value->call.params != NULL)
     {
@@ -1269,8 +1263,6 @@ int expr_enumtype_record_emit(expr * value, int stack_level, module * module_val
     bc.record.count = count + 1;
     bytecode_add(module_value->code, &bc);
 
-    /* printf("expr enumtype record index %d stack level %d\n", index, stack_level); */
-    
     return 0;
 }
 
@@ -1511,7 +1503,15 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
                  value->right->comb.comb == COMB_TYPE_ENUMTYPE)
         {
-            bc.type = BYTECODE_OP_EQ_INT;
+            switch (value->left->comb.comb_enumtype->type)
+            {
+            case ENUMTYPE_TYPE_ITEM:
+                bc.type = BYTECODE_OP_EQ_INT;
+            break;
+            case ENUMTYPE_TYPE_RECORD:
+                bc.type = BYTECODE_OP_EQ_ENUMTYPE_RECORD;
+            break;
+            }
         }
         else if (value->left->comb.comb == COMB_TYPE_CHAR &&
                  value->right->comb.comb == COMB_TYPE_CHAR)
@@ -1597,7 +1597,15 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
                  value->right->comb.comb == COMB_TYPE_ENUMTYPE)
         {
-            bc.type = BYTECODE_OP_NEQ_INT;
+            switch (value->left->comb.comb_enumtype->type)
+            {
+            case ENUMTYPE_TYPE_ITEM:
+                bc.type = BYTECODE_OP_NEQ_INT;
+            break;
+            case ENUMTYPE_TYPE_RECORD:
+                bc.type = BYTECODE_OP_NEQ_ENUMTYPE_RECORD;
+            break;
+            }
         }
         else if (value->left->comb.comb == COMB_TYPE_CHAR &&
                  value->right->comb.comb == COMB_TYPE_CHAR)
@@ -2238,10 +2246,8 @@ int expr_enumtype_emit(expr * value, int stack_level, module * module_value, int
     bc.integer.value = index;
     bytecode_add(module_value->code, &bc);
 
-    if (value->enumtype.id_enumtype_value->type == ENUMTYPE_TYPE_INDEXED)
+    if (value->enumtype.id_enumtype_value->type == ENUMTYPE_TYPE_RECORD)
     {
-        /* printf("enumtype indexed %d stack level %d\n", index, stack_level); */
-    
         bc.type = BYTECODE_RECORD;
         bc.record.count = 1;
         bytecode_add(module_value->code, &bc);

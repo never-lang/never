@@ -80,6 +80,9 @@ typedef enum bytecode_type
     BYTECODE_OP_EQ_STRING,
     BYTECODE_OP_NEQ_STRING,
 
+    BYTECODE_OP_EQ_ENUMTYPE_RECORD,
+    BYTECODE_OP_NEQ_ENUMTYPE_RECORD,
+
     BYTECODE_OP_EQ_NIL,
     BYTECODE_OP_EQ_STRING_NIL,
     BYTECODE_OP_EQ_ARRAY_NIL,
@@ -364,6 +367,9 @@ void bytecode_print_op_neq_char(bytecode * code);
 
 void bytecode_print_op_eq_string(bytecode * code);
 void bytecode_print_op_neq_string(bytecode * code);
+
+void bytecode_print_op_eq_enumtype_record(bytecode * code);
+void bytecode_print_op_neq_enumtype_record(bytecode * code);
 
 void bytecode_print_op_eq_nil(bytecode * code);
 

@@ -123,6 +123,11 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard * match_v
     enumtype * enumtype_value = match_value->guard_record.enumtype_value;
     enumerator * enumerator_value = match_value->guard_record.enumerator_value;
 
+    if (matchbinds == NULL || enumtype_value == NULL || enumerator_value == NULL)
+    {
+        return 0;
+    }
+
     if (enumerator_value->record_value->params->count != matchbinds->count)
     {
         *result = TYPECHECK_FAIL;
@@ -219,7 +224,7 @@ int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * res
             print_error_msg(match_value->line_no,
                             "enums are different %s and %s\n",
                             value->comb.comb_enumtype->id,
-                            match_value->guard_item.enumtype_value->id);
+                            match_value->guard_item.enum_id);
             return 0;
         }
     break;
@@ -230,7 +235,7 @@ int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * res
             print_error_msg(match_value->line_no,
                             "enums are different %s and %s\n",
                             value->comb.comb_enumtype->id,
-                            match_value->guard_record.enumtype_value->id);
+                            match_value->guard_record.enum_id);
             return 0;
         }
     break;

@@ -1,23 +1,35 @@
 
-enum Optional { Some { x : int; y : int; }, None }
+enum Optional { O, Some { x : int; y : int; }, None }
 enum Optional_S { Some, None }
 
 record Some { x : int; y : int; }
 
 func calc() -> Optional
 {
-    Optional::Some(10, 1)
+    Optional::Some(10, 2)
 }
 
 func main() -> int
 {
     let V = 10;
-    let c = calc();
+    let c = Optional::None;
     let z = 1000;
 
+    c = calc();
+
+    if (c == Optional::Some)
+    {
+        print(10)
+    }
+    else
+    {
+        print(0)
+    };
+    
     match calc()
     {
-        Optional::Some(x, y) -> print(x + y);
+        Optional::O -> 40;
+        Optional::Some(x, y) -> print(z + x + y);
         Optional::None -> 30;
     }
     

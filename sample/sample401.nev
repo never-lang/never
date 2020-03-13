@@ -1,4 +1,5 @@
 
+enum I { ONE, TWO, THREE }
 enum E { ONE { value : int; }, TWO }
 
 record R
@@ -8,12 +9,15 @@ record R
 
 func main() -> int
 {
-    /*let r = R(E::TWO);
-    
-    r.e = E::ONE(1000); */
+    let a = [ I::ONE, I::TWO, I::THREE ] : I;
+    let b = [ E::ONE(120), E::TWO, E::TWO ] : E;
     let e = E::ONE(1000);
 
-    e.value;
+    match b[0]
+    {
+        E::ONE(value) -> print(value);
+        E::TWO -> print(0);
+    };
 
     0
 }
