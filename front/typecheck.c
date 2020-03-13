@@ -915,8 +915,6 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
         }
         else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
         {
-            /*value->comb.comb = COMB_TYPE_ENUMTYPE;
-            value->comb.comb_enumtype = entry->enumtype_value;*/
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
 
@@ -1554,6 +1552,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
         break;
     case COMB_TYPE_ENUMTYPE:
         if (value->call.func_expr->type == EXPR_ENUMTYPE &&
+            value->call.func_expr->enumtype.id_enumtype_value != NULL &&
             value->call.func_expr->enumtype.id_enumerator_value != NULL &&
             value->call.func_expr->enumtype.id_enumerator_value->type == ENUMERATOR_TYPE_RECORD &&
             value->call.func_expr->enumtype.id_enumerator_value->record_value != NULL &&
@@ -1709,6 +1708,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
             else
             {
                 *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no, "cannot find attribute %s in record %s\n",
                                 value->attr.id, record_value->id);
             }
@@ -1717,6 +1717,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
     else
     {
         *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no, "cannot get record attribute of type %s\n",
                         comb_type_str(value->attr.record_value->comb.comb));
     }
@@ -1839,7 +1840,8 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         }
         else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
                  value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
-                 value->left->comb.comb_enumtype == value->right->comb.comb_enumtype)
+                 value->left->comb.comb_enumtype == value->right->comb.comb_enumtype &&
+                 value->left->comb.comb_enumtype->type == ENUMTYPE_TYPE_PLAIN)
         {
             value->comb.comb = COMB_TYPE_INT;
         }

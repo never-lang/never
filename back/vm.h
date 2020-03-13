@@ -184,7 +184,6 @@ void vm_execute_array_deref(vm * machine, bytecode * code);
 void vm_execute_array_append(vm * machine, bytecode * code);
 
 void vm_execute_record(vm * machine, bytecode * code);
-void vm_execute_enumtype_record(vm * machine, bytecode * code);
 void vm_execute_attr(vm * machine, bytecode * code);
 void vm_execute_nil_record_ref(vm * machine, bytecode * code);
 

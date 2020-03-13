@@ -208,10 +208,10 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
         }
         else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
         {
-            enumtype * enumtype_value = entry->enumtype_value;
-
-            value->id.id_type_value = ID_TYPE_ENUMTYPE;
-            value->id.id_enumtype_value = enumtype_value;
+            *result = GENCODE_FAIL;
+            print_error_msg(value->line_no, "founf enum %s, at this stage it is very bad\n",
+                            value->id.id);
+            assert(0);
         }
         else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
         {

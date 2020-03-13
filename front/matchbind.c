@@ -133,3 +133,19 @@ void matchbind_list_add_end(matchbind_list * list, matchbind * value)
     }
 }
 
+void matchbind_list_set_stack_level(matchbind_list * list, int stack_level)
+{
+    matchbind_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        matchbind * value = node->value;
+        if (value != NULL)
+        {
+            value->stack_level = stack_level;
+        }
+        node = node->next;
+    }
+}
+
+

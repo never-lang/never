@@ -1,5 +1,5 @@
 
-enum Optional { Some { value : int; s : int; }, None }
+enum Optional { Some { x : int; y : int; }, None }
 
 func calc() -> Optional
 {
@@ -10,10 +10,11 @@ func main() -> int
 {
     let V = 10;
     let c = calc();
+    let z = 1000;
 
     match c
     {
-        Optional::Some(x, v) -> print(2 * x + v + V);
+        Optional::Some(x, y) -> print(2 + x * y);
         Optional::None -> print(0);
     };
     

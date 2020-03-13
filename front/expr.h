@@ -98,8 +98,7 @@ typedef enum id_type
     ID_TYPE_FUNC_TOP = 6,
     ID_TYPE_FUNC = 7,
     ID_TYPE_FUNC_NEST = 8,
-    ID_TYPE_RECORD = 9,
-    ID_TYPE_ENUMTYPE = 10
+    ID_TYPE_RECORD = 9
 } id_type;
 
 typedef struct array array;

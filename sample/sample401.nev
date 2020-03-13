@@ -11,7 +11,9 @@ func main() -> int
     /*let r = R(E::TWO);
     
     r.e = E::ONE(1000); */
-    E::ONE(1000);
+    let e = E::ONE(1000);
+
+    e.value;
 
     0
 }

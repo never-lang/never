@@ -33,6 +33,7 @@ enum
 };
 
 typedef struct match_guard_item match_guard_item;
+typedef struct match_guard_record match_guard_record;
 typedef struct match_guard_else match_guard_else;
 typedef struct match_guard match_guard;
 typedef struct match_guard_list match_guard_list;
@@ -51,6 +52,8 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
                                module * module_value, int * result);
 int func_freevar_id_bind_emit(freevar * value, int stack_level,
                               module * module_value, int * result);
+int func_freevar_id_matchbind_emit(freevar * value, int stack_level, 
+                                   module * module_value, int * result);
 int func_freevar_emit(freevar * value, int stack_level, module * module_value,
                       int * result);
 int func_freevar_list_emit(freevar_list * freevars, int stack_level,
@@ -101,6 +104,9 @@ int expr_for_emit(expr * value, int stack_level, module * module_value,
 int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
                                int stack_level, module * module_value,
                                func_list_weak * list_weak, int * result);
+int expr_match_guard_record_emit(match_guard_record * record_value, bytecode *label,
+                                 int stack_level, module * module_value,
+                                 func_list_weak * list_weak, int * result);
 int expr_match_guard_else_emit(match_guard_else * else_value, bytecode * label,
                                int stack_level, module * module_value,
                                func_list_weak * list_weak, int * result);

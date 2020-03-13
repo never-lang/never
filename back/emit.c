@@ -135,6 +135,23 @@ int func_freevar_id_bind_emit(freevar * value, int stack_level,
     return 0;
 }
 
+int func_freevar_id_matchbind_emit(freevar * value, int stack_level, 
+                                   module * module_value, int * result)
+{
+    bytecode bc = { 0 };
+    
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level;
+    bc.id_local.index = value->src.matchbind_value->index;
+    
+    bytecode_add(module_value->code, &bc);
+
+    /* TODO */
+    assert(0);
+
+    return 0;
+}
+
 int func_freevar_id_qualifier_emit(freevar * value, int stack_level,
                                    module * module_value, int * result)
 {
@@ -163,11 +180,14 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
     case FREEVAR_PARAM:
         func_freevar_id_local_emit(value, stack_level, module_value, result);
         break;
-    case FREEVAR_QUALIFIER:
-        func_freevar_id_qualifier_emit(value, stack_level, module_value, result);
-        break;
     case FREEVAR_BIND:
         func_freevar_id_bind_emit(value, stack_level, module_value, result);
+        break;
+    case FREEVAR_MATCHBIND:
+        func_freevar_id_matchbind_emit(value, stack_level, module_value, result);
+        break;
+    case FREEVAR_QUALIFIER:
+        func_freevar_id_qualifier_emit(value, stack_level, module_value, result);
         break;
     case FREEVAR_FREEVAR:
         bc.type = BYTECODE_ID_GLOBAL;
@@ -242,6 +262,28 @@ int expr_id_bind_emit(expr * value, int stack_level, module * module_value,
 
     return 0;
 }
+
+int expr_id_matchbind_emit(expr * value, int stack_level, module * module_value,
+                           int * result)
+{
+#if 0
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level;
+    bc.id_local.index = value->id.id_matchbind_value->index;
+
+    bytecode_add(module_value->code, &bc);
+
+    /* TODO */
+    assert(0);
+#endif
+    printf("id matchbind sl %d id sl %d index %d \n", stack_level,
+           value->id.id_matchbind_value->stack_level,
+           value->id.id_matchbind_value->index);
+
+    return 0;
+}        
 
 int expr_id_global_emit(expr * value, int stack_value, module * module_value,
                         int * result)
@@ -320,6 +362,9 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
     case ID_TYPE_BIND:
         expr_id_bind_emit(value, stack_level, module_value, result);
         break;
+    case ID_TYPE_MATCHBIND:
+        expr_id_matchbind_emit(value, stack_level, module_value, result);
+        break;
     case ID_TYPE_QUALIFIER:
         expr_id_qualifier_emit(value, stack_level, module_value, result);
         break;        
@@ -346,9 +391,6 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
         break;
     case ID_TYPE_RECORD:
         expr_nil_emit(value, stack_level, module_value, result);
-        break;
-    case ID_TYPE_ENUMTYPE:
-        assert(0);
         break;
     }
     return 0;
@@ -920,12 +962,6 @@ int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
     bc.type = BYTECODE_JUMPZ;
     condz = bytecode_add(module_value->code, &bc);
 
-    /* pop previous value of stack */
-    bc.type = BYTECODE_SLIDE;
-    bc.slide.m = 0;
-    bc.slide.q = 1;            
-    bytecode_add(module_value->code, &bc);
-
     expr_emit(item_value->expr_value, stack_level, module_value, list_weak, result);
 
     bc.type = BYTECODE_JUMP;
@@ -939,18 +975,30 @@ int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
     return 0;
 }
 
+int expr_match_guard_record_emit(match_guard_record * record_value, bytecode * label,
+                                 int stack_level, module * module_value,
+                                 func_list_weak * list_weak, int * result)
+{
+    if (record_value->matchbinds != NULL)
+    {
+        matchbind_list_set_stack_level(record_value->matchbinds, stack_level);
+    }
+
+    expr_emit(record_value->expr_value, stack_level, module_value, list_weak, result);
+#if 0
+    assert(0);
+    /* TODO */
+#endif
+
+    return 0;
+}
+
 int expr_match_guard_else_emit(match_guard_else * else_value, bytecode * label,
                                int stack_level, module * module_value,
                                func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
     bytecode *cond;
-
-    /* pop previous value of stack */
-    bc.type = BYTECODE_SLIDE;
-    bc.slide.m = 0;
-    bc.slide.q = 1;            
-    bytecode_add(module_value->code, &bc);
 
     expr_emit(else_value->expr_value, stack_level, module_value, list_weak, result);
 
@@ -960,32 +1008,6 @@ int expr_match_guard_else_emit(match_guard_else * else_value, bytecode * label,
 
     return 0;
 }                                                    
-
-int expr_match_guard_emit(match_guard * match_value, bytecode * label,
-                          int stack_level,
-                          module * module_value, func_list_weak * list_weak,
-                          int * result)
-{
-    switch (match_value->type)
-    {
-        case MATCH_GUARD_ITEM:
-            expr_match_guard_item_emit(&match_value->guard_item, label,
-                                       stack_level, module_value, list_weak,
-                                       result);
-        break;
-        case MATCH_GUARD_RECORD:
-            /* TODO */
-            assert(0);
-        break;
-        case MATCH_GUARD_ELSE:
-            expr_match_guard_else_emit(&match_value->guard_else, label,
-                                       stack_level, module_value, list_weak,
-                                       result);
-        break;
-    }
-
-    return 0;
-}                          
 
 /**
  * match.expr_value
@@ -1007,6 +1029,33 @@ int expr_match_guard_emit(match_guard * match_value, bytecode * label,
  *        jump labelB
  * :labelE
  */
+int expr_match_guard_emit(match_guard * match_value, bytecode * label,
+                          int stack_level,
+                          module * module_value, func_list_weak * list_weak,
+                          int * result)
+{
+    switch (match_value->type)
+    {
+        case MATCH_GUARD_ITEM:
+            expr_match_guard_item_emit(&match_value->guard_item, label,
+                                       stack_level, module_value, list_weak,
+                                       result);
+        break;
+        case MATCH_GUARD_RECORD:
+            expr_match_guard_record_emit(&match_value->guard_record, label,
+                                         stack_level, module_value, list_weak,
+                                         result);
+        break;
+        case MATCH_GUARD_ELSE:
+            expr_match_guard_else_emit(&match_value->guard_else, label,
+                                       stack_level, module_value, list_weak,
+                                       result);
+        break;
+    }
+
+    return 0;
+}                          
+
 int expr_match_guard_list_emit(match_guard_list * list, int stack_level,
                                module * module_value, func_list_weak * list_weak,
                                int * result)
@@ -1020,6 +1069,12 @@ int expr_match_guard_list_emit(match_guard_list * list, int stack_level,
 
     bc.type = BYTECODE_LABEL;
     labelB = bytecode_add(module_value->code, &bc);
+
+    /* pop previous value of stack */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 1;
+    bc.slide.q = 1;            
+    bytecode_add(module_value->code, &bc);
     
     bc.type = BYTECODE_JUMP;
     condE = bytecode_add(module_value->code, &bc);
@@ -1060,7 +1115,7 @@ int expr_match_emit(expr * value, int stack_level, module * module_value,
 
     if (value->match.match_guards != NULL)
     {
-        expr_match_guard_list_emit(value->match.match_guards, stack_level,
+        expr_match_guard_list_emit(value->match.match_guards, stack_level + 1,
                                    module_value, list_weak, result);
     }
 
@@ -1163,11 +1218,12 @@ int expr_enumtype_record_emit(expr * value, int stack_level, module * module_val
     }
 
     index = value->call.func_expr->enumtype.id_enumerator_value->index;
-    
-    bc.type = BYTECODE_ENUMTYPE_RECORD;
-    bc.enumtype.index = index;
-    bc.enumtype.count = count;
-    
+    bc.type = BYTECODE_INT;
+    bc.integer.value = index;
+    bytecode_add(module_value->code, &bc);
+        
+    bc.type = BYTECODE_RECORD;
+    bc.record.count = count + 1;
     bytecode_add(module_value->code, &bc);
 
     return 0;
