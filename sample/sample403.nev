@@ -1,0 +1,23 @@
+
+enum OP { ADD { x : int; y : int; }, MUL { x : int; y : int; } }
+
+func get_func(o : OP) -> () -> () -> int
+{
+    match o
+    {
+        OP::ADD(x, y) -> let func () -> () -> int { let func() -> int { x + y } };
+        OP::MUL(x, y) -> let func () -> () -> int { let func() -> int { x * y } };
+    }
+}
+
+func main() -> int
+{
+    let o = OP::MUL(10, 20);
+    let f = get_func(o);
+    
+    print(f()());
+    
+    0
+}
+
+

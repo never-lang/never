@@ -12,7 +12,7 @@ func get_func(o : OP) -> () -> int
 
 func main() -> int
 {
-    let o = OP::ADD(10, 20);
+    let o = OP::MUL(10, 20);
     let f = get_func(o);
     
     print(f());

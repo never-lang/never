@@ -140,9 +140,9 @@ int func_freevar_id_matchbind_emit(freevar * value, int stack_level,
 {
     bytecode bc = { 0 };
     
-    bc.type = BYTECODE_ID_LOCAL;
-    bc.id_local.stack_level = stack_level;
-    bc.id_local.index = value->src.matchbind_value->index;
+    bc.type = BYTECODE_ATTR;
+    bc.attr.stack_level = stack_level - value->src.matchbind_value->stack_level - 1;
+    bc.attr.index = value->src.matchbind_value->index + 1;
     
     bytecode_add(module_value->code, &bc);
 
