@@ -1559,6 +1559,8 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
             param_expr_list_cmp(value->call.func_expr->enumtype.id_enumerator_value->record_value->params,
                                 value->call.params) == TYPECHECK_SUCC)
         {
+            value->call.func_expr->enumtype.called = 1;
+
             value->comb.comb = COMB_TYPE_ENUMTYPE;
             value->comb.comb_enumtype = value->call.func_expr->comb.comb_enumtype;
         }
@@ -1840,7 +1842,8 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         }
         else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
                  value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
-                 value->left->comb.comb_enumtype == value->right->comb.comb_enumtype)
+                 value->left->comb.comb_enumtype == value->right->comb.comb_enumtype &&
+                 value->left->comb.comb_enumtype->type == ENUMTYPE_TYPE_ITEM)
         {
             value->comb.comb = COMB_TYPE_INT;
         }

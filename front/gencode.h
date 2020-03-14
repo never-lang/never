@@ -35,6 +35,8 @@ enum
 typedef struct match_guard match_guard;
 typedef struct match_guard_list match_guard_list;
 
+int expr_enumtype_check_call(func * func_value, symtab * stab, expr * value, int * result);
+
 int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * tab,
                     expr * value, int * result);
 
@@ -46,9 +48,6 @@ int func_gencode_freevars_match_guard_list(func * func_value, symtab * stab,
                                            match_guard_list * list, int * result);
 int func_gencode_freevars_match_expr(func * func_value, symtab * stab,
                                      expr * value, int * result);
-int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result);
-int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
-                                    int * result);
 int func_gencode_freevars_qualifier(func * func_value, symtab * stab,
                                     qualifier * value, int * result);
 int func_gencode_freevars_qualifier_list(func * func_value, symtab * stab,
@@ -74,5 +73,9 @@ int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_
 int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list * list,
                                     int * result);
 int func_gencode_freevars(func * func_value, symtab * stab, int * result);
+int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result);
+int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
+                                    int * result);
 
 #endif /* __GENCODE_H__ */
+

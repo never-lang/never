@@ -16,15 +16,6 @@ func main() -> int
     let z = 1000;
 
     c = calc();
-
-    if (c == Optional::Some)
-    {
-        print(10)
-    }
-    else
-    {
-        print(0)
-    };
     
     match calc()
     {

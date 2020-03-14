@@ -136,6 +136,7 @@ typedef struct expr
         char * string_value; /* EXPR_STRING */
         struct
         {
+            char called;
             char * enum_id;
             char * item_id;
             enumerator * id_enumerator_value;

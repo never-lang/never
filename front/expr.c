@@ -81,6 +81,7 @@ expr * expr_new_enumtype(char * enum_id, char * item_id)
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_ENUMTYPE;
+    ret->enumtype.called = 0;
     ret->enumtype.enum_id = enum_id;
     ret->enumtype.item_id = item_id;
     ret->enumtype.id_enumerator_value = NULL;

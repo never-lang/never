@@ -27,6 +27,20 @@
 #include <assert.h>
 #include <stdio.h>
 
+int expr_enumtype_check_call(func * func_value, symtab * stab, expr * value, int * result)
+{
+    if (value->enumtype.id_enumerator_value != NULL &&
+        value->enumtype.id_enumerator_value->type == ENUMERATOR_TYPE_RECORD &&
+        value->enumtype.called == 0)
+    {
+        *result = GENCODE_FAIL;
+        print_error_msg(value->line_no, "enum type record %s::%s not constructed\n",
+                        value->enumtype.enum_id, value->enumtype.item_id);
+    }
+    
+    return 0;
+}        
+
 /**
  * free variables
  */
@@ -365,153 +379,6 @@ int func_gencode_freevars_match_expr(func * func_value, symtab * stab,
     return 0;
 }
 
-int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result)
-{
-    switch (value->type)
-    {
-    case EXPR_INT:
-    case EXPR_FLOAT:
-    case EXPR_CHAR:
-    case EXPR_STRING:
-    case EXPR_ID:
-    case EXPR_ENUMTYPE:
-    case EXPR_NIL:
-        /* not possible */
-        break;
-    case EXPR_NEG:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_ADD:
-    case EXPR_SUB:
-    case EXPR_MUL:
-    case EXPR_DIV:
-    case EXPR_MOD:
-    case EXPR_LT:
-    case EXPR_GT:
-    case EXPR_LTE:
-    case EXPR_GTE:
-    case EXPR_EQ:
-    case EXPR_NEQ:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
-        break;
-    case EXPR_AND:
-    case EXPR_OR:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
-        break;
-    case EXPR_NOT:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_SUP:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_COND:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->middle, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
-        break;
-    case EXPR_ARRAY:
-        if (value->array.array_value != NULL)
-        {
-            func_gencode_freevars_array(func_value, stab, value->array.array_value, result);
-        }
-        break;
-    case EXPR_ARRAY_DEREF:
-        func_gencode_freevars_expr(func_value, stab, value->array_deref.array_expr,
-                                   result);
-        if (value->array_deref.ref != NULL)
-        {
-            func_gencode_freevars_expr_list(func_value, stab, value->array_deref.ref,
-                                            result);
-        }
-        break;
-    case EXPR_CALL:
-    case EXPR_LAST_CALL:
-        func_gencode_freevars_expr(func_value, stab, value->call.func_expr, result);
-        if (value->call.params)
-        {
-            func_gencode_freevars_expr_list(func_value, stab, value->call.params,
-                                            result);
-        }
-        break;
-    case EXPR_FUNC:
-        if (value->func_value)
-        {
-            func_gencode_freevars_func(func_value, stab, value->func_value, result);
-        }
-        break;
-    case EXPR_SEQ:
-        if (value->seq.list != NULL)
-        {
-            func_gencode_freevars_expr_list(func_value, stab, value->seq.list,
-                                            result);
-        }
-        break;
-    case EXPR_ASS:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
-        break;
-    case EXPR_WHILE:
-    case EXPR_DO_WHILE:
-        func_gencode_freevars_expr(func_value, stab, value->whileloop.cond, result);
-        func_gencode_freevars_expr(func_value, stab, value->whileloop.do_value, result);
-        break;
-    case EXPR_FOR:
-        func_gencode_freevars_expr(func_value, stab, value->forloop.init, result);
-        func_gencode_freevars_expr(func_value, stab, value->forloop.cond, result);
-        func_gencode_freevars_expr(func_value, stab, value->forloop.incr, result);
-        func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
-        break;
-    case EXPR_MATCH:
-        func_gencode_freevars_match_expr(func_value, stab, value, result);
-        break;
-    case EXPR_BUILD_IN:
-        if (value->func_build_in.param != NULL)
-        {
-            func_gencode_freevars_expr_list(func_value, stab, value->func_build_in.param,
-                                            result);
-        }
-        break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_LISTCOMP:
-        if (value->listcomp_value != NULL)
-        {
-            func_gencode_freevars_listcomp(func_value, value->listcomp_value->stab,
-                                           value->listcomp_value, result);
-        }
-        break;
-    case EXPR_ATTR:
-        if (value->attr.record_value != NULL)
-        {
-            func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
-        }
-        break;
-    }
-
-    return 0;
-}
-
-int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
-                                    int * result)
-{
-    expr_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        expr * value = node->value;
-        if (value != NULL)
-        {
-            func_gencode_freevars_expr(func_value, stab, value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
 int func_gencode_freevars_qualifier(func * func_value, symtab * stab,
                                     qualifier * value, int * result)
 {
@@ -720,4 +587,152 @@ int func_gencode_freevars(func * func_value, symtab * stab, int * result)
     return 0;
 }
 
+int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,
+                                    int * result)
+{
+    expr_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        expr * value = node->value;
+        if (value != NULL)
+        {
+            func_gencode_freevars_expr(func_value, stab, value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result)
+{
+    switch (value->type)
+    {
+    case EXPR_INT:
+    case EXPR_FLOAT:
+    case EXPR_CHAR:
+    case EXPR_STRING:
+    case EXPR_ID:
+    case EXPR_NIL:
+        /* not possible */
+        break;
+    case EXPR_ENUMTYPE:
+        expr_enumtype_check_call(func_value, stab, value, result);
+        break;
+    case EXPR_NEG:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        break;
+    case EXPR_ADD:
+    case EXPR_SUB:
+    case EXPR_MUL:
+    case EXPR_DIV:
+    case EXPR_MOD:
+    case EXPR_LT:
+    case EXPR_GT:
+    case EXPR_LTE:
+    case EXPR_GTE:
+    case EXPR_EQ:
+    case EXPR_NEQ:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
+        break;
+    case EXPR_AND:
+    case EXPR_OR:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
+        break;
+    case EXPR_NOT:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        break;
+    case EXPR_SUP:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        break;
+    case EXPR_COND:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->middle, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
+        break;
+    case EXPR_ARRAY:
+        if (value->array.array_value != NULL)
+        {
+            func_gencode_freevars_array(func_value, stab, value->array.array_value, result);
+        }
+        break;
+    case EXPR_ARRAY_DEREF:
+        func_gencode_freevars_expr(func_value, stab, value->array_deref.array_expr,
+                                   result);
+        if (value->array_deref.ref != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->array_deref.ref,
+                                            result);
+        }
+        break;
+    case EXPR_CALL:
+    case EXPR_LAST_CALL:
+        func_gencode_freevars_expr(func_value, stab, value->call.func_expr, result);
+        if (value->call.params)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->call.params,
+                                            result);
+        }
+        break;
+    case EXPR_FUNC:
+        if (value->func_value)
+        {
+            func_gencode_freevars_func(func_value, stab, value->func_value, result);
+        }
+        break;
+    case EXPR_SEQ:
+        if (value->seq.list != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->seq.list,
+                                            result);
+        }
+        break;
+    case EXPR_ASS:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
+        break;
+    case EXPR_WHILE:
+    case EXPR_DO_WHILE:
+        func_gencode_freevars_expr(func_value, stab, value->whileloop.cond, result);
+        func_gencode_freevars_expr(func_value, stab, value->whileloop.do_value, result);
+        break;
+    case EXPR_FOR:
+        func_gencode_freevars_expr(func_value, stab, value->forloop.init, result);
+        func_gencode_freevars_expr(func_value, stab, value->forloop.cond, result);
+        func_gencode_freevars_expr(func_value, stab, value->forloop.incr, result);
+        func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
+        break;
+    case EXPR_MATCH:
+        func_gencode_freevars_match_expr(func_value, stab, value, result);
+        break;
+    case EXPR_BUILD_IN:
+        if (value->func_build_in.param != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->func_build_in.param,
+                                            result);
+        }
+        break;
+    case EXPR_INT_TO_FLOAT:
+    case EXPR_FLOAT_TO_INT:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        break;
+    case EXPR_LISTCOMP:
+        if (value->listcomp_value != NULL)
+        {
+            func_gencode_freevars_listcomp(func_value, value->listcomp_value->stab,
+                                           value->listcomp_value, result);
+        }
+        break;
+    case EXPR_ATTR:
+        if (value->attr.record_value != NULL)
+        {
+            func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
+        }
+        break;
+    }
+
+    return 0;
+}
 

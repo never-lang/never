@@ -128,6 +128,22 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard * match_v
         return 0;
     }
 
+    if ((enumerator_value->record_value == NULL ||
+         enumerator_value->record_value->params == NULL) && matchbinds->count == 0)
+    {
+        return 0;
+    }
+    else if ((enumerator_value->record_value == NULL ||
+              enumerator_value->record_value->params == NULL) && matchbinds->count > 0)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(match_value->line_no, "enum record %s.%s takes no params while guard has %d\n",
+                        match_value->guard_record.enum_id,
+                        match_value->guard_record.item_id,
+                        matchbinds->count);
+        return 0;
+    }
+
     if (enumerator_value->record_value->params->count != matchbinds->count)
     {
         *result = TYPECHECK_FAIL;
@@ -248,8 +264,6 @@ int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * res
 
 int expr_match_guard_list_left_cmp(expr * value, match_guard_list * list, int * result)
 {
-    match_guard_list_node * node = list->tail;
-
     if (value->comb.comb != COMB_TYPE_ENUMTYPE)
     {
         *result = TYPECHECK_FAIL;
@@ -258,6 +272,7 @@ int expr_match_guard_list_left_cmp(expr * value, match_guard_list * list, int * 
         return 0;
     }
 
+    match_guard_list_node * node = list->tail;
     while (node != NULL)
     {
         match_guard * match_value = node->value;
