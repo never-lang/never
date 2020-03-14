@@ -17,6 +17,15 @@ func main() -> int
 
     c = calc();
     
+    if let Optional::Some = c
+    {
+        10
+    }
+    else
+    {
+        0
+    };
+    
     match calc()
     {
         Optional::O -> 40;

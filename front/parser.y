@@ -305,6 +305,14 @@ expr: TOK_IF '(' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
     $$->line_no = $<line_no>1;
 };
 
+expr: TOK_IF TOK_LET TOK_ID TOK_DDOT TOK_ID '=' expr
+{
+};
+
+expr: TOK_IF TOK_LET TOK_ID TOK_DDOT TOK_ID '(' param_list ')' '=' expr
+{
+};
+
 expr: array
 {
     $$ = expr_new_array($1);
