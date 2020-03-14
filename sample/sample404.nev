@@ -1,0 +1,20 @@
+
+enum E { ONE { x : int; y : int; }, TWO }
+
+
+func main() -> int
+{
+    let e = {[ 10 ]} : E;
+    
+    e[0] = E::ONE(10, 20);
+    e[1] = E::TWO;
+    
+    match e[0]
+    {
+        E::ONE(x, y) -> prints("E::ONE(" + x + "," + y + ")\n");
+        E::TWO -> prints("E::TWO\n");
+    };
+    
+    0
+}
+

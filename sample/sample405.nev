@@ -1,0 +1,26 @@
+
+enum Result { Ok { value : int; }, Err { msg : string; } }
+
+func div(n : int, d : int) -> Result
+{
+    if (d != 0)
+    {
+        Result::Ok(n / d)
+    }
+    else
+    {
+        Result::Err("division by zero")
+    }
+}
+
+func main() -> int
+{
+    match div(10, 0)
+    {
+        Result::Ok(value) -> print(value);
+        Result::Err(msg) -> { prints(msg + "\n"); 0 };
+    };
+
+    0
+}
+

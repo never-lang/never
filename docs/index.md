@@ -885,6 +885,88 @@ The above example shows ```Tree``` record which holds value, references to
 other records and function. In the ```main``` three records are initialized.
 and then function ```print``` is used to recursively print the tree.
 
+## Enumerated Records
+
+Enum type can also hold one of possible record values. Such type lets to define
+convenient optional values, error codes or recursive data types.
+
+```swift
+enum Optional { Some { value : int; }, None }
+
+func calc() -> Optional
+{
+    Optional::Some(10)
+}
+
+func main() -> int
+{
+    match calc()
+    {
+        Optional::Some(value) -> print(value);
+        Optional::None -> print(0);
+    };
+    
+    0
+}
+```
+
+```swift
+enum Result { Ok { value : int; }, Err { msg : string; } }
+
+func div(n : int, d : int) -> Result
+{
+    if (d != 0)
+    {
+        Result::Ok(n / d)
+    }
+    else
+    {
+        Result::Err("division by zero")
+    }
+}
+
+func main() -> int
+{
+    match div(10, 0)
+    {
+        Result::Ok(value) -> print(value);
+        Result::Err(msg) -> { prints(msg + "\n"); 0 };
+    };
+
+    0
+}
+```
+
+```swift
+enum Tree { Node { value : int; left : Tree; right : Tree; }, None }
+
+func printTree(tree : Tree) -> int
+{
+    match (tree)
+    {
+        Tree::Node(value, left, right) -> { 
+                                              printTree(left);
+                                              print(value);
+                                              printTree(right); 
+                                              0 
+                                          };
+        Tree::None -> 0;
+    }
+}
+
+func main() -> int
+{
+    let tree = Tree::Node(40, 
+                  Tree::Node(20, Tree::None,
+                      Tree::Node(30, Tree::None, Tree::None)),
+                  Tree::Node(60, Tree::None, Tree::None));
+
+    printTree(tree);
+
+    0
+}
+```
+
 ## Mathematical Functions
 Never supports a few built-in mathematical functions - ```sin(x)```,
 ```cos(x)```, ```tan(x)```, ```exp(x)```, ```log(x)```, ```sqrt(x)```

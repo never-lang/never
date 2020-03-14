@@ -483,6 +483,14 @@ void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
     collector->mem[addr].object_value->vec_value->value[vec_index] = value;
 }
 
+unsigned int gc_get_vec_size(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_VEC);
+    
+    return collector->mem[addr].object_value->vec_value->size;
+}
+
 mem_ptr gc_get_vec_ref(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);

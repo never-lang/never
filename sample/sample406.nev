@@ -1,0 +1,24 @@
+
+enum Tree { Node { value : int; left : Tree; right : Tree; }, None }
+
+func printTree(tree : Tree) -> int
+{
+    match (tree)
+    {
+        Tree::Node(value, left, right) -> { printTree(left); print(value); printTree(right); 0 };
+        Tree::None -> 0;
+    }
+}
+
+func main() -> int
+{
+    let tree = Tree::Node(40, 
+                  Tree::Node(20, Tree::None,
+                      Tree::Node(30, Tree::None, Tree::None)),
+                  Tree::Node(60, Tree::None, Tree::None));
+
+    printTree(tree);
+
+    0
+}
+

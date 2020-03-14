@@ -2102,7 +2102,15 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     }
     else if (array_value->ret->type == PARAM_ENUMTYPE)
     {
-        bc.type = BYTECODE_MK_ARRAY_INT;
+        switch (array_value->ret->enumtype_value->type)
+        {
+            case ENUMTYPE_TYPE_ITEM:
+                bc.type = BYTECODE_MK_ARRAY_INT;
+            break;
+            case ENUMTYPE_TYPE_RECORD:
+                bc.type = BYTECODE_MK_ARRAY_RECORD;
+            break;
+        }
     }
     else if (array_value->ret->type == PARAM_ARRAY)
     {

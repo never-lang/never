@@ -1,0 +1,19 @@
+
+enum Optional { Some { value : int; }, None }
+
+func rec(o : Optional) -> int
+{
+    match o
+    {
+        Optional::Some(value) -> value > 0 ? { print(value); rec(Optional::Some(value - 1)) } : 0;
+        Optional::None -> 0;
+    }
+}
+
+func main() -> int
+{
+    rec(Optional::Some(10));
+    
+    0
+}
+

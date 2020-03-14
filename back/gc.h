@@ -110,6 +110,7 @@ void gc_set_string_ref(gc * collector, mem_ptr addr, mem_ptr string_ref);
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
 void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,
                 mem_ptr value);
+unsigned int gc_get_vec_size(gc * collector, mem_ptr addr);
 mem_ptr gc_get_vec_ref(gc * collector, mem_ptr addr);
 mem_ptr gc_set_vec_ref(gc * collector, mem_ptr addr, mem_ptr vec_ref);
 

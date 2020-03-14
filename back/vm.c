@@ -2236,6 +2236,15 @@ void vm_execute_attr(vm * machine, bytecode * code)
         return;
     }
     
+    unsigned int size = gc_get_vec_size(machine->collector, record_value);
+    if (code->attr.index >= size)
+    {
+        print_error_msg(machine->line_no, "attribute index out of bounds\n");
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_INDEX_OOB;
+        return;
+    }
+    
     mem_ptr addr =
         gc_get_vec(machine->collector, record_value, code->attr.index);
 
