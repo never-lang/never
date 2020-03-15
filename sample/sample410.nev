@@ -1,0 +1,54 @@
+
+enum Optional_Array { Some { array[D] : int; }, None }
+
+func array_print(array[D] : int) -> int
+{
+    let i = 0;
+    
+    for (i = 0; i < D; i = i + 1)
+    {
+        print(array[i])
+    };
+    
+    0
+}
+
+func optional_array_new(len : int) -> Optional_Array
+{
+    let i = 0;
+    let arr = [ 0 ] : int;
+
+    if (len < 10)
+    {
+        arr = {[ len ]} : int;
+    
+        for (i = 0; i < len; i = i + 1)
+        {
+            arr[i] = 2 * i
+        };
+    
+        Optional_Array::Some(arr)
+    }
+    else
+    {
+        Optional_Array::None
+    }
+}
+
+func optional_array_print(array : Optional_Array) -> int
+{
+    match array
+    {
+        Optional_Array::Some(array) -> array_print(array);
+        Optional_Array::None -> { prints("array too large\n"); 0 };
+    }
+}
+
+func main() -> int
+{
+    optional_array_print(optional_array_new(5));
+    optional_array_print(optional_array_new(20));
+    
+    0
+}
+

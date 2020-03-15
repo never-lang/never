@@ -1,0 +1,25 @@
+
+record Rect { width : int; height : int; }
+
+enum Optional_Rect { Some { rect : Rect; }, None }
+
+func print_rect(rect : Optional_Rect) -> string
+{
+    match rect
+    {
+        Optional_Rect::Some(rect) -> prints("width " + rect.width + " height " + rect.height + "\n");
+        Optional_Rect::None -> prints("unknown rect\n");
+    }
+}
+
+func main() -> int
+{
+    let r1 = Optional_Rect::Some(Rect(100, 200));
+    let r2 = Optional_Rect::None;
+    
+    print_rect(r1);
+    print_rect(r2);
+    
+    0
+}
+

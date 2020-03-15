@@ -157,7 +157,7 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard * match_v
 
     if (match_value->guard_record.stab == NULL)
     {
-        match_value->guard_record.stab = symtab_new(8, SYMTAB_TYPE_BLOCK, tab);
+        match_value->guard_record.stab = symtab_new(8, SYMTAB_TYPE_FUNC, tab);
     }
 
     matchbind_list_node * matchbind_node = matchbinds->tail;

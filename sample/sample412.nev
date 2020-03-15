@@ -1,0 +1,34 @@
+
+enum Optional_Func { Some { f(int) -> int; }, None }
+
+func one(p : int) -> int
+{
+    prints("function " + p + "\n");
+    0
+}
+
+func exec(f : Optional_Func, p : int) -> int
+{
+    match f
+    {
+        Optional_Func::Some(f) -> f(p);
+        Optional_Func::None -> { prints("no function\n"); 0 };
+    }
+}
+
+func main() -> int
+{
+    let f1 = Optional_Func::Some(one);
+    let f2 = Optional_Func::Some(let func(p : int) -> int {
+                                     prints("lambda " + p + "\n");
+                                     0
+                                 });
+    let f3 = Optional_Func::None;
+
+    exec(f1, 1);
+    exec(f2, 0);
+    exec(f3, 0);
+    
+    0
+}
+
