@@ -1,0 +1,23 @@
+
+enum Optional { Some { value : int; }, None }
+
+func printOptional(o : Optional) -> int
+{
+    match o
+    {
+        Optional::Some(value) -> assert(value == 1000);
+        Optional::None -> assert(0);
+    }
+}
+
+func main() -> int
+{
+    let o = Optional::None;
+    
+    o = Optional::Some(1000);
+    
+    printOptional(o);
+    
+    0
+}
+
