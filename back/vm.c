@@ -89,9 +89,11 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_OP_EQ_STRING, vm_execute_op_eq_string },
     { BYTECODE_OP_NEQ_STRING, vm_execute_op_neq_string },
-    
+
+#if 0    
     { BYTECODE_OP_EQ_ENUMTYPE_RECORD, vm_execute_op_eq_enumtype_record },
     { BYTECODE_OP_NEQ_ENUMTYPE_RECORD, vm_execute_op_neq_enumtype_record },
+#endif
     
     { BYTECODE_OP_EQ_NIL, vm_execute_op_eq_nil },
 
@@ -1001,6 +1003,7 @@ void vm_execute_op_neq_string(vm * machine, bytecode * code)
     machine->sp--;
 }
 
+#if 0
 void vm_execute_op_eq_enumtype_record(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
@@ -1040,7 +1043,9 @@ void vm_execute_op_eq_enumtype_record(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
+#endif
 
+#if 0
 void vm_execute_op_neq_enumtype_record(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
@@ -1080,6 +1085,7 @@ void vm_execute_op_neq_enumtype_record(vm * machine, bytecode * code)
     machine->stack[machine->sp - 1] = entry;
     machine->sp--;
 }
+#endif
 
 void vm_execute_op_eq_nil(vm * machine, bytecode * code)
 {

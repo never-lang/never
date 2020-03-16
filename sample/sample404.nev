@@ -9,7 +9,7 @@ func main() -> int
     e[0] = E::ONE(10, 20);
     e[1] = E::TWO;
     
-    match e[0]
+    match e[1]
     {
         E::ONE(x, y) -> prints("E::ONE(" + x + "," + y + ")\n");
         E::TWO -> prints("E::TWO\n");

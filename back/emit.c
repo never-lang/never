@@ -1509,7 +1509,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
                 bc.type = BYTECODE_OP_EQ_INT;
             break;
             case ENUMTYPE_TYPE_RECORD:
-                bc.type = BYTECODE_OP_EQ_ENUMTYPE_RECORD;
+                /* bc.type = BYTECODE_OP_EQ_ENUMTYPE_RECORD; */
+                *result = EMIT_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot compare enum record type\n");
+                assert(0);
             break;
             }
         }
@@ -1603,7 +1607,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
                 bc.type = BYTECODE_OP_NEQ_INT;
             break;
             case ENUMTYPE_TYPE_RECORD:
-                bc.type = BYTECODE_OP_NEQ_ENUMTYPE_RECORD;
+                /* bc.type = BYTECODE_OP_NEQ_ENUMTYPE_RECORD; */
+                *result = EMIT_FAIL;
+                print_error_msg(value->line_no,
+                                "cannot compare enum record type\n");
+                assert(0);
             break;
             }
         }

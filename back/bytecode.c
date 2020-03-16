@@ -82,8 +82,10 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_EQ_STRING, bytecode_print_op_eq_string },
     { BYTECODE_OP_NEQ_STRING, bytecode_print_op_neq_string },
 
+#if 0
     { BYTECODE_OP_EQ_ENUMTYPE_RECORD, bytecode_print_op_eq_enumtype_record },
     { BYTECODE_OP_NEQ_ENUMTYPE_RECORD, bytecode_print_op_neq_enumtype_record },
+#endif
 
     { BYTECODE_OP_EQ_NIL, bytecode_print_op_eq_nil },
 
@@ -428,15 +430,19 @@ void bytecode_print_op_neq_string(bytecode * code)
     printf("%d: op neq string\n", code->addr);
 }
 
+#if 0
 void bytecode_print_op_eq_enumtype_record(bytecode * code)
 {
     printf("%d: op eq enumtype record\n", code->addr);
 }
+#endif
 
+#if 0
 void bytecode_print_op_neq_enumtype_record(bytecode * code)
 {
     printf("%d: op neq enumtype record\n", code->addr);
 }
+#endif
 
 void bytecode_print_op_eq_nil(bytecode * code)
 {
