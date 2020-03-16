@@ -116,11 +116,6 @@ void vm_execute_op_neq_char(vm * machine, bytecode * code);
 void vm_execute_op_eq_string(vm * machine, bytecode * code);
 void vm_execute_op_neq_string(vm * machine, bytecode * code);
 
-#if 0
-void vm_execute_op_eq_enumtype_record(vm * machine, bytecode * code);
-void vm_execute_op_neq_enumtype_record(vm * machine, bytecode * code);
-#endif
-
 void vm_execute_op_eq_nil(vm * machine, bytecode * code);
 
 void vm_execute_op_eq_string_nil(vm * machine, bytecode * code);
