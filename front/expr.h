@@ -22,8 +22,6 @@
 #ifndef __EXPR_H__
 #define __EXPR_H__
 
-#include "freevar.h"
-
 typedef float func_float_float(float x);
 
 typedef enum expr_type
@@ -61,6 +59,7 @@ typedef enum expr_type
     EXPR_WHILE = 30,
     EXPR_DO_WHILE = 31,
     EXPR_FOR = 32,
+    EXPR_IFLET = 41,
     EXPR_MATCH = 33,
     EXPR_BUILD_IN = 34,
     EXPR_INT_TO_FLOAT = 35,
@@ -110,8 +109,11 @@ typedef struct listcomp listcomp;
 typedef struct record record;
 typedef struct enumtype enumtype;
 typedef struct enumerator enumerator;
+typedef struct iflet iflet;
 typedef struct matchbind matchbind;
 typedef struct match_guard_list match_guard_list;
+typedef struct freevar freevar;
+typedef struct param param;
 
 typedef struct expr_comb
 {
@@ -184,6 +186,7 @@ typedef struct expr
             struct expr * incr;
             struct expr * do_value;
         } forloop;
+        struct iflet * iflet_value;
         struct
         {
             struct expr * expr_value;
@@ -254,6 +257,7 @@ expr * expr_new_ass(expr * left, expr * right);
 expr * expr_new_while(expr * cond, expr * do_value);
 expr * expr_new_do_while(expr * cond, expr * do_value);
 expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value);
+expr * expr_new_iflet(iflet * iflet_value);
 expr * expr_new_match(expr * expr_value, match_guard_list * match_guards);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);

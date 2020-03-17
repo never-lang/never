@@ -68,6 +68,7 @@ int yyerror(never ** nev, char * str)
 %type <val.qualifier_value> generator
 %type <val.qualifier_value> qualifier
 %type <val.qualifier_list_value> qualifier_list
+%type <val.iflet_value> iflet
 %type <val.matchbind_value> matchbind
 %type <val.matchbind_list_value> matchbind_list
 %type <val.match_guard_value> match_guard
@@ -140,6 +141,7 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) decl_delete($$); } decl
 %destructor { if ($$) decl_list_delete($$); } decl_list
 %destructor { if ($$) record_delete($$); } record
+%destructor { if ($$) iflet_delete($$); } iflet
 %destructor { if ($$) matchbind_delete($$); } matchbind
 %destructor { if ($$) matchbind_list_delete($$); } matchbind_list
 %destructor {  } never
@@ -305,14 +307,6 @@ expr: TOK_IF '(' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
     $$->line_no = $<line_no>1;
 };
 
-expr: TOK_IF TOK_LET TOK_ID TOK_DDOT TOK_ID '=' expr
-{
-};
-
-expr: TOK_IF TOK_LET TOK_ID TOK_DDOT TOK_ID '(' param_list ')' '=' expr
-{
-};
-
 expr: array
 {
     $$ = expr_new_array($1);
@@ -452,6 +446,26 @@ expr: TOK_DO expr TOK_WHILE '(' expr ')'
 expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
 {
     $$ = expr_new_for($3, $5, $7, $9);
+    $$->line_no = $<line_no>1;
+};
+
+
+iflet: TOK_IF TOK_LET '(' TOK_ID TOK_DDOT TOK_ID '=' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
+{
+    $$ = iflet_new($4, $6, NULL, $8, $10, $12);
+    $$->line_no = $<line_no>1;
+};
+
+
+iflet: TOK_IF TOK_LET '(' TOK_ID TOK_DDOT TOK_ID '(' matchbind_list ')' '=' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
+{
+    $$ = iflet_new($4, $6, $8, $11, $13, $15);
+    $$->line_no = $<line_no>1;
+};
+
+expr: iflet
+{
+    $$ = expr_new_iflet($1);
     $$->line_no = $<line_no>1;
 };
 

@@ -23,6 +23,7 @@
 #include "array.h"
 #include "func.h"
 #include "listcomp.h"
+#include "iflet.h"
 #include "match.h"
 #include <assert.h>
 #include <stdio.h>
@@ -290,6 +291,18 @@ expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value)
     return ret;
 }
 
+expr * expr_new_iflet(iflet * iflet_value)
+{
+    expr * ret = (expr *)malloc(sizeof(iflet));
+    
+    ret->type = EXPR_IFLET;
+    ret->line_no = 0;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->iflet_value = iflet_value;
+    
+    return ret;
+}
+
 expr * expr_new_match(expr * expr_value, match_guard_list * match_guards)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -480,6 +493,12 @@ void expr_delete(expr * value)
         if (value->forloop.do_value != NULL)
         {
             expr_delete(value->forloop.do_value);
+        }
+        break;
+    case EXPR_IFLET:
+        if (value->iflet_value != NULL)
+        {
+            iflet_delete(value->iflet_value);
         }
         break;
     case EXPR_MATCH:

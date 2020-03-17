@@ -34,6 +34,7 @@
 #include "record.h"
 #include "enumerator.h"
 #include "enums.h"
+#include "iflet.h"
 #include "match.h"
 #include "matchbind.h"
 
@@ -59,6 +60,7 @@ typedef union token_value {
     bind * var_value;
     bind * bind_value;
     bind_list * bind_list_value;
+    iflet * iflet_value;
     match_guard * match_guard_value;
     match_guard_list * match_guard_list_value;
     func_decl * func_decl_value;
