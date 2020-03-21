@@ -293,7 +293,7 @@ expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value)
 
 expr * expr_new_iflet(iflet * iflet_value)
 {
-    expr * ret = (expr *)malloc(sizeof(iflet));
+    expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_IFLET;
     ret->line_no = 0;
@@ -647,6 +647,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_WHILE: return "while";
     case EXPR_DO_WHILE: return "do while";
     case EXPR_FOR: return "for";
+    case EXPR_IFLET: return "if let";
     case EXPR_MATCH: return "match";
     case EXPR_BUILD_IN: return "build id";
     case EXPR_INT_TO_FLOAT: return "int to float";

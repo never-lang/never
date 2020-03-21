@@ -3,14 +3,16 @@ enum Result { Ok { value : int; }, Err { msg : string; } }
 
 func calc() -> Result
 {
-    Result::Ok(1000)
+    Result::Ok(1)
 }
 
 func main() -> int
 {
-    if let (Result::Ok(value) = calc())
+    let i = 100;
+
+    if let (Result::Ok = calc())
     {
-        print(value)
+        print(200)
     }
     else
     {

@@ -21,6 +21,7 @@ int print_func_except(except * value, int depth);
 int print_func_except_list(except_list * list, int depth);
 int print_func_attr(expr * value, int depth);
 int print_func_ffi(func * value, int depth);
+int print_func_iflet(iflet * value, int depth);
 int print_func_match_guard(match_guard * value, int depth);
 int print_func_match_guard_list(match_guard_list * list, int depth);
 int print_func_match_expr(expr * value, int depth);

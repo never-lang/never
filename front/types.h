@@ -61,6 +61,8 @@ typedef union token_value {
     bind * bind_value;
     bind_list * bind_list_value;
     iflet * iflet_value;
+    match_guard_item * match_guard_item_value;
+    match_guard_record * match_guard_record_value;
     match_guard * match_guard_value;
     match_guard_list * match_guard_list_value;
     func_decl * func_decl_value;

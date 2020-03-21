@@ -41,8 +41,14 @@ typedef struct match_guard_item
     char * item_id;
     enumtype * enumtype_value;
     enumerator * enumerator_value;
-    expr * expr_value;
+    unsigned int line_no;
 } match_guard_item;
+
+typedef struct match_guard_item_expr
+{
+    match_guard_item * guard;
+    expr * expr_value;
+} match_guard_item_expr;
 
 typedef struct match_guard_record
 {
@@ -52,21 +58,28 @@ typedef struct match_guard_record
     matchbind_list * matchbinds;
     enumtype * enumtype_value;
     enumerator * enumerator_value;
-    expr * expr_value;
+    unsigned int line_no;
 } match_guard_record;
 
-typedef struct match_guard_else
+typedef struct match_guard_record_expr
+{
+    match_guard_record * guard;
+    expr * expr_value;
+} match_guard_record_expr;
+
+typedef struct match_guard_else_expr
 {
     expr * expr_value;
-} match_guard_else;
+    unsigned int line_no;
+} match_guard_else_expr;
 
 typedef struct match_guard
 {
     match_guard_type type;
     union {
-        match_guard_item guard_item;
-        match_guard_record guard_record;
-        match_guard_else guard_else;
+        match_guard_item_expr guard_item;
+        match_guard_record_expr guard_record;
+        match_guard_else_expr guard_else;
     };
     unsigned int line_no;
 } match_guard;
@@ -85,8 +98,14 @@ typedef struct match_guard_list
     match_guard_list_node * tail;
 } match_guard_list;
 
-match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_value);
-match_guard * match_guard_new_record(char * enum_id, char * item_id, matchbind_list * matchbinds, expr * expr_value);
+match_guard_item * match_guard_item_new(char * enum_id, char * item_id);
+void match_guard_item_delete(match_guard_item * value);
+
+match_guard_record * match_guard_record_new(char * enum_id, char * item_id, matchbind_list * matchbinds);
+void match_guard_record_delete(match_guard_record * value);
+
+match_guard * match_guard_new_item(match_guard_item * guard, expr * expr_value);
+match_guard * match_guard_new_record(match_guard_record * guard, expr * expr_value);
 match_guard * match_guard_new_else(expr * expr_value);
 void match_guard_delete(match_guard * value);
 

@@ -22,6 +22,7 @@
 #include "constred.h"
 #include "strutil.h"
 #include "utils.h"
+#include "iflet.h"
 #include "match.h"
 #include <stdlib.h>
 #include <string.h>
@@ -615,6 +616,11 @@ int expr_constred(expr * value, int * result)
         expr_constred(value->forloop.cond, result);
         expr_constred(value->forloop.incr, result);
         expr_constred(value->forloop.do_value, result);
+        break;
+    case EXPR_IFLET:
+        expr_constred(value->iflet_value->expr_value, result);
+        expr_constred(value->iflet_value->then_value, result);
+        expr_constred(value->iflet_value->else_value, result);
         break;
     case EXPR_MATCH:
         expr_match_constred(value, result);

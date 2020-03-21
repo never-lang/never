@@ -42,6 +42,8 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * tab,
 
 int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * freevar_value,
                                   int * result);
+int func_gencode_freevars_iflet_expr(func * func_value, symtab * stab,
+                                     expr * value, int * result);
 int func_gencode_freevars_match_guard(func * func_value, symtab * stab,
                                       match_guard * match_value, int * result);
 int func_gencode_freevars_match_guard_list(func * func_value, symtab * stab,

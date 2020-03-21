@@ -25,33 +25,86 @@
 #include "symtab.h"
 #include <stdlib.h>
 
-match_guard * match_guard_new_item(char * enum_id, char * item_id, expr * expr_value)
+match_guard_item * match_guard_item_new(char * enum_id, char * item_id)
+{
+    match_guard_item * ret = (match_guard_item *)malloc(sizeof(match_guard_item));
+    
+    ret->enum_id = enum_id;
+    ret->item_id = item_id;
+    ret->enumtype_value = NULL;
+    ret->enumerator_value = NULL;
+    ret->line_no = 0;
+    
+    return ret;
+}
+
+void match_guard_item_delete(match_guard_item * value)
+{
+    if (value->enum_id != NULL)
+    {
+        free(value->enum_id);
+    }
+    if (value->item_id != NULL)
+    {
+        free(value->item_id);
+    }
+    free(value);
+}
+
+match_guard_record * match_guard_record_new(char * enum_id, char * item_id, matchbind_list * matchbinds)
+{
+    match_guard_record * ret = (match_guard_record *)malloc(sizeof(match_guard_record));
+    
+    ret->stab = NULL;
+    ret->enum_id = enum_id;
+    ret->item_id = item_id;
+    ret->matchbinds = matchbinds;
+    ret->enumtype_value = NULL;
+    ret->enumerator_value = NULL;
+    ret->line_no = 0;
+    
+    return ret;
+}
+
+void match_guard_record_delete(match_guard_record * value)
+{
+    if (value->stab != NULL)
+    {
+        symtab_delete(value->stab);
+    }
+    if (value->enum_id != NULL)
+    {
+        free(value->enum_id);
+    }
+    if (value->item_id != NULL)
+    {
+        free(value->item_id);
+    }
+    if (value->matchbinds != NULL)
+    {
+        matchbind_list_delete(value->matchbinds);
+    }
+    free(value);
+}
+
+match_guard * match_guard_new_item(match_guard_item * guard, expr * expr_value)
 {
     match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
     
     ret->type = MATCH_GUARD_ITEM;
-    ret->guard_item.enum_id = enum_id;
-    ret->guard_item.item_id = item_id;
-    ret->guard_item.enumtype_value = NULL;
-    ret->guard_item.enumerator_value = NULL;
+    ret->guard_item.guard = guard;
     ret->guard_item.expr_value = expr_value;
     ret->line_no = 0;
         
     return ret;
 }
 
-match_guard * match_guard_new_record(char * enum_id, char * item_id,
-                                     matchbind_list * matchbinds, expr * expr_value)
+match_guard * match_guard_new_record(match_guard_record * guard, expr * expr_value)
 {
     match_guard * ret = (match_guard *)malloc(sizeof(match_guard));
     
     ret->type = MATCH_GUARD_RECORD;
-    ret->guard_record.stab = NULL;
-    ret->guard_record.enum_id = enum_id;
-    ret->guard_record.item_id = item_id;
-    ret->guard_record.matchbinds = matchbinds;
-    ret->guard_record.enumtype_value = NULL;
-    ret->guard_record.enumerator_value = NULL;
+    ret->guard_record.guard = guard;
     ret->guard_record.expr_value = expr_value;
     ret->line_no = 0;
     
@@ -74,13 +127,9 @@ void match_guard_delete(match_guard * value)
     switch (value->type)
     {
         case MATCH_GUARD_ITEM:
-            if (value->guard_item.enum_id != NULL)
+            if (value->guard_item.guard != NULL)
             {
-                free(value->guard_item.enum_id);
-            }
-            if (value->guard_item.item_id != NULL)
-            {
-                free(value->guard_item.item_id);
+                match_guard_item_delete(value->guard_item.guard);
             }
             if (value->guard_item.expr_value != NULL)
             {
@@ -88,21 +137,9 @@ void match_guard_delete(match_guard * value)
             }
         break;
         case MATCH_GUARD_RECORD:
-            if (value->guard_record.stab != NULL)
+            if (value->guard_record.guard != NULL)
             {
-                symtab_delete(value->guard_record.stab);
-            }
-            if (value->guard_record.enum_id != NULL)
-            {
-                free(value->guard_record.enum_id);
-            }
-            if (value->guard_record.item_id != NULL)
-            {
-                free(value->guard_record.item_id);
-            }
-            if (value->guard_record.matchbinds != NULL)
-            {
-                matchbind_list_delete(value->guard_record.matchbinds);
+                match_guard_record_delete(value->guard_record.guard);
             }
             if (value->guard_record.expr_value != NULL)
             {

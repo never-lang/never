@@ -23,6 +23,7 @@
 #include "freevar.h"
 #include "symtab.h"
 #include "utils.h"
+#include "iflet.h"
 #include "match.h"
 #include <assert.h>
 #include <stdio.h>
@@ -330,6 +331,26 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
     return 0;
 }
 
+int func_gencode_freevars_iflet_expr(func * func_value, symtab * stab,
+                                     expr * value, int * result)
+{
+    func_gencode_freevars_expr(func_value, stab, value->iflet_value->expr_value, result);
+    
+    switch (value->iflet_value->type)
+    {
+        case IFLET_TYPE_ITEM:
+            func_gencode_freevars_expr(func_value, stab, value->iflet_value->then_value, result);
+            func_gencode_freevars_expr(func_value, stab, value->iflet_value->else_value, result);
+        break;
+        case IFLET_TYPE_RECORD:
+            func_gencode_freevars_expr(func_value, value->iflet_value->guard_record->stab, value->iflet_value->then_value, result);
+            func_gencode_freevars_expr(func_value, value->iflet_value->guard_record->stab, value->iflet_value->else_value, result);
+        break;
+    }
+
+    return 0;
+}        
+
 int func_gencode_freevars_match_guard(func * func_value, symtab * stab,
                                       match_guard * match_value, int * result)
 {
@@ -339,7 +360,7 @@ int func_gencode_freevars_match_guard(func * func_value, symtab * stab,
             func_gencode_freevars_expr(func_value, stab, match_value->guard_item.expr_value, result);
         break;
         case MATCH_GUARD_RECORD:
-            func_gencode_freevars_expr(func_value, match_value->guard_record.stab, match_value->guard_record.expr_value, result);
+            func_gencode_freevars_expr(func_value, match_value->guard_record.guard->stab, match_value->guard_record.expr_value, result);
         break;
         case MATCH_GUARD_ELSE:
             func_gencode_freevars_expr(func_value, stab, match_value->guard_else.expr_value, result);
@@ -703,6 +724,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->forloop.cond, result);
         func_gencode_freevars_expr(func_value, stab, value->forloop.incr, result);
         func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
+        break;
+    case EXPR_IFLET:
+        func_gencode_freevars_iflet_expr(func_value, stab, value, result);
         break;
     case EXPR_MATCH:
         func_gencode_freevars_match_expr(func_value, stab, value, result);

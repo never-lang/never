@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 #include "tcheckarr.h"
 #include "utils.h"
 #include "listcomp.h"
+#include "tciflet.h"
 #include "tcmatch.h"
 #include <assert.h>
 #include <stdio.h>
@@ -489,6 +490,21 @@ int param_expr_list_cmp(param_list * params, expr_list * list)
     }
 
     return TYPECHECK_SUCC;
+}
+
+int expr_comb_is_enum(expr * value, int * result)
+{
+    if (value->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        return TYPECHECK_SUCC;
+    }
+
+    *result = TYPECHECK_FAIL;
+    print_error_msg(value->line_no,
+                    "expression is %s not enum name\n",
+                    comb_type_str(value->comb.comb));
+
+    return TYPECHECK_FAIL;
 }
 
 int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
@@ -2010,6 +2026,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
                             "for loop condition is %s\n",
                             comb_type_str(value->forloop.cond->comb.comb));
         }
+        break;
+    case EXPR_IFLET:
+        expr_iflet_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_MATCH:
         expr_match_check_type(tab, value, func_value, syn_level, result);

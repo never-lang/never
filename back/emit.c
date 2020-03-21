@@ -22,6 +22,7 @@
 #include "emit.h"
 #include "freevar.h"
 #include "symtab.h"
+#include "iflet.h"
 #include "match.h"
 #include "utils.h"
 #include <assert.h>
@@ -936,15 +937,13 @@ int expr_for_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
-int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
+int expr_iflet_guard_item_emit(match_guard_item * guard_item,
                                int stack_level, module * module_value,
                                func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
-    bytecode *cond, *condz;
-    bytecode *labelN;
-
-    switch (item_value->enumtype_value->type)
+    
+    switch (guard_item->enumtype_value->type)
     {
         case ENUMTYPE_TYPE_ITEM:
             bc.type = BYTECODE_DUP;
@@ -959,7 +958,123 @@ int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
     }
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = item_value->enumerator_value->index;
+    bc.integer.value = guard_item->enumerator_value->index;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_iflet_guard_record_emit(match_guard_record * guard_record,
+                                 int stack_level, module * module_value,
+                                 func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    if (guard_record->matchbinds != NULL)
+    {
+        matchbind_list_set_stack_level(guard_record->matchbinds, stack_level);
+    }
+    
+    switch (guard_record->enumtype_value->type)
+    {
+        case ENUMTYPE_TYPE_ITEM:
+            bc.type = BYTECODE_DUP;
+            bytecode_add(module_value->code, &bc);
+        break;
+        case ENUMTYPE_TYPE_RECORD:
+            bc.type = BYTECODE_ATTR;
+            bc.attr.stack_level = 0;
+            bc.attr.index = 0;
+            bytecode_add(module_value->code, &bc);
+        break;
+    }
+
+    bc.type = BYTECODE_INT;
+    bc.integer.value = guard_record->enumerator_value->index;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_iflet_emit(expr * value, int stack_level, module * module_value,
+                    func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode *cond, *condE;
+    bytecode *label, *labelE;
+
+    bc.type = BYTECODE_LINE;
+    bc.line.no = value->line_no;
+    bytecode_add(module_value->code, &bc);
+
+    expr_emit(value->iflet_value->expr_value, stack_level, module_value, list_weak, result);
+
+    switch (value->iflet_value->type)
+    {
+        case IFLET_TYPE_ITEM:
+            expr_iflet_guard_item_emit(value->iflet_value->guard_item,
+                                       stack_level, module_value, list_weak, result);
+        break;
+        case IFLET_TYPE_RECORD:
+            expr_iflet_guard_record_emit(value->iflet_value->guard_record,
+                                         stack_level, module_value, list_weak, result);
+        break;
+    }
+
+    bc.type = BYTECODE_OP_EQ_INT;
+    bytecode_add(module_value->code, &bc);
+            
+    bc.type = BYTECODE_JUMPZ;
+    condE = bytecode_add(module_value->code, &bc);
+    
+    expr_emit(value->iflet_value->then_value, stack_level + 1, module_value, list_weak, result);
+
+    bc.type = BYTECODE_JUMP;
+    cond = bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_LABEL;          
+    labelE = bytecode_add(module_value->code, &bc);
+    condE->jump.offset = labelE->addr - condE->addr;
+
+    expr_emit(value->iflet_value->else_value, stack_level + 1, module_value, list_weak, result);
+
+    bc.type = BYTECODE_LABEL;          
+    label = bytecode_add(module_value->code, &bc);
+    cond->jump.offset = label->addr - cond->addr;
+
+    /* pop previous value of stack */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 1;
+    bc.slide.q = 1;            
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}        
+
+int expr_match_guard_item_emit(match_guard_item_expr * item_value, bytecode *label,
+                               int stack_level, module * module_value,
+                               func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode *cond, *condz;
+    bytecode *labelN;
+
+    switch (item_value->guard->enumtype_value->type)
+    {
+        case ENUMTYPE_TYPE_ITEM:
+            bc.type = BYTECODE_DUP;
+            bytecode_add(module_value->code, &bc);
+        break;
+        case ENUMTYPE_TYPE_RECORD:
+            bc.type = BYTECODE_ATTR;
+            bc.attr.stack_level = 0;
+            bc.attr.index = 0;
+            bytecode_add(module_value->code, &bc);
+        break;
+    }
+
+    bc.type = BYTECODE_INT;
+    bc.integer.value = item_value->guard->enumerator_value->index;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_OP_EQ_INT;
@@ -981,7 +1096,7 @@ int expr_match_guard_item_emit(match_guard_item * item_value, bytecode *label,
     return 0;
 }
 
-int expr_match_guard_record_emit(match_guard_record * record_value, bytecode * label,
+int expr_match_guard_record_emit(match_guard_record_expr * record_value, bytecode * label,
                                  int stack_level, module * module_value,
                                  func_list_weak * list_weak, int * result)
 {
@@ -989,12 +1104,12 @@ int expr_match_guard_record_emit(match_guard_record * record_value, bytecode * l
     bytecode *cond, *condz;
     bytecode *labelN;
 
-    if (record_value->matchbinds != NULL)
+    if (record_value->guard->matchbinds != NULL)
     {
-        matchbind_list_set_stack_level(record_value->matchbinds, stack_level - 1);
+        matchbind_list_set_stack_level(record_value->guard->matchbinds, stack_level - 1);
     }
 
-    switch (record_value->enumtype_value->type)
+    switch (record_value->guard->enumtype_value->type)
     {
         case ENUMTYPE_TYPE_ITEM:
             bc.type = BYTECODE_DUP;
@@ -1009,7 +1124,7 @@ int expr_match_guard_record_emit(match_guard_record * record_value, bytecode * l
     }
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = record_value->enumerator_value->index;
+    bc.integer.value = record_value->guard->enumerator_value->index;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_OP_EQ_INT;
@@ -1031,7 +1146,7 @@ int expr_match_guard_record_emit(match_guard_record * record_value, bytecode * l
     return 0;
 }
 
-int expr_match_guard_else_emit(match_guard_else * else_value, bytecode * label,
+int expr_match_guard_else_emit(match_guard_else_expr * else_value, bytecode * label,
                                int stack_level, module * module_value,
                                func_list_weak * list_weak, int * result)
 {
@@ -1755,6 +1870,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         break;
     case EXPR_FOR:
         expr_for_emit(value, stack_level, module_value, list_weak, result);
+        break;
+    case EXPR_IFLET:
+        expr_iflet_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_MATCH:
         expr_match_emit(value, stack_level, module_value, list_weak, result);

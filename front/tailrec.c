@@ -21,6 +21,7 @@
  */
 #include "tailrec.h"
 #include "symtab.h"
+#include "iflet.h"
 #include "match.h"
 #include <assert.h>
 #include <stdio.h>
@@ -205,6 +206,11 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         expr_tailrec(syn_level, stab, value->forloop.cond, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->forloop.incr, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->forloop.do_value, TAILREC_OP_SKIP);
+    break;
+    case EXPR_IFLET:
+        expr_tailrec(syn_level, stab, value->iflet_value->expr_value, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, stab, value->iflet_value->then_value, op);
+        expr_tailrec(syn_level, stab, value->iflet_value->else_value, op);
     break;
     case EXPR_MATCH:
         expr_match_tailrec(syn_level, stab, value, op);

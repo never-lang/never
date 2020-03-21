@@ -19,39 +19,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __IFLET_H__
-#define __IFLET_H__
+#ifndef __TCIFLET_H__
+#define __TCIFLET_H__
 
-typedef struct match_guard_item match_guard_item;
-typedef struct match_guard_record match_guard_record;
-typedef struct expr expr;
+#include "never.h"
+#include "iflet.h"
 
-typedef enum iflet_type
-{
-    IFLET_TYPE_ITEM = 1,
-    IFLET_TYPE_RECORD = 2
-} iflet_type;
-
-typedef struct iflet
-{
-    iflet_type type;
-    union
-    {
-        match_guard_item * guard_item;
-        match_guard_record * guard_record;
-    };
-    expr * expr_value;
-    expr * then_value;
-    expr * else_value;
-    unsigned int line_no;
-} iflet;
-
-iflet * iflet_item_new(match_guard_item * guard_item,
-                       expr * expr_value, expr * then_value, expr * else_value);
-iflet * iflet_record_new(match_guard_record * guard_record,
-                         expr * expr_value, expr * then_value, expr * else_value);
-
-void iflet_delete(iflet * value);
-
-#endif /* __IFLET_H__ */
+int iflet_check_type(symtab * tab, iflet * iflet_value, func * func_value,
+                          unsigned int syn_level, int * result);
+                          
+int expr_iflet_check_type(symtab * tab, expr * value, func * func_value,
+                          unsigned int syn_level, int * result);
+        
+#endif /* __TCIFLET_H__ */
 

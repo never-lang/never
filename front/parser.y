@@ -71,6 +71,8 @@ int yyerror(never ** nev, char * str)
 %type <val.iflet_value> iflet
 %type <val.matchbind_value> matchbind
 %type <val.matchbind_list_value> matchbind_list
+%type <val.match_guard_item_value> match_guard_item
+%type <val.match_guard_record_value> match_guard_record
 %type <val.match_guard_value> match_guard
 %type <val.match_guard_list_value> match_guard_list
 %type <val.let_value> let
@@ -144,6 +146,10 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) iflet_delete($$); } iflet
 %destructor { if ($$) matchbind_delete($$); } matchbind
 %destructor { if ($$) matchbind_list_delete($$); } matchbind_list
+%destructor { if ($$) match_guard_item_delete($$); } match_guard_item
+%destructor { if ($$) match_guard_record_delete($$); } match_guard_record
+%destructor { if ($$) match_guard_delete($$); } match_guard
+%destructor { if ($$) match_guard_list_delete($$); } match_guard_list
 %destructor {  } never
 
 %pure-parser
@@ -449,17 +455,27 @@ expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
     $$->line_no = $<line_no>1;
 };
 
-
-iflet: TOK_IF TOK_LET '(' TOK_ID TOK_DDOT TOK_ID '=' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
+iflet: TOK_IF TOK_LET '(' match_guard_item '=' expr ')' expr %prec TOK_IF
 {
-    $$ = iflet_new($4, $6, NULL, $8, $10, $12);
+    $$ = iflet_item_new($4, $6, $8, expr_new_int(0));
     $$->line_no = $<line_no>1;
 };
 
-
-iflet: TOK_IF TOK_LET '(' TOK_ID TOK_DDOT TOK_ID '(' matchbind_list ')' '=' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
+iflet: TOK_IF TOK_LET '(' match_guard_record '=' expr ')' expr %prec TOK_IF
 {
-    $$ = iflet_new($4, $6, $8, $11, $13, $15);
+    $$ = iflet_record_new($4, $6, $8, expr_new_int(0));
+    $$->line_no = $<line_no>1;
+};
+
+iflet: TOK_IF TOK_LET '(' match_guard_item '=' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
+{
+    $$ = iflet_item_new($4, $6, $8, $10);
+    $$->line_no = $<line_no>1;
+};
+
+iflet: TOK_IF TOK_LET '(' match_guard_record '=' expr ')' expr TOK_ELSE expr %prec TOK_ELSE
+{
+    $$ = iflet_record_new($4, $6, $8, $10);
     $$->line_no = $<line_no>1;
 };
 
@@ -487,15 +503,27 @@ matchbind_list: matchbind_list ',' matchbind
     $$ = $1;
 };
 
-match_guard: TOK_ID TOK_DDOT TOK_ID TOK_RET expr
+match_guard_item: TOK_ID TOK_DDOT TOK_ID
 {
-    $$ = match_guard_new_item($1, $3, $5);
+    $$ = match_guard_item_new($1, $3);
     $$->line_no = $<line_no>1;
 };
 
-match_guard: TOK_ID TOK_DDOT TOK_ID '(' matchbind_list ')' TOK_RET expr
+match_guard_record: TOK_ID TOK_DDOT TOK_ID '(' matchbind_list ')'
 {
-    $$ = match_guard_new_record($1, $3, $5, $8);
+    $$ = match_guard_record_new($1, $3, $5);
+    $$->line_no = $<line_no>1;
+};
+
+match_guard: match_guard_item TOK_RET expr
+{
+    $$ = match_guard_new_item($1, $3);
+    $$->line_no = $<line_no>1;
+};
+
+match_guard: match_guard_record TOK_RET expr
+{
+    $$ = match_guard_new_record($1, $3);
     $$->line_no = $<line_no>1;
 };
 

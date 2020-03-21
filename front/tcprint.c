@@ -1,5 +1,27 @@
+/**
+ * Copyright 2018 Slawomir Maludzinski
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 #include "tcprint.h"
 #include "match.h"
+#include "iflet.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -11,6 +33,23 @@ int print_func_attr(expr * value, int depth)
     if (value->attr.record_value != NULL)
     {
         print_func_expr(value->attr.record_value, depth);
+    }
+    return 0;
+}
+
+int print_func_iflet(iflet * value, int depth)
+{
+    if (value->expr_value != NULL)
+    {
+        print_func_expr(value->expr_value, depth);
+    }
+    if (value->then_value != NULL)
+    {
+        print_func_expr(value->then_value, depth);
+    }
+    if (value->else_value != NULL)
+    {
+        print_func_expr(value->else_value, depth);
     }
     return 0;
 }
@@ -152,6 +191,9 @@ int print_func_expr(expr * value, int depth)
         print_func_expr(value->forloop.cond, depth);
         print_func_expr(value->forloop.incr, depth);
         print_func_expr(value->forloop.do_value, depth);
+        break;
+    case EXPR_IFLET:
+        print_func_iflet(value->iflet_value, depth);
         break;
     case EXPR_MATCH:
         print_func_match_expr(value, depth);

@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -52,6 +52,7 @@ int param_expr_array_cmp(param * param_value, expr * expr_value);
 int param_expr_cmp(param * param_value, expr * expr_value);
 int param_expr_list_cmp(param_list * params, expr_list * list);
 
+int expr_comb_is_enum(expr * value, int * result);
 int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result);
 
 int symtab_entry_exists(symtab_entry * entry, unsigned int line_no);
