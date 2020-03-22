@@ -1,0 +1,47 @@
+
+enum Number { One { n : int; },
+              Two { n : int; },
+              Three { n : int; },
+              Four { n : int; } }
+
+func printNum(n : Number) -> string
+{
+    if let (Number::One(n) = n)
+    {
+        prints("Number::One " + n + "\n")
+    }
+    else if let (Number::Two(n) = n)
+    {
+        prints("Number::Two " + n + "\n")
+    }
+    else if let (Number::Three(n) = n)
+    {
+        prints("Number::Three " + n + "\n")
+    }
+    else if let (Number::Four(n) = n)
+    {
+        prints("Number::Four " + n + "\n")
+    }
+    else
+    {
+        prints("Unknown Number\n")
+    }
+}
+
+func getNumber() -> Number
+{
+    Number::Three(3)
+}
+
+func main() -> int
+{
+    let n = Number::One(1);
+
+    printNum(n);
+    printNum(Number::Two(2));
+    printNum(getNumber());
+    
+    0
+}
+
+

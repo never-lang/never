@@ -1,0 +1,49 @@
+
+enum Number { One { n : int; },
+              Two { n : int; },
+              Three,
+              Four }
+
+func printNum(n : Number, m : int) -> string
+{
+    if let (Number::One(n) = n)
+    {
+        prints("Number::One " + n + "\n")
+    }
+    else if let (Number::Two(n) = n)
+    {
+        prints("Number::Two " + n + "\n")
+    }
+    else if (m == 3)
+    {
+        prints("Three " + m + "\n")
+    }
+    else if (m == 4)
+    {
+        prints("Four " + m + "\n")
+    }
+    else
+    {
+        prints("Other Number\n")
+    }
+}
+
+func getNumber() -> Number
+{
+    Number::Three
+}
+
+func main() -> int
+{
+    let n = Number::One(1);
+
+    printNum(n, 1);
+    printNum(Number::Two(2), 2);
+    printNum(getNumber(), 3);
+    printNum(Number::Four, 4);
+    printNum(Number::Four, 5);
+    
+    0
+}
+
+

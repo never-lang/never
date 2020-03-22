@@ -344,7 +344,7 @@ int func_gencode_freevars_iflet_expr(func * func_value, symtab * stab,
         break;
         case IFLET_TYPE_RECORD:
             func_gencode_freevars_expr(func_value, value->iflet_value->guard_record->stab, value->iflet_value->then_value, result);
-            func_gencode_freevars_expr(func_value, value->iflet_value->guard_record->stab, value->iflet_value->else_value, result);
+            func_gencode_freevars_expr(func_value, stab, value->iflet_value->else_value, result);
         break;
     }
 

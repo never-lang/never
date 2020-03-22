@@ -82,15 +82,13 @@ int iflet_check_type(symtab * tab, iflet * iflet_value, func * func_value,
             {
                 enum_matchbind_list(iflet_value->guard_record->matchbinds);
                 symtab_add_matchbind_from_matchbind_list(tab, iflet_value->guard_record, syn_level, result);
-
                 expr_check_type(iflet_value->guard_record->stab, iflet_value->then_value, func_value, syn_level, result);
-                expr_check_type(iflet_value->guard_record->stab, iflet_value->else_value, func_value, syn_level, result);
             }
             else
             {
                 expr_check_type(tab, iflet_value->then_value, func_value, syn_level, result);
-                expr_check_type(tab, iflet_value->else_value, func_value, syn_level, result);
             }
+            expr_check_type(tab, iflet_value->else_value, func_value, syn_level, result);
         break;
     }
 
