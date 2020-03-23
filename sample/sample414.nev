@@ -16,7 +16,8 @@ func main() -> int
     }
     else
     {
-        print(90)
+        print(90);
+        assert(0)
     };
 
     0

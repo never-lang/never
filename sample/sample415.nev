@@ -17,7 +17,7 @@ func main() -> int
 {
     let o = Optional::Some(10);
     
-    print(getF(o)());
+    assert(getF(o)() == 10);
     
     0
 }

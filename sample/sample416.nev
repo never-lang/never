@@ -18,7 +18,7 @@ func main() -> int
     let o = Optional::Some(10);
     o = Optional::None;
     
-    print(getF(o)()());
+    assert(getF(o)()() == 1000);
     
     0
 }

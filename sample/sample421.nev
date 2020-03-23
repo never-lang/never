@@ -1,0 +1,21 @@
+
+enum Result { Ok { value : int; }, Err { msg : string; } }
+
+func calc() -> Result
+{
+    Result::Ok(1)
+}
+
+func main() -> int
+{
+    let i = match calc()
+            {
+                Result::Ok -> 200;
+                Result::Err -> 90;
+            };
+
+    assert(i == 200);
+
+    0
+}
+

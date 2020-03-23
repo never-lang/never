@@ -1,0 +1,25 @@
+
+enum Result { Ok { value : int; }, Err { msg : string; } }
+
+func divide(n : int, d : int) -> Result
+{
+    Result::Ok(n / d)
+}
+catch (division_by_zero)
+{
+    Result::Err("division by zero\n")
+}
+
+func main() -> int
+{
+    let r = match divide(10, 0)
+            {
+                Result::Ok(value) -> value;
+                Result::Err(msg) -> { prints(msg); -1 };
+            };
+            
+    assert(r == -1);
+
+    0
+}
+

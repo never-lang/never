@@ -1,0 +1,24 @@
+
+enum Result { Ok { value : int; }, Err { msg : string; } }
+
+func calc() -> Result
+{
+    Result::Ok(200)
+}
+
+func main() -> int
+{
+    let i = if let (Result::Ok(value) = calc())
+            {
+                value
+            }
+            else
+            {
+                90
+            };
+            
+    assert(i == 200);
+
+    0
+}
+

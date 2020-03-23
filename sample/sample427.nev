@@ -1,0 +1,44 @@
+
+record Rect
+{
+    x : int;
+    y : int;
+}
+
+enum Result { Ok { rects[D] : Rect; }, Err { msg : string; } }
+
+func printRect(rects[D] : Rect) -> int
+{
+    let i = 0;
+
+    for (i = 0; i < D; i = i + 1)
+    {
+        prints(rects[i].x + " " + rects[i].y + "\n")
+    };
+    
+    0
+}
+
+func rects() -> Result
+{
+    Result::Ok([Rect(100, 200), Rect(200, 300), Rect(300, 400)] : Rect)
+}
+
+func main() -> int
+{
+    let i = 0;
+    let j = if let (Result::Ok(rects) = rects())
+            {
+                printRect(rects);
+                1
+            }
+            else
+            {
+                0
+            };
+            
+    assert(j == 1);
+
+    0
+}
+

@@ -1,0 +1,37 @@
+
+record Rect
+{
+    x : int;
+    y : int;
+    printRect(r : Rect) -> string;
+}
+
+enum Result { Ok { value : Rect; }, Err { msg : string; } }
+
+func printRect(r : Rect) -> string
+{
+    prints("x " + r.x + " y " + r.y + "\n")
+}
+
+func rect() -> Result
+{
+    Result::Ok(Rect(200, 300, printRect))
+}
+
+func main() -> int
+{
+    let i = if let (Result::Ok(rect) = rect())
+            {
+                rect.printRect(rect);
+                rect.x + rect.y
+            }
+            else
+            {
+                90
+            };
+            
+    assert(i == 500);
+
+    0
+}
+

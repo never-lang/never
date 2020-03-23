@@ -1,27 +1,27 @@
 
 enum Number { One, Two, Three, Four }
 
-func printNum(n : Number) -> string
+func printNum(n : Number) -> int
 {
     if let (Number::One = n)
     {
-        prints("Number::One\n")
+        prints("Number::One\n"); 1
     }
     else if let (Number::Two = n)
     {
-        prints("Number::Two\n")
+        prints("Number::Two\n"); 2
     }
     else if let (Number::Three = n)
     {
-        prints("Number::Three\n")
+        prints("Number::Three\n"); 3
     }
     else if let (Number::Four = n)
     {
-        prints("Number::Four\n")
+        prints("Number::Four\n"); 4
     }
     else
     {
-        prints("Unknown Number\n")
+        prints("Unknown Number\n"); 0
     }
 }
 
@@ -34,9 +34,9 @@ func main() -> int
 {
     let n = Number::One;
 
-    printNum(n);
-    printNum(Number::Two);
-    printNum(getNumber());
+    assert(printNum(n) == 1);
+    assert(printNum(Number::Two) == 2);
+    assert(printNum(getNumber()) == 3);
     
     0
 }
