@@ -967,6 +967,61 @@ func main() -> int
 }
 ```
 
+It may be difficult to enumerate all possible match guards. To check for
+just one value and assign its value it is useful to use ```if let``` expression.
+
+```swift
+enum Optional { Some{ value : int; }, Other, None }
+
+func getF(o : Optional) -> () -> int
+{
+    if let ( Optional::Some(value) = o)
+    {
+        let func() -> int { value }
+    }
+    else
+    {
+        let func() -> int { 1000 }
+    }
+}
+
+func main() -> int
+{
+    let o = Optional::Some(10);
+    
+    getF(o)();
+    
+    0
+}
+```
+
+As ```if let``` is an expression it can be used to initalize variables.
+
+```swift
+enum Result { Ok { value : int; }, Err { msg : string; } }
+
+func calc() -> Result
+{
+    Result::Ok(1)
+}
+
+func main() -> int
+{
+    let i = if let (Result::Ok(value) = calc())
+            {
+                value
+            }
+            else
+            {
+                90
+            };
+            
+    print(i);
+
+    0
+}
+```
+
 ## Mathematical Functions
 Never supports a few built-in mathematical functions - ```sin(x)```,
 ```cos(x)```, ```tan(x)```, ```exp(x)```, ```log(x)```, ```sqrt(x)```
