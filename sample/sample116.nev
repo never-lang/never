@@ -4,7 +4,7 @@ func f1(tab[row, col] : int) -> [D] : [D,D] : int
     [ tab, tab, tab ] : [D, D] : int
 }
 
-func main() -> int
+func main() -> bool
 {
     assert( f1( [ [ 1, 2 ],
                   [ 3, 4 ] ] : int)[0][1,1] == 4 )

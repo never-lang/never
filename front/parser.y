@@ -460,7 +460,7 @@ expr: TOK_WHILE '(' expr ')' expr
 
 expr: TOK_DO expr TOK_WHILE '(' expr ')'
 {
-    $$ = expr_new_while($2, $5);
+    $$ = expr_new_do_while($5, $2);
     $$->line_no = $<line_no>1;
 };
 

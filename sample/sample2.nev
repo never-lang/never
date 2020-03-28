@@ -17,7 +17,7 @@ func twice(single_func(float, float) -> float) -> (float, float) -> float
     twice_func
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(twice(min)(12.0, 15.0) == 120.00)
 }

@@ -1,0 +1,25 @@
+
+func testdo() -> int
+{
+    let i = 10;
+    let sum = 0;
+    
+    do
+    {
+        print(i);
+        sum = sum + i;
+        i = i - 1
+    }
+    while (i > 0);
+    
+    assert(sum == 55);
+    
+    0
+}
+
+
+func main() -> int
+{
+    testdo()
+}
+

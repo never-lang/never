@@ -169,6 +169,7 @@
     </context>
 
     <context id="types" style-ref="type">
+      <keyword>bool</keyword>
       <keyword>float</keyword>
       <keyword>int</keyword>
       <keyword>string</keyword>

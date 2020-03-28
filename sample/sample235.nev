@@ -10,19 +10,22 @@ func three(d : int, c : int) -> int
 func two(d : int) -> int
 {
     three(d, 199);
-    assert(0)
+    assert(false);
+    0
 }
 
 func one(d : int) -> int
 {
     two(d);
-    assert(0)
+    assert(false);
+    0
 }
 
 func main() -> int
 {
     one(0);
-    assert(0)
+    assert(false);
+    0
 }
 catch
 {

@@ -4,7 +4,7 @@ func f1(tab[row, col] : int) -> int
     row * col
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(f1([ [ 10, 20, 30 ], [ 30, 40, 50 ] ] : int) == 6)
 }

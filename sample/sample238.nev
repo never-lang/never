@@ -27,7 +27,7 @@ catch (division_by_zero)
     170
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(one(0) == 170)
 }

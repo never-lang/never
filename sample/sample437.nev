@@ -1,0 +1,11 @@
+
+func main() -> int
+{
+    let a = [ false, true, false, true ] : bool;
+    
+    assert(a[0] == false);
+    assert(a[1] == true);
+    
+    0
+}
+

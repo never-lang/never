@@ -9,7 +9,7 @@ func f(i : int) -> [_] : int
     t1
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(f(5)[1] == 112)
 }

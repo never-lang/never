@@ -9,7 +9,7 @@ func get_func(glob1 : float) -> (float, float) -> float
     min
 }
 
-func main() -> int 
+func main() -> bool 
 {
     assert(get_func(20.0)(15.0, 30.0) == 300.0)
 }

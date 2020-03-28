@@ -7,7 +7,7 @@ func f1(a : int, b : int, c : int) -> [D] : () -> int
     ] : () -> int
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(f1(80, 90, 100)[1]() == 70)
 }

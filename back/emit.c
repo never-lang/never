@@ -690,8 +690,13 @@ int expr_not_emit(expr * value, int stack_level, module * module_value,
 {
     bytecode bc = { 0 };
     expr_emit(value->left, stack_level, module_value, list_weak, result);
-
-    if (value->comb.comb == COMB_TYPE_INT)
+        
+    if (value->comb.comb == COMB_TYPE_BOOL)
+    {
+        bc.type = BYTECODE_OP_NOT_INT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_NOT_INT;
         bytecode_add(module_value->code, &bc);
@@ -720,6 +725,10 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
          value->right->comb.comb == COMB_TYPE_NIL)
     {
         bc.type = BYTECODE_OP_ASS_RECORD_NIL;
+    }
+    else if (value->comb.comb == COMB_TYPE_BOOL)
+    {
+        bc.type = BYTECODE_OP_ASS_INT;
     }
     else if (value->comb.comb == COMB_TYPE_INT)
     {
@@ -1608,6 +1617,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             bc.type = BYTECODE_OP_EQ_NIL;
         }
+        else if (value->left->comb.comb == COMB_TYPE_BOOL &&
+                 value->right->comb.comb == COMB_TYPE_BOOL)
+        {
+            bc.type = BYTECODE_OP_EQ_INT;
+        }
         else if (value->left->comb.comb == COMB_TYPE_INT &&
                  value->right->comb.comb == COMB_TYPE_INT)
         {
@@ -1704,6 +1718,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             value->right->comb.comb == COMB_TYPE_NIL)
         {
             bc.type = BYTECODE_OP_NEQ_NIL;
+        }
+        else if (value->left->comb.comb == COMB_TYPE_BOOL &&
+                 value->right->comb.comb == COMB_TYPE_BOOL)
+        {
+            bc.type = BYTECODE_OP_EQ_INT;
         }
         else if (value->left->comb.comb == COMB_TYPE_INT &&
                  value->right->comb.comb == COMB_TYPE_INT)
@@ -2211,7 +2230,11 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     
     expr_list_emit(array_value->dims, stack_level, module_value, list_weak, result);
 
-    if (array_value->ret->type == PARAM_INT)
+    if (array_value->ret->type == PARAM_BOOL)
+    {
+        bc.type = BYTECODE_MK_ARRAY_INT;
+    }
+    else if (array_value->ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_MK_ARRAY_INT;
     }

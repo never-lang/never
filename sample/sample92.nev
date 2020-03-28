@@ -7,7 +7,7 @@ func f1(a : int) -> [D, D] : int
      [ 0, 0, 0, a ]] : int
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(f1(11)[0, 0] == 11)
 }

@@ -1416,13 +1416,13 @@ int expr_eq_check_type(symtab * tab, expr * value, func * func_value, unsigned i
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
 
-    if (value->left->comb.comb == COMB_TYPE_BOOL &&
-        value->right->comb.comb == COMB_TYPE_BOOL)
+    if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_NIL)
     {
         value->comb.comb = COMB_TYPE_BOOL;
-    }        
-    else if (value->left->comb.comb == COMB_TYPE_NIL &&
-             value->right->comb.comb == COMB_TYPE_NIL)
+    }
+    else if (value->left->comb.comb == COMB_TYPE_BOOL &&
+             value->right->comb.comb == COMB_TYPE_BOOL)
     {
         value->comb.comb = COMB_TYPE_BOOL;
     }
@@ -1751,11 +1751,11 @@ int qualifier_check_type(symtab * tab, qualifier * value, func * func_value, uns
             if (value->expr_value != NULL)
             {
                 expr_check_type(tab, value->expr_value, func_value, syn_level, result);
-                if (value->expr_value->comb.comb != COMB_TYPE_INT)
+                if (value->expr_value->comb.comb != COMB_TYPE_BOOL)
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(value->line_no,
-                                    "filter should be int type is %s\n",
+                                    "filter should be bool type is %s\n",
                                      comb_type_str(value->expr_value->comb.comb));
                 }
             }

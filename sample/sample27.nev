@@ -23,7 +23,7 @@ func mutrec(n : float) -> float
     C(n)
 }
 
-func main() -> int 
+func main() -> bool 
 {
     assert(mutrec(1.0) == -20.0)
 }

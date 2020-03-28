@@ -1,0 +1,15 @@
+
+func boolexpr(a : bool, b : bool) -> bool
+{
+    a || b
+}
+
+func main() -> bool
+{
+    assert(boolexpr(true, true));
+    assert(boolexpr(true, false));
+    assert(boolexpr(false, true));
+    assert(!boolexpr(false, false))
+}
+
+

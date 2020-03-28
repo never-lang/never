@@ -9,7 +9,7 @@ func f1(a : int) -> int
     call( {[ a, a ]} : int )
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(f1(3) == 0)
 }

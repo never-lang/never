@@ -34,7 +34,7 @@ func one(d : int) -> int
     two(d)
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(one(0) == 299)
 }

@@ -1,6 +1,6 @@
 
-func main() -> int
+func main() -> bool
 {
-    assert(1 < 10 && 20 < 30 ? 1 : 0)
+    assert(1 < 10 && 20 < 30 ? true : false)
 }
 

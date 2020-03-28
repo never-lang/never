@@ -7,7 +7,7 @@ func f1(a : int) -> int
       [ 7, 6, 6 ]] : int)[a, a - 1]
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(f1(2) == 9)
 }

@@ -14,7 +14,7 @@ func select(a : int) -> (float, float) -> float
     a < 100 ? min : max
 }
 
-func main() -> int 
+func main() -> bool 
 {
     assert(select(110)(40.0, 20.0) == 40.0)
 }

@@ -1,0 +1,24 @@
+
+record Bools
+{
+    a : bool;
+    b : bool;
+}
+
+func calc(b : Bools) -> int
+{
+    assert(b.a == true);
+    assert(b.b == false);
+    0
+}
+
+func main() -> int
+{
+    let b = Bools(true, false);
+
+    calc(b);
+    
+    0
+}
+
+

@@ -1,4 +1,4 @@
-func main() -> int
+func main() -> bool
 {
      func fib(n : int) -> int 
      {

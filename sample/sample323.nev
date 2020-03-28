@@ -7,7 +7,7 @@ func main() -> int
     print(print(print(10 / p)));
     print(20 / p);
 
-    assert(0);
+    assert(false);
 
     0
 }

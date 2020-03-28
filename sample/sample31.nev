@@ -1,5 +1,5 @@
 
-func main() -> int 
+func main() -> bool 
 {
     assert(20 / 5 / 2 == 2)
 }

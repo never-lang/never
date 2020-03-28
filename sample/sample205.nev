@@ -1,5 +1,5 @@
 
-func main() -> int
+func main() -> bool
 {
     assert((1.0 > 10.0 ? 1 : 0) == 0);
     assert((1 > 10 ? 1 : 0) == 0)

@@ -1,12 +1,12 @@
 
 enum Optional { Some { value : int; }, None }
 
-func printOptional(o : Optional) -> int
+func printOptional(o : Optional) -> bool
 {
     match o
     {
         Optional::Some(value) -> assert(value == 1000);
-        Optional::None -> assert(0);
+        Optional::None -> assert(false);
     }
 }
 

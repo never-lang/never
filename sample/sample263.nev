@@ -1,9 +1,9 @@
 
-func main() -> int
+func main() -> bool
 {
     let s1 = "text equal";
     let s2 = "text not equal";
 
-    assert(if (s1 != s2) { 1 } else { 0 } == 1)
+    assert((if (s1 != s2) { 1 } else { 0 }) == 1)
 }
 

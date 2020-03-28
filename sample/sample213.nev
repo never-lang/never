@@ -1,7 +1,7 @@
 
-func main() -> int
+func main() -> bool
 {
-    assert(!(1 && 10) == 0);
-    assert(!(1 || 10) == 0)
+    assert(true && true);
+    assert(true || false)
 }
 

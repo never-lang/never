@@ -1,11 +1,11 @@
 
 func main() -> int
 {
-    let i = 0;
+    let i = true;
     
-    let z = { i } || { prints("false\n"); 0 };
+    let z = { i } || { prints("false\n"); false };
 
-    print(z);
+    printb(z);
 
     0
 }

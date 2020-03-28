@@ -1,5 +1,5 @@
 
-func main() -> int
+func main() -> bool
 {
     let a = 12;
     let b = 3;
