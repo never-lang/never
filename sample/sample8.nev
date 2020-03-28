@@ -11,7 +11,7 @@ func max(a : float, b : float) -> float
     a > b ? a : b
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(((110 != 100) ? min : max)(10.0, 20.0) == 10.0)
 }

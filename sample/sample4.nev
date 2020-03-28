@@ -5,7 +5,7 @@ func min(a : float, b : float) -> float
     (a < b) ? a : b
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(min(min(10.0, 8.0), min(20.0, 30.0)) == 8.0)
 }

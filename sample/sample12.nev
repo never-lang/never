@@ -6,7 +6,7 @@ func execute(a : int, b : int, f1(int, int) -> int) -> int
     f1(a, b)
 } 
  
-func main() -> int
+func main() -> bool
 {
     assert(execute(10, 20, 
              let func min(a : int, b : int) -> int

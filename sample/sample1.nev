@@ -38,7 +38,7 @@ func void_func() -> float
     0 < 0 ? 0.0 : 10.0
 }
 
-func main() -> int 
+func main() -> bool 
 {
     assert(prfloat(my_func) == 600.0)
 }

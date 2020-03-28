@@ -8,7 +8,8 @@ func three(d : int, c : int) -> int
 func two(d : int) -> int
 {
     three(d, 199);
-    assert(0)
+    assert(false);
+    0
 }
 catch (wrong_array_size)
 {
@@ -28,7 +29,7 @@ func one(d : int) -> int
     two(d)
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(one(0) == 155)
 }

@@ -23,7 +23,7 @@ catch (division_by_zero)
     100 + 20 + 9
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(one(0) == 129)
 }

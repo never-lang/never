@@ -1,21 +1,21 @@
 
 
-func isOdd(n : int) -> int
+func isOdd(n : int) -> bool
 {
     n % 2 == 1
 }
 
-func isEven(n : int) -> int
+func isEven(n : int) -> bool
 {
     n % 2 == 0
 }
 
 func main() -> int
 {
-    print(isOdd(1));
-    print(isOdd(2));
-    print(isEven(1));
-    print(isEven(2));
+    printb(isOdd(1));
+    printb(isOdd(2));
+    printb(isEven(1));
+    printb(isEven(2));
     
     0
 }

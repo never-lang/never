@@ -1,5 +1,5 @@
 
-func main() -> int
+func main() -> bool
 {
     assert((10 + 2) % (2 + 1) == 0)
 }

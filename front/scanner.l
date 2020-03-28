@@ -49,6 +49,24 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
      /* DO NOTHING */
 }
 
+bool {
+    tokp->line_no = line_no;
+    scanner_printf("bool\n");
+    return TOK_BOOL;
+}
+
+true {
+    tokp->line_no = line_no;
+    scanner_printf("true\n");
+    return TOK_TRUE;
+}
+
+false {
+    tokp->line_no = line_no;
+    scanner_printf("false\n");
+    return TOK_FALSE;
+}
+
 catch {
     tokp->line_no = line_no;
     scanner_printf("catch\n");

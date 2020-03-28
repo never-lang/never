@@ -13,7 +13,7 @@ func C(n : float) -> float
     A(n)
 }
     
-func main() -> int 
+func main() -> bool 
 {
     assert(C(1.0) == 40.0)
 }

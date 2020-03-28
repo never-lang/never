@@ -1388,6 +1388,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
 
     switch (value->type)
     {
+    case EXPR_BOOL:
+        expr_int_emit(value, stack_level, module_value, result);
+        break;
     case EXPR_INT:
         expr_int_emit(value, stack_level, module_value, result);
         break;
@@ -2594,6 +2597,7 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
         case PARAM_STRING:
             bc.type = BYTECODE_FUNC_FFI_STRING;
         break;
+        case PARAM_BOOL:
         case PARAM_DIM:
         case PARAM_ARRAY:
         case PARAM_ENUMTYPE:

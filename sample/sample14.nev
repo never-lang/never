@@ -18,7 +18,7 @@ func fun0(a0 : float, b0 : float) -> float
     fun1(a0, b0)
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(fun0(2.0, 3.0) == 20.0)
 }

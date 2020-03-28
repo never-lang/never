@@ -1,15 +1,17 @@
-func one() -> int
+func one() -> bool
 {
-    print(0)
+    print(0);
+    false
 }
 
-func two() -> int
+func two() -> bool
 {
-    print(20)
+    print(20);
+    true
 }
 
-func main() -> int
+func main() -> bool
 {
-    assert(one() || two() ? 1 : 0)
+    assert(one() || two() ? true : false)
 }
 

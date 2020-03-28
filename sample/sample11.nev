@@ -1,7 +1,7 @@
 /**
  * Crazy level max
  */
-func main() -> int 
+func main() -> bool 
 {
     assert((2 < 1 ? let func min(a : float, b : float) -> float { a < b ? a : b }
                   : let func max(a : float, b : float) -> float { a > b ? a : b })(10.0, 20.0) == 20.0)

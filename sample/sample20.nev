@@ -18,7 +18,7 @@ func funGen2(f1(a : float, b : float) -> float) -> (a : float, b : float) -> flo
     twice
 }
 
-func main() -> int 
+func main() -> bool 
 {
     assert(funGen2(min)(15.0, 20.0) == 30.0)
 }

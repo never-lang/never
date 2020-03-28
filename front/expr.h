@@ -26,7 +26,8 @@ typedef float func_float_float(float x);
 
 typedef enum expr_type
 {
-    EXPR_INT = 1,
+    EXPR_BOOL = 1,
+    EXPR_INT,
     EXPR_FLOAT,
     EXPR_CHAR,
     EXPR_STRING,
@@ -237,6 +238,7 @@ typedef struct expr_list
     expr_list_node * tail;
 } expr_list;
 
+expr * expr_new_bool(int int_value);
 expr * expr_new_int(int int_value);
 expr * expr_new_float(float float_value);
 expr * expr_new_char(char char_value);

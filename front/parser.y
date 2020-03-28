@@ -29,6 +29,9 @@ int yyerror(never ** nev, char * str)
 %token <val.int_value> TOK_NUM_INT
 %token <val.str_value> TOK_NUM_STRING
 %token <val.char_value> TOK_NUM_CHAR
+%token <val.str_value> TOK_BOOL
+%token <val.str_value> TOK_TRUE
+%token <val.str_value> TOK_FALSE
 %token <val.str_value> TOK_CHAR
 %token <val.str_value> TOK_STRING
 %token <val.str_value> TOK_FLOAT
@@ -156,6 +159,18 @@ int yyerror(never ** nev, char * str)
 %parse-param { never ** nev }
 
 %%
+
+expr: TOK_TRUE
+{
+    $$ = expr_new_bool(1);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_FALSE
+{
+    $$ = expr_new_bool(0);
+    $$->line_no = $<line_no>1;
+};
 
 expr: TOK_ID
 {
@@ -585,6 +600,18 @@ expr_seq: expr_seq ';' expr
 {
     expr_list_add_end($1, $3);
     $$ = $1;
+};
+
+param: TOK_BOOL
+{
+    $$ = param_new_bool(NULL);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID ':' TOK_BOOL
+{
+    $$ = param_new_bool($1);
+    $$->line_no = $<line_no>1;
 };
 
 param: TOK_INT

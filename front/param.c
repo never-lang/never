@@ -25,6 +25,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+param * param_new_bool(char * id)
+{
+    param * value = (param *)malloc(sizeof(param));
+    
+    value->type = PARAM_BOOL;
+    value->index = -1;
+    value->id = id;
+    value->record_id = NULL;
+    value->params = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+    
+    return value;
+}
+
 param * param_new_int(char * id)
 {
     param * value = (param *)malloc(sizeof(param));
@@ -324,6 +339,8 @@ char * param_type_str(param_type type)
 {
     switch (type)
     {
+    case PARAM_BOOL:
+        return "PARAM_BOOL";
     case PARAM_INT:
         return "PARAM_INT";
     case PARAM_FLOAT:

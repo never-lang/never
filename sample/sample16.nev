@@ -8,7 +8,7 @@ func execute(a : float, b : float, f1(float, float) -> float) -> float
     f1(a, b)
 } 
  
-func main() -> int
+func main() -> bool
 {
     assert(execute(15.0, 20.0, min) == 30.0)
 }

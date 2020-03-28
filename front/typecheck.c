@@ -146,7 +146,11 @@ int expr_set_comb_type(expr * value, param * param_value)
     {
         value->comb.comb = COMB_TYPE_ERR;
     }
-    if (param_value->type == PARAM_INT)
+    if (param_value->type == PARAM_BOOL)
+    {
+        value->comb.comb = COMB_TYPE_BOOL;
+    }
+    else if (param_value->type == PARAM_INT)
     {
         value->comb.comb = COMB_TYPE_INT;
     }
@@ -207,7 +211,11 @@ int param_cmp(param * param_one, param * param_two)
     {
         return TYPECHECK_FAIL;
     }
-    if (param_one->type == PARAM_INT && param_two->type == PARAM_INT)
+    if (param_one->type == PARAM_BOOL && param_two->type == PARAM_BOOL)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (param_one->type == PARAM_INT && param_two->type == PARAM_INT)
     {
         return TYPECHECK_SUCC;
     }
@@ -327,7 +335,9 @@ int array_cmp(int comb_dims_one, param * ret_one,
 
 int param_is_num(param * value)
 {
-    if (value->type == PARAM_INT || value->type == PARAM_FLOAT)
+    if (value->type == PARAM_BOOL ||
+        value->type == PARAM_INT ||
+        value->type == PARAM_FLOAT)
     {
         return TYPECHECK_SUCC;
     }
@@ -337,7 +347,8 @@ int param_is_num(param * value)
 
 int param_is_dynamic_array(param * value)
 {
-    if (value->type == PARAM_INT ||
+    if (value->type == PARAM_BOOL ||
+        value->type == PARAM_INT ||
         value->type == PARAM_FLOAT ||
         value->type == PARAM_ENUMTYPE ||
         value->type == PARAM_CHAR ||
@@ -373,7 +384,11 @@ int param_expr_cmp(param * param_value, expr * expr_value)
         return TYPECHECK_FAIL;
     }
 
-    if (param_value->type == PARAM_INT && expr_value->comb.comb == COMB_TYPE_INT)
+    if (param_value->type == PARAM_BOOL && expr_value->comb.comb == COMB_TYPE_BOOL)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (param_value->type == PARAM_INT && expr_value->comb.comb == COMB_TYPE_INT)
     {
         return TYPECHECK_SUCC;
     }
@@ -509,8 +524,13 @@ int expr_comb_is_enum(expr * value, int * result)
 
 int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
 {
-    if (left->comb.comb == COMB_TYPE_INT &&
-        right->comb.comb == COMB_TYPE_INT)
+    if (left->comb.comb == COMB_TYPE_BOOL &&
+        right->comb.comb == COMB_TYPE_BOOL)
+    {
+        value->comb.comb = left->comb.comb;
+    }
+    else if (left->comb.comb == COMB_TYPE_INT &&
+             right->comb.comb == COMB_TYPE_INT)
     {
         value->comb.comb = left->comb.comb;
     }
@@ -844,6 +864,7 @@ int param_check_type(symtab * tab, param * param_value,
 {
     switch (param_value->type)
     {
+        case PARAM_BOOL:
         case PARAM_INT:
         case PARAM_FLOAT:
         break;
@@ -1291,8 +1312,13 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
 
-    if (value->left->comb.comb == COMB_TYPE_INT &&
-        value->right->comb.comb == COMB_TYPE_INT)
+    if (value->left->comb.comb == COMB_TYPE_BOOL &&
+        value->right->comb.comb == COMB_TYPE_BOOL)
+    {
+        value->comb.comb = COMB_TYPE_BOOL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_INT)
     {
         value->comb.comb = COMB_TYPE_INT;
     }
@@ -1389,71 +1415,76 @@ int expr_eq_check_type(symtab * tab, expr * value, func * func_value, unsigned i
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
-        
-    if (value->left->comb.comb == COMB_TYPE_NIL &&
-        value->right->comb.comb == COMB_TYPE_NIL)
+
+    if (value->left->comb.comb == COMB_TYPE_BOOL &&
+        value->right->comb.comb == COMB_TYPE_BOOL)
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
+    }        
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
              value->right->comb.comb == COMB_TYPE_ENUMTYPE &&
              value->left->comb.comb_enumtype == value->right->comb.comb_enumtype &&
              value->left->comb.comb_enumtype->type == ENUMTYPE_TYPE_ITEM)
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
              value->right->comb.comb == COMB_TYPE_CHAR)
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if ((value->left->comb.comb == COMB_TYPE_STRING &&
               value->right->comb.comb == COMB_TYPE_NIL) ||
              (value->left->comb.comb == COMB_TYPE_NIL &&
               value->right->comb.comb == COMB_TYPE_STRING))
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if ((value->left->comb.comb == COMB_TYPE_ARRAY &&
               value->right->comb.comb == COMB_TYPE_NIL) ||
              (value->left->comb.comb == COMB_TYPE_NIL &&
               value->right->comb.comb == COMB_TYPE_ARRAY))
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
               value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
               value->right->comb.comb == COMB_TYPE_NIL)
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_NIL &&
             (value->right->comb.comb == COMB_TYPE_RECORD ||
              value->right->comb.comb == COMB_TYPE_RECORD_ID))
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if ((value->left->comb.comb == COMB_TYPE_FUNC &&
               value->right->comb.comb == COMB_TYPE_NIL) ||
              (value->left->comb.comb == COMB_TYPE_NIL &&
               value->right->comb.comb == COMB_TYPE_FUNC))
     {
-        value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else
     {
@@ -1474,7 +1505,7 @@ int expr_cond_check_type(symtab * tab, expr * value, func * func_value, unsigned
     expr_check_type(tab, value->middle, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
 
-    if (value->left->comb.comb != COMB_TYPE_INT)
+    if (value->left->comb.comb != COMB_TYPE_BOOL)
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
@@ -1671,12 +1702,12 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
             print_error_msg(value->line_no, "enum record type mismatch\n");
         }
         break;
+    case COMB_TYPE_BOOL:
     case COMB_TYPE_INT:
     case COMB_TYPE_FLOAT:
     case COMB_TYPE_CHAR:
     case COMB_TYPE_STRING:
     case COMB_TYPE_ARRAY:
-    case COMB_TYPE_BOOL:
     case COMB_TYPE_UNKNOWN:
     case COMB_TYPE_ERR:
     case COMB_TYPE_NIL:
@@ -1830,6 +1861,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
 {
     switch (value->type)
     {
+    case EXPR_BOOL:
+        value->comb.comb = COMB_TYPE_BOOL;
+        break;
     case EXPR_INT:
         value->comb.comb = COMB_TYPE_INT;
         break;
@@ -1896,17 +1930,17 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         if (value->left->comb.comb == COMB_TYPE_INT &&
             value->right->comb.comb == COMB_TYPE_INT)
         {
-            value->comb.comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_BOOL;
         }
         else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
                  value->right->comb.comb == COMB_TYPE_FLOAT)
         {
-            value->comb.comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_BOOL;
         }
         else if (value->left->comb.comb == COMB_TYPE_CHAR &&
                  value->right->comb.comb == COMB_TYPE_CHAR)
         {
-            value->comb.comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_BOOL;
         }
         else
         {
@@ -1926,10 +1960,10 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
     case EXPR_OR:
         expr_check_type(tab, value->left, func_value, syn_level, result);
         expr_check_type(tab, value->right, func_value, syn_level, result);
-        if (value->left->comb.comb == COMB_TYPE_INT &&
-            value->right->comb.comb == COMB_TYPE_INT)
+        if (value->left->comb.comb == COMB_TYPE_BOOL &&
+            value->right->comb.comb == COMB_TYPE_BOOL)
         {
-            value->comb.comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_BOOL;
         }
         else
         {
@@ -1942,9 +1976,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         break;
     case EXPR_NOT:
         expr_check_type(tab, value->left, func_value, syn_level, result);
-        if (value->left->comb.comb == COMB_TYPE_INT)
+        if (value->left->comb.comb == COMB_TYPE_BOOL)
         {
-            value->comb.comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_BOOL;
         }
         else
         {
@@ -1995,9 +2029,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         expr_check_type(tab, value->whileloop.cond, func_value, syn_level, result);
         expr_check_type(tab, value->whileloop.do_value, func_value, syn_level, result);
         
-        if (value->whileloop.cond->comb.comb == COMB_TYPE_INT)
+        if (value->whileloop.cond->comb.comb == COMB_TYPE_BOOL)
         {
-            value->comb.comb = COMB_TYPE_INT;        
+            value->comb.comb = COMB_TYPE_INT;
         }
         else
         {
@@ -2014,7 +2048,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         expr_check_type(tab, value->forloop.incr, func_value, syn_level, result);
         expr_check_type(tab, value->forloop.do_value, func_value, syn_level, result);
         
-        if (value->forloop.cond->comb.comb == COMB_TYPE_INT)
+        if (value->forloop.cond->comb.comb == COMB_TYPE_BOOL)
         {
             value->comb.comb = COMB_TYPE_INT;
         }

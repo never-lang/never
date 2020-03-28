@@ -24,6 +24,16 @@
 #include <stdio.h>
 #include <string.h>
 
+param_list * params_bool_x()
+{
+    param_list * params = NULL;
+
+    params = param_list_new();
+    param_list_add_end(params, param_new_bool(strdup("x")));
+
+    return params;
+}
+
 param_list * params_int_x()
 {
     param_list * params = NULL;
@@ -105,7 +115,11 @@ func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
     func * func_value = NULL;
     func_body * body = NULL;
 
-    if (param_ret->type == PARAM_INT)
+    if (param_ret->type == PARAM_BOOL)
+    {
+        func_expr = expr_new_build_in(math_id, actual, param_new_bool(NULL));
+    }
+    else if (param_ret->type == PARAM_INT)
     {
         func_expr = expr_new_build_in(math_id, actual, param_new_int(NULL));
     }
@@ -133,6 +147,12 @@ func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
     func_value = func_new(decl, body);
 
     return func_value;
+}
+
+func * libmath_func_bool_x_new(libmath_func math_id)
+{
+    return lib_math_func_any_new(math_id, params_bool_x(), params_x(),
+                                 param_new_bool(NULL));
 }
 
 func * libmath_func_int_x_new(libmath_func math_id)
@@ -267,6 +287,11 @@ func * libmath_func_read_new()
     return libmath_func_void_int_new(LIB_MATH_READ);
 }
 
+func * libmath_func_print_bool_new()
+{
+    return libmath_func_bool_x_new(LIB_MATH_PRINTB);
+}
+
 func * libmath_func_print_int_new()
 {
     return libmath_func_int_x_new(LIB_MATH_PRINT);
@@ -294,7 +319,7 @@ func * libmath_func_length_new()
 
 func * libmath_func_assert_int_new()
 {
-    return libmath_func_int_x_new(LIB_MATH_ASSERT);
+    return libmath_func_bool_x_new(LIB_MATH_ASSERT);
 }
 
 func * libmath_func_assert_float_new()
@@ -316,6 +341,7 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_ord_new());
     func_list_add_end(funcs, libmath_func_chr_new());
     func_list_add_end(funcs, libmath_func_read_new());
+    func_list_add_end(funcs, libmath_func_print_bool_new());
     func_list_add_end(funcs, libmath_func_print_int_new());
     func_list_add_end(funcs, libmath_func_print_float_new());
     func_list_add_end(funcs, libmath_func_print_char_new());
@@ -357,6 +383,8 @@ const char * libmath_func_to_str(libmath_func math_id)
         return "read";
     case LIB_MATH_PRINT:
         return "print";
+    case LIB_MATH_PRINTB:
+        return "printb";
     case LIB_MATH_PRINTF:
         return "printf";
     case LIB_MATH_PRINTC:

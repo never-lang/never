@@ -1,0 +1,18 @@
+
+
+func main() -> int
+{
+    let v = if (false)
+        {
+            10
+        }
+        else
+        {
+            0
+        };
+      
+    print(v);  
+    assert(v == 0);
+
+    0
+}

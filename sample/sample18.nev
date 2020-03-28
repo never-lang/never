@@ -4,7 +4,7 @@ func get(f(float, float) -> float) -> (float, float) -> float
     f
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(get(let func min(a : float, b : float) -> float { a < b ? a : b })(130.0, 20.0 - -80.0) == 100.0)
 }

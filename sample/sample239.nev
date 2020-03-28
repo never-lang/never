@@ -8,7 +8,7 @@ catch (division_by_zero)
     one(1)
 }
 
-func main() -> int
+func main() -> bool
 {
     assert(one(0) == 0)
 }

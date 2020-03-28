@@ -14,7 +14,7 @@ func main() -> int
 {
     print(print(print(getP().x)));
 
-    assert(0);
+    assert(false);
 
     0
 }

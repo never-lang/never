@@ -7,7 +7,7 @@ func twice(a : int) -> int
 func test(a : int) -> int
 {
     twice(twice(twice(32 / a)));
-    assert(0);
+    assert(false);
 
     0
 }

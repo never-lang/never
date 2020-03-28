@@ -101,6 +101,7 @@ int print_func_expr(expr * value, int depth)
 {
     switch (value->type)
     {
+    case EXPR_BOOL:
     case EXPR_INT:
     case EXPR_FLOAT:
     case EXPR_CHAR:

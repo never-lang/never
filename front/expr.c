@@ -29,6 +29,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+expr * expr_new_bool(int int_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_BOOL;
+    ret->int_value = int_value;
+    ret->comb.comb = COMB_TYPE_BOOL;
+    ret->line_no = 0;
+
+    return ret;
+}
+
 expr * expr_new_int(int int_value)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -361,6 +373,7 @@ void expr_delete(expr * value)
 {
     switch (value->type)
     {
+    case EXPR_BOOL:
     case EXPR_INT:
     case EXPR_FLOAT:
     case EXPR_CHAR:
@@ -614,6 +627,7 @@ const char * expr_type_str(expr_type type)
 {
     switch (type)
     {
+    case EXPR_BOOL: return "bool";
     case EXPR_INT: return "int";
     case EXPR_FLOAT: return "float";
     case EXPR_CHAR: return "char";

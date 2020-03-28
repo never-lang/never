@@ -40,6 +40,7 @@ typedef enum libmath_func
     LIB_MATH_CHR,
     LIB_MATH_READ,
     LIB_MATH_PRINT,
+    LIB_MATH_PRINTB,
     LIB_MATH_PRINTF,
     LIB_MATH_PRINTC,
     LIB_MATH_PRINTS,
@@ -48,6 +49,7 @@ typedef enum libmath_func
     LIB_MATH_ASSERTF
 } libmath_func;
 
+param_list * params_bool_x();
 param_list * params_int_x();
 param_list * params_float_x();
 param_list * params_float_x_float_y();
@@ -58,6 +60,7 @@ expr_list * params_x_y();
 
 func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
                              expr_list * actual, param * param_ret);
+func * libmath_func_bool_x_new(libmath_func math_id);
 func * libmath_func_int_x_new(libmath_func math_id);
 func * libmath_func_float_x_new(libmath_func math_id);
 func * libmath_func_float_x_float_y_new(libmath_func math_id);
@@ -80,6 +83,7 @@ func * libmath_func_str_float_new();
 func * libmath_func_ord_new();
 func * libmath_func_chr_new();
 func * libmath_func_read_new();
+func * libmath_func_print_bool_new();
 func * libmath_func_print_int_new();
 func * libmath_func_print_float_new();
 func * libmath_func_print_char_new();

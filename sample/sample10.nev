@@ -18,7 +18,7 @@ func funGen2(a : float, b : float) -> float
     mul(a, b + 2.0)
 }
 
-func main() -> int 
+func main() -> bool 
 {
     assert(funGen2(10.0, 20.0) == 220.0)
 }

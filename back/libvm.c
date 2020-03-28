@@ -139,12 +139,21 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
     case LIB_MATH_READ:
     {
         int x = 0;
-        scanf("%d", &x);
+        int r = scanf("%d", &x);
+        r = r;
         addr = gc_alloc_int(machine->collector, x);
         machine->sp++;
     }
     break;
     case LIB_MATH_PRINT:
+    {
+        int x =
+            gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+        string_print_int(x);
+        addr = gc_alloc_int(machine->collector, x);
+    }
+    break;
+    case LIB_MATH_PRINTB:
     {
         int x =
             gc_get_int(machine->collector, machine->stack[machine->sp].addr);

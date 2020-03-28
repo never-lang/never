@@ -100,6 +100,7 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
 {
     switch (value->type)
     {
+    case EXPR_BOOL:
     case EXPR_INT:
     case EXPR_FLOAT:
     case EXPR_CHAR:

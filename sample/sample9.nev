@@ -1,7 +1,7 @@
 /**
  * more crazy stuff
  */
-func main() -> int
+func main() -> bool
 {
     assert(let func min(a : float, b : float) -> float { (a < b) ? a : b }(100.0, 20.0) == 20.0)
 }

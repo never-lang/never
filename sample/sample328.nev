@@ -7,7 +7,7 @@ func main() -> int
     assert(nil == t[0]);
     
     prints(t[0]);
-    assert(0);
+    assert(false);
 
     0
 }

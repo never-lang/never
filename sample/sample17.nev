@@ -1,17 +1,17 @@
 
 func get(c : int) -> (float, float) -> float
 {
-    c ? let func min(a : float, b : float) -> float
-           {
-              a < b ? a : b
-           }
-      : let func max(a : float, b : float) -> float
-           {
-              a > b ? a : b
-           }
+    c != 0 ? let func min(a : float, b : float) -> float
+             {
+                a < b ? a : b
+             }
+           : let func max(a : float, b : float) -> float
+             {
+                a > b ? a : b
+             }
 }
 
-func main() -> int 
+func main() -> bool 
 {
     assert(get(0)(10.0, 20.0) == 20.0)
 }
