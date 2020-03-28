@@ -1,0 +1,15 @@
+
+func exec() -> int
+{
+    while (false)
+    {
+        10
+    }
+}
+
+func main() -> int
+{
+    print(exec())
+}
+
+
