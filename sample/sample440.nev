@@ -1,0 +1,50 @@
+
+enum ET { True { v : bool; }, False { v : bool; } }
+
+record T { t : bool; f : bool; }
+
+func check(t : bool, f : bool) -> bool
+{
+    assert((t && t) == true);
+    assert((t && f) == false);
+    assert((f && t) == false);
+    assert((f && f) == false);
+    assert((t || t) == true);
+    assert((t || f) == true);
+    assert((f || t) == true);
+    assert((f || f) == false);
+    assert((!t) == false);
+    assert((!f) == true)   
+}
+
+func main() -> bool
+{
+    let a = [ true, false ] : bool;
+    let t = T(true, false);
+    let eT = ET::True(true);
+    let eF = ET::False(false);
+
+    check(true, false);
+    check(a[0], a[1]);
+    check(t.t, t.f);
+
+    if let (ET::True(vT) = eT)
+    {
+        if let (ET::False(vF) = eF)
+        {
+            check(vT, vF)
+        }
+        else
+        {
+            assert(false)
+        }
+    }
+    else
+    {
+        assert(false)
+    }
+    
+}
+
+
+
