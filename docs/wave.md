@@ -13,7 +13,7 @@ I will present how to create a small animation which uses several Linux utilitie
 Animation uses well know [POV-Ray][Povray] raytracing tool to generate 3D ```z = sin(x, y)```
 function. First we need to generate a frame of the animation sequence.
 
-```swift
+```never
 record Point
 {
     x : float;

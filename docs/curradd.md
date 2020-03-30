@@ -13,7 +13,7 @@ to a function which takes only one argument is called currying.
 
 ## Function Currying
 
-```swift
+```never
 func add(x : int, y : int) -> int
 {
     x + y
@@ -23,7 +23,7 @@ func add(x : int, y : int) -> int
 The above code snippet presents function ```add``` which returns sum of its
 arguments.
 
-```swift
+```never
 func cadd(x : int) -> (int) -> int
 {
     let func (y : int) -> int
@@ -38,7 +38,7 @@ addend and returns anonymous function (often called lambda) which takes second
 addend (cadd: R -> (R -> R)). Then such function can be used to return sum.
 Curried ```add``` is presented in Never programming language in the above listing.
 
-```swift
+```never
 func main() -> int
 {
     print(add(5, 7));

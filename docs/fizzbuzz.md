@@ -11,7 +11,7 @@ For numbers which are multiples of both three and five print “Fizz Buzz”."*
 
 And the answer is...
 
-```swift
+```never
 func fizz_buzz() -> int
 {
     var i = 1;

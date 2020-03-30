@@ -51,7 +51,7 @@ as easy as other sorting algorithms.
 In the beginning lets perpare some utility functions. Which will be needed to
 visualize and implement workings of the algorithm.
 
-```swift
+```never
 func print_tab(tab[D] : int) -> int
 {
     var i = 0;
@@ -91,7 +91,7 @@ The first of the above functions prints out array which is passed. Function
 which is used to generate random values. Quick sort algorithm uses random
 places to choose pivot. This way we can try to avoid O(n^2) algorithm complexity.
 
-```swift
+```never
 func qsort_rec(tab[D] : int,
                beg : int, end : int,
                rand() -> int) -> int
@@ -150,7 +150,7 @@ to ```-1```. After sequence pass an item moved to the end is placed in correct
 position. Then sorting continues in left and right subsequences.
 
 
-```swift
+```never
 func main() -> int
 {
     var tab = [ 4, 9, 2, 7, 5, 6, 8, 3, 10, 1 ] : int;

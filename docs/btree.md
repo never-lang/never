@@ -13,7 +13,7 @@ Binary trees are used to quickly insert, search and delete data. The following
 sections present how insert and delete operations are implemented in Never
 programming language.
 
-```swift
+```never
 record Node
 {
     value : int;
@@ -26,7 +26,7 @@ Each node in binary tree consists of value and left and right subtrees.
 
 ## Insert
 
-```swift
+```never
 func btree_insert(tree : Node, value : int) -> Node
 {
     if (tree == nil)
@@ -54,7 +54,7 @@ Insert operation is very simple. If value being inserted is less than
 node's value then value is inserted in left subtree. When value is larger
 or equal node's value then value is inserted in right subtree.
 
-```swift
+```never
 func main() -> int
 {
     var btree = Node;
@@ -76,7 +76,7 @@ is created.
 
 ## Delete
 
-```swift
+```never
 func btree_min(tree : Node) -> Node
 {
     var min = Node;
@@ -91,7 +91,7 @@ func btree_min(tree : Node) -> Node
 }
 ```
 
-```swift
+```never
 func btree_delete(tree : Node, value : int) -> Node
 {
     if (tree != nil)
@@ -152,7 +152,7 @@ in current node, then it is deleted as inorder successor is a leaf.
 
 ![btree_del][btree_del]
 
-```swift
+```never
 func main() -> int
 {
     btree = btree_delete(btree, 10);
@@ -169,7 +169,7 @@ deleted is shown above.
 
 ## Print
 
-```swift
+```never
 func btree_print(tree : Node, depth : int) -> string
 {
     if (tree != nil)

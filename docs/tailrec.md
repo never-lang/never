@@ -14,7 +14,7 @@ Many problems are expressed using themselves as subproblems. This leads to an in
 ## Tail Recursion
 The following code listing presents Fibonacci function expressed in [Never][never-lang] language. It is expressed almost in the same way as its mathematical definition. To calculate ```fib(20)``` function ```fib``` is called 21891 times. When executed on a typical laptop it takes approximately 0.6s to execute (unsing Never language).
 
-```
+```never
 func fib(n : int) -> int 
 {
     (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
@@ -25,7 +25,7 @@ Mathematicians and computer scientists began to think how this situation could b
 
 First, it needs to be the last call. Second, it needs parameter ```n```. Also we may notice that result is a sum of two previous values, lets name them ```a``` and ```b```.
 
-```
+```never
 func fib(n : int, a : int, b : int) -> int
 {
     (n == 0) ? a : (n == 1) ? b : fib(n - 1, b, a + b)
@@ -37,7 +37,7 @@ The above listing presents tail recursive definition of the Fibonacci function. 
 ## Function Evaluation
 Other functions can be turned into tail recursive as well.
 
-```
+```never
 func gcd(x : int, y : int) -> int
 {
     (y == 0) ? x : gcd(y, x % y)
@@ -46,13 +46,14 @@ func gcd(x : int, y : int) -> int
 
 The above function present greatest common divisor function.
 
-```
+```never
 func factorial(n : int, val : int) -> int
 {
     n == 0 ? val : factorial(n - 1, n * val)
 }
 ```
-```
+
+```never
 func power(a : int, n : int, val : int) -> int
 {
     n == 0 ? val : power(a, n - 1, a * val)
@@ -66,7 +67,7 @@ Tail recursive functions can be used to create programs. When evaluating mathema
 
 To illustrate this technique lets have a look at the following examples. Different functions are executed over elements of an array. [Never][never-lang] language declares an array of four integers as ```{ 1, 2, 3, 4 } -> int``` and gets value of its elements using ```t[i]``` syntax. When an array is passed to a function its size is given in ```t[elems] -> int``` parameter.
 
-```
+```never
 func tprint( t[elems] : int ) -> int
 {
 	func __tprint( val : int, i : int, t[elems] : int ) -> int
@@ -84,7 +85,7 @@ func main() -> int
 
 The above function ```__tprint``` is invoked for every element of an array. Each element of the array is printed using ```print(t[i])``` function. Next the ```__tprint``` is invoked again to print the next value. To make program more readable function ```__tprint``` is defined within function ```tprint``` which takes the array as its parameter. This technique will recur in following examples.
 
-```
+```never
 func tsum( t[elems] : int) -> int
 {
 	func __tsum( sum : int, i : int, t[elems] : int ) -> int
@@ -100,7 +101,7 @@ func main() -> int
 ```
 To calculate sum of array elements in each recursive call sum is increased. Finally sum of all elements is returned.
 
-```
+```never
 func tmin( t[elems] : int ) -> int
 {
 	func __tmin( min : int, i : int, t[elems] : int ) -> int
@@ -116,7 +117,7 @@ func main() -> int
 ```
 Similar idea can be used to determine the lowest value within an array...
 
-```
+```never
 func exists( e : int, t[elems] : int ) -> int
 {
 	func __exists( i : int, e : int, t[elems] : int ) -> int
@@ -132,7 +133,7 @@ func main() -> int
 ```
 ...or used to determine if given value exists with an array. Recursive calls stop when sought after value is found.
 
-```
+```never
 func add_five(e : int) -> int
 {
 	print(e + 5)
@@ -153,7 +154,7 @@ func main() -> int
 ```
 [Never][never-lang] supports first-call functions which can be passed to other functions. This property can be used to execute arbitrary function over all elements. In the above example function ```add_five``` is passed to ```tforeach``` function.
 
-```
+```never
 func sum_mapi(i : int, e : int) -> int
 {
     print(i + e)
@@ -174,7 +175,7 @@ func main() -> int
 ```
 The above listing presents ```mapi``` function which is invoked with element index and its value.
 
-```
+```never
 func odd( e : int ) -> int
 {
     e % 2

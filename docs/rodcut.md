@@ -26,7 +26,7 @@ the rod so that profit is maximized.
 ## Recursive Algorithm
 
 
-```swift
+```never
 func max(a : int, b : int) -> int
 {
     a > b ? a : b
@@ -36,7 +36,7 @@ func max(a : int, b : int) -> int
 As rod cutting problem mentions maximum profit, likely maximum function
 is needed. The above code snippet presents such function.
 
-```swift
+```never
 func cutrod(price[_] : int, len : int) -> int
 {
     var i = 0;
@@ -68,7 +68,7 @@ that problem of size ```len``` is calculated using solution to problem
 of size ```len - i - 1```. This sentence can be formulated by simple
 expression ```max_p = max(max_p, price[i] + cutrod(price, len - i - 1))```.
 
-```swift
+```never
 func main() -> int
 {
     let price = [ 1, 5, 8, 9, 10, 17, 17, 20 ] : int;
@@ -82,7 +82,7 @@ sections of lengths 1, 2, 3, ... can be sold for 1, 5, 8, ... is presented above
 
 ### Memoization
 
-```swift
+```never
 func cutrod(price[P] : int, memo[M] : int, len : int) -> int
 {
     var i = 0;
@@ -105,7 +105,7 @@ func cutrod(price[P] : int, memo[M] : int, len : int) -> int
 }
 ```
 
-```swift
+```never
 func main() -> int
 {
     let price = [ 1, 5, 8, 9, 10, 17, 17, 20 ] : int;

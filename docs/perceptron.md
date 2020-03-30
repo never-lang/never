@@ -15,7 +15,7 @@ I will try to explain everything step by step so you can follow the article easi
 
 ## Sigmoid
 
-```
+```never
 func sigmoid(x : float) -> float
 {
     1.0 / (1.0 + exp(-x))
@@ -30,7 +30,7 @@ to have zero-one results for parameters.
 
 ## Linear Congruential Generator
 
-```
+```never
 func randomize(seed : int) -> () -> int
 {
     let v = seed;
@@ -60,7 +60,7 @@ to initialize neural network.
 
 ## Matrix Algebra
 
-```
+```never
 func print_matrix(W[D1, D2] : float) -> int
 {
     let r = 0;
@@ -88,7 +88,7 @@ takes string as parameter and prints it on console. Addition operator is overloa
 (which means it can take arguments of different types) and in the above case adds
 float and string parameter by changing float into its string representation.
 
-```
+```never
 func one_matrix(W[D1, D2] : float) -> int
 {
     let r = 0;
@@ -108,7 +108,7 @@ Functions can also modify passed parameters. The above function initializes
 all matrix elements to one. Later this matrix will be used to perform matrix
 subtraction.
 
-```
+```never
 func rand_matrix(W[D1, D2] : float, rand() -> int) -> int
 {
     let r = 0;
@@ -124,7 +124,7 @@ func rand_matrix(W[D1, D2] : float, rand() -> int) -> int
 }
 ```
 
-```
+```never
 func sigmoid_matrix(W[D1, D2] : float) -> [_,_] : float
 {
     let r = 0;
@@ -148,7 +148,7 @@ also presents how function ```rand``` is passed as a parameter. Second example
 shows how function ```sigmoid_matrix``` calculates sigmoid values for each
 matrix elements.
 
-```
+```never
 func T_matrix(W[D1, D2] : float) -> [_,_] : float
 {
     let r = 0;
@@ -170,7 +170,7 @@ One of common matrix operation is transposition. The function ```T_matrix```
 returns matrix whose element at index ```[r, c]``` is placed at index ```[c, r]```
 in the returned matrix.
 
-```
+```never
 func Hadamard_matrix(W1[D1, D2] : float, W2[D3, D4] : float) -> [_,_] : float
 {
     let r = 0;
@@ -209,14 +209,14 @@ As usual lets start with basic components which are needed. As stated above
 we need set of inputs ```x``` and expected results ```y```. They may be
 expressed in Never as follows:
 
-```
+```never
     let x = [ [0, 1, 0],
               [1, 0, 0],
               [1, 1, 1],
               [0, 0, 1] ] : float;
 ```
 
-```
+```never
     let y = [ [1, 0, 1, 0] ] : float;
     let yT = T_matrix(y);
 ```
@@ -230,7 +230,7 @@ return only value of ```x1```.
 Input weights ```W``` are first initialized to random values. The following code
 can set ```[3, 1]``` matrix.
 
-```
+```never
     let W = {[ 3, 1 ]} : float;
     let rand = randomize(165);
     rand_matrix(W, rand);
@@ -239,7 +239,7 @@ can set ```[3, 1]``` matrix.
 Now output calculation formula is simple. What is also worth noticing is that
 array ```s``` contains four values for each input sample.
 
-```
+```never
     let z = {[ 4, 1 ]} : float;
     let s = {[ 4, 1 ]} : float;
 
@@ -261,7 +261,7 @@ Lets recall that matrix ```s``` contains output values for each input value.
 Error can be calculated by subtracting each element of ```yT``` from ```s```.
 Of course we keep these values in a matrix.
 
-```
+```never
     let err = {[ 4, 1 ]} : float;
     err = yT - s;
 ``` 
@@ -281,7 +281,7 @@ is given by transpose of matrix ```T```. To multiply values by their
 corresponding elements matrix Hadamard multiplication is used.
 Value ```1``` is replaced by matrix with all elements initialized to ```1```.
 
-```
+```never
     let sD = {[ 4, 1 ]} : float;
     let one = {[ 4, 1 ]} : float;
 
@@ -292,14 +292,14 @@ Value ```1``` is replaced by matrix with all elements initialized to ```1```.
 Learning cycles are executed using loop over forward and backpropagation
 phases.
 
-```
+```never
     let i = 0;
     for (i = 0; i < 1000; i = i + 1)
 ```
 
 ## Listing
 
-```
+```never
 func nn() -> int
 {
     let x = [ [0, 1, 0],
@@ -347,7 +347,7 @@ The above code presents the whole network learning algorithm on one listing.
 
 ## Beginning at the End
 
-```
+```never
 func main() -> int
 {
     nn();

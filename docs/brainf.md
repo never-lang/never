@@ -31,7 +31,7 @@ The following table lists Brain F\*\*\* instructions:
 
 ### Data Structures
 
-```swift
+```never
 record BFI
 {
     cmd : char;
@@ -55,7 +55,7 @@ is executed. ```MEM``` record is a double linked list through ```next``` and
 
 ### Algorithms
 
-```swift
+```never
 func compile(prog : string) -> BFI
 {
     var i = 0;
@@ -109,7 +109,7 @@ func compile(prog : string) -> BFI
 }
 ```
 
-```swift
+```never
 func exec(pgm : BFI) -> int
 {
     var m = MEM(0, nil, nil);
@@ -170,7 +170,7 @@ func exec(pgm : BFI) -> int
 }
 ```
 
-```swift
+```never
 func run(prog : string) -> int
 {
     var pgm = BFI;
@@ -185,7 +185,7 @@ func run(prog : string) -> int
 }
 ```
 
-```swift
+```never
 func main() -> int
 {
     /* Hello World! */

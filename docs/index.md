@@ -13,7 +13,7 @@ to calculate expressions. Also it demonstrates how functions can be compiled,
 invoked and passed as parameters or results between other functions.
 
 ## Introduction
-```swift
+```never
 func main() -> float
 {
     100.0 * 1.8 + 32.0
@@ -25,7 +25,7 @@ in Unix shell or C language ```main``` can take ```int``` or ```float``` paramet
 The function may only return value of one expression. In the above example temperature
 of boiling water given in Celsius degrees is converted to Fahrenheit degrees.
 
-```swift
+```never
 func cel2fah(c : float) -> float
 {
     c * 1.8 + 32.0
@@ -43,7 +43,7 @@ The above listing presents such a function.
 In particular, functions may invoke themselves. The Fibonacci function is
 a classic example:
 
-```swift
+```never
 func fib(n : int) -> int
 {
     (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
@@ -57,7 +57,7 @@ func main() -> int
 
 or greatest common divisor:
 
-```swift
+```never
 func gcd(x : int, y : int) -> int
 {
     (y == 0) ? x : gcd(y, x % y)
@@ -86,7 +86,7 @@ One of most interesting features of functional programming languages is their
 ability to accept and return functions. The following code demonstrates this
 feature.
 
-```swift
+```never
 func fah2cel(f : float) -> float
 {
     (f - 32.0) / 1.8
@@ -114,7 +114,7 @@ degrees. As Never is strongly typed the function specifies its return type as
 ```(float) -> float``` which is the type of degree converting functions.
 
 Functions may also take other functions as arguments.
-```swift
+```never
 func fah2cel(f : float) -> float
 {
     (f - 32.0) / 1.8
@@ -144,7 +144,7 @@ Also its parameter ```conv``` is strongly typed with function type.
 Never supports any degree of function nesting. As result it is not needed to
 define all functions in programs top level.
 
-```swift
+```never
 func dir_deg(d : int) -> (float) -> float
 {
     func fah2cel(f : float) -> float
@@ -171,7 +171,7 @@ they cannot be invoked from function ```main```. Only functions and parameters
 which are defined above or at the same level in the structure of a program
 can be used.
 
-```swift
+```never
 func dir_deg(d : float, coeff : float) -> (float) -> float
 {
     func fah2cel(f : float) -> float
@@ -202,7 +202,7 @@ temperature after ```dir_deg``` returns.
 Functions in functional programming languages are also expressions.
 This leads to very interesting syntax which is supported by Never.
 
-```swift
+```never
 func degrees(conv(float) -> float, degree : float) -> float
 {
     conv(degree)
@@ -222,7 +222,7 @@ a parameter being passed to function ```degrees```. The function converts from
 Réaumur degrees to Celsius degrees.
 
 The idea of in-lining functions may be taken into extreme...
-```swift
+```never
 func calc() -> (float) -> float
 {
     func fah2cel(f : float) -> float { (f - 32.0) / 1.8 }
@@ -235,7 +235,7 @@ func main() -> float
 ```
 ... and a little step further.
 
-```swift
+```never
 func dir_deg(d : int) -> (float) -> float
 {
     d == 0 ? let func fah2cel(f : float) -> float { (f - 32.0) / 1.8 }
@@ -252,7 +252,7 @@ func main() -> float
 ## Bindings
 Functions let to define bindings with local values.
 
-```swift
+```never
 func area(a : float, b : float, c : float) -> float
 {
     let p = (a + b + c) / 2.0;
@@ -265,7 +265,7 @@ their values can be declared and used in their order. In the following example
 variables ```q``` and ```p``` are declared in correct order. When reversed
 compilation error will be displayed.
 
-```swift
+```never
 func outer(a : float, b : float) -> float
 {
     let q = 10.0;
@@ -277,7 +277,7 @@ func outer(a : float, b : float) -> float
 
 Bindings can hold any expressions. Thus the following code is also possible...
 
-```swift
+```never
 func outer(to : int) -> () -> int
 {
     let p = 2 * to;
@@ -292,7 +292,7 @@ func outer(to : int) -> () -> int
 
 ... or even
 
-```swift
+```never
 func outer(to : int) -> (int) -> int
 {
     let f = let func rec(start : int) -> int
@@ -324,7 +324,7 @@ the value on the left hand side is a temporary, assignment will be discarded.
 
 The following examples present assignments and flow control.
 
-```swift
+```never
 func main() -> int
 {
     let n = 18;
@@ -343,7 +343,7 @@ The following code calculates divisors of a number and outlines ```for``` and ``
 expressions. The following factorizes a number using ```for```
 and ```while``` expressions.
 
-```swift
+```never
 func divisors(n : int) -> int
 {
     var i = 1;
@@ -372,7 +372,7 @@ func main() -> int
 }
 ```
 
-```swift
+```never
 func factorize(n : int) -> int
 {
     var i = 1;
@@ -399,7 +399,7 @@ Never supports arrays of any dimension. Array are also expressions and may be
 passed between functions. The following example declares an array and returns
 value of its element.
 
-```swift
+```never
 func f1(a -> int) -> [D, D] : int
 {
      [ [ a, 0, 0, 0 ],
@@ -417,7 +417,7 @@ func main() -> int
 Arrays may contain elements of any type. In particular these may be other
 arrays...
 
-```swift
+```never
 func call(tab[row] : [D] : int) -> int
 {
     tab[row - 1][1]
@@ -435,7 +435,7 @@ func main() -> int
 }
 ```
 ...or even functions.
-```swift
+```never
 func f1(a : int, b : int, c : int) -> [D] : () -> int
 {
      [
@@ -453,7 +453,7 @@ func main() -> int
 
 When arrays are passed to functions their dimensions are also passed as function
 arguments. This type of array passing type is called conformant arrays.
-```swift
+```never
 func f1(tab[row, col] : int) -> int
 {
     row * col
@@ -468,7 +468,7 @@ func main() -> int
 Conformat arrays let to iterate over array elements. The following listing
 demonstrates how conformant arrays and tail recursion are used to determine
 lowest element in an array.
-```swift
+```never
 func tmin( t[elems] : int ) -> int
 {
     func __tmin( min : int, i : int, t[elems] : int ) -> int
@@ -487,7 +487,7 @@ func main() -> int
 The following example presents how to pass any function which is executed over
 all elements of an array. This program uses arrays, first class functions
 and tail recursion.
-```swift
+```never
 func add_five(e : int) -> int
 {
     print(e + 5)
@@ -510,7 +510,7 @@ func main() -> int
 
 Arrays may contain other arrays. This feature lets us to define vectors
 of arrays.
-```swift
+```never
 func printTab( tab[dim] : int ) -> int
 {
     func __printTab( val : int, i : int, tab[dim] : int ) -> int
@@ -537,7 +537,7 @@ func main() -> int
 ```
 
 The above code can be rewritten using ```foreach``` functions.
-```swift
+```never
 func twice(e -> int) -> int
 {
     print(2 * e)
@@ -572,7 +572,7 @@ func main() -> int
 Arrays can be used to memorize sub-problem results in dynamic programming. 
 The following example solves rod cutting dynamic problem.
 
-```swift
+```never
 func max(a : int, b : int) -> int { a > b ? a : b }
 
 func cutrod(price[P] : int, memo[M] : int, len : int) -> int
@@ -608,35 +608,35 @@ func main() -> int
 ## Array Operators
 Never lets to add, subtract and multiply int and float arrays.
 
-```swift
+```never
 func main() -> int
 {
     printtab( 2 * [ 3, 5, 7, 9 ] : int )
 }
 ```
 
-```swift
+```never
 func main() -> int
 {
     printtab( - [ 1, -2, 3, -4, 5, -6 ] : int )
 }
 ```
 
-```swift
+```never
 func main() -> int
 {
     printtab( [ 3.5, 5.5, 7.5 ] : float - [ 3.0, 4.0, 7.0 ] : float )
 }
 ```
 
-```swift
+```never
 func main() -> int
 {
     printtab( [ 1.5, 2.5, 3.5 ] : float + [ 3.0, 4.0, 7.0 ] : float )
 }
 ```
 
-```swift
+```never
 func main() -> int
 {
     printtab( [ [ 1.0, 2.0, 3.0 ],
@@ -653,7 +653,7 @@ func main() -> int
 Never supports list comprehension. Each list consists of a series of
 generators and filers and expression which yields list elements.
 
-```swift
+```never
 func cl() -> [_] : int
 {
     [ x * x | x in [10, 20, 30, 40, 50] : int ] : int
@@ -662,7 +662,7 @@ func cl() -> [_] : int
 
 The following example presents both generators and filters.
 
-```swift
+```never
 func cl() -> [_] : int
 {
     [ x * x | x in [1, 2, 3, 4, 5, 6, 7, 8] : int; (x * x % 2) == 0 ] : int
@@ -671,7 +671,7 @@ func cl() -> [_] : int
 
 List comprehension may also invoke other functions.
 
-```swift
+```never
 func cl() -> [_] : float
 {
     func grad(d : float) -> float
@@ -686,7 +686,7 @@ func cl() -> [_] : float
 
 or even return list of closures.
 
-```swift
+```never
 func cl() -> [_] : (float) -> float
 {
     func grad(d : float) -> float
@@ -701,7 +701,7 @@ func cl() -> [_] : (float) -> float
 
 The following code snippets present other examples:
 
-```swift
+```never
 func decor(str : string) -> string
 {
     "###" + str + "###\n"
@@ -729,7 +729,7 @@ func main() -> int
 0
 ```
 
-```swift
+```never
 func main() -> int
 {
     var i = 0;
@@ -758,7 +758,7 @@ func main() -> int
 0
 ```
 
-```swift
+```never
 func main() -> int
 {
     var i = 0;
@@ -789,7 +789,7 @@ func main() -> int
 
 ## Enums
 
-```swift
+```never
 enum EONE { one, two, three, four, five }
 
 enum ETWO { one, two, three, four, five }
@@ -824,7 +824,7 @@ they can be defined and used. Enums can also be used in match expression
 to convert their values. Match expression is exhaustive which means that
 all possibile enum values should be covered.
 
-```swift
+```never
 func main() -> int
 {
     match EONE.five
@@ -839,7 +839,7 @@ func main() -> int
 
 ## Records
 
-```swift
+```never
 record Tree
 {
     value : int;
@@ -890,7 +890,7 @@ and then function ```print``` is used to recursively print the tree.
 Enum type can also hold one of possible record values. Such type lets to define
 convenient optional values, error codes or recursive data types.
 
-```swift
+```never
 enum Optional { Some { value : int; }, None }
 
 func calc() -> Optional
@@ -910,7 +910,7 @@ func main() -> int
 }
 ```
 
-```swift
+```never
 enum Result { Ok { value : int; }, Err { msg : string; } }
 
 func div(n : int, d : int) -> Result
@@ -937,7 +937,7 @@ func main() -> int
 }
 ```
 
-```swift
+```never
 enum Tree { Node { value : int; left : Tree; right : Tree; }, None }
 
 func printTree(tree : Tree) -> int
@@ -970,7 +970,7 @@ func main() -> int
 It may be difficult to enumerate all possible match guards. To check for
 just one value and assign its value it is useful to use ```if let``` expression.
 
-```swift
+```never
 enum Optional { Some{ value : int; }, Other, None }
 
 func getF(o : Optional) -> () -> int
@@ -997,7 +997,7 @@ func main() -> int
 
 As ```if let``` is an expression it can be used to initalize variables.
 
-```swift
+```never
 enum Result { Ok { value : int; }, Err { msg : string; } }
 
 func calc() -> Result
@@ -1028,7 +1028,7 @@ Never supports a few built-in mathematical functions - ```sin(x)```,
 and ```pow(x,y)```. These functions are also first class so they may be passed
 in between functions as any other function.
 
-```swift
+```never
 func deg2rad(deg : float) -> float
 {
     deg * 3.14159 / 180
@@ -1049,7 +1049,7 @@ Together with arrays mathematical functions can be used to express and calculate
 vector rotations. Code snippet included below rotates vector ```[[ 10.0, 0.0 ]]```
 by 0, 45, 90, 180, 270 and 360 degrees.
 
-```swift
+```never
 func print_vect(vect[D1, D2] : float) -> int
 {
     printf(vect[0, 0]);
@@ -1088,7 +1088,7 @@ happens inside exception handler it replaces exception being processed.
 The following code shows how exception ```invalid_domain``` raised when negative
 parameter passed to ```sqrt``` function is passed.
 
-```swift
+```never
 func main() -> int
 {
     sqrt(-1)
@@ -1103,7 +1103,7 @@ Exception need not be processed in the same function where they occurred. They
 are passed down call stack. First function which defines exception handler
 is used. Also any exception can be caught by parameterless exception handler.
 
-```swift
+```never
 func three(d : int, c : int) -> int
 {
     let t = [ 1, 2, 3 ] : int;
@@ -1151,7 +1151,7 @@ Never implements simple `print(int x) -> int` and `printf(float x) -> float` fun
 The function writes an integer or float parameter `x` (with a new line character)
 to standard output and returns passed value.  By default `printf` uses `"%.2f\n"` formatting.
 
-```swift
+```never
 func main() -> float
 {
     printf(123.456)
@@ -1160,7 +1160,7 @@ func main() -> float
 
 It is also possible to print string of characters.
 
-```swift
+```never
 func main() -> int
 {
     let txt = "answer is ";
@@ -1174,7 +1174,7 @@ func main() -> int
 
 They may be concatenated with integers or floats.
 
-```swift
+```never
 func print_vect(vect[D1, D2] : float) -> int
 {
     prints("[" + vect[0, 0] + "," + vect[0, 1] + "]\n");
@@ -1184,7 +1184,7 @@ func print_vect(vect[D1, D2] : float) -> int
 
 String can also be assigned and compared.
 
-```swift
+```never
 func main() -> int
 {
     let s1 = "string one\n";
@@ -1201,7 +1201,7 @@ func main() -> int
 }
 ```
 
-```swift
+```never
 func main() -> int
 {
     let s1 = "text equal";
@@ -1215,7 +1215,7 @@ func main() -> int
 Never language can be embedded in Unix shell and C code.
 
 ### Shell
-```swift
+```never
 #!/usr/bin/nev
 
 func add(a : int, b : int, c : int) -> int
@@ -1291,7 +1291,7 @@ Never can also invoke functions in dynamically loaded libraries. The following
 code snippets demonstrate how to invoke function in math and system libraries.
 Right now only basic types can be passed.
 
-```swift
+```never
 extern "libm.so.6" func sinhf(x : float) -> float
 extern "libm.so.6" func coshf(x : float) -> float
 extern "libm.so.6" func powf(base : float, exp : float) -> float
@@ -1314,7 +1314,7 @@ func main() -> int
 }
 ```
 
-```swift
+```never
 func main() -> int
 {
     var system = let extern "libc.so.6" func system(cmd : string) -> float;
