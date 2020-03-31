@@ -12,6 +12,11 @@ export default function(hljs) {
     relevance: 0
   }
 
+  var NEVER_STRING = {
+    className: 'string',
+    begin: '"', end: '"'
+  }
+
   var NEVER_TYPE = {
     className: 'type',
     begin: '\\b[A-Z][0-9A-Za-z$_]*',
@@ -77,21 +82,45 @@ export default function(hljs) {
     ]
   }
 
+  var NEVER_EXTERN = {
+    className: 'function',
+    begin: 'extern', end: '[\n\r]',
+    excludeBeging: true,
+    keywords: NEVER_KEYWORDS,
+    contains:
+    [
+      NEVER_STRING,
+      {
+        className: 'title',
+        begin: '\\bfunc', end: /[A-Za-z$_][0-9A-Za-z$_]*/,
+        excludeBegin: true
+      },
+      {
+        className: 'params',
+        begin: /\{/, end: /\}/,
+        endsParent: true,
+        contains:
+        [
+          NEVER_DIM,
+          NEVER_TYPE
+        ]
+      }
+    ]
+  }
+
   return {
     name: 'never',
     aliases: [ 'Never ' ],
     disableAutodetect: true,
-    case_insensitive: false, // language is case-insensitive
+    case_insensitive: false, // language is case-sensitive
     keywords: NEVER_KEYWORDS,
     contains: [
       NEVER_TYPE,
       NEVER_FUNCTION,
       NEVER_ENUM_RECORD,
+      NEVER_EXTERN,
       NEVER_NUMBER,
-      {
-        className: 'string',
-        begin: '"', end: '"'
-      },
+      NEVER_STRING,
       hljs.C_BLOCK_COMMENT_MODE,
       hljs.HASH_COMMENT_MODE
     ]
