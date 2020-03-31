@@ -15,6 +15,7 @@ nav:
        - Dynamic Programming - Rod Cutting : rodcut.md
        - Tribute to Alonso C.: curradd.md
        - Fizz Buzz: fizzbuzz.md
+       - Pythagorean Triangle: pitria.md
        - Tail Recursion: tailrec.md
        - Neural Network: perceptron.md
        - Wave: wave.md
