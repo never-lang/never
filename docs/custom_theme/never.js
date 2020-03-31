@@ -6,15 +6,26 @@ export default function(hljs) {
     built_in: 'assert assertb assertf chr cos exp length log ord pow print printb printc printf prints read sin sqrt str strf tan'
   }
 
+  var NEVER_NUMBER = {
+    className: 'number',
+    begin: '\\b0[xX][0-9A-F]+\\b|\\b[0-9]+\\b',
+    relevance: 0
+  }
+
   var NEVER_TYPE = {
     className: 'type',
-    begin: ': ', end: '[A-Za-z$_][0-9A-Za-z$_]*',
-    excludeBegin: true
+    begin: '\\b[A-Z][0-9A-Za-z$_]*',
+    relevance: 0
+  }
+  
+  var NEVER_DIM = {
+    className: 'array',
+    begin: '\\[', end: '\\]'
   }
 
   var NEVER_FUNCTION = {
     className: 'function',
-    beginKeywords: 'func', end: '->', excludeEnd: true,
+    beginKeywords: 'func', end: '{', excludeEnd: true,
     contains:
     [
       hljs.inherit(hljs.TITLE_MODE, {
@@ -26,6 +37,18 @@ export default function(hljs) {
         keywords: NEVER_KEYWORDS,
         contains:
         [
+          NEVER_DIM,
+          NEVER_TYPE
+        ]
+      },
+      {
+        className: 'params',
+        begin: /->/, end: /\{/,
+        endsParent: true,
+        keywords: NEVER_KEYWORDS,
+        contains:
+        [
+          NEVER_DIM,
           NEVER_TYPE
         ]
       }
@@ -39,7 +62,18 @@ export default function(hljs) {
     [
       hljs.inherit(hljs.TITLE_MODE, {
         begin: /[A-Za-z$_][0-9A-Za-z$_]*/
-      })
+      }),
+      {
+        className: 'params',
+        begin: /\{/, end: /\}/,
+        endsParent: true,
+        keywords: NEVER_KEYWORDS,
+        contains:
+        [
+          NEVER_DIM,
+          NEVER_TYPE
+        ]
+      }
     ]
   }
 
@@ -53,30 +87,13 @@ export default function(hljs) {
       NEVER_TYPE,
       NEVER_FUNCTION,
       NEVER_ENUM_RECORD,
-      {
-        className: 'identifier',
-        begin: '/[A-Za-z$_][0-9A-Za-z$_]*/'
-      },
-      {
-        className: 'number',
-        begin: '\\b0[xX][0-9A-F]+|[0-9]+\\b'
-      },
+      NEVER_NUMBER,
       {
         className: 'string',
         begin: '"', end: '"'
       },
-      {
-        className: 'array',
-        begin: '\\[', end: '\\]'
-      },
-      hljs.HASH_COMMENT_MODE,
-      hljs.COMMENT(
-        '/\\*', // begin
-        '\\*/', // end
-        {
-          contains: [ 'self' ]
-        }
-      )
+      hljs.C_BLOCK_COMMENT_MODE,
+      hljs.HASH_COMMENT_MODE
     ]
   }
 }
