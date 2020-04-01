@@ -8,8 +8,11 @@ export default function(hljs) {
 
   var NEVER_NUMBER = {
     className: 'number',
-    begin: '\\b0[xX][0-9A-F]+\\b|\\b[0-9]+\\b',
-    relevance: 0
+    variants:
+    [
+      { begin: '\\b[\\d_]+(\\.[\\deE_]+)?\\b' },
+      { begin: '\\b0[xX][a-fA-F0-9_]+(\\.[a-fA-F0-9p_]+)?\\b' }
+    ]
   }
 
   var NEVER_STRING = {
