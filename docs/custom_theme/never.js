@@ -1,3 +1,11 @@
+/*
+Language: Never
+Author: Slawomir Maludzinski <slawomir.maludzinski@gmail.com>
+Description: Syntactically scoped, strongly typed, call by value, functional programming language
+Website: https://never-lang.readthedocs.io/
+Category: functional
+*/
+
 export default function(hljs) {
   var NEVER_KEYWORDS = {
     keyword: 'catch do enum else extern for func if in let match record throw var while',
@@ -23,7 +31,6 @@ export default function(hljs) {
   var NEVER_TYPE = {
     className: 'type',
     begin: '\\b[A-Z][0-9A-Za-z$_]*',
-    relevance: 0
   }
   
   var NEVER_DIM = {
