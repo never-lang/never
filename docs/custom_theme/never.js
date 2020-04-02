@@ -59,6 +59,7 @@ export default function(hljs) {
       {
         className: 'params',
         begin: /->/, end: /\{/,
+        excludeBegin: true, excludeEnd: true,
         endsParent: true,
         keywords: NEVER_KEYWORDS,
         contains:
