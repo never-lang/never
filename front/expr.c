@@ -197,6 +197,33 @@ expr * expr_new_array_deref(expr * array_expr, expr_list * ref)
     return ret;
 }
 
+expr * expr_new_range_dim(expr * from, expr * to)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+
+    ret->type = EXPR_RANGE_DIM;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->line_no = 0;
+    ret->range_dim.from = from;
+    ret->range_dim.to = to;
+
+    return ret;
+}
+
+expr * expr_new_range(expr_list * range_dims)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+
+    ret->type = EXPR_RANGE;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->comb.comb_params = NULL;
+    ret->comb.comb_ret = NULL;
+    ret->line_no = 0;
+    ret->range.range_dims = range_dims;
+
+    return ret;
+}
+
 expr * expr_new_seq(expr_list * list)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -436,6 +463,22 @@ void expr_delete(expr * value)
         expr_delete(value->array_deref.array_expr);
         expr_list_delete(value->array_deref.ref);
         break;
+    case EXPR_RANGE_DIM:
+        if (value->range_dim.from)
+        {
+            expr_delete(value->range_dim.from);
+        }
+        if (value->range_dim.to)
+        {
+            expr_delete(value->range_dim.to);
+        }
+        break;
+    case EXPR_RANGE:
+        if (value->range.range_dims)
+        {
+            expr_list_delete(value->range.range_dims);
+        }
+        break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         if (value->call.func_expr != NULL)
@@ -656,6 +699,8 @@ const char * expr_type_str(expr_type type)
     case EXPR_CALL: return "call";
     case EXPR_LAST_CALL: return "last call";
     case EXPR_FUNC: return "func";
+    case EXPR_RANGE_DIM: return "range dim";
+    case EXPR_RANGE: return "range";
     case EXPR_SEQ: return "seq";
     case EXPR_ASS: return "ass";
     case EXPR_WHILE: return "while";
@@ -698,6 +743,10 @@ const char * comb_type_str(comb_type type)
         return "string";
     case COMB_TYPE_ARRAY:
         return "array";
+    case COMB_TYPE_RANGE_DIM:
+        return "range dim";
+    case COMB_TYPE_RANGE:
+        return "range";
     case COMB_TYPE_FUNC:
         return "func";
     case COMB_TYPE_RECORD:

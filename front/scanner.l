@@ -187,10 +187,22 @@ match {
     return TOK_MATCH;
 }
 
+range {
+    tokp->line_no = line_no;
+    scanner_printf("range\n");
+    return TOK_RANGE;
+}
+
 "::" {
     tokp->line_no = line_no;
     scanner_printf("::\n");
     return TOK_DDOT;
+}
+
+".." {
+    tokp->line_no = line_no;
+    scanner_printf("..\n");
+    return TOK_TODOTS;
 }
 
 "+"|"-"|"/"|"*"|"%"|"=" {

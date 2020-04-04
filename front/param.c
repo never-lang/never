@@ -21,6 +21,7 @@
  */
 #include "param.h"
 #include "dim.h"
+#include "range.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -135,6 +136,36 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     return value;
 }
 
+param * param_new_range(char * id, range_list * ranges)
+{
+    param * value = (param *)malloc(sizeof(param));
+
+    value->type = PARAM_RANGE;
+    value->index = -1;
+    value->id = id;
+    value->record_id = NULL;
+    value->ranges = ranges;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_slice(char * id, range_list * ranges, param * ret)
+{
+    param * value = (param *)malloc(sizeof(param));
+
+    value->type = PARAM_SLICE;
+    value->index = -1;
+    value->id = id;
+    value->record_id = NULL;
+    value->ranges = ranges;
+    value->ret = ret;
+    value->line_no = 0;
+
+    return value;
+}
+
 param * param_new_record(char * id, char * record_id)
 {
     param * value = (param *)malloc(sizeof(param));
@@ -171,18 +202,43 @@ void param_delete(param * value)
     {
         free(value->id);
     }
-    if (value->record_id)
-    {
-        free(value->record_id);
-    }
 
-    if (value->type == PARAM_FUNC && value->params != NULL)
+    switch (value->type)
     {
-        param_list_delete(value->params);
-    }
-    else if (value->type == PARAM_ARRAY && value->dims != NULL)
-    {
-        param_list_delete(value->dims);
+        case PARAM_BOOL:
+        case PARAM_INT:
+        case PARAM_FLOAT:
+        case PARAM_CHAR:
+        case PARAM_STRING:
+        case PARAM_DIM:
+        break;
+        case PARAM_ARRAY:
+            if (value->dims != NULL)
+            {
+                param_list_delete(value->dims);
+            }
+        break;
+        case PARAM_RANGE:
+        case PARAM_SLICE:
+            if (value->ranges != NULL)
+            {
+                range_list_delete(value->ranges);
+            }
+        break;
+        case PARAM_RECORD:
+            if (value->record_id)
+            {
+                free(value->record_id);
+            }
+        break;
+        case PARAM_ENUMTYPE:
+        break;
+        case PARAM_FUNC:
+            if (value->params != NULL)
+            {
+                param_list_delete(value->params);
+            }
+        break;
     }
 
     if (value->ret)
@@ -357,6 +413,10 @@ char * param_type_str(param_type type)
         return "PARAM_DIM";
     case PARAM_ARRAY:
         return "PARAM_ARRAY";
+    case PARAM_RANGE:
+        return "PARAM_RANGE";
+    case PARAM_SLICE:
+        return "PARAM_SLICE";
     case PARAM_FUNC:
         return "PARAM_FUNC";
     }

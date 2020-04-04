@@ -22,6 +22,9 @@
 #ifndef __PARAM_H__
 #define __PARAM_H__
 
+typedef struct range range;
+typedef struct range_list range_list;
+
 typedef enum param_type
 {
     PARAM_BOOL = 1,
@@ -31,6 +34,8 @@ typedef enum param_type
     PARAM_STRING,
     PARAM_DIM,
     PARAM_ARRAY,
+    PARAM_RANGE,
+    PARAM_SLICE,
     PARAM_ENUMTYPE,
     PARAM_RECORD,
     PARAM_FUNC
@@ -46,6 +51,7 @@ typedef struct param
         struct param * array;
         struct param_list * params;
         struct param_list * dims;
+        struct range_list * ranges;
         struct record * record_value;
         struct enumtype * enumtype_value;
     };
@@ -74,6 +80,8 @@ param * param_new_char(char * id);
 param * param_new_string(char * id);
 param * param_new_dim(char * id);
 param * param_new_array(char * id, param_list * dims, param * ret);
+param * param_new_range(char * id, range_list * ranges);
+param * param_new_slice(char * id, range_list * ranges, param * ret);
 param * param_new_record(char * id, char * record_id);
 param * param_new_func(char * id, param_list * params, param * ret);
 void param_delete(param * value);

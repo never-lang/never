@@ -24,6 +24,7 @@
 
 #include "array.h"
 #include "dim.h"
+#include "range.h"
 #include "expr.h"
 #include "param.h"
 #include "bind.h"
@@ -52,6 +53,8 @@ typedef union token_value {
     param_list * param_list_value;
     dim * dim_value;
     dim_list * dim_list_value;
+    range * range_value;
+    range_list * range_list_value;
     array * array_value;
     listcomp * listcomp_value;
     qualifier * qualifier_value;

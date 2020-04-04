@@ -55,12 +55,18 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_EXTERN
 %token <val.str_value> TOK_MATCH
 %token <val.str_value> TOK_DDOT
+%token <val.str_value> TOK_TODOTS
+%token <val.str_value> TOK_RANGE
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
 %type <val.expr_seq_value> expr_seq
 %type <val.param_value> dim
 %type <val.param_list_value> dim_list
+%type <val.range_value> range
+%type <val.range_list_value> range_list
+%type <val.expr_value> range_dim
+%type <val.expr_list_value> range_dim_list
 %type <val.param_value> param
 %type <val.param_list_value> param_list
 %type <val.param_list_value> param_seq
@@ -117,11 +123,15 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) free($$); } TOK_ID
 %destructor { if ($$) param_delete($$); } dim
 %destructor { if ($$) param_list_delete($$); } dim_list
+%destructor { if ($$) range_delete($$); } range
+%destructor { if ($$) range_list_delete($$); } range_list
 %destructor { if ($$) param_delete($$); } param
 %destructor { if ($$) param_list_delete($$); } param_list
 %destructor { if ($$) expr_delete($$); } expr
 %destructor { if ($$) expr_list_delete($$); } expr_list
 %destructor { if ($$) expr_list_delete($$); } expr_seq
+%destructor { if ($$) expr_delete($$); } range_dim
+%destructor { if ($$) expr_list_delete($$); } range_dim_list
 %destructor { if ($$) array_delete($$); } array
 %destructor { if ($$) array_delete($$); } array_sub
 %destructor { if ($$) listcomp_delete($$); } listcomp
@@ -602,6 +612,66 @@ expr_seq: expr_seq ';' expr
     $$ = $1;
 };
 
+range_dim: expr TOK_TODOTS expr
+{
+    $$ = expr_new_range_dim($1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+range_dim_list: range_dim
+{
+    $$ = expr_list_new();
+    expr_list_add_end($$, $1);
+};
+
+range_dim_list: range_dim_list ',' range_dim
+{
+    expr_list_add_end($1, $3);
+    $$ = $1;
+};
+
+expr: '[' range_dim_list ']'
+{
+    $$ = expr_new_range($2);
+    $$->line_no = $<line_no>1;
+};
+
+dim: TOK_ID
+{
+    $$ = param_new_dim($1);
+    $$->line_no = $<line_no>1;
+};
+
+dim_list: dim
+{
+    $$ = param_list_new();
+    param_list_add_end($$, $1);
+};
+
+dim_list: dim_list ',' dim
+{
+    param_list_add_end($1, $3);
+    $$ = $1;
+};
+
+range: TOK_ID TOK_TODOTS TOK_ID
+{
+    $$ = range_new($1, $3);
+    $$->line_no = $<line_no>1;
+};
+
+range_list: range
+{
+    $$ = range_list_new();
+    range_list_add_end($$, $1);
+};
+
+range_list: range_list ',' range
+{
+    range_list_add_end($1, $3);
+    $$ = $1;
+};
+
 param: TOK_BOOL
 {
     $$ = param_new_bool(NULL);
@@ -686,6 +756,30 @@ param: TOK_ID '[' dim_list ']' ':' param
     $$->line_no = $<line_no>1;
 };
 
+param: '[' range_list ']' ':' TOK_RANGE
+{
+    $$ = param_new_range(NULL, $2);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID '[' range_list ']' ':' TOK_RANGE
+{
+    $$ = param_new_range($1, $3);
+    $$->line_no = $<line_no>1;
+};
+
+param: '[' range_list ']' ':' param
+{
+    $$ = param_new_slice(NULL, $2, $5);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID '[' range_list ']' ':' param
+{
+    $$ = param_new_slice($1, $3, $6);
+    $$->line_no = $<line_no>1;
+};
+
 param: '(' ')' TOK_RET param
 {
     $$ = param_new_func(NULL, NULL, $4);
@@ -708,24 +802,6 @@ param: TOK_ID '(' param_list ')' TOK_RET param
 {
     $$ = param_new_func($1, $3, $6);
     $$->line_no = $<line_no>6;
-};
-
-dim: TOK_ID
-{
-    $$ = param_new_dim($1);
-    $$->line_no = $<line_no>1;
-};
-
-dim_list: dim
-{
-    $$ = param_list_new();
-    param_list_add_end($$, $1);
-};
-
-dim_list: dim_list ',' dim
-{
-    param_list_add_end($1, $3);
-    $$ = $1;
 };
 
 param_list: param

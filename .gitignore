@@ -2,6 +2,10 @@
 *.o
 *.so
 
+# private files
+.vscode
+never.code-workspace
+
 # generated
 nev
 nev.dSYM/

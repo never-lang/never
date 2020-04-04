@@ -55,6 +55,8 @@ typedef enum expr_type
     EXPR_CALL,        /* ID ( expr_list) */
     EXPR_LAST_CALL,   /* ID (expr_list */
     EXPR_FUNC,        /* func ID ( ... ) */
+    EXPR_RANGE_DIM,
+    EXPR_RANGE,
     EXPR_SEQ,
     EXPR_ASS,
     EXPR_WHILE,
@@ -82,9 +84,11 @@ typedef enum comb_type
     COMB_TYPE_CHAR = 8,
     COMB_TYPE_STRING = 9,
     COMB_TYPE_ARRAY = 10,
-    COMB_TYPE_FUNC = 11,
-    COMB_TYPE_RECORD = 12,
-    COMB_TYPE_RECORD_ID = 13,
+    COMB_TYPE_RANGE_DIM = 11,
+    COMB_TYPE_RANGE = 12,
+    COMB_TYPE_FUNC = 13,
+    COMB_TYPE_RECORD = 14,
+    COMB_TYPE_RECORD_ID = 15,
 } comb_type;
 
 typedef enum id_type
@@ -213,6 +217,15 @@ typedef struct expr
             struct expr * array_expr; /* EXPR_ARRAY_DEREF */
             struct expr_list * ref;
         } array_deref;
+        struct
+        {
+            struct expr * from;
+            struct expr * to;
+        } range_dim;
+        struct
+        {
+            struct expr_list * range_dims;
+        } range;
         listcomp * listcomp_value; /* EXPR_LISTCOMP */
         struct
         {
@@ -252,6 +265,8 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle,
                       expr * expr_right);
 expr * expr_new_array(array * value);
 expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
+expr * expr_new_range_dim(expr * from, expr * to);
+expr * expr_new_range(expr_list * range_dims);
 expr * expr_new_seq(expr_list * list);
 expr * expr_new_func(func * value);
 expr * expr_new_call(expr * func_expr, expr_list * params);
