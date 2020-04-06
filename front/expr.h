@@ -55,13 +55,15 @@ typedef enum expr_type
     EXPR_CALL,        /* ID ( expr_list) */
     EXPR_LAST_CALL,   /* ID (expr_list */
     EXPR_FUNC,        /* func ID ( ... ) */
-    EXPR_RANGE_DIM,
+    EXPR_RANGE_ELEM,
     EXPR_RANGE,
+    EXPR_SLICE,
     EXPR_SEQ,
     EXPR_ASS,
     EXPR_WHILE,
     EXPR_DO_WHILE,
     EXPR_FOR,
+    EXPR_FOR_IN,
     EXPR_IFLET,
     EXPR_MATCH,
     EXPR_BUILD_IN,
@@ -84,8 +86,8 @@ typedef enum comb_type
     COMB_TYPE_CHAR = 8,
     COMB_TYPE_STRING = 9,
     COMB_TYPE_ARRAY = 10,
-    COMB_TYPE_RANGE_DIM = 11,
-    COMB_TYPE_RANGE = 12,
+    COMB_TYPE_RANGE = 11,
+    COMB_TYPE_SLICE = 12,
     COMB_TYPE_FUNC = 13,
     COMB_TYPE_RECORD = 14,
     COMB_TYPE_RECORD_ID = 15,
@@ -191,6 +193,12 @@ typedef struct expr
             struct expr * incr;
             struct expr * do_value;
         } forloop;
+        struct
+        {
+            char * id;
+            struct expr * in_value;
+            struct expr * do_value;
+        } forinloop;
         struct iflet * iflet_value;
         struct
         {
@@ -221,11 +229,16 @@ typedef struct expr
         {
             struct expr * from;
             struct expr * to;
-        } range_dim;
+        } range_elem;
         struct
         {
-            struct expr_list * range_dims;
+            struct expr_list * range_elems;
         } range;
+        struct
+        {
+            struct expr * array_expr;
+            struct expr_list * range_elems;
+        } slice;
         listcomp * listcomp_value; /* EXPR_LISTCOMP */
         struct
         {
@@ -265,8 +278,9 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle,
                       expr * expr_right);
 expr * expr_new_array(array * value);
 expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
-expr * expr_new_range_dim(expr * from, expr * to);
-expr * expr_new_range(expr_list * range_dims);
+expr * expr_new_range_elem(expr * from, expr * to);
+expr * expr_new_range(expr_list * range_elems);
+expr * expr_new_slice(expr * array_expr, expr_list * range_elems);
 expr * expr_new_seq(expr_list * list);
 expr * expr_new_func(func * value);
 expr * expr_new_call(expr * func_expr, expr_list * params);
@@ -274,6 +288,7 @@ expr * expr_new_ass(expr * left, expr * right);
 expr * expr_new_while(expr * cond, expr * do_value);
 expr * expr_new_do_while(expr * cond, expr * do_value);
 expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value);
+expr * expr_new_for_in(char * id, expr * in_value, expr * do_value);
 expr * expr_new_iflet(iflet * iflet_value);
 expr * expr_new_match(expr * expr_value, match_guard_list * match_guards);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);

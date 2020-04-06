@@ -136,13 +136,13 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     return value;
 }
 
-param * param_new_range(char * id, range_list * ranges)
+param * param_new_range(range_list * ranges)
 {
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_RANGE;
     value->index = -1;
-    value->id = id;
+    value->id = NULL;
     value->record_id = NULL;
     value->ranges = ranges;
     value->ret = NULL;

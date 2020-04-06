@@ -187,6 +187,32 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             func_tailrec(syn_level + 2, value->func_value);
         }
     break;
+    case EXPR_RANGE_ELEM:
+        if (value->range_elem.from != NULL)
+        {
+            expr_tailrec(syn_level, stab, value->range_elem.from, TAILREC_OP_SKIP);
+        }
+        if (value->range_elem.to != NULL)
+        {
+            expr_tailrec(syn_level, stab, value->range_elem.to, TAILREC_OP_SKIP);
+        }
+    break;
+    case EXPR_RANGE:
+        if (value->range.range_elems != NULL)
+        {
+            expr_list_tailrec(syn_level, stab, value->range.range_elems, TAILREC_OP_SKIP);
+        }
+    break;
+    case EXPR_SLICE:
+        if (value->slice.array_expr != NULL)
+        {
+            expr_tailrec(syn_level, stab, value->slice.array_expr, TAILREC_OP_SKIP);
+        }
+        if (value->slice.range_elems != NULL)
+        {
+            expr_list_tailrec(syn_level, stab, value->slice.range_elems, TAILREC_OP_SKIP);
+        }
+    break;
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
@@ -207,6 +233,10 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         expr_tailrec(syn_level, stab, value->forloop.cond, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->forloop.incr, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->forloop.do_value, TAILREC_OP_SKIP);
+    break;
+    case EXPR_FOR_IN:
+        expr_tailrec(syn_level, stab, value->forinloop.in_value, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, stab, value->forinloop.do_value, TAILREC_OP_SKIP);
     break;
     case EXPR_IFLET:
         expr_tailrec(syn_level, stab, value->iflet_value->expr_value, TAILREC_OP_SKIP);

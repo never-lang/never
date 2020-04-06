@@ -631,6 +631,32 @@ int expr_constred(expr * value, int * result)
             func_constred(value->func_value, result);
         }
         break;
+    case EXPR_RANGE_ELEM:
+        if (value->range_elem.from)
+        {
+            expr_constred(value->range_elem.from, result);
+        }
+        if (value->range_elem.to)
+        {
+            expr_constred(value->range_elem.to, result);
+        }
+        break;
+    case EXPR_RANGE:
+        if (value->range.range_elems != NULL)
+        {
+            expr_list_constred(value->range.range_elems, result);
+        }
+        break;
+    case EXPR_SLICE:
+        if (value->slice.array_expr != NULL)
+        {
+            expr_constred(value->slice.array_expr, result);
+        }
+        if (value->slice.range_elems != NULL)
+        {
+            expr_list_constred(value->slice.range_elems, result);
+        }
+        break;
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
@@ -651,6 +677,10 @@ int expr_constred(expr * value, int * result)
         expr_constred(value->forloop.cond, result);
         expr_constred(value->forloop.incr, result);
         expr_constred(value->forloop.do_value, result);
+        break;
+    case EXPR_FOR_IN:
+        expr_constred(value->forinloop.in_value, result);
+        expr_constred(value->forinloop.do_value, result);
         break;
     case EXPR_IFLET:
         expr_constred(value->iflet_value->expr_value, result);

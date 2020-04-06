@@ -172,6 +172,31 @@ int print_func_expr(expr * value, int depth)
             print_func(value->func_value, depth + 1);
         }
         break;
+    case EXPR_RANGE_ELEM:
+        if (value->range_elem.from != NULL)
+        {
+            print_func_expr(value->range_elem.from, depth);
+        }
+        if (value->range_elem.to != NULL)
+        {
+            print_func_expr(value->range_elem.to, depth);
+        }
+        break;
+    case EXPR_RANGE:
+        if (value->range.range_elems != NULL)
+        {
+            print_func_expr_list(value->range.range_elems, depth);
+        }
+        break;
+    case EXPR_SLICE:
+        if (value->slice.array_expr != NULL)
+        {
+            print_func_expr(value->slice.array_expr, depth);
+        }
+        if (value->slice.range_elems != NULL)
+        {
+            print_func_expr_list(value->slice.range_elems, depth);
+        }
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
@@ -192,6 +217,10 @@ int print_func_expr(expr * value, int depth)
         print_func_expr(value->forloop.cond, depth);
         print_func_expr(value->forloop.incr, depth);
         print_func_expr(value->forloop.do_value, depth);
+        break;
+    case EXPR_FOR_IN:
+        print_func_expr(value->forinloop.in_value, depth);
+        print_func_expr(value->forinloop.do_value, depth);
         break;
     case EXPR_IFLET:
         print_func_iflet(value->iflet_value, depth);

@@ -2,6 +2,7 @@
 %{
 #include <unistd.h>
 #include <stdio.h>
+#include <assert.h>
 #include "utils.h"
 #include "types.h"
 #include "scanner.h"
@@ -63,10 +64,10 @@ int yyerror(never ** nev, char * str)
 %type <val.expr_seq_value> expr_seq
 %type <val.param_value> dim
 %type <val.param_list_value> dim_list
-%type <val.range_value> range
-%type <val.range_list_value> range_list
-%type <val.expr_value> range_dim
-%type <val.expr_list_value> range_dim_list
+%type <val.range_value> range_dim
+%type <val.range_list_value> range_dim_list
+%type <val.expr_value> range_elem
+%type <val.expr_list_value> range_elem_list
 %type <val.param_value> param
 %type <val.param_list_value> param_list
 %type <val.param_list_value> param_seq
@@ -123,15 +124,15 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) free($$); } TOK_ID
 %destructor { if ($$) param_delete($$); } dim
 %destructor { if ($$) param_list_delete($$); } dim_list
-%destructor { if ($$) range_delete($$); } range
-%destructor { if ($$) range_list_delete($$); } range_list
+%destructor { if ($$) range_delete($$); } range_dim
+%destructor { if ($$) range_list_delete($$); } range_dim_list
 %destructor { if ($$) param_delete($$); } param
 %destructor { if ($$) param_list_delete($$); } param_list
 %destructor { if ($$) expr_delete($$); } expr
 %destructor { if ($$) expr_list_delete($$); } expr_list
 %destructor { if ($$) expr_list_delete($$); } expr_seq
-%destructor { if ($$) expr_delete($$); } range_dim
-%destructor { if ($$) expr_list_delete($$); } range_dim_list
+%destructor { if ($$) expr_delete($$); } range_elem
+%destructor { if ($$) expr_list_delete($$); } range_elem_list
 %destructor { if ($$) array_delete($$); } array
 %destructor { if ($$) array_delete($$); } array_sub
 %destructor { if ($$) listcomp_delete($$); } listcomp
@@ -344,9 +345,17 @@ expr: array
     $$->line_no = $1->line_no;
 };
 
-expr: expr '[' expr_list ']' /* array dereference */
+/* array dereference */
+expr: expr '[' expr_list ']'
 {
     $$ = expr_new_array_deref($1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+/* array or slice or range slice */
+expr: expr '[' range_elem_list ']'
+{
+    $$ = expr_new_slice($1, $3);
     $$->line_no = $<line_no>2;
 };
 
@@ -477,6 +486,12 @@ expr: TOK_DO expr TOK_WHILE '(' expr ')'
 expr: TOK_FOR '(' expr ';' expr ';' expr ')' expr %prec TOK_FOR
 {
     $$ = expr_new_for($3, $5, $7, $9);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_FOR '(' TOK_ID TOK_IN expr ')' expr %prec TOK_FOR
+{
+    $$ = expr_new_for_in($3, $5, $7);
     $$->line_no = $<line_no>1;
 };
 
@@ -612,25 +627,25 @@ expr_seq: expr_seq ';' expr
     $$ = $1;
 };
 
-range_dim: expr TOK_TODOTS expr
+range_elem: expr TOK_TODOTS expr
 {
-    $$ = expr_new_range_dim($1, $3);
+    $$ = expr_new_range_elem($1, $3);
     $$->line_no = $<line_no>2;
 };
 
-range_dim_list: range_dim
+range_elem_list: range_elem
 {
     $$ = expr_list_new();
     expr_list_add_end($$, $1);
 };
 
-range_dim_list: range_dim_list ',' range_dim
+range_elem_list: range_elem_list ',' range_elem
 {
     expr_list_add_end($1, $3);
     $$ = $1;
 };
 
-expr: '[' range_dim_list ']'
+expr: '[' range_elem_list ']'
 {
     $$ = expr_new_range($2);
     $$->line_no = $<line_no>1;
@@ -654,19 +669,19 @@ dim_list: dim_list ',' dim
     $$ = $1;
 };
 
-range: TOK_ID TOK_TODOTS TOK_ID
+range_dim: TOK_ID TOK_TODOTS TOK_ID
 {
     $$ = range_new($1, $3);
     $$->line_no = $<line_no>1;
 };
 
-range_list: range
+range_dim_list: range_dim
 {
     $$ = range_list_new();
     range_list_add_end($$, $1);
 };
 
-range_list: range_list ',' range
+range_dim_list: range_dim_list ',' range_dim
 {
     range_list_add_end($1, $3);
     $$ = $1;
@@ -756,25 +771,19 @@ param: TOK_ID '[' dim_list ']' ':' param
     $$->line_no = $<line_no>1;
 };
 
-param: '[' range_list ']' ':' TOK_RANGE
+param: '[' range_dim_list ']' ':' TOK_RANGE
 {
-    $$ = param_new_range(NULL, $2);
+    $$ = param_new_range($2);
     $$->line_no = $<line_no>1;
 };
 
-param: TOK_ID '[' range_list ']' ':' TOK_RANGE
-{
-    $$ = param_new_range($1, $3);
-    $$->line_no = $<line_no>1;
-};
-
-param: '[' range_list ']' ':' param
+param: '[' range_dim_list ']' ':' param
 {
     $$ = param_new_slice(NULL, $2, $5);
     $$->line_no = $<line_no>1;
 };
 
-param: TOK_ID '[' range_list ']' ':' param
+param: TOK_ID '[' range_dim_list ']' ':' param
 {
     $$ = param_new_slice($1, $3, $6);
     $$->line_no = $<line_no>1;
