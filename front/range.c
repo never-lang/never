@@ -20,14 +20,15 @@
  * THE SOFTWARE.
  */
 #include "range.h"
+#include "param.h"
 #include <stdlib.h>
 
-range * range_new(char * id_from, char * id_to)
+range * range_new(param * from, param * to)
 {
     range * value = malloc(sizeof(range));
 
-    value->id_from = id_from;
-    value->id_to = id_to;
+    value->from = from;
+    value->to = to;
     value->line_no = 0;
 
     return value;
@@ -35,13 +36,13 @@ range * range_new(char * id_from, char * id_to)
 
 void range_delete(range * value)
 {
-    if (value->id_from != NULL)
+    if (value->from != NULL)
     {
-        free(value->id_from);
+        param_delete(value->from);
     }
-    if (value->id_to != NULL)
+    if (value->to != NULL)
     {
-        free(value->id_to);
+        param_delete(value->to);
     }
     free(value);
 }

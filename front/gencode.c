@@ -104,6 +104,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 param_value->type == PARAM_ENUMTYPE ||
                 param_value->type == PARAM_DIM ||
                 param_value->type == PARAM_ARRAY ||
+                param_value->type == PARAM_RANGE ||
+                param_value->type == PARAM_RANGE_DIM ||
+                param_value->type == PARAM_SLICE ||
                 param_value->type == PARAM_RECORD ||
                 param_value->type == PARAM_FUNC)
             {
@@ -690,6 +693,12 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
                                             result);
         }
         break;
+    case EXPR_RANGE:
+    case EXPR_RANGE_DIM:
+    case EXPR_SLICE:
+        /* TODO: correct this */
+        assert(0);
+        break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         func_gencode_freevars_expr(func_value, stab, value->call.func_expr, result);
@@ -726,6 +735,10 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->forloop.cond, result);
         func_gencode_freevars_expr(func_value, stab, value->forloop.incr, result);
         func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
+        break;
+    case EXPR_FOR_IN:
+        func_gencode_freevars_expr(func_value, stab, value->forinloop.in_value, result);
+        func_gencode_freevars_expr(func_value, stab, value->forinloop.do_value, result);
         break;
     case EXPR_IFLET:
         func_gencode_freevars_iflet_expr(func_value, stab, value, result);

@@ -1,0 +1,10 @@
+func r( [ from .. to ] : range ) -> int
+{
+    [ from .. to, 1 .. 2 ][1, 2]
+}
+
+func main() -> int
+{
+    0
+}
+

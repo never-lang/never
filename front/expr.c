@@ -197,11 +197,11 @@ expr * expr_new_array_deref(expr * array_expr, expr_list * ref)
     return ret;
 }
 
-expr * expr_new_range_elem(expr * from, expr * to)
+expr * expr_new_range_dim(expr * from, expr * to)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
 
-    ret->type = EXPR_RANGE_ELEM;
+    ret->type = EXPR_RANGE_DIM;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
     ret->range_elem.from = from;
@@ -490,7 +490,7 @@ void expr_delete(expr * value)
         expr_delete(value->array_deref.array_expr);
         expr_list_delete(value->array_deref.ref);
         break;
-    case EXPR_RANGE_ELEM:
+    case EXPR_RANGE_DIM:
         if (value->range_elem.from)
         {
             expr_delete(value->range_elem.from);
@@ -749,7 +749,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_CALL: return "call";
     case EXPR_LAST_CALL: return "last call";
     case EXPR_FUNC: return "func";
-    case EXPR_RANGE_ELEM: return "range dim";
+    case EXPR_RANGE_DIM: return "range dim";
     case EXPR_RANGE: return "range";
     case EXPR_SLICE: return "slice";
     case EXPR_SEQ: return "seq";

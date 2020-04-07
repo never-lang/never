@@ -62,6 +62,10 @@ int symtab_add_param_from_param(symtab * tab, param * param_value,
                             unsigned int syn_level, int * result);
 int symtab_add_param_from_param_list(symtab * tab, param_list * list,
                                  unsigned int syn_level, int * result);
+int symtab_add_param_from_range(symtab * tab, range * value,
+                                unsigned int syn_level, int * result);
+int symtab_add_param_from_range_list(symtab * tab, range_list * list,
+                                     unsigned int syn_level, int * result);
 int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
                               unsigned int syn_level, int * result);
 int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,

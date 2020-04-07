@@ -22,10 +22,12 @@
 #ifndef __RANGE_H__
 #define __RANGE_H__
 
+typedef struct param param;
+
 typedef struct range
 {
-    char * id_from;
-    char * id_to;
+    param * from;
+    param * to;
     unsigned int line_no;
 } range;
 
@@ -43,7 +45,7 @@ typedef struct range_list
     range_list_node * tail;
 } range_list;
 
-range * range_new(char * id_from, char * id_to);
+range * range_new(param * from, param * to);
 void range_delete(range * value);
 
 range_list_node * range_list_node_new(range * value);

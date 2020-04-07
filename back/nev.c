@@ -106,6 +106,7 @@ int nev_compile_prog(const char * main_name, program * prog)
                 ret = never_tailrec(nev);
                 if (ret == 0)
                 {
+#if 0                        
                     ret = never_emit(main_name, nev, prog->module_value);
                     if (ret == 0)
                     {
@@ -115,6 +116,7 @@ int nev_compile_prog(const char * main_name, program * prog)
 
                     /* print_functions(nev);
                     module_print(prog->module_value); */
+#endif                
                 }
             }
         }

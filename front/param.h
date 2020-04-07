@@ -35,6 +35,7 @@ typedef enum param_type
     PARAM_DIM,
     PARAM_ARRAY,
     PARAM_RANGE,
+    PARAM_RANGE_DIM,
     PARAM_SLICE,
     PARAM_ENUMTYPE,
     PARAM_RECORD,
@@ -81,6 +82,7 @@ param * param_new_string(char * id);
 param * param_new_dim(char * id);
 param * param_new_array(char * id, param_list * dims, param * ret);
 param * param_new_range(range_list * ranges);
+param * param_new_range_dim(char * id);
 param * param_new_slice(char * id, range_list * ranges, param * ret);
 param * param_new_record(char * id, char * record_id);
 param * param_new_func(char * id, param_list * params, param * ret);

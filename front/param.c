@@ -151,6 +151,21 @@ param * param_new_range(range_list * ranges)
     return value;
 }
 
+param * param_new_range_dim(char * id)
+{
+    param * value = (param *)malloc(sizeof(param));
+
+    value->type = PARAM_RANGE_DIM;
+    value->index = -1;
+    value->id = id;
+    value->record_id = NULL;
+    value->params = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
 param * param_new_slice(char * id, range_list * ranges, param * ret)
 {
     param * value = (param *)malloc(sizeof(param));
@@ -211,6 +226,7 @@ void param_delete(param * value)
         case PARAM_CHAR:
         case PARAM_STRING:
         case PARAM_DIM:
+        case PARAM_RANGE_DIM:
         break;
         case PARAM_ARRAY:
             if (value->dims != NULL)
@@ -411,6 +427,8 @@ char * param_type_str(param_type type)
         return "PARAM_RECORD";
     case PARAM_DIM:
         return "PARAM_DIM";
+    case PARAM_RANGE_DIM:
+        return "PARAM_RANGE_DIM";
     case PARAM_ARRAY:
         return "PARAM_ARRAY";
     case PARAM_RANGE:

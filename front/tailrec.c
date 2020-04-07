@@ -187,7 +187,7 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             func_tailrec(syn_level + 2, value->func_value);
         }
     break;
-    case EXPR_RANGE_ELEM:
+    case EXPR_RANGE_DIM:
         if (value->range_elem.from != NULL)
         {
             expr_tailrec(syn_level, stab, value->range_elem.from, TAILREC_OP_SKIP);

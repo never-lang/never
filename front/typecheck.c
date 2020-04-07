@@ -143,9 +143,10 @@ int enum_matchbind_list(matchbind_list * list)
 
 int expr_set_comb_type(expr * value, param * param_value)
 {
-    if (value == NULL || param_value == NULL)
+    if (param_value == NULL)
     {
         value->comb.comb = COMB_TYPE_ERR;
+        return 0;
     }
 
     switch (param_value->type)
@@ -180,6 +181,9 @@ int expr_set_comb_type(expr * value, param * param_value)
         case PARAM_RANGE:
             value->comb.comb = COMB_TYPE_RANGE;
             value->comb.comb_dims = param_value->ranges->count;
+        break;
+        case PARAM_RANGE_DIM:
+            value->comb.comb = COMB_TYPE_INT;
         break;
         case PARAM_SLICE:
             value->comb.comb = COMB_TYPE_SLICE;
@@ -223,17 +227,6 @@ int param_cmp(param * param_one, param * param_two)
     {
         return TYPECHECK_SUCC;
     }
-    else if (param_one->type == PARAM_ENUMTYPE && param_two->type == PARAM_ENUMTYPE)
-    {
-        if (param_one->enumtype_value == param_two->enumtype_value)
-        {
-            return TYPECHECK_SUCC;
-        }
-        else
-        {
-            return TYPECHECK_FAIL;
-        }
-    }
     else if (param_one->type == PARAM_CHAR && param_two->type == PARAM_CHAR)
     {
         return TYPECHECK_SUCC;
@@ -244,8 +237,53 @@ int param_cmp(param * param_one, param * param_two)
     }
     else if (param_one->type == PARAM_ARRAY && param_two->type == PARAM_ARRAY)
     {
-        return (param_one->dims->count == param_two->dims->count &&
-                param_cmp(param_one->ret, param_two->ret));
+        if ((param_one->dims->count == param_two->dims->count) &&
+            (param_cmp(param_one->ret, param_two->ret) == TYPECHECK_SUCC))
+        {
+            return TYPECHECK_SUCC;
+        }
+        else
+        {
+            return TYPECHECK_FAIL;
+        }
+    }
+    else if (param_one->type == PARAM_RANGE && param_two->type == PARAM_RANGE)
+    {
+        if (param_one->ranges->count == param_two->ranges->count)        
+        {
+            return TYPECHECK_SUCC;
+        }
+        else
+        {
+            return TYPECHECK_FAIL;
+        }
+    }
+    else if (param_one->type == PARAM_RANGE_DIM && param_two->type == PARAM_RANGE_DIM)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (param_one->type == PARAM_SLICE && param_two->type == PARAM_SLICE)
+    {
+        if ((param_one->ranges->count == param_two->ranges->count) &&
+            (param_cmp(param_one->ret, param_two->ret) == TYPECHECK_SUCC))
+        {
+            return TYPECHECK_SUCC;
+        }
+        else
+        {
+            return TYPECHECK_FAIL;
+        }
+    }
+    else if (param_one->type == PARAM_ENUMTYPE && param_two->type == PARAM_ENUMTYPE)
+    {
+        if (param_one->enumtype_value == param_two->enumtype_value)
+        {
+            return TYPECHECK_SUCC;
+        }
+        else
+        {
+            return TYPECHECK_FAIL;
+        }
     }
     else if (param_one->type == PARAM_RECORD && param_two->type == PARAM_RECORD)
     {
@@ -372,6 +410,24 @@ int param_expr_array_cmp(param * param_value, expr * expr_value)
     return param_cmp(param_value->ret, expr_value->comb.comb_ret);
 }
 
+int param_expr_range_cmp(param * param_value, expr * expr_value)
+{
+    if (param_value->ranges->count == expr_value->comb.comb_dims)
+    {
+        return TYPECHECK_SUCC;
+    }
+    return TYPECHECK_FAIL;
+}
+
+int param_expr_slice_cmp(param * param_value, expr * expr_value)
+{
+    if (param_value->ranges->count != expr_value->comb.comb_dims)
+    {
+        return TYPECHECK_FAIL;
+    }
+    return param_cmp(param_value->ret, expr_value->comb.comb_ret);
+}
+
 int param_expr_cmp(param * param_value, expr * expr_value)
 {
     if (param_value == NULL && expr_value == NULL)
@@ -410,17 +466,6 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     {
         return TYPECHECK_SUCC;
     }
-    else if (param_value->type == PARAM_ENUMTYPE && expr_value->comb.comb == COMB_TYPE_ENUMTYPE)
-    {
-        if (param_value->enumtype_value == expr_value->comb.comb_enumtype)
-        {
-            return TYPECHECK_SUCC;
-        }
-        else
-        {
-            return TYPECHECK_FAIL;
-        }
-    }
     else if (param_value->type == PARAM_CHAR && expr_value->comb.comb == COMB_TYPE_CHAR)
     {
         return TYPECHECK_SUCC;
@@ -445,11 +490,35 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     {
         return param_expr_array_cmp(param_value, expr_value);
     }
+    else if (param_value->type == PARAM_RANGE &&
+             expr_value->comb.comb == COMB_TYPE_RANGE)
+    {
+        return param_expr_range_cmp(param_value, expr_value);
+    }
+    else if (param_value->type == PARAM_RANGE_DIM && expr_value->comb.comb == COMB_TYPE_INT)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (param_value->type == PARAM_SLICE && expr_value->comb.comb == COMB_TYPE_SLICE)
+    {
+        return param_expr_slice_cmp(param_value, expr_value);
+    }
     else if (param_value->type == PARAM_RECORD &&
             (expr_value->comb.comb == COMB_TYPE_RECORD ||
              expr_value->comb.comb == COMB_TYPE_RECORD_ID))
     {
         if (param_value->record_value == expr_value->comb.comb_record)
+        {
+            return TYPECHECK_SUCC;
+        }
+        else
+        {
+            return TYPECHECK_FAIL;
+        }
+    }
+    else if (param_value->type == PARAM_ENUMTYPE && expr_value->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        if (param_value->enumtype_value == expr_value->comb.comb_enumtype)
         {
             return TYPECHECK_SUCC;
         }
@@ -544,48 +613,10 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
     {
         value->comb.comb = left->comb.comb;
     }
-    else if (left->comb.comb == COMB_TYPE_ENUMTYPE &&
-             right->comb.comb == COMB_TYPE_ENUMTYPE &&
-             left->comb.comb_enumtype == right->comb.comb_enumtype)
-    {
-        value->comb.comb = COMB_TYPE_ENUMTYPE;
-        value->comb.comb_enumtype = left->comb.comb_enumtype;
-    }
     else if (left->comb.comb == COMB_TYPE_STRING &&
              right->comb.comb == COMB_TYPE_STRING)
     {
         value->comb.comb = left->comb.comb;
-    }
-    else if ((left->comb.comb == COMB_TYPE_RECORD ||
-              left->comb.comb == COMB_TYPE_RECORD_ID) &&
-             (right->comb.comb == COMB_TYPE_RECORD ||
-              right->comb.comb == COMB_TYPE_RECORD_ID) &&
-             left->comb.comb_record == right->comb.comb_record)
-    {
-        value->comb.comb = COMB_TYPE_RECORD;
-        value->comb.comb_record = left->comb.comb_record;
-    }
-    else if (left->comb.comb == COMB_TYPE_FUNC &&
-             right->comb.comb == COMB_TYPE_FUNC)
-    {
-        if (func_cmp(left->comb.comb_params,
-                     left->comb.comb_ret,
-                     right->comb.comb_params,
-                     right->comb.comb_ret) == TYPECHECK_SUCC)
-        {
-            value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.comb_params = left->comb.comb_params;
-            value->comb.comb_ret = left->comb.comb_ret;
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no,
-                            "functions are different %s:%u %s:%u\n",
-                            left->id, left->line_no,
-                            right->id, right->line_no);
-        }
     }
     else if (left->comb.comb == COMB_TYPE_ARRAY &&
              right->comb.comb == COMB_TYPE_ARRAY)
@@ -609,6 +640,75 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
                              right->line_no);
          }
     }
+    else if (left->comb.comb == COMB_TYPE_RANGE &&
+             right->comb.comb == COMB_TYPE_RANGE)
+    {
+        if (value->left->comb.comb_dims == value->right->comb.comb_dims)
+        {
+            value->comb.comb = COMB_TYPE_ARRAY;
+            value->comb.comb_dims = value->left->comb.comb_dims;
+        }
+    }
+    else if (left->comb.comb == COMB_TYPE_SLICE &&
+             right->comb.comb == COMB_TYPE_SLICE)
+    {
+         if (array_cmp(left->comb.comb_dims,
+                       left->comb.comb_ret,
+                       right->comb.comb_dims,
+                       right->comb.comb_ret) == TYPECHECK_SUCC)
+         {
+             value->comb.comb = COMB_TYPE_SLICE;
+             value->comb.comb_dims = left->comb.comb_dims;
+             value->comb.comb_ret = left->comb.comb_ret;
+         }
+         else
+         {
+             *result = TYPECHECK_FAIL;
+             value->comb.comb = COMB_TYPE_ERR;
+             print_error_msg(value->line_no,
+                             "slices are different first line %u second line %u\n",
+                             left->line_no,
+                             right->line_no);
+         }
+    }
+    else if (left->comb.comb == COMB_TYPE_FUNC &&
+             right->comb.comb == COMB_TYPE_FUNC)
+    {
+        if (func_cmp(left->comb.comb_params,
+                     left->comb.comb_ret,
+                     right->comb.comb_params,
+                     right->comb.comb_ret) == TYPECHECK_SUCC)
+        {
+            value->comb.comb = COMB_TYPE_FUNC;
+            value->comb.comb_params = left->comb.comb_params;
+            value->comb.comb_ret = left->comb.comb_ret;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "functions are different %s:%u %s:%u\n",
+                            left->id, left->line_no,
+                            right->id, right->line_no);
+        }
+    }
+    else if (left->comb.comb == COMB_TYPE_ENUMTYPE &&
+             right->comb.comb == COMB_TYPE_ENUMTYPE &&
+             left->comb.comb_enumtype == right->comb.comb_enumtype)
+    {
+        value->comb.comb = COMB_TYPE_ENUMTYPE;
+        value->comb.comb_enumtype = left->comb.comb_enumtype;
+    }
+    else if ((left->comb.comb == COMB_TYPE_RECORD ||
+              left->comb.comb == COMB_TYPE_RECORD_ID) &&
+             (right->comb.comb == COMB_TYPE_RECORD ||
+              right->comb.comb == COMB_TYPE_RECORD_ID) &&
+             left->comb.comb_record == right->comb.comb_record)
+    {
+        value->comb.comb = COMB_TYPE_RECORD;
+        value->comb.comb_record = left->comb.comb_record;
+    }
     else
     {
         *result = TYPECHECK_FAIL;
@@ -627,65 +727,72 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
  */
 int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
 {
-    if (entry->type == SYMTAB_FUNC)
+    switch (entry->type)
     {
-        func * al_func = entry->func_value;
-        print_error_msg(line_no,
-                        "function %s already defined at line %u\n",
-                         entry->id, al_func->line_no);
-    }
-    else if (entry->type == SYMTAB_PARAM)
-    {
-        param * al_param = entry->param_value;
-        print_error_msg(line_no,
-                        "parameter %s already defined at line %u\n",
-                        entry->id, al_param->line_no);
-    }
-    else if (entry->type == SYMTAB_BIND)
-    {
-        bind * al_bind = entry->bind_value;
-        print_error_msg(line_no,
-                        "bind %s already defined at line %u\n",
-                         entry->id, al_bind->line_no);
-    }
-    else if (entry->type == SYMTAB_MATCHBIND)
-    {
-        matchbind * al_matchbind = entry->matchbind_value;
-        print_error_msg(line_no,
-                        "match bind %s already defined at line %u\n",
-                        entry->id, al_matchbind->line_no);
-    }
-    else if (entry->type == SYMTAB_QUALIFIER)
-    {
-        qualifier * al_qualifier = entry->qualifier_value;
-        print_error_msg(line_no,
-                        "qualifier %s already defined at line %u\n",
-                        entry->id, al_qualifier->line_no);
-    }
-    else if (entry->type == SYMTAB_ENUMERATOR)
-    {
-        enumerator * al_enumerator = entry->enumerator_value;
-        print_error_msg(line_no,
-                        "enum item %s already defined at line %u\n",
-                        entry->id, al_enumerator->line_no);
-    }
-    else if (entry->type == SYMTAB_ENUMTYPE)
-    {
-        enumtype * al_enumtype = entry->enumtype_value;
-        print_error_msg(line_no,
-                        "enum %s already defined at line %u\n",
-                        entry->id, al_enumtype->line_no);
-    }
-    else if (entry->type == SYMTAB_RECORD)
-    {
-        record * al_record = entry->record_value;
-        print_error_msg(line_no,
-                        "record %s already defined at line %u\n",
-                        entry->id, al_record->line_no);
-    }
-    else
-    {
-        assert(0);
+        case SYMTAB_FUNC:
+        {
+            func * al_func = entry->func_value;
+            print_error_msg(line_no,
+                            "function %s already defined at line %u\n",
+                            entry->id, al_func->line_no);
+        }
+        break;
+        case SYMTAB_PARAM:
+        {
+            param * al_param = entry->param_value;
+            print_error_msg(line_no,
+                            "parameter %s already defined at line %u\n",
+                            entry->id, al_param->line_no);
+        }
+        break;
+        case SYMTAB_BIND:
+        {
+            bind * al_bind = entry->bind_value;
+            print_error_msg(line_no,
+                            "bind %s already defined at line %u\n",
+                            entry->id, al_bind->line_no);
+        }
+        break;
+        case SYMTAB_MATCHBIND:
+        {
+            matchbind * al_matchbind = entry->matchbind_value;
+            print_error_msg(line_no,
+                            "match bind %s already defined at line %u\n",
+                            entry->id, al_matchbind->line_no);
+        }
+        break;
+        case SYMTAB_QUALIFIER:
+        {
+            qualifier * al_qualifier = entry->qualifier_value;
+            print_error_msg(line_no,
+                            "qualifier %s already defined at line %u\n",
+                            entry->id, al_qualifier->line_no);
+        }
+        break;
+        case SYMTAB_ENUMERATOR:
+        {
+            enumerator * al_enumerator = entry->enumerator_value;
+            print_error_msg(line_no,
+                            "enum item %s already defined at line %u\n",
+                            entry->id, al_enumerator->line_no);
+        }
+        break;
+        case SYMTAB_ENUMTYPE:
+        {
+            enumtype * al_enumtype = entry->enumtype_value;
+            print_error_msg(line_no,
+                            "enum %s already defined at line %u\n",
+                            entry->id, al_enumtype->line_no);
+        }
+        break;
+        case SYMTAB_RECORD:
+        {
+            record * al_record = entry->record_value;
+            print_error_msg(line_no,
+                            "record %s already defined at line %u\n",
+                            entry->id, al_record->line_no);
+        }
+        break;
     }
 
     return 0;
@@ -694,6 +801,13 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
 int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
                                       unsigned int syn_level, int * result)
 {
+    if (param_value->id == NULL)
+    {
+        return 0;
+    }
+
+    printf("symtab add %s\n", param_value->id);
+
     symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry == NULL)
     {
@@ -717,13 +831,12 @@ int symtab_add_param_from_param(symtab * tab, param * param_value,
     }
     else if (param_value->type == PARAM_SLICE)
     {
-        /* TODO: add param from slice */
-        assert(0);
+        symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
+        symtab_add_param_from_range_list(tab, param_value->ranges, syn_level, result);
     }
     else if (param_value->type == PARAM_RANGE)
     {
-        /* TODO: add param from range */
-        assert(0);
+        symtab_add_param_from_range_list(tab, param_value->ranges, syn_level, result);
     }
     else
     {
@@ -739,7 +852,7 @@ int symtab_add_param_from_param_list(symtab * tab, param_list * list,
     while (node != NULL)
     {
         param * param_value = node->value;
-        if (param_value && param_value->id != NULL)
+        if (param_value)
         {
             symtab_add_param_from_param(tab, param_value, syn_level, result);
         }
@@ -747,6 +860,33 @@ int symtab_add_param_from_param_list(symtab * tab, param_list * list,
     }
     return 0;
 }
+
+int symtab_add_param_from_range(symtab * tab, range * value,
+                                unsigned int syn_level, int * result)
+{
+    symtab_add_param_from_basic_param(tab, value->from, syn_level, result);
+    symtab_add_param_from_basic_param(tab, value->to, syn_level, result);
+
+    return 0;
+}                                
+
+int symtab_add_param_from_range_list(symtab * tab, range_list * list,
+                                     unsigned int syn_level, int * result)
+{
+    range_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        range * value = node->value;
+        if (value != NULL)
+        {
+            symtab_add_param_from_range(tab, value, syn_level, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}                                     
 
 int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
                               unsigned int syn_level, int * result)
@@ -923,6 +1063,8 @@ int param_check_type(symtab * tab, param * param_value,
             {
                 param_range_list_check_type(tab, param_value->ranges, syn_level, result);
             }
+        break;
+        case PARAM_RANGE_DIM:
         break;
         case PARAM_SLICE:
             if (param_value->ranges != NULL)
@@ -1447,6 +1589,24 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         value->comb.comb_dims = value->left->comb.comb_dims;
         value->comb.comb_ret = value->left->comb.comb_ret;
     }
+    else if (value->left->comb.comb == COMB_TYPE_RANGE &&
+             value->right->comb.comb == COMB_TYPE_RANGE &&
+             value->left->comb.comb_dims == value->right->comb.comb_dims)
+    {
+        value->comb.comb = COMB_TYPE_RANGE;
+        value->comb.comb_dims = value->left->comb.comb_dims;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_SLICE &&
+             value->right->comb.comb == COMB_TYPE_SLICE &&
+             array_cmp(value->left->comb.comb_dims,
+                       value->left->comb.comb_ret,
+                       value->right->comb.comb_dims,
+                       value->right->comb.comb_ret) == TYPECHECK_SUCC)
+    {
+        value->comb.comb = COMB_TYPE_ARRAY;
+        value->comb.comb_dims = value->left->comb.comb_dims;
+        value->comb.comb_ret = value->left->comb.comb_ret;
+    }
     else
     {
         *result = TYPECHECK_FAIL;
@@ -1677,20 +1837,13 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_RANGE)
     {
-        if (value->array_deref.array_expr->comb.comb_dims !=
-            value->array_deref.ref->count)
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to deref range\n");
-        }
-        else
+        if ((value->array_deref.array_expr->comb.comb_dims == value->array_deref.ref->count) &&
+            (value->array_deref.array_expr->comb.comb_dims == 1))
         {
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
             {
-                expr_set_comb_type(value, value->array_deref.array_expr->comb.comb_ret);
+                value->comb.comb = COMB_TYPE_INT;
             }
             else
             {
@@ -1699,6 +1852,13 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                 print_error_msg(value->line_no,
                                 "incorrect types of arguments passed to deref range\n");
             }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "incorrect number of dimensions passed to deref range\n");
         }
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_STRING)
@@ -1741,14 +1901,8 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
 int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                                 int * result)
 {
-    if (value->slice.array_expr != NULL)
-    {
-        expr_check_type(tab, value->slice.array_expr, func_value, syn_level, result);
-    }
-    if (value->slice.range_elems != NULL)
-    {
-        expr_list_check_type(tab, value->slice.range_elems, func_value, syn_level, result);
-    }
+    expr_check_type(tab, value->slice.array_expr, func_value, syn_level, result);
+    expr_list_check_type(tab, value->slice.range_elems, func_value, syn_level, result);
 
     if (value->slice.array_expr->comb.comb == COMB_TYPE_ARRAY)
     {
@@ -1820,7 +1974,7 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
 int expr_range_elem_check_type(symtab * tab, expr * value, func * func_value,
                                unsigned int syn_level, int * result)
 {
-    assert (value->type == EXPR_RANGE_ELEM);
+    assert (value->type == EXPR_RANGE_DIM);
 
     expr_check_type(tab, value->range_elem.from, func_value, syn_level, result);
     expr_check_type(tab, value->range_elem.to, func_value, syn_level, result);
@@ -2228,7 +2382,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
     case EXPR_ARRAY_DEREF:
         expr_array_deref_check_type(tab, value, func_value, syn_level, result);
         break;
-    case EXPR_RANGE_ELEM:
+    case EXPR_RANGE_DIM:
         expr_range_elem_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_RANGE:

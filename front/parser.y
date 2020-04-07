@@ -66,8 +66,8 @@ int yyerror(never ** nev, char * str)
 %type <val.param_list_value> dim_list
 %type <val.range_value> range_dim
 %type <val.range_list_value> range_dim_list
-%type <val.expr_value> range_elem
-%type <val.expr_list_value> range_elem_list
+%type <val.expr_value> expr_range_dim
+%type <val.expr_list_value> expr_range_dim_list
 %type <val.param_value> param
 %type <val.param_list_value> param_list
 %type <val.param_list_value> param_seq
@@ -131,8 +131,8 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) expr_delete($$); } expr
 %destructor { if ($$) expr_list_delete($$); } expr_list
 %destructor { if ($$) expr_list_delete($$); } expr_seq
-%destructor { if ($$) expr_delete($$); } range_elem
-%destructor { if ($$) expr_list_delete($$); } range_elem_list
+%destructor { if ($$) expr_delete($$); } expr_range_dim
+%destructor { if ($$) expr_list_delete($$); } expr_range_dim_list
 %destructor { if ($$) array_delete($$); } array
 %destructor { if ($$) array_delete($$); } array_sub
 %destructor { if ($$) listcomp_delete($$); } listcomp
@@ -353,7 +353,7 @@ expr: expr '[' expr_list ']'
 };
 
 /* array or slice or range slice */
-expr: expr '[' range_elem_list ']'
+expr: expr '[' expr_range_dim_list ']'
 {
     $$ = expr_new_slice($1, $3);
     $$->line_no = $<line_no>2;
@@ -627,25 +627,25 @@ expr_seq: expr_seq ';' expr
     $$ = $1;
 };
 
-range_elem: expr TOK_TODOTS expr
+expr_range_dim: expr TOK_TODOTS expr
 {
-    $$ = expr_new_range_elem($1, $3);
+    $$ = expr_new_range_dim($1, $3);
     $$->line_no = $<line_no>2;
 };
 
-range_elem_list: range_elem
+expr_range_dim_list: expr_range_dim
 {
     $$ = expr_list_new();
     expr_list_add_end($$, $1);
 };
 
-range_elem_list: range_elem_list ',' range_elem
+expr_range_dim_list: expr_range_dim_list ',' expr_range_dim
 {
     expr_list_add_end($1, $3);
     $$ = $1;
 };
 
-expr: '[' range_elem_list ']'
+expr: '[' expr_range_dim_list ']'
 {
     $$ = expr_new_range($2);
     $$->line_no = $<line_no>1;
@@ -671,8 +671,14 @@ dim_list: dim_list ',' dim
 
 range_dim: TOK_ID TOK_TODOTS TOK_ID
 {
-    $$ = range_new($1, $3);
-    $$->line_no = $<line_no>1;
+    param * from = param_new_range_dim($1);
+    param * to = param_new_range_dim($3);
+
+    from->line_no = $<line_no>1;
+    to->line_no = $<line_no>3;
+
+    $$ = range_new(from, to);
+    $$->line_no = $<line_no>2;
 };
 
 range_dim_list: range_dim

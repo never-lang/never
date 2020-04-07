@@ -631,7 +631,7 @@ int expr_constred(expr * value, int * result)
             func_constred(value->func_value, result);
         }
         break;
-    case EXPR_RANGE_ELEM:
+    case EXPR_RANGE_DIM:
         if (value->range_elem.from)
         {
             expr_constred(value->range_elem.from, result);
