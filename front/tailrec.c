@@ -23,6 +23,7 @@
 #include "symtab.h"
 #include "iflet.h"
 #include "match.h"
+#include "forin.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -235,8 +236,8 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         expr_tailrec(syn_level, stab, value->forloop.do_value, TAILREC_OP_SKIP);
     break;
     case EXPR_FOR_IN:
-        expr_tailrec(syn_level, stab, value->forinloop.in_value, TAILREC_OP_SKIP);
-        expr_tailrec(syn_level, stab, value->forinloop.do_value, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, stab, value->forin_value->in_value, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, stab, value->forin_value->do_value, TAILREC_OP_SKIP);
     break;
     case EXPR_IFLET:
         expr_tailrec(syn_level, stab, value->iflet_value->expr_value, TAILREC_OP_SKIP);

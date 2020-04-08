@@ -31,6 +31,7 @@
 #include "enumerator.h"
 #include "func.h"
 #include "array.h"
+#include "forin.h"
 
 typedef enum symtab_lookup_op
 {
@@ -50,10 +51,11 @@ typedef enum symtab_entry_type
     SYMTAB_BIND = 2,
     SYMTAB_MATCHBIND = 3,
     SYMTAB_QUALIFIER = 4,
-    SYMTAB_RECORD = 5,
-    SYMTAB_ENUMTYPE = 6,
-    SYMTAB_ENUMERATOR = 7,
-    SYMTAB_FUNC = 8
+    SYMTAB_FORIN = 5,
+    SYMTAB_RECORD = 6,
+    SYMTAB_ENUMTYPE = 7,
+    SYMTAB_ENUMERATOR = 8,
+    SYMTAB_FUNC = 9
 } symtab_entry_type;
 
 typedef struct symtab_entry
@@ -65,6 +67,7 @@ typedef struct symtab_entry
         bind * bind_value;
         matchbind * matchbind_value;
         qualifier * qualifier_value;
+        forin * forin_value;
         record * record_value;
         enumtype * enumtype_value;
         enumerator * enumerator_value;
@@ -102,6 +105,7 @@ void symtab_add_param(symtab * tab, param * param_value, unsigned int syn_level)
 void symtab_add_bind(symtab * tab, bind * let_value, unsigned int syn_level);
 void symtab_add_matchbind(symtab * tab, matchbind * matchbind_value, unsigned int syn_level);
 void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned int syn_level);
+void symtab_add_forin(symtab * tab, forin * forin_value, unsigned int syn_level);
 void symtab_add_enumerator(symtab * tab, enumerator * enumerator_value, unsigned int syn_level);
 void symtab_add_enumtype(symtab * tab, enumtype * enumtype_value, unsigned int syn_level);
 void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_level);

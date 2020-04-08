@@ -25,6 +25,7 @@
 #include "utils.h"
 #include "iflet.h"
 #include "match.h"
+#include "forin.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -731,8 +732,7 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {
-            func_gencode_freevars_expr_list(func_value, stab, value->seq.list,
-                                            result);
+            func_gencode_freevars_expr_list(func_value, stab, value->seq.list, result);
         }
         break;
     case EXPR_ASS:
@@ -751,8 +751,8 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
         break;
     case EXPR_FOR_IN:
-        func_gencode_freevars_expr(func_value, stab, value->forinloop.in_value, result);
-        func_gencode_freevars_expr(func_value, stab, value->forinloop.do_value, result);
+        func_gencode_freevars_expr(func_value, stab, value->forin_value->in_value, result);
+        func_gencode_freevars_expr(func_value, stab, value->forin_value->do_value, result);
         break;
     case EXPR_IFLET:
         func_gencode_freevars_iflet_expr(func_value, stab, value, result);

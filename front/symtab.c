@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 symtab_entry * symtab_entry_new(unsigned int size)
 {
     symtab_entry * entries =
@@ -176,6 +175,7 @@ char * symtab_entry_type_str(symtab_entry_type type)
         case SYMTAB_BIND: return "bind";
         case SYMTAB_MATCHBIND: return "match bind";
         case SYMTAB_QUALIFIER: return "qualifier";
+        case SYMTAB_FORIN: return "for in";
         case SYMTAB_ENUMERATOR: return "enumerator";
         case SYMTAB_ENUMTYPE: return "enum";
         case SYMTAB_RECORD: return "record";
@@ -270,6 +270,19 @@ void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned in
  
     symtab_entry_add_object(tab->entries, tab->size, SYMTAB_QUALIFIER, qualifier_value->id,
                             qualifier_value, syn_level);
+    tab->count++;
+    symtab_resize(tab);
+}
+
+void symtab_add_forin(symtab * tab, forin * forin_value, unsigned int syn_level)
+{
+    if (forin_value->id == NULL)
+    {
+        return;
+    }
+
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_FORIN, forin_value->id,
+                            forin_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }

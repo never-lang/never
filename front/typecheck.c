@@ -29,6 +29,8 @@
 #include "tciflet.h"
 #include "tcmatch.h"
 #include "range.h"
+#include "forin.h"
+#include "tcforin.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -768,6 +770,10 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
                             "qualifier %s already defined at line %u\n",
                             entry->id, al_qualifier->line_no);
         }
+        break;
+        case SYMTAB_FORIN:
+            /* TODO: symtab forin */
+            assert(0);
         break;
         case SYMTAB_ENUMERATOR:
         {
@@ -2461,26 +2467,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         }
         break;
     case EXPR_FOR_IN:
-        expr_check_type(tab, value->forinloop.in_value, func_value, syn_level, result);
-        expr_check_type(tab, value->forinloop.do_value, func_value, syn_level, result);
-
-        if ((value->forinloop.in_value->comb.comb == COMB_TYPE_ARRAY &&
-             value->forinloop.in_value->comb.comb_dims == 1) ||
-            (value->forinloop.in_value->comb.comb == COMB_TYPE_SLICE &&
-             value->forinloop.in_value->comb.comb_dims == 1) ||
-            (value->forinloop.in_value->comb.comb == COMB_TYPE_RANGE &&
-             value->forinloop.in_value->comb.comb_dims == 1))
-        {
-            value->comb.comb = COMB_TYPE_INT;
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no,
-                            "for in loop expression is not of one dimensional array, slice or range is %s\n",
-                            comb_type_str(value->forinloop.in_value->comb.comb));
-        }
+        expr_forin_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_IFLET:
         expr_iflet_check_type(tab, value, func_value, syn_level, result);

@@ -22,6 +22,7 @@
 #include "tcprint.h"
 #include "match.h"
 #include "iflet.h"
+#include "forin.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -219,8 +220,8 @@ int print_func_expr(expr * value, int depth)
         print_func_expr(value->forloop.do_value, depth);
         break;
     case EXPR_FOR_IN:
-        print_func_expr(value->forinloop.in_value, depth);
-        print_func_expr(value->forinloop.do_value, depth);
+        print_func_expr(value->forin_value->in_value, depth);
+        print_func_expr(value->forin_value->do_value, depth);
         break;
     case EXPR_IFLET:
         print_func_iflet(value->iflet_value, depth);

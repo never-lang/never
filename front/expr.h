@@ -117,6 +117,7 @@ typedef struct record record;
 typedef struct enumtype enumtype;
 typedef struct enumerator enumerator;
 typedef struct iflet iflet;
+typedef struct forin forin;
 typedef struct matchbind matchbind;
 typedef struct match_guard_list match_guard_list;
 typedef struct freevar freevar;
@@ -166,10 +167,7 @@ typedef struct expr
                 enumtype * id_enumtype_value;
             };
         } id;
-        struct
-        {
-            struct func * func_value; /* EXPR_FUNC */
-        };
+        struct func * func_value; /* EXPR_FUNC */
         struct
         {
             struct expr * left;
@@ -193,12 +191,7 @@ typedef struct expr
             struct expr * incr;
             struct expr * do_value;
         } forloop;
-        struct
-        {
-            char * id;
-            struct expr * in_value;
-            struct expr * do_value;
-        } forinloop;
+        struct forin * forin_value;
         struct iflet * iflet_value;
         struct
         {

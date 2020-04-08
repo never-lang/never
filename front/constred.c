@@ -24,6 +24,7 @@
 #include "utils.h"
 #include "iflet.h"
 #include "match.h"
+#include "forin.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -679,8 +680,8 @@ int expr_constred(expr * value, int * result)
         expr_constred(value->forloop.do_value, result);
         break;
     case EXPR_FOR_IN:
-        expr_constred(value->forinloop.in_value, result);
-        expr_constred(value->forinloop.do_value, result);
+        expr_constred(value->forin_value->in_value, result);
+        expr_constred(value->forin_value->do_value, result);
         break;
     case EXPR_IFLET:
         expr_constred(value->iflet_value->expr_value, result);

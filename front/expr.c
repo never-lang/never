@@ -24,6 +24,7 @@
 #include "func.h"
 #include "listcomp.h"
 #include "iflet.h"
+#include "forin.h"
 #include "match.h"
 #include <assert.h>
 #include <stdio.h>
@@ -348,9 +349,7 @@ expr * expr_new_for_in(char * id, expr * in_value, expr * do_value)
     ret->type = EXPR_FOR_IN;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
-    ret->forinloop.id = id;
-    ret->forinloop.in_value = in_value;
-    ret->forinloop.do_value = do_value;
+    ret->forin_value = forin_new(id, in_value, do_value);
 
     return ret;
 }
@@ -587,17 +586,9 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_FOR_IN:
-        if (value->forinloop.id != NULL)
+        if (value->forin_value != NULL)
         {
-            free(value->forinloop.id);
-        }   
-        if (value->forinloop.in_value != NULL)
-        {
-            expr_delete(value->forinloop.in_value);
-        }
-        if (value->forinloop.do_value != NULL)
-        {
-            expr_delete(value->forinloop.do_value);
+            forin_delete(value->forin_value);
         }
         break;
     case EXPR_IFLET:
