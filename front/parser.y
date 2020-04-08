@@ -669,6 +669,15 @@ dim_list: dim_list ',' dim
     $$ = $1;
 };
 
+range_dim: TOK_TODOTS
+{
+    param * from = param_new_range_dim(NULL);
+    param * to = param_new_range_dim(NULL);
+
+    $$ = range_new(from, to);
+    $$->line_no = $<line_no>1;
+};
+
 range_dim: TOK_ID TOK_TODOTS TOK_ID
 {
     param * from = param_new_range_dim($1);

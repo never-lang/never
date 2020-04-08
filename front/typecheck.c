@@ -806,8 +806,6 @@ int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
         return 0;
     }
 
-    printf("symtab add %s\n", param_value->id);
-
     symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_LOOKUP_LOCAL);
     if (entry == NULL)
     {
@@ -1908,7 +1906,9 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
     {
         if (value->slice.array_expr->comb.comb_dims == value->slice.range_elems->count)
         {
-            value->comb = value->slice.array_expr->comb;
+            value->comb.comb = COMB_TYPE_SLICE;
+            value->comb.comb_dims = value->slice.array_expr->comb.comb_dims;
+            value->comb.comb_ret = value->slice.array_expr->comb.comb_ret;
         }
         else
         {
@@ -1922,7 +1922,9 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
     {
         if (value->slice.array_expr->comb.comb_dims == value->slice.range_elems->count)
         {
-            value->comb = value->slice.array_expr->comb;
+            value->comb.comb = COMB_TYPE_SLICE;
+            value->comb.comb_dims = value->slice.array_expr->comb.comb_dims;
+            value->comb.comb_ret = value->slice.array_expr->comb.comb_ret;
         }
         else
         {
@@ -1936,7 +1938,8 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
     {
         if (value->slice.array_expr->comb.comb_dims == value->slice.range_elems->count)
         {
-            value->comb = value->slice.array_expr->comb;
+            value->comb.comb = COMB_TYPE_RANGE;
+            value->comb.comb_dims = value->slice.array_expr->comb.comb_dims;
         }
         else
         {
@@ -1950,7 +1953,7 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
     {
         if (value->slice.range_elems->count == 1)
         {
-            value->comb = value->slice.array_expr->comb;
+            value->comb.comb = COMB_TYPE_STRING;
         }
         else
         {
@@ -1976,23 +1979,23 @@ int expr_range_elem_check_type(symtab * tab, expr * value, func * func_value,
 {
     assert (value->type == EXPR_RANGE_DIM);
 
-    expr_check_type(tab, value->range_elem.from, func_value, syn_level, result);
-    expr_check_type(tab, value->range_elem.to, func_value, syn_level, result);
+    expr_check_type(tab, value->range_dim.from, func_value, syn_level, result);
+    expr_check_type(tab, value->range_dim.to, func_value, syn_level, result);
 
-    if (value->range_elem.from->comb.comb != COMB_TYPE_INT)
+    if (value->range_dim.from->comb.comb != COMB_TYPE_INT)
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(value->range_elem.from->line_no,
+        print_error_msg(value->range_dim.from->line_no,
                         "expected range from of type int but got %s\n",
-                        comb_type_str(value->range_elem.from->comb.comb));
+                        comb_type_str(value->range_dim.from->comb.comb));
     }
 
-    if (value->range_elem.to->comb.comb != COMB_TYPE_INT)
+    if (value->range_dim.to->comb.comb != COMB_TYPE_INT)
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(value->range_elem.to->line_no,
+        print_error_msg(value->range_dim.to->line_no,
                         "expected range to of type int but got %s\n",
-                        comb_type_str(value->range_elem.to->comb.comb));
+                        comb_type_str(value->range_dim.to->comb.comb));
     }
 
     return 0;
@@ -2396,6 +2399,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         break;
     case EXPR_SLICE:
         expr_slice_check_type(tab, value, func_value, syn_level, result);
+        break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         expr_call_check_type(tab, value, func_value, syn_level, result);

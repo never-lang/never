@@ -1,10 +1,11 @@
-func r( [ from .. to ] : range ) -> int
+func r( a[D] : int, s1[from .. to] : int, [from2..to2] : range ) -> [..] : int
 {
-    [ from .. to, 1 .. 2 ][1, 2]
+    let b = [1, 2, 3] : int;
+
+    a [ from .. to ]
 }
 
 func main() -> int
 {
     0
 }
-

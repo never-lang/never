@@ -229,7 +229,7 @@ typedef struct expr
         {
             struct expr * from;
             struct expr * to;
-        } range_elem;
+        } range_dim;
         struct
         {
             struct expr_list * range_elems;

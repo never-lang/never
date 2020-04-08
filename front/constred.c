@@ -632,13 +632,13 @@ int expr_constred(expr * value, int * result)
         }
         break;
     case EXPR_RANGE_DIM:
-        if (value->range_elem.from)
+        if (value->range_dim.from)
         {
-            expr_constred(value->range_elem.from, result);
+            expr_constred(value->range_dim.from, result);
         }
-        if (value->range_elem.to)
+        if (value->range_dim.to)
         {
-            expr_constred(value->range_elem.to, result);
+            expr_constred(value->range_dim.to, result);
         }
         break;
     case EXPR_RANGE:

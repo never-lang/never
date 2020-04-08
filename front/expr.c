@@ -204,8 +204,8 @@ expr * expr_new_range_dim(expr * from, expr * to)
     ret->type = EXPR_RANGE_DIM;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
-    ret->range_elem.from = from;
-    ret->range_elem.to = to;
+    ret->range_dim.from = from;
+    ret->range_dim.to = to;
 
     return ret;
 }
@@ -216,8 +216,6 @@ expr * expr_new_range(expr_list * range_elems)
 
     ret->type = EXPR_RANGE;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
-    ret->comb.comb_params = NULL;
-    ret->comb.comb_ret = NULL;
     ret->line_no = 0;
     ret->range.range_elems = range_elems;
 
@@ -491,13 +489,13 @@ void expr_delete(expr * value)
         expr_list_delete(value->array_deref.ref);
         break;
     case EXPR_RANGE_DIM:
-        if (value->range_elem.from)
+        if (value->range_dim.from)
         {
-            expr_delete(value->range_elem.from);
+            expr_delete(value->range_dim.from);
         }
-        if (value->range_elem.to)
+        if (value->range_dim.to)
         {
-            expr_delete(value->range_elem.to);
+            expr_delete(value->range_dim.to);
         }
         break;
     case EXPR_RANGE:
@@ -515,6 +513,7 @@ void expr_delete(expr * value)
         {
             expr_list_delete(value->slice.range_elems);
         }
+        break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:
         if (value->call.func_expr != NULL)

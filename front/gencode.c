@@ -693,11 +693,25 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
                                             result);
         }
         break;
-    case EXPR_RANGE:
     case EXPR_RANGE_DIM:
+        func_gencode_freevars_expr(func_value, stab, value->range_dim.from, result);
+        func_gencode_freevars_expr(func_value, stab, value->range_dim.to, result);
+        break;
+    case EXPR_RANGE:
+        if (value->range.range_elems != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->range.range_elems, result);
+        }
+        break;
     case EXPR_SLICE:
-        /* TODO: correct this */
-        assert(0);
+        if (value->slice.array_expr != NULL)
+        {
+            func_gencode_freevars_expr(func_value, stab, value->slice.array_expr, result);
+        }
+        if (value->slice.range_elems != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->slice.range_elems, result);
+        }
         break;
     case EXPR_CALL:
     case EXPR_LAST_CALL:

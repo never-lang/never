@@ -173,13 +173,13 @@ int print_func_expr(expr * value, int depth)
         }
         break;
     case EXPR_RANGE_DIM:
-        if (value->range_elem.from != NULL)
+        if (value->range_dim.from != NULL)
         {
-            print_func_expr(value->range_elem.from, depth);
+            print_func_expr(value->range_dim.from, depth);
         }
-        if (value->range_elem.to != NULL)
+        if (value->range_dim.to != NULL)
         {
-            print_func_expr(value->range_elem.to, depth);
+            print_func_expr(value->range_dim.to, depth);
         }
         break;
     case EXPR_RANGE:

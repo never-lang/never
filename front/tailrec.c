@@ -188,13 +188,13 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         }
     break;
     case EXPR_RANGE_DIM:
-        if (value->range_elem.from != NULL)
+        if (value->range_dim.from != NULL)
         {
-            expr_tailrec(syn_level, stab, value->range_elem.from, TAILREC_OP_SKIP);
+            expr_tailrec(syn_level, stab, value->range_dim.from, TAILREC_OP_SKIP);
         }
-        if (value->range_elem.to != NULL)
+        if (value->range_dim.to != NULL)
         {
-            expr_tailrec(syn_level, stab, value->range_elem.to, TAILREC_OP_SKIP);
+            expr_tailrec(syn_level, stab, value->range_dim.to, TAILREC_OP_SKIP);
         }
     break;
     case EXPR_RANGE:
