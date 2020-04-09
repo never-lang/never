@@ -276,12 +276,12 @@ void symtab_add_qualifier(symtab * tab, qualifier * qualifier_value, unsigned in
 
 void symtab_add_forin(symtab * tab, forin * forin_value, unsigned int syn_level)
 {
-    if (forin_value->id == NULL)
+    if (forin_value->iter->id.id == NULL)
     {
         return;
     }
 
-    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_FORIN, forin_value->id,
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_FORIN, forin_value->iter->id.id,
                             forin_value, syn_level);
     tab->count++;
     symtab_resize(tab);

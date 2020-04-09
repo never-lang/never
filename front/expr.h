@@ -101,6 +101,7 @@ typedef enum id_type
     ID_TYPE_BIND = 3,
     ID_TYPE_MATCHBIND = 4,
     ID_TYPE_QUALIFIER = 5,
+    ID_TYPE_FORIN = 10,
     ID_TYPE_FUNC_TOP = 6,
     ID_TYPE_FUNC = 7,
     ID_TYPE_FUNC_NEST = 8,
@@ -129,7 +130,7 @@ typedef struct expr_comb
     struct param_list * comb_params; /* function arguments */
     struct param * comb_ret;       /* function ret */
     unsigned int comb_dims;               /* array dimensions */
-    struct record * comb_record; /* record */
+    struct record * comb_record;   /* record */ 
     struct enumtype * comb_enumtype; /* enum */
     struct matchbind * comb_matchbind; /* match bind (id in record match guard) */
 } expr_comb;
@@ -162,6 +163,7 @@ typedef struct expr
                 bind * id_bind_value;
                 matchbind * id_matchbind_value;
                 qualifier * id_qualifier_value;
+                forin * id_forin_value;
                 func * id_func_value;
                 record * id_record_value;
                 enumtype * id_enumtype_value;

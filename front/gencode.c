@@ -54,101 +54,142 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
     entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
-        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
+        switch (entry->type)
         {
-            func * sup_func_value = entry->func_value;
-            if (sup_func_value)
+        case SYMTAB_FUNC:
+            if (entry->func_value != NULL)
             {
-                if (entry->syn_level == 0)
+                func * sup_func_value = entry->func_value;
+                if (sup_func_value)
                 {
-                    value->id.id_type_value = ID_TYPE_FUNC_TOP;
-                    value->id.id_func_value = sup_func_value;
+                    if (entry->syn_level == 0)
+                    {
+                        value->id.id_type_value = ID_TYPE_FUNC_TOP;
+                        value->id.id_func_value = sup_func_value;
+                    }
+                    else if (syn_level - 1 == entry->syn_level &&
+                            func_value == sup_func_value) /* recursive call */
+                    {
+                        value->id.id_type_value = ID_TYPE_FUNC_NEST;
+                        value->id.id_func_value = sup_func_value;
+                    }
+                    else if (syn_level == entry->syn_level)
+                    {
+                        value->id.id_type_value = ID_TYPE_FUNC;
+                        value->id.id_func_value = sup_func_value;
+                    }
+                    else
+                    {
+                        freevar * freevar_value = NULL;
+                        if (func_value->freevars == NULL)
+                        {
+                            func_value->freevars = freevar_list_new();
+                        }
+
+                        freevar_value =
+                            freevar_list_add(func_value->freevars, value->id.id);
+
+                        freevar_value->orig.type = FREEVAR_FUNC;
+                        freevar_value->orig.func_value = sup_func_value;
+
+                        value->id.id_type_value = ID_TYPE_GLOBAL;
+                        value->id.id_freevar_value = freevar_value;
+                    }
                 }
-                else if (syn_level - 1 == entry->syn_level &&
-                         func_value == sup_func_value) /* recursive call */
+            }
+        break;
+        case SYMTAB_PARAM:
+            if (entry->param_value != NULL)
+            {
+                param * param_value = entry->param_value;
+                if (param_value->type == PARAM_BOOL ||
+                    param_value->type == PARAM_INT ||
+                    param_value->type == PARAM_FLOAT ||
+                    param_value->type == PARAM_CHAR ||
+                    param_value->type == PARAM_STRING ||
+                    param_value->type == PARAM_ENUMTYPE ||
+                    param_value->type == PARAM_DIM ||
+                    param_value->type == PARAM_ARRAY ||
+                    param_value->type == PARAM_RANGE ||
+                    param_value->type == PARAM_RANGE_DIM ||
+                    param_value->type == PARAM_SLICE ||
+                    param_value->type == PARAM_RECORD ||
+                    param_value->type == PARAM_FUNC)
                 {
-                    value->id.id_type_value = ID_TYPE_FUNC_NEST;
-                    value->id.id_func_value = sup_func_value;
-                }
-                else if (syn_level == entry->syn_level)
-                {
-                    value->id.id_type_value = ID_TYPE_FUNC;
-                    value->id.id_func_value = sup_func_value;
+                    if (syn_level == entry->syn_level)
+                    {
+                        value->id.id_type_value = ID_TYPE_LOCAL;
+                        value->id.id_param_value = param_value;
+                    }
+                    else
+                    {
+                        freevar * freevar_value = NULL;
+                        if (func_value->freevars == NULL)
+                        {
+                            func_value->freevars = freevar_list_new();
+                        }
+
+                        freevar_value =
+                            freevar_list_add(func_value->freevars, value->id.id);
+
+                        freevar_value->orig.type = FREEVAR_PARAM;
+                        freevar_value->orig.param_value = param_value;
+
+                        value->id.id_type_value = ID_TYPE_GLOBAL;
+                        value->id.id_freevar_value = freevar_value;
+                    }
                 }
                 else
                 {
-                    freevar * freevar_value = NULL;
-                    if (func_value->freevars == NULL)
-                    {
-                        func_value->freevars = freevar_list_new();
-                    }
-
-                    freevar_value =
-                        freevar_list_add(func_value->freevars, value->id.id);
-
-                    freevar_value->orig.type = FREEVAR_FUNC;
-                    freevar_value->orig.func_value = sup_func_value;
-
-                    value->id.id_type_value = ID_TYPE_GLOBAL;
-                    value->id.id_freevar_value = freevar_value;
+                    printf("unknown param type %s\n", param_type_str(param_value->type));
+                    assert(0);
                 }
             }
-        }
-        else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
-        {
-            param * param_value = entry->param_value;
-            if (param_value->type == PARAM_BOOL ||
-                param_value->type == PARAM_INT ||
-                param_value->type == PARAM_FLOAT ||
-                param_value->type == PARAM_CHAR ||
-                param_value->type == PARAM_STRING ||
-                param_value->type == PARAM_ENUMTYPE ||
-                param_value->type == PARAM_DIM ||
-                param_value->type == PARAM_ARRAY ||
-                param_value->type == PARAM_RANGE ||
-                param_value->type == PARAM_RANGE_DIM ||
-                param_value->type == PARAM_SLICE ||
-                param_value->type == PARAM_RECORD ||
-                param_value->type == PARAM_FUNC)
+        break;
+        case SYMTAB_BIND:
+            if (entry->bind_value != NULL)
             {
-                if (syn_level == entry->syn_level)
+                bind * bind_value = entry->bind_value;
+                if (bind_value->type == BIND_LET || bind_value->type == BIND_VAR)
                 {
-                    value->id.id_type_value = ID_TYPE_LOCAL;
-                    value->id.id_param_value = param_value;
+                    if (syn_level == entry->syn_level)
+                    {
+                        value->id.id_type_value = ID_TYPE_BIND;
+                        value->id.id_bind_value = bind_value;
+                    }
+                    else
+                    {
+                        freevar * freevar_value = NULL;
+                        if (func_value->freevars == NULL)
+                        {
+                            func_value->freevars = freevar_list_new();
+                        }
+                        
+                        freevar_value =
+                            freevar_list_add(func_value->freevars, value->id.id);
+
+                        freevar_value->orig.type = FREEVAR_BIND;
+                        freevar_value->orig.bind_value = bind_value;
+                        
+                        value->id.id_type_value = ID_TYPE_GLOBAL;
+                        value->id.id_freevar_value = freevar_value;
+                    }
                 }
                 else
                 {
-                    freevar * freevar_value = NULL;
-                    if (func_value->freevars == NULL)
-                    {
-                        func_value->freevars = freevar_list_new();
-                    }
-
-                    freevar_value =
-                        freevar_list_add(func_value->freevars, value->id.id);
-
-                    freevar_value->orig.type = FREEVAR_PARAM;
-                    freevar_value->orig.param_value = param_value;
-
-                    value->id.id_type_value = ID_TYPE_GLOBAL;
-                    value->id.id_freevar_value = freevar_value;
-                }
+                    fprintf(stderr, "unknown bind type %d\n", bind_value->type);
+                    assert(0);
+                }            
             }
-            else
+        break;
+        case SYMTAB_MATCHBIND:
+            if (entry->matchbind_value != NULL)
             {
-                printf("unknown param type %s\n", param_type_str(param_value->type));
-                assert(0);
-            }
-        }
-        else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
-        {
-            bind * bind_value = entry->bind_value;
-            if (bind_value->type == BIND_LET || bind_value->type == BIND_VAR)
-            {
+                matchbind * matchbind_value = entry->matchbind_value;
                 if (syn_level == entry->syn_level)
                 {
-                    value->id.id_type_value = ID_TYPE_BIND;
-                    value->id.id_bind_value = bind_value;
+                    value->id.id_type_value = ID_TYPE_MATCHBIND;
+                    value->id.id_matchbind_value = matchbind_value;
                 }
                 else
                 {
@@ -161,89 +202,97 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     freevar_value =
                         freevar_list_add(func_value->freevars, value->id.id);
 
-                    freevar_value->orig.type = FREEVAR_BIND;
-                    freevar_value->orig.bind_value = bind_value;
+                    freevar_value->orig.type = FREEVAR_MATCHBIND;
+                    freevar_value->orig.matchbind_value = matchbind_value;
                     
                     value->id.id_type_value = ID_TYPE_GLOBAL;
                     value->id.id_freevar_value = freevar_value;
                 }
             }
-            else
+        break;
+        case SYMTAB_QUALIFIER:
+            if (entry->qualifier_value != NULL)
             {
-                fprintf(stderr, "unknown bind type %d\n", bind_value->type);
+                qualifier * qualifier_value = entry->qualifier_value;
+                if (syn_level == entry->syn_level)
+                {
+                    value->id.id_type_value = ID_TYPE_QUALIFIER;
+                    value->id.id_qualifier_value = qualifier_value;
+                }
+                else
+                {
+                    freevar * freevar_value = NULL;
+                    if (func_value->freevars == NULL)
+                    {
+                        func_value->freevars = freevar_list_new();
+                    }
+                    
+                    freevar_value =
+                        freevar_list_add(func_value->freevars, value->id.id);
+
+                    freevar_value->orig.type = FREEVAR_QUALIFIER;
+                    freevar_value->orig.qualifier_value = qualifier_value;
+                    
+                    value->id.id_type_value = ID_TYPE_GLOBAL;
+                    value->id.id_freevar_value = freevar_value;
+                }
+            }
+        break;
+        case SYMTAB_FORIN:
+            if (entry->forin_value != NULL)
+            {
+                forin * forin_value = entry->forin_value;
+                if (syn_level == entry->syn_level)
+                {
+                    value->id.id_type_value = ID_TYPE_FORIN;
+                    value->id.id_forin_value = forin_value;
+                }
+                else
+                {
+                    freevar * freevar_value = NULL;
+                    if (func_value->freevars == NULL)
+                    {
+                        func_value->freevars = freevar_list_new();
+                    }
+
+                    freevar_value =
+                        freevar_list_add(func_value->freevars, value->id.id);
+
+                    freevar_value->orig.type = FREEVAR_FORIN;
+                    freevar_value->orig.forin_value = forin_value;
+
+                    value->id.id_type_value = ID_TYPE_GLOBAL;
+                    value->id.id_freevar_value = freevar_value;
+                }
+            }
+        break;
+        case SYMTAB_RECORD:
+            if (entry->record_value != NULL)
+            {
+                record * record_value = entry->record_value;
+
+                value->id.id_type_value = ID_TYPE_RECORD;
+                value->id.id_record_value = record_value;
+            }
+        break;
+        case SYMTAB_ENUMTYPE:
+            if (entry->enumtype_value != NULL)
+            {
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no, "found enum %s, at this stage it is very bad\n",
+                                value->id.id);
                 assert(0);
-            }            
-        }
-        else if (entry->type == SYMTAB_MATCHBIND && entry->matchbind_value != NULL)
-        {
-            matchbind * matchbind_value = entry->matchbind_value;
-            if (syn_level == entry->syn_level)
-            {
-                value->id.id_type_value = ID_TYPE_MATCHBIND;
-                value->id.id_matchbind_value = matchbind_value;
             }
-            else
+        break;
+        case SYMTAB_ENUMERATOR:
+            if (entry->enumerator_value != NULL)
             {
-                freevar * freevar_value = NULL;
-                if (func_value->freevars == NULL)
-                {
-                    func_value->freevars = freevar_list_new();
-                }
-                
-                freevar_value =
-                    freevar_list_add(func_value->freevars, value->id.id);
-
-                freevar_value->orig.type = FREEVAR_MATCHBIND;
-                freevar_value->orig.matchbind_value = matchbind_value;
-                
-                value->id.id_type_value = ID_TYPE_GLOBAL;
-                value->id.id_freevar_value = freevar_value;
+                *result = GENCODE_FAIL;
+                print_error_msg(value->line_no, "found enumerator %s, at this stage it is very bad\n",
+                                value->id.id);
+                assert(0);
             }
-        }
-        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
-        {
-            qualifier * qualifier_value = entry->qualifier_value;
-            if (syn_level == entry->syn_level)
-            {
-                value->id.id_type_value = ID_TYPE_QUALIFIER;
-                value->id.id_qualifier_value = qualifier_value;
-            }
-            else
-            {
-                freevar * freevar_value = NULL;
-                if (func_value->freevars == NULL)
-                {
-                    func_value->freevars = freevar_list_new();
-                }
-                
-                freevar_value =
-                    freevar_list_add(func_value->freevars, value->id.id);
-
-                freevar_value->orig.type = FREEVAR_QUALIFIER;
-                freevar_value->orig.qualifier_value = qualifier_value;
-                
-                value->id.id_type_value = ID_TYPE_GLOBAL;
-                value->id.id_freevar_value = freevar_value;
-            }
-        }
-        else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
-        {
-            *result = GENCODE_FAIL;
-            print_error_msg(value->line_no, "found enum %s, at this stage it is very bad\n",
-                            value->id.id);
-            assert(0);
-        }
-        else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
-        {
-            record * record_value = entry->record_value;
-
-            value->id.id_type_value = ID_TYPE_RECORD;
-            value->id.id_record_value = record_value;
-        }
-        else
-        {
-            fprintf(stderr, "unknown record type\n");
-            assert(0);
+        break;
         }
     }
     else
@@ -317,11 +366,26 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
             freevar_value->src.type = FREEVAR_QUALIFIER;
             freevar_value->src.qualifier_value = entry->qualifier_value;
         }
+        else if (entry->type == SYMTAB_FORIN && freevar_value->orig.type == FREEVAR_FORIN &&
+                 entry->forin_value == freevar_value->orig.forin_value)
+        {
+            freevar_value->src.type = FREEVAR_FORIN;
+            freevar_value->src.forin_value = entry->forin_value;
+        }
         else if (entry->type == SYMTAB_FUNC && freevar_value->orig.type == FREEVAR_FUNC &&
             entry->func_value == freevar_value->orig.func_value)
         {
             freevar_value->src.type = FREEVAR_FUNC;
             freevar_value->src.func_value = entry->func_value;
+        }
+        else if (entry->type == SYMTAB_RECORD ||
+                 entry->type == SYMTAB_ENUMTYPE ||
+                 entry->type == SYMTAB_ENUMERATOR)
+        {
+            *result = GENCODE_FAIL;
+            print_error_msg(0, "found %s, at this stage it is very bad\n",
+                            symtab_entry_type_str(entry->type));
+            assert(0);
         }
         else
         {

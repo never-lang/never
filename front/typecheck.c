@@ -772,8 +772,12 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         }
         break;
         case SYMTAB_FORIN:
-            /* TODO: symtab forin */
-            assert(0);
+        {
+            forin * al_forin = entry->forin_value;
+            print_error_msg(line_no,
+                            "forin iterator %s already defined at line %u\n",
+                            entry->id, al_forin->line_no);
+        }
         break;
         case SYMTAB_ENUMERATOR:
         {
@@ -1121,46 +1125,73 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     entry = symtab_lookup(tab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
-        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
+        switch (entry->type)
         {
-            func * func_value = entry->func_value;
+            case SYMTAB_FUNC:
+                if (entry->func_value != NULL)
+                {
+                    func * func_value = entry->func_value;
 
-            value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.comb_params = func_value->decl->params;
-            value->comb.comb_ret = func_value->decl->ret;
-        }
-        else if (entry->type == SYMTAB_PARAM && entry->param_value != NULL)
-        {
-            expr_set_comb_type(value, entry->param_value);
-        }
-        else if (entry->type == SYMTAB_BIND && entry->bind_value != NULL)
-        {
-            value->comb = entry->bind_value->expr_value->comb;
-        }
-        else if (entry->type == SYMTAB_MATCHBIND && entry->matchbind_value != NULL)
-        {
-            expr_set_comb_type(value, entry->matchbind_value->param_value);
-        }
-        else if (entry->type == SYMTAB_QUALIFIER && entry->qualifier_value != NULL)
-        {
-            expr_set_comb_type(value, entry->qualifier_value->expr_value->comb.comb_ret);
-        }
-        else if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
+                    value->comb.comb = COMB_TYPE_FUNC;
+                    value->comb.comb_params = func_value->decl->params;
+                    value->comb.comb_ret = func_value->decl->ret;
+                }
+            break;
+            case SYMTAB_PARAM:
+                if (entry->param_value != NULL)
+                {
+                    expr_set_comb_type(value, entry->param_value);
+                }
+            break;
+            case SYMTAB_BIND:
+                if (entry->bind_value != NULL)
+                {
+                    value->comb = entry->bind_value->expr_value->comb;
+                }
+            break;
+            case SYMTAB_MATCHBIND:
+                if (entry->matchbind_value != NULL)
+                {
+                    expr_set_comb_type(value, entry->matchbind_value->param_value);
+                }
+            break;
+            case SYMTAB_QUALIFIER:
+                if (entry->qualifier_value != NULL)
+                {
+                    expr_set_comb_type(value, entry->qualifier_value->expr_value->comb.comb_ret);
+                }
+            break;
+            case SYMTAB_FORIN:
+                if (entry->forin_value != NULL)
+                {
+                    value->comb = entry->forin_value->iter->comb;
+                }
+            break;
+            case SYMTAB_RECORD:
+                if (entry->record_value != NULL)
+                {
+                    value->comb.comb = COMB_TYPE_RECORD_ID;
+                    value->comb.comb_record = entry->record_value;
+                }
+            break;
+            case SYMTAB_ENUMTYPE:
+                if (entry->enumtype_value != NULL)
+                {
+                    *result = TYPECHECK_FAIL;
+                    value->comb.comb = COMB_TYPE_ERR;
 
-            print_error_msg(value->line_no, "found enum id %s\n",
-                            value->id.id);
-        }
-        else if (entry->type == SYMTAB_RECORD && entry->record_value != NULL)
-        {
-            value->comb.comb = COMB_TYPE_RECORD_ID;
-            value->comb.comb_record = entry->record_value;
-        }
-        else
-        {
-            assert(0);
+                    print_error_msg(value->line_no, "found enum id %s\n", value->id.id);
+                }
+            break;
+            case SYMTAB_ENUMERATOR:
+                if (entry->enumerator_value != NULL)
+                {
+                    *result = TYPECHECK_FAIL;
+                    value->comb.comb = COMB_TYPE_ERR;
+
+                    print_error_msg(value->line_no, "found enumerator %s\n", value->id.id);
+                }
+            break;
         }
     }
     else

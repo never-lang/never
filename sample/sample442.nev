@@ -3,11 +3,14 @@ record R { a : int; b : int; }
 
 func forincheck( a [ from .. to ] : int ) -> int
 {
-    let b = [ "one", "two", "three" ] : string;
+    let b = [ [1..10], [10..20], [20..30] ] : [..] : range;
 
-    for (s in ((([1, 2, 3, 4, 4] : int))))
+    for (x in [1..10])
     {
-        print(s)
+        for (y in [1..10])
+        {
+            print(x + y)
+        }
     };
 
     0

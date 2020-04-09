@@ -23,13 +23,13 @@
 #include "expr.h"
 #include "symtab.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 forin * forin_new(char * id, expr * in_value, expr * do_value)
 {
     forin * value = (forin *)malloc(sizeof(forin));
 
-    value->id = id;
-    value->param_value = NULL;
+    value->iter = expr_new_id(id);
     value->in_value = in_value;
     value->do_value = do_value;
     value->line_no = 0;
@@ -40,9 +40,9 @@ forin * forin_new(char * id, expr * in_value, expr * do_value)
 
 void forin_delete(forin * value)
 {
-    if (value->id != NULL)
+    if (value->iter != NULL)
     {
-        free(value->id);
+        expr_delete(value->iter);
     }
     if (value->in_value != NULL)
     {
@@ -60,5 +60,20 @@ void forin_delete(forin * value)
     free(value);
 }
 
+void forin_print(forin * value)
+{
+    printf("forin %s %s\n", forin_type_str(value->type), value->iter->id.id);
+}
 
+char * forin_type_str(forin_type type)
+{
+    switch (type)
+    {
+        case FORIN_TYPE_ARRAY: return "forin array";
+        case FORIN_TYPE_RANGE: return "forin range";
+        case FORIN_TYPE_SLICE: return "forin slice";
+        case FORIN_TYPE_STRING: return "forin string";
+    }
 
+    return "forin unknown";
+}

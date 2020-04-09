@@ -37,8 +37,7 @@ typedef enum forin_type
 typedef struct forin
 {
     forin_type type;
-    char * id;
-    param * param_value; /* TODO: check */
+    expr * iter;
     struct expr * in_value;
     struct expr * do_value;
     unsigned int line_no;
@@ -47,5 +46,8 @@ typedef struct forin
 
 forin * forin_new(char * id, expr * in_value, expr * do_value);
 void forin_delete(forin * value);
+
+void forin_print(forin * value);
+char * forin_type_str(forin_type type);
 
 #endif /* __FORIN_H__ */

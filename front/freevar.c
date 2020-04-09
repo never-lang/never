@@ -173,6 +173,12 @@ void freevar_loc_print(freevar_loc * value)
             matchbind_print(value->matchbind_value);
         }
         break;
+    case FREEVAR_FORIN:
+        if (value->forin_value)
+        {
+            forin_print(value->forin_value);
+        }
+        break;
     case FREEVAR_FREEVAR:
         if (value->freevar_value)
         {
@@ -223,6 +229,8 @@ char * freevar_type_str(freevar_type type)
         return "FREEVAR_PARAM";
     case FREEVAR_QUALIFIER:
         return "FREEVAR_QUALIFIER";
+    case FREEVAR_FORIN:
+        return "FREEVAR_FORIN";
     case FREEVAR_BIND:
         return "FREEVAR_BIND";
     case FREEVAR_MATCHBIND:
