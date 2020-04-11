@@ -150,7 +150,7 @@ int func_freevar_id_matchbind_emit(freevar * value, int stack_level,
     bytecode bc = { 0 };
     
     bc.type = BYTECODE_VECREF_DEREF;
-    bc.vecref_deref.stack_level = stack_level - value->src.matchbind_value->stack_level - 1;
+    bc.vecref_deref.stack_level = stack_level - value->src.matchbind_value->stack_level;
     bc.vecref_deref.index = value->src.matchbind_value->index + 1;
     
     bytecode_add(module_value->code, &bc);
@@ -320,7 +320,7 @@ int expr_id_matchbind_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
 
     bc.type = BYTECODE_VECREF_DEREF;
-    bc.vecref_deref.stack_level = stack_level - value->id.id_matchbind_value->stack_level - 1;
+    bc.vecref_deref.stack_level = stack_level - value->id.id_matchbind_value->stack_level;
     bc.vecref_deref.index = value->id.id_matchbind_value->index + 1;
 
     bytecode_add(module_value->code, &bc);
@@ -1095,11 +1095,11 @@ int expr_iflet_emit(expr * value, int stack_level, module * module_value,
     {
         case IFLET_TYPE_ITEM:
             expr_iflet_guard_item_emit(value->iflet_value->guard_item,
-                                       stack_level, module_value, list_weak, result);
+                                       stack_level + 1, module_value, list_weak, result);
         break;
         case IFLET_TYPE_RECORD:
             expr_iflet_guard_record_emit(value->iflet_value->guard_record,
-                                         stack_level, module_value, list_weak, result);
+                                         stack_level + 1, module_value, list_weak, result);
         break;
     }
 
@@ -1188,7 +1188,7 @@ int expr_match_guard_record_emit(match_guard_record_expr * record_value, bytecod
 
     if (record_value->guard->matchbinds != NULL)
     {
-        matchbind_list_set_stack_level(record_value->guard->matchbinds, stack_level - 1);
+        matchbind_list_set_stack_level(record_value->guard->matchbinds, stack_level);
     }
 
     switch (record_value->guard->enumtype_value->type)
