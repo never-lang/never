@@ -31,9 +31,9 @@
  */
 int print_func_attr(expr * value, int depth)
 {
-    if (value->attr.record_value != NULL)
+    if (value->vecref_deref.record_value != NULL)
     {
-        print_func_expr(value->attr.record_value, depth);
+        print_func_expr(value->vecref_deref.record_value, depth);
     }
     return 0;
 }
@@ -184,9 +184,9 @@ int print_func_expr(expr * value, int depth)
         }
         break;
     case EXPR_RANGE:
-        if (value->range.range_elems != NULL)
+        if (value->range.range_dims != NULL)
         {
-            print_func_expr_list(value->range.range_elems, depth);
+            print_func_expr_list(value->range.range_dims, depth);
         }
         break;
     case EXPR_SLICE:
@@ -194,9 +194,9 @@ int print_func_expr(expr * value, int depth)
         {
             print_func_expr(value->slice.array_expr, depth);
         }
-        if (value->slice.range_elems != NULL)
+        if (value->slice.range_dims != NULL)
         {
-            print_func_expr_list(value->slice.range_elems, depth);
+            print_func_expr_list(value->slice.range_dims, depth);
         }
     case EXPR_SEQ:
         if (value->seq.list != NULL)
@@ -219,7 +219,7 @@ int print_func_expr(expr * value, int depth)
         print_func_expr(value->forloop.incr, depth);
         print_func_expr(value->forloop.do_value, depth);
         break;
-    case EXPR_FOR_IN:
+    case EXPR_FORIN:
         print_func_expr(value->forin_value->in_value, depth);
         print_func_expr(value->forin_value->do_value, depth);
         break;

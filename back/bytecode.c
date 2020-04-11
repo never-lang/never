@@ -144,14 +144,16 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_MK_ARRAY_ARRAY, bytecode_print_mk_array_array },
     { BYTECODE_MK_ARRAY_RECORD, bytecode_print_mk_array_record },
     { BYTECODE_MK_ARRAY_FUNC, bytecode_print_mk_array_func },
-
     { BYTECODE_MK_INIT_ARRAY, bytecode_print_mk_init_array },
+    { BYTECODE_MK_RANGE, bytecode_print_mk_range },
+    { BYTECODE_MK_SLICE, bytecode_print_mk_slice },
+
     { BYTECODE_STRING_DEREF, bytecode_print_string_deref },
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
     { BYTECODE_ARRAY_APPEND, bytecode_print_array_append },
 
     { BYTECODE_RECORD, bytecode_print_record },
-    { BYTECODE_ATTR, bytecode_print_attr },
+    { BYTECODE_VECREF_DEREF, bytecode_print_vecref_deref },
     { BYTECODE_NIL_RECORD_REF, bytecode_print_nil_record_ref },
 
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
@@ -684,6 +686,16 @@ void bytecode_print_mk_init_array(bytecode * code)
     printf("%d: mk init array %d\n", code->addr, code->mk_array.dims);
 }
 
+void bytecode_print_mk_range(bytecode * code)
+{
+    printf("%d: mk range %u\n", code->addr, code->mk_range.dims);
+}
+
+void bytecode_print_mk_slice(bytecode * code)
+{
+    printf("%d: mk slice %u\n", code->addr, code->mk_slice.dims);
+}
+
 void bytecode_print_string_deref(bytecode * code)
 {
     printf("%d: string deref\n", code->addr);
@@ -706,9 +718,9 @@ void bytecode_print_record(bytecode * code)
     printf("%d: record count %u\n", code->addr, code->record.count);
 }
 
-void bytecode_print_attr(bytecode * code)
+void bytecode_print_vecref_deref(bytecode * code)
 {
-    printf("%d: attr index %d %u\n", code->addr, code->attr.stack_level, code->attr.index);
+    printf("%d: attr index %d %u\n", code->addr, code->vecref_deref.stack_level, code->vecref_deref.index);
 }
 
 void bytecode_print_nil_record_ref(bytecode * code)

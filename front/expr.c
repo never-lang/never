@@ -211,19 +211,19 @@ expr * expr_new_range_dim(expr * from, expr * to)
     return ret;
 }
 
-expr * expr_new_range(expr_list * range_elems)
+expr * expr_new_range(expr_list * range_dims)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
 
     ret->type = EXPR_RANGE;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
-    ret->range.range_elems = range_elems;
+    ret->range.range_dims = range_dims;
 
     return ret;
 }
 
-expr * expr_new_slice(expr * array_expr, expr_list * range_elems)
+expr * expr_new_slice(expr * array_expr, expr_list * range_dims)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
 
@@ -231,7 +231,7 @@ expr * expr_new_slice(expr * array_expr, expr_list * range_elems)
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
     ret->slice.array_expr = array_expr;
-    ret->slice.range_elems = range_elems;
+    ret->slice.range_dims = range_dims;
 
     return ret;
 }
@@ -346,7 +346,7 @@ expr * expr_new_for_in(char * id, expr * in_value, expr * do_value)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
 
-    ret->type = EXPR_FOR_IN;
+    ret->type = EXPR_FORIN;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->forin_value = forin_new(id, in_value, do_value);
@@ -395,9 +395,9 @@ expr * expr_new_attr(expr * record_value, char * id)
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_ATTR;
-    ret->attr.id = id;
-    ret->attr.record_value = record_value;
-    ret->attr.id_param_value = NULL;
+    ret->vecref_deref.id = id;
+    ret->vecref_deref.record_value = record_value;
+    ret->vecref_deref.id_param_value = NULL;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     
@@ -498,9 +498,9 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_RANGE:
-        if (value->range.range_elems)
+        if (value->range.range_dims)
         {
-            expr_list_delete(value->range.range_elems);
+            expr_list_delete(value->range.range_dims);
         }
         break;
     case EXPR_SLICE:
@@ -508,9 +508,9 @@ void expr_delete(expr * value)
         {
             expr_delete(value->slice.array_expr);
         }
-        if (value->slice.range_elems != NULL)
+        if (value->slice.range_dims != NULL)
         {
-            expr_list_delete(value->slice.range_elems);
+            expr_list_delete(value->slice.range_dims);
         }
         break;
     case EXPR_CALL:
@@ -585,7 +585,7 @@ void expr_delete(expr * value)
             expr_delete(value->forloop.do_value);
         }
         break;
-    case EXPR_FOR_IN:
+    case EXPR_FORIN:
         if (value->forin_value != NULL)
         {
             forin_delete(value->forin_value);
@@ -615,13 +615,13 @@ void expr_delete(expr * value)
         listcomp_delete(value->listcomp_value);
         break;
     case EXPR_ATTR:
-        if (value->attr.id != NULL)
+        if (value->vecref_deref.id != NULL)
         {
-            free(value->attr.id);
+            free(value->vecref_deref.id);
         }
-        if (value->attr.record_value != NULL)
+        if (value->vecref_deref.record_value != NULL)
         {
-            expr_delete(value->attr.record_value);
+            expr_delete(value->vecref_deref.record_value);
         }
         break;
     }
@@ -747,7 +747,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_WHILE: return "while";
     case EXPR_DO_WHILE: return "do while";
     case EXPR_FOR: return "for";
-    case EXPR_FOR_IN: return "for in";
+    case EXPR_FORIN: return "for in";
     case EXPR_IFLET: return "if let";
     case EXPR_MATCH: return "match";
     case EXPR_BUILD_IN: return "build id";

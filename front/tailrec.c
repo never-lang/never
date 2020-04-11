@@ -199,9 +199,9 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         }
     break;
     case EXPR_RANGE:
-        if (value->range.range_elems != NULL)
+        if (value->range.range_dims != NULL)
         {
-            expr_list_tailrec(syn_level, stab, value->range.range_elems, TAILREC_OP_SKIP);
+            expr_list_tailrec(syn_level, stab, value->range.range_dims, TAILREC_OP_SKIP);
         }
     break;
     case EXPR_SLICE:
@@ -209,9 +209,9 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         {
             expr_tailrec(syn_level, stab, value->slice.array_expr, TAILREC_OP_SKIP);
         }
-        if (value->slice.range_elems != NULL)
+        if (value->slice.range_dims != NULL)
         {
-            expr_list_tailrec(syn_level, stab, value->slice.range_elems, TAILREC_OP_SKIP);
+            expr_list_tailrec(syn_level, stab, value->slice.range_dims, TAILREC_OP_SKIP);
         }
     break;
     case EXPR_SEQ:
@@ -235,7 +235,7 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         expr_tailrec(syn_level, stab, value->forloop.incr, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->forloop.do_value, TAILREC_OP_SKIP);
     break;
-    case EXPR_FOR_IN:
+    case EXPR_FORIN:
         expr_tailrec(syn_level, stab, value->forin_value->in_value, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->forin_value->do_value, TAILREC_OP_SKIP);
     break;
@@ -266,9 +266,9 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         }
         break;
     case EXPR_ATTR:
-        if (value->attr.record_value != NULL)
+        if (value->vecref_deref.record_value != NULL)
         {
-            expr_tailrec(syn_level, stab, value->attr.record_value, TAILREC_OP_SKIP);
+            expr_tailrec(syn_level, stab, value->vecref_deref.record_value, TAILREC_OP_SKIP);
         }
         break;
     }

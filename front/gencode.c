@@ -113,6 +113,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     param_value->type == PARAM_RANGE ||
                     param_value->type == PARAM_RANGE_DIM ||
                     param_value->type == PARAM_SLICE ||
+                    param_value->type == PARAM_SLICE_DIM ||
                     param_value->type == PARAM_RECORD ||
                     param_value->type == PARAM_FUNC)
                 {
@@ -763,9 +764,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->range_dim.to, result);
         break;
     case EXPR_RANGE:
-        if (value->range.range_elems != NULL)
+        if (value->range.range_dims != NULL)
         {
-            func_gencode_freevars_expr_list(func_value, stab, value->range.range_elems, result);
+            func_gencode_freevars_expr_list(func_value, stab, value->range.range_dims, result);
         }
         break;
     case EXPR_SLICE:
@@ -773,9 +774,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         {
             func_gencode_freevars_expr(func_value, stab, value->slice.array_expr, result);
         }
-        if (value->slice.range_elems != NULL)
+        if (value->slice.range_dims != NULL)
         {
-            func_gencode_freevars_expr_list(func_value, stab, value->slice.range_elems, result);
+            func_gencode_freevars_expr_list(func_value, stab, value->slice.range_dims, result);
         }
         break;
     case EXPR_CALL:
@@ -814,7 +815,7 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->forloop.incr, result);
         func_gencode_freevars_expr(func_value, stab, value->forloop.do_value, result);
         break;
-    case EXPR_FOR_IN:
+    case EXPR_FORIN:
         func_gencode_freevars_expr(func_value, stab, value->forin_value->in_value, result);
         func_gencode_freevars_expr(func_value, stab, value->forin_value->do_value, result);
         break;
@@ -843,9 +844,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         }
         break;
     case EXPR_ATTR:
-        if (value->attr.record_value != NULL)
+        if (value->vecref_deref.record_value != NULL)
         {
-            func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
+            func_gencode_freevars_expr(func_value, stab, value->vecref_deref.record_value, result);
         }
         break;
     }

@@ -142,12 +142,14 @@ typedef enum bytecode_type
     BYTECODE_MK_ARRAY_RECORD,
     BYTECODE_MK_ARRAY_FUNC,
     BYTECODE_MK_INIT_ARRAY,
+    BYTECODE_MK_RANGE,
+    BYTECODE_MK_SLICE,
     BYTECODE_STRING_DEREF,
     BYTECODE_ARRAY_DEREF,    
     BYTECODE_ARRAY_APPEND,
 
     BYTECODE_RECORD,
-    BYTECODE_ATTR,
+    BYTECODE_VECREF_DEREF,
     BYTECODE_NIL_RECORD_REF,
 
     BYTECODE_FUNC_DEF,
@@ -273,13 +275,21 @@ typedef struct bytecode
         } array_deref;
         struct
         {
+            unsigned int dims;
+        } mk_range;
+        struct
+        {
+            unsigned int dims;
+        } mk_slice;
+        struct
+        {
             unsigned int count;
         } record;
         struct
         {
             int stack_level;
             unsigned int index;
-        } attr;
+        } vecref_deref;
         struct
         {
             unsigned int count;
@@ -431,13 +441,15 @@ void bytecode_print_mk_array_array(bytecode * code);
 void bytecode_print_mk_array_record(bytecode * code);
 void bytecode_print_mk_array_func(bytecode * code);
 void bytecode_print_mk_init_array(bytecode * code);
+void bytecode_print_mk_range(bytecode * code);
+void bytecode_print_mk_slice(bytecode * code);
 
 void bytecode_print_string_deref(bytecode * code);
 void bytecode_print_array_deref(bytecode * code);
 void bytecode_print_array_append(bytecode * code);
 
 void bytecode_print_record(bytecode * code);
-void bytecode_print_attr(bytecode * code);
+void bytecode_print_vecref_deref(bytecode * code);
 void bytecode_print_nil_record_ref(bytecode * code);
 
 void bytecode_print_func_def(bytecode * code);

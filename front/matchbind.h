@@ -64,6 +64,7 @@ void matchbind_list_delete(matchbind_list * list);
 
 void matchbind_list_add_beg(matchbind_list * list, matchbind * value);
 void matchbind_list_add_end(matchbind_list * list, matchbind * value);
+
 void matchbind_list_set_stack_level(matchbind_list * list, int stack_level);
 
 #endif /* __MATCHBIND_H__ */

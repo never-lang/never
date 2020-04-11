@@ -56,6 +56,10 @@ int func_freevar_id_bind_emit(freevar * value, int stack_level,
                               module * module_value, int * result);
 int func_freevar_id_matchbind_emit(freevar * value, int stack_level, 
                                    module * module_value, int * result);
+int func_freevar_id_qualifier_emit(freevar * value, int stack_level,
+                                   module * module_value, int * result);
+int func_freevar_id_forin_emit(freevar * value, int stack_level, 
+                               module * module_value, int * result);
 int func_freevar_emit(freevar * value, int stack_level, module * module_value,
                       int * result);
 int func_freevar_list_emit(freevar_list * freevars, int stack_level,
@@ -65,8 +69,12 @@ int expr_id_local_emit(expr * value, int stack_level, module * module_value,
                        int * result);
 int expr_id_qualifier_emit(expr * value, int stack_level, module * module_value,
                            int * result);
+int expr_id_forin_emit(expr * value, int stack_level, module * module_value,
+                       int * result);
 int expr_id_bind_emit(expr * value, int stack_level, module * module_value,
                        int * result);
+int expr_id_matchbind_emit(expr * value, int stack_level, module * module_value,
+                           int * result);
 int expr_id_global_emit(expr * value, int stack_value, module * module_value,
                         int * result);
 int expr_id_func_top_emit(func * func_value, int stack_level,
@@ -103,6 +111,8 @@ int expr_do_while_emit(expr * value, int stack_level, module * module_value,
                        func_list_weak * list_weak, int * result);
 int expr_for_emit(expr * value, int stack_level, module * module_value, 
                   func_list_weak * list_weak, int * result);
+int expr_forin_emit(expr * value, int stack_level, module * module_value, 
+                    func_list_weak * list_weak, int * result);
 int expr_iflet_guard_item_emit(match_guard_item * guard_item,
                                int stack_level, module * module_value,
                                func_list_weak * list_weak, int * result);
@@ -128,6 +138,14 @@ int expr_match_guard_list_emit(match_guard_list * list, int stack_level,
                                module * module_value, func_list_weak * list_weak,
                                int * result);
 int expr_match_emit(expr * value, int stack_level, module * module_value,
+                    func_list_weak * list_weak, int * result);
+int expr_range_dim_emit(expr * value, int stack_level, module * module_value,
+                        func_list_weak * list_weak, int * result);
+int expr_range_dim_list_emit(expr_list * list, int stack_level, module * module_value,
+                             func_list_weak * list_weak, int * result);
+int expr_range_emit(expr * value, int stack_level, module * module_value,
+                    func_list_weak * list_weak, int * result);
+int expr_slice_emit(expr * value, int stack_level, module * module_value,
                     func_list_weak * list_weak, int * result);
 int expr_call_emit(expr * value, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);

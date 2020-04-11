@@ -1,0 +1,18 @@
+
+func print_range( [ f1 .. t1 ] : range ) -> int
+{
+    print(f1);
+    print(t1);
+
+    0
+}
+
+func main() -> int
+{
+    let r = [ 10 .. 30 ];
+
+    print_range( [ 10 .. 20 ] );
+    print_range( r );
+
+    0
+}

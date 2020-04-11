@@ -179,12 +179,15 @@ void vm_execute_mk_array_array(vm * machine, bytecode * code);
 void vm_execute_mk_array_record(vm * machine, bytecode * code);
 void vm_execute_mk_array_func(vm * machine, bytecode * code);
 void vm_execute_mk_init_array(vm * machine, bytecode * code);
+void vm_execute_mk_range(vm * machine, bytecode * code);
+void vm_execute_mk_slice(vm * machine, bytecode * code);
+
 void vm_execute_string_deref(vm * machine, bytecode * code);
 void vm_execute_array_deref(vm * machine, bytecode * code);
 void vm_execute_array_append(vm * machine, bytecode * code);
 
 void vm_execute_record(vm * machine, bytecode * code);
-void vm_execute_attr(vm * machine, bytecode * code);
+void vm_execute_vecref_deref(vm * machine, bytecode * code);
 void vm_execute_nil_record_ref(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);

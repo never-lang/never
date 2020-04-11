@@ -148,6 +148,11 @@ param * param_new_range(range_list * ranges)
     value->ret = NULL;
     value->line_no = 0;
 
+    if (value->ranges != NULL)
+    {
+        range_dim_set_range(value->ranges, value);
+    }
+
     return value;
 }
 
@@ -159,7 +164,6 @@ param * param_new_range_dim(char * id)
     value->index = -1;
     value->id = id;
     value->record_id = NULL;
-    value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
 
@@ -177,6 +181,11 @@ param * param_new_slice(char * id, range_list * ranges, param * ret)
     value->ranges = ranges;
     value->ret = ret;
     value->line_no = 0;
+
+    if (value->ranges != NULL)
+    {
+        range_dim_set_slice(value->ranges, value);
+    }
 
     return value;
 }
@@ -227,6 +236,7 @@ void param_delete(param * value)
         case PARAM_STRING:
         case PARAM_DIM:
         case PARAM_RANGE_DIM:
+        case PARAM_SLICE_DIM:
         break;
         case PARAM_ARRAY:
             if (value->dims != NULL)
@@ -435,6 +445,8 @@ char * param_type_str(param_type type)
         return "PARAM_RANGE";
     case PARAM_SLICE:
         return "PARAM_SLICE";
+    case PARAM_SLICE_DIM:
+        return "PARAM_SLICE_DIM";
     case PARAM_FUNC:
         return "PARAM_FUNC";
     }

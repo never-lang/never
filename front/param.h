@@ -37,6 +37,7 @@ typedef enum param_type
     PARAM_RANGE,
     PARAM_RANGE_DIM,
     PARAM_SLICE,
+    PARAM_SLICE_DIM,
     PARAM_ENUMTYPE,
     PARAM_RECORD,
     PARAM_FUNC
@@ -50,6 +51,8 @@ typedef struct param
     char * record_id;
     union {
         struct param * array;
+        struct param * range;
+        struct param * slice;
         struct param_list * params;
         struct param_list * dims;
         struct range_list * ranges;

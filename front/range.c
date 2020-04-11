@@ -125,3 +125,63 @@ void range_list_add_end(range_list * list, range * value)
         list->head = node;
     }
 }
+
+void range_dim_set_range(range_list * list, param * range_value)
+{
+    int index = 0;
+    range_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        range * value = node->value;
+        if (value != NULL)
+        {
+            if (value->from != NULL)
+            {
+                value->from->type = PARAM_RANGE_DIM;
+                value->from->index = index;
+                value->from->range = range_value;
+            }
+            index++;
+
+            if (value->to != NULL)
+            {
+                value->to->type = PARAM_RANGE_DIM;
+                value->to->index = index;
+                value->to->range = range_value;
+            }
+            index++;
+        }
+        node = node->next;
+    }
+}
+
+void range_dim_set_slice(range_list * list, param * slice_value)
+{
+    int index = 0;
+    range_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        range * value = node->value;
+        if (value != NULL)
+        {
+            if (value->from != NULL)
+            {
+                value->from->type = PARAM_SLICE_DIM;
+                value->from->index = index;
+                value->from->slice = slice_value;
+            }
+            index++;
+
+            if (value->to != NULL)
+            {
+                value->to->type = PARAM_SLICE_DIM;
+                value->to->index = index;
+                value->to->slice = slice_value;
+            }
+            index++;
+        }
+        node = node->next;
+    }
+}

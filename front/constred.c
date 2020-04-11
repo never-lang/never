@@ -643,9 +643,9 @@ int expr_constred(expr * value, int * result)
         }
         break;
     case EXPR_RANGE:
-        if (value->range.range_elems != NULL)
+        if (value->range.range_dims != NULL)
         {
-            expr_list_constred(value->range.range_elems, result);
+            expr_list_constred(value->range.range_dims, result);
         }
         break;
     case EXPR_SLICE:
@@ -653,9 +653,9 @@ int expr_constred(expr * value, int * result)
         {
             expr_constred(value->slice.array_expr, result);
         }
-        if (value->slice.range_elems != NULL)
+        if (value->slice.range_dims != NULL)
         {
-            expr_list_constred(value->slice.range_elems, result);
+            expr_list_constred(value->slice.range_dims, result);
         }
         break;
     case EXPR_SEQ:
@@ -679,7 +679,7 @@ int expr_constred(expr * value, int * result)
         expr_constred(value->forloop.incr, result);
         expr_constred(value->forloop.do_value, result);
         break;
-    case EXPR_FOR_IN:
+    case EXPR_FORIN:
         expr_constred(value->forin_value->in_value, result);
         expr_constred(value->forin_value->do_value, result);
         break;
@@ -730,9 +730,9 @@ int expr_constred(expr * value, int * result)
         }
         break;
     case EXPR_ATTR:
-        if (value->attr.record_value != NULL)
+        if (value->vecref_deref.record_value != NULL)
         {
-            expr_constred(value->attr.record_value, result);
+            expr_constred(value->vecref_deref.record_value, result);
         }
         break;
     }

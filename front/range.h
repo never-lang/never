@@ -52,9 +52,12 @@ range_list_node * range_list_node_new(range * value);
 void range_list_node_delete(range_list_node * node);
 
 range_list * range_list_new();
-void range_list_delete(range_list * value);
+void range_list_delete(range_list * list);
 
 void range_list_add_beg(range_list * list, range * value);
 void range_list_add_end(range_list * list, range * value);
+
+void range_dim_set_range(range_list * list, param * range_value);
+void range_dim_set_slice(range_list * list, param * slice_value);
 
 #endif /* __RANGE_H__ */

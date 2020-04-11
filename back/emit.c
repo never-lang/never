@@ -110,6 +110,14 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
         bc.id_dim_local.index = value->src.param_value->array->index;
         bc.id_dim_local.dim_index = value->src.param_value->index;
     }
+    else if (value->src.param_value->type == PARAM_RANGE_DIM)
+    {
+        assert(0);
+    }
+    else if (value->src.param_value->type == PARAM_SLICE_DIM)
+    {
+        assert(0);
+    }
     else
     {
         bc.type = BYTECODE_ID_LOCAL;
@@ -141,9 +149,9 @@ int func_freevar_id_matchbind_emit(freevar * value, int stack_level,
 {
     bytecode bc = { 0 };
     
-    bc.type = BYTECODE_ATTR;
-    bc.attr.stack_level = stack_level - value->src.matchbind_value->stack_level - 1;
-    bc.attr.index = value->src.matchbind_value->index + 1;
+    bc.type = BYTECODE_VECREF_DEREF;
+    bc.vecref_deref.stack_level = stack_level - value->src.matchbind_value->stack_level - 1;
+    bc.vecref_deref.index = value->src.matchbind_value->index + 1;
     
     bytecode_add(module_value->code, &bc);
 
@@ -161,6 +169,14 @@ int func_freevar_id_qualifier_emit(freevar * value, int stack_level,
     
     bytecode_add(module_value->code, &bc);
     
+    return 0;
+}
+
+int func_freevar_id_forin_emit(freevar * value, int stack_level, 
+                               module * module_value, int * result)
+{
+    /* TODO: freevar id forin emit */
+    assert(0);
     return 0;
 }
 
@@ -186,6 +202,9 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
         break;
     case FREEVAR_QUALIFIER:
         func_freevar_id_qualifier_emit(value, stack_level, module_value, result);
+        break;
+    case FREEVAR_FORIN:
+        func_freevar_id_forin_emit(value, stack_level, module_value, result);
         break;
     case FREEVAR_FREEVAR:
         bc.type = BYTECODE_ID_GLOBAL;
@@ -228,12 +247,24 @@ int expr_id_local_emit(expr * value, int stack_level, module * module_value,
 {
     bytecode bc = { 0 };
 
+    /* TODO: emit code for range dim */
     if (value->id.id_param_value->type == PARAM_DIM)
     {
         bc.type = BYTECODE_ID_DIM_LOCAL;
         bc.id_dim_local.stack_level = stack_level;
         bc.id_dim_local.index = value->id.id_param_value->array->index;
         bc.id_dim_local.dim_index = value->id.id_param_value->index;
+    }
+    else if (value->id.id_param_value->type == PARAM_RANGE_DIM)
+    {
+        bc.type = BYTECODE_VECREF_DEREF;
+        bc.vecref_deref.stack_level = stack_level - value->id.id_param_value->range->index;
+        bc.vecref_deref.index = value->id.id_param_value->index;
+    }
+    else if (value->id.id_param_value->type == PARAM_SLICE_DIM)
+    {
+        /* TODO: slice dim */
+        //assert(0);
     }
     else
     {
@@ -244,6 +275,28 @@ int expr_id_local_emit(expr * value, int stack_level, module * module_value,
 
     bytecode_add(module_value->code, &bc);
 
+    return 0;
+}
+
+int expr_id_qualifier_emit(expr * value, int stack_level, module * module_value,
+                           int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level - value->id.id_qualifier_value->stack_level - 3;
+    bc.id_local.index = 0;
+
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_id_forin_emit(expr * value, int stack_level, module * module_value,
+                       int * result)
+{
+    /* TODO: expr id forin emit */
+    assert(0);
     return 0;
 }
 
@@ -266,9 +319,9 @@ int expr_id_matchbind_emit(expr * value, int stack_level, module * module_value,
 {
     bytecode bc = { 0 };
 
-    bc.type = BYTECODE_ATTR;
-    bc.attr.stack_level = stack_level - value->id.id_matchbind_value->stack_level - 1;
-    bc.attr.index = value->id.id_matchbind_value->index + 1;
+    bc.type = BYTECODE_VECREF_DEREF;
+    bc.vecref_deref.stack_level = stack_level - value->id.id_matchbind_value->stack_level - 1;
+    bc.vecref_deref.index = value->id.id_matchbind_value->index + 1;
 
     bytecode_add(module_value->code, &bc);
 
@@ -357,7 +410,10 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
         break;
     case ID_TYPE_QUALIFIER:
         expr_id_qualifier_emit(value, stack_level, module_value, result);
-        break;        
+        break;    
+    case ID_TYPE_FORIN:
+        expr_id_forin_emit(value, stack_level, module_value, result);
+        break;
     case ID_TYPE_FUNC_TOP:
         if (value->id.id_func_value != NULL)
         {
@@ -762,6 +818,16 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     {
         bc.type = BYTECODE_OP_ASS_ARRAY;
     }
+    else if (value->comb.comb == COMB_TYPE_RANGE)
+    {
+        /* TODO: range assign */
+        assert(0);
+    }
+    else if (value->comb.comb == COMB_TYPE_SLICE)
+    {
+        /* TODO: slice assign */
+        assert(0);
+    }
     else if (value->comb.comb == COMB_TYPE_FUNC)
     {
         bc.type = BYTECODE_OP_ASS_FUNC;
@@ -946,6 +1012,13 @@ int expr_for_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_forin_emit(expr * value, int stack_level, module * module_value, 
+                    func_list_weak * list_weak, int * result)
+{
+    /* TODO: expr forin emit */
+    return 0;
+}
+
 int expr_iflet_guard_item_emit(match_guard_item * guard_item,
                                int stack_level, module * module_value,
                                func_list_weak * list_weak, int * result)
@@ -959,9 +1032,9 @@ int expr_iflet_guard_item_emit(match_guard_item * guard_item,
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
-            bc.type = BYTECODE_ATTR;
-            bc.attr.stack_level = 0;
-            bc.attr.index = 0;
+            bc.type = BYTECODE_VECREF_DEREF;
+            bc.vecref_deref.stack_level = 0;
+            bc.vecref_deref.index = 0;
             bytecode_add(module_value->code, &bc);
         break;
     }
@@ -991,9 +1064,9 @@ int expr_iflet_guard_record_emit(match_guard_record * guard_record,
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
-            bc.type = BYTECODE_ATTR;
-            bc.attr.stack_level = 0;
-            bc.attr.index = 0;
+            bc.type = BYTECODE_VECREF_DEREF;
+            bc.vecref_deref.stack_level = 0;
+            bc.vecref_deref.index = 0;
             bytecode_add(module_value->code, &bc);
         break;
     }
@@ -1075,9 +1148,9 @@ int expr_match_guard_item_emit(match_guard_item_expr * item_value, bytecode *lab
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
-            bc.type = BYTECODE_ATTR;
-            bc.attr.stack_level = 0;
-            bc.attr.index = 0;
+            bc.type = BYTECODE_VECREF_DEREF;
+            bc.vecref_deref.stack_level = 0;
+            bc.vecref_deref.index = 0;
             bytecode_add(module_value->code, &bc);
         break;
     }
@@ -1125,9 +1198,9 @@ int expr_match_guard_record_emit(match_guard_record_expr * record_value, bytecod
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
-            bc.type = BYTECODE_ATTR;
-            bc.attr.stack_level = 0;
-            bc.attr.index = 0;
+            bc.type = BYTECODE_VECREF_DEREF;
+            bc.vecref_deref.stack_level = 0;
+            bc.vecref_deref.index = 0;
             bytecode_add(module_value->code, &bc);
         break;
     }
@@ -1280,6 +1353,77 @@ int expr_match_emit(expr * value, int stack_level, module * module_value,
         expr_match_guard_list_emit(value->match.match_guards, stack_level + 1,
                                    module_value, list_weak, result);
     }
+
+    return 0;
+}                    
+
+int expr_range_dim_emit(expr * value, int stack_level, module * module_value,
+                        func_list_weak * list_weak, int * result)
+{
+    assert(value->type == EXPR_RANGE_DIM);
+
+    expr_emit(value->range_dim.to, stack_level, module_value, list_weak, result);
+    expr_emit(value->range_dim.from, stack_level + 1, module_value, list_weak, result);
+
+    return 0;
+}                        
+
+int expr_range_dim_list_emit(expr_list * list, int stack_level, module * module_value,
+                             func_list_weak * list_weak, int * result)
+{
+    int r = 0;
+
+    expr_list_node * node = list->head;
+    while (node != NULL)
+    {
+        expr * value = node->value;
+        if (value != NULL)
+        {
+            expr_range_dim_emit(value, stack_level + r, module_value, list_weak, result);
+            r += 2;
+        }
+        node = node->prev;
+    }
+
+    return 0;
+}
+
+int expr_range_emit(expr * value, int stack_level, module * module_value,
+                    func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_LINE;
+    bc.line.no = value->line_no;
+    bytecode_add(module_value->code, &bc);
+
+    expr_range_dim_list_emit(value->range.range_dims, stack_level, module_value, list_weak, result);
+
+    bc.type = BYTECODE_MK_RANGE;
+    bc.mk_range.dims = value->range.range_dims->count;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}                    
+
+int expr_slice_emit(expr * value, int stack_level, module * module_value,
+                    func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_LINE;
+    bc.line.no = value->line_no;
+    bytecode_add(module_value->code, &bc);
+
+    expr_emit(value->slice.array_expr, stack_level, module_value, list_weak, result);
+    expr_range_dim_list_emit(value->slice.range_dims, stack_level + 1, module_value, list_weak, result);
+
+    /* TODO: check slice emit */
+    /* TODO: slice array, range, slice, string */
+
+    bc.type = BYTECODE_MK_SLICE;
+    bc.mk_slice.dims = value->slice.range_dims->count;
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }                    
@@ -1852,6 +1996,15 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             assert(0);
         }
         break;
+    case EXPR_RANGE_DIM:
+        expr_range_dim_emit(value, stack_level, module_value, list_weak, result);
+        break;
+    case EXPR_RANGE:
+        expr_range_emit(value, stack_level, module_value, list_weak, result);
+        break;
+    case EXPR_SLICE:
+        expr_slice_emit(value, stack_level, module_value, list_weak, result);
+        break;
     case EXPR_CALL:
         if (value->call.func_expr->comb.comb == COMB_TYPE_RECORD_ID)
         {
@@ -1861,9 +2014,13 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             expr_enumtype_record_emit(value, stack_level, module_value, list_weak, result);
         }
-        else
+        else if (value->call.func_expr->comb.comb == COMB_TYPE_FUNC)
         {
             expr_call_emit(value, stack_level, module_value, list_weak, result);
+        }
+        else
+        {
+            assert(0);
         }
         break;
     case EXPR_LAST_CALL:
@@ -1892,6 +2049,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         break;
     case EXPR_FOR:
         expr_for_emit(value, stack_level, module_value, list_weak, result);
+        break;
+    case EXPR_FORIN:
+        expr_forin_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_IFLET:
         expr_iflet_emit(value, stack_level, module_value, list_weak, result);
@@ -1951,8 +2111,8 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_ATTR:
-        if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD ||
-            value->attr.record_value->comb.comb == COMB_TYPE_RECORD_ID)
+        if (value->vecref_deref.record_value->comb.comb == COMB_TYPE_RECORD ||
+            value->vecref_deref.record_value->comb.comb == COMB_TYPE_RECORD_ID)
         {
             expr_record_attr_emit(value, stack_level, module_value, list_weak, result);
         }
@@ -2011,20 +2171,6 @@ int expr_seq_emit(expr_list * list, int stack_level, module * module_value,
         }
         node = node->next;
     }
-
-    return 0;
-}
-
-int expr_id_qualifier_emit(expr * value, int stack_level, module * module_value,
-                           int * result)
-{
-    bytecode bc = { 0 };
-
-    bc.type = BYTECODE_ID_LOCAL;
-    bc.id_local.stack_level = stack_level - value->id.id_qualifier_value->stack_level - 3;
-    bc.id_local.index = 0;
-
-    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -2420,17 +2566,17 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
     int index = -1;
     
-    expr_emit(value->attr.record_value, stack_level, module_value, list_weak, result);
+    expr_emit(value->vecref_deref.record_value, stack_level, module_value, list_weak, result);
     
-    if (value->attr.id_param_value != NULL)
+    if (value->vecref_deref.id_param_value != NULL)
     {
-        index = value->attr.id_param_value->index;
+        index = value->vecref_deref.id_param_value->index;
     }
     assert(index != -1);
     
-    bc.type = BYTECODE_ATTR;
-    bc.attr.stack_level = 0;
-    bc.attr.index = index;
+    bc.type = BYTECODE_VECREF_DEREF;
+    bc.vecref_deref.stack_level = 0;
+    bc.vecref_deref.index = index;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_SLIDE;
@@ -2623,6 +2769,10 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
         case PARAM_BOOL:
         case PARAM_DIM:
         case PARAM_ARRAY:
+        case PARAM_RANGE_DIM:
+        case PARAM_RANGE:
+        case PARAM_SLICE:
+        case PARAM_SLICE_DIM:
         case PARAM_ENUMTYPE:
         case PARAM_RECORD:
         case PARAM_FUNC:

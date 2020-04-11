@@ -63,7 +63,7 @@ typedef enum expr_type
     EXPR_WHILE,
     EXPR_DO_WHILE,
     EXPR_FOR,
-    EXPR_FOR_IN,
+    EXPR_FORIN,
     EXPR_IFLET,
     EXPR_MATCH,
     EXPR_BUILD_IN,
@@ -227,12 +227,12 @@ typedef struct expr
         } range_dim;
         struct
         {
-            struct expr_list * range_elems;
+            struct expr_list * range_dims;
         } range;
         struct
         {
             struct expr * array_expr;
-            struct expr_list * range_elems;
+            struct expr_list * range_dims;
         } slice;
         listcomp * listcomp_value; /* EXPR_LISTCOMP */
         struct
@@ -240,8 +240,7 @@ typedef struct expr
             struct expr * record_value; /* record_value . id */
             char * id;
             param * id_param_value;
-        }
-        attr;
+        } vecref_deref;
     };
 } expr;
 
@@ -273,9 +272,9 @@ expr * expr_new_three(int type, expr * expr_left, expr * expr_middle,
                       expr * expr_right);
 expr * expr_new_array(array * value);
 expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
-expr * expr_new_range(expr_list * range_elems);
+expr * expr_new_range(expr_list * range_dims);
 expr * expr_new_range_dim(expr * from, expr * to);
-expr * expr_new_slice(expr * array_expr, expr_list * range_elems);
+expr * expr_new_slice(expr * array_expr, expr_list * range_dims);
 expr * expr_new_seq(expr_list * list);
 expr * expr_new_func(func * value);
 expr * expr_new_call(expr * func_expr, expr_list * params);
