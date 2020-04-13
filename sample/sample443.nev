@@ -1,6 +1,4 @@
 
-enum E { One { v1: int; v2 : int; v3 : float; } }
-
 func print_range( [ f1 .. t1 ] : range ) -> int
 {
     print(f1);
@@ -11,16 +9,21 @@ func print_range( [ f1 .. t1 ] : range ) -> int
 
 func main() -> int
 {
-    let r = [ 10 .. 30 ];
-    let e = E::One(1, 2, 3.0);
+    let f = 40;
+    let t = 50;
+    let r1 = [ 10 .. 30 ];
+    let r2 = [ f .. t ];
 
-    print_range( [ 10 .. 20 ] );
-    print_range( r );
+    /* print_range( [ 10 .. 20 ] ); */
+    print_range( r1 );
 
-    match (e)
-    {
-        E::One(v1, v2, v3) -> { print(v1); print(v2); printf(v3) };
-    };
+    print_range( r2 );
+
+    t = 60;
+    print_range( r2 );
+
+    r2 = r1;
+    print_range( r2 );
 
     0
 }

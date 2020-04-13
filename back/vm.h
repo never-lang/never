@@ -141,7 +141,10 @@ void vm_execute_op_neq_nil_record(vm * machine, bytecode * code);
 void vm_execute_op_neq_nil_func(vm * machine, bytecode * code);
 
 void vm_execute_op_not_int(vm * machine, bytecode * code);
+
 void vm_execute_op_inc_int(vm * machine, bytecode * code);
+void vm_execute_op_dec_int(vm * machine, bytecode * code);
+void vm_execute_op_dup_int(vm * machine, bytecode * code);
 
 void vm_execute_int_to_float(vm * machine, bytecode * code);
 void vm_execute_float_to_int(vm * machine, bytecode * code);

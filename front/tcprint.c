@@ -31,9 +31,9 @@
  */
 int print_func_attr(expr * value, int depth)
 {
-    if (value->vecref_deref.record_value != NULL)
+    if (value->attr.record_value != NULL)
     {
-        print_func_expr(value->vecref_deref.record_value, depth);
+        print_func_expr(value->attr.record_value, depth);
     }
     return 0;
 }

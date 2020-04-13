@@ -40,6 +40,7 @@ typedef struct forin
     expr * iter;
     struct expr * in_value;
     struct expr * do_value;
+    int stack_level;
     unsigned int line_no;
     symtab * stab;
 } forin;

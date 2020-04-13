@@ -1,0 +1,26 @@
+
+
+func printA( a[D] : int ) -> int
+{
+    for (i in a)
+    {
+        print(i)
+    }
+}
+
+func main() -> int
+{
+    let a = [ 10, 20, 30, 40, 50 ] : int;
+
+    for (i in [ 12, 13, 14, 15, 16 ] : int)
+    {
+        print(i)
+    };
+
+    for (i in a)
+    {
+        print(i)
+    };
+
+    printA(a)
+}

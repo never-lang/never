@@ -395,9 +395,9 @@ expr * expr_new_attr(expr * record_value, char * id)
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_ATTR;
-    ret->vecref_deref.id = id;
-    ret->vecref_deref.record_value = record_value;
-    ret->vecref_deref.id_param_value = NULL;
+    ret->attr.id = id;
+    ret->attr.record_value = record_value;
+    ret->attr.id_param_value = NULL;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     
@@ -615,13 +615,13 @@ void expr_delete(expr * value)
         listcomp_delete(value->listcomp_value);
         break;
     case EXPR_ATTR:
-        if (value->vecref_deref.id != NULL)
+        if (value->attr.id != NULL)
         {
-            free(value->vecref_deref.id);
+            free(value->attr.id);
         }
-        if (value->vecref_deref.record_value != NULL)
+        if (value->attr.record_value != NULL)
         {
-            expr_delete(value->vecref_deref.record_value);
+            expr_delete(value->attr.record_value);
         }
         break;
     }

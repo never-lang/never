@@ -240,7 +240,7 @@ typedef struct expr
             struct expr * record_value; /* record_value . id */
             char * id;
             param * id_param_value;
-        } vecref_deref;
+        } attr;
     };
 } expr;
 

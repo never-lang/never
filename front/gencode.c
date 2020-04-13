@@ -844,9 +844,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         }
         break;
     case EXPR_ATTR:
-        if (value->vecref_deref.record_value != NULL)
+        if (value->attr.record_value != NULL)
         {
-            func_gencode_freevars_expr(func_value, stab, value->vecref_deref.record_value, result);
+            func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
         }
         break;
     }

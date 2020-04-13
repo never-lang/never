@@ -107,7 +107,10 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_NEQ_NIL_FUNC, bytecode_print_op_neq_nil_func },
 
     { BYTECODE_OP_NOT_INT, bytecode_print_op_not_int },
+
     { BYTECODE_OP_INC_INT, bytecode_print_op_inc_int },
+    { BYTECODE_OP_DEC_INT, bytecode_print_op_dec_int },
+    { BYTECODE_OP_DUP_INT, bytecode_print_op_dup_int },
 
     { BYTECODE_INT_TO_FLOAT, bytecode_print_int_to_float },
     { BYTECODE_FLOAT_TO_INT, bytecode_print_float_to_int },
@@ -529,6 +532,20 @@ void bytecode_print_op_inc_int(bytecode * code)
                                      code->id_local.index);
 }
 
+void bytecode_print_op_dec_int(bytecode * code)
+{
+    printf("%d: op dec int %d %d\n", code->addr, 
+                                     code->id_local.stack_level,
+                                     code->id_local.index);
+}
+
+void bytecode_print_op_dup_int(bytecode * code)
+{
+    printf("%d: op dup int %d %d\n", code->addr, 
+                                     code->id_local.stack_level,
+                                     code->id_local.index);
+}
+
 void bytecode_print_int_to_float(bytecode * code)
 {
     printf("%d: int to float\n", code->addr);
@@ -720,7 +737,7 @@ void bytecode_print_record(bytecode * code)
 
 void bytecode_print_vecref_deref(bytecode * code)
 {
-    printf("%d: attr index %d %u\n", code->addr, code->vecref_deref.stack_level, code->vecref_deref.index);
+    printf("%d: attr index %d %u\n", code->addr, code->attr.stack_level, code->attr.index);
 }
 
 void bytecode_print_nil_record_ref(bytecode * code)

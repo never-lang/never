@@ -115,7 +115,10 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_NEQ_NIL_FUNC, vm_execute_op_neq_nil_func },
 
     { BYTECODE_OP_NOT_INT, vm_execute_op_not_int },
+
     { BYTECODE_OP_INC_INT, vm_execute_op_inc_int },
+    { BYTECODE_OP_DEC_INT, vm_execute_op_dec_int },
+    { BYTECODE_OP_DUP_INT, vm_execute_op_dup_int },
 
     { BYTECODE_INT_TO_FLOAT, vm_execute_int_to_float },
     { BYTECODE_FLOAT_TO_INT, vm_execute_float_to_int },
@@ -1295,6 +1298,32 @@ void vm_execute_op_inc_int(vm * machine, bytecode * code)
     gc_inc_int(machine->collector, addr);        
 }
 
+void vm_execute_op_dec_int(vm * machine, bytecode * code)
+{
+    mem_ptr addr = machine
+                       ->stack[machine->sp - (code->id_local.stack_level -
+                                              code->id_local.index)].addr;
+    gc_dec_int(machine->collector, addr);        
+}
+
+void vm_execute_op_dup_int(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr addr_a = machine
+                       ->stack[machine->sp - (code->id_local.stack_level -
+                                              code->id_local.index)].addr;
+    int a = gc_get_int(machine->collector, addr_a);
+    mem_ptr addr = gc_alloc_int(machine->collector, a);
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
 void vm_execute_int_to_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
@@ -2177,7 +2206,7 @@ void vm_execute_vecref_deref(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     
-    mem_ptr record_ref = machine->stack[machine->sp - code->vecref_deref.stack_level].addr;
+    mem_ptr record_ref = machine->stack[machine->sp - code->attr.stack_level].addr;
     mem_ptr record_value = gc_get_vec_ref(machine->collector, record_ref);
     if (record_value == nil_ptr)
     {
@@ -2187,7 +2216,7 @@ void vm_execute_vecref_deref(vm * machine, bytecode * code)
     }
     
     unsigned int size = gc_get_vec_size(machine->collector, record_value);
-    if (code->vecref_deref.index >= size)
+    if (code->attr.index >= size)
     {
         print_error_msg(machine->line_no, "attribute index out of bounds\n");
         machine->running = VM_EXCEPTION;
@@ -2196,7 +2225,7 @@ void vm_execute_vecref_deref(vm * machine, bytecode * code)
     }
     
     mem_ptr addr =
-        gc_get_vec(machine->collector, record_value, code->vecref_deref.index);
+        gc_get_vec(machine->collector, record_value, code->attr.index);
 
     machine->sp++;
     vm_check_stack(machine);

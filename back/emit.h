@@ -111,6 +111,10 @@ int expr_do_while_emit(expr * value, int stack_level, module * module_value,
                        func_list_weak * list_weak, int * result);
 int expr_for_emit(expr * value, int stack_level, module * module_value, 
                   func_list_weak * list_weak, int * result);
+int expr_forin_array_emit(expr * value, int stack_level, module * module_value, 
+                          func_list_weak * list_weak, int * result);
+int expr_forin_range_emit(expr * value, int stack_level, module * module_value, 
+                          func_list_weak * list_weak, int * result);
 int expr_forin_emit(expr * value, int stack_level, module * module_value, 
                     func_list_weak * list_weak, int * result);
 int expr_iflet_guard_item_emit(match_guard_item * guard_item,

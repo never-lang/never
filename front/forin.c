@@ -32,6 +32,7 @@ forin * forin_new(char * id, expr * in_value, expr * do_value)
     value->iter = expr_new_id(id);
     value->in_value = in_value;
     value->do_value = do_value;
+    value->stack_level = 0;
     value->line_no = 0;
     value->stab = NULL;
 

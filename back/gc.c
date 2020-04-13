@@ -363,6 +363,14 @@ void gc_inc_int(gc * collector, mem_ptr addr)
     collector->mem[addr].object_value->int_value++;
 }
 
+void gc_dec_int(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_INT);
+
+    collector->mem[addr].object_value->int_value--;
+}
+
 int * gc_get_int_ptr(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);

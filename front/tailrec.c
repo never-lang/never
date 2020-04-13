@@ -266,9 +266,9 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         }
         break;
     case EXPR_ATTR:
-        if (value->vecref_deref.record_value != NULL)
+        if (value->attr.record_value != NULL)
         {
-            expr_tailrec(syn_level, stab, value->vecref_deref.record_value, TAILREC_OP_SKIP);
+            expr_tailrec(syn_level, stab, value->attr.record_value, TAILREC_OP_SKIP);
         }
         break;
     }

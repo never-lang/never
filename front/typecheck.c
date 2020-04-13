@@ -2241,21 +2241,21 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
 int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                          int * result)
 {
-    if (value->vecref_deref.record_value != NULL)
+    if (value->attr.record_value != NULL)
     {
-        expr_check_type(tab, value->vecref_deref.record_value, func_value, syn_level, result);
+        expr_check_type(tab, value->attr.record_value, func_value, syn_level, result);
     }
 
-    if (value->vecref_deref.record_value->comb.comb == COMB_TYPE_RECORD ||
-        value->vecref_deref.record_value->comb.comb == COMB_TYPE_RECORD_ID)
+    if (value->attr.record_value->comb.comb == COMB_TYPE_RECORD ||
+        value->attr.record_value->comb.comb == COMB_TYPE_RECORD_ID)
     {
-        record * record_value = value->vecref_deref.record_value->comb.comb_record;
-        if (record_value != NULL && value->vecref_deref.id != NULL)
+        record * record_value = value->attr.record_value->comb.comb_record;
+        if (record_value != NULL && value->attr.id != NULL)
         {
-            param * param_value = record_find_param(record_value, value->vecref_deref.id);
+            param * param_value = record_find_param(record_value, value->attr.id);
             if (param_value != NULL)
             {
-                value->vecref_deref.id_param_value = param_value;
+                value->attr.id_param_value = param_value;
 
                 expr_set_comb_type(value, param_value);
             }
@@ -2264,7 +2264,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no, "cannot find attribute %s in record %s\n",
-                                value->vecref_deref.id, record_value->id);
+                                value->attr.id, record_value->id);
             }
         }
     }
@@ -2273,7 +2273,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no, "cannot get record attribute of type %s\n",
-                        comb_type_str(value->vecref_deref.record_value->comb.comb));
+                        comb_type_str(value->attr.record_value->comb.comb));
     }
 
     return 0;

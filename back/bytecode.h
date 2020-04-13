@@ -105,6 +105,8 @@ typedef enum bytecode_type
     BYTECODE_OP_NOT_INT,
     
     BYTECODE_OP_INC_INT,
+    BYTECODE_OP_DEC_INT,
+    BYTECODE_OP_DUP_INT,
 
     BYTECODE_INT_TO_FLOAT,
     BYTECODE_FLOAT_TO_INT,
@@ -289,7 +291,7 @@ typedef struct bytecode
         {
             int stack_level;
             unsigned int index;
-        } vecref_deref;
+        } attr;
         struct
         {
             unsigned int count;
@@ -400,7 +402,10 @@ void bytecode_print_op_neq_nil_record(bytecode * code);
 void bytecode_print_op_neq_nil_func(bytecode * code);
 
 void bytecode_print_op_not_int(bytecode * code);
+
 void bytecode_print_op_inc_int(bytecode * code);
+void bytecode_print_op_dec_int(bytecode * code);
+void bytecode_print_op_dup_int(bytecode * code);
 
 void bytecode_print_int_to_float(bytecode * code);
 void bytecode_print_float_to_int(bytecode * code);

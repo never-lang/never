@@ -730,9 +730,9 @@ int expr_constred(expr * value, int * result)
         }
         break;
     case EXPR_ATTR:
-        if (value->vecref_deref.record_value != NULL)
+        if (value->attr.record_value != NULL)
         {
-            expr_constred(value->vecref_deref.record_value, result);
+            expr_constred(value->attr.record_value, result);
         }
         break;
     }

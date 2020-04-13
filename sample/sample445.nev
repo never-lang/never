@@ -1,0 +1,11 @@
+
+func main() -> int
+{
+    let a = 0;
+    let i = for (i in [ 10 .. a ])
+            {
+                print(i)
+            };
+
+    0    
+}
