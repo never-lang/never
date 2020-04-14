@@ -163,6 +163,12 @@ int expr_seq_emit(expr_list * list, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int expr_yeld_emit(listcomp * listcomp_value, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
+int generator_array_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                         int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result);
+int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                         int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result);
 int generator_emit(listcomp * listcomp_value, qualifier_list_node * node,
                    int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);

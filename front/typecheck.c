@@ -207,6 +207,32 @@ int expr_set_comb_type(expr * value, param * param_value)
     return 0;
 }
 
+int expr_qualifier_set_comb_type(expr * value, expr * expr_value)
+{
+    if (expr_value->comb.comb == COMB_TYPE_ARRAY &&
+        expr_value->comb.comb_dims == 1)
+    {
+        expr_set_comb_type(value, expr_value->comb.comb_ret);
+    }
+    else if (expr_value->comb.comb == COMB_TYPE_SLICE &&
+             expr_value->comb.comb_dims == 1)
+    {
+        /* TODO: slice */
+        assert(0);
+    }
+    else if (expr_value->comb.comb == COMB_TYPE_RANGE &&
+             expr_value->comb.comb_dims == 1)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else
+    {
+        assert(0);
+    }
+
+    return 0;
+}
+
 int param_cmp(param * param_one, param * param_two)
 {
     if (param_one == NULL && param_two == NULL)
@@ -1160,7 +1186,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
             case SYMTAB_QUALIFIER:
                 if (entry->qualifier_value != NULL)
                 {
-                    expr_set_comb_type(value, entry->qualifier_value->expr_value->comb.comb_ret);
+                    expr_qualifier_set_comb_type(value, entry->qualifier_value->expr_value);
                 }
             break;
             case SYMTAB_FORIN:
@@ -2160,8 +2186,13 @@ int qualifier_check_type(symtab * tab, qualifier * value, func * func_value, uns
             if (value->expr_value != NULL)
             {
                 expr_check_type(tab, value->expr_value, func_value, syn_level, result);
-                if (value->expr_value->comb.comb != COMB_TYPE_ARRAY ||
-                    value->expr_value->comb.comb_dims != 1)
+                
+                if (!((value->expr_value->comb.comb == COMB_TYPE_ARRAY &&
+                       value->expr_value->comb.comb_dims == 1) ||
+                      (value->expr_value->comb.comb == COMB_TYPE_RANGE &&
+                       value->expr_value->comb.comb_dims == 1) ||
+                      (value->expr_value->comb.comb == COMB_TYPE_SLICE &&
+                       value->expr_value->comb.comb_dims == 1)))
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(value->line_no,
