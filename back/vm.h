@@ -183,10 +183,19 @@ void vm_execute_mk_array_record(vm * machine, bytecode * code);
 void vm_execute_mk_array_func(vm * machine, bytecode * code);
 void vm_execute_mk_init_array(vm * machine, bytecode * code);
 void vm_execute_mk_range(vm * machine, bytecode * code);
-void vm_execute_mk_slice(vm * machine, bytecode * code);
 
-void vm_execute_string_deref(vm * machine, bytecode * code);
+void vm_get_slice_range(int range1_from, int range1_to,
+                        int range2_from, int range2_to,
+                        int * res_from,  int * res_to, int * oob);
+void vm_execute_slice_array(vm * machine, bytecode * code);
+void vm_execute_slice_range(vm * machine, bytecode * code);
+void vm_execute_slice_slice(vm * machine, bytecode * code);
+void vm_execute_slice_string(vm * machine, bytecode * code);
+
 void vm_execute_array_deref(vm * machine, bytecode * code);
+void vm_execute_range_deref(vm * machine, bytecode * code);
+void vm_execute_slice_deref(vm * machine, bytecode * code);
+void vm_execute_string_deref(vm * machine, bytecode * code);
 void vm_execute_array_append(vm * machine, bytecode * code);
 
 void vm_execute_record(vm * machine, bytecode * code);

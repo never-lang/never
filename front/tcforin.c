@@ -41,7 +41,7 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
         break;
         case COMB_TYPE_RANGE:
             value->type = FORIN_TYPE_RANGE;
-            value->iter->comb.comb = COMB_TYPE_INT;
+            expr_set_comb_type(value->iter, value->in_value->comb.comb_ret);
 
             symtab_add_forin(tab, value, syn_level);
         break;

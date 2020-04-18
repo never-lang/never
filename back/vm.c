@@ -157,10 +157,16 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_MK_ARRAY_FUNC, vm_execute_mk_array_func },
     { BYTECODE_MK_INIT_ARRAY, vm_execute_mk_init_array },
     { BYTECODE_MK_RANGE, vm_execute_mk_range },
-    { BYTECODE_MK_SLICE, vm_execute_mk_slice },
 
-    { BYTECODE_STRING_DEREF, vm_execute_string_deref },
+    { BYTECODE_SLICE_ARRAY, vm_execute_slice_array },
+    { BYTECODE_SLICE_RANGE, vm_execute_slice_range },
+    { BYTECODE_SLICE_SLICE, vm_execute_slice_slice },
+    { BYTECODE_SLICE_STRING, vm_execute_slice_string },
+
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
+    { BYTECODE_RANGE_DEREF, vm_execute_range_deref },
+    { BYTECODE_SLICE_DEREF, vm_execute_slice_deref },
+    { BYTECODE_STRING_DEREF, vm_execute_string_deref },
     { BYTECODE_ARRAY_APPEND, vm_execute_array_append },
 
     { BYTECODE_RECORD, vm_execute_record },
@@ -1935,6 +1941,14 @@ void vm_execute_mk_array_num(vm * machine, bytecode * code, param_type value)
         {
             elem = gc_alloc_arr_ref(machine->collector, nil_ptr);
         }
+        else if (value == PARAM_RANGE)
+        {
+            assert(0); /* TODO: generate range array dim */
+        }
+        else if (value == PARAM_SLICE)
+        {
+            assert(0); /* TODO: generate slice array dim */
+        }
         else if (value == PARAM_ENUMTYPE)
         {
             elem = gc_alloc_int(machine->collector, 0);
@@ -2059,40 +2073,146 @@ void vm_execute_mk_range(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
-void vm_execute_mk_slice(vm * machine, bytecode * code)
+void vm_execute_slice_array(vm * machine, bytecode * code)
 {
-    assert(0);
+    assert(0); /* TODO: slice array */
 }
 
-void vm_execute_string_deref(vm * machine, bytecode * code)
+/**
+ *  [a .. b] [ c .. d ]
+ *   a < b     c < d     a+c .. a+d  a+d <= b
+ *   a > b     c < d     a-c .. a-d  a-d >= b
+ *   a < b     c > d     a+c .. a+d  a+c <= b
+ *   a > b     c > d     a-c .. a-d  a-c >= b
+ */
+void vm_get_slice_range(
+    int range1_from, int range1_to,
+    int range2_from, int range2_to,
+    int * res_from,  int * res_to, int * oob)
+{
+    if (range1_from < range1_to)
+    {
+        *res_from = range1_from + range2_from;
+        *res_to = range1_from + range2_to;
+
+        if (range2_from < range2_to)
+        {
+            if (*res_to > range1_to)
+            {
+                *oob = 1;
+                return;
+            }
+        }
+        else
+        {
+            if (*res_from > range1_to)
+            {
+                *oob = 1;
+                return;
+            }             
+        }
+    }
+    else
+    {
+        *res_from = range1_from - range2_from;
+        *res_to = range1_from - range2_to;
+
+        if (range2_from < range2_to)
+        {
+            if (*res_to < range1_to)
+            {
+                *oob = 1;
+                return;
+            }             
+        }
+        else
+        {
+            if (*res_from < range1_to)
+            {
+                *oob = 1;
+                return;
+            }             
+        }
+    }
+}                        
+
+void vm_execute_slice_range(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    char c = 0;
+    mem_ptr range = { 0 };
+    unsigned int d = 0;
+    unsigned int dims = 0;
 
-    mem_ptr str_ptr = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
-    int index = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    if (str_ptr == nil_ptr)
+    mem_ptr range1 = gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr range2 = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
+    if (range1 == nil_ptr || range2 == nil_ptr)
     {
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NIL_POINTER;
         return;
     }
 
-    char * str = gc_get_string(machine->collector, str_ptr);
-    if (index >= (int)strlen(str))
+    dims = code->mk_slice.dims;
+    range = gc_alloc_vec(machine->collector, 2 * dims);
+
+    for (d = 0; d < dims; d++)
     {
-        machine->running = VM_EXCEPTION;
-        machine->exception = EXCEPT_NO_INDEX_OOB;
-        return;
+        int oob = 0;
+        int res_from = 0;
+        int res_to = 0;
+        mem_ptr res_from_addr = { 0 };
+        mem_ptr res_to_addr = { 0 };
+
+        mem_ptr range1_from_addr = gc_get_vec(machine->collector, range1, d * 2);
+        mem_ptr range1_to_addr = gc_get_vec(machine->collector, range1, d * 2 + 1);
+
+        mem_ptr range2_from_addr = gc_get_vec(machine->collector, range2, d * 2);
+        mem_ptr range2_to_addr = gc_get_vec(machine->collector, range2, d * 2 + 1);
+
+        int range1_from = gc_get_int(machine->collector, range1_from_addr);
+        int range1_to = gc_get_int(machine->collector, range1_to_addr);
+        int range2_from = gc_get_int(machine->collector, range2_from_addr);
+        int range2_to = gc_get_int(machine->collector, range2_to_addr);
+
+        /* TODO: remove this
+        printf("slice.range_dims %d\n", dims);
+        printf("[%d..%d][%d..%d]\n", range1_from, range1_to,
+                                     range2_from, range2_to);
+        */
+
+        vm_get_slice_range(range1_from, range1_to,
+                           range2_from, range2_to,
+                           &res_from, &res_to, &oob);
+
+        if (oob)
+        {
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NO_INDEX_OOB;
+            return;
+        }
+
+        res_from_addr = gc_alloc_int(machine->collector, res_from);
+        res_to_addr = gc_alloc_int(machine->collector, res_to);
+
+        gc_set_vec(machine->collector, range, 2 * d, res_from_addr);
+        gc_set_vec(machine->collector, range, 2 * d + 1, res_to_addr);
     }
 
-    c = str[index];
-
     entry.type = GC_MEM_ADDR;
-    entry.addr = gc_alloc_char(machine->collector, c);
+    entry.addr = gc_alloc_vec_ref(machine->collector, range);
 
-    machine->stack[machine->sp - 1] = entry;
     machine->sp--;
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_slice_slice(vm * machine, bytecode * code)
+{
+    assert(0); /* TODO: slice slice */
+}
+
+void vm_execute_slice_string(vm * machine, bytecode * code)
+{
+    assert(0); /* TODO: slice string */
 }
 
 void vm_execute_array_deref(vm * machine, bytecode * code)
@@ -2159,6 +2279,107 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = elem;
 
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_range_deref(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr array = { 0 };
+    mem_ptr range = { 0 };
+    object_arr_dim * dv = NULL;
+    unsigned int d = 0;
+    unsigned int dims = 0;
+
+    dims = code->array_deref.dims;
+
+    range = gc_get_vec_ref(machine->collector, machine->stack[machine->sp - dims].addr);
+    if (range == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    dv = object_arr_dim_new(1);
+    dv[0].elems = dims;
+    dv[0].mult = 1;
+
+    array = gc_alloc_arr(machine->collector, 1, dv);
+
+    for (d = 0; d < dims; d++)
+    {
+        mem_ptr range_from_addr = { 0 };
+        mem_ptr range_to_addr = { 0 };
+        mem_ptr res_from_addr = { 0 };
+        int oob = 0;
+        int res_from = 0;
+        int res_to = 0;
+        int range_from = 0;
+        int range_to = 0;
+        int range_indx = 0;
+
+        range_from_addr = gc_get_vec(machine->collector, range, d * 2);
+        range_to_addr = gc_get_vec(machine->collector, range, d * 2 + 1);
+        range_from = gc_get_int(machine->collector, range_from_addr);
+        range_to = gc_get_int(machine->collector, range_to_addr);
+        range_indx = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
+
+        vm_get_slice_range(range_from, range_to,
+                           range_indx, range_indx,
+                           &res_from, &res_to, &oob);
+        if (oob)
+        {
+            print_error_msg(machine->line_no, "range index %d out of bounds\n",
+                            range_indx);
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NO_INDEX_OOB;
+            return;
+        }
+
+        res_from_addr = gc_alloc_int(machine->collector, res_from);
+        gc_set_arr_elem(machine->collector, array, d, res_from_addr);
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_arr_ref(machine->collector, array);
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_slice_deref(vm * machine, bytecode * code)
+{
+    assert(0); /* TODO: slice deref */
+}
+
+void vm_execute_string_deref(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    char c = 0;
+
+    mem_ptr str_ptr = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    int index = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    if (str_ptr == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    char * str = gc_get_string(machine->collector, str_ptr);
+    if (index >= (int)strlen(str))
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_INDEX_OOB;
+        return;
+    }
+
+    c = str[index];
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_char(machine->collector, c);
+
+    machine->sp--;
     machine->stack[machine->sp] = entry;
 }
 

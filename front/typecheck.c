@@ -183,6 +183,7 @@ int expr_set_comb_type(expr * value, param * param_value)
         case PARAM_RANGE:
             value->comb.comb = COMB_TYPE_RANGE;
             value->comb.comb_dims = param_value->ranges->count;
+            value->comb.comb_ret = param_value->ret;
         break;
         case PARAM_SLICE_DIM:
         case PARAM_RANGE_DIM:
@@ -676,6 +677,7 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
         {
             value->comb.comb = COMB_TYPE_RANGE;
             value->comb.comb_dims = value->left->comb.comb_dims;
+            value->comb.comb_ret = value->left->comb.comb_ret;
         }
     }
     else if (left->comb.comb == COMB_TYPE_SLICE &&
@@ -1658,6 +1660,7 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     {
         value->comb.comb = COMB_TYPE_RANGE;
         value->comb.comb_dims = value->left->comb.comb_dims;
+        value->comb.comb_ret = value->left->comb.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_SLICE &&
              value->right->comb.comb == COMB_TYPE_SLICE &&
@@ -1846,16 +1849,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
 
     if (value->array_deref.array_expr->comb.comb == COMB_TYPE_ARRAY)
     {
-        if (value->array_deref.array_expr->comb.comb_dims !=
-            value->array_deref.ref->count)
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(
-                value->line_no,
-                "incorrect number of dimesions passed to deref array\n");
-        }
-        else
+        if (value->array_deref.array_expr->comb.comb_dims == value->array_deref.ref->count)
         {
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
@@ -1871,42 +1865,26 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                                 "incorrect types of arguments passed to deref array\n");
             }
         }
-    }
-    else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_SLICE)
-    {
-        if (value->array_deref.array_expr->comb.comb_dims != 
-            value->array_deref.ref->count)
+        else
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to deref slice\n");
-        }
-        else
-        {
-            if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
-                                                func_value, syn_level, result) == TYPECHECK_SUCC)
-            {
-                expr_set_comb_type(value, value->array_deref.array_expr->comb.comb_ret);
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no,
-                                "incorrect types of arguments passed to deref slice\n");
-            }
+            print_error_msg(
+                value->line_no,
+                "incorrect number of dimesions passed to deref array\n");
+
         }
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_RANGE)
     {
-        if ((value->array_deref.array_expr->comb.comb_dims == value->array_deref.ref->count) &&
-            (value->array_deref.array_expr->comb.comb_dims == 1))
+        if (value->array_deref.array_expr->comb.comb_dims == value->array_deref.ref->count)
         {
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
             {
-                value->comb.comb = COMB_TYPE_INT;
+                value->comb.comb = COMB_TYPE_ARRAY;
+                value->comb.comb_dims = 1;
+                value->comb.comb_ret = value->array_deref.array_expr->comb.comb_ret;
             }
             else
             {
@@ -1924,17 +1902,36 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                             "incorrect number of dimensions passed to deref range\n");
         }
     }
-    else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_STRING)
+    else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_SLICE)
     {
-        if (value->array_deref.ref->count != 1)
+        if (value->array_deref.array_expr->comb.comb_dims == 
+            value->array_deref.ref->count)
+        {
+            if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
+                                                func_value, syn_level, result) == TYPECHECK_SUCC)
+            {
+                expr_set_comb_type(value, value->array_deref.array_expr->comb.comb_ret);
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "incorrect types of arguments passed to deref slice\n");
+            }
+        }
+        else
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(
-                value->line_no,
-                "strings can be deref only using one dimesion\n");
+            print_error_msg(value->line_no,
+                            "incorrect number of dimensions passed to deref slice\n");
+
         }
-        else
+    }
+    else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_STRING)
+    {
+        if (value->array_deref.ref->count == 1)
         {
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
@@ -1948,6 +1945,14 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                 print_error_msg(value->line_no,
                                 "incorrect types to deref string\n");
             }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(
+                value->line_no,
+                "strings can be deref only using one dimesion\n");
         }
     }
     else
@@ -1983,6 +1988,22 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
                             "incorrect number of dimensions passed to slice array\n");
         }
     }
+    else if (value->slice.array_expr->comb.comb == COMB_TYPE_RANGE)
+    {
+        if (value->slice.array_expr->comb.comb_dims == value->slice.range_dims->count)
+        {
+            value->comb.comb = COMB_TYPE_RANGE;
+            value->comb.comb_dims = value->slice.array_expr->comb.comb_dims;
+            value->comb.comb_ret = value->slice.array_expr->comb.comb_ret;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "incorrect number of dimensions passed to slice range\n");
+        }
+    }
     else if (value->slice.array_expr->comb.comb == COMB_TYPE_SLICE)
     {
         if (value->slice.array_expr->comb.comb_dims == value->slice.range_dims->count)
@@ -1997,21 +2018,6 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
                             "incorrect number of dimensions passed to slice slice\n");
-        }
-    }
-    else if (value->slice.array_expr->comb.comb == COMB_TYPE_RANGE)
-    {
-        if (value->slice.array_expr->comb.comb_dims == value->slice.range_dims->count)
-        {
-            value->comb.comb = COMB_TYPE_RANGE;
-            value->comb.comb_dims = value->slice.array_expr->comb.comb_dims;
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to slice range\n");
         }
     }
     else if (value->slice.array_expr->comb.comb == COMB_TYPE_STRING)
@@ -2039,7 +2045,19 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
     return 0;
 }                                
 
-int expr_range_elem_check_type(symtab * tab, expr * value, func * func_value,
+int expr_range_check_type(symtab * tab, expr * value, func * func_value,
+                          unsigned int syn_level, int * result)
+{
+    expr_range_list_check_type(tab, value->range.range_dims, func_value, syn_level, result);
+
+    value->comb.comb = COMB_TYPE_RANGE;
+    value->comb.comb_dims = value->range.range_dims->count;
+    value->comb.comb_ret = value->range.ret;
+
+    return 0;
+}
+
+int expr_range_dim_check_type(symtab * tab, expr * value, func * func_value,
                                unsigned int syn_level, int * result)
 {
     assert (value->type == EXPR_RANGE_DIM);
@@ -2076,7 +2094,7 @@ int expr_range_list_check_type(symtab * tab, expr_list * range_dims, func * func
         expr * value = node->value;
         if (value != NULL)
         {
-            expr_range_elem_check_type(tab, value, func_value, syn_level, result);
+            expr_range_dim_check_type(tab, value, func_value, syn_level, result);
         }
         node = node->next;
     }
@@ -2456,15 +2474,12 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         expr_array_deref_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_RANGE_DIM:
-        expr_range_elem_check_type(tab, value, func_value, syn_level, result);
+        expr_range_dim_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_RANGE:
         if (value->range.range_dims != NULL)
         {
-            expr_range_list_check_type(tab, value->range.range_dims, func_value, syn_level, result);
-
-            value->comb.comb = COMB_TYPE_RANGE;
-            value->comb.comb_dims = value->range.range_dims->count;
+            expr_range_check_type(tab, value, func_value, syn_level, result);
         }
         break;
     case EXPR_SLICE:

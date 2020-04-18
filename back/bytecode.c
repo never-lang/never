@@ -149,10 +149,16 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_MK_ARRAY_FUNC, bytecode_print_mk_array_func },
     { BYTECODE_MK_INIT_ARRAY, bytecode_print_mk_init_array },
     { BYTECODE_MK_RANGE, bytecode_print_mk_range },
-    { BYTECODE_MK_SLICE, bytecode_print_mk_slice },
 
-    { BYTECODE_STRING_DEREF, bytecode_print_string_deref },
+    { BYTECODE_SLICE_ARRAY, bytecode_print_slice_array },
+    { BYTECODE_SLICE_RANGE, bytecode_print_slice_range },
+    { BYTECODE_SLICE_SLICE, bytecode_print_slice_slice },
+    { BYTECODE_SLICE_STRING, bytecode_print_slice_string },
+
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
+    { BYTECODE_RANGE_DEREF, bytecode_print_range_deref },
+    { BYTECODE_SLICE_DEREF, bytecode_print_slice_deref },
+    { BYTECODE_STRING_DEREF, bytecode_print_string_deref },
     { BYTECODE_ARRAY_APPEND, bytecode_print_array_append },
 
     { BYTECODE_RECORD, bytecode_print_record },
@@ -708,19 +714,44 @@ void bytecode_print_mk_range(bytecode * code)
     printf("%d: mk range %u\n", code->addr, code->mk_range.dims);
 }
 
-void bytecode_print_mk_slice(bytecode * code)
+void bytecode_print_slice_array(bytecode * code)
 {
-    printf("%d: mk slice %u\n", code->addr, code->mk_slice.dims);
+    printf("%d: slice array %u\n", code->addr, code->mk_slice.dims);
 }
 
-void bytecode_print_string_deref(bytecode * code)
+void bytecode_print_slice_range(bytecode * code)
 {
-    printf("%d: string deref\n", code->addr);
+    printf("%d: slice range %u\n", code->addr, code->mk_slice.dims);
+}
+
+void bytecode_print_slice_slice(bytecode * code)
+{
+    printf("%d: slice slice %u\n", code->addr, code->mk_slice.dims);
+}
+
+void bytecode_print_slice_string(bytecode * code)
+{
+    printf("%d: slice string %u\n", code->addr, code->mk_slice.dims);
 }
 
 void bytecode_print_array_deref(bytecode * code)
 {
     printf("%d: array deref %d\n", code->addr, code->array_deref.dims);
+}
+
+void bytecode_print_range_deref(bytecode * code)
+{
+    printf("%d: range deref %d\n", code->addr, code->array_deref.dims);
+}
+
+void bytecode_print_slice_deref(bytecode * code)
+{
+    printf("%d: slice deref %d\n", code->addr, code->array_deref.dims);
+}
+
+void bytecode_print_string_deref(bytecode * code)
+{
+    printf("%d: string deref\n", code->addr);
 }
 
 void bytecode_print_array_append(bytecode * code)

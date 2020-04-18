@@ -1699,16 +1699,46 @@ int expr_slice_emit(expr * value, int stack_level, module * module_value,
     bc.line.no = value->line_no;
     bytecode_add(module_value->code, &bc);
 
+    /* array, range, slice or string */
     expr_emit(value->slice.array_expr, stack_level, module_value, list_weak, result);
+
+    /* range */
     expr_range_dim_list_emit(value->slice.range_dims, stack_level + 1, module_value, list_weak, result);
 
-    /* TODO: check slice emit */
-    /* TODO: slice array, range, slice, string */
-
-    bc.type = BYTECODE_MK_SLICE;
-    bc.mk_slice.dims = value->slice.range_dims->count;
+    bc.type = BYTECODE_MK_RANGE;
+    bc.mk_range.dims = value->slice.range_dims->count;
     bytecode_add(module_value->code, &bc);
 
+    if (value->slice.array_expr->comb.comb == COMB_TYPE_ARRAY)
+    {
+        bc.type = BYTECODE_SLICE_ARRAY;
+        bc.mk_slice.dims = value->slice.range_dims->count;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->slice.array_expr->comb.comb == COMB_TYPE_RANGE)
+    {
+        bc.type = BYTECODE_SLICE_RANGE;
+        bc.mk_slice.dims = value->slice.range_dims->count;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->slice.array_expr->comb.comb == COMB_TYPE_SLICE)
+    {
+        bc.type = BYTECODE_SLICE_SLICE;
+        bc.mk_slice.dims = value->slice.range_dims->count;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->slice.array_expr->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_SLICE_STRING;
+        bc.mk_slice.dims = value->slice.range_dims->count;
+        bytecode_add(module_value->code, &bc);
+    }
+    else
+    {
+        /* this should have been detected by typechecker */
+        assert(0);
+    }
+    
     return 0;
 }                    
 
@@ -2266,6 +2296,14 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         if (value->array_deref.array_expr->comb.comb == COMB_TYPE_ARRAY)
         {
             expr_array_deref_emit(value, stack_level, module_value, list_weak, result);
+        }
+        else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_RANGE)
+        {
+            expr_range_deref_emit(value, stack_level, module_value, list_weak, result);
+        }
+        else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_SLICE)
+        {
+            expr_slice_deref_emit(value, stack_level, module_value, list_weak, result);
         }
         else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_STRING)
         {
@@ -2985,6 +3023,51 @@ int expr_array_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
+                          func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
+    expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result);
+
+    bc.type = BYTECODE_ARRAY_DEREF;
+    bc.array_deref.dims = value->array_deref.ref->count;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_range_deref_emit(expr * value, int stack_level, module * module_value,
+                          func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
+    expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result);
+
+    bc.type = BYTECODE_RANGE_DEREF;
+    bc.array_deref.dims = value->array_deref.ref->count;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_slice_deref_emit(expr * value, int stack_level, module * module_value,
+                          func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
+    expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result);
+
+    bc.type = BYTECODE_SLICE_DEREF;
+    bc.array_deref.dims = value->array_deref.ref->count;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
 int expr_string_deref_emit(expr * value, int stack_level, module * module_value,
                            func_list_weak * list_weak, int * result)
 {
@@ -2996,24 +3079,6 @@ int expr_string_deref_emit(expr * value, int stack_level, module * module_value,
     bc.type = BYTECODE_STRING_DEREF;
 
     bytecode_add(module_value->code, &bc);
-
-    return 0;
-}
-
-int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
-                          func_list_weak * list_weak, int * result)
-{
-    bytecode bc = { 0 };
-
-    expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
-    expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result);
-
-    bc.type = BYTECODE_ARRAY_DEREF;
-    bc.array_deref.dims = value->array_deref.ref->count;
-
-    bytecode_add(module_value->code, &bc);
-
-    /* TODO: deref slice, range, string */
 
     return 0;
 }

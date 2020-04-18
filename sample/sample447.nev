@@ -1,0 +1,16 @@
+
+func pr( [ from .. to ] : range ) -> int
+{
+    prints("[" + from + ".." + to + "]\n");
+
+    0
+}
+
+func main() -> int
+{
+    let r1 = [10..100][0..10][5..10];
+
+    pr(r1);
+
+    0
+}

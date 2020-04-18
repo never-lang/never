@@ -145,8 +145,9 @@ param * param_new_range(range_list * ranges)
     value->id = NULL;
     value->record_id = NULL;
     value->ranges = ranges;
-    value->ret = NULL;
     value->line_no = 0;
+
+    value->ret = param_new_int(NULL);
 
     if (value->ranges != NULL)
     {

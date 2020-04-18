@@ -1,0 +1,18 @@
+
+func pr_dim ( dim[D] : int ) -> int
+{
+    for (i in [0..D])
+    {
+        print(dim[i])
+    }
+}
+
+func main() -> int
+{
+    let dim = [110..200, 100..0][1, 1];
+
+    /* print(dim); */
+    pr_dim(dim);
+
+    0
+}

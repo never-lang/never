@@ -218,6 +218,7 @@ expr * expr_new_range(expr_list * range_dims)
     ret->type = EXPR_RANGE;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->line_no = 0;
+    ret->range.ret = param_new_int(NULL);
     ret->range.range_dims = range_dims;
 
     return ret;
@@ -498,6 +499,10 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_RANGE:
+        if (value->range.ret)
+        {
+            param_delete(value->range.ret);
+        }
         if (value->range.range_dims)
         {
             expr_list_delete(value->range.range_dims);

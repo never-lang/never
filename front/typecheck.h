@@ -106,7 +106,9 @@ int expr_array_deref_check_type(symtab * tab, expr * value, func * func_value, u
                                 int * result);
 int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                           int * result);
-int expr_range_elem_check_type(symtab * tab, expr * value, func * func_value,
+int expr_range_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
+                          int * result);
+int expr_range_dim_check_type(symtab * tab, expr * value, func * func_value,
                                unsigned int syn_level, int * result);
 int expr_range_list_check_type(symtab * tab, expr_list * range_dims, func * func_value, 
                                unsigned int syn_level, int * result);

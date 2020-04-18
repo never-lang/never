@@ -227,6 +227,7 @@ typedef struct expr
         } range_dim;
         struct
         {
+            struct param * ret;
             struct expr_list * range_dims;
         } range;
         struct
