@@ -118,7 +118,10 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
     }
     else if (value->src.param_value->type == PARAM_SLICE_DIM)
     {
-        assert(0);
+        bc.type = BYTECODE_ID_DIM_SLICE;
+        bc.id_dim_slice.stack_level = stack_level;
+        bc.id_dim_slice.index = value->src.param_value->slice->index;
+        bc.id_dim_slice.dim_index = value->src.param_value->index;
     }
     else
     {
@@ -168,7 +171,6 @@ int func_freevar_id_qualifier_emit(freevar * value, int stack_level,
     bc.type = BYTECODE_ID_LOCAL;
     bc.id_local.stack_level = stack_level - value->src.qualifier_value->stack_level;
     bc.id_local.index = 0;
-    
     bytecode_add(module_value->code, &bc);
     
     return 0;
@@ -177,8 +179,13 @@ int func_freevar_id_qualifier_emit(freevar * value, int stack_level,
 int func_freevar_id_forin_emit(freevar * value, int stack_level, 
                                module * module_value, int * result)
 {
-    /* TODO: freevar id forin emit */
-    assert(0);
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_LOCAL;
+    bc.id_local.stack_level = stack_level - value->src.forin_value->stack_level;
+    bc.id_local.index = 0;
+    bytecode_add(module_value->code, &bc);
+
     return 0;
 }
 
@@ -249,7 +256,6 @@ int expr_id_local_emit(expr * value, int stack_level, module * module_value,
 {
     bytecode bc = { 0 };
 
-    /* TODO: emit code for range dim */
     if (value->id.id_param_value->type == PARAM_DIM)
     {
         bc.type = BYTECODE_ID_DIM_LOCAL;
@@ -265,8 +271,10 @@ int expr_id_local_emit(expr * value, int stack_level, module * module_value,
     }
     else if (value->id.id_param_value->type == PARAM_SLICE_DIM)
     {
-        /* TODO: slice dim */
-        //assert(0);
+        bc.type = BYTECODE_ID_DIM_SLICE;
+        bc.id_dim_slice.stack_level = stack_level;
+        bc.id_dim_slice.index = value->id.id_param_value->slice->index;
+        bc.id_dim_slice.dim_index = value->id.id_param_value->index;
     }
     else
     {
@@ -832,8 +840,7 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     }
     else if (value->comb.comb == COMB_TYPE_SLICE)
     {
-        /* TODO: slice assign */
-        assert(0);
+        bc.type = BYTECODE_OP_ASS_RECORD;
     }
     else if (value->comb.comb == COMB_TYPE_FUNC)
     {

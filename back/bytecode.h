@@ -33,6 +33,7 @@ typedef enum bytecode_type
 
     BYTECODE_ID_LOCAL,
     BYTECODE_ID_DIM_LOCAL,
+    BYTECODE_ID_DIM_SLICE,
     BYTECODE_ID_GLOBAL,
     BYTECODE_ID_FUNC_FUNC,
     BYTECODE_ID_FUNC_ADDR,
@@ -229,6 +230,12 @@ typedef struct bytecode
         } id_dim_local;
         struct
         {
+            int stack_level;
+            int index;
+            int dim_index;
+        } id_dim_slice;
+        struct
+        {
             int index;
             int dim_index;
         } id_dim_global;
@@ -337,6 +344,7 @@ void bytecode_print_string(bytecode * code);
 
 void bytecode_print_id_local(bytecode * code);
 void bytecode_print_id_dim_local(bytecode * code);
+void bytecode_print_id_dim_slice(bytecode * code);
 void bytecode_print_id_global(bytecode * code);
 void bytecode_print_id_func_func(bytecode * code);
 void bytecode_print_id_func_addr(bytecode * code);

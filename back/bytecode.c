@@ -35,6 +35,7 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
     { BYTECODE_ID_DIM_LOCAL, bytecode_print_id_dim_local },
+    { BYTECODE_ID_DIM_SLICE, bytecode_print_id_dim_slice },
     { BYTECODE_ID_GLOBAL, bytecode_print_id_global },
     { BYTECODE_ID_FUNC_FUNC, bytecode_print_id_func_func },
     { BYTECODE_ID_FUNC_ADDR, bytecode_print_id_func_addr },
@@ -239,6 +240,13 @@ void bytecode_print_id_dim_local(bytecode * code)
     printf("%d: id dim local %d %d %d\n", code->addr,
            code->id_dim_local.stack_level, code->id_dim_local.index,
            code->id_dim_local.dim_index);
+}
+
+void bytecode_print_id_dim_slice(bytecode * code)
+{
+    printf("%d: id dim slice %d %d %d\n", code->addr,
+           code->id_dim_slice.stack_level, code->id_dim_slice.index,
+           code->id_dim_slice.dim_index);
 }
 
 void bytecode_print_id_global(bytecode * code)

@@ -1,0 +1,29 @@
+
+func pr_slice( d1 : int, s[from..to] : int ) -> int
+{
+    let d2 = 0;
+
+    print(from);
+    print(to);
+
+    for (i in [0..to])
+    {
+        print(s[i])
+    };
+
+    0
+}
+
+func main() -> int
+{
+    let i = 0;
+    let arr = [ 10, 11, 12, 13, 14, 15 ] : int;
+    let slice1 = arr[ 1 .. 4 ];
+    let slice2 = arr[ 0 .. 5 ];
+
+    slice1 = slice2;
+
+    pr_slice(0, slice1);
+
+    0
+}

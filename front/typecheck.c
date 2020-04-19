@@ -1669,7 +1669,7 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
                        value->right->comb.comb_dims,
                        value->right->comb.comb_ret) == TYPECHECK_SUCC)
     {
-        value->comb.comb = COMB_TYPE_ARRAY;
+        value->comb.comb = COMB_TYPE_SLICE;
         value->comb.comb_dims = value->left->comb.comb_dims;
         value->comb.comb_ret = value->left->comb.comb_ret;
     }
