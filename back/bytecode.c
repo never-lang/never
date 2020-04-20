@@ -157,12 +157,14 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_SLICE_STRING, bytecode_print_slice_string },
 
     { BYTECODE_ARRAY_DEREF, bytecode_print_array_deref },
+    { BYTECODE_ARRAYREF_DEREF, bytecode_print_arrayref_deref },
     { BYTECODE_RANGE_DEREF, bytecode_print_range_deref },
     { BYTECODE_SLICE_DEREF, bytecode_print_slice_deref },
     { BYTECODE_STRING_DEREF, bytecode_print_string_deref },
     { BYTECODE_ARRAY_APPEND, bytecode_print_array_append },
 
     { BYTECODE_RECORD, bytecode_print_record },
+    { BYTECODE_VEC_DEREF, bytecode_print_vec_deref },
     { BYTECODE_VECREF_DEREF, bytecode_print_vecref_deref },
     { BYTECODE_NIL_RECORD_REF, bytecode_print_nil_record_ref },
 
@@ -747,6 +749,11 @@ void bytecode_print_array_deref(bytecode * code)
     printf("%d: array deref %d\n", code->addr, code->array_deref.dims);
 }
 
+void bytecode_print_arrayref_deref(bytecode * code)
+{
+    printf("%d: array deref %d\n", code->addr, code->array_deref.dims);
+}
+
 void bytecode_print_range_deref(bytecode * code)
 {
     printf("%d: range deref %d\n", code->addr, code->array_deref.dims);
@@ -774,9 +781,14 @@ void bytecode_print_record(bytecode * code)
     printf("%d: record count %u\n", code->addr, code->record.count);
 }
 
+void bytecode_print_vec_deref(bytecode * code)
+{
+    printf("%d: vec index %d %u\n", code->addr, code->attr.stack_level, code->attr.index);
+}
+
 void bytecode_print_vecref_deref(bytecode * code)
 {
-    printf("%d: attr index %d %u\n", code->addr, code->attr.stack_level, code->attr.index);
+    printf("%d: vecref index %d %u\n", code->addr, code->attr.stack_level, code->attr.index);
 }
 
 void bytecode_print_nil_record_ref(bytecode * code)

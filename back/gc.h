@@ -115,6 +115,7 @@ unsigned int gc_get_vec_size(gc * collector, mem_ptr addr);
 mem_ptr gc_get_vec_ref(gc * collector, mem_ptr addr);
 mem_ptr gc_set_vec_ref(gc * collector, mem_ptr addr, mem_ptr vec_ref);
 
+mem_ptr gc_get_arr(gc * collector, mem_ptr addr);
 mem_ptr gc_get_arr_ref(gc * collector, mem_ptr addr);
 void gc_set_arr_ref(gc * collector, mem_ptr addr, mem_ptr array);
 

@@ -22,6 +22,10 @@
 #ifndef __BYTECODE_H__
 #define __BYTECODE_H__
 
+#define SLICE_SIZE 2
+#define SLICE_ARRAY_INDEX 0
+#define SLICE_RANGE_INDEX 1
+
 typedef enum bytecode_type
 {
     BYTECODE_UNKNOWN = 0,
@@ -152,13 +156,15 @@ typedef enum bytecode_type
     BYTECODE_SLICE_SLICE,
     BYTECODE_SLICE_STRING,
 
-    BYTECODE_ARRAY_DEREF,    
+    BYTECODE_ARRAY_DEREF,
+    BYTECODE_ARRAYREF_DEREF,
     BYTECODE_RANGE_DEREF,
     BYTECODE_SLICE_DEREF,
     BYTECODE_STRING_DEREF,
     BYTECODE_ARRAY_APPEND,
 
     BYTECODE_RECORD,
+    BYTECODE_VEC_DEREF,
     BYTECODE_VECREF_DEREF,
     BYTECODE_NIL_RECORD_REF,
 
@@ -288,7 +294,7 @@ typedef struct bytecode
         struct
         {
             unsigned int dims;
-        } array_deref; /* BYTECODE_ARRAY_DEREF BYTECODE_RANGE_DEREF BYTECODE_SLICE_DEREF */
+        } array_deref; /* BYTECODE_ARRAYREF_DEREF BYTECODE_RANGE_DEREF BYTECODE_SLICE_DEREF */
         struct
         {
             unsigned int dims;
@@ -469,12 +475,14 @@ void bytecode_print_slice_slice(bytecode * code);
 void bytecode_print_slice_string(bytecode * code);
 
 void bytecode_print_array_deref(bytecode * code);
+void bytecode_print_arrayref_deref(bytecode * code);
 void bytecode_print_range_deref(bytecode * code);
 void bytecode_print_slice_deref(bytecode * code);
 void bytecode_print_string_deref(bytecode * code);
 void bytecode_print_array_append(bytecode * code);
 
 void bytecode_print_record(bytecode * code);
+void bytecode_print_vec_deref(bytecode * code);
 void bytecode_print_vecref_deref(bytecode * code);
 void bytecode_print_nil_record_ref(bytecode * code);
 

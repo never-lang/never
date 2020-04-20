@@ -33,10 +33,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define SLICE_SIZE 2
-#define SLICE_ARRAY_INDEX 0
-#define SLICE_RANGE_INDEX 1
-
 vm_execute_str vm_execute_op[] = {
     { BYTECODE_UNKNOWN, vm_execute_unknown },
 
@@ -169,12 +165,14 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_SLICE_STRING, vm_execute_slice_string },
 
     { BYTECODE_ARRAY_DEREF, vm_execute_array_deref },
+    { BYTECODE_ARRAYREF_DEREF, vm_execute_arrayref_deref },
     { BYTECODE_RANGE_DEREF, vm_execute_range_deref },
     { BYTECODE_SLICE_DEREF, vm_execute_slice_deref },
     { BYTECODE_STRING_DEREF, vm_execute_string_deref },
     { BYTECODE_ARRAY_APPEND, vm_execute_array_append },
 
     { BYTECODE_RECORD, vm_execute_record },
+    { BYTECODE_VEC_DEREF, vm_execute_vec_deref },
     { BYTECODE_VECREF_DEREF, vm_execute_vecref_deref },
     { BYTECODE_NIL_RECORD_REF, vm_execute_nil_record_ref },
 
@@ -1926,7 +1924,7 @@ void vm_execute_op_ass_func(vm * machine, bytecode * code)
 
 void vm_execute_jumpz(vm * machine, bytecode * code)
 {
-    float a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
 
     if (a == 0)
     {
@@ -2293,7 +2291,10 @@ void vm_execute_slice_string(vm * machine, bytecode * code)
     assert(0); /* TODO: slice string */
 }
 
-void vm_execute_array_deref(vm * machine, bytecode * code)
+void vm_execute_array_deref_univ(
+    vm * machine,
+    bytecode * code, 
+    mem_ptr (* gc_get_array) (gc * collector, mem_ptr addr))
 {
     gc_stack entry = { 0 };
 
@@ -2320,7 +2321,7 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     }
 
     mem_ptr array = { 0 };
-    array = gc_get_arr_ref(machine->collector, machine->stack[machine->sp--].addr);
+    array = gc_get_array(machine->collector, machine->stack[machine->sp--].addr);
     if (array == nil_ptr)
     {
         object_arr_dim_delete(addr);
@@ -2358,6 +2359,16 @@ void vm_execute_array_deref(vm * machine, bytecode * code)
     entry.addr = elem;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_array_deref(vm * machine, bytecode * code)
+{
+    vm_execute_array_deref_univ(machine, code, gc_get_arr);
+}
+
+void vm_execute_arrayref_deref(vm * machine, bytecode * code)
+{
+    vm_execute_array_deref_univ(machine, code, gc_get_arr_ref);
 }
 
 void vm_execute_range_deref(vm * machine, bytecode * code)
@@ -2594,6 +2605,22 @@ void vm_execute_record(vm * machine, bytecode * code)
     entry.type = GC_MEM_ADDR;
     entry.addr = gc_alloc_vec_ref(machine->collector, addr);
     
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_vec_deref(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+
+    mem_ptr vec = machine->stack[machine->sp - code->attr.stack_level].addr;
+    mem_ptr addr = gc_get_vec(machine->collector, vec, code->attr.index);
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
     machine->stack[machine->sp] = entry;
 }
 

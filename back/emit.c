@@ -1075,7 +1075,7 @@ int expr_forin_array_emit(expr * value, int stack_level, module * module_value,
     bc.id_local.index = 0;
     bytecode_add(module_value->code, &bc);
 
-    bc.type = BYTECODE_ARRAY_DEREF;
+    bc.type = BYTECODE_ARRAYREF_DEREF;
     bc.array_deref.dims = 1;
     bytecode_add(module_value->code, &bc);
 
@@ -1253,7 +1253,7 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
         bc.slide.q = 2;
         bytecode_add(module_value->code, &bc);
 
-        /* inc loop counter */
+        /* dec loop counter */
         bc.type = BYTECODE_OP_DEC_INT;
         bc.id_local.stack_level = 0;
         bc.id_local.index = 0;
@@ -1284,6 +1284,203 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_forin_slice_emit(expr * value, int stack_level, module * module_value, 
+                          func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode * condd;
+    bytecode * conda, * condb;
+    bytecode * condea, * condeb;
+    bytecode * labelA, * labelB;
+    bytecode * labelD;
+    bytecode * labelE;
+
+    expr_emit(value->forin_value->in_value, stack_level, module_value, list_weak, result);
+
+    /* push array */
+    bc.type = BYTECODE_VECREF_DEREF;
+    bc.attr.stack_level = 0;
+    bc.attr.index = SLICE_ARRAY_INDEX;
+    bytecode_add(module_value->code, &bc);
+
+    /* push range */
+    bc.type = BYTECODE_VECREF_DEREF;
+    bc.attr.stack_level = 1;
+    bc.attr.index = SLICE_RANGE_INDEX;
+    bytecode_add(module_value->code, &bc);
+
+    /* loop counter set to from value */
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_VEC_DEREF;
+    bc.attr.stack_level = 1;
+    bc.attr.index = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_OP_ASS_INT;
+    bytecode_add(module_value->code, &bc);
+
+    /* get loop direction */
+    bc.type = BYTECODE_VEC_DEREF;
+    bc.attr.stack_level = 1;
+    bc.attr.index = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_VEC_DEREF;
+    bc.attr.stack_level = 2;
+    bc.attr.index = 1;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_OP_LT_INT;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_JUMPZ;
+    condd = bytecode_add(module_value->code, &bc);
+
+    /* FROM  < TO */
+       bc.type = BYTECODE_LABEL;
+       labelA = bytecode_add(module_value->code, &bc);
+
+       /* for all */
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 0;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_VEC_DEREF;
+       bc.attr.stack_level = 2;
+       bc.attr.index = 1;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_OP_LTE_INT;
+       bytecode_add(module_value->code, &bc);
+
+       /* exit loop if all passed */
+       bc.type = BYTECODE_JUMPZ;
+       condea = bytecode_add(module_value->code, &bc);
+
+       /* push value */
+       /* remember stack level to get value later */
+       value->forin_value->stack_level = stack_level + 5;
+
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 2;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 1;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_ARRAY_DEREF;
+       bc.array_deref.dims = 1;
+       bytecode_add(module_value->code, &bc);
+
+       expr_emit(value->forin_value->do_value, stack_level + 5, module_value, list_weak, result);
+
+       /* pop value */
+       bc.type = BYTECODE_SLIDE;
+       bc.slide.m = 0;
+       bc.slide.q = 2;
+       bytecode_add(module_value->code, &bc);
+
+       /* inc loop counter */
+       bc.type = BYTECODE_OP_INC_INT;
+       bc.id_local.stack_level = 0;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       /* jump to beginning */
+       bc.type = BYTECODE_JUMP;
+       conda = bytecode_add(module_value->code, &bc);
+       conda->jump.offset = labelA->addr - conda->addr;
+
+    /* FROM > TO */
+    bc.type = BYTECODE_LABEL;
+    labelD = bytecode_add(module_value->code, &bc);
+    condd->jump.offset = labelD->addr - condd->addr;
+
+       bc.type = BYTECODE_LABEL;
+       labelB = bytecode_add(module_value->code, &bc);
+
+       /* for all */
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 0;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_VEC_DEREF;
+       bc.attr.stack_level = 2;
+       bc.attr.index = 1;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_OP_GTE_INT;
+       bytecode_add(module_value->code, &bc);
+
+       /* exit loop if all passed */
+       bc.type = BYTECODE_JUMPZ;
+       condeb = bytecode_add(module_value->code, &bc);
+
+       /* push value */
+       /* remember stack level to get value later */
+       value->forin_value->stack_level = stack_level + 5;
+
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 2;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 1;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_ARRAY_DEREF;
+       bc.array_deref.dims = 1;
+       bytecode_add(module_value->code, &bc);
+
+       expr_emit(value->forin_value->do_value, stack_level + 5, module_value, list_weak, result);
+
+       /* pop value */
+       bc.type = BYTECODE_SLIDE;
+       bc.slide.m = 0;
+       bc.slide.q = 2;
+       bytecode_add(module_value->code, &bc);
+
+       /* inc loop counter */
+       bc.type = BYTECODE_OP_DEC_INT;
+       bc.id_local.stack_level = 0;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       /* jump to beginning */
+       bc.type = BYTECODE_JUMP;
+       condb = bytecode_add(module_value->code, &bc);
+       condb->jump.offset = labelB->addr - condb->addr;
+
+    /* exit */
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+    condea->jump.offset = labelE->addr - condea->addr;
+    condeb->jump.offset = labelE->addr - condeb->addr;
+
+    /* pop slice, array, range, counter */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 4;
+    bytecode_add(module_value->code, &bc);
+
+    /* for loop returns int 0 */
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 0;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
 int expr_forin_emit(expr * value, int stack_level, module * module_value, 
                     func_list_weak * list_weak, int * result)
 {
@@ -1300,7 +1497,7 @@ int expr_forin_emit(expr * value, int stack_level, module * module_value,
     else if (value->forin_value->in_value->comb.comb == COMB_TYPE_SLICE &&
             value->forin_value->in_value->comb.comb_dims == 1)
     {
-        assert(0);
+        expr_forin_slice_emit(value, stack_level, module_value, list_weak, result);
     }
     else
     {
@@ -2569,7 +2766,7 @@ int generator_array_emit(listcomp * listcomp_value, qualifier_list_node * node,
     bc.id_local.index = 0;
     bytecode_add(module_value->code, &bc);
 
-    bc.type = BYTECODE_ARRAY_DEREF;
+    bc.type = BYTECODE_ARRAYREF_DEREF;
     bc.array_deref.dims = 1;
     bytecode_add(module_value->code, &bc);
 
@@ -3038,7 +3235,7 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
     expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
     expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result);
 
-    bc.type = BYTECODE_ARRAY_DEREF;
+    bc.type = BYTECODE_ARRAYREF_DEREF;
     bc.array_deref.dims = value->array_deref.ref->count;
     bytecode_add(module_value->code, &bc);
 
