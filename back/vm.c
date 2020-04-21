@@ -174,6 +174,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_RECORD, vm_execute_record },
     { BYTECODE_VEC_DEREF, vm_execute_vec_deref },
     { BYTECODE_VECREF_DEREF, vm_execute_vecref_deref },
+    { BYTECODE_VECREF_VEC_DEREF, vm_execute_vecref_vec_deref },
     { BYTECODE_NIL_RECORD_REF, vm_execute_nil_record_ref },
 
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
@@ -2627,6 +2628,25 @@ void vm_execute_vec_deref(vm * machine, bytecode * code)
 void vm_execute_vecref_deref(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
+
+    mem_ptr vecref = machine->stack[machine->sp].addr;
+    mem_ptr vec = gc_get_vec_ref(machine->collector, vecref);
+    if (vec == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = vec;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_vecref_vec_deref(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
     
     mem_ptr record_ref = machine->stack[machine->sp - code->attr.stack_level].addr;
     mem_ptr record_value = gc_get_vec_ref(machine->collector, record_ref);
@@ -2637,6 +2657,9 @@ void vm_execute_vecref_deref(vm * machine, bytecode * code)
         return;
     }
     
+    /* TODO: consider changing into assert as vectors are used only intenally
+     * and should always correctly calculated indexed
+     */
     unsigned int size = gc_get_vec_size(machine->collector, record_value);
     if (code->attr.index >= size)
     {

@@ -112,7 +112,7 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
     }
     else if (value->src.param_value->type == PARAM_RANGE_DIM)
     {
-        bc.type = BYTECODE_VECREF_DEREF;
+        bc.type = BYTECODE_VECREF_VEC_DEREF;
         bc.attr.stack_level = stack_level - value->src.param_value->range->index;
         bc.attr.index = value->src.param_value->index;
     }
@@ -154,7 +154,7 @@ int func_freevar_id_matchbind_emit(freevar * value, int stack_level,
 {
     bytecode bc = { 0 };
     
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VECREF_VEC_DEREF;
     bc.attr.stack_level = stack_level - value->src.matchbind_value->stack_level;
     bc.attr.index = value->src.matchbind_value->index + 1;
     
@@ -265,7 +265,7 @@ int expr_id_local_emit(expr * value, int stack_level, module * module_value,
     }
     else if (value->id.id_param_value->type == PARAM_RANGE_DIM)
     {
-        bc.type = BYTECODE_VECREF_DEREF;
+        bc.type = BYTECODE_VECREF_VEC_DEREF;
         bc.attr.stack_level = stack_level - value->id.id_param_value->range->index;
         bc.attr.index = value->id.id_param_value->index;
     }
@@ -335,7 +335,7 @@ int expr_id_matchbind_emit(expr * value, int stack_level, module * module_value,
 {
     bytecode bc = { 0 };
 
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VECREF_VEC_DEREF;
     bc.attr.stack_level = stack_level - value->id.id_matchbind_value->stack_level;
     bc.attr.index = value->id.id_matchbind_value->index + 1;
 
@@ -1130,12 +1130,16 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
 
     expr_emit(value->forin_value->in_value, stack_level, module_value, list_weak, result);
 
+    /* deref range so it is faster to access */
+    bc.type = BYTECODE_VECREF_DEREF;
+    bytecode_add(module_value->code, &bc);
+
     /* loop counter set to from value */
     bc.type = BYTECODE_INT;
     bc.integer.value = 0;
     bytecode_add(module_value->code, &bc);
 
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VEC_DEREF;
     bc.attr.stack_level = 1;
     bc.attr.index = 0;
     bytecode_add(module_value->code, &bc);
@@ -1144,12 +1148,12 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
     bytecode_add(module_value->code, &bc);
 
     /* get loop direction */
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VEC_DEREF;
     bc.attr.stack_level = 1;
     bc.attr.index = 0;
     bytecode_add(module_value->code, &bc);
 
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VEC_DEREF;
     bc.attr.stack_level = 2;
     bc.attr.index = 1;
     bytecode_add(module_value->code, &bc);
@@ -1170,7 +1174,7 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
         bc.id_local.index = 0;
         bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_VECREF_DEREF;
+        bc.type = BYTECODE_VEC_DEREF;
         bc.attr.stack_level = 2;
         bc.attr.index = 1;
         bytecode_add(module_value->code, &bc);
@@ -1224,7 +1228,7 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
         bc.id_local.index = 0;
         bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_VECREF_DEREF;
+        bc.type = BYTECODE_VEC_DEREF;
         bc.attr.stack_level = 2;
         bc.attr.index = 1;
         bytecode_add(module_value->code, &bc);
@@ -1298,13 +1302,13 @@ int expr_forin_slice_emit(expr * value, int stack_level, module * module_value,
     expr_emit(value->forin_value->in_value, stack_level, module_value, list_weak, result);
 
     /* push array */
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VECREF_VEC_DEREF;
     bc.attr.stack_level = 0;
     bc.attr.index = SLICE_ARRAY_INDEX;
     bytecode_add(module_value->code, &bc);
 
     /* push range */
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VECREF_VEC_DEREF;
     bc.attr.stack_level = 1;
     bc.attr.index = SLICE_RANGE_INDEX;
     bytecode_add(module_value->code, &bc);
@@ -1520,7 +1524,7 @@ int expr_iflet_guard_item_emit(match_guard_item * guard_item,
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
-            bc.type = BYTECODE_VECREF_DEREF;
+            bc.type = BYTECODE_VECREF_VEC_DEREF;
             bc.attr.stack_level = 0;
             bc.attr.index = 0;
             bytecode_add(module_value->code, &bc);
@@ -1552,7 +1556,7 @@ int expr_iflet_guard_record_emit(match_guard_record * guard_record,
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
-            bc.type = BYTECODE_VECREF_DEREF;
+            bc.type = BYTECODE_VECREF_VEC_DEREF;
             bc.attr.stack_level = 0;
             bc.attr.index = 0;
             bytecode_add(module_value->code, &bc);
@@ -1636,7 +1640,7 @@ int expr_match_guard_item_emit(match_guard_item_expr * item_value, bytecode *lab
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
-            bc.type = BYTECODE_VECREF_DEREF;
+            bc.type = BYTECODE_VECREF_VEC_DEREF;
             bc.attr.stack_level = 0;
             bc.attr.index = 0;
             bytecode_add(module_value->code, &bc);
@@ -1686,7 +1690,7 @@ int expr_match_guard_record_emit(match_guard_record_expr * record_value, bytecod
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
-            bc.type = BYTECODE_VECREF_DEREF;
+            bc.type = BYTECODE_VECREF_VEC_DEREF;
             bc.attr.stack_level = 0;
             bc.attr.index = 0;
             bytecode_add(module_value->code, &bc);
@@ -2822,12 +2826,16 @@ int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
 
     expr_emit(value->expr_value, stack_level, module_value, list_weak, result);
 
+    /* deref range so it is faster to access */
+    bc.type = BYTECODE_VECREF_DEREF;
+    bytecode_add(module_value->code, &bc);
+
     /* loop counter set to from value */
     bc.type = BYTECODE_INT;
     bc.integer.value = 0;
     bytecode_add(module_value->code, &bc);
 
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VEC_DEREF;
     bc.attr.stack_level = 1;
     bc.attr.index = 0;
     bytecode_add(module_value->code, &bc);
@@ -2836,12 +2844,12 @@ int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
     bytecode_add(module_value->code, &bc);
 
     /* get loop direction */
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VEC_DEREF;
     bc.attr.stack_level = 1;
     bc.attr.index = 0;
     bytecode_add(module_value->code, &bc);
 
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VEC_DEREF;
     bc.attr.stack_level = 2;
     bc.attr.index = 1;
     bytecode_add(module_value->code, &bc);
@@ -2862,7 +2870,7 @@ int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
         bc.id_local.index = 0;
         bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_VECREF_DEREF;
+        bc.type = BYTECODE_VEC_DEREF;
         bc.attr.stack_level = 2;
         bc.attr.index = 1;
         bytecode_add(module_value->code, &bc);
@@ -2916,7 +2924,7 @@ int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
         bc.id_local.index = 0;
         bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_VECREF_DEREF;
+        bc.type = BYTECODE_VEC_DEREF;
         bc.attr.stack_level = 2;
         bc.attr.index = 1;
         bytecode_add(module_value->code, &bc);
@@ -2987,13 +2995,13 @@ int generator_slice_emit(listcomp * listcomp_value, qualifier_list_node * node,
     expr_emit(value->expr_value, stack_level, module_value, list_weak, result);
 
     /* push array */
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VECREF_VEC_DEREF;
     bc.attr.stack_level = 0;
     bc.attr.index = SLICE_ARRAY_INDEX;
     bytecode_add(module_value->code, &bc);
 
     /* push range */
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VECREF_VEC_DEREF;
     bc.attr.stack_level = 1;
     bc.attr.index = SLICE_RANGE_INDEX;
     bytecode_add(module_value->code, &bc);
@@ -3520,7 +3528,7 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
     }
     assert(index != -1);
     
-    bc.type = BYTECODE_VECREF_DEREF;
+    bc.type = BYTECODE_VECREF_VEC_DEREF;
     bc.attr.stack_level = 0;
     bc.attr.index = index;
     bytecode_add(module_value->code, &bc);

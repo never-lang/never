@@ -166,6 +166,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_RECORD, bytecode_print_record },
     { BYTECODE_VEC_DEREF, bytecode_print_vec_deref },
     { BYTECODE_VECREF_DEREF, bytecode_print_vecref_deref },
+    { BYTECODE_VECREF_VEC_DEREF, bytecode_print_vecref_vec_deref },
     { BYTECODE_NIL_RECORD_REF, bytecode_print_nil_record_ref },
 
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
@@ -789,6 +790,11 @@ void bytecode_print_vec_deref(bytecode * code)
 void bytecode_print_vecref_deref(bytecode * code)
 {
     printf("%d: vecref index %d %u\n", code->addr, code->attr.stack_level, code->attr.index);
+}
+
+void bytecode_print_vecref_vec_deref(bytecode * code)
+{
+    printf("%d: vecref vec index %d %u\n", code->addr, code->attr.stack_level, code->attr.index);
 }
 
 void bytecode_print_nil_record_ref(bytecode * code)
