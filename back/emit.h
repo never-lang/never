@@ -171,6 +171,9 @@ int generator_array_emit(listcomp * listcomp_value, qualifier_list_node * node,
 int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
                          int stack_level, module * module_value,
                          func_list_weak * list_weak, int * result);
+int generator_slice_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                         int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result);
 int generator_emit(listcomp * listcomp_value, qualifier_list_node * node,
                    int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);

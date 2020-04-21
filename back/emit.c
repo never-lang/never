@@ -2971,6 +2971,200 @@ int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
     return 0;
 }
 
+int generator_slice_emit(listcomp * listcomp_value, qualifier_list_node * node,
+                         int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode * condd;
+    bytecode * conda, * condb;
+    bytecode * condea, * condeb;
+    bytecode * labelA, * labelB;
+    bytecode * labelD;
+    bytecode * labelE;
+    qualifier * value = node->value;
+
+    expr_emit(value->expr_value, stack_level, module_value, list_weak, result);
+
+    /* push array */
+    bc.type = BYTECODE_VECREF_DEREF;
+    bc.attr.stack_level = 0;
+    bc.attr.index = SLICE_ARRAY_INDEX;
+    bytecode_add(module_value->code, &bc);
+
+    /* push range */
+    bc.type = BYTECODE_VECREF_DEREF;
+    bc.attr.stack_level = 1;
+    bc.attr.index = SLICE_RANGE_INDEX;
+    bytecode_add(module_value->code, &bc);
+
+    /* loop counter set to from value */
+    bc.type = BYTECODE_INT;
+    bc.integer.value = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_VEC_DEREF;
+    bc.attr.stack_level = 1;
+    bc.attr.index = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_OP_ASS_INT;
+    bytecode_add(module_value->code, &bc);
+
+    /* get loop direction */
+    bc.type = BYTECODE_VEC_DEREF;
+    bc.attr.stack_level = 1;
+    bc.attr.index = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_VEC_DEREF;
+    bc.attr.stack_level = 2;
+    bc.attr.index = 1;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_OP_LT_INT;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_JUMPZ;
+    condd = bytecode_add(module_value->code, &bc);
+
+    /* FROM  < TO */
+       bc.type = BYTECODE_LABEL;
+       labelA = bytecode_add(module_value->code, &bc);
+
+       /* for all */
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 0;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_VEC_DEREF;
+       bc.attr.stack_level = 2;
+       bc.attr.index = 1;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_OP_LTE_INT;
+       bytecode_add(module_value->code, &bc);
+
+       /* exit loop if all passed */
+       bc.type = BYTECODE_JUMPZ;
+       condea = bytecode_add(module_value->code, &bc);
+
+       /* push value */
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 2;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 1;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_ARRAY_DEREF;
+       bc.array_deref.dims = 1;
+       bytecode_add(module_value->code, &bc);
+
+       /* remember stack level to get value later */
+       value->stack_level = stack_level + 5;
+
+       qualifier_stack_emit(listcomp_value, node->next, stack_level + 5, module_value, list_weak, result);
+
+       /* pop value */
+       bc.type = BYTECODE_SLIDE;
+       bc.slide.m = 0;
+       bc.slide.q = 1;
+       bytecode_add(module_value->code, &bc);
+
+       /* inc loop counter */
+       bc.type = BYTECODE_OP_INC_INT;
+       bc.id_local.stack_level = 0;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       /* jump to beginning */
+       bc.type = BYTECODE_JUMP;
+       conda = bytecode_add(module_value->code, &bc);
+       conda->jump.offset = labelA->addr - conda->addr;
+
+    /* FROM > TO */
+    bc.type = BYTECODE_LABEL;
+    labelD = bytecode_add(module_value->code, &bc);
+    condd->jump.offset = labelD->addr - condd->addr;
+
+       bc.type = BYTECODE_LABEL;
+       labelB = bytecode_add(module_value->code, &bc);
+
+       /* for all */
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 0;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_VEC_DEREF;
+       bc.attr.stack_level = 2;
+       bc.attr.index = 1;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_OP_GTE_INT;
+       bytecode_add(module_value->code, &bc);
+
+       /* exit loop if all passed */
+       bc.type = BYTECODE_JUMPZ;
+       condeb = bytecode_add(module_value->code, &bc);
+
+       /* push value */
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 2;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_ID_LOCAL;
+       bc.id_local.stack_level = 1;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       bc.type = BYTECODE_ARRAY_DEREF;
+       bc.array_deref.dims = 1;
+       bytecode_add(module_value->code, &bc);
+
+       /* remember stack level to get value later */
+       value->stack_level = stack_level + 5;
+
+       qualifier_stack_emit(listcomp_value, node->next, stack_level + 5, module_value, list_weak, result);
+
+       /* pop value */
+       bc.type = BYTECODE_SLIDE;
+       bc.slide.m = 0;
+       bc.slide.q = 1;
+       bytecode_add(module_value->code, &bc);
+
+       /* inc loop counter */
+       bc.type = BYTECODE_OP_DEC_INT;
+       bc.id_local.stack_level = 0;
+       bc.id_local.index = 0;
+       bytecode_add(module_value->code, &bc);
+
+       /* jump to beginning */
+       bc.type = BYTECODE_JUMP;
+       condb = bytecode_add(module_value->code, &bc);
+       condb->jump.offset = labelB->addr - condb->addr;
+
+    /* exit */
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+    condea->jump.offset = labelE->addr - condea->addr;
+    condeb->jump.offset = labelE->addr - condeb->addr;
+
+    /* pop slice, array, range, counter */
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 0;
+    bc.slide.q = 4;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
 int generator_emit(listcomp * listcomp_value, qualifier_list_node * node,
                    int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result)
@@ -2990,8 +3184,8 @@ int generator_emit(listcomp * listcomp_value, qualifier_list_node * node,
     else if (node->value->expr_value->comb.comb == COMB_TYPE_SLICE &&
              node->value->expr_value->comb.comb_dims == 1)
     {
-        /* TODO: listcomp oveer slice */
-        assert(0);
+        generator_slice_emit(listcomp_value, node, stack_level, module_value,
+                             list_weak, result);
     }
     else
     {

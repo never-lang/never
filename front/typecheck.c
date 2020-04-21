@@ -218,8 +218,7 @@ int expr_qualifier_set_comb_type(expr * value, expr * expr_value)
     else if (expr_value->comb.comb == COMB_TYPE_SLICE &&
              expr_value->comb.comb_dims == 1)
     {
-        /* TODO: slice */
-        assert(0);
+        expr_set_comb_type(value, expr_value->comb.comb_ret);
     }
     else if (expr_value->comb.comb == COMB_TYPE_RANGE &&
              expr_value->comb.comb_dims == 1)
