@@ -26,6 +26,8 @@
 #include "program.h"
 #include "except.h"
 
+typedef struct gc gc;
+
 typedef enum vm_state
 {
     VM_HALT = 0,
@@ -193,6 +195,7 @@ void vm_execute_slice_range(vm * machine, bytecode * code);
 void vm_execute_slice_slice(vm * machine, bytecode * code);
 void vm_execute_slice_string(vm * machine, bytecode * code);
 
+void vm_execute_array_deref_univ(vm * machine, bytecode * code,  mem_ptr (* gc_get_array) (gc * collector, mem_ptr addr));
 void vm_execute_array_deref(vm * machine, bytecode * code);
 void vm_execute_arrayref_deref(vm * machine, bytecode * code);
 void vm_execute_range_deref(vm * machine, bytecode * code);

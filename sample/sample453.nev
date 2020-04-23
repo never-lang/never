@@ -1,0 +1,10 @@
+
+
+func main() -> int
+{
+    let str = "Hello World!";
+
+    prints(str[length(str) - 1 .. 0] + "\n");
+
+    0
+}

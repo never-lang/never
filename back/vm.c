@@ -344,24 +344,23 @@ void vm_execute_id_dim_slice(vm * machine, bytecode * code)
     }
     else
     {
-        mem_ptr from_addr = { 0 };
-        mem_ptr to_addr = { 0 };
+        mem_ptr range_from_addr = { 0 };
+        mem_ptr range_to_addr = { 0 };
+        range_from_addr = gc_get_vec(machine->collector, range, dim - 1);
+        range_to_addr = gc_get_vec(machine->collector, range, dim);
+
         int range_from = 0;
         int range_to = 0;
-
-        from_addr = gc_get_vec(machine->collector, range, dim - 1);
-        to_addr = gc_get_vec(machine->collector, range, dim);
-
-        range_from = gc_get_int(machine->collector, from_addr);
-        range_to = gc_get_int(machine->collector, to_addr);
+        range_from = gc_get_int(machine->collector, range_from_addr);
+        range_to = gc_get_int(machine->collector, range_to_addr);
 
         if (range_to > range_from)
         {
-            value = range_to - range_from + 1;
+            value = range_to - range_from;
         }
         else
         {
-            value = range_from - range_to + 1;
+            value = range_from - range_to;
         }
     }
 
@@ -1997,11 +1996,11 @@ void vm_execute_mk_array_num(vm * machine, bytecode * code, param_type value)
         }
         else if (value == PARAM_RANGE)
         {
-            assert(0); /* TODO: generate range array dim */
+            elem = gc_alloc_vec_ref(machine->collector, nil_ptr);
         }
         else if (value == PARAM_SLICE)
         {
-            assert(0); /* TODO: generate slice array dim */
+            elem = gc_alloc_vec_ref(machine->collector, nil_ptr);
         }
         else if (value == PARAM_ENUMTYPE)
         {
@@ -2188,7 +2187,6 @@ void vm_get_slice_range(
 void vm_execute_slice_array(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr slice = { 0 };
     mem_ptr array = { 0 };
     mem_ptr range = { 0 };
 
@@ -2201,6 +2199,7 @@ void vm_execute_slice_array(vm * machine, bytecode * code)
         return;
     }
 
+    mem_ptr slice = { 0 };
     slice = gc_alloc_vec(machine->collector, SLICE_SIZE);
 
     gc_set_vec(machine->collector, slice, SLICE_ARRAY_INDEX, array);
@@ -2216,9 +2215,6 @@ void vm_execute_slice_array(vm * machine, bytecode * code)
 void vm_execute_slice_range(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr range = { 0 };
-    unsigned int d = 0;
-    unsigned int dims = 0;
 
     mem_ptr range1 = gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
     mem_ptr range2 = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
@@ -2228,6 +2224,10 @@ void vm_execute_slice_range(vm * machine, bytecode * code)
         machine->exception = EXCEPT_NIL_POINTER;
         return;
     }
+
+    unsigned int d = 0;
+    unsigned int dims = 0;
+    mem_ptr range = { 0 };
 
     dims = code->mk_slice.dims;
     range = gc_alloc_vec(machine->collector, 2 * dims);
@@ -2252,7 +2252,7 @@ void vm_execute_slice_range(vm * machine, bytecode * code)
         int range2_to = gc_get_int(machine->collector, range2_to_addr);
 
         /* TODO: remove this
-        printf("slice.range_dims %d\n", dims);
+        printf("slice range range_dims %d\n", dims);
         printf("[%d..%d][%d..%d]\n", range1_from, range1_to,
                                      range2_from, range2_to);
         */
@@ -2260,7 +2260,6 @@ void vm_execute_slice_range(vm * machine, bytecode * code)
         vm_get_slice_range(range1_from, range1_to,
                            range2_from, range2_to,
                            &res_from, &res_to, &oob);
-
         if (oob)
         {
             machine->running = VM_EXCEPTION;
@@ -2284,15 +2283,144 @@ void vm_execute_slice_range(vm * machine, bytecode * code)
 
 void vm_execute_slice_slice(vm * machine, bytecode * code)
 {
-    assert(0); /* TODO: slice slice */
+    gc_stack entry = { 0 };
+
+    mem_ptr slice = gc_get_vec_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr range = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
+    if (slice == nil_ptr || range == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    mem_ptr slice_array = gc_get_vec(machine->collector, slice, SLICE_ARRAY_INDEX);
+    mem_ptr slice_range = gc_get_vec(machine->collector, slice, SLICE_RANGE_INDEX);
+    if (slice_range == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    /* slice slice */
+    unsigned int d = 0;
+    unsigned int dims = 0;
+    mem_ptr range_res = { 0 };
+
+    dims = code->mk_slice.dims;
+    range_res = gc_alloc_vec(machine->collector, 2 * dims);
+
+    for (d = 0; d < dims; d++)
+    {
+        int oob = 0;
+        int res_from = 0;
+        int res_to = 0;
+        mem_ptr res_from_addr = { 0 };
+        mem_ptr res_to_addr = { 0 };
+
+        mem_ptr range1_from_addr = gc_get_vec(machine->collector, slice_range, d * 2);
+        mem_ptr range1_to_addr = gc_get_vec(machine->collector, slice_range, d * 2 + 1);
+
+        mem_ptr range2_from_addr = gc_get_vec(machine->collector, range, d * 2);
+        mem_ptr range2_to_addr = gc_get_vec(machine->collector, range, d * 2 + 1);
+
+        int range1_from = gc_get_int(machine->collector, range1_from_addr);
+        int range1_to = gc_get_int(machine->collector, range1_to_addr);
+        int range2_from = gc_get_int(machine->collector, range2_from_addr);
+        int range2_to = gc_get_int(machine->collector, range2_to_addr);
+
+        /* TODO: remove this
+        printf("slice slice range_dims %d\n", dims);
+        printf("[%d..%d][%d..%d]\n", range1_from, range1_to,
+                                     range2_from, range2_to);
+        */
+
+        vm_get_slice_range(range1_from, range1_to,
+                           range2_from, range2_to,
+                           &res_from, &res_to, &oob);
+        if (oob)
+        {
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NO_INDEX_OOB;
+            return;
+        }
+
+        res_from_addr = gc_alloc_int(machine->collector, res_from);
+        res_to_addr = gc_alloc_int(machine->collector, res_to);
+
+        gc_set_vec(machine->collector, range_res, 2 * d, res_from_addr);
+        gc_set_vec(machine->collector, range_res, 2 * d + 1, res_to_addr);
+    }
+
+    /* create slice */
+    mem_ptr slice_res = { 0 };
+    slice_res = gc_alloc_vec(machine->collector, SLICE_SIZE);
+
+    gc_set_vec(machine->collector, slice_res, SLICE_ARRAY_INDEX, slice_array);
+    gc_set_vec(machine->collector, slice_res, SLICE_RANGE_INDEX, range_res);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_vec_ref(machine->collector, slice_res);
+
+    machine->sp--;
+    machine->stack[machine->sp] = entry;
 }
 
 void vm_execute_slice_string(vm * machine, bytecode * code)
 {
-    assert(0); /* TODO: slice string */
+    gc_stack entry = { 0 };
+
+    mem_ptr string = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr range = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
+
+    mem_ptr range_from_addr = gc_get_vec(machine->collector, range, 0);
+    mem_ptr range_to_addr = gc_get_vec(machine->collector, range, 1);
+
+    int range_from = gc_get_int(machine->collector, range_from_addr);
+    int range_to = gc_get_int(machine->collector, range_to_addr);
+    int string_len = gc_get_string_len(machine->collector, string);
+
+    if (range_from < 0 ||
+        range_to < 0 ||
+        range_from >= string_len ||
+        range_to >= string_len)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_INDEX_OOB;
+        return;
+    }
+
+    char * string_res = NULL;
+    if (range_from < range_to)
+    {
+        unsigned int sl = range_to - range_from + 1;
+        string_res = strndup(gc_get_string(machine->collector, string) + range_from, sl);
+    }
+    else
+    {
+        unsigned int i = 0;
+        unsigned int sl = range_from - range_to + 1;
+        string_res = strndup(gc_get_string(machine->collector, string) + range_to, sl);
+        for (i = 0 ; i < sl / 2; i++)
+        {
+            char tmp;
+            tmp = string_res[i];
+            string_res[i] = string_res[sl - i - 1];
+            string_res[sl - i - 1] = tmp;
+        }
+    }
+
+    mem_ptr string_res_addr = gc_alloc_string_take(machine->collector, string_res);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_string_ref(machine->collector, string_res_addr);
+
+    machine->sp--;
+    machine->stack[machine->sp] = entry;
 }
 
-void vm_execute_array_deref_univ(
+inline void vm_execute_array_deref_univ(
     vm * machine,
     bytecode * code, 
     mem_ptr (* gc_get_array) (gc * collector, mem_ptr addr))

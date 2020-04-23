@@ -456,6 +456,14 @@ char ** gc_get_string_ptr(gc * collector, mem_ptr addr)
     return &collector->mem[addr].object_value->string_value;
 }
 
+unsigned int gc_get_string_len(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_STRING);
+
+    return strlen(collector->mem[addr].object_value->string_value);
+}
+
 mem_ptr gc_get_string_ref(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);

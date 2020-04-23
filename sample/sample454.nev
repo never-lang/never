@@ -1,0 +1,24 @@
+
+func pr_range( [ from .. to ] : range ) -> int
+{
+    prints("range [" + from + ".." + to + "]\n");
+    0
+}
+
+func pr_ranges( ranges[D] : [..] : range ) -> int
+{
+    for (r in ranges)
+    {
+        pr_range(r)
+    }
+}
+
+func main() -> int
+{
+    let r = [ [ from .. to ] | from in [ 0 .. 10 ]; to in [ 0 .. 10 ] ] : [..] : range;
+
+    pr_ranges(r);
+
+    0
+}
+

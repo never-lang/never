@@ -1,0 +1,22 @@
+
+func print_slice( ssa [ from .. to ] : int ) -> int
+{
+    print(from);
+    print(to);
+
+    for (i in ssa)
+    {
+        print(i)
+    }
+}
+
+func main() -> int
+{
+    let a = [ 1, 2, 3, 4, 5, 6 ] : int;
+    let sa = a [ 1 .. 4];
+    let ssa = sa [ 0 .. 3 ];
+
+    print_slice(ssa);
+
+    0
+}
