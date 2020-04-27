@@ -1,29 +1,99 @@
 
-record R { a : int; b : int; }
-
-func forincheck( a [ from .. to ] : int ) -> int
+func sum_array_one( a[D] : int ) -> int
 {
-    let b = [ [1..10], [10..20], [20..30] ] : [..] : range;
+    let r = 0;
 
-    for (x in [1..10])
+    for (e in a)
     {
-        for (y in [1..10])
-        {
-            print(x + y)
-        }
+        r = r + e
     };
 
-    0
+    r
 }
 
-func r( a[D] : int, s1[from .. to] : int, [from2..to2] : range ) -> [..] : int
+func sum_array_two( a[D] : int ) -> int
 {
-    let b = [1, 2, 3] : int;
+    let r = 0;
 
-    a [ from .. to ]
+    for (i in [0 .. D - 1])
+    {
+        r = r + a[i]
+    };
+
+    r
+}
+
+func sum_array_six( a[D] : int ) -> int
+{
+    let r = 0;
+
+    for (i in [D - 1 .. 0])
+    {
+        r = r + a[i]
+    };
+
+    r
+}
+
+func sum_array_three( a[D] : int ) -> int
+{
+    let r = 0;
+    let i = 0;
+
+    for (i = 0; i < D; i = i + 1)
+    {
+        r = r + a[i]
+    };
+
+    r
+}
+
+func sum_array_four( a[D] : int ) -> int
+{
+    let r = 0;
+
+    for (i in a[0 .. D - 1])
+    {
+        r = r + i
+    };
+
+    r
+}
+
+func sum_array_five( a[D] : int ) -> int
+{
+    let r = 0;
+
+    for (i in a[D - 1 .. 0])
+    {
+        r = r + i
+    };
+
+    r
 }
 
 func main() -> int
 {
+    let a = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int;
+    let r = [ 0 .. 9 ];
+
+    assert(sum_array_one([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int) == 45);
+    assert(sum_array_one(a) == 45);
+
+    assert(sum_array_two([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int) == 45);
+    assert(sum_array_two(a) == 45);
+
+    assert(sum_array_three([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int) == 45);
+    assert(sum_array_three(a) == 45);
+
+    assert(sum_array_four([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int) == 45);
+    assert(sum_array_four(a) == 45);
+
+    assert(sum_array_five([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int) == 45);
+    assert(sum_array_five(a) == 45);
+
+    assert(sum_array_six([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int) == 45);
+    assert(sum_array_six(a) == 45);
+
     0
 }

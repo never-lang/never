@@ -1,25 +1,21 @@
 
 func print_range( [ f1 .. t1 ] : range ) -> int
 {
-    print(f1);
-    print(t1);
+    assert(f1 == 10);
+    assert(t1 == 30);
 
     0
 }
 
 func main() -> int
 {
-    let f = 40;
-    let t = 50;
+    let f = 10;
+    let t = 30;
     let r1 = [ 10 .. 30 ];
     let r2 = [ f .. t ];
 
-    /* print_range( [ 10 .. 20 ] ); */
     print_range( r1 );
 
-    print_range( r2 );
-
-    t = 60;
     print_range( r2 );
 
     r2 = r1;

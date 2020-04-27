@@ -1,22 +1,24 @@
 
-func print_slice( ssa [ from .. to ] : int ) -> int
+func gr(index : int, [from .. to ] : range ) -> int
 {
-    print(from);
-    print(to);
-
-    for (i in ssa)
-    {
-        print(i)
-    }
+    [from .. to][index][0]
+}
+catch (index_out_of_bounds)
+{
+    99
 }
 
 func main() -> int
 {
-    let a = [ 1, 2, 3, 4, 5, 6 ] : int;
-    let sa = a [ 1 .. 4];
-    let ssa = sa [ 0 .. 3 ];
+    let r = [ 1 .. 5 ];
 
-    print_slice(ssa);
+    assert(gr(-1, r) == 99);
+    assert(gr(0, r) == 1);
+    assert(gr(1, r) == 2);
+    assert(gr(2, r) == 3);
+    assert(gr(3, r) == 4);
+    assert(gr(4, r) == 5);
+    assert(gr(5, r) == 99);
 
     0
 }

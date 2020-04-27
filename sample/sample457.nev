@@ -1,6 +1,18 @@
 
+func check( ra[D] : [..] : range ) -> int
+{
+    assert( ra[0][0][0] == 1 );
+    assert( ra[1][0][0] == 10 );
+    assert( ra[2][0][0] == 100 );
+
+    0
+}
 
 func main() -> int
 {
+    let ra = [ [ 1..10 ], [ 10..20 ], [ 100..200 ] ] : [..] : range;
+
+    check(ra);
+
     0
 }

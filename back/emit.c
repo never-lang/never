@@ -1179,7 +1179,7 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
         bc.attr.index = 1;
         bytecode_add(module_value->code, &bc);
     
-        bc.type = BYTECODE_OP_LT_INT;
+        bc.type = BYTECODE_OP_LTE_INT;
         bytecode_add(module_value->code, &bc);
 
         /* exit loop if all passed */
@@ -1233,7 +1233,7 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
         bc.attr.index = 1;
         bytecode_add(module_value->code, &bc);
     
-        bc.type = BYTECODE_OP_GT_INT;
+        bc.type = BYTECODE_OP_GTE_INT;
         bytecode_add(module_value->code, &bc);
 
         /* exit loop if all passed */
@@ -2875,7 +2875,7 @@ int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
         bc.attr.index = 1;
         bytecode_add(module_value->code, &bc);
     
-        bc.type = BYTECODE_OP_LT_INT;
+        bc.type = BYTECODE_OP_LTE_INT;
         bytecode_add(module_value->code, &bc);
 
         /* exit loop if all passed */
@@ -2929,7 +2929,7 @@ int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
         bc.attr.index = 1;
         bytecode_add(module_value->code, &bc);
     
-        bc.type = BYTECODE_OP_GT_INT;
+        bc.type = BYTECODE_OP_GTE_INT;
         bytecode_add(module_value->code, &bc);
 
         /* exit loop if all passed */

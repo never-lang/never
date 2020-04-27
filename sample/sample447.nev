@@ -3,6 +3,9 @@ func pr( [ from .. to ] : range ) -> int
 {
     prints("[" + from + ".." + to + "]\n");
 
+    assert(from == 15);
+    assert(to == 20);
+
     0
 }
 

@@ -11,6 +11,9 @@ func pr_slice( d1 : int, s[from..to] : int ) -> int
         print(s[i])
     };
 
+    assert(from == 0);
+    assert(to == 5);
+
     0
 }
 

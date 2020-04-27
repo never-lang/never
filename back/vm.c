@@ -2543,6 +2543,14 @@ void vm_execute_range_deref(vm * machine, bytecode * code)
         range_to = gc_get_int(machine->collector, range_to_addr);
         range_indx = gc_get_int(machine->collector, machine->stack[machine->sp--].addr);
 
+        if (range_indx < 0)
+        {
+            print_error_msg(machine->line_no, "range index %d out of bounds\n", d);
+            machine->running = VM_EXCEPTION;
+            machine->exception = EXCEPT_NO_INDEX_OOB;
+            return;
+        }
+
         vm_get_slice_range(range_from, range_to,
                            range_indx, range_indx,
                            &res_from, &res_to, &oob);

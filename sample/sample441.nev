@@ -1,26 +1,55 @@
 
-record R { a : int; b : int; }
-
-func forincheck( a [ from .. to ] : int ) -> int
+func sum_array( a[D] : int ) -> int
 {
-    let b = [ "one", "two", "three" ] : string;
+    let r = 0;
 
-    for (s in ((([1, 2, 3, 4, 4] : int))))
+    for (e in a)
     {
-        print(s)
+        r = r + e
     };
 
-    0
+    r
 }
 
-func r( a[D] : int, s1[from .. to] : int, [from2..to2] : range ) -> [..] : int
+func sum_range( [ from .. to ] : range ) -> int
 {
-    let b = [1, 2, 3] : int;
+    let r = 0;
 
-    a [ from .. to ]
+    for (s in ((([ from .. to ]))))
+    {
+        r = r + s
+    };
+
+    r   
+}
+
+func sum_slice( a [ from .. to ] : int ) -> int
+{
+    let r = 0;
+
+    for (s in (((a))))
+    {
+        r = r + s
+    };
+
+    r
 }
 
 func main() -> int
 {
+    let a = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int;
+    let r = [ 0 .. 9 ];
+
+    assert(sum_array([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int) == 45);
+    assert(sum_array(a) == 45);
+
+    assert(sum_range([0 .. 9]) == 45);
+    assert(sum_range(r) == 45);
+    assert(sum_range([-1 .. 10][1 .. 10]) == 45);
+
+    assert(sum_slice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] : int [ 0 .. 9 ]) == 45);
+    assert(sum_slice(a [ 0 .. 9 ]) == 45);
+    assert(sum_slice(a [ -1 .. 10 ][1 .. 10]) == 45);
+
     0
 }

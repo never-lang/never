@@ -3,7 +3,7 @@ record R { x : int; y : int; }
 
 func pr( a[D] : R ) -> int
 {
-    for ( i in [ 0 .. D ] )
+    for ( i in [ 0 .. D - 1 ] )
     {
         prints(a[i].x + " " + a[i].y + "\n")
     }
@@ -11,7 +11,7 @@ func pr( a[D] : R ) -> int
 
 func main() -> int
 {
-    let a = [ R(x, y) | x in [ 0 .. 5 ]; y in [ 1 .. x + 1 ] ] : R;
+    let a = [ R(x, y) | x in [ 0 .. 5 ]; y in [ 0 .. x ] ] : R;
 
     pr(a);
 

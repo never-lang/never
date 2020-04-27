@@ -1,26 +1,24 @@
 
-
-func printA( a[D] : int ) -> int
+func sum( a[D] : int ) -> int
 {
-    for (i in a)
-    {
-        print(i)
-    }
+    let r = 0;
+    
+    for (e in a) { r = r + e };
+    
+    r
 }
 
 func main() -> int
 {
     let a = [ 10, 20, 30, 40, 50 ] : int;
+    let lcr = [ i * 10 | i in [1 .. 5] ] : int;
+    let lcs1 = [ i * 10 | i in [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] : int [ 1 .. 5 ] ] : int;
+    let lcs2 = [ i * 10 | i in [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] : int [ 0 .. 9 ] [ 1 .. 5 ] ] : int;
 
-    for (i in [ 12, 13, 14, 15, 16 ] : int)
-    {
-        print(i)
-    };
+    assert(sum(a) == 150);
+    assert(sum(lcr) == 150);
+    assert(sum(lcs1) == 150);
+    assert(sum(lcs2) == 150);
 
-    for (i in a)
-    {
-        print(i)
-    };
-
-    printA(a)
+    0
 }

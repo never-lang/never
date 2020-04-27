@@ -2,9 +2,11 @@
 
 func main() -> int
 {
-    let str = "Hello World!";
+    let str1 = "Hello World!";
+    let str2 = "!dlroW olleH";
 
-    prints(str[length(str) - 1 .. 0] + "\n");
+    prints(str1[length(str1) - 1 .. 0] + "\n");
+    assert(str1[length(str1) - 1 .. 0] == str2);
 
     0
 }
