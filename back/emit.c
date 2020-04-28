@@ -3518,24 +3518,100 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result)
 {
     bytecode bc = { 0 };
-    int index = -1;
-    
+    int slide_q = 1;
+
     expr_emit(value->attr.record_value, stack_level, module_value, list_weak, result);
-    
-    if (value->attr.id_param_value != NULL)
+
+    assert(value->attr.id_param_value != NULL);
+
+    if (value->attr.id_param_value->type == PARAM_DIM)
     {
-        index = value->attr.id_param_value->index;
+        int dim_index = -1;
+        int array_index = -1;
+
+        dim_index = value->id.id_param_value->index;
+        assert(dim_index != -1);
+
+        array_index = value->id.id_param_value->array->index;
+        assert(array_index != -1);
+
+        bc.type = BYTECODE_VECREF_VEC_DEREF;
+        bc.attr.stack_level = 0;
+        bc.attr.index = array_index;
+        bytecode_add(module_value->code, &bc);
+
+        bc.type = BYTECODE_ID_DIM_LOCAL;
+        bc.id_dim_local.stack_level = 0;
+        bc.id_dim_local.index = 0;
+        bc.id_dim_local.dim_index = dim_index;
+        bytecode_add(module_value->code, &bc);
+
+        slide_q = 2;
     }
-    assert(index != -1);
-    
-    bc.type = BYTECODE_VECREF_VEC_DEREF;
-    bc.attr.stack_level = 0;
-    bc.attr.index = index;
-    bytecode_add(module_value->code, &bc);
+    else if (value->attr.id_param_value->type == PARAM_RANGE_DIM)
+    {
+        int index = -1;
+        int range_index = -1;
+
+        index = value->attr.id_param_value->index;
+        assert(index != -1);
+
+        range_index = value->attr.id_param_value->range->index;
+        assert(range_index != -1);
+
+        bc.type = BYTECODE_VECREF_VEC_DEREF;
+        bc.attr.stack_level = 0;
+        bc.attr.index = range_index;
+        bytecode_add(module_value->code, &bc);
+
+        bc.type = BYTECODE_VECREF_VEC_DEREF;
+        bc.attr.stack_level = 0;
+        bc.attr.index = index;
+        bytecode_add(module_value->code, &bc);
+
+        slide_q = 2;
+    }
+    else if (value->attr.id_param_value->type == PARAM_SLICE_DIM)
+    {
+        int dim_index = -1;
+        int slice_index = -1;
+
+        slice_index = value->id.id_param_value->slice->index;
+        assert(slice_index != -1);
+
+        dim_index = value->id.id_param_value->index;
+        assert(dim_index != -1);
+
+        bc.type = BYTECODE_VECREF_VEC_DEREF;
+        bc.attr.stack_level = 0;
+        bc.attr.index = slice_index;
+        bytecode_add(module_value->code, &bc);
+
+        bc.type = BYTECODE_ID_DIM_SLICE;
+        bc.id_dim_slice.stack_level = 0;
+        bc.id_dim_slice.index = 0;
+        bc.id_dim_slice.dim_index = dim_index;
+        bytecode_add(module_value->code, &bc);
+
+        slide_q = 2;
+    }
+    else
+    {
+        int index = -1;
+        index = value->attr.id_param_value->index;
+        assert(index != -1);
+
+        bc.type = BYTECODE_VECREF_VEC_DEREF;
+        bc.attr.stack_level = 0;
+        bc.attr.index = index;
+        bytecode_add(module_value->code, &bc);
+
+        slide_q = 1;
+    }
 
     bc.type = BYTECODE_SLIDE;
     bc.slide.m = 1;
-    bc.slide.q = 1;
+    bc.slide.q = slide_q;
     bytecode_add(module_value->code, &bc);
 
     return 0;

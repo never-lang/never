@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 param * param_new_bool(char * id)
 {
@@ -252,13 +253,12 @@ void param_delete(param * value)
                 range_list_delete(value->ranges);
             }
         break;
+        case PARAM_ENUMTYPE:
         case PARAM_RECORD:
             if (value->record_id)
             {
                 free(value->record_id);
             }
-        break;
-        case PARAM_ENUMTYPE:
         break;
         case PARAM_FUNC:
             if (value->params != NULL)
