@@ -788,7 +788,13 @@ param: TOK_ID '[' dim_list ']' ':' param
 
 param: '[' range_dim_list ']' ':' TOK_RANGE
 {
-    $$ = param_new_range($2);
+    $$ = param_new_range(NULL, $2);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID '[' range_dim_list ']' ':' TOK_RANGE
+{
+    $$ = param_new_range($1, $3);
     $$->line_no = $<line_no>1;
 };
 

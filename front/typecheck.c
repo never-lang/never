@@ -872,6 +872,7 @@ int symtab_add_param_from_param(symtab * tab, param * param_value,
     }
     else if (param_value->type == PARAM_RANGE)
     {
+        symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
         symtab_add_param_from_range_list(tab, param_value->ranges, syn_level, result);
     }
     else

@@ -84,7 +84,7 @@ param * param_new_char(char * id);
 param * param_new_string(char * id);
 param * param_new_dim(char * id);
 param * param_new_array(char * id, param_list * dims, param * ret);
-param * param_new_range(range_list * ranges);
+param * param_new_range(char * id, range_list * ranges);
 param * param_new_range_dim(char * id);
 param * param_new_slice(char * id, range_list * ranges, param * ret);
 param * param_new_record(char * id, char * record_id);

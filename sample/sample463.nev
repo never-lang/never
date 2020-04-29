@@ -1,0 +1,50 @@
+
+enum E { 
+    S,
+    R { x : int; a[D] : int; [from .. to] : range; s [ from_s .. to_s ] : string; }
+}
+
+func pr_array( a[D] : int ) -> int
+{
+    for (e in a)
+    {
+        print(e)
+    }
+}
+
+func pr_range( [ from .. to ] : range ) -> int
+{
+    print(from);
+    print(to);
+
+    0
+}
+
+func pr_R( e : E ) -> int
+{
+    if let (E::R(x, a, r, s) = e)
+    {
+        print(x);
+
+        pr_array(a);
+        pr_range(r);
+
+        for (e in s)
+        {
+            prints(e + "\n")
+        }
+    };
+
+    0
+}
+
+func main() -> int
+{
+    let ai = [ 1, 2, 3, 4 ] : int;
+    let as = [ "zero", "one", "two", "three", "four", "five", "six" ] : string;
+    let r = E::R(1, ai, [ 10 .. 200 ], as[ 1 .. 3 ]);
+
+    pr_R(r);
+
+    0
+}

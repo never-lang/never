@@ -1,0 +1,22 @@
+
+func pr_range( r[from..to] : range ) -> int
+{
+    prints("[" + from + ".." + to +"]\n");
+    0
+}
+
+func sl_range( r[from..to] : range ) -> int
+{
+    pr_range( r );
+    pr_range( r[to..from] );
+    0
+}
+
+func main() -> int
+{
+    let r = [ 0 .. 100 ];
+
+    sl_range(r);
+
+    0
+}
