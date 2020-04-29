@@ -1570,6 +1570,13 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
 
+    if (value->left->type != EXPR_ID)
+    {
+        print_warning_msg(value->line_no,
+                          "expression on assignment left side is not an identifier but %s\n",
+                          expr_type_str(value->left->type));
+    }
+
     if (value->left->comb.comb == COMB_TYPE_BOOL &&
         value->right->comb.comb == COMB_TYPE_BOOL)
     {
