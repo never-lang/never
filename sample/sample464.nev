@@ -1,0 +1,29 @@
+
+func pr_range( [from..to] : range ) -> int
+{
+    prints("[" + from + ".." + to + "]\n");
+    0
+}
+
+func pr_arr( rs[D] : [..] : range ) -> int
+{
+    for (r in rs)
+    {
+        pr_range(r)
+    }
+}
+
+func main() -> int
+{
+    let rs = {[ 5 ]} : [..] : range;
+
+    rs[0] = [1..10];
+    rs[1] = [10..20];
+    rs[2] = [20..30];
+    rs[3] = [30..40];
+    rs[4] = [40..50];
+
+    pr_arr(rs);
+
+    0
+}

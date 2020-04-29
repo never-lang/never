@@ -1,0 +1,32 @@
+
+func pr_slice( s [from..to] : string ) -> int
+{
+    for (e in s)
+    {
+        prints(e + "\n")
+    }
+}
+
+func pr_arr( rs[D] : [..] : string ) -> int
+{
+    for (r in rs)
+    {
+        pr_slice(r)
+    }
+}
+
+func main() -> int
+{
+    let ss = [ "one", "two", "three", "four", "five", "six" ] : string;
+    let rs = {[ 5 ]} : [..] : string;
+
+    rs[0] = ss[0..1];
+    rs[1] = ss[1..2];
+    rs[2] = ss[2..3];
+    rs[3] = ss[3..4];
+    rs[4] = ss[4..5];
+
+    pr_arr(rs);
+
+    0
+}

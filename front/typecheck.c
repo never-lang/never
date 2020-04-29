@@ -421,6 +421,8 @@ int param_is_dynamic_array(param * value)
         value->type == PARAM_CHAR ||
         value->type == PARAM_STRING ||
         value->type == PARAM_ARRAY ||
+        value->type == PARAM_RANGE ||
+        value->type == PARAM_SLICE ||
         value->type == PARAM_RECORD ||
         value->type == PARAM_FUNC)
     {

@@ -648,6 +648,148 @@ func main() -> int
 }
 ```
 
+## Ranges and Slices
+
+Writing loops over arrays requires creating an index which is incremented in every loop iteration. Such code
+is so common that Never supports syntactic sugar which improves this task.
+
+```never
+
+func pr_range( r[from..to] : range ) -> int
+{
+    prints("[" + from + ".." + to +"]\n");
+    0
+}
+
+func sl_range( r[from..to] : range ) -> int
+{
+    pr_range( r );
+    pr_range( r[to..from] );
+    0
+}
+
+func main() -> int
+{
+    let r = [ 0 .. 100 ];
+
+    sl_range(r);
+
+    0
+}
+```
+
+Ranges specify continous numers starting from first to including the last index. Ranges can also be multidimensional.
+The above listing presents a range from 0 to 100. The range is printed in ```pr_range``` function. Ranges can also
+be restricted to its subrange. Function ```sl_range``` restricts range ```r``` from its last to first value and
+thus reverses it.
+
+```never
+func main() -> int
+{
+    let a = [ 1, 2, 3, 4, 5, 6 ] : int;
+    let s = a[5 .. 1];
+
+    for (i in s)
+    {
+        print(i)
+    }
+}
+```
+
+Ranges can also be used to specify a slice of an array.
+
+
+```never
+func main() -> int
+{
+    let str1 = "Hello World!";
+    let str2 = "!dlroW olleH";
+
+    prints(str1[length(str1) - 1 .. 0] + "\n");
+
+    0
+}
+```
+
+Slices can also be used to extract a string substring.
+As slices are Never first class citizens they can be created, passed or returned by functions. Is is also possible
+to use list comprehension to create them.
+
+```never
+record R { x : int; y : int; }
+
+func pr( a[D] : R ) -> int
+{
+    for ( i in [ 0 .. D - 1 ] )
+    {
+        prints(a[i].x + " " + a[i].y + "\n")
+    }
+}
+
+func main() -> int
+{
+    let a = [ R(x, y) | x in [ 0 .. 5 ]; y in [ 0 .. x ] ] : R;
+
+    pr(a);
+
+    0    
+}
+```
+
+Ranges and slices can also be part of records or enumerated records.
+
+```never
+enum E { 
+    S,
+    R { x : int; a[D] : int; [from .. to] : range; s [ from_s .. to_s ] : string; }
+}
+
+func pr_array( a[D] : int ) -> int
+{
+    for (e in a)
+    {
+        print(e)
+    }
+}
+
+func pr_range( [ from .. to ] : range ) -> int
+{
+    print(from);
+    print(to);
+
+    0
+}
+
+func pr_R( e : E ) -> int
+{
+    if let (E::R(x, a, r, s) = e)
+    {
+        print(x);
+
+        pr_array(a);
+        pr_range(r);
+
+        for (e in s)
+        {
+            prints(e + "\n")
+        }
+    };
+
+    0
+}
+
+func main() -> int
+{
+    let ai = [ 1, 2, 3, 4 ] : int;
+    let as = [ "zero", "one", "two", "three", "four", "five", "six" ] : string;
+    let r = E::R(1, ai, [ 10 .. 200 ], as[ 1 .. 3 ]);
+
+    pr_R(r);
+
+    0
+}
+```
+
 ## List Comprehension
 
 Never supports list comprehension. Each list consists of a series of

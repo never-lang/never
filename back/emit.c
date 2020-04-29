@@ -3337,6 +3337,14 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     {
         bc.type = BYTECODE_MK_ARRAY_ARRAY;
     }
+    else if (array_value->ret->type == PARAM_RANGE)
+    {
+        bc.type = BYTECODE_MK_ARRAY_RECORD;
+    }
+    else if (array_value->ret->type == PARAM_SLICE)
+    {
+        bc.type = BYTECODE_MK_ARRAY_RECORD;
+    }
     else if (array_value->ret->type == PARAM_RECORD)
     {
         bc.type = BYTECODE_MK_ARRAY_RECORD;
