@@ -69,6 +69,7 @@ void vm_execute_float(vm * machine, bytecode * code);
 void vm_execute_char(vm * machine, bytecode * code);
 void vm_execute_string(vm * machine, bytecode * code);
 
+void vm_execute_id_top(vm * machine, bytecode * code);
 void vm_execute_id_local(vm * machine, bytecode * code);
 void vm_execute_id_dim_local(vm * machine, bytecode * code);
 void vm_execute_id_dim_slice(vm * machine, bytecode * code);

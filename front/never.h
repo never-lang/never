@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2018-2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +25,17 @@
 #include "func.h"
 #include "symtab.h"
 #include "decl.h"
+#include "bind.h"
 
 typedef struct never
 {
     symtab * stab;
     decl_list * decls;
+    bind_list * binds;
     func_list * funcs;
 } never;
 
-never * never_new(decl_list * decls, func_list * funcs);
+never * never_new(decl_list * decls, bind_list * binds, func_list * funcs);
 void never_delete(never * nev);
 
 #endif /* __NEVER_H__ */

@@ -940,6 +940,10 @@ int never_constred(never * nev)
 {
     int result = CONSTRED_SUCC;
 
+    if (nev->binds)
+    {
+        bind_list_constred(nev->binds, &result);
+    }
     if (nev->funcs)
     {
         func_list_constred(nev->funcs, &result);

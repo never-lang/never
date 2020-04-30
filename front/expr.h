@@ -98,6 +98,7 @@ typedef enum id_type
     ID_TYPE_UNKNOWN = 0,
     ID_TYPE_LOCAL = 1,
     ID_TYPE_GLOBAL = 2,
+    ID_TYPE_BIND_TOP = 11,
     ID_TYPE_BIND = 3,
     ID_TYPE_MATCHBIND = 4,
     ID_TYPE_QUALIFIER = 5,

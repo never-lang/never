@@ -3152,9 +3152,28 @@ int decl_list_check_type(symtab * stab, decl_list * list, int * result)
 
 int never_check_type(never * nev, int * result)
 {
+    int start = 0;
     unsigned int syn_level = 0;
     
+    if (nev->stab != NULL && nev->decls != NULL)
+    {
+        /* add decls to symtab */
+        never_add_decl_list(nev->stab, nev->decls, result);
+
+        /* check decls */
+        decl_list_check_type(nev->stab, nev->decls, result);
+    }
+
     symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
+
+    if (nev->stab != NULL && nev->binds != NULL)
+    {
+        func_enum_bind_list(nev->binds, start);
+        bind_list_check_type(nev->stab, nev->binds, NULL, syn_level, result);
+        start += nev->binds->count;
+    }
+
+    func_enum_func_list(nev->funcs, start); 
     func_list_check_type(nev->stab, nev->funcs, syn_level, result);
 
     return 0;
@@ -3234,15 +3253,6 @@ int never_sem_check(const char * main_name, never * nev)
         nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     }
 
-    if (nev->stab != NULL && nev->decls != NULL)
-    {
-        /* add decls to symtab */
-        never_add_decl_list(nev->stab, nev->decls, &typecheck_res);
-
-        /* check decls */
-        decl_list_check_type(nev->stab, nev->decls, &typecheck_res);
-    }
-    
     /* printf("---- check types ---\n"); */
     never_check_type(nev, &typecheck_res);
 

@@ -480,6 +480,10 @@ int print_func_list(func_list * list, int depth)
 
 int print_functions(never * nev)
 {
+    if (nev->binds)
+    {
+        print_func_bind_list(nev->binds, 1);
+    }
     if (nev->funcs)
     {
         print_func_list(nev->funcs, 1);

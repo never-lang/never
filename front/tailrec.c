@@ -467,7 +467,7 @@ int func_tailrec_native(unsigned int syn_level, func * value)
     {
         bind_list_tailrec(syn_level, value->stab, value->body->binds, TAILREC_OP_SKIP);
     }
-    
+ 
     if (value->body != NULL && value->body->funcs != NULL)
     {
         func_list_tailrec(syn_level, value->body->funcs);
@@ -526,6 +526,10 @@ int never_tailrec(never * nev)
 {
     unsigned int syn_level = 0;
 
+    if (nev->binds)
+    {
+        bind_list_tailrec(syn_level, nev->stab, nev->binds, TAILREC_OP_SKIP);
+    }
     if (nev->funcs)
     {
         func_list_tailrec(syn_level, nev->funcs);

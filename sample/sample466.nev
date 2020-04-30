@@ -1,0 +1,19 @@
+
+let B = 2;
+let A = 2 + 2 * B;
+let xyz = let func (i : int) -> int { boo(A + B + i) };
+
+func boo(a : int) -> int
+{
+    print(a)
+}
+
+func main() -> int
+{
+    let a = A + B;
+    let b = 130;
+
+    boo(xyz(b));
+
+    0
+}

@@ -316,6 +316,19 @@ int expr_id_forin_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_id_bind_top_emit(expr * value, int stack_level, module * module_value,
+                          int * result)
+{
+    bytecode bc = { 0 };
+
+    bc.type = BYTECODE_ID_TOP;
+    bc.id_top.index = value->id.id_bind_value->index;
+
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
 int expr_id_bind_emit(expr * value, int stack_level, module * module_value,
                        int * result)
 {
@@ -324,7 +337,6 @@ int expr_id_bind_emit(expr * value, int stack_level, module * module_value,
     bc.type = BYTECODE_ID_LOCAL;
     bc.id_local.stack_level = stack_level;
     bc.id_local.index = value->id.id_bind_value->index;
-
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -417,6 +429,9 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
         break;
     case ID_TYPE_GLOBAL:
         expr_id_global_emit(value, stack_level, module_value, result);
+        break;
+    case ID_TYPE_BIND_TOP:
+        expr_id_bind_top_emit(value, stack_level, module_value, result);
         break;
     case ID_TYPE_BIND:
         expr_id_bind_emit(value, stack_level, module_value, result);
@@ -3889,7 +3904,7 @@ int func_body_emit_native(func * func_value, module * module_value,
 {
     bytecode bc = { 0 };
     bytecode *labelA, *labelE = NULL;
-    int func_count = 0;
+    int stack_level = 0;
 
     bc.type = BYTECODE_FUNC_DEF;
     labelA = bytecode_add(module_value->code, &bc);
@@ -3898,17 +3913,17 @@ int func_body_emit_native(func * func_value, module * module_value,
     if (func_value->body && func_value->body->binds)
     {
         bind_list_emit(func_value->body->binds, 0, module_value, list_weak, result);
-        func_count += func_value->body->binds->count;
+        stack_level += func_value->body->binds->count;
     }
     if (func_value->body && func_value->body->funcs)
     {
-        func_list_emit(func_value->body->funcs, func_count, module_value,
+        func_list_emit(func_value->body->funcs, stack_level, module_value,
                        list_weak, result);
-        func_count += func_value->body->funcs->count;
+        stack_level += func_value->body->funcs->count;
     }
     if (func_value->body && func_value->body->ret)
     {
-        expr_emit(func_value->body->ret, func_count, module_value, list_weak, result);
+        expr_emit(func_value->body->ret, stack_level, module_value, list_weak, result);
     }
     if (func_value->body && func_value->body->ret && func_value->body->ret->line_no > 0)
     {
@@ -4124,6 +4139,12 @@ int never_emit(const char * main_name, never * nev, module * module_value)
     int stack_level = 0;
     int gencode_res = 0;
     func_list_weak * list_weak = func_list_weak_new();
+
+    if (nev->binds)
+    {
+        bind_list_emit(nev->binds, stack_level, module_value, list_weak, &gencode_res);
+        /* stack_level += nev->binds->count; */
+    }
 
     func_list_emit(nev->funcs, stack_level, module_value, list_weak, &gencode_res);
     func_main_emit(main_name, nev, stack_level, module_value, &gencode_res);
