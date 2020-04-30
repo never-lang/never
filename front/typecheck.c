@@ -1570,7 +1570,9 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
 
-    if (value->left->type != EXPR_ID)
+    if (value->left->type != EXPR_ID &&
+        value->left->type != EXPR_ATTR &&
+        value->left->type != EXPR_ARRAY_DEREF)
     {
         print_warning_msg(value->line_no,
                           "expression on assignment left side is not an identifier but %s\n",
