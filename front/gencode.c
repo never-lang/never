@@ -153,7 +153,12 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 bind * bind_value = entry->bind_value;
                 if (bind_value->type == BIND_LET || bind_value->type == BIND_VAR)
                 {
-                    if (syn_level == entry->syn_level)
+                    if (entry->syn_level == 0)
+                    {
+                        value->id.id_type_value = ID_TYPE_BIND_TOP;
+                        value->id.id_bind_value = bind_value;
+                    }
+                    else if (syn_level == entry->syn_level)
                     {
                         value->id.id_type_value = ID_TYPE_BIND;
                         value->id.id_bind_value = bind_value;

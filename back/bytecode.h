@@ -35,6 +35,7 @@ typedef enum bytecode_type
     BYTECODE_CHAR,
     BYTECODE_STRING,
 
+    BYTECODE_ID_TOP,
     BYTECODE_ID_LOCAL,
     BYTECODE_ID_DIM_LOCAL,
     BYTECODE_ID_DIM_SLICE,
@@ -220,6 +221,10 @@ typedef struct bytecode
         {
             unsigned int index; /* BYTECODE_STRING */
         } string;
+        struct
+        {
+            int index;
+        } id_top;
         struct /* BYTECODE_ID_LOCAL BYTECODE_INC_INT */
         {
             int stack_level;
@@ -349,6 +354,7 @@ void bytecode_print_float(bytecode * code);
 void bytecode_print_char(bytecode * code);
 void bytecode_print_string(bytecode * code);
 
+void bytecode_print_id_top(bytecode * code);
 void bytecode_print_id_local(bytecode * code);
 void bytecode_print_id_dim_local(bytecode * code);
 void bytecode_print_id_dim_slice(bytecode * code);

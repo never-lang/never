@@ -1164,6 +1164,40 @@ func main() -> int
 }
 ```
 
+Enumerated records can be used to create variant type which accepts values of different types.
+
+```never
+enum Variant { Int { value : int; },
+               Float { value : float; },
+               Char { value : char; },
+               String { value : string; } }
+
+func printv ( v : Variant ) -> Variant
+{
+    match (v)
+    {
+        Variant::Int(value) -> { print(value); v };
+        Variant::Float(value) -> { printf(value); v };
+        Variant::Char(value) -> { printc(value); v };
+        Variant::String(value) -> { prints(value); v };
+    }
+}
+
+func main() -> int
+{
+    let i = 10;
+    let f = 10.0;
+    let c = 'A';
+
+    printv(Variant::Int(i));
+    printv(Variant::Float(f));
+    printv(Variant::Char(c));
+    printv(Variant::String("ten"));
+
+    0
+}
+```
+
 ## Mathematical Functions
 Never supports a few built-in mathematical functions - ```sin(x)```,
 ```cos(x)```, ```tan(x)```, ```exp(x)```, ```log(x)```, ```sqrt(x)```

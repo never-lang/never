@@ -1076,12 +1076,22 @@ decl_list: decl_list decl
 
 never: func_list
 {
-    $$ = *nev = never_new(NULL, $1);
+    $$ = *nev = never_new(NULL, NULL, $1);
+};
+
+never: bind_list func_list
+{
+    $$ = *nev = never_new(NULL, $1, $2);
 };
 
 never: decl_list func_list
 {
-    $$ = *nev = never_new($1, $2);
+    $$ = *nev = never_new($1, NULL, $2);
+};
+
+never: decl_list bind_list func_list
+{
+    $$ = *nev = never_new($1, $2, $3);
 };
 
 %%

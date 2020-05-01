@@ -1,10 +1,19 @@
 
+let B = 2;
+let A = 2 + 2 * B;
+let xyz = let func (i : int) -> int { boo(A + B + i) };
+
+func boo(a : int) -> int
+{
+    print(a)
+}
 
 func main() -> int
 {
-    let i = 10;
+    let a = A + B;
+    let b = 130;
 
-    if (i == 20) { i = 10 } else { 5 };
+    boo(xyz(b));
 
     0
 }

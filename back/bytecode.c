@@ -33,6 +33,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_CHAR, bytecode_print_char },
     { BYTECODE_STRING, bytecode_print_string },
 
+    { BYTECODE_ID_TOP, bytecode_print_id_top },
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
     { BYTECODE_ID_DIM_LOCAL, bytecode_print_id_dim_local },
     { BYTECODE_ID_DIM_SLICE, bytecode_print_id_dim_slice },
@@ -230,6 +231,11 @@ void bytecode_print_char(bytecode * code)
 void bytecode_print_string(bytecode * code)
 {
     printf("%d: string %u\n", code->addr, code->string.index);
+}
+
+void bytecode_print_id_top(bytecode * code)
+{
+    printf("%d: id top %d\n", code->addr, code->id_top.index);
 }
 
 void bytecode_print_id_local(bytecode * code)

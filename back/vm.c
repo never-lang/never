@@ -41,6 +41,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_CHAR, vm_execute_char },
     { BYTECODE_STRING, vm_execute_string },
 
+    { BYTECODE_ID_TOP, vm_execute_id_top },
     { BYTECODE_ID_LOCAL, vm_execute_id_local },
     { BYTECODE_ID_DIM_LOCAL, vm_execute_id_dim_local },
     { BYTECODE_ID_DIM_SLICE, vm_execute_id_dim_slice },
@@ -286,6 +287,22 @@ void vm_execute_string(vm * machine, bytecode * code)
     entry.addr = gc_alloc_string_ref(machine->collector, addr);
     
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_id_top(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr addr = machine
+                       ->stack[code->id_top.index]
+                       .addr;
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;   
 }
 
 void vm_execute_id_local(vm * machine, bytecode * code)
