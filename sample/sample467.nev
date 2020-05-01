@@ -1,0 +1,13 @@
+
+let f = let func() -> int { 10 * 10 };
+let A = f();
+let B = A;
+
+func main() -> int
+{
+    print(f());
+    print(A);
+    print(B);
+
+    0
+}

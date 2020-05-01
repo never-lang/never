@@ -1229,7 +1229,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     else
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(value->line_no, "cannot find param %s\n",
+        print_error_msg(value->line_no, "cannot find identifier %s\n",
                         value->id.id);
     }
     return 0;

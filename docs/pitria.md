@@ -1,5 +1,6 @@
 # Pythagorean Triangle
 
+This example presents how to create Pythagorean triangles using list comprehension and ranges.
 
 ```never
 record Triangle
@@ -11,23 +12,21 @@ record Triangle
 
 func printTriangle(t[D] : Triangle) -> int
 {
-    let d = 0;
-    
-    for (d = 0; d < D; d = d + 1)
+    for (d in t)
         prints("pythagorean triangle" +
-               " a = " + t[d].a + 
-               " b = " + t[d].b +
-               " c = " + t[d].c + "\n")
+               " a = " + d.a + 
+               " b = " + d.b +
+               " c = " + d.c + "\n")
 }
 
-func range() -> [_] : int
+func getRange() -> [_] : int
 {
     [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ] : int
 }
 
 func main() -> int
 {
-    let r = range();
+    let r = getRange();
     let pitria = [ Triangle(a, b, c) |
                     a in r;
                     b in r;
@@ -39,6 +38,17 @@ func main() -> int
     0
 }
 ```
+
+Function ```getRange``` can be substituted with one returning range type.
+
+```never
+func getRange() -> [..] : range
+{
+    [ 1..13 ]
+}
+```
+
+After running the program, the following output is displayed.
 
 Output:
 
