@@ -22,6 +22,9 @@
 #ifndef __PARAM_H__
 #define __PARAM_H__
 
+#define PARAM_CMP_SUCC 0
+#define PARAM_CMP_FAIL 1
+
 typedef struct range range;
 typedef struct range_list range_list;
 
@@ -90,6 +93,11 @@ param * param_new_slice(char * id, range_list * ranges, param * ret);
 param * param_new_record(char * id, char * record_id);
 param * param_new_func(char * id, param_list * params, param * ret);
 void param_delete(param * value);
+
+int param_cmp(param * param_one, param * param_two);
+int param_list_cmp(param_list * param_one, param_list * param_two);
+int func_cmp(param_list * param_list_one, param * ret_one,
+             param_list * param_list_two, param * ret_two);
 
 param_list_node * param_list_node_new(param * value);
 void param_list_node_delete(param_list_node * node);

@@ -41,10 +41,6 @@ int enum_matchbind_list(matchbind_list * list);
 int expr_set_comb_type(expr * value, param * param_value);
 int expr_qualifier_set_comb_type(expr * value, expr * expr_value);
 
-int param_cmp(param * param_one, param * param_two);
-int param_list_cmp(param_list * param_one, param_list * param_two);
-int func_cmp(param_list * param_list_one, param * ret_one,
-             param_list * param_list_two, param * ret_two);
 int array_cmp(int comb_dims_one, param * ret_one,
               int comb_dims_two, param * ret_two); 
 int param_is_num(param * value);
