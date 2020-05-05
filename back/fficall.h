@@ -62,5 +62,19 @@ int test_print_str(const char * str);
 char * test_conc_str(const char * a, const char * b);
 char * test_conc_int_str(int d, const char * s);
 
+typedef struct test_Point
+{
+    int x;
+    int y;
+} test_Point;
+
+typedef struct test_Rect
+{
+    test_Point a;
+    test_Point b;
+} test_Rect;
+
+test_Point test_rect(test_Rect r);
+
 #endif /* __FFICALL_H__ */
 

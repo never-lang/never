@@ -1,0 +1,30 @@
+
+record Point
+{
+    x : int;
+    y : int;
+}
+
+record Rect
+{
+    a : Point;
+    b : Point;
+}
+
+extern "host" func test_print_str(s : string) -> int
+extern "host" func test_rect(r : Rect) -> Point
+
+func main() -> int
+{
+    let r = Rect(Point(10, 20), Point(30, 40));
+    let p = Point;
+
+    p = test_rect(r);
+
+    prints(p.x + " " + p.y + "\n");
+
+    /* test_print_str("one two three") */
+
+    0
+}
+
