@@ -3809,15 +3809,26 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
     {
         case PARAM_INT:
             bc.type = BYTECODE_FUNC_FFI_INT;
+            bytecode_add(module_value->code, &bc);
         break;
         case PARAM_FLOAT:
             bc.type = BYTECODE_FUNC_FFI_FLOAT;
+            bytecode_add(module_value->code, &bc);
         break;
         case PARAM_CHAR:
             bc.type = BYTECODE_FUNC_FFI_CHAR;
+            bytecode_add(module_value->code, &bc);
         break;
         case PARAM_STRING:
             bc.type = BYTECODE_FUNC_FFI_STRING;
+            bytecode_add(module_value->code, &bc);
+        break;
+        case PARAM_RECORD:
+            bc.type = BYTECODE_FUNC_FFI_RECORD;
+            bc.ffi_record.count = value->record_value->params->count;
+            bytecode_add(module_value->code, &bc);
+
+            func_body_emit_ffi_param_list(value->record_value->params, module_value, result);
         break;
         case PARAM_BOOL:
         case PARAM_DIM:
@@ -3827,14 +3838,11 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
         case PARAM_SLICE:
         case PARAM_SLICE_DIM:
         case PARAM_ENUMTYPE:
-        case PARAM_RECORD:
         case PARAM_FUNC:
             *result = EMIT_FAIL;
             print_error_msg(value->line_no, "ffi type not supported");
         break;
     }
-
-    bytecode_add(module_value->code, &bc);
 
     return 0;
 }

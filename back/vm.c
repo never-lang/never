@@ -185,6 +185,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_FUNC_FFI_FLOAT, vm_execute_func_ffi_float },
     { BYTECODE_FUNC_FFI_CHAR, vm_execute_func_ffi_char },
     { BYTECODE_FUNC_FFI_STRING, vm_execute_func_ffi_string },
+    { BYTECODE_FUNC_FFI_RECORD, vm_execute_func_ffi_record },
 
     { BYTECODE_DUP, vm_execute_dup },
     { BYTECODE_GLOBAL_VEC, vm_execute_global_vec },
@@ -2857,55 +2858,260 @@ int vm_str_print(char * str)
     return 0;
 }
 
+unsigned int vm_execute_func_ffi_align(unsigned int value, unsigned int alignment)
+{
+    if (alignment == 1) return value;
+    return (value + (alignment - 1)) & ~(alignment - 1);
+}
+
+ffi_type * vm_execute_func_ffi_record_type(vm * machine, unsigned int count)
+{
+    ffi_type * type = (ffi_type *)malloc(sizeof(ffi_type));
+
+    type->size = 0;
+    type->alignment = 0;
+    type->type = FFI_TYPE_STRUCT;
+    type->elements = (ffi_type **)malloc((count + 1) * sizeof(ffi_type *));
+    type->elements[count] = NULL;
+
+    unsigned int i = 0;
+    for (i = 0; i < count; i++)
+    {
+        bytecode bc = machine->prog->module_value->code_arr[machine->ip++];
+        switch (bc.type)
+        {
+            case BYTECODE_FUNC_FFI_INT:
+            {
+                type->elements[i] = &ffi_type_sint;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_FLOAT:
+            {
+                type->elements[i] = &ffi_type_float;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_CHAR:
+            {
+                type->elements[i] = &ffi_type_schar;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_STRING:
+            {
+                type->elements[i] = &ffi_type_pointer;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_RECORD:
+            {
+                ffi_type * rec_value = vm_execute_func_ffi_record_type(machine, bc.ffi_record.count);
+                type->elements[i] = rec_value;
+            }
+            break;
+            default:
+                assert(0);
+        }
+    }
+
+    return type;
+}
+
+void vm_execute_func_ffi_record_value(vm * machine, mem_ptr rec_addr, unsigned int count,
+                                      ffi_type * type, void * data, unsigned int * offset)
+{
+    unsigned int i = 0;
+
+    for (i = 0; i < count; i++)
+    {
+        bytecode bc = machine->prog->module_value->code_arr[machine->ip++];
+        switch (bc.type)
+        {
+            case BYTECODE_FUNC_FFI_INT:
+            {
+                mem_ptr int_addr = gc_get_vec(machine->collector, rec_addr, i);
+                int * int_value = gc_get_int_ptr(machine->collector, int_addr);
+
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                *(int *)((char *)data + *offset) = *int_value;
+                *offset += type->elements[i]->size;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_FLOAT:
+            {
+                mem_ptr float_addr = gc_get_vec(machine->collector, rec_addr, i);
+                float * float_value = gc_get_float_ptr(machine->collector, float_addr);
+
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                *(float *)((char *)data + *offset) = *float_value;
+                *offset += type->elements[i]->size;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_CHAR:
+            {
+                mem_ptr char_addr = gc_get_vec(machine->collector, rec_addr, i);
+                char * char_value = gc_get_char_ptr(machine->collector, char_addr);
+
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                *(char *)((char *)data + *offset) = *char_value;
+                *offset += type->elements[i]->size;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_STRING:
+            {
+                mem_ptr str_addr = gc_get_vec(machine->collector, rec_addr, i);
+                mem_ptr str_b = gc_get_string_ref(machine->collector, str_addr);
+                char ** str_value = gc_get_string_ptr(machine->collector, str_b);
+
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                *(char **)((char *)data + *offset) = *str_value;
+                *offset += type->elements[i]->size;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_RECORD:
+            {
+                unsigned int rec_offset = 0;
+                mem_ptr rec_ref_addr = gc_get_vec(machine->collector, rec_addr, i);
+                mem_ptr rec_addr = gc_get_vec_ref(machine->collector, rec_ref_addr);
+
+                *offset = rec_offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                vm_execute_func_ffi_record_value(machine, rec_addr, bc.ffi_record.count, type->elements[i], data, offset);
+                *offset = rec_offset + type->elements[i]->size;
+            }
+            break;
+            default:
+                assert(0);
+        }
+    }
+}
+
+mem_ptr vm_execute_func_ffi_record_new(vm * machine, unsigned int count,
+                                       ffi_type * type, void * data, unsigned int * offset)
+{
+    unsigned int rec_offset = 0;
+
+    *offset = rec_offset = vm_execute_func_ffi_align(*offset, type->alignment);
+
+    mem_ptr rec = gc_alloc_vec(machine->collector, count);
+
+    unsigned int i = 0;
+    for (i = 0; i < count; i++)
+    {
+        bytecode bc = machine->prog->module_value->code_arr[machine->ip++];
+        switch (bc.type)
+        {
+            case BYTECODE_FUNC_FFI_INT:
+            {
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+
+                int int_value = *(int *)((char *)data + *offset);
+                mem_ptr int_addr = gc_alloc_int(machine->collector, int_value);
+
+                *offset += type->elements[i]->size;
+
+                gc_set_vec(machine->collector, rec, i, int_addr);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_FLOAT:
+            {
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+
+                float float_value = *(float *)((char *)data + *offset);
+                mem_ptr float_addr = gc_alloc_float(machine->collector, float_value);
+
+                *offset += type->elements[i]->size;
+
+                gc_set_vec(machine->collector, rec, i, float_addr);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_CHAR:
+            {
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+
+                char char_value = *(char *)((char *)data + *offset);
+                mem_ptr char_addr = gc_alloc_char(machine->collector, char_value);
+
+                *offset += type->elements[i]->size;
+
+                gc_set_vec(machine->collector, rec, i, char_addr);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_STRING:
+            {
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+
+                char * str_value = *(char **)((char *)data + *offset);
+                mem_ptr str_addr = gc_alloc_string(machine->collector, str_value);
+                mem_ptr str_ref_addr = gc_alloc_string_ref(machine->collector, str_addr);
+
+                *offset += type->elements[i]->size;
+
+                gc_set_vec(machine->collector, rec, i, str_ref_addr);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_RECORD:
+            {
+                unsigned int rec_offset = 0;
+                *offset = rec_offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+
+                mem_ptr rec_addr = vm_execute_func_ffi_record_new(machine, bc.ffi_record.count,
+                                                                  type->elements[i], data , offset);
+
+                *offset = rec_offset + type->elements[i]->size;
+
+                gc_set_vec(machine->collector, rec, i, rec_addr);            
+            }
+            break;
+            default:
+                assert(0);
+        }
+    }
+
+    *offset = rec_offset + type->size;
+
+    rec = gc_alloc_vec_ref(machine->collector, rec);
+
+    return rec;
+}
+
 void vm_execute_func_ffi(vm * machine, bytecode * code)
 {
 #ifndef NO_FFI
     bytecode bc = { 0 };
     int ret = FFI_SUCC;
     unsigned int i = 0;
-
+    unsigned int ffi_count = code->ffi.count;
+        
     ffi_decl * fd = ffi_decl_new(code->ffi.count);
 
-    /* prepare param types and values */
-    for (i = 0; i < code->ffi.count; i++)
+    /* prepare param types */
+    unsigned int ip = machine->ip;
+    for (i = 0; i < ffi_count; i++)
     {
-        bc = machine->prog->module_value->code_arr[machine->ip + i];
+        bc = machine->prog->module_value->code_arr[machine->ip++];
         switch (bc.type)
         {
             case BYTECODE_FUNC_FFI_INT:
             {
-                int * int_value;
-                int_value = gc_get_int_ptr(machine->collector, machine->stack[machine->sp - i].addr);
-
                 ffi_decl_set_param_type(fd, i, &ffi_type_sint);
-                ffi_decl_set_param_value(fd, i, int_value);
             }
             break;
             case BYTECODE_FUNC_FFI_FLOAT:
             {
-                float * float_value;
-                float_value = gc_get_float_ptr(machine->collector, machine->stack[machine->sp - i].addr);
-
                 ffi_decl_set_param_type(fd, i, &ffi_type_float);
-                ffi_decl_set_param_value(fd, i, float_value);
             }
             break;
             case BYTECODE_FUNC_FFI_CHAR:
             {
-                char * char_value;
-                char_value = gc_get_char_ptr(machine->collector, machine->stack[machine->sp - i].addr);
-
                 ffi_decl_set_param_type(fd, i, &ffi_type_schar);
-                ffi_decl_set_param_value(fd, i, char_value);
             }
             break;
             case BYTECODE_FUNC_FFI_STRING:
             {
-                mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp - i].addr);
-                char ** str_value = gc_get_string_ptr(machine->collector, str_b);
-
                 ffi_decl_set_param_type(fd, i, &ffi_type_pointer);
-                ffi_decl_set_param_value(fd, i, str_value);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_RECORD:
+            {
+                ffi_type * rec_type = vm_execute_func_ffi_record_type(machine, bc.ffi_record.count);
+                ffi_decl_set_param_type(fd, i, rec_type);
             }
             break;
             default:
@@ -2914,7 +3120,7 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     }
 
     /* set return */
-    bc = machine->prog->module_value->code_arr[machine->ip + code->ffi.count];
+    bc = machine->prog->module_value->code_arr[machine->ip++];
     switch (bc.type)
     {
         case BYTECODE_FUNC_FFI_INT:
@@ -2929,6 +3135,12 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         case BYTECODE_FUNC_FFI_STRING:
             ffi_decl_set_ret_type(fd, &ffi_type_pointer);
         break;
+        case BYTECODE_FUNC_FFI_RECORD:
+        {
+            ffi_type * rec_type = vm_execute_func_ffi_record_type(machine, bc.ffi_record.count);
+            ffi_decl_set_ret_type(fd, rec_type);
+        }
+        break;
         default:
             assert(0);
     }
@@ -2942,6 +3154,54 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_FFI_FAIL;
         return;
+    }
+    
+    /* prepare values */
+    machine->ip = ip;
+    for (i = 0; i < code->ffi.count; i++)
+    {
+        bc = machine->prog->module_value->code_arr[machine->ip++];
+        switch (bc.type)
+        {
+            case BYTECODE_FUNC_FFI_INT:
+            {
+                int * int_value = gc_get_int_ptr(machine->collector, machine->stack[machine->sp--].addr);
+                ffi_decl_set_param_value(fd, i, int_value);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_FLOAT:
+            {
+                float * float_value = gc_get_float_ptr(machine->collector, machine->stack[machine->sp--].addr);
+                ffi_decl_set_param_value(fd, i, float_value);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_CHAR:
+            {
+                char * char_value = gc_get_char_ptr(machine->collector, machine->stack[machine->sp--].addr);
+                ffi_decl_set_param_value(fd, i, char_value);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_STRING:
+            {
+                mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp--].addr);
+                char ** str_value = gc_get_string_ptr(machine->collector, str_b);
+                ffi_decl_set_param_value(fd, i, str_value);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_RECORD:
+            {
+                unsigned int offset = 0;
+                void * rec_value = (void *)malloc(fd->param_types[i]->size);
+                mem_ptr rec_addr = gc_get_vec_ref(machine->collector, machine->stack[machine->sp--].addr);
+
+                vm_execute_func_ffi_record_value(machine, rec_addr, bc.ffi_record.count, fd->param_types[i], rec_value, &offset);
+
+                ffi_decl_set_param_value(fd, i, rec_value);
+            }
+            break;
+            default:
+                assert(0);
+        }
     }
 
     /* call */
@@ -2974,6 +3234,7 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     }
 
     /* get result */
+    bc = machine->prog->module_value->code_arr[machine->ip++];
     switch (bc.type)
     {
         case BYTECODE_FUNC_FFI_INT:
@@ -2989,6 +3250,13 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         {
             mem_ptr str = gc_alloc_string(machine->collector, fd->ret_string_value);
             addr = gc_alloc_string_ref(machine->collector, str);
+        }
+        break;
+        case BYTECODE_FUNC_FFI_RECORD:
+        {
+            unsigned int offset = 0;
+            addr = vm_execute_func_ffi_record_new(machine, bc.ffi_record.count,
+                                                  fd->ret_type, fd->ret_void_value, &offset);
         }
         break;
         default:
@@ -3023,6 +3291,11 @@ void vm_execute_func_ffi_char(vm * machine, bytecode * code)
 }
 
 void vm_execute_func_ffi_string(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
+
+void vm_execute_func_ffi_record(vm * machine, bytecode * code)
 {
     /* func_ffi reads it */
 }

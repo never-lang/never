@@ -217,6 +217,7 @@ void vm_execute_func_ffi_int(vm * machine, bytecode * code);
 void vm_execute_func_ffi_float(vm * machine, bytecode * code);
 void vm_execute_func_ffi_char(vm * machine, bytecode * code);
 void vm_execute_func_ffi_string(vm * machine, bytecode * code);
+void vm_execute_func_ffi_record(vm * machine, bytecode * code);
 
 void vm_execute_dup(vm * machine, bytecode * code);
 void vm_execute_global_vec(vm * machine, bytecode * code);

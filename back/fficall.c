@@ -39,8 +39,36 @@ ffi_decl * ffi_decl_new(unsigned int count)
     return value;
 }
 
+void ffi_decl_delete_ffi_type(ffi_type * type)
+{
+    unsigned int i = 0;
+
+    while (type->elements[i] != NULL)
+    {
+        if (type->elements[i]->type == FFI_TYPE_STRUCT)
+        {
+            ffi_decl_delete_ffi_type(type->elements[i]);
+        }
+        i++;
+    }
+
+    free(type->elements);
+    free(type);
+}
+
 void ffi_decl_delete(ffi_decl * value)
 {
+    unsigned int i = 0;
+
+    for (i = 0; i < value->count; i++)
+    {
+        if (value->param_types[i]->type == FFI_TYPE_STRUCT)
+        {
+            ffi_decl_delete_ffi_type(value->param_types[i]);
+            free(value->param_values[i]);
+        }
+    }
+
     if (value->param_types != NULL)
     {
         free(value->param_types);
@@ -49,6 +77,12 @@ void ffi_decl_delete(ffi_decl * value)
     {
         free(value->param_values);
     }
+    if (value->ret_type->type == FFI_TYPE_STRUCT)
+    {
+        free(value->ret_void_value);
+        ffi_decl_delete_ffi_type(value->ret_type);
+    }
+
     free(value);
 }
 
@@ -87,6 +121,12 @@ int ffi_decl_prepare(ffi_decl * decl)
     {
         fprintf(stderr, "ffi_prep_cif returned an error %d\n", status);
         return FFI_FAIL;
+    }
+
+    /* allocate memory for return */
+    if (decl->ret_type->type == FFI_TYPE_STRUCT)
+    {
+        decl->ret_void_value = (void *)malloc(decl->ret_type->size);
     }
 
     return FFI_SUCC;
@@ -131,7 +171,14 @@ int ffi_decl_call(ffi_decl * decl, char * fname, void * handle)
         return FFI_FAIL;
     }
 
-    ffi_call(&decl->cif, FFI_FN(func), &decl->ret_void_value, decl->param_values);
+    if (decl->ret_type->type == FFI_TYPE_STRUCT)
+    {
+        ffi_call(&decl->cif, FFI_FN(func), decl->ret_void_value, decl->param_values);
+    }
+    else
+    {
+        ffi_call(&decl->cif, FFI_FN(func), &decl->ret_void_value, decl->param_values);
+    }
 
     return FFI_SUCC;
 }
@@ -164,6 +211,15 @@ char * test_conc_int_str(int d, const char * s)
     sprintf(c, "%d:%s", d, s);
 
     return c;
+}
+
+test_Point test_rect(test_Rect r)
+{
+    test_Point rec = { 110, 120 };
+
+    printf("test rect [ %d %d ] [ %d %d ]\n", r.a.x, r.a.y, r.b.x, r.b.y);
+
+    return rec;
 }
 
 #endif /* NO_FFI */

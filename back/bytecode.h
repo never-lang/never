@@ -178,6 +178,7 @@ typedef enum bytecode_type
     BYTECODE_FUNC_FFI_FLOAT,
     BYTECODE_FUNC_FFI_CHAR,
     BYTECODE_FUNC_FFI_STRING,
+    BYTECODE_FUNC_FFI_RECORD,
 
     BYTECODE_DUP,
     BYTECODE_GLOBAL_VEC,
@@ -324,6 +325,10 @@ typedef struct bytecode
             unsigned int fname_index;
             unsigned int libname_index;
         } ffi;
+        struct
+        {
+            unsigned int count;
+        } ffi_record;
     };
 } bytecode;
 
@@ -502,6 +507,7 @@ void bytecode_print_func_ffi_int(bytecode * code);
 void bytecode_print_func_ffi_float(bytecode * code);
 void bytecode_print_func_ffi_char(bytecode * code);
 void bytecode_print_func_ffi_string(bytecode * code);
+void bytecode_print_func_ffi_record(bytecode * code);
 
 void bytecode_print_dup(bytecode * code);
 void bytecode_print_global_vec(bytecode * code);
