@@ -217,7 +217,7 @@ test_Point test_rect(test_Rect r)
 {
     test_Point rec = { 110, 120 };
 
-    printf("test rect [ %d %d ] [ %d %d ]\n", r.a.x, r.a.y, r.b.x, r.b.y);
+    printf("test rect [ %d %d ] [ %d %d ] [ %d %d ]\n", r.a.x, r.a.y, r.b.x, r.b.y, r.c.x, r.c.y);
 
     return rec;
 }

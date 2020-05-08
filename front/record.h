@@ -28,6 +28,7 @@ typedef struct param_list param_list;
 
 typedef struct record
 {
+    char cycle;
     char * id;
     param_list * params;
     symtab * stab;

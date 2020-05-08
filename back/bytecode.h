@@ -178,6 +178,7 @@ typedef enum bytecode_type
     BYTECODE_FUNC_FFI_FLOAT,
     BYTECODE_FUNC_FFI_CHAR,
     BYTECODE_FUNC_FFI_STRING,
+    BYTECODE_FUNC_FFI_VOID,
     BYTECODE_FUNC_FFI_RECORD,
 
     BYTECODE_DUP,
@@ -328,6 +329,7 @@ typedef struct bytecode
         struct
         {
             unsigned int count;
+            unsigned int total_count;
         } ffi_record;
     };
 } bytecode;
@@ -507,6 +509,7 @@ void bytecode_print_func_ffi_int(bytecode * code);
 void bytecode_print_func_ffi_float(bytecode * code);
 void bytecode_print_func_ffi_char(bytecode * code);
 void bytecode_print_func_ffi_string(bytecode * code);
+void bytecode_print_func_ffi_void(bytecode * code);
 void bytecode_print_func_ffi_record(bytecode * code);
 
 void bytecode_print_dup(bytecode * code);

@@ -29,9 +29,11 @@ record * record_new(char * id, param_list * params)
 {
     record * value = (record *)malloc(sizeof(record));
     
+    value->cycle = 0;
     value->id = id;
     value->params = params;
     value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
+    value->line_no = 0;
     
     return value;
 }

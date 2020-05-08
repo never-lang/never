@@ -172,6 +172,12 @@ int expr_set_comb_type(expr * value, param * param_value)
         case PARAM_STRING:
             value->comb.comb = COMB_TYPE_STRING;
         break;
+        case PARAM_VOID:
+            value->comb.comb = COMB_TYPE_INT;
+        break;
+        case PARAM_C_PTR:
+            value->comb.comb = COMB_TYPE_C_PTR;
+        break;
         case PARAM_DIM:
             value->comb.comb = COMB_TYPE_INT;
         break;
@@ -932,6 +938,8 @@ int param_check_type(symtab * tab, param * param_value,
         break;
         case PARAM_CHAR:
         case PARAM_STRING:
+        case PARAM_VOID:
+        case PARAM_C_PTR:
         case PARAM_DIM:
         break;
         case PARAM_ARRAY:
@@ -2030,6 +2038,8 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
     case COMB_TYPE_FLOAT:
     case COMB_TYPE_CHAR:
     case COMB_TYPE_STRING:
+    case COMB_TYPE_VOID:
+    case COMB_TYPE_C_PTR:
     case COMB_TYPE_ARRAY:
     case COMB_TYPE_RANGE:
     case COMB_TYPE_SLICE:

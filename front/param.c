@@ -102,6 +102,36 @@ param * param_new_string(char * id)
     return value;
 }
 
+param * param_new_void(char * id)
+{
+    param * value = (param *)malloc(sizeof(param));
+    
+    value->type = PARAM_VOID;
+    value->index = -1;
+    value->id = NULL;
+    value->record_id = NULL;
+    value->params = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_c_ptr(char * id)
+{
+    param * value = (param *)malloc(sizeof(param));
+    
+    value->type = PARAM_C_PTR;
+    value->index = -1;
+    value->id = id;
+    value->record_id = NULL;
+    value->params = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
 param * param_new_dim(char * id)
 {
     param * value = (param *)malloc(sizeof(param));
@@ -236,6 +266,8 @@ void param_delete(param * value)
         case PARAM_FLOAT:
         case PARAM_CHAR:
         case PARAM_STRING:
+        case PARAM_VOID:
+        case PARAM_C_PTR:
         case PARAM_DIM:
         case PARAM_RANGE_DIM:
         case PARAM_SLICE_DIM:
@@ -304,6 +336,14 @@ int param_cmp(param * param_one, param * param_two)
         return PARAM_CMP_SUCC;
     }
     else if (param_one->type == PARAM_STRING && param_two->type == PARAM_STRING)
+    {
+        return PARAM_CMP_SUCC;
+    }
+    else if (param_one->type == PARAM_VOID && param_two->type == PARAM_VOID)
+    {
+        return PARAM_CMP_SUCC;
+    }
+    else if (param_one->type == PARAM_C_PTR && param_two->type == PARAM_C_PTR)
     {
         return PARAM_CMP_SUCC;
     }
@@ -576,33 +616,37 @@ char * param_type_str(param_type type)
     switch (type)
     {
     case PARAM_BOOL:
-        return "PARAM_BOOL";
+        return "param bool";
     case PARAM_INT:
-        return "PARAM_INT";
+        return "param int";
     case PARAM_FLOAT:
-        return "PARAM_FLOAT";
+        return "param float";
     case PARAM_ENUMTYPE:
-        return "PARAM_ENUMTYPE";
+        return "param enumtype";
     case PARAM_CHAR:
-        return "PARAM_CHAR";
+        return "param char";
     case PARAM_STRING:
-        return "PARAM_STRING";
+        return "param string";
+    case PARAM_VOID:
+        return "param void";
+    case PARAM_C_PTR:
+        return "param c_ptr";
     case PARAM_RECORD:
-        return "PARAM_RECORD";
+        return "param record";
     case PARAM_DIM:
-        return "PARAM_DIM";
+        return "param dim";
     case PARAM_RANGE_DIM:
-        return "PARAM_RANGE_DIM";
+        return "param range dim";
     case PARAM_ARRAY:
-        return "PARAM_ARRAY";
+        return "param array";
     case PARAM_RANGE:
-        return "PARAM_RANGE";
+        return "param range";
     case PARAM_SLICE:
-        return "PARAM_SLICE";
+        return "param slice";
     case PARAM_SLICE_DIM:
-        return "PARAM_SLICE_DIM";
+        return "param slice dim";
     case PARAM_FUNC:
-        return "PARAM_FUNC";
+        return "param func";
     }
-    return "PARAM_???";
+    return "unknown param";
 }

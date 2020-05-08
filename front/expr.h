@@ -84,6 +84,8 @@ typedef enum comb_type
     COMB_TYPE_FLOAT = 5,
     COMB_TYPE_CHAR = 8,
     COMB_TYPE_STRING = 9,
+    COMB_TYPE_VOID = 17,
+    COMB_TYPE_C_PTR = 18,
     COMB_TYPE_ARRAY = 10,
     COMB_TYPE_RANGE = 11,
     COMB_TYPE_SLICE = 12,
