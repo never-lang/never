@@ -3801,9 +3801,10 @@ int func_except_emit(func_except * value, func * func_value, int stack_level,
     return 0;
 }
 
-int func_body_emit_ffi_param(param * value, module * module_value, int * result)
+unsigned int func_body_emit_ffi_param(param * value, module * module_value, int * result)
 {
     bytecode bc = { 0 };
+    unsigned int total_count = 1;
 
     switch (value->type)
     {
@@ -3823,12 +3824,36 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
             bc.type = BYTECODE_FUNC_FFI_STRING;
             bytecode_add(module_value->code, &bc);
         break;
+        case PARAM_VOID:
+            bc.type = BYTECODE_FUNC_FFI_VOID;
+            bytecode_add(module_value->code, &bc);
+        break;
+        case PARAM_C_PTR:
+            /*bc.type = BYTECODE_FUNC_C_PTR;
+            bytecode_add(module_value->code, &bc);*/
+            assert(0);
+        break;
         case PARAM_RECORD:
+        {
+            bytecode * ffi_rec;
             bc.type = BYTECODE_FUNC_FFI_RECORD;
             bc.ffi_record.count = value->record_value->params->count;
-            bytecode_add(module_value->code, &bc);
+            ffi_rec = bytecode_add(module_value->code, &bc);
 
-            func_body_emit_ffi_param_list(value->record_value->params, module_value, result);
+            if (value->record_value->cycle == 0)
+            {
+                value->record_value->cycle = 1;
+                total_count = 1 + func_body_emit_ffi_param_list(value->record_value->params, module_value, result);
+                value->record_value->cycle = 0;
+            }
+            else
+            {
+                *result = EMIT_FAIL;
+                print_error_msg(value->line_no, "cannot generate ffi code for infinite records %s\n", value->record_value->id);
+            }
+
+            ffi_rec->ffi_record.total_count = total_count;
+        }
         break;
         case PARAM_BOOL:
         case PARAM_DIM:
@@ -3844,11 +3869,12 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
         break;
     }
 
-    return 0;
+    return total_count;
 }
 
-int func_body_emit_ffi_param_list(param_list * params, module * module_value, int * result)
+unsigned int func_body_emit_ffi_param_list(param_list * params, module * module_value, int * result)
 {
+    unsigned int total_count = 0;
     param_list_node * node = params->tail;
     
     while (node != NULL)
@@ -3856,12 +3882,12 @@ int func_body_emit_ffi_param_list(param_list * params, module * module_value, in
         param * value = node->value;
         if (value != NULL)
         {
-            func_body_emit_ffi_param(value, module_value, result);
+            total_count += func_body_emit_ffi_param(value, module_value, result);
         }
         node = node->next;
     }
 
-    return 0;
+    return total_count;
 }
 
 int func_body_emit_ffi(func * func_value, module * module_value,

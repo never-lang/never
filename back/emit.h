@@ -226,8 +226,8 @@ int except_implicit_emit(func * func_value, int stack_level, module * module_val
                          func_list_weak * list_weak, int * result);
 int func_except_emit(func_except * value, func * func_value, int stack_level,
                      module * module_value, func_list_weak * list_weak, int * result);
-int func_body_emit_ffi_param(param * value, module * module_value, int * result);
-int func_body_emit_ffi_param_list(param_list * params, module * module_value, int * result);
+unsigned int func_body_emit_ffi_param(param * value, module * module_value, int * result);
+unsigned int func_body_emit_ffi_param_list(param_list * params, module * module_value, int * result);
 int func_body_emit_ffi(func * func_value, module * module_value,
                        func_list_weak * list_weak, int * result);
 int func_body_emit_native(func * func_value, module * module_value,

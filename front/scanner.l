@@ -175,6 +175,18 @@ string {
     return TOK_STRING;
 }
 
+c_ptr {
+    tokp->line_no = line_no;
+    scanner_printf("c_ptr\n");
+    return TOK_C_PTR;
+}
+
+void {
+    tokp->line_no = line_no;
+    scanner_printf("void\n");
+    return TOK_VOID;
+}
+
 nil {
     tokp->line_no = line_no;
     scanner_printf("nil\n");

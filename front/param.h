@@ -35,6 +35,8 @@ typedef enum param_type
     PARAM_FLOAT,
     PARAM_CHAR,
     PARAM_STRING,
+    PARAM_VOID,
+    PARAM_C_PTR,
     PARAM_DIM,
     PARAM_ARRAY,
     PARAM_RANGE,
@@ -85,6 +87,8 @@ param * param_new_int(char * id);
 param * param_new_float(char * id);
 param * param_new_char(char * id);
 param * param_new_string(char * id);
+param * param_new_void(char * id);
+param * param_new_c_ptr(char * id);
 param * param_new_dim(char * id);
 param * param_new_array(char * id, param_list * dims, param * ret);
 param * param_new_range(char * id, range_list * ranges);

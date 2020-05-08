@@ -177,6 +177,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_FUNC_FFI_FLOAT, bytecode_print_func_ffi_float },
     { BYTECODE_FUNC_FFI_CHAR, bytecode_print_func_ffi_char },
     { BYTECODE_FUNC_FFI_STRING, bytecode_print_func_ffi_string },
+    { BYTECODE_FUNC_FFI_VOID, bytecode_print_func_ffi_void },
     { BYTECODE_FUNC_FFI_RECORD, bytecode_print_func_ffi_record },
 
     { BYTECODE_DUP, bytecode_print_dup },    
@@ -845,9 +846,14 @@ void bytecode_print_func_ffi_string(bytecode * code)
     printf("%d: ffi string\n", code->addr);
 }
 
+void bytecode_print_func_ffi_void(bytecode * code)
+{
+    printf("%d: ffi void\n", code->addr);
+}
+
 void bytecode_print_func_ffi_record(bytecode * code)
 {
-    printf("%d: ffi record %u\n", code->addr, code->ffi_record.count);
+    printf("%d: ffi record %u %u\n", code->addr, code->ffi_record.count, code->ffi_record.total_count);
 }
 
 void bytecode_print_dup(bytecode * code)

@@ -72,6 +72,7 @@ typedef struct test_Rect
 {
     test_Point a;
     test_Point b;
+    test_Point c;
 } test_Rect;
 
 test_Point test_rect(test_Rect r);

@@ -788,6 +788,11 @@ const char * comb_type_str(comb_type type)
         return "char";
     case COMB_TYPE_STRING:
         return "string";
+    case COMB_TYPE_VOID:
+        return "void";
+    case COMB_TYPE_C_PTR:
+        return "c_ptr";
+    break;
     case COMB_TYPE_ARRAY:
         return "array";
     case COMB_TYPE_RANGE:

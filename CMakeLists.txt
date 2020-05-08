@@ -42,7 +42,8 @@ add_library(nev STATIC
 	${FLEX_scanner_OUTPUTS}
 	${SRC}
 )
-target_link_libraries(nev m dl ffi)
+
+target_link_libraries(nev m dl /usr/local/lib/libffi.so.8)
 
 add_executable(${CMAKE_PROJECT_NAME} main.c getopt.c)
 target_link_libraries(${CMAKE_PROJECT_NAME} nev)

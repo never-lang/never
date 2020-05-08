@@ -35,6 +35,8 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_FALSE
 %token <val.str_value> TOK_CHAR
 %token <val.str_value> TOK_STRING
+%token <val.str_value> TOK_VOID
+%token <val.str_value> TOK_C_PTR
 %token <val.str_value> TOK_FLOAT
 %token <val.str_value> TOK_INT
 %token <val.str_value> TOK_LET
@@ -759,7 +761,25 @@ param: TOK_STRING
 param: TOK_ID ':' TOK_STRING
 {
     $$ = param_new_string($1);
-    $$->line_no = $<line_no>2;
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_VOID
+{
+    $$ = param_new_void(NULL);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_C_PTR
+{
+    $$ = param_new_c_ptr(NULL);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID ':' TOK_C_PTR
+{
+    $$ = param_new_c_ptr($1);
+    $$->line_no = $<line_no>1;
 };
 
 param: TOK_ID %prec TOK_RET
