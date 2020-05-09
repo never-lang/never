@@ -68,6 +68,7 @@ void vm_execute_int(vm * machine, bytecode * code);
 void vm_execute_float(vm * machine, bytecode * code);
 void vm_execute_char(vm * machine, bytecode * code);
 void vm_execute_string(vm * machine, bytecode * code);
+void vm_execute_c_null(vm * machine, bytecode * code);
 
 void vm_execute_id_top(vm * machine, bytecode * code);
 void vm_execute_id_local(vm * machine, bytecode * code);
@@ -120,6 +121,9 @@ void vm_execute_op_neq_char(vm * machine, bytecode * code);
 void vm_execute_op_eq_string(vm * machine, bytecode * code);
 void vm_execute_op_neq_string(vm * machine, bytecode * code);
 
+void vm_execute_op_eq_c_ptr(vm * machine, bytecode * code);
+void vm_execute_op_neq_c_ptr(vm * machine, bytecode * code);
+
 void vm_execute_op_eq_nil(vm * machine, bytecode * code);
 
 void vm_execute_op_eq_string_nil(vm * machine, bytecode * code);
@@ -168,6 +172,7 @@ void vm_execute_op_ass_int(vm * machine, bytecode * code);
 void vm_execute_op_ass_float(vm * machine, bytecode * code);
 void vm_execute_op_ass_char(vm * machine, bytecode * code);
 void vm_execute_op_ass_string(vm * machine, bytecode * code);
+void vm_execute_op_ass_c_ptr(vm * machine, bytecode * code);
 void vm_execute_op_ass_array(vm * machine, bytecode * code);
 void vm_execute_op_ass_record(vm * machine, bytecode * code);
 void vm_execute_op_ass_func(vm * machine, bytecode * code);
@@ -212,13 +217,6 @@ void vm_execute_nil_record_ref(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
 void vm_execute_func_obj(vm * machine, bytecode * code);
-void vm_execute_func_ffi(vm * machine, bytecode * code);
-void vm_execute_func_ffi_int(vm * machine, bytecode * code);
-void vm_execute_func_ffi_float(vm * machine, bytecode * code);
-void vm_execute_func_ffi_char(vm * machine, bytecode * code);
-void vm_execute_func_ffi_string(vm * machine, bytecode * code);
-void vm_execute_func_ffi_void(vm * machine, bytecode * code);
-void vm_execute_func_ffi_record(vm * machine, bytecode * code);
 
 void vm_execute_dup(vm * machine, bytecode * code);
 void vm_execute_global_vec(vm * machine, bytecode * code);

@@ -711,6 +711,7 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
     case EXPR_STRING:
     case EXPR_ID:
     case EXPR_NIL:
+    case EXPR_C_NULL:
         /* not possible */
         break;
     case EXPR_ENUMTYPE:

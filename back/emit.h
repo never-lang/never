@@ -44,12 +44,15 @@ int expr_int_emit(expr * value, int stack_level, module * module_value,
                   int * result);
 int expr_float_emit(expr * value, int stack_level, module * module_value,
                     int * result);
-int expr_nil_emit(expr * value, int stack_level, module * module_value,
-                  int * result);
 int expr_char_emit(expr * value, int stack_level, module * module_value,
                    int * result);
 int expr_string_emit(expr * value, int stack_level, module * module_value,
                      int * result);
+int expr_nil_emit(expr * value, int stack_level, module * module_value,
+                  int * result);
+int expr_c_null_emit(expr * value, int stack_level, module * module_value,
+                     int * result);
+
 int func_freevar_id_local_emit(freevar * value, int stack_level,
                                module * module_value, int * result);
 int func_freevar_id_bind_emit(freevar * value, int stack_level,
@@ -94,7 +97,10 @@ int expr_sub_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int expr_mul_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
-
+int expr_eq_emit(expr * value, int stack_level, module * module_value,
+                 func_list_weak * list_weak, int * result);
+int expr_neq_emit(expr * value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result);
 int expr_and_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int expr_or_emit(expr * value, int stack_level, module * module_value,

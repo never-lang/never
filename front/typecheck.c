@@ -173,7 +173,7 @@ int expr_set_comb_type(expr * value, param * param_value)
             value->comb.comb = COMB_TYPE_STRING;
         break;
         case PARAM_VOID:
-            value->comb.comb = COMB_TYPE_INT;
+            value->comb.comb = COMB_TYPE_VOID;
         break;
         case PARAM_C_PTR:
             value->comb.comb = COMB_TYPE_C_PTR;
@@ -355,6 +355,10 @@ int param_expr_cmp(param * param_value, expr * expr_value)
         return TYPECHECK_SUCC;
     }
     else if (param_value->type == PARAM_STRING && expr_value->comb.comb == COMB_TYPE_STRING)
+    {
+        return TYPECHECK_SUCC;
+    }
+    else if (param_value->type == PARAM_C_PTR && expr_value->comb.comb == COMB_TYPE_C_PTR)
     {
         return TYPECHECK_SUCC;
     }
@@ -924,6 +928,41 @@ int param_range_list_check_type(symtab * tab, range_list * list,
     return 0;
 }                          
 
+int param_ffi_check_type(symtab * tab, param * param_value,
+                         unsigned int syn_level, int * result)
+{
+    switch (param_value->type)
+    {
+        case PARAM_CHAR:
+        case PARAM_INT:
+        case PARAM_FLOAT:
+        case PARAM_STRING:
+        case PARAM_VOID:
+        case PARAM_C_PTR:
+        /* these types are supported for ffi */
+        break;
+        case PARAM_RECORD:
+            param_enum_record_check_type(tab, param_value, syn_level, result);
+        break;
+
+        case PARAM_BOOL:
+        case PARAM_DIM:
+        case PARAM_ARRAY:
+        case PARAM_RANGE_DIM:
+        case PARAM_RANGE:
+        case PARAM_SLICE:
+        case PARAM_SLICE_DIM:
+        case PARAM_ENUMTYPE:
+        case PARAM_FUNC:
+            *result = TYPECHECK_FAIL;
+            print_error_msg(param_value->line_no, "ffi type %s not supported\n",
+                            param_type_str(param_value->type));
+        break;
+    }
+    
+    return 0;
+}
+
 int param_check_type(symtab * tab, param * param_value,
                      unsigned int syn_level, int * result)
 {
@@ -932,14 +971,17 @@ int param_check_type(symtab * tab, param * param_value,
         case PARAM_BOOL:
         case PARAM_INT:
         case PARAM_FLOAT:
+        case PARAM_CHAR:
+        case PARAM_STRING:
+        case PARAM_C_PTR:
         break;
         case PARAM_ENUMTYPE:
             param_enum_record_check_type(tab, param_value, syn_level, result);
         break;
-        case PARAM_CHAR:
-        case PARAM_STRING:
         case PARAM_VOID:
-        case PARAM_C_PTR:
+            *result = TYPECHECK_FAIL;
+            print_error_msg(param_value->line_no, "void type supported only in ffi\n");
+        break;
         case PARAM_DIM:
         break;
         case PARAM_ARRAY:
@@ -1482,6 +1524,11 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     {
         value->comb.comb = COMB_TYPE_STRING;
     }
+    else if (value->left->comb.comb == COMB_TYPE_C_PTR &&
+             value->right->comb.comb == COMB_TYPE_C_PTR)
+    {
+        value->comb.comb = COMB_TYPE_C_PTR;
+    }
     else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
               value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
              (value->right->comb.comb == COMB_TYPE_RECORD || 
@@ -1559,6 +1606,11 @@ int expr_eq_check_type(symtab * tab, expr * value, func * func_value, unsigned i
 
     if (value->left->comb.comb == COMB_TYPE_NIL &&
              value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        value->comb.comb = COMB_TYPE_BOOL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_C_PTR &&
+             value->right->comb.comb == COMB_TYPE_C_PTR)
     {
         value->comb.comb = COMB_TYPE_BOOL;
     }
@@ -2229,6 +2281,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
     case EXPR_NIL:
         value->comb.comb = COMB_TYPE_NIL;
         break;
+    case EXPR_C_NULL:
+        value->comb.comb = COMB_TYPE_C_PTR;
+        break;
     case EXPR_NEG:
         expr_neg_check_type(tab, value, func_value, syn_level, result);
     break;
@@ -2679,7 +2734,7 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
     }
     if (func_value->decl->ret != NULL)
     {
-        param_check_type(func_value->stab, func_value->decl->ret, syn_level, result);
+        param_ffi_check_type(func_value->stab, func_value->decl->ret, syn_level, result);
     }
 #else
     *result = TYPECHECK_FAIL;

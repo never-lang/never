@@ -108,12 +108,9 @@ int print_func_expr(expr * value, int depth)
     case EXPR_CHAR:
     case EXPR_STRING:
     case EXPR_ENUMTYPE:
-        /* no symtabs possible */
-        break;
     case EXPR_ID:
-        /* no symtabs possible */
-        break;
     case EXPR_NIL:
+    case EXPR_C_NULL:
         /* no symtabs possible */
         break;
     case EXPR_NEG:
