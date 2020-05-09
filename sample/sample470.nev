@@ -14,18 +14,23 @@ record Rect
 
 extern "host" func test_print_str(s : string) -> int
 extern "host" func test_rect(r : Rect) -> Point
+extern "host" func test_void() -> c_ptr
+extern "host" func test_void_call(a : c_ptr) -> void
 
 func main() -> int
 {
-    let r = Rect(Point(10, 20), Point, Point(40, 50));
+    let r = Rect(Point(10, 20), Point(30, 40), Point(40, 50));
     let p = Point;
+    let a = c_null;
 
     p = test_rect(r);
 
+    a = test_void();
+    test_void_call(a);
+
     prints(p.x + " " + p.y + "\n");
 
-    /* test_print_str("one two three") */
+    test_print_str("test_print_str\n");
 
     0
 }
-

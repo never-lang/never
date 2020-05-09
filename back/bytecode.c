@@ -32,6 +32,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_FLOAT, bytecode_print_float },
     { BYTECODE_CHAR, bytecode_print_char },
     { BYTECODE_STRING, bytecode_print_string },
+    { BYTECODE_C_NULL, bytecode_print_c_null },
 
     { BYTECODE_ID_TOP, bytecode_print_id_top },
     { BYTECODE_ID_LOCAL, bytecode_print_id_local },
@@ -84,6 +85,9 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_EQ_STRING, bytecode_print_op_eq_string },
     { BYTECODE_OP_NEQ_STRING, bytecode_print_op_neq_string },
 
+    { BYTECODE_OP_EQ_C_PTR, bytecode_print_op_eq_c_ptr },
+    { BYTECODE_OP_NEQ_C_PTR, bytecode_print_op_neq_c_ptr },
+
     { BYTECODE_OP_EQ_NIL, bytecode_print_op_eq_nil },
 
     { BYTECODE_OP_EQ_STRING_NIL, bytecode_print_op_eq_string_nil },
@@ -132,6 +136,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_ASS_FLOAT, bytecode_print_op_ass_float },
     { BYTECODE_OP_ASS_CHAR, bytecode_print_op_ass_char },
     { BYTECODE_OP_ASS_STRING, bytecode_print_op_ass_string },
+    { BYTECODE_OP_ASS_C_PTR, bytecode_print_op_ass_c_ptr },
     { BYTECODE_OP_ASS_ARRAY, bytecode_print_op_ass_array },
     { BYTECODE_OP_ASS_RECORD, bytecode_print_op_ass_record },
     { BYTECODE_OP_ASS_FUNC, bytecode_print_op_ass_func },
@@ -178,6 +183,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_FUNC_FFI_CHAR, bytecode_print_func_ffi_char },
     { BYTECODE_FUNC_FFI_STRING, bytecode_print_func_ffi_string },
     { BYTECODE_FUNC_FFI_VOID, bytecode_print_func_ffi_void },
+    { BYTECODE_FUNC_FFI_C_PTR, bytecode_print_func_ffi_c_ptr },
     { BYTECODE_FUNC_FFI_RECORD, bytecode_print_func_ffi_record },
 
     { BYTECODE_DUP, bytecode_print_dup },    
@@ -233,6 +239,11 @@ void bytecode_print_char(bytecode * code)
 void bytecode_print_string(bytecode * code)
 {
     printf("%d: string %u\n", code->addr, code->string.index);
+}
+
+void bytecode_print_c_null(bytecode * code)
+{
+    printf("%d: c_null\n", code->addr);
 }
 
 void bytecode_print_id_top(bytecode * code)
@@ -455,6 +466,16 @@ void bytecode_print_op_neq_string(bytecode * code)
     printf("%d: op neq string\n", code->addr);
 }
 
+void bytecode_print_op_eq_c_ptr(bytecode * code)
+{
+    printf("%d: op eq c_ptr\n", code->addr);
+}
+
+void bytecode_print_op_neq_c_ptr(bytecode * code)
+{
+    printf("%d: op neq c_ptr\n", code->addr);
+}
+
 void bytecode_print_op_eq_nil(bytecode * code)
 {
     printf("%d: op eq nil\n", code->addr);
@@ -649,6 +670,11 @@ void bytecode_print_op_ass_char(bytecode * code)
 void bytecode_print_op_ass_string(bytecode * code)
 {
     printf("%d: op ass string\n", code->addr);
+}
+
+void bytecode_print_op_ass_c_ptr(bytecode * code)
+{
+    printf("%d: op ass c_ptr\n", code->addr);
 }
 
 void bytecode_print_op_ass_array(bytecode * code)
@@ -849,6 +875,11 @@ void bytecode_print_func_ffi_string(bytecode * code)
 void bytecode_print_func_ffi_void(bytecode * code)
 {
     printf("%d: ffi void\n", code->addr);
+}
+
+void bytecode_print_func_ffi_c_ptr(bytecode * code)
+{
+    printf("%d: ffi c_ptr\n", code->addr);
 }
 
 void bytecode_print_func_ffi_record(bytecode * code)

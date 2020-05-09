@@ -108,6 +108,7 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
     case EXPR_STRING:
     case EXPR_ENUMTYPE:
     case EXPR_NIL:
+    case EXPR_C_NULL:
         /* no tailrec possible */
         break;
     case EXPR_ID:

@@ -34,6 +34,7 @@ typedef enum bytecode_type
     BYTECODE_FLOAT,
     BYTECODE_CHAR,
     BYTECODE_STRING,
+    BYTECODE_C_NULL,
 
     BYTECODE_ID_TOP,
     BYTECODE_ID_LOCAL,
@@ -86,6 +87,9 @@ typedef enum bytecode_type
     BYTECODE_OP_EQ_STRING,
     BYTECODE_OP_NEQ_STRING,
 
+    BYTECODE_OP_EQ_C_PTR,
+    BYTECODE_OP_NEQ_C_PTR,
+
     BYTECODE_OP_EQ_NIL,
     BYTECODE_OP_EQ_STRING_NIL,
     BYTECODE_OP_EQ_ARRAY_NIL,
@@ -132,6 +136,7 @@ typedef enum bytecode_type
     BYTECODE_OP_ASS_FLOAT,
     BYTECODE_OP_ASS_CHAR,
     BYTECODE_OP_ASS_STRING,
+    BYTECODE_OP_ASS_C_PTR,
     BYTECODE_OP_ASS_ARRAY,
     BYTECODE_OP_ASS_RECORD,
     BYTECODE_OP_ASS_FUNC,
@@ -179,6 +184,7 @@ typedef enum bytecode_type
     BYTECODE_FUNC_FFI_CHAR,
     BYTECODE_FUNC_FFI_STRING,
     BYTECODE_FUNC_FFI_VOID,
+    BYTECODE_FUNC_FFI_C_PTR,
     BYTECODE_FUNC_FFI_RECORD,
 
     BYTECODE_DUP,
@@ -360,6 +366,7 @@ void bytecode_print_int(bytecode * code);
 void bytecode_print_float(bytecode * code);
 void bytecode_print_char(bytecode * code);
 void bytecode_print_string(bytecode * code);
+void bytecode_print_c_null(bytecode * code);
 
 void bytecode_print_id_top(bytecode * code);
 void bytecode_print_id_local(bytecode * code);
@@ -412,6 +419,9 @@ void bytecode_print_op_neq_char(bytecode * code);
 void bytecode_print_op_eq_string(bytecode * code);
 void bytecode_print_op_neq_string(bytecode * code);
 
+void bytecode_print_op_eq_c_ptr(bytecode * code);
+void bytecode_print_op_neq_c_ptr(bytecode * code);
+
 void bytecode_print_op_eq_nil(bytecode * code);
 
 void bytecode_print_op_eq_string_nil(bytecode * code);
@@ -460,6 +470,7 @@ void bytecode_print_op_ass_int(bytecode * code);
 void bytecode_print_op_ass_float(bytecode * code);
 void bytecode_print_op_ass_char(bytecode * code);
 void bytecode_print_op_ass_string(bytecode * code);
+void bytecode_print_op_ass_c_ptr(bytecode * code);
 void bytecode_print_op_ass_array(bytecode * code);
 void bytecode_print_op_ass_func(bytecode * code);
 void bytecode_print_op_ass_record(bytecode * code);
@@ -510,6 +521,7 @@ void bytecode_print_func_ffi_float(bytecode * code);
 void bytecode_print_func_ffi_char(bytecode * code);
 void bytecode_print_func_ffi_string(bytecode * code);
 void bytecode_print_func_ffi_void(bytecode * code);
+void bytecode_print_func_ffi_c_ptr(bytecode * code);
 void bytecode_print_func_ffi_record(bytecode * code);
 
 void bytecode_print_dup(bytecode * code);

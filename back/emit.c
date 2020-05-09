@@ -66,7 +66,17 @@ int expr_nil_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
     
     bc.type = BYTECODE_NIL_RECORD_REF;
+    bytecode_add(module_value->code, &bc);
     
+    return 0;
+}                  
+
+int expr_c_null_emit(expr * value, int stack_level, module * module_value,
+                     int * result)
+{
+    bytecode bc = { 0 };
+    
+    bc.type = BYTECODE_C_NULL;
     bytecode_add(module_value->code, &bc);
     
     return 0;
@@ -513,6 +523,235 @@ int expr_neg_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_eq_emit(expr * value, int stack_level, module * module_value,
+                 func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->left, stack_level, module_value, list_weak, result);
+    expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_NIL &&
+        value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_EQ_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_BOOL &&
+             value->right->comb.comb == COMB_TYPE_BOOL)
+    {
+        bc.type = BYTECODE_OP_EQ_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_EQ_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
+             value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        bc.type = BYTECODE_OP_EQ_FLOAT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
+             value->right->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        switch (value->left->comb.comb_enumtype->type)
+        {
+        case ENUMTYPE_TYPE_ITEM:
+            bc.type = BYTECODE_OP_EQ_INT;
+        break;
+        case ENUMTYPE_TYPE_RECORD:
+            *result = EMIT_FAIL;
+            print_error_msg(value->line_no,
+                            "cannot compare enum record type\n");
+            assert(0);
+        break;
+        }
+    }
+    else if (value->left->comb.comb == COMB_TYPE_CHAR &&
+             value->right->comb.comb == COMB_TYPE_CHAR)
+    {
+        bc.type = BYTECODE_OP_EQ_CHAR;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_EQ_STRING;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_EQ_STRING_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_EQ_NIL_STRING;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_C_PTR &&
+             value->right->comb.comb == COMB_TYPE_C_PTR)
+    {
+        bc.type = BYTECODE_OP_EQ_C_PTR;
+    }             
+    else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_EQ_ARRAY_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_ARRAY)
+    {
+        bc.type = BYTECODE_OP_EQ_NIL_ARRAY;
+    }
+    else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
+              value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
+              value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_EQ_RECORD_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+            (value->right->comb.comb == COMB_TYPE_RECORD ||
+             value->right->comb.comb == COMB_TYPE_RECORD_ID))
+    {
+        bc.type = BYTECODE_OP_EQ_NIL_RECORD;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FUNC &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_EQ_FUNC_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_FUNC)
+    {
+        bc.type = BYTECODE_OP_EQ_NIL_FUNC;
+    }
+    else
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no, "cannot eq different types %s %s\n",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+        assert(0);
+    }
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_neq_emit(expr * value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->left, stack_level, module_value, list_weak, result);
+    expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_NIL &&
+        value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_NEQ_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_BOOL &&
+             value->right->comb.comb == COMB_TYPE_BOOL)
+    {
+        bc.type = BYTECODE_OP_EQ_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_NEQ_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
+             value->right->comb.comb == COMB_TYPE_FLOAT)
+    {
+        bc.type = BYTECODE_OP_NEQ_FLOAT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
+             value->right->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        switch (value->left->comb.comb_enumtype->type)
+        {
+        case ENUMTYPE_TYPE_ITEM:
+            bc.type = BYTECODE_OP_NEQ_INT;
+        break;
+        case ENUMTYPE_TYPE_RECORD:
+            *result = EMIT_FAIL;
+            print_error_msg(value->line_no,
+                            "cannot compare enum record type\n");
+            assert(0);
+        break;
+        }
+    }
+    else if (value->left->comb.comb == COMB_TYPE_CHAR &&
+             value->right->comb.comb == COMB_TYPE_CHAR)
+    {
+        bc.type = BYTECODE_OP_NEQ_CHAR;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_NEQ_STRING;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_NEQ_STRING_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_NEQ_NIL_STRING;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_C_PTR &&
+             value->right->comb.comb == COMB_TYPE_C_PTR)
+    {
+        bc.type = BYTECODE_OP_NEQ_C_PTR;
+    }             
+    else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_NEQ_ARRAY_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_ARRAY)
+    {
+        bc.type = BYTECODE_OP_NEQ_NIL_ARRAY;
+    }
+    else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
+              value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
+              value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_NEQ_RECORD_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+            (value->right->comb.comb == COMB_TYPE_RECORD ||
+             value->right->comb.comb == COMB_TYPE_RECORD_ID))
+    {
+        bc.type = BYTECODE_OP_NEQ_NIL_RECORD;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_FUNC &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_NEQ_FUNC_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_FUNC)
+    {
+        bc.type = BYTECODE_OP_NEQ_NIL_FUNC;
+    }
+    else
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no,
+                        "cannot neq different types %s %s\n",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+        assert(0);
+    }
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}                  
+
 int expr_add_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result)
 {
@@ -844,6 +1083,10 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     else if (value->comb.comb == COMB_TYPE_STRING)
     {
         bc.type = BYTECODE_OP_ASS_STRING;
+    }
+    else if (value->comb.comb == COMB_TYPE_C_PTR)
+    {
+        bc.type = BYTECODE_OP_ASS_C_PTR;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY)
     {
@@ -2099,6 +2342,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
     case EXPR_NIL:
         expr_nil_emit(value, stack_level, module_value, result);
         break;
+    case EXPR_C_NULL:
+        expr_c_null_emit(value, stack_level, module_value, result);
+        break;
     case EXPR_ID:
         expr_id_emit(value, stack_level, module_value, result);
         break;
@@ -2290,209 +2536,10 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_EQ:
-        expr_emit(value->left, stack_level, module_value, list_weak, result);
-        expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
-
-        if (value->left->comb.comb == COMB_TYPE_NIL &&
-            value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_EQ_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_BOOL &&
-                 value->right->comb.comb == COMB_TYPE_BOOL)
-        {
-            bc.type = BYTECODE_OP_EQ_INT;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_INT &&
-                 value->right->comb.comb == COMB_TYPE_INT)
-        {
-            bc.type = BYTECODE_OP_EQ_INT;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
-                 value->right->comb.comb == COMB_TYPE_FLOAT)
-        {
-            bc.type = BYTECODE_OP_EQ_FLOAT;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
-                 value->right->comb.comb == COMB_TYPE_ENUMTYPE)
-        {
-            switch (value->left->comb.comb_enumtype->type)
-            {
-            case ENUMTYPE_TYPE_ITEM:
-                bc.type = BYTECODE_OP_EQ_INT;
-            break;
-            case ENUMTYPE_TYPE_RECORD:
-                *result = EMIT_FAIL;
-                print_error_msg(value->line_no,
-                                "cannot compare enum record type\n");
-                assert(0);
-            break;
-            }
-        }
-        else if (value->left->comb.comb == COMB_TYPE_CHAR &&
-                 value->right->comb.comb == COMB_TYPE_CHAR)
-        {
-            bc.type = BYTECODE_OP_EQ_CHAR;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_STRING &&
-                 value->right->comb.comb == COMB_TYPE_STRING)
-        {
-            bc.type = BYTECODE_OP_EQ_STRING;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_STRING &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_EQ_STRING_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_STRING)
-        {
-            bc.type = BYTECODE_OP_EQ_NIL_STRING;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_EQ_ARRAY_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_ARRAY)
-        {
-            bc.type = BYTECODE_OP_EQ_NIL_ARRAY;
-        }
-        else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
-                  value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
-                  value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_EQ_RECORD_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                (value->right->comb.comb == COMB_TYPE_RECORD ||
-                 value->right->comb.comb == COMB_TYPE_RECORD_ID))
-        {
-            bc.type = BYTECODE_OP_EQ_NIL_RECORD;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_FUNC &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_EQ_FUNC_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_FUNC)
-        {
-            bc.type = BYTECODE_OP_EQ_NIL_FUNC;
-        }
-        else
-        {
-            *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot eq different types %s %s\n",
-                            comb_type_str(value->left->comb.comb),
-                            comb_type_str(value->right->comb.comb));
-            assert(0);
-        }
-        bytecode_add(module_value->code, &bc);
+        expr_eq_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_NEQ:
-        expr_emit(value->left, stack_level, module_value, list_weak, result);
-        expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
-
-        if (value->left->comb.comb == COMB_TYPE_NIL &&
-            value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_NEQ_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_BOOL &&
-                 value->right->comb.comb == COMB_TYPE_BOOL)
-        {
-            bc.type = BYTECODE_OP_EQ_INT;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_INT &&
-                 value->right->comb.comb == COMB_TYPE_INT)
-        {
-            bc.type = BYTECODE_OP_NEQ_INT;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
-                 value->right->comb.comb == COMB_TYPE_FLOAT)
-        {
-            bc.type = BYTECODE_OP_NEQ_FLOAT;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
-                 value->right->comb.comb == COMB_TYPE_ENUMTYPE)
-        {
-            switch (value->left->comb.comb_enumtype->type)
-            {
-            case ENUMTYPE_TYPE_ITEM:
-                bc.type = BYTECODE_OP_NEQ_INT;
-            break;
-            case ENUMTYPE_TYPE_RECORD:
-                *result = EMIT_FAIL;
-                print_error_msg(value->line_no,
-                                "cannot compare enum record type\n");
-                assert(0);
-            break;
-            }
-        }
-        else if (value->left->comb.comb == COMB_TYPE_CHAR &&
-                 value->right->comb.comb == COMB_TYPE_CHAR)
-        {
-            bc.type = BYTECODE_OP_NEQ_CHAR;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_STRING &&
-                 value->right->comb.comb == COMB_TYPE_STRING)
-        {
-            bc.type = BYTECODE_OP_NEQ_STRING;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_STRING &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_NEQ_STRING_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_STRING)
-        {
-            bc.type = BYTECODE_OP_NEQ_NIL_STRING;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_NEQ_ARRAY_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_ARRAY)
-        {
-            bc.type = BYTECODE_OP_NEQ_NIL_ARRAY;
-        }
-        else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
-                  value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
-                  value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_NEQ_RECORD_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                (value->right->comb.comb == COMB_TYPE_RECORD ||
-                 value->right->comb.comb == COMB_TYPE_RECORD_ID))
-        {
-            bc.type = BYTECODE_OP_NEQ_NIL_RECORD;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_FUNC &&
-                 value->right->comb.comb == COMB_TYPE_NIL)
-        {
-            bc.type = BYTECODE_OP_NEQ_FUNC_NIL;
-        }
-        else if (value->left->comb.comb == COMB_TYPE_NIL &&
-                 value->right->comb.comb == COMB_TYPE_FUNC)
-        {
-            bc.type = BYTECODE_OP_NEQ_NIL_FUNC;
-        }
-        else
-        {
-            *result = EMIT_FAIL;
-            print_error_msg(value->line_no,
-                            "cannot neq different types %s %s\n",
-                            comb_type_str(value->left->comb.comb),
-                            comb_type_str(value->right->comb.comb));
-            assert(0);
-        }
-        bytecode_add(module_value->code, &bc);
+        expr_neq_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_AND:
         expr_and_emit(value, stack_level, module_value, list_weak, result);
@@ -3829,9 +3876,8 @@ unsigned int func_body_emit_ffi_param(param * value, module * module_value, int 
             bytecode_add(module_value->code, &bc);
         break;
         case PARAM_C_PTR:
-            /*bc.type = BYTECODE_FUNC_C_PTR;
-            bytecode_add(module_value->code, &bc);*/
-            assert(0);
+            bc.type = BYTECODE_FUNC_FFI_C_PTR;
+            bytecode_add(module_value->code, &bc);
         break;
         case PARAM_RECORD:
         {

@@ -129,6 +129,17 @@ expr * expr_new_nil()
     return ret;
 }
 
+expr * expr_new_c_null()
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+    
+    ret->type = EXPR_C_NULL;
+    ret->comb.comb = COMB_TYPE_C_PTR;
+    ret->line_no = 0;
+    
+    return ret;
+}
+
 expr * expr_new_one(int type, expr * left)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -430,6 +441,7 @@ void expr_delete(expr * value)
     case EXPR_FLOAT:
     case EXPR_CHAR:
     case EXPR_NIL:
+    case EXPR_C_NULL:
         break;
     case EXPR_STRING:
         if (value->string_value != NULL)
@@ -761,6 +773,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_LISTCOMP: return "listcomp";
     case EXPR_ATTR: return "attr";
     case EXPR_NIL: return "nil";
+    case EXPR_C_NULL: return "c_null";
     }
     
     return "unknown";
@@ -792,7 +805,6 @@ const char * comb_type_str(comb_type type)
         return "void";
     case COMB_TYPE_C_PTR:
         return "c_ptr";
-    break;
     case COMB_TYPE_ARRAY:
         return "array";
     case COMB_TYPE_RANGE:

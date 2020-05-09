@@ -79,6 +79,7 @@ mem_ptr gc_alloc_char(gc * collector, char value);
 mem_ptr gc_alloc_string(gc * collector, char * value);
 mem_ptr gc_alloc_string_take(gc * collector, char * value);
 mem_ptr gc_alloc_string_ref(gc * collector, mem_ptr str);
+mem_ptr gc_alloc_c_ptr(gc * collector, void * value);
 mem_ptr gc_alloc_vec(gc * collector, unsigned int size);
 mem_ptr gc_alloc_vec_ref(gc * collector, mem_ptr vec);
 mem_ptr gc_alloc_arr(gc * collector, unsigned int dims, object_arr_dim * dv);
@@ -108,6 +109,10 @@ unsigned int gc_get_string_len(gc * collector, mem_ptr addr);
 
 mem_ptr gc_get_string_ref(gc * collector, mem_ptr addr);
 void gc_set_string_ref(gc * collector, mem_ptr addr, mem_ptr string_ref);
+
+void * gc_get_c_ptr(gc * collector, mem_ptr addr);
+void * gc_get_c_ptr_ptr(gc * collector, mem_ptr addr);
+void gc_set_c_ptr(gc * collector, mem_ptr addr, void * value);
 
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
 void gc_set_vec(gc * collector, mem_ptr addr, unsigned int vec_index,

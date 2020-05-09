@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2018-2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -218,5 +218,16 @@ test_Point test_rect(test_Rect r)
     printf("test rect [ %d %d ] [ %d %d ] [ %d %d ]\n", r.a.x, r.a.y, r.b.x, r.b.y, r.c.x, r.c.y);
 
     return rec;
+}
+
+char * test_void()
+{
+    return strdup("one two three");
+}
+
+void test_void_call(char * str)
+{
+    printf("%s\n", str);
+    free(str);
 }
 

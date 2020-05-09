@@ -27,51 +27,52 @@ typedef float func_float_float(float x);
 typedef enum expr_type
 {
     EXPR_BOOL = 1,
-    EXPR_INT,
-    EXPR_FLOAT,
-    EXPR_CHAR,
-    EXPR_STRING,
-    EXPR_ENUMTYPE,
-    EXPR_ID,
-    EXPR_NEG,
-    EXPR_ADD,
-    EXPR_SUB,
-    EXPR_MUL,
-    EXPR_DIV,
-    EXPR_MOD,
-    EXPR_LT,
-    EXPR_GT,
-    EXPR_LTE,
-    EXPR_GTE,
-    EXPR_EQ,
-    EXPR_NEQ,
-    EXPR_AND,
-    EXPR_OR,
-    EXPR_NOT,
-    EXPR_SUP,         /* ( expr ) */
-    EXPR_COND,        /* expr ? expr : expr */
-    EXPR_ARRAY,       /* [ expr_list ] */
-    EXPR_ARRAY_DEREF, /* expr [ expr_list ] */
-    EXPR_CALL,        /* ID ( expr_list) */
-    EXPR_LAST_CALL,   /* ID (expr_list */
-    EXPR_FUNC,        /* func ID ( ... ) */
-    EXPR_RANGE_DIM,
-    EXPR_RANGE,
-    EXPR_SLICE,
-    EXPR_SEQ,
-    EXPR_ASS,
-    EXPR_WHILE,
-    EXPR_DO_WHILE,
-    EXPR_FOR,
-    EXPR_FORIN,
-    EXPR_IFLET,
-    EXPR_MATCH,
-    EXPR_BUILD_IN,
-    EXPR_INT_TO_FLOAT,
-    EXPR_FLOAT_TO_INT,
-    EXPR_LISTCOMP,
-    EXPR_ATTR,
-    EXPR_NIL
+    EXPR_INT = 2,
+    EXPR_FLOAT = 3,
+    EXPR_CHAR = 4,
+    EXPR_STRING = 5,
+    EXPR_ENUMTYPE = 6,
+    EXPR_ID = 7,
+    EXPR_NEG = 8,
+    EXPR_ADD = 9,
+    EXPR_SUB = 10,
+    EXPR_MUL = 11,
+    EXPR_DIV = 12,
+    EXPR_MOD = 13,
+    EXPR_LT = 14,
+    EXPR_GT = 15,
+    EXPR_LTE = 16,
+    EXPR_GTE = 17,
+    EXPR_EQ = 18,
+    EXPR_NEQ = 19,
+    EXPR_AND = 20,
+    EXPR_OR = 21,
+    EXPR_NOT = 22,
+    EXPR_SUP = 23,         /* ( expr ) */
+    EXPR_COND = 24,        /* expr ? expr : expr */
+    EXPR_ARRAY = 25,       /* [ expr_list ] */
+    EXPR_ARRAY_DEREF = 26, /* expr [ expr_list ] */
+    EXPR_CALL = 27,        /* ID ( expr_list) */
+    EXPR_LAST_CALL = 28,   /* ID (expr_list */
+    EXPR_FUNC = 29,        /* func ID ( ... ) */
+    EXPR_RANGE_DIM = 30,
+    EXPR_RANGE = 31,
+    EXPR_SLICE = 32,
+    EXPR_SEQ = 33,
+    EXPR_ASS = 34,
+    EXPR_WHILE = 35,
+    EXPR_DO_WHILE = 36,
+    EXPR_FOR = 37,
+    EXPR_FORIN = 38,
+    EXPR_IFLET = 39,
+    EXPR_MATCH = 40,
+    EXPR_BUILD_IN = 41,
+    EXPR_INT_TO_FLOAT = 42,
+    EXPR_FLOAT_TO_INT = 43,
+    EXPR_LISTCOMP = 44,
+    EXPR_ATTR = 45,
+    EXPR_NIL = 46,
+    EXPR_C_NULL = 47
 } expr_type;
 
 typedef enum comb_type
@@ -82,10 +83,10 @@ typedef enum comb_type
     COMB_TYPE_BOOL = 3,
     COMB_TYPE_INT = 4,
     COMB_TYPE_FLOAT = 5,
-    COMB_TYPE_CHAR = 8,
-    COMB_TYPE_STRING = 9,
-    COMB_TYPE_VOID = 17,
-    COMB_TYPE_C_PTR = 18,
+    COMB_TYPE_CHAR = 6,
+    COMB_TYPE_STRING = 7,
+    COMB_TYPE_VOID = 8,
+    COMB_TYPE_C_PTR = 9,
     COMB_TYPE_ARRAY = 10,
     COMB_TYPE_RANGE = 11,
     COMB_TYPE_SLICE = 12,
@@ -100,15 +101,15 @@ typedef enum id_type
     ID_TYPE_UNKNOWN = 0,
     ID_TYPE_LOCAL = 1,
     ID_TYPE_GLOBAL = 2,
-    ID_TYPE_BIND_TOP = 11,
-    ID_TYPE_BIND = 3,
-    ID_TYPE_MATCHBIND = 4,
-    ID_TYPE_QUALIFIER = 5,
-    ID_TYPE_FORIN = 10,
-    ID_TYPE_FUNC_TOP = 6,
-    ID_TYPE_FUNC = 7,
-    ID_TYPE_FUNC_NEST = 8,
-    ID_TYPE_RECORD = 9
+    ID_TYPE_BIND_TOP = 3,
+    ID_TYPE_BIND = 4,
+    ID_TYPE_MATCHBIND = 5,
+    ID_TYPE_QUALIFIER = 6,
+    ID_TYPE_FORIN = 7,
+    ID_TYPE_FUNC_TOP = 8,
+    ID_TYPE_FUNC = 9,
+    ID_TYPE_FUNC_NEST = 10,
+    ID_TYPE_RECORD = 11
 } id_type;
 
 typedef struct array array;
@@ -270,6 +271,7 @@ expr * expr_new_string(char * string_value);
 expr * expr_new_enumtype(char * enum_id, char * item_id);
 expr * expr_new_id(char * id);
 expr * expr_new_nil();
+expr * expr_new_c_null();
 expr * expr_new_one(int type, expr * expr_left);
 expr * expr_new_two(int type, expr * expr_left, expr * expr_right);
 expr * expr_new_three(int type, expr * expr_left, expr * expr_middle,
