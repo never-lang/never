@@ -24,8 +24,7 @@
 #include "module.h"
 #include <stdlib.h>
 
-program * program_new(object * params, unsigned int param_count,
-                      bytecode * code_arr, unsigned int code_size)
+program * program_new()
 {
     program * value = malloc(sizeof(program));
 

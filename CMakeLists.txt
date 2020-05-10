@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0.2)
 project(never)
 enable_language(C)
 
@@ -20,6 +20,8 @@ endif (MSVC)
 
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-unused-parameter -Wno-unused-function")
+  include_directories("/usr/local/include" "/usr/include")
+  link_directories("/usr/local/lib" "/usr/local")
   if(ENABLE_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g ")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
@@ -28,7 +30,6 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
   endif(ENABLE_COVERAGE)
 endif ()
-
 
 file(GLOB SRC
 	"back/*.c"
@@ -47,6 +48,20 @@ target_link_libraries(nev m dl ffi)
 add_executable(${CMAKE_PROJECT_NAME} main.c getopt.c)
 target_link_libraries(${CMAKE_PROJECT_NAME} nev)
 
+
+if(WASM_ONLY)
+  message(STATUS "Setting compilation target to native WASM")
+  set(CMAKE_EXECUTABLE_SUFFIX ".wasm")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -DNO_FFI")
+  set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-s WASM=1 -s EXPORTED_FUNCTIONS='[_never]' -s EXTRA_EXPORTED_RUNTIME_METHODS='[ccall, cwrap]'")
+endif(WASM_ONLY)
+
+if(JS_ONLY)
+  message(STATUS "Setting compilation target to native JavaScript")
+  set(CMAKE_EXECUTABLE_SUFFIX ".js")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -DNO_FFI")
+  set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-s WASM=0 -s EXPORTED_FUNCTIONS='[_never]' -s EXTRA_EXPORTED_RUNTIME_METHODS='[ccall, cwrap]'")
+endif(JS_ONLY)
 
 # test
 enable_testing()
