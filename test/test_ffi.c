@@ -19,6 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef NO_FFI
+
 #include "nev.h"
 #include "fficall.h"
 #include <stdio.h>
@@ -161,4 +163,6 @@ int main(int argc, char * argv[])
     
     return 0;
 }
+
+#endif /* NO_FFI */
 

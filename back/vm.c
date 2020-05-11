@@ -2857,15 +2857,9 @@ int vm_str_print(char * str)
     return 0;
 }
 
-#ifdef NO_FFI
-    void vm_execute_func_ffi(vm * machine, bytecode * code)
-    {
-
-    }
-#else
 void vm_execute_func_ffi(vm * machine, bytecode * code)
 {
-
+#ifndef NO_FFI
     bytecode bc = { 0 };
     int ret = FFI_SUCC;
     unsigned int i = 0;
@@ -3010,8 +3004,8 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+#endif /* NO_FFI */
 }
-#endif
 
 void vm_execute_func_ffi_int(vm * machine, bytecode * code)
 {

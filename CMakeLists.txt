@@ -20,8 +20,6 @@ endif (MSVC)
 
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-unused-parameter -Wno-unused-function")
-  include_directories("/usr/local/include" "/usr/include")
-  link_directories("/usr/local/lib" "/usr/local")
   if(ENABLE_COVERAGE)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g ")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
@@ -43,11 +41,15 @@ add_library(nev STATIC
 	${FLEX_scanner_OUTPUTS}
 	${SRC}
 )
-target_link_libraries(nev m dl ffi)
+
+if (WASM_ONLY OR JS_ONLY)
+  target_link_libraries(nev m dl)
+else()
+  target_link_libraries(nev m dl ffi)
+endif()
 
 add_executable(${CMAKE_PROJECT_NAME} main.c getopt.c)
 target_link_libraries(${CMAKE_PROJECT_NAME} nev)
-
 
 if(WASM_ONLY)
   message(STATUS "Setting compilation target to native WASM")

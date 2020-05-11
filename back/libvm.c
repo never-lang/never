@@ -246,6 +246,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         assert(0);
     }
 
+#ifndef NO_FFI
     if (fetestexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW | FE_UNDERFLOW))
     {
         if (fetestexcept(FE_DIVBYZERO))
@@ -273,6 +274,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         machine->running = VM_EXCEPTION;
         return;
     }
+#endif /* NO_FFI */
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
