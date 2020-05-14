@@ -244,6 +244,6 @@ vm * vm_new(unsigned int mem_size, unsigned int stack_size);
 void vm_delete(vm * machine);
 
 void vm_print_stack_trace(vm * machine);
-void vm_print(vm * machine);
+void vm_print(vm * machine, const char * msg);
 
 #endif /* __VM_H__ */

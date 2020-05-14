@@ -96,16 +96,19 @@ dlcache * dlcache_new(unsigned int size)
 {
     dlcache * cache = (dlcache *)malloc(sizeof(dlcache));
     dlcache_entry * entries = dlcache_entry_new(size);
-    void * host_handle = NULL;
     
     cache->size = size;
     cache->count = 0;
     cache->entries = entries;
 
+#ifndef NO_FFI
+    void * host_handle = NULL;
     host_handle = ffi_decl_get_handle("host");
     dlcache_add_dl(cache, "host", host_handle);
-    
     return cache;
+#else
+    return cache;
+#endif
 }
 
 void dlcache_delete(dlcache * cache)
@@ -160,6 +163,7 @@ void * dlcache_get_handle(dlcache * cache, const char * dl_name)
     }
     else
     {
+#ifndef NO_FFI
         handle = ffi_decl_get_handle(dl_name);
         if (handle == NULL)
         {
@@ -167,6 +171,7 @@ void * dlcache_get_handle(dlcache * cache, const char * dl_name)
             return NULL;
         }
         dlcache_add_dl(cache, dl_name, handle);
+#endif
     }
     
     return handle;

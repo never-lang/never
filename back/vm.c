@@ -180,7 +180,6 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_FUNC_OBJ, vm_execute_func_obj },
-    
     { BYTECODE_FUNC_FFI, vm_execute_func_ffi },
     { BYTECODE_FUNC_FFI_INT, vm_execute_func_ffi_int },
     { BYTECODE_FUNC_FFI_FLOAT, vm_execute_func_ffi_float },
@@ -221,7 +220,7 @@ void vm_check_stack(vm * machine)
     if (machine->sp >= machine->stack_size)
     {
         fprintf(stderr, "stack too large\n");
-        vm_print(machine);
+        vm_print(machine, "stack too large");
         exit(1);
     }
 }
@@ -2860,6 +2859,7 @@ int vm_str_print(char * str)
 
 void vm_execute_func_ffi(vm * machine, bytecode * code)
 {
+#ifndef NO_FFI
     bytecode bc = { 0 };
     int ret = FFI_SUCC;
     unsigned int i = 0;
@@ -3004,6 +3004,7 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+#endif /* NO_FFI */
 }
 
 void vm_execute_func_ffi_int(vm * machine, bytecode * code)
@@ -3304,7 +3305,7 @@ int vm_execute(vm * machine, program * prog, object * result)
 
     if (machine->running == VM_ERROR)
     {
-        vm_print(machine);
+        vm_print(machine, "VM_ERROR");
         vm_print_stack_trace(machine);    
     }
     else if (machine->running == VM_HALT)
@@ -3373,7 +3374,7 @@ void vm_print_stack_trace(vm * machine)
     }
 }
 
-void vm_print(vm * machine)
+void vm_print(vm * machine, const char * msg)
 {
     printf("machine:\n");
     printf("\tsp: %d\n", machine->sp);
@@ -3385,6 +3386,7 @@ void vm_print(vm * machine)
     printf("\tstack_size: %u\n", machine->stack_size);
     printf("\tmem_size: %u\n", machine->collector->mem_size);
     printf("\trunning: %d\n", machine->running);
+    printf("\tmessage: %s\n", msg);
     printf("\n");
 }
 

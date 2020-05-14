@@ -52,6 +52,32 @@ static int get_result(object * result)
     return ret;
 }
 
+int never(const char * src)
+{
+    int ret = 0;
+
+    object result = { 0 };
+    program * prog = program_new();
+
+    ret = nev_compile_str(src, prog);
+    if (ret == 0)
+    {
+        ret = nev_execute(prog, &result,  DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
+        if (ret == 0) {
+            ret = get_result(&result);
+        }
+    }
+
+#ifndef NO_FFI
+    printf("\n");
+    fflush(stdout);
+#endif
+
+    program_delete(prog);
+
+    return ret;
+}
+
 int main(int argc, char * argv[])
 {
     const char * exe = argv[0];

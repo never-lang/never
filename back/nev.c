@@ -43,6 +43,7 @@
 
 extern FILE * yyin;
 extern int parse_result;
+extern int yyparse (never ** nev);
 
 int never_func_main_params(
     const char * main_name, never * nev,
