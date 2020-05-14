@@ -62,7 +62,7 @@ if(JS_ONLY)
   message(STATUS "Setting compilation target to native JavaScript")
   set(CMAKE_EXECUTABLE_SUFFIX ".js")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNDEBUG -DNO_FFI")
-  set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-s WASM=0 -s EXPORTED_FUNCTIONS='[_never]' -s EXTRA_EXPORTED_RUNTIME_METHODS='[ccall, cwrap]'")
+  set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-s WASM=0 -s EXPORTED_FUNCTIONS='[_never]' -s EXTRA_EXPORTED_RUNTIME_METHODS='[ccall, cwrap]' --pre-js ../never-init.js")
 endif(JS_ONLY)
 
 # test

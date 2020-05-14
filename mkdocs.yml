@@ -10,6 +10,7 @@ theme:
 nav:
    - Documentation: index.md
    - Tutorials:
+       - Never on the Web: never-web.md
        - Sorting - Quick Sort: qsort.md
        - Data Structures - Binary Tree: btree.md
        - Dynamic Programming - Rod Cutting : rodcut.md

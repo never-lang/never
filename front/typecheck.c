@@ -2809,6 +2809,7 @@ int func_except_check_type(symtab * tab, func_except * value, func * func_value,
 int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                         int * result)
 {
+#ifndef NO_FFI
     if (func_value->stab == NULL)
     {
         func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);
@@ -2823,6 +2824,11 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
     {
         param_check_type(func_value->stab, func_value->decl->ret, syn_level, result);
     }
+#else
+    *result = TYPECHECK_FAIL;
+    print_error_msg(func_value->line_no,
+                    "FFI not supported with JS %s\n", func_value->decl->id);
+#endif
 
     return 0;
 }                           

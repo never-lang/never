@@ -55,6 +55,7 @@ static int get_result(object * result)
 int never(const char * src)
 {
     int ret = 0;
+
     object result = { 0 };
     program * prog = program_new();
 
@@ -67,7 +68,13 @@ int never(const char * src)
         }
     }
 
+#ifndef NO_FFI
+    printf("\n");
+    fflush(stdout);
+#endif
+
     program_delete(prog);
+
     return ret;
 }
 
