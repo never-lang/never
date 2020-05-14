@@ -43,7 +43,7 @@ add_library(nev STATIC
 	${SRC}
 )
 
-target_link_libraries(nev m dl /usr/local/lib/libffi.so.8)
+target_link_libraries(nev m dl ffi)
 
 add_executable(${CMAKE_PROJECT_NAME} main.c getopt.c)
 target_link_libraries(${CMAKE_PROJECT_NAME} nev)
