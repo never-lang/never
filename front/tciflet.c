@@ -39,7 +39,7 @@ int iflet_guard_expr_cmp(iflet * iflet_value, int * result)
         {
             *result = TYPECHECK_FAIL;
             print_error_msg(iflet_value->line_no,
-                            "enums are different %s and %s\n",
+                            "enums are different %s and %s",
                             value->comb.comb_enumtype->id,
                             iflet_value->guard_item->enum_id);
             return 0;
@@ -50,7 +50,7 @@ int iflet_guard_expr_cmp(iflet * iflet_value, int * result)
         {
             *result = TYPECHECK_FAIL;
             print_error_msg(iflet_value->line_no,
-                            "enums are different %s and %s\n",
+                            "enums are different %s and %s",
                             value->comb.comb_enumtype->id,
                             iflet_value->guard_record->enum_id);
             return 0;

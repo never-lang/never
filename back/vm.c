@@ -497,7 +497,7 @@ void vm_execute_op_div_int(vm * machine, bytecode * code)
 
     if (b == 0)
     {
-        print_error_msg(machine->line_no, "cannot divide by zero\n");
+        print_error_msg(machine->line_no, "cannot divide by zero");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_DIVISION;
         return;
@@ -522,7 +522,7 @@ void vm_execute_op_mod_int(vm * machine, bytecode * code)
 
     if (b == 0)
     {
-        print_error_msg(machine->line_no, "cannot divide by zero\n");
+        print_error_msg(machine->line_no, "cannot divide by zero");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_DIVISION;
         return;
@@ -609,7 +609,7 @@ void vm_execute_op_div_float(vm * machine, bytecode * code)
 
     if (b == 0)
     {
-        print_error_msg(machine->line_no, "cannot divide by zero\n");
+        print_error_msg(machine->line_no, "cannot divide by zero");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_DIVISION;
         return;
@@ -1500,7 +1500,7 @@ void vm_execute_op_add_arr_int(vm * machine, bytecode * code)
 
     if (!object_arr_can_add(m1, m2))
     {
-        print_error_msg(machine->line_no, "improper array size\n");
+        print_error_msg(machine->line_no, "improper array size");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
@@ -1543,7 +1543,7 @@ void vm_execute_op_add_arr_float(vm * machine, bytecode * code)
 
     if (!object_arr_can_add(m1, m2))
     {
-        print_error_msg(machine->line_no, "improper array size\n");
+        print_error_msg(machine->line_no, "improper array size");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
@@ -1586,7 +1586,7 @@ void vm_execute_op_sub_arr_int(vm * machine, bytecode * code)
 
     if (!object_arr_can_add(m1, m2))
     {
-        print_error_msg(machine->line_no, "improper array size\n");
+        print_error_msg(machine->line_no, "improper array size");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
@@ -1629,7 +1629,7 @@ void vm_execute_op_sub_arr_float(vm * machine, bytecode * code)
 
     if (!object_arr_can_add(m1, m2))
     {
-        print_error_msg(machine->line_no, "improper array size\n");
+        print_error_msg(machine->line_no, "improper array size");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
@@ -1738,7 +1738,7 @@ void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code)
 
     if (!object_arr_can_mult(m1, m2))
     {
-        print_error_msg(machine->line_no, "improper array size\n");
+        print_error_msg(machine->line_no, "improper array size");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
@@ -1799,7 +1799,7 @@ void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code)
 
     if (!object_arr_can_mult(m1, m2))
     {
-        print_error_msg(machine->line_no, "improper array size\n");
+        print_error_msg(machine->line_no, "improper array size");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_ARR_SIZE;
         return;
@@ -1976,7 +1976,7 @@ void vm_execute_mk_array_num(vm * machine, bytecode * code, param_type value)
         if (e <= 0)
         {
             object_arr_dim_delete(dv);
-            print_error_msg(machine->line_no, "array index %d out of bounds\n",
+            print_error_msg(machine->line_no, "array index %d out of bounds",
                             d);
             machine->running = VM_EXCEPTION;
             machine->exception = EXCEPT_NO_INDEX_OOB;
@@ -2456,7 +2456,7 @@ inline void vm_execute_array_deref_univ(
         if (e < 0)
         {
             object_arr_dim_delete(addr);
-            print_error_msg(machine->line_no, "array index %d out of bounds\n",
+            print_error_msg(machine->line_no, "array index %d out of bounds",
                             d);
             machine->running = VM_EXCEPTION;
             machine->exception = EXCEPT_NO_INDEX_OOB;
@@ -2487,7 +2487,7 @@ inline void vm_execute_array_deref_univ(
 
     if (oobounds >= 0)
     {
-        print_error_msg(machine->line_no, "array index %d out of bounds\n",
+        print_error_msg(machine->line_no, "array index %d out of bounds",
                         oobounds);
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_INDEX_OOB;
@@ -2561,7 +2561,7 @@ void vm_execute_range_deref(vm * machine, bytecode * code)
 
         if (range_indx < 0)
         {
-            print_error_msg(machine->line_no, "range index %d out of bounds\n", d);
+            print_error_msg(machine->line_no, "range index %d out of bounds", d);
             machine->running = VM_EXCEPTION;
             machine->exception = EXCEPT_NO_INDEX_OOB;
             return;
@@ -2572,7 +2572,7 @@ void vm_execute_range_deref(vm * machine, bytecode * code)
                            &res_from, &res_to, &oob);
         if (oob)
         {
-            print_error_msg(machine->line_no, "range index %d out of bounds\n", d);
+            print_error_msg(machine->line_no, "range index %d out of bounds", d);
             machine->running = VM_EXCEPTION;
             machine->exception = EXCEPT_NO_INDEX_OOB;
             return;
@@ -2603,7 +2603,7 @@ void vm_execute_slice_deref(vm * machine, bytecode * code)
         if (e < 0)
         {
             object_arr_dim_delete(addr);
-            print_error_msg(machine->line_no, "slice index %d out of bounds\n", d);
+            print_error_msg(machine->line_no, "slice index %d out of bounds", d);
             machine->running = VM_EXCEPTION;
             machine->exception = EXCEPT_NO_INDEX_OOB;
             return;
@@ -2653,7 +2653,7 @@ void vm_execute_slice_deref(vm * machine, bytecode * code)
         if (oob)
         {
             object_arr_dim_delete(addr);
-            print_error_msg(machine->line_no, "slice index %d out of bounds\n", d);
+            print_error_msg(machine->line_no, "slice index %d out of bounds", d);
             machine->running = VM_EXCEPTION;
             machine->exception = EXCEPT_NO_INDEX_OOB;
             return;
@@ -2671,7 +2671,7 @@ void vm_execute_slice_deref(vm * machine, bytecode * code)
 
     if (oobounds >= 0)
     {
-        print_error_msg(machine->line_no, "slice index %d out of bounds\n",
+        print_error_msg(machine->line_no, "slice index %d out of bounds",
                         oobounds);
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_INDEX_OOB;
@@ -2815,7 +2815,7 @@ void vm_execute_vecref_vec_deref(vm * machine, bytecode * code)
     unsigned int size = gc_get_vec_size(machine->collector, record_value);
     if (code->attr.index >= size)
     {
-        print_error_msg(machine->line_no, "attribute index out of bounds\n");
+        print_error_msg(machine->line_no, "attribute index out of bounds");
         machine->running = VM_EXCEPTION;
         machine->exception = EXCEPT_NO_INDEX_OOB;
         return;

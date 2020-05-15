@@ -75,7 +75,7 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard_record * 
               enumerator_value->record_value->params == NULL) && matchbinds->count > 0)
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(guard_record->line_no, "enum record %s.%s takes no params while guard has %d\n",
+        print_error_msg(guard_record->line_no, "enum record %s.%s takes no params while guard has %d",
                         guard_record->enum_id,
                         guard_record->item_id,
                         matchbinds->count);
@@ -85,7 +85,7 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard_record * 
     if (enumerator_value->record_value->params->count != matchbinds->count)
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(guard_record->line_no, "enum record %s.%s takes %d params while guard has %d\n",
+        print_error_msg(guard_record->line_no, "enum record %s.%s takes %d params while guard has %d",
                         guard_record->enum_id,
                         guard_record->item_id,
                         enumerator_value->record_value->params->count,
@@ -135,14 +135,14 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard_item * guard_item
             else
             {
                 *result = TYPECHECK_FAIL;
-                print_error_msg(guard_item->line_no, "cannot find enum item %s.%s\n",
+                print_error_msg(guard_item->line_no, "cannot find enum item %s.%s",
                                 guard_item->enum_id, guard_item->item_id);
             }
         }
         else
         {
             *result = TYPECHECK_FAIL;
-            print_error_msg(guard_item->line_no, "found %s instead of enum %s\n",
+            print_error_msg(guard_item->line_no, "found %s instead of enum %s",
                             symtab_entry_type_str(entry->type),
                             guard_item->enum_id);
         }
@@ -150,7 +150,7 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard_item * guard_item
     else
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(guard_item->line_no, "cannot find enum %s\n",
+        print_error_msg(guard_item->line_no, "cannot find enum %s",
                         guard_item->enum_id);
     }
 
@@ -176,14 +176,14 @@ int expr_match_guard_record_check_type(symtab * tab, match_guard_record * guard_
             else
             {
                 *result = TYPECHECK_FAIL;
-                print_error_msg(guard_record->line_no, "cannot find enum item %s.%s\n",
+                print_error_msg(guard_record->line_no, "cannot find enum item %s.%s",
                                 guard_record->enum_id, guard_record->item_id);
             }
         }
         else
         {
             *result = TYPECHECK_FAIL;
-            print_error_msg(guard_record->line_no, "found %s instead of enum %s\n",
+            print_error_msg(guard_record->line_no, "found %s instead of enum %s",
                             symtab_entry_type_str(entry->type),
                             guard_record->enum_id);
         }
@@ -191,7 +191,7 @@ int expr_match_guard_record_check_type(symtab * tab, match_guard_record * guard_
     else
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(guard_record->line_no, "cannot find enum %s\n",
+        print_error_msg(guard_record->line_no, "cannot find enum %s",
                         guard_record->enum_id);
     }
 
@@ -257,7 +257,7 @@ int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * res
         {
             *result = TYPECHECK_FAIL;
             print_error_msg(match_value->line_no,
-                            "enums are different %s and %s\n",
+                            "enums are different %s and %s",
                             value->comb.comb_enumtype->id,
                             match_value->guard_item.guard->enum_id);
             return 0;
@@ -268,7 +268,7 @@ int expr_match_guard_left_cmp(expr * value, match_guard * match_value, int * res
         {
             *result = TYPECHECK_FAIL;
             print_error_msg(match_value->line_no,
-                            "enums are different %s and %s\n",
+                            "enums are different %s and %s",
                             value->comb.comb_enumtype->id,
                             match_value->guard_record.guard->enum_id);
             return 0;
@@ -287,7 +287,7 @@ int expr_match_guard_list_left_cmp(expr * value, match_guard_list * list, int * 
     {
         *result = TYPECHECK_FAIL;
         print_error_msg(value->line_no,
-                        "match expression is %s not enum\n", comb_type_str(value->comb.comb));
+                        "match expression is %s not enum", comb_type_str(value->comb.comb));
         return 0;
     }
 
@@ -352,7 +352,7 @@ int expr_match_guard_mark_item(match_guard * match_value)
                 if (enumerator_value->mark == 1)
                 {
                     print_warning_msg(match_value->line_no,
-                                      "repeated enum name %s.%s in match expression\n",
+                                      "repeated enum name %s.%s in match expression",
                                       match_value->guard_item.guard->enum_id,
                                       match_value->guard_item.guard->item_id);
                 }
@@ -369,7 +369,7 @@ int expr_match_guard_mark_item(match_guard * match_value)
                 if (enumerator_value->mark == 1)
                 {
                     print_warning_msg(match_value->line_no,
-                                      "repeated enum name %s.%s in match expression\n",
+                                      "repeated enum name %s.%s in match expression",
                                       match_value->guard_record.guard->enum_id,
                                       match_value->guard_record.guard->item_id);
                 }
@@ -440,7 +440,7 @@ int expr_match_guard_are_all_mark_items(expr * value, int * result)
                 if (enumerator_value != NULL && enumerator_value->mark == 0)
                 {
                     print_error_msg(value->line_no,
-                                    "match expression does not cover %s.%s enum\n",
+                                    "match expression does not cover %s.%s enum",
                                     enum_value->id, enumerator_value->id);
                     *result = TYPECHECK_FAIL;
                 }
@@ -455,7 +455,7 @@ int expr_match_guard_are_all_mark_items(expr * value, int * result)
     else if (match_expr != NULL)
     {
         print_error_msg(value->line_no,
-                        "match expression wrong type %s\n",
+                        "match expression wrong type %s",
                         comb_type_str(match_expr->comb.comb));
         *result = TYPECHECK_FAIL;
     }
@@ -474,14 +474,14 @@ int expr_match_guard_list_exhaustive(expr * value, match_guard_list * list, int 
         if (match_else_cnt > 1)
         {
             print_warning_msg(value->line_no,
-                              "match expression contains more than one else guard\n");
+                              "match expression contains more than one else guard");
         }
         
         /* else as last guard present (warning) */
         if (expr_match_guard_list_last_else(list) == TYPECHECK_FAIL)
         {
             print_warning_msg(value->line_no,
-                              "match expression else guard is not last\n");
+                              "match expression else guard is not last");
         }
     }
     else

@@ -15,6 +15,11 @@
 unsigned int line_no = 1;
 string * string_value = NULL;
 
+void set_line_no(unsigned int value)
+{
+    line_no = value;
+}
+
 void scanner_printf(const char * format, ...)
 {
     va_list ap;

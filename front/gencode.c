@@ -36,7 +36,7 @@ int expr_enumtype_check_call(func * func_value, symtab * stab, expr * value, int
         value->enumtype.called == 0)
     {
         *result = GENCODE_FAIL;
-        print_error_msg(value->line_no, "enum type record %s::%s not constructed\n",
+        print_error_msg(value->line_no, "enum type record %s::%s not constructed",
                         value->enumtype.enum_id, value->enumtype.item_id);
     }
     
@@ -285,7 +285,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
             if (entry->enumtype_value != NULL)
             {
                 *result = GENCODE_FAIL;
-                print_error_msg(value->line_no, "found enum %s, at this stage it is very bad\n",
+                print_error_msg(value->line_no, "found enum %s, at this stage it is very bad",
                                 value->id.id);
                 assert(0);
             }
@@ -294,7 +294,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
             if (entry->enumerator_value != NULL)
             {
                 *result = GENCODE_FAIL;
-                print_error_msg(value->line_no, "found enumerator %s, at this stage it is very bad\n",
+                print_error_msg(value->line_no, "found enumerator %s, at this stage it is very bad",
                                 value->id.id);
                 assert(0);
             }
@@ -389,7 +389,7 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
                  entry->type == SYMTAB_ENUMERATOR)
         {
             *result = GENCODE_FAIL;
-            print_error_msg(0, "found %s, at this stage it is very bad\n",
+            print_error_msg(0, "found %s, at this stage it is very bad",
                             symtab_entry_type_str(entry->type));
             assert(0);
         }

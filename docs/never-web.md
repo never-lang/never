@@ -5,6 +5,10 @@
 
 # Never on The Web
 
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<a class="github-button" href="https://github.com/never-lang/never" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star never-lang/never on GitHub">Star me!</a>
+
 You may try Never on the web. Just select an example or write your
 own code!
 
@@ -340,7 +344,8 @@ own code!
   }
 
   var editor = CodeMirror.fromTextArea(document.getElementById("input"), {
-    lineNumbers: true
+    lineNumbers: true,
+    indentUnit: 4
   });
 
   var never = Module.cwrap('never','number',['string']);

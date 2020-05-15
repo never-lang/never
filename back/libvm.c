@@ -218,7 +218,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
             gc_get_int(machine->collector, machine->stack[machine->sp].addr);
         if (x == 0)
         {
-            print_error_msg(machine->line_no, "assert failed\n");
+            print_error_msg(machine->line_no, "assert failed");
             machine->running = VM_ERROR;
             return;
         }
@@ -233,7 +233,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
                                    machine->stack[machine->sp - 1].addr);
         if (-delta > x || x > delta)
         {
-            print_error_msg(machine->line_no, "assert failed\n");
+            print_error_msg(machine->line_no, "assert failed");
             machine->running = VM_ERROR;
             return;
         }
@@ -267,7 +267,7 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         }
 
         print_error_msg(machine->line_no,
-                        "an error occurred in build in function %s %s\n",
+                        "an error occurred in build in function %s %s",
                         libmath_func_to_str(code->build_in.id),
                         except_to_str(machine->exception));
 

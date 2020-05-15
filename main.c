@@ -69,7 +69,7 @@ int never(const char * src)
     }
 
 #ifndef NO_FFI
-    printf("\n");
+    printf("\r\n");
     fflush(stdout);
 #endif
 
