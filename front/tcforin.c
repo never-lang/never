@@ -69,7 +69,7 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
         case COMB_TYPE_RECORD:
         case COMB_TYPE_RECORD_ID:
             print_error_msg(value->in_value->line_no,
-                            "for in loop expression incorrect type %s\n",
+                            "for in loop expression incorrect type %s",
                             comb_type_str(value->in_value->comb.comb));
         break;
     }
@@ -96,7 +96,7 @@ int expr_forin_check_type(symtab * tab, expr * value, func * func_value,
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
-                        "for in loop expression is not of one dimensional array, slice or range is %s\n",
+                        "for in loop expression is not of one dimensional array, slice or range is %s",
                         comb_type_str(value->forin_value->in_value->comb.comb));
     }
 
