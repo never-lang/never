@@ -9,7 +9,6 @@
 #include "never.h"
 
 int parse_result;
-extern int line_no;
 
 int yylex(token * tokp)
 {

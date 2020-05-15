@@ -47,7 +47,7 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(
-                        value->line_no, "incorrect types in array %s %s\n",
+                        value->line_no, "incorrect types in array %s %s",
                         param_type_str(ret->type), expr_type_str(value->type));
                 }
             }
@@ -68,7 +68,7 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
                     {
                         *result = TYPECHECK_FAIL;
                         print_error_msg(value->line_no,
-                                        "incorrect types in array %s %s\n",
+                                        "incorrect types in array %s %s",
                                         param_type_str(ret->type),
                                         expr_type_str(value->type));
                     }
@@ -85,7 +85,7 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
                             *result = TYPECHECK_FAIL;
                             print_error_msg(
                                 value->line_no,
-                                "incorrect dimesions in array %s %s\n",
+                                "incorrect dimesions in array %s %s",
                                 param_type_str(ret->type),
                                 expr_type_str(value->type));
                         }
@@ -94,7 +94,7 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
                     {
                         *result = TYPECHECK_FAIL;
                         print_error_msg(value->line_no,
-                                        "incorrect types in array %s %s\n",
+                                        "incorrect types in array %s %s",
                                         param_type_str(ret->type),
                                         expr_type_str(value->type));
                     }
@@ -195,7 +195,7 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "array is not well formed\n");
+            print_error_msg(value->line_no, "array is not well formed");
         }
     }
     else if (value->array.array_value->type == ARRAY_SUB)
@@ -218,7 +218,7 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "dynamic array of %s is not supported\n",
+            print_error_msg(value->line_no, "dynamic array of %s is not supported",
                             param_type_str(value->array.array_value->ret->type));
         }
 
@@ -233,7 +233,7 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         else
         {
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "array is not well formed\n");
+            print_error_msg(value->line_no, "array is not well formed");
         }
     }
 

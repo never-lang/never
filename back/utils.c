@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-const char * utils_file_name = NULL;
+const char * utils_file_name = "line";
 
 void set_utils_file_name(const char * file_name)
 {
@@ -39,6 +39,12 @@ void print_error_msg(int line_no, const char * format, ...)
     fprintf(stderr, "%s:%d: error: ", utils_file_name, line_no);
     vfprintf(stderr, format, args);
 
+#ifndef NO_FFI
+    fprintf(stderr, "\n");
+#else
+    fprintf(stderr, "\r\n");
+#endif
+
     va_end(args);
 }
 
@@ -50,6 +56,12 @@ void print_warning_msg(int line_no, const char * format, ...)
 
     fprintf(stderr, "%s:%d: warning: ", utils_file_name, line_no);
     vfprintf(stderr, format, args);
+
+#ifndef NO_FFI
+    fprintf(stderr, "\n");
+#else
+    fprintf(stderr, "\r\n");
+#endif
 
     va_end(args);
 }

@@ -230,7 +230,7 @@ int expr_constred(expr * value, int * result)
             if (right_value->int_value == 0)
             {
                 *result = CONSTRED_FAIL;
-                print_error_msg(value->line_no, "division by zero\n");
+                print_error_msg(value->line_no, "division by zero");
                 return 0;
             }
 
@@ -250,7 +250,7 @@ int expr_constred(expr * value, int * result)
             if (right_value->float_value == 0)
             {
                 *result = CONSTRED_FAIL;
-                print_error_msg(value->line_no, "division by zero\n");
+                print_error_msg(value->line_no, "division by zero");
                 return 0;
             }
 
@@ -275,7 +275,7 @@ int expr_constred(expr * value, int * result)
             if (right_value->int_value == 0)
             {
                 *result = CONSTRED_FAIL;
-                print_error_msg(value->line_no, "division by zero\n");
+                print_error_msg(value->line_no, "division by zero");
                 return 0;
             }
 
