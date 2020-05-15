@@ -197,7 +197,7 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
     switch (value->src.type)
     {
     case FREEVAR_UNKNOWN:
-        print_error_msg(0, "unknown freevar %s during emit\n", value->id);
+        print_error_msg(0, "unknown freevar %s during emit", value->id);
         assert(0);
         break;
     case FREEVAR_PARAM:
@@ -421,7 +421,7 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
     {
     case ID_TYPE_UNKNOWN:
         print_error_msg(value->line_no,
-                        "not recognized id, at this stage it is very bad\n");
+                        "not recognized id, at this stage it is very bad");
         assert(0);
         break;
     case ID_TYPE_LOCAL:
@@ -505,7 +505,7 @@ int expr_neg_emit(expr * value, int stack_level, module * module_value,
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(value->line_no, "cannot neg type %s\n",
+        print_error_msg(value->line_no, "cannot neg type %s",
                         comb_type_str(value->comb.comb));
         assert(0);
     }
@@ -576,7 +576,7 @@ int expr_add_emit(expr * value, int stack_level, module * module_value,
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(value->line_no, "cannot add type %s\n",
+        print_error_msg(value->line_no, "cannot add type %s",
                         comb_type_str(value->comb.comb));
         assert(0);
     }
@@ -617,7 +617,7 @@ int expr_sub_emit(expr * value, int stack_level, module * module_value,
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(value->line_no, "cannot sub type %s\n",
+        print_error_msg(value->line_no, "cannot sub type %s",
                         comb_type_str(value->comb.comb));
         assert(0);
     }
@@ -674,7 +674,7 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(value->line_no, "cannot mul type %s\n",
+        print_error_msg(value->line_no, "cannot mul type %s",
                         comb_type_str(value->comb.comb));
         assert(0);
     }
@@ -791,7 +791,7 @@ int expr_not_emit(expr * value, int stack_level, module * module_value,
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(value->line_no, "cannot not type %s\n",
+        print_error_msg(value->line_no, "cannot not type %s",
                         comb_type_str(value->comb.comb));
         assert(0);
     }
@@ -868,7 +868,7 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(value->line_no, "cannot assign type %s\n",
+        print_error_msg(value->line_no, "cannot assign type %s",
                         comb_type_str(value->comb.comb));
         assert(0);
     }
@@ -2135,7 +2135,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else
         {
             *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot div type %s\n",
+            print_error_msg(value->line_no, "cannot div type %s",
                             comb_type_str(value->comb.comb));
             assert(0);
         }
@@ -2157,7 +2157,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else
         {
             *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot mod type %s %s\n",
+            print_error_msg(value->line_no, "cannot mod type %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
             assert(0);
@@ -2188,7 +2188,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else
         {
             *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot lt different types %s %s\n",
+            print_error_msg(value->line_no, "cannot lt different types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
             assert(0);
@@ -2219,7 +2219,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else
         {
             *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot gt different types %s %s\n",
+            print_error_msg(value->line_no, "cannot gt different types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
             assert(0);
@@ -2251,7 +2251,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             *result = EMIT_FAIL;
             print_error_msg(value->line_no,
-                            "cannot lte different types %s %s\n",
+                            "cannot lte different types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
             assert(0);
@@ -2283,7 +2283,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             *result = EMIT_FAIL;
             print_error_msg(value->line_no,
-                            "cannot gte different types %s %s\n",
+                            "cannot gte different types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
             assert(0);
@@ -2324,7 +2324,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             case ENUMTYPE_TYPE_RECORD:
                 *result = EMIT_FAIL;
                 print_error_msg(value->line_no,
-                                "cannot compare enum record type\n");
+                                "cannot compare enum record type");
                 assert(0);
             break;
             }
@@ -2384,7 +2384,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else
         {
             *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot eq different types %s %s\n",
+            print_error_msg(value->line_no, "cannot eq different types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
             assert(0);
@@ -2426,7 +2426,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             case ENUMTYPE_TYPE_RECORD:
                 *result = EMIT_FAIL;
                 print_error_msg(value->line_no,
-                                "cannot compare enum record type\n");
+                                "cannot compare enum record type");
                 assert(0);
             break;
             }
@@ -2487,7 +2487,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             *result = EMIT_FAIL;
             print_error_msg(value->line_no,
-                            "cannot neq different types %s %s\n",
+                            "cannot neq different types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
             assert(0);
@@ -2536,7 +2536,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             *result = EMIT_FAIL;
             print_error_msg(value->line_no,
-                            "cannot deref type %s\n",
+                            "cannot deref type %s",
                             comb_type_str(value->array_deref.array_expr->comb.comb));
             assert(0);
         }
@@ -2626,7 +2626,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else
         {
             *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot convert type %s to float\n",
+            print_error_msg(value->line_no, "cannot convert type %s to float",
                             comb_type_str(value->left->comb.comb));
             assert(0);
         }
@@ -2643,7 +2643,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else
         {
             *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot convert type %s to int\n",
+            print_error_msg(value->line_no, "cannot convert type %s to int",
                             comb_type_str(value->left->comb.comb));
             assert(0);
         }
@@ -3830,7 +3830,7 @@ int func_body_emit_ffi_param(param * value, module * module_value, int * result)
         case PARAM_RECORD:
         case PARAM_FUNC:
             *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "ffi type not supported\n");
+            print_error_msg(value->line_no, "ffi type not supported");
         break;
     }
 
@@ -4101,7 +4101,7 @@ int func_main_emit(
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(0, "no %s function defined\n", main_name);
+        print_error_msg(0, "no %s function defined", main_name);
     }
     return 0;
 }

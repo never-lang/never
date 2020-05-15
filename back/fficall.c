@@ -19,6 +19,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef NO_FFI
+
 #include "fficall.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -164,4 +166,5 @@ char * test_conc_int_str(int d, const char * s)
     return c;
 }
 
+#endif /* NO_FFI */
 

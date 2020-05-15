@@ -24,6 +24,9 @@
 
 #include "types.h"
 
+extern unsigned int line_no;
+void set_line_no(unsigned int value);
+
 int yylex_destroy();
 
 int lex_scan(token * tokp);

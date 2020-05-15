@@ -43,6 +43,7 @@
 
 extern FILE * yyin;
 extern int parse_result;
+extern int yyparse (never ** nev);
 
 int never_func_main_params(
     const char * main_name, never * nev,
@@ -91,7 +92,9 @@ int nev_compile_prog(const char * main_name, program * prog)
     int ret = 0;
     never * nev = NULL;
 
+    set_line_no(1);
     parse_result = 0;
+
     yyparse(&nev);
     if ((ret = parse_result) == 0)
     {

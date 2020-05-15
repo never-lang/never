@@ -22,6 +22,8 @@
 #ifndef __FFICALL_H__
 #define __FFICALL_H__
 
+#ifndef NO_FFI
+
 #include <ffi.h>
 
 #define FFI_SUCC 0
@@ -61,6 +63,8 @@ int test_print_str(const char * str);
 
 char * test_conc_str(const char * a, const char * b);
 char * test_conc_int_str(int d, const char * s);
+
+#endif
 
 #endif /* __FFICALL_H__ */
 

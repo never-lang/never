@@ -330,14 +330,14 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     {
         expr_conv(expr_value, EXPR_FLOAT_TO_INT);
 
-        print_warning_msg(expr_value->line_no, "converted float to int\n");
+        print_warning_msg(expr_value->line_no, "converted float to int");
         return TYPECHECK_SUCC;
     }
     else if (param_value->type == PARAM_FLOAT && expr_value->comb.comb == COMB_TYPE_INT)
     {
         expr_conv(expr_value, EXPR_INT_TO_FLOAT);
 
-        print_warning_msg(expr_value->line_no, "converted int to float\n");
+        print_warning_msg(expr_value->line_no, "converted int to float");
         return TYPECHECK_SUCC;
     }
     else if (param_value->type == PARAM_FLOAT && expr_value->comb.comb == COMB_TYPE_FLOAT)
@@ -360,7 +360,7 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     {
         expr_conv(expr_value, EXPR_FLOAT_TO_INT);
 
-        print_warning_msg(expr_value->line_no, "converted float to int\n");
+        print_warning_msg(expr_value->line_no, "converted float to int");
         return TYPECHECK_SUCC;
     }
     else if (param_value->type == PARAM_ARRAY &&
@@ -463,7 +463,7 @@ int expr_comb_is_enum(expr * value, int * result)
 
     *result = TYPECHECK_FAIL;
     print_error_msg(value->line_no,
-                    "expression is %s not enum name\n",
+                    "expression is %s not enum name",
                     comb_type_str(value->comb.comb));
 
     return TYPECHECK_FAIL;
@@ -513,7 +513,7 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
              *result = TYPECHECK_FAIL;
              value->comb.comb = COMB_TYPE_ERR;
              print_error_msg(value->line_no,
-                             "arrays are different first line %u second line %u\n",
+                             "arrays are different first line %u second line %u",
                              left->line_no,
                              right->line_no);
          }
@@ -545,7 +545,7 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
              *result = TYPECHECK_FAIL;
              value->comb.comb = COMB_TYPE_ERR;
              print_error_msg(value->line_no,
-                             "slices are different first line %u second line %u\n",
+                             "slices are different first line %u second line %u",
                              left->line_no,
                              right->line_no);
          }
@@ -567,7 +567,7 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "functions are different %s:%u %s:%u\n",
+                            "functions are different %s:%u %s:%u",
                             left->id, left->line_no,
                             right->id, right->line_no);
         }
@@ -593,7 +593,7 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
-                        "types on conditional expression do not match %s %s\n",
+                        "types on conditional expression do not match %s %s",
                         comb_type_str(left->comb.comb),
                         comb_type_str(right->comb.comb));
     }
@@ -612,7 +612,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             func * al_func = entry->func_value;
             print_error_msg(line_no,
-                            "function %s already defined at line %u\n",
+                            "function %s already defined at line %u",
                             entry->id, al_func->line_no);
         }
         break;
@@ -620,7 +620,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             param * al_param = entry->param_value;
             print_error_msg(line_no,
-                            "parameter %s already defined at line %u\n",
+                            "parameter %s already defined at line %u",
                             entry->id, al_param->line_no);
         }
         break;
@@ -628,7 +628,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             bind * al_bind = entry->bind_value;
             print_error_msg(line_no,
-                            "bind %s already defined at line %u\n",
+                            "bind %s already defined at line %u",
                             entry->id, al_bind->line_no);
         }
         break;
@@ -636,7 +636,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             matchbind * al_matchbind = entry->matchbind_value;
             print_error_msg(line_no,
-                            "match bind %s already defined at line %u\n",
+                            "match bind %s already defined at line %u",
                             entry->id, al_matchbind->line_no);
         }
         break;
@@ -644,7 +644,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             qualifier * al_qualifier = entry->qualifier_value;
             print_error_msg(line_no,
-                            "qualifier %s already defined at line %u\n",
+                            "qualifier %s already defined at line %u",
                             entry->id, al_qualifier->line_no);
         }
         break;
@@ -652,7 +652,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             forin * al_forin = entry->forin_value;
             print_error_msg(line_no,
-                            "forin iterator %s already defined at line %u\n",
+                            "forin iterator %s already defined at line %u",
                             entry->id, al_forin->line_no);
         }
         break;
@@ -660,7 +660,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             enumerator * al_enumerator = entry->enumerator_value;
             print_error_msg(line_no,
-                            "enum item %s already defined at line %u\n",
+                            "enum item %s already defined at line %u",
                             entry->id, al_enumerator->line_no);
         }
         break;
@@ -668,7 +668,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             enumtype * al_enumtype = entry->enumtype_value;
             print_error_msg(line_no,
-                            "enum %s already defined at line %u\n",
+                            "enum %s already defined at line %u",
                             entry->id, al_enumtype->line_no);
         }
         break;
@@ -676,7 +676,7 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
         {
             record * al_record = entry->record_value;
             print_error_msg(line_no,
-                            "record %s already defined at line %u\n",
+                            "record %s already defined at line %u",
                             entry->id, al_record->line_no);
         }
         break;
@@ -871,7 +871,7 @@ int param_enum_record_check_type(symtab * tab, param * param_value,
         *result = TYPECHECK_FAIL;
         param_value->record_value = NULL;
 
-        print_error_msg(param_value->line_no, "cannot find record or enum %s\n",
+        print_error_msg(param_value->line_no, "cannot find record or enum %s",
                         param_value->record_id);
     }
     else if (entry->type == SYMTAB_RECORD)
@@ -888,7 +888,7 @@ int param_enum_record_check_type(symtab * tab, param * param_value,
         *result = TYPECHECK_FAIL;
         param_value->record_value = NULL;
 
-        print_error_msg(param_value->line_no, "expected record or enum but %s found\n",
+        print_error_msg(param_value->line_no, "expected record or enum but %s found",
                         symtab_entry_type_str(entry->type));
     }
 
@@ -1059,7 +1059,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
                     *result = TYPECHECK_FAIL;
                     value->comb.comb = COMB_TYPE_ERR;
 
-                    print_error_msg(value->line_no, "found enum id %s\n", value->id.id);
+                    print_error_msg(value->line_no, "found enum id %s", value->id.id);
                 }
             break;
             case SYMTAB_ENUMERATOR:
@@ -1068,7 +1068,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
                     *result = TYPECHECK_FAIL;
                     value->comb.comb = COMB_TYPE_ERR;
 
-                    print_error_msg(value->line_no, "found enumerator %s\n", value->id.id);
+                    print_error_msg(value->line_no, "found enumerator %s", value->id.id);
                 }
             break;
         }
@@ -1076,7 +1076,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     else
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(value->line_no, "cannot find identifier %s\n",
+        print_error_msg(value->line_no, "cannot find identifier %s",
                         value->id.id);
     }
     return 0;
@@ -1104,7 +1104,7 @@ int expr_enumtype_check_type(symtab * tab, expr * value, int * result)
             {
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no, "cannot find enum %s::%s\n",
+                print_error_msg(value->line_no, "cannot find enum %s::%s",
                                 value->enumtype.enum_id,
                                 value->enumtype.item_id);
             }
@@ -1113,7 +1113,7 @@ int expr_enumtype_check_type(symtab * tab, expr * value, int * result)
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "expected enumtype %s but found %s\n",
+            print_error_msg(value->line_no, "expected enumtype %s but found %s",
                             value->enumtype.enum_id,
                             symtab_entry_type_str(entry->type));
         }
@@ -1122,7 +1122,7 @@ int expr_enumtype_check_type(symtab * tab, expr * value, int * result)
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot find enumtype %s\n",
+        print_error_msg(value->line_no, "cannot find enumtype %s",
                         value->enumtype.enum_id);
     }
 
@@ -1159,7 +1159,7 @@ int expr_neg_check_type(symtab * tab, expr * value, func * func_value,
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot negate type %s\n",
+        print_error_msg(value->line_no, "cannot negate type %s",
                         comb_type_str(value->left->comb.comb));
     }
     
@@ -1182,7 +1182,7 @@ int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value,
         expr_conv(value->left, EXPR_INT_TO_FLOAT);
         value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float\n");
+        print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_INT)
@@ -1190,7 +1190,7 @@ int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value,
         expr_conv(value->right, EXPR_INT_TO_FLOAT);
         value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float\n");
+        print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
@@ -1252,7 +1252,7 @@ int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value,
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
-                        "cannot exec arithmetic operation on types %s %s\n",
+                        "cannot exec arithmetic operation on types %s %s",
                         comb_type_str(value->left->comb.comb),
                         comb_type_str(value->right->comb.comb));
     }
@@ -1276,7 +1276,7 @@ int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         expr_conv(value->left, EXPR_INT_TO_FLOAT);
         value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float\n");
+        print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_INT)
@@ -1284,7 +1284,7 @@ int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         expr_conv(value->right, EXPR_INT_TO_FLOAT);
         value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float\n");
+        print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
@@ -1317,7 +1317,7 @@ int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         value->comb.comb_dims = value->right->comb.comb_dims;
         value->comb.comb_ret = value->right->comb.comb_ret;
 
-        print_warning_msg(value->line_no, "converted int to float\n");
+        print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
@@ -1329,7 +1329,7 @@ int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         value->comb.comb_dims = value->right->comb.comb_dims;
         value->comb.comb_ret = value->right->comb.comb_ret;
 
-        print_warning_msg(value->line_no, "converted float to int\n");
+        print_warning_msg(value->line_no, "converted float to int");
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
@@ -1358,7 +1358,7 @@ int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
-                        "cannot exec arithmetic operation on types %s %s\n",
+                        "cannot exec arithmetic operation on types %s %s",
                         comb_type_str(value->left->comb.comb),
                         comb_type_str(value->right->comb.comb));
     }
@@ -1383,7 +1383,7 @@ int expr_div_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         expr_conv(value->left, EXPR_INT_TO_FLOAT);
         value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float\n");
+        print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_INT)
@@ -1391,7 +1391,7 @@ int expr_div_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         expr_conv(value->right, EXPR_INT_TO_FLOAT);
         value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float\n");
+        print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
@@ -1403,7 +1403,7 @@ int expr_div_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
-                        "cannot exec arithmetic operation on types %s %s\n",
+                        "cannot exec arithmetic operation on types %s %s",
                         comb_type_str(value->left->comb.comb),
                         comb_type_str(value->right->comb.comb));
     }
@@ -1422,7 +1422,7 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         value->left->type != EXPR_ARRAY_DEREF)
     {
         print_warning_msg(value->line_no,
-                          "expression on assignment left side is not an identifier but %s\n",
+                          "expression on assignment left side is not an identifier but %s",
                           expr_type_str(value->left->type));
     }
 
@@ -1442,7 +1442,7 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         expr_conv(value->right, EXPR_FLOAT_TO_INT);
         value->comb.comb = COMB_TYPE_INT;
 
-        print_warning_msg(value->line_no, "converted float to int\n");
+        print_warning_msg(value->line_no, "converted float to int");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_INT)
@@ -1450,7 +1450,7 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         expr_conv(value->right, EXPR_INT_TO_FLOAT);
         value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float\n");
+        print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
@@ -1536,7 +1536,7 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
-                        "cannot assign different types %s %s\n",
+                        "cannot assign different types %s %s",
                         comb_type_str(value->left->comb.comb),
                         comb_type_str(value->right->comb.comb));
     }
@@ -1623,7 +1623,7 @@ int expr_eq_check_type(symtab * tab, expr * value, func * func_value, unsigned i
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot compare types %s %s\n",
+        print_error_msg(value->line_no, "cannot compare types %s %s",
                         comb_type_str(value->left->comb.comb),
                         comb_type_str(value->right->comb.comb));
     }
@@ -1643,7 +1643,7 @@ int expr_cond_check_type(symtab * tab, expr * value, func * func_value, unsigned
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no,
-                        "cannot execute conditional operator on %s\n",
+                        "cannot execute conditional operator on %s",
                         comb_type_str(value->left->comb.comb));
         return 0;
     }
@@ -1662,13 +1662,13 @@ int array_dims_check_type_expr(symtab * tab, expr * value, func * func_value, un
     if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         expr_conv(value, EXPR_FLOAT_TO_INT);
-        print_warning_msg(value->line_no, "converted float to int\n");
+        print_warning_msg(value->line_no, "converted float to int");
     }
     else if (value->comb.comb != COMB_TYPE_INT)
     {
         *result = res = TYPECHECK_FAIL;
         print_error_msg(value->line_no,
-                        "incorrect types %s passed to deref array\n",
+                        "incorrect types %s passed to deref array",
                         comb_type_str(value->comb.comb));
     }
     return res;
@@ -1720,7 +1720,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no,
-                                "incorrect types of arguments passed to deref array\n");
+                                "incorrect types of arguments passed to deref array");
             }
         }
         else
@@ -1729,7 +1729,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(
                 value->line_no,
-                "incorrect number of dimesions passed to deref array\n");
+                "incorrect number of dimesions passed to deref array");
 
         }
     }
@@ -1749,7 +1749,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no,
-                                "incorrect types of arguments passed to deref range\n");
+                                "incorrect types of arguments passed to deref range");
             }
         }
         else
@@ -1757,7 +1757,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to deref range\n");
+                            "incorrect number of dimensions passed to deref range");
         }
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_SLICE)
@@ -1775,7 +1775,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no,
-                                "incorrect types of arguments passed to deref slice\n");
+                                "incorrect types of arguments passed to deref slice");
             }
         }
         else
@@ -1783,7 +1783,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to deref slice\n");
+                            "incorrect number of dimensions passed to deref slice");
 
         }
     }
@@ -1801,7 +1801,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no,
-                                "incorrect types to deref string\n");
+                                "incorrect types to deref string");
             }
         }
         else
@@ -1810,14 +1810,14 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(
                 value->line_no,
-                "strings can be deref only using one dimesion\n");
+                "strings can be deref only using one dimesion");
         }
     }
     else
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot deref %s\n",
+        print_error_msg(value->line_no, "cannot deref %s",
                         comb_type_str(value->array_deref.array_expr->comb.comb));
     }
 
@@ -1843,7 +1843,7 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to slice array\n");
+                            "incorrect number of dimensions passed to slice array");
         }
     }
     else if (value->slice.array_expr->comb.comb == COMB_TYPE_RANGE)
@@ -1859,7 +1859,7 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to slice range\n");
+                            "incorrect number of dimensions passed to slice range");
         }
     }
     else if (value->slice.array_expr->comb.comb == COMB_TYPE_SLICE)
@@ -1875,7 +1875,7 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to slice slice\n");
+                            "incorrect number of dimensions passed to slice slice");
         }
     }
     else if (value->slice.array_expr->comb.comb == COMB_TYPE_STRING)
@@ -1889,14 +1889,14 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to slice string\n");
+                            "incorrect number of dimensions passed to slice string");
         }
     }
     else
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot deref %s\n",
+        print_error_msg(value->line_no, "cannot deref %s",
                         comb_type_str(value->slice.array_expr->comb.comb));
     }
 
@@ -1927,7 +1927,7 @@ int expr_range_dim_check_type(symtab * tab, expr * value, func * func_value,
     {
         *result = TYPECHECK_FAIL;
         print_error_msg(value->range_dim.from->line_no,
-                        "expected range from of type int but got %s\n",
+                        "expected range from of type int but got %s",
                         comb_type_str(value->range_dim.from->comb.comb));
     }
 
@@ -1935,7 +1935,7 @@ int expr_range_dim_check_type(symtab * tab, expr * value, func * func_value,
     {
         *result = TYPECHECK_FAIL;
         print_error_msg(value->range_dim.to->line_no,
-                        "expected range to of type int but got %s\n",
+                        "expected range to of type int but got %s",
                         comb_type_str(value->range_dim.to->comb.comb));
     }
 
@@ -1982,7 +1982,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
 
-            print_error_msg(value->line_no, "function call type mismatch\n");
+            print_error_msg(value->line_no, "function call type mismatch");
         }
         break;
     case COMB_TYPE_RECORD_ID:
@@ -1998,7 +1998,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
             value->comb.comb = COMB_TYPE_ERR;
             value->comb.comb_record = NULL;            
 
-            print_error_msg(value->line_no, "record create type mismatch\n");
+            print_error_msg(value->line_no, "record create type mismatch");
         }
 
         break;
@@ -2022,7 +2022,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
             value->comb.comb = COMB_TYPE_ERR;
             value->comb.comb_enumtype = NULL;
                     
-            print_error_msg(value->line_no, "enum record type mismatch\n");
+            print_error_msg(value->line_no, "enum record type mismatch");
         }
         break;
     case COMB_TYPE_BOOL:
@@ -2041,7 +2041,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             
-            print_error_msg(value->line_no, "cannot execute function on type %s\n",
+            print_error_msg(value->line_no, "cannot execute function on type %s",
                             comb_type_str(value->call.func_expr->comb.comb));
         }
         break;
@@ -2072,7 +2072,7 @@ int qualifier_check_type(symtab * tab, qualifier * value, func * func_value, uns
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(value->line_no,
-                                    "generators over one dimensional arrays\n");
+                                    "generators over one dimensional arrays");
                 }
             }
             symtab_add_qualifier_from_qualifier(tab, value, syn_level, result);
@@ -2085,7 +2085,7 @@ int qualifier_check_type(symtab * tab, qualifier * value, func * func_value, uns
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(value->line_no,
-                                    "filter should be bool type is %s\n",
+                                    "filter should be bool type is %s",
                                      comb_type_str(value->expr_value->comb.comb));
                 }
             }
@@ -2137,7 +2137,7 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
     {
         *result = TYPECHECK_FAIL;
         print_error_msg(listcomp_value->line_no,
-                        "incorrect return type in list comprehension %s %s\n",
+                        "incorrect return type in list comprehension %s %s",
                         comb_type_str(listcomp_value->expr_value->comb.comb),
                         param_type_str(listcomp_value->ret->type));
     }
@@ -2170,7 +2170,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
             {
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no, "cannot find attribute %s in record %s\n",
+                print_error_msg(value->line_no, "cannot find attribute %s in record %s",
                                 value->attr.id, record_value->id);
             }
         }
@@ -2179,7 +2179,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot get record attribute of type %s\n",
+        print_error_msg(value->line_no, "cannot get record attribute of type %s",
                         comb_type_str(value->attr.record_value->comb.comb));
     }
 
@@ -2245,7 +2245,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "cannot exec mod operation on types %s %s\n",
+                            "cannot exec mod operation on types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
         }
@@ -2276,7 +2276,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "cannot compare types %s %s\n",
+            print_error_msg(value->line_no, "cannot compare types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
         }
@@ -2299,7 +2299,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "cannot compare types %s %s\n",
+            print_error_msg(value->line_no, "cannot compare types %s %s",
                             comb_type_str(value->left->comb.comb),
                             comb_type_str(value->right->comb.comb));
         }
@@ -2314,7 +2314,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "cannot ne types %s\n",
+            print_error_msg(value->line_no, "cannot ne types %s",
                             comb_type_str(value->left->comb.comb));
         }
         break;
@@ -2380,7 +2380,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "while loop condition type is %s\n",
+                            "while loop condition type is %s",
                             comb_type_str(value->whileloop.cond->comb.comb));
         }
         break;
@@ -2399,7 +2399,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "for loop condition is %s\n",
+                            "for loop condition is %s",
                             comb_type_str(value->forloop.cond->comb.comb));
         }
         break;
@@ -2429,7 +2429,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "cannot convert type %s to float\n",
+            print_error_msg(value->line_no, "cannot convert type %s to float",
                             value->line_no, comb_type_str(value->left->comb.comb));
         }
         break;
@@ -2443,7 +2443,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "cannot convert type %s to int\n",
+            print_error_msg(value->line_no, "cannot convert type %s to int",
                             value->line_no, comb_type_str(value->left->comb.comb));
         }
         break;
@@ -2459,7 +2459,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "list comprehension is not well formed\n");
+            print_error_msg(value->line_no, "list comprehension is not well formed");
         }
         break;
     case EXPR_ATTR:
@@ -2506,7 +2506,7 @@ int expr_seq_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         value->comb.comb = COMB_TYPE_ERR;
 
         print_error_msg(value->line_no,
-                        "no type in sequence %s\n", expr_type_str(value->type));
+                        "no type in sequence %s", expr_type_str(value->type));
     }
 
     return 0;
@@ -2593,7 +2593,7 @@ int except_check_id(except * value, int * result)
         value->no = EXCEPT_NO_UNKNOWN;
         *result = TYPECHECK_FAIL;
         print_error_msg(value->line_no,
-                        "unknown exception %s\n", value->id);
+                        "unknown exception %s", value->id);
     }
     return 0;
 }
@@ -2614,7 +2614,7 @@ int except_check_type(symtab * tab, except * value,
     {
         *result = TYPECHECK_FAIL;
         print_error_msg(value->line_no,
-                        "incorrect return type in function %s\n",
+                        "incorrect return type in function %s",
                         func_value->decl->id);
     }
 
@@ -2656,6 +2656,7 @@ int func_except_check_type(symtab * tab, func_except * value, func * func_value,
 int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                         int * result)
 {
+#ifndef NO_FFI
     if (func_value->stab == NULL)
     {
         func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);
@@ -2670,6 +2671,11 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
     {
         param_check_type(func_value->stab, func_value->decl->ret, syn_level, result);
     }
+#else
+    *result = TYPECHECK_FAIL;
+    print_error_msg(func_value->line_no,
+                    "FFI not supported with JS %s", func_value->decl->id);
+#endif
 
     return 0;
 }                           
@@ -2746,7 +2752,7 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
         {
             *result = TYPECHECK_FAIL;
             print_error_msg(func_value->line_no,
-                            "incorrect return type in function %s\n",
+                            "incorrect return type in function %s",
                             func_value->decl->id);
         }
     }
@@ -3066,14 +3072,14 @@ int func_main_check_type(const char * main_name, symtab * tab, int * result)
                 *result = TYPECHECK_FAIL;
                 print_error_msg(
                     func_value->line_no,
-                    "function main can take only numerical parameters\n",
+                    "function main can take only numerical parameters",
                     func_value->decl->params->count);
             }
             if (func_value->decl->ret == NULL)
             {
                 *result = TYPECHECK_FAIL;
                 print_error_msg(func_value->line_no,
-                                "incorrect function main return type\n");
+                                "incorrect function main return type");
             }
             else
             {
@@ -3081,20 +3087,20 @@ int func_main_check_type(const char * main_name, symtab * tab, int * result)
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(func_value->line_no,
-                                    "incorrect function main return type\n");
+                                    "incorrect function main return type");
                 }
             }
         }
         else
         {
             *result = TYPECHECK_FAIL;
-            print_error_msg(0, "incorrect function main, expected function\n");
+            print_error_msg(0, "incorrect function main, expected function");
         }
     }
     else
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(0, "function %s is not defined\n", main_name);
+        print_error_msg(0, "function %s is not defined", main_name);
     }
 
     return 0;

@@ -157,12 +157,12 @@ void string_print(char * val)
 
 void string_print_int(int val)
 {
-    printf("%d\n", val);
+    printf("%d\r\n", val);
 }
 
 void string_print_float(float val)
 {
-    printf("%.2f\n", val);
+    printf("%.2f\r\n", val);
 }
 
 void string_print_char(char val)
