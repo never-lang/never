@@ -35,7 +35,12 @@ ffi_decl * ffi_decl_new(unsigned int count)
     value->count = count;
     value->param_types = (ffi_type **)malloc(count * sizeof(ffi_type *));
     value->param_values = (void **)malloc(count * sizeof(void *));
-    
+    value->ret_type = NULL;
+    value->ret_void_value = NULL;
+
+    memset(value->param_types, 0, count * sizeof(ffi_type*));
+    memset(value->param_values, 0, count * sizeof(void *));
+
     return value;
 }
 
@@ -62,7 +67,8 @@ void ffi_decl_delete(ffi_decl * value)
 
     for (i = 0; i < value->count; i++)
     {
-        if (value->param_types[i]->type == FFI_TYPE_STRUCT)
+        if (value->param_types[i] != NULL &&
+            value->param_types[i]->type == FFI_TYPE_STRUCT)
         {
             ffi_decl_delete_ffi_type(value->param_types[i]);
             free(value->param_values[i]);
@@ -77,7 +83,8 @@ void ffi_decl_delete(ffi_decl * value)
     {
         free(value->param_values);
     }
-    if (value->ret_type->type == FFI_TYPE_STRUCT)
+    if (value->ret_type != NULL &&
+        value->ret_type->type == FFI_TYPE_STRUCT)
     {
         free(value->ret_void_value);
         ffi_decl_delete_ffi_type(value->ret_type);
@@ -183,6 +190,8 @@ int ffi_decl_call(ffi_decl * decl, char * fname, void * handle)
     return FFI_SUCC;
 }
 
+/* FFI test functions to self test never-lang */
+
 char test_char(char c)
 {
     return ((c - 'A' + 1) % ('Z' - 'A' + 1)) + 'A';
@@ -231,6 +240,67 @@ void test_void_call(char * str)
 {
     printf("%s\n", str);
     free(str);
+}
+
+int test_types_get_int()
+{
+    return 10;
+}
+
+float test_types_get_float()
+{
+    return 10.0;
+}
+
+char test_types_get_char()
+{
+    return 'C';
+}
+
+char * test_types_get_string()
+{
+    return "CCC";
+}
+
+test_Point p1 = { 10, 20 };
+
+test_Point * test_types_get_ptr()
+{
+    return &p1;
+}
+
+void test_types_call(int i, float f, char c, char * str, test_Point * ptr, test_Types rec)
+{
+    assert(i == 10);
+    assert(f == 10.0);
+    assert(c == 'A');
+    assert(strcmp(str, "AAA") == 0);
+    assert(ptr->x == 10);
+    assert(ptr->y == 20);
+
+    assert(rec.i == 20);
+    assert(rec.f == 20.0);
+    assert(rec.c == 'B');
+    assert(strcmp(rec.str, "BBB") == 0);
+    assert(rec.ptr->x == 10);
+    assert(rec.ptr->y == 20);
+    assert(rec.rec.x == 30);
+    assert(rec.rec.y == 40);
+}
+
+test_Types test_types_get_rec()
+{
+    test_Types ret;
+
+    ret.i = 10;
+    ret.f = 10.0;
+    ret.c = 'A';
+    ret.str = "AAA";
+    ret.ptr = &p1;
+    ret.rec.x = 20;
+    ret.rec.y = 30;
+
+    return ret;
 }
 
 #endif /* NO_FFI */

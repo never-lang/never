@@ -58,11 +58,7 @@ void ffi_decl_close_handle(void * handle);
 int ffi_decl_prepare(ffi_decl * decl);
 int ffi_decl_call(ffi_decl * decl, char * fname, void * handle);
 
-char test_char(char c);
-int test_print_str(const char * str);
-
-char * test_conc_str(const char * a, const char * b);
-char * test_conc_int_str(int d, const char * s);
+/* these functions are needed to self test never-lang */
 
 typedef struct test_Point
 {
@@ -77,10 +73,36 @@ typedef struct test_Rect
     test_Point c;
 } test_Rect;
 
+typedef struct test_Types
+{
+    int i;
+    float f;
+    char c;
+    char * str;
+    test_Point * ptr;
+    test_Point rec;
+} test_Types;
+
+char test_char(char c);
+int test_print_str(const char * str);
+
+char * test_conc_str(const char * a, const char * b);
+char * test_conc_int_str(int d, const char * s);
+
 test_Point test_rect(test_Rect r);
+
 char * test_void();
 void test_void_call(char * str);
+
+int test_types_get_int();
+float test_types_get_float();
+char test_types_get_char();
+char * test_types_get_string();
+test_Point * test_types_get_ptr();
+void test_types_call(int i, float f, char c, char * str, test_Point * ptr, test_Types rec);
+test_Types test_types_get_rec();
 
 #endif /* NO_FFI */
 
 #endif /* __FFICALL_H__ */
+

@@ -1,0 +1,49 @@
+
+record Point
+{
+    x : int;
+    y : int;
+}
+
+record Types
+{
+    i : int;
+    f : float;
+    c : char;
+    str : string;
+    ptr : c_ptr;
+    rec : Point;
+}
+
+extern "host" func test_types_get_int() -> int
+extern "host" func test_types_get_float() -> float
+extern "host" func test_types_get_char() -> char
+extern "host" func test_types_get_string() -> string
+extern "host" func test_types_get_ptr() -> c_ptr
+extern "host" func test_types_call(i : int, f : float, c : char, str : string, ptr : c_ptr, rec : Types) -> void
+extern "host" func test_types_get_rec() -> Types
+
+func main() -> int
+{
+    let p = Point(30, 40);
+    let ptr = test_types_get_ptr();
+    let t = Types(20, 20.0, 'B', "BBB", ptr, p);
+    let g = test_types_get_rec();
+
+    assert(test_types_get_int() == 10);
+    assert(test_types_get_float() == 10.0);
+    assert(test_types_get_char() == 'C');
+    assert(test_types_get_string() == "CCC");
+
+    test_types_call(10, 10.0, 'A', "AAA", ptr, t);
+
+    assert(g.i == 10);
+    assert(g.f == 10.0);
+    assert(g.c == 'A');
+    assert(g.str == "AAA");
+    assert(g.ptr == ptr);
+    assert(g.rec.x == 20);
+    assert(g.rec.y == 30);
+
+    0
+}

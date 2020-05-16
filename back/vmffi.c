@@ -144,7 +144,7 @@ static int vm_execute_func_ffi_record_value(vm * machine, mem_ptr rec_addr, unsi
                 if (str_b != nil_ptr)
                 {
                     char ** str_value = gc_get_string_ptr(machine->collector, str_b);
-                    *(char **)((char **)data + *offset) = *str_value;
+                    *(char **)((char *)data + *offset) = *str_value;
                 }
                 else
                 {
@@ -159,7 +159,7 @@ static int vm_execute_func_ffi_record_value(vm * machine, mem_ptr rec_addr, unsi
                 void * c_ptr_value = gc_get_c_ptr(machine->collector, c_ptr_addr);
 
                 *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
-                *(void **)((void **)data + *offset) = c_ptr_value;
+                *(void **)((char *)data + *offset) = c_ptr_value;
                 *offset += type->elements[i]->size;
             }
             break;
@@ -261,7 +261,7 @@ static mem_ptr vm_execute_func_ffi_record_new(vm * machine, unsigned int count,
             {
                 *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
                 
-                void * c_ptr_value  = *(void **)((void *)data + *offset);
+                void * c_ptr_value  = *(void **)((char *)data + *offset);
                 mem_ptr c_ptr_addr = gc_alloc_c_ptr(machine->collector, c_ptr_value);
 
                 *offset += type->elements[i]->size;
