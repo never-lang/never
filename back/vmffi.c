@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef NO_FFI
+
 static unsigned int vm_execute_func_ffi_align(unsigned int value, unsigned int alignment)
 {
     if (alignment == 1) return value;
@@ -294,9 +296,11 @@ static mem_ptr vm_execute_func_ffi_record_new(vm * machine, unsigned int count,
 
     return rec;
 }
+#endif /* NO_FFI */
 
 void vm_execute_func_ffi(vm * machine, bytecode * code)
 {
+#ifndef NO_FFI
     bytecode bc = { 0 };
     int ret = FFI_SUCC;
     unsigned int i = 0;
@@ -540,6 +544,7 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+#endif /* NO_FFI */
 }
 
 void vm_execute_func_ffi_int(vm * machine, bytecode * code)
