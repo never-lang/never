@@ -3121,6 +3121,7 @@ int func_main_check_num_params(param_list * params)
     return 1;
 }
 
+/* TODO: move it to emit function and check all top functions */
 int func_main_check_type(const char * main_name, symtab * tab, int * result)
 {
     symtab_entry * entry = NULL;

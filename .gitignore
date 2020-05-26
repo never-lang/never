@@ -21,6 +21,8 @@ test_dlcache
 
 # build
 build/
+build_js/
+build_wasm/
 front/parser.h
 front/parser.c
 front/parser.output

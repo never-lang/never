@@ -4156,6 +4156,7 @@ int func_main_emit(
         bc.global_vec.count = 0;
         bytecode_add(module_value->code, &bc);
 
+        /* TODO: replace with other bytecode which will invoke proper function */
         bc.type = BYTECODE_ID_FUNC_FUNC;
         bc.id_func.func_value = entry->func_value;
         bytecode_add(module_value->code, &bc);
@@ -4214,6 +4215,7 @@ int func_list_emit(func_list * list, int stack_level, module * module_value,
     return 0;
 }
 
+/* TODO: remove main_name from here */
 int never_emit(const char * main_name, never * nev, module * module_value)
 {
     int stack_level = 0;

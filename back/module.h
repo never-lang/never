@@ -31,6 +31,8 @@ typedef struct module {
     char ** strtab_array;
     unsigned int strtab_size;
     
+    /* TODO: add functab here */
+
     bytecode_list * code;
     bytecode * code_arr;
     unsigned int code_size;

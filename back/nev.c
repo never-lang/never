@@ -45,6 +45,7 @@ extern FILE * yyin;
 extern int parse_result;
 extern int yyparse (never ** nev);
 
+/* TODO: move to emit to create module object */
 int never_func_main_params(
     const char * main_name, never * nev,
     object ** params, unsigned int * param_count)
@@ -87,6 +88,7 @@ int never_func_main_params(
     return 0;
 }
 
+/* TODO: remove main_name */
 int nev_compile_prog(const char * main_name, program * prog)
 {
     int ret = 0;
@@ -112,6 +114,7 @@ int nev_compile_prog(const char * main_name, program * prog)
                     ret = never_emit(main_name, nev, prog->module_value);
                     if (ret == 0)
                     {
+                        /* TODO: move to general place where all top func are added to module */
                         never_func_main_params(main_name, nev, &prog->params, &prog->param_count);
                         module_close(prog->module_value);
                     }
@@ -131,6 +134,7 @@ int nev_compile_prog(const char * main_name, program * prog)
     return ret;
 }
 
+/* TODO: remove main_name parameter */
 int nev_compile(const char * input, const char * main_name, program * prog, int type)
 {
     int ret;
@@ -197,8 +201,10 @@ int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
     /* bytecode_array_print(prog->module_value->code_arr,
                             prog->module_value->code_size); */
 
+    /* TODO: reuse vm for every nev_execute invocation */
     machine = vm_new(vm_mem_size, vm_stack_size);
 
+    /* TODO: add entry function name */
     ret = vm_execute(machine, prog, result);
 
     vm_delete(machine);
@@ -206,6 +212,7 @@ int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
     return ret;
 }
 
+/* TODO: check every function which is invoked if proper number of args are passed */
 int argc_to_program(program * prog, unsigned int argc, char * argv[])
 {
     unsigned int i;
@@ -239,12 +246,15 @@ int nev_compile_and_exec(const char * input, int argc, char * argv[],
     int ret = 0;
     program * prog = program_new();
 
+    /* TODO: nev_compile should not have main function name */
     ret = nev_compile(input, "main", prog, type);
     if (ret == 0)
     {
+        /* TODO: pass function name which should be used */
         ret = argc_to_program(prog, argc, argv);
         if (ret == 0)
         {
+            /* TODO: pass function name which should be invoked */
             ret = nev_execute(prog, result, vm_mem_size, vm_stack_size);
         }
     }
