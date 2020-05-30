@@ -45,51 +45,7 @@ extern FILE * yyin;
 extern int parse_result;
 extern int yyparse (never ** nev);
 
-/* TODO: move to emit to create module object */
-int never_func_main_params(
-    const char * main_name, never * nev,
-    object ** params, unsigned int * param_count)
-{
-    object * object_param = NULL;
-    symtab_entry * entry = NULL;
-
-    *params = NULL;
-    *param_count = 0;
-
-    entry = symtab_lookup(nev->stab, main_name, SYMTAB_LOOKUP_LOCAL);
-    if (entry != NULL && entry->type == SYMTAB_FUNC &&
-        entry->func_value != NULL)
-    {
-        func * func_value = entry->func_value;
-        if (func_value->decl->params != NULL)
-        {
-            *param_count = func_value->decl->params->count;
-            *params = object_param = malloc(sizeof(object) * (*param_count));
-            memset(*params, 0, sizeof(object) * (*param_count));
-
-            param_list_node * node = func_value->decl->params->tail;
-            while (node != NULL)
-            {
-                param * value = node->value;
-                if (value->type == PARAM_INT)
-                {
-                    object_param->type = OBJECT_INT;
-                }
-                else if (value->type == PARAM_FLOAT)
-                {
-                    object_param->type = OBJECT_FLOAT;
-                }
-                object_param++;
-                node = node->next;
-            }
-        }
-    }
-
-    return 0;
-}
-
-/* TODO: remove main_name */
-int nev_compile_prog(const char * main_name, program * prog)
+int nev_compile_prog(program * prog)
 {
     int ret = 0;
     never * nev = NULL;
@@ -102,7 +58,7 @@ int nev_compile_prog(const char * main_name, program * prog)
     {
         libmath_add_funcs(nev->funcs);
 
-        ret = never_sem_check(main_name, nev);
+        ret = never_sem_check(nev);
         if (ret == 0)
         {
             ret = never_optimize(nev);
@@ -111,11 +67,9 @@ int nev_compile_prog(const char * main_name, program * prog)
                 ret = never_tailrec(nev);
                 if (ret == 0)
                 {
-                    ret = never_emit(main_name, nev, prog->module_value);
+                    ret = never_emit(nev, prog->module_value);
                     if (ret == 0)
                     {
-                        /* TODO: move to general place where all top func are added to module */
-                        never_func_main_params(main_name, nev, &prog->params, &prog->param_count);
                         module_close(prog->module_value);
                     }
 
@@ -134,8 +88,7 @@ int nev_compile_prog(const char * main_name, program * prog)
     return ret;
 }
 
-/* TODO: remove main_name parameter */
-int nev_compile(const char * input, const char * main_name, program * prog, int type)
+int nev_compile(const char * input, program * prog, int type)
 {
     int ret;
 
@@ -155,7 +108,7 @@ int nev_compile(const char * input, const char * main_name, program * prog, int 
         }
     }
 
-    ret = nev_compile_prog(main_name, prog);
+    ret = nev_compile_prog(prog);
 
     if (type == PARSE_FILE)
     {
@@ -169,53 +122,53 @@ int nev_compile(const char * input, const char * main_name, program * prog, int 
 
 int nev_compile_str(const char * str, program * prog)
 {
-    return nev_compile(str, "main", prog, PARSE_STR);
-}
-
-int nev_compile_str_main(const char * str, const char * main_name, program * prog)
-{
-    return nev_compile(str, main_name, prog, PARSE_STR);
+    return nev_compile(str, prog, PARSE_STR);
 }
 
 int nev_compile_file(const char * file_name, program * prog)
 {
-    return nev_compile(file_name, "main", prog, PARSE_FILE);
+    return nev_compile(file_name, prog, PARSE_FILE);
 }
 
-int nev_compile_file_main(const char * file_name, const char * main_name, program * prog)
+int nev_execute(program * prog,
+                const char * entry_name,
+                object * result,
+                vm * machine)
 {
-    return nev_compile(file_name, main_name, prog, PARSE_FILE);
-}
-
-int nev_execute(program * prog, object * result, unsigned int vm_mem_size,
-                unsigned int vm_stack_size)
-{
-    int ret = 0;
-    vm * machine = NULL;
-
     if (prog->module_value->code_arr == NULL)
     {
-        return 0;
+        return 1;
     }
+
+    functab_entry * entry = functab_lookup(prog->module_value->functab_value, entry_name);
+    if (entry == NULL)
+    {
+        fprintf(stderr, "cannot find entry %s\n", entry_name);
+        return 1;
+    }
+
+    prog->entry_addr = entry->func_addr;
 
     /* bytecode_array_print(prog->module_value->code_arr,
                             prog->module_value->code_size); */
 
-    /* TODO: reuse vm for every nev_execute invocation */
-    machine = vm_new(vm_mem_size, vm_stack_size);
-
-    /* TODO: add entry function name */
-    ret = vm_execute(machine, prog, result);
-
-    vm_delete(machine);
+    int ret = vm_execute(machine, prog, result);
 
     return ret;
 }
 
-/* TODO: check every function which is invoked if proper number of args are passed */
-int argc_to_program(program * prog, unsigned int argc, char * argv[])
+int argc_to_program(program * prog, const char * entry_name, unsigned int argc, char * argv[])
 {
-    unsigned int i;
+    functab_entry * entry = functab_lookup(prog->module_value->functab_value, entry_name);
+    if (entry == NULL)
+    {
+        fprintf(stderr, "cannot find entry %s\n", entry_name);
+        return 1;
+    }
+
+    prog->param_count = entry->params_count;
+    prog->params = entry->params;
+    prog->entry_addr = entry->func_addr;
 
     if (prog->param_count > argc)
     {
@@ -224,6 +177,7 @@ int argc_to_program(program * prog, unsigned int argc, char * argv[])
         return 1;
     }
 
+    unsigned int i;
     for (i = 0; i < prog->param_count; i++)
     {
         if (prog->params[i].type == OBJECT_INT)
@@ -239,23 +193,31 @@ int argc_to_program(program * prog, unsigned int argc, char * argv[])
     return 0;
 }
 
-int nev_compile_and_exec(const char * input, int argc, char * argv[],
-                         object * result, int type, unsigned int vm_mem_size,
+int nev_compile_and_exec(const char * input,
+                         int argc,
+                         char * argv[],
+                         object * result,
+                         int type,
+                         unsigned int vm_mem_size,
                          unsigned int vm_stack_size)
 {
     int ret = 0;
     program * prog = program_new();
+    static const char * entry_name = "main";
 
-    /* TODO: nev_compile should not have main function name */
-    ret = nev_compile(input, "main", prog, type);
+    ret = nev_compile(input, prog, type);
     if (ret == 0)
     {
-        /* TODO: pass function name which should be used */
-        ret = argc_to_program(prog, argc, argv);
+        ret = argc_to_program(prog, entry_name, argc, argv);
         if (ret == 0)
         {
-            /* TODO: pass function name which should be invoked */
-            ret = nev_execute(prog, result, vm_mem_size, vm_stack_size);
+            vm * machine = NULL;
+
+            machine = vm_new(vm_mem_size, vm_stack_size);
+
+            ret = nev_execute(prog, entry_name, result, machine);
+
+            vm_delete(machine);
         }
     }
 

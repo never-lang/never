@@ -30,6 +30,7 @@ program * program_new()
 
     value->params = NULL;
     value->param_count = 0;
+    value->entry_addr = 0;
     value->module_value = module_new();
 
     return value;

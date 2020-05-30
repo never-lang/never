@@ -406,8 +406,10 @@ int print_func_native(func * value, int depth)
 {
     if (value->decl->id != NULL)
     {
-        printf("\nfunction (%d): %d %s@%u\n", depth, value->index,
-               value->decl->id, value->addr);
+        printf("\nfunction (%d): index %d entry %d id %s@%u\n",
+                depth,
+                value->index, value->entry,
+                value->decl->id, value->addr);
     }
     if (value->stab)
     {

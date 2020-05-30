@@ -43,6 +43,7 @@ typedef enum bytecode_type
     BYTECODE_ID_GLOBAL,
     BYTECODE_ID_FUNC_FUNC,
     BYTECODE_ID_FUNC_ADDR,
+    BYTECODE_ID_FUNC_ENTRY,
 
     BYTECODE_OP_NEG_INT,
     BYTECODE_OP_ADD_INT,
@@ -375,6 +376,7 @@ void bytecode_print_id_dim_slice(bytecode * code);
 void bytecode_print_id_global(bytecode * code);
 void bytecode_print_id_func_func(bytecode * code);
 void bytecode_print_id_func_addr(bytecode * code);
+void bytecode_print_id_func_entry(bytecode * code);
 
 void bytecode_print_op_neg_int(bytecode * code);
 void bytecode_print_op_add_int(bytecode * code);

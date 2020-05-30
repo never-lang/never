@@ -22,10 +22,12 @@
 #ifndef __FUNCTAB_H__
 #define __FUNCTAB_H__
 
+typedef struct func func;
 typedef struct object object;
 
 typedef struct functab_entry
 {
+    func * func_value;
     const char * id;
     unsigned int func_addr;
     object * params;
@@ -43,19 +45,17 @@ functab_entry * functab_entry_new(unsigned int size);
 void functab_entry_delete(functab_entry * entries);
 
 void functab_entry_add_func(functab_entry * entries, unsigned int size,
-                            const char * id, unsigned int func_addr,
-                            object * params, unsigned int params_count);
+                            func * func_value, object * params, unsigned int params_count);
 functab_entry * functab_entry_lookup(functab_entry * entries, unsigned int size,
                                      const char * id);
 void functab_entry_resize(functab_entry * entries, unsigned int size,
                           functab_entry * entries_new, unsigned int size_new);
 
-functab * funtab_new(unsigned int size);
+functab * functab_new(unsigned int size);
 void functab_delete(functab * tab);
 
 void functab_resize(functab * tab);
-void functab_add_func(functab * tab, const char * id, unsigned int func_addr,
-                            object * params, unsigned int params_count);
+void functab_add_func(functab * tab, func * func_value, object * params, unsigned int params_count);
 functab_entry * functab_lookup(functab * tab, const char * id);
 
 #endif /* __FUNCTAB_H__ */

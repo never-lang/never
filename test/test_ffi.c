@@ -93,8 +93,8 @@ int program_one(program * prog)
         "  "
         "   0 "
         "}";
-
-    return nev_compile_str_main(prog_str, "on_key", prog);
+    
+    return nev_compile_str(prog_str, prog);
 }
 
 int program_two(program * prog)
@@ -118,7 +118,7 @@ int program_two(program * prog)
         "   0 "
         "}";
 
-    return nev_compile_str_main(prog_str, "on_key", prog);
+    return nev_compile_str(prog_str, prog);
 }
 
 int execute_prog(program * prog, int param1)
@@ -128,13 +128,17 @@ int execute_prog(program * prog, int param1)
 
     prog->params[0].int_value = param1;
 
+    vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
+
     ret =
-        nev_execute(prog, &result, DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
+        nev_execute(prog, "on_key", &result, machine);
     if (ret == 0)
     {
         assert(result.type == OBJECT_INT && result.int_value == 0);
     }
-        
+
+    vm_delete(machine);
+
     return 0;
 }
 

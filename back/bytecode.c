@@ -41,6 +41,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_ID_GLOBAL, bytecode_print_id_global },
     { BYTECODE_ID_FUNC_FUNC, bytecode_print_id_func_func },
     { BYTECODE_ID_FUNC_ADDR, bytecode_print_id_func_addr },
+    { BYTECODE_ID_FUNC_ENTRY, bytecode_print_id_func_entry },
 
     { BYTECODE_OP_NEG_INT, bytecode_print_op_neg_int },
     { BYTECODE_OP_ADD_INT, bytecode_print_op_add_int },
@@ -284,6 +285,11 @@ void bytecode_print_id_func_func(bytecode * code)
 void bytecode_print_id_func_addr(bytecode * code)
 {
     printf("%d: id func addr %d\n", code->addr, code->id_func.func_addr);
+}
+
+void bytecode_print_id_func_entry(bytecode * code)
+{
+    printf("%d: id func entry\n", code->addr);    
 }
 
 void bytecode_print_op_neg_int(bytecode * code)

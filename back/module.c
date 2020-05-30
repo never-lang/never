@@ -30,6 +30,8 @@ module * module_new()
     value->strtab_array = NULL;
     value->strtab_size = 0;
     
+    value->functab_value = functab_new(8);
+
     value->code_arr = NULL;
     value->code_size = 0;
     value->code = bytecode_new();
@@ -49,6 +51,10 @@ void module_delete(module * value)
     {
         strtab_array_delete(value->strtab_array, value->strtab_size);
     }
+    if (value->functab_value != NULL)
+    {
+        functab_delete(value->functab_value);
+    }
     if (value->code != NULL)
     {
         bytecode_delete(value->code);
@@ -64,6 +70,7 @@ void module_delete(module * value)
     free(value);
 }
 
+/* TODO: add code which will change function to address in entries */
 void module_close(module * value)
 {
     if (value->strtab_value != NULL)

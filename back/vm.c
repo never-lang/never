@@ -49,6 +49,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_ID_GLOBAL, vm_execute_id_global },
     { BYTECODE_ID_FUNC_FUNC, vm_execute_id_func_func },
     { BYTECODE_ID_FUNC_ADDR, vm_execute_id_func_addr },
+    { BYTECODE_ID_FUNC_ENTRY, vm_execute_id_func_entry },
 
     { BYTECODE_OP_NEG_INT, vm_execute_op_neg_int },
     { BYTECODE_OP_ADD_INT, vm_execute_op_add_int },
@@ -446,6 +447,19 @@ void vm_execute_id_func_addr(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_id_func_entry(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr vec = machine->stack[machine->sp].addr;
+    mem_ptr addr =
+        gc_alloc_func(machine->collector, vec, machine->prog->entry_addr);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;   
 }
 
 /* a op b
@@ -3110,7 +3124,7 @@ void vm_execute_rewrite(vm * machine, bytecode * code)
 void vm_execute_push_param(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr;
+    mem_ptr addr = { 0 };
     unsigned int i;
 
     for (i = machine->prog->param_count; i > 0; i--)

@@ -23,10 +23,13 @@
 #include "freevar.h"
 #include "symtab.h"
 #include "iflet.h"
+#include "object.h"
 #include "match.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* GP old, FP old, IP old, line_no, PP old */
 #define NUM_FRAME_PTRS 5
@@ -4131,8 +4134,60 @@ int func_emit(func * func_value, int stack_level, module * module_value,
     return 0;
 }              
 
-int func_main_emit(
-    const char * main_name,
+int func_entry_params(func * func_value, module * module_value, int * result)
+{
+    if (func_value->entry == 1)
+    {
+        if (func_value->decl->params != NULL)
+        {
+            object ** params = NULL;
+            object * object_param = NULL;
+            unsigned int params_count = 0;
+
+            params_count = func_value->decl->params->count;
+            *params = object_param = malloc(sizeof(object) * (params_count));
+            memset(*params, 0, sizeof(object) * (params_count));
+
+            param_list_node * node = func_value->decl->params->tail;
+            while (node != NULL)
+            {
+                param * value = node->value;
+                if (value->type == PARAM_INT)
+                {
+                    object_param->type = OBJECT_INT;
+                }
+                else if (value->type == PARAM_FLOAT)
+                {
+                    object_param->type = OBJECT_FLOAT;
+                }
+                object_param++;
+                node = node->next;
+            }
+
+            functab_add_func(module_value->functab_value, func_value, *params, params_count);
+        }
+    }
+
+    return 0;
+}
+
+int func_list_entry_params(func_list * list, module * module_value, int * result)
+{
+    func_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        func * func_value = node->value;
+        if (func_value != NULL)
+        {
+            func_entry_params(func_value, module_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_entry_emit(
     never * nev,
     int stack_level,
     module * module_value,
@@ -4140,7 +4195,8 @@ int func_main_emit(
 {
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(nev->stab, main_name, SYMTAB_LOOKUP_LOCAL);
+    /* TODO: remove lookup. vm should initalize and then invoke entry (main) function */
+    entry = symtab_lookup(nev->stab, "main", SYMTAB_LOOKUP_LOCAL);
     if (entry != NULL && entry->type == SYMTAB_FUNC)
     {
         bytecode bc = { 0 };
@@ -4156,9 +4212,7 @@ int func_main_emit(
         bc.global_vec.count = 0;
         bytecode_add(module_value->code, &bc);
 
-        /* TODO: replace with other bytecode which will invoke proper function */
-        bc.type = BYTECODE_ID_FUNC_FUNC;
-        bc.id_func.func_value = entry->func_value;
+        bc.type = BYTECODE_ID_FUNC_ENTRY;
         bytecode_add(module_value->code, &bc);
 
         bc.type = BYTECODE_CALL;
@@ -4182,7 +4236,7 @@ int func_main_emit(
     else
     {
         *result = EMIT_FAIL;
-        print_error_msg(0, "no %s function defined", main_name);
+        print_error_msg(0, "no %s function defined", "main");
     }
     return 0;
 }
@@ -4215,8 +4269,7 @@ int func_list_emit(func_list * list, int stack_level, module * module_value,
     return 0;
 }
 
-/* TODO: remove main_name from here */
-int never_emit(const char * main_name, never * nev, module * module_value)
+int never_emit(never * nev, module * module_value)
 {
     int stack_level = 0;
     int gencode_res = 0;
@@ -4229,7 +4282,11 @@ int never_emit(const char * main_name, never * nev, module * module_value)
     }
 
     func_list_emit(nev->funcs, stack_level, module_value, list_weak, &gencode_res);
-    func_main_emit(main_name, nev, stack_level, module_value, &gencode_res);
+
+    /* generate module entry function list */
+    func_list_entry_params(nev->funcs, module_value, &gencode_res);
+
+    func_entry_emit(nev, stack_level, module_value, &gencode_res);
         
     while (list_weak->count > 0)
     {

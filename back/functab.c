@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include "functab.h"
+#include "func.h"
 #include "object.h"
 #include "hash.h"
 #include <stdlib.h>
@@ -36,17 +37,17 @@ functab_entry * functab_entry_new(unsigned int size)
 
 void functab_entry_delete(functab_entry * entries)
 {
+    /* TODO: possibly delete ids */
     free(entries);
 }
 
 void functab_entry_add_func(functab_entry * entries, unsigned int size,
-                            const char * id, unsigned int func_addr,
-                            object * params, unsigned int params_count)
+                            func * func_value, object * params, unsigned int params_count)
 {
     unsigned int times = 0;
     unsigned int index = 0;
 
-    index = hash_string(id) % size;
+    index = hash_string(func_value->decl->id) % size;
     while (entries[index].id != 0)
     {
         index = (index + 1) % size;
@@ -57,8 +58,9 @@ void functab_entry_add_func(functab_entry * entries, unsigned int size,
         }
     }
 
-    entries[index].id = id;
-    entries[index].func_addr = func_addr;
+    entries[index].id = func_value->decl->id;
+    entries[index].func_addr = 0;
+    entries[index].func_value = func_value;
     entries[index].params = params;
     entries[index].params_count = params_count;
 }
@@ -97,13 +99,14 @@ void functab_entry_resize(functab_entry * entries, unsigned int size,
         if (entries[i].id != NULL)
         {
             functab_entry_add_func(entries_new, size_new,
-                                   entries[i].id, entries[i].func_addr,
-                                   entries[i].params, entries[i].params_count);
+                                   entries[i].func_value,
+                                   entries[i].params,
+                                   entries[i].params_count);
         }
     }
 }
 
-functab * funtab_new(unsigned int size)
+functab * functab_new(unsigned int size)
 {
     functab * tab = (functab *)malloc(sizeof(functab));
 
@@ -137,10 +140,10 @@ void functab_resize(functab * tab)
     }
 }
 
-void functab_add_func(functab * tab, const char * id, unsigned int func_addr,
+void functab_add_func(functab * tab, func * func_value,
                       object * params, unsigned int params_count)
 {
-    functab_entry_add_func(tab->entries, tab->size, id, func_addr, params, params_count);
+    functab_entry_add_func(tab->entries, tab->size, func_value, params, params_count);
 
     tab->count++;
     functab_resize(tab);

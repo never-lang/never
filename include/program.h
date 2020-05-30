@@ -28,6 +28,7 @@ typedef struct program
 {
     object * params;
     unsigned int param_count;
+    unsigned int entry_addr;
     struct module * module_value;
 } program;
 

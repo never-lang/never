@@ -77,6 +77,7 @@ void vm_execute_id_dim_slice(vm * machine, bytecode * code);
 void vm_execute_id_global(vm * machine, bytecode * code);
 void vm_execute_id_func_func(vm * machine, bytecode * code);
 void vm_execute_id_func_addr(vm * machine, bytecode * code);
+void vm_execute_id_func_entry(vm * machine, bytecode * code);
 
 void vm_execute_op_neg_int(vm * machine, bytecode * code);
 void vm_execute_op_add_int(vm * machine, bytecode * code);
