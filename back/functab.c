@@ -25,6 +25,7 @@
 #include "hash.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <assert.h>
 
 functab_entry * functab_entry_new(unsigned int size)
@@ -35,9 +36,23 @@ functab_entry * functab_entry_new(unsigned int size)
     return entries;
 }
 
-void functab_entry_delete(functab_entry * entries)
+void functab_entry_delete(functab_entry * entries, unsigned int size)
 {
-    /* TODO: possibly delete ids */
+    unsigned int i = 0;
+
+    for (i = 0; i < size; i++)
+    {
+        if (entries[i].type == FUNCTAB_ADDR && entries[i].id != NULL)
+        {
+            free(entries[i].id);
+        }
+        if (entries[i].params != NULL)
+        {
+            free(entries[i].params);
+            entries[i].params = NULL;
+        }
+    }
+
     free(entries);
 }
 
@@ -121,7 +136,7 @@ void functab_delete(functab * tab)
 {
     if (tab->entries)
     {
-        functab_entry_delete(tab->entries);
+        functab_entry_delete(tab->entries, tab->size);
     }
     free(tab);
 }
@@ -134,9 +149,24 @@ void functab_resize(functab * tab)
         functab_entry * entries_new = functab_entry_new(size_new);
 
         functab_entry_resize(tab->entries, tab->size, entries_new, size_new);
-        functab_entry_delete(tab->entries);
+        free(tab->entries);
         tab->size = size_new;
         tab->entries = entries_new;
+    }
+}
+
+void functab_close(functab * tab)
+{
+    unsigned int i = 0;
+
+    for (i = 0 ; i < tab->size; i++)
+    {
+        if (tab->entries[i].func_value != NULL)
+        {
+            tab->entries[i].type = FUNCTAB_ADDR;
+            tab->entries[i].id = strdup(tab->entries[i].func_value->decl->id);
+            tab->entries[i].func_addr = tab->entries[i].func_value->addr;
+        }
     }
 }
 

@@ -25,10 +25,17 @@
 typedef struct func func;
 typedef struct object object;
 
+typedef enum functab_type
+{
+    FUNCTAB_FUNC = 0,
+    FUNCTAB_ADDR = 1
+} functab_type;
+
 typedef struct functab_entry
 {
+    functab_type type;
     func * func_value;
-    const char * id;
+    char * id;
     unsigned int func_addr;
     object * params;
     unsigned int params_count;
@@ -42,7 +49,7 @@ typedef struct functab
 } functab;
 
 functab_entry * functab_entry_new(unsigned int size);
-void functab_entry_delete(functab_entry * entries);
+void functab_entry_delete(functab_entry * entries, unsigned int size);
 
 void functab_entry_add_func(functab_entry * entries, unsigned int size,
                             func * func_value, object * params, unsigned int params_count);
@@ -55,6 +62,7 @@ functab * functab_new(unsigned int size);
 void functab_delete(functab * tab);
 
 void functab_resize(functab * tab);
+void functab_close(functab * tab);
 void functab_add_func(functab * tab, func * func_value, object * params, unsigned int params_count);
 functab_entry * functab_lookup(functab * tab, const char * id);
 

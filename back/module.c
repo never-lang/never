@@ -70,7 +70,6 @@ void module_delete(module * value)
     free(value);
 }
 
-/* TODO: add code which will change function to address in entries */
 void module_close(module * value)
 {
     if (value->strtab_value != NULL)
@@ -81,6 +80,10 @@ void module_close(module * value)
     {
         bytecode_func_addr(value->code);
         bytecode_to_array(value->code, &value->code_arr, &value->code_size);
+    }
+    if (value->functab_value != NULL)
+    {
+        functab_close(value->functab_value);
     }
 }
 

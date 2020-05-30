@@ -37,7 +37,9 @@ typedef struct module {
     bytecode_list * code;
     bytecode * code_arr;
     unsigned int code_size;
-    
+
+    unsigned int code_entry;
+
     exctab * exctab_value;
 } module;
 

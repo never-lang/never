@@ -4138,15 +4138,15 @@ int func_entry_params(func * func_value, module * module_value, int * result)
 {
     if (func_value->entry == 1)
     {
+        object * params = NULL;
+        object * object_param = NULL;
+        unsigned int params_count = 0;
+
         if (func_value->decl->params != NULL)
         {
-            object ** params = NULL;
-            object * object_param = NULL;
-            unsigned int params_count = 0;
-
             params_count = func_value->decl->params->count;
-            *params = object_param = malloc(sizeof(object) * (params_count));
-            memset(*params, 0, sizeof(object) * (params_count));
+            params = object_param = malloc(sizeof(object) * (params_count));
+            memset(params, 0, sizeof(object) * (params_count));
 
             param_list_node * node = func_value->decl->params->tail;
             while (node != NULL)
@@ -4163,9 +4163,9 @@ int func_entry_params(func * func_value, module * module_value, int * result)
                 object_param++;
                 node = node->next;
             }
-
-            functab_add_func(module_value->functab_value, func_value, *params, params_count);
         }
+
+        functab_add_func(module_value->functab_value, func_value, params, params_count);
     }
 
     return 0;
@@ -4188,56 +4188,48 @@ int func_list_entry_params(func_list * list, module * module_value, int * result
 }
 
 int func_entry_emit(
-    never * nev,
-    int stack_level,
-    module * module_value,
-    int * result)
+    never * nev, int stack_level,
+    module * module_value, int * result)
 {
-    symtab_entry * entry = NULL;
+    bytecode bc = { 0 };
+    bytecode *labelA, *labelE, *labelH;
+    bytecode *labelEntry;
 
-    /* TODO: remove lookup. vm should initalize and then invoke entry (main) function */
-    entry = symtab_lookup(nev->stab, "main", SYMTAB_LOOKUP_LOCAL);
-    if (entry != NULL && entry->type == SYMTAB_FUNC)
-    {
-        bytecode bc = { 0 };
-        bytecode *labelA, *labelE, *labelH;
+    bc.type = BYTECODE_LABEL;
+    labelEntry = bytecode_add(module_value->code, &bc);
+    module_value->code_entry = labelEntry->addr;
 
-        bc.type = BYTECODE_MARK;
-        labelA = bytecode_add(module_value->code, &bc);
+    bc.type = BYTECODE_MARK;
+    labelA = bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_PUSH_PARAM;
-        bytecode_add(module_value->code, &bc);
+    bc.type = BYTECODE_PUSH_PARAM;
+    bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_GLOBAL_VEC;
-        bc.global_vec.count = 0;
-        bytecode_add(module_value->code, &bc);
+    bc.type = BYTECODE_GLOBAL_VEC;
+    bc.global_vec.count = 0;
+    bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_ID_FUNC_ENTRY;
-        bytecode_add(module_value->code, &bc);
+    bc.type = BYTECODE_ID_FUNC_ENTRY;
+    bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_CALL;
-        bytecode_add(module_value->code, &bc);
+    bc.type = BYTECODE_CALL;
+    bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_LABEL;
-        labelH = bytecode_add(module_value->code, &bc);
-        labelA->mark.addr = labelH->addr;
+    bc.type = BYTECODE_LABEL;
+    labelH = bytecode_add(module_value->code, &bc);
+    labelA->mark.addr = labelH->addr;
 
-        bc.type = BYTECODE_HALT;
-        bytecode_add(module_value->code, &bc);
+    bc.type = BYTECODE_HALT;
+    bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_LABEL;
-        labelE = bytecode_add(module_value->code, &bc);
-        
-        bc.type = BYTECODE_UNHANDLED_EXCEPTION;
-        bytecode_add(module_value->code, &bc);
-        
-        exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr);            
-    }
-    else
-    {
-        *result = EMIT_FAIL;
-        print_error_msg(0, "no %s function defined", "main");
-    }
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+    
+    bc.type = BYTECODE_UNHANDLED_EXCEPTION;
+    bytecode_add(module_value->code, &bc);
+    
+    exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr);            
+
     return 0;
 }
 
