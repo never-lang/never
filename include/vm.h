@@ -24,9 +24,9 @@
 
 #include "bytecode.h"
 #include "program.h"
-#include "except.h"
 
 typedef struct gc gc;
+typedef struct bytecode bytecode;
 
 typedef enum vm_state
 {
@@ -35,6 +35,20 @@ typedef enum vm_state
     VM_EXCEPTION = 2,
     VM_ERROR = 3
 } vm_state;
+
+typedef enum except_no
+{
+    EXCEPT_NO_UNKNOWN = 0,
+    EXCEPT_NO_DIVISION = 1,
+    EXCEPT_NO_ARR_SIZE = 2,
+    EXCEPT_NO_INDEX_OOB = 3,
+    EXCEPT_NO_INVALID = 4,
+    EXCEPT_NO_OVERFLOW = 5,
+    EXCEPT_NO_UNDERFLOW = 6,
+    EXCEPT_NO_INEXACT = 7,
+    EXCEPT_NIL_POINTER = 8,
+    EXCEPT_FFI_FAIL = 9,
+} except_no;
 
 typedef struct vm
 {
