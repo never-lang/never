@@ -36,6 +36,8 @@ module * module_new()
     value->code_size = 0;
     value->code = bytecode_new();
 
+    value->code_entry = 0;
+
     value->exctab_value = exception_tab_new(32);
     
     return value;

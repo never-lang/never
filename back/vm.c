@@ -3127,7 +3127,7 @@ void vm_execute_push_param(vm * machine, bytecode * code)
     mem_ptr addr = { 0 };
     unsigned int i;
 
-    for (i = machine->prog->param_count; i > 0; i--)
+    for (i = machine->prog->params_count; i > 0; i--)
     {
         if (machine->prog->params[i - 1].type == OBJECT_INT)
         {
@@ -3231,6 +3231,7 @@ vm * vm_new(unsigned int mem_size, unsigned int stack_size)
     machine->dlib_cache = dlcache_new(DEFAULT_DLCACHE_SIZE);
     machine->exception = EXCEPT_NO_UNKNOWN;
     machine->line_no = 0;
+    machine->initialized = 0;
 
     vm_execute_op_test();
 

@@ -29,7 +29,7 @@ program * program_new()
     program * value = malloc(sizeof(program));
 
     value->params = NULL;
-    value->param_count = 0;
+    value->params_count = 0;
     value->entry_addr = 0;
     value->module_value = module_new();
 
@@ -38,10 +38,6 @@ program * program_new()
 
 void program_delete(program * value)
 {
-    if (value->params != NULL)
-    {
-        object_delete(value->params);
-    }
     if (value->module_value != NULL)
     {
         module_delete(value->module_value);

@@ -65,9 +65,14 @@ int never(const char * src)
         
         vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
 
-        ret = nev_execute(prog, "main", &result, machine);
-        if (ret == 0) {
-            ret = get_result(&result);
+        ret = nev_prepare(prog, "main");
+        if (ret == 0)
+        {
+            ret = nev_execute(prog, machine, &result);
+            if (ret == 0)
+            {
+                ret = get_result(&result);
+            }
         }
 
         vm_delete(machine);

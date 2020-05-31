@@ -77,12 +77,21 @@ int fire(int at_x, int at_y)
 int program_one(program * prog)
 {
     const char * prog_str =
+        "var cnt = 0;"
+        " "
         "extern \"host\" func turn_left() -> int "
         "extern \"host\" func turn_right() -> int "
         "extern \"host\" func go_ahead(dist : int) -> int "
         "extern \"host\" func get_x() -> int "
         "extern \"host\" func get_y() -> int "
         "extern \"host\" func fire(at_x : int, at_y : int) -> int "
+        " "
+        "func on_click() -> int"
+        "{ "
+        "  cnt = cnt + 1; "
+        "  print(cnt); "
+        "  0 "
+        "} "
         " "
         "func on_key(dist : int) -> int "
         "{ "
@@ -100,12 +109,22 @@ int program_one(program * prog)
 int program_two(program * prog)
 {
     const char * prog_str =
+        "var cnt = 0;"
+        " "
         "extern \"host\" func turn_left() -> int "
         "extern \"host\" func turn_right() -> int "
         "extern \"host\" func go_ahead(dist : int) -> int "
         "extern \"host\" func get_x() -> int "
         "extern \"host\" func get_y() -> int "
         "extern \"host\" func fire(at_x : int, at_y : int) -> int "
+        " "
+        " "
+        "func on_click() -> int"
+        "{ "
+        "  cnt = cnt + 1; "
+        "  print(cnt); "
+        "  0 "
+        "} "
         " "
         "func on_key(dist : int) -> int "
         "{ "
@@ -123,18 +142,35 @@ int program_two(program * prog)
 
 int execute_prog(program * prog, int param1)
 {
+    int i = 0;
     int ret = 0;
     object result = { 0 };
 
-    prog->params[0].int_value = param1;
-
     vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
 
-    ret =
-        nev_execute(prog, "on_key", &result, machine);
+    ret = nev_prepare(prog, "on_key");
     if (ret == 0)
     {
-        assert(result.type == OBJECT_INT && result.int_value == 0);
+        prog->params[0].int_value = param1;
+
+        ret = nev_execute(prog, machine, &result);
+        if (ret == 0)
+        {
+            assert(result.type == OBJECT_INT && result.int_value == 0);
+        }
+    }
+
+    for (i = 0; i < 10; i++)
+    {
+        ret = nev_prepare(prog, "on_click");
+        if (ret == 0)
+        {
+            ret = nev_execute(prog, machine, &result);
+            if (ret == 0)
+            {
+                assert(result.type == OBJECT_INT && result.int_value == 0);
+            }
+        }
     }
 
     vm_delete(machine);

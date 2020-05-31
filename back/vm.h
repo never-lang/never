@@ -52,6 +52,7 @@ typedef struct vm
     except_no exception;
     unsigned int line_no;
     vm_state running;
+    unsigned int initialized;
 
     program * prog;
 } vm;

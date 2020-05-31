@@ -48,8 +48,7 @@ void functab_entry_delete(functab_entry * entries, unsigned int size)
         }
         if (entries[i].params != NULL)
         {
-            free(entries[i].params);
-            entries[i].params = NULL;
+            object_delete(entries[i].params);
         }
     }
 

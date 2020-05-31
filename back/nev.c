@@ -130,34 +130,31 @@ int nev_compile_file(const char * file_name, program * prog)
     return nev_compile(file_name, prog, PARSE_FILE);
 }
 
-int nev_execute(program * prog,
-                const char * entry_name,
-                object * result,
-                vm * machine)
+int nev_execute(program * prog, vm * machine, object * result)
 {
     if (prog->module_value->code_arr == NULL)
     {
         return 1;
     }
 
-    functab_entry * entry = functab_lookup(prog->module_value->functab_value, entry_name);
-    if (entry == NULL)
+    if (machine->initialized == 0)
     {
-        fprintf(stderr, "cannot find entry %s\n", entry_name);
-        return 1;
+        machine->ip = 0;
+        machine->initialized = 1;
+    }
+    else
+    {
+        machine->ip = prog->module_value->code_entry;
     }
 
-    prog->entry_addr = entry->func_addr;
+    /* printf("machine->ip %u\n", machine->ip);
+    bytecode_array_print(prog->module_value->code_arr,
+                        prog->module_value->code_size); */
 
-    /* bytecode_array_print(prog->module_value->code_arr,
-                            prog->module_value->code_size); */
-
-    int ret = vm_execute(machine, prog, result);
-
-    return ret;
+    return vm_execute(machine, prog, result);
 }
 
-int argc_to_program(program * prog, const char * entry_name, unsigned int argc, char * argv[])
+int nev_prepare(program * prog, const char * entry_name)
 {
     functab_entry * entry = functab_lookup(prog->module_value->functab_value, entry_name);
     if (entry == NULL)
@@ -166,19 +163,36 @@ int argc_to_program(program * prog, const char * entry_name, unsigned int argc, 
         return 1;
     }
 
-    prog->param_count = entry->params_count;
+    prog->params_count = entry->params_count;
     prog->params = entry->params;
     prog->entry_addr = entry->func_addr;
 
-    if (prog->param_count > argc)
+    return 0;
+}
+
+int nev_prepare_argv_argv(program * prog, const char * entry_name, unsigned int argc, char * argv[])
+{
+    unsigned int i;
+
+    functab_entry * entry = functab_lookup(prog->module_value->functab_value, entry_name);
+    if (entry == NULL)
     {
-        fprintf(stderr, "too few parameters, expected %d got %d\n",
-                prog->param_count, argc);
+        fprintf(stderr, "cannot find entry %s\n", entry_name);
         return 1;
     }
 
-    unsigned int i;
-    for (i = 0; i < prog->param_count; i++)
+    prog->params_count = entry->params_count;
+    prog->params = entry->params;
+    prog->entry_addr = entry->func_addr;
+
+    if (prog->params_count > argc)
+    {
+        fprintf(stderr, "too few parameters, expected %d got %d\n",
+                prog->params_count, argc);
+        return 1;
+    }
+
+    for (i = 0; i < prog->params_count; i++)
     {
         if (prog->params[i].type == OBJECT_INT)
         {
@@ -202,20 +216,18 @@ int nev_compile_and_exec(const char * input,
                          unsigned int vm_stack_size)
 {
     int ret = 0;
+    vm * machine = NULL;
     program * prog = program_new();
-    static const char * entry_name = "main";
 
     ret = nev_compile(input, prog, type);
     if (ret == 0)
     {
-        ret = argc_to_program(prog, entry_name, argc, argv);
+        ret = nev_prepare_argv_argv(prog, "main", argc, argv);
         if (ret == 0)
         {
-            vm * machine = NULL;
-
             machine = vm_new(vm_mem_size, vm_stack_size);
 
-            ret = nev_execute(prog, entry_name, result, machine);
+            ret = nev_execute(prog, machine, result);
 
             vm_delete(machine);
         }

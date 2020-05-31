@@ -45,24 +45,24 @@ char * readall(const char * file)
     return src;
 }
 
-void run(int param1, int param2, program * prog, const char * entry_name)
+void run(program * prog, vm * machine, const char * entry_name, int param1, int param2)
 {
     int ret;
     object result = { 0 };
 
-    prog->params[0].int_value = param1;
-    prog->params[1].int_value = param2;
-
-    vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
-
-    ret = nev_execute(prog, entry_name, &result, machine);
+    ret = nev_prepare(prog, entry_name);
     if (ret == 0)
     {
-        assert(result.type == OBJECT_INT &&
-               result.int_value == 10 * (param1 + param2));
-    }
+        prog->params[0].int_value = param1;
+        prog->params[1].int_value = param2;
 
-    vm_delete(machine);
+        ret = nev_execute(prog, machine, &result);
+        if (ret == 0)
+        {
+            assert(result.type == OBJECT_INT &&
+                   result.int_value == 10 * (param1 + param2));
+        }
+    }
 }
 
 void test_one()
@@ -78,13 +78,17 @@ void test_one()
         int param1 = 1;
         int param2 = 1;
 
+        vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
+
         for (param1 = 1; param1 < 10; param1++)
         {
             for (param2 = 1; param2 < 10; param2++)
             {
-                run(param1, param2, prog, "main");
+                run(prog, machine, "main", param1, param2);
             }
         }
+
+        vm_delete(machine);
     }
 
     program_delete(prog);
@@ -102,8 +106,12 @@ void test_two()
     {
         int param1 = 10;
         int param2 = 20;
-        
-        run(param1, param2, prog, "on_event");
+
+        vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
+
+        run(prog, machine, "on_event", param1, param2);
+
+        vm_delete(machine);
     }
     
     program_delete(prog);
@@ -116,8 +124,6 @@ void test_sample(const char * samplepath)
 
     if (prog_str != NULL)
     {
-        object result = { 0 };
-
         int ret = nev_compile_str(prog_str, prog);
         if (ret != 0)
         {
@@ -125,17 +131,21 @@ void test_sample(const char * samplepath)
         }
         assert(ret == 0);
 
-        vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
-
-        ret = nev_execute(prog, "main", &result, machine);
-        if (ret != 0)
+        ret = nev_prepare(prog, "main");
+        if (ret == 0)
         {
-            printf("path: %s\nprog_str: %s\n", samplepath, prog_str);
+            object result = { 0 };
+            vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
+
+            ret = nev_execute(prog, machine, &result);
+            if (ret != 0)
+            {
+                printf("path: %s\nprog_str: %s\n", samplepath, prog_str);
+            }
+            assert(ret == 0);
+
+            vm_delete(machine);
         }
-
-        vm_delete(machine);
-
-        assert(ret == 0);
 
         free(prog_str);
     }
