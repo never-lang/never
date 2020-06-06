@@ -34,6 +34,7 @@ func * func_new_except(func_decl * decl, func_body * body, func_except * except)
     func * value = (func *)malloc(sizeof(func));
     
     value->type = FUNC_TYPE_NATIVE;
+    value->entry = 0;
     value->index = 0;
     value->decl = decl;
     value->stab = NULL;
@@ -53,6 +54,7 @@ func * func_new_ffi(char * libname, func_decl * decl)
     func * value = (func *)malloc(sizeof(func));
     
     value->type = FUNC_TYPE_FFI;
+    value->entry = 0;
     value->index = 0;
     value->decl = decl;
     value->stab = NULL;

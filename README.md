@@ -34,6 +34,50 @@ Never can be installed in steps:
 * ```mkdir build; cd build```
 * ```cmake ..; make```
 
+### asm.js wasm
+
+To compile for asm.js or wasm targets use the following commands:
+
+Get the latest sdk: git clone https://github.com/emscripten-core/emsdk.git
+
+```bash
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+source ./emsdk_env.sh
+```
+
+Compile to native asm.js
+
+```bash
+mkdir build && cd build
+emcmake cmake .. -DJS_ONLY=ON 
+make
+```
+
+Compile to native wasm
+
+```bash
+mkdir build && cd build
+emcmake cmake .. -DWASM_ONLY=ON 
+make
+```
+
+Run
+
+Now you should see never.js file in your build directory. You can overwrite ../never.js and open never.html, or modify never.html to load build/never.js file or load the file in JS console and run:
+
+```bash
+python -m SimpleHTTPServer 8000
+# http://localhost:8000/never.html
+```
+
+```js
+var never = Module.cwrap('never','number',['string']);
+never("func main() -> int { 123 }")
+```
+
+
 ## Contributing
 All help is welcome! Using it, reporting bugs, spreading the word, writing
 code samples, blogs, submitting ideas, documentation, new features. Everyone

@@ -22,6 +22,7 @@
 #ifndef __EXCEPT_H__
 #define __EXCEPT_H__
 
+#include "vm.h"
 #include "expr.h"
 
 typedef enum except_type
@@ -30,20 +31,6 @@ typedef enum except_type
     EXCEPT_ALL = 1,
     EXCEPT_ID = 2
 } except_type;
-
-typedef enum except_no
-{
-    EXCEPT_NO_UNKNOWN = 0,
-    EXCEPT_NO_DIVISION = 1,
-    EXCEPT_NO_ARR_SIZE = 2,
-    EXCEPT_NO_INDEX_OOB = 3,
-    EXCEPT_NO_INVALID = 4,
-    EXCEPT_NO_OVERFLOW = 5,
-    EXCEPT_NO_UNDERFLOW = 6,
-    EXCEPT_NO_INEXACT = 7,
-    EXCEPT_NIL_POINTER = 8,
-    EXCEPT_FFI_FAIL = 9,
-} except_no;
 
 #define EXCEPT_NO_UNKNOWN_NAME "unknown_exception"
 #define EXCEPT_NO_DIVISION_NAME "division_by_zero"

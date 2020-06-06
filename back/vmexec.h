@@ -1,5 +1,5 @@
-/**
- * Copyright 2018 Slawomir Maludzinski
+/** 
+ * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,42 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __VM_H__
-#define __VM_H__
+#ifndef __VMEXEC_H__
+#define __VMEXEC_H__
 
+#include "vm.h"
 #include "bytecode.h"
-#include "program.h"
-#include "except.h"
-
-typedef struct gc gc;
-
-typedef enum vm_state
-{
-    VM_HALT = 0,
-    VM_RUNNING = 1,
-    VM_EXCEPTION = 2,
-    VM_ERROR = 3
-} vm_state;
-
-typedef struct vm
-{
-    stack_ptr sp;
-    stack_ptr fp;
-    stack_ptr pp;
-    mem_ptr gp;
-    ip_ptr ip;
-
-    int stack_size;
-    struct gc_stack * stack;
-    struct gc * collector;
-    struct dlcache * dlib_cache;
-
-    except_no exception;
-    unsigned int line_no;
-    vm_state running;
-
-    program * prog;
-} vm;
 
 typedef struct vm_execute_str
 {
@@ -62,6 +31,7 @@ typedef struct vm_execute_str
     void (*execute)(vm * machine, bytecode * code);
 } vm_execute_str;
 
+void vm_execute_op_test();
 void vm_execute_unknown(vm * machine, bytecode * code);
 
 void vm_execute_int(vm * machine, bytecode * code);
@@ -77,6 +47,7 @@ void vm_execute_id_dim_slice(vm * machine, bytecode * code);
 void vm_execute_id_global(vm * machine, bytecode * code);
 void vm_execute_id_func_func(vm * machine, bytecode * code);
 void vm_execute_id_func_addr(vm * machine, bytecode * code);
+void vm_execute_id_func_entry(vm * machine, bytecode * code);
 
 void vm_execute_op_neg_int(vm * machine, bytecode * code);
 void vm_execute_op_add_int(vm * machine, bytecode * code);
@@ -237,13 +208,4 @@ void vm_execute_rethrow(vm * machine, bytecode * code);
 void vm_execute_unhandled_exception(vm * machine, bytecode * code);
 void vm_execute_halt(vm * machine, bytecode * code);
 
-void vm_check_stack(vm * machine);
-int vm_execute(vm * machine, program * prog, object * result);
-
-vm * vm_new(unsigned int mem_size, unsigned int stack_size);
-void vm_delete(vm * machine);
-
-void vm_print_stack_trace(vm * machine);
-void vm_print(vm * machine, const char * msg);
-
-#endif /* __VM_H__ */
+#endif /* __VMEXEC_H__ */

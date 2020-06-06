@@ -30,9 +30,13 @@ module * module_new()
     value->strtab_array = NULL;
     value->strtab_size = 0;
     
+    value->functab_value = functab_new(8);
+
     value->code_arr = NULL;
     value->code_size = 0;
     value->code = bytecode_new();
+
+    value->code_entry = 0;
 
     value->exctab_value = exception_tab_new(32);
     
@@ -48,6 +52,10 @@ void module_delete(module * value)
     if (value->strtab_array != NULL)
     {
         strtab_array_delete(value->strtab_array, value->strtab_size);
+    }
+    if (value->functab_value != NULL)
+    {
+        functab_delete(value->functab_value);
     }
     if (value->code != NULL)
     {
@@ -74,6 +82,10 @@ void module_close(module * value)
     {
         bytecode_func_addr(value->code);
         bytecode_to_array(value->code, &value->code_arr, &value->code_size);
+    }
+    if (value->functab_value != NULL)
+    {
+        functab_close(value->functab_value);
     }
 }
 

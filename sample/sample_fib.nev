@@ -5,6 +5,6 @@ func fib(n : int) -> int
 
 func main() -> int 
 {
-    fib(20)
+    print(fib(20))
 }
 

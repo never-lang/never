@@ -23,10 +23,13 @@
 #include "freevar.h"
 #include "symtab.h"
 #include "iflet.h"
+#include "object.h"
 #include "match.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* GP old, FP old, IP old, line_no, PP old */
 #define NUM_FRAME_PTRS 5
@@ -4131,58 +4134,102 @@ int func_emit(func * func_value, int stack_level, module * module_value,
     return 0;
 }              
 
-int func_main_emit(
-    const char * main_name,
-    never * nev,
-    int stack_level,
-    module * module_value,
-    int * result)
+int func_entry_params(func * func_value, module * module_value, int * result)
 {
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(nev->stab, main_name, SYMTAB_LOOKUP_LOCAL);
-    if (entry != NULL && entry->type == SYMTAB_FUNC)
+    if (func_value->entry == 1)
     {
-        bytecode bc = { 0 };
-        bytecode *labelA, *labelE, *labelH;
+        object * params = NULL;
+        object * object_param = NULL;
+        unsigned int params_count = 0;
 
-        bc.type = BYTECODE_MARK;
-        labelA = bytecode_add(module_value->code, &bc);
+        if (func_value->decl->params != NULL)
+        {
+            params_count = func_value->decl->params->count;
+            params = object_param = malloc(sizeof(object) * (params_count));
+            memset(params, 0, sizeof(object) * (params_count));
 
-        bc.type = BYTECODE_PUSH_PARAM;
-        bytecode_add(module_value->code, &bc);
+            param_list_node * node = func_value->decl->params->tail;
+            while (node != NULL)
+            {
+                param * value = node->value;
+                if (value->type == PARAM_INT)
+                {
+                    object_param->type = OBJECT_INT;
+                }
+                else if (value->type == PARAM_FLOAT)
+                {
+                    object_param->type = OBJECT_FLOAT;
+                }
+                object_param++;
+                node = node->next;
+            }
+        }
 
-        bc.type = BYTECODE_GLOBAL_VEC;
-        bc.global_vec.count = 0;
-        bytecode_add(module_value->code, &bc);
-
-        bc.type = BYTECODE_ID_FUNC_FUNC;
-        bc.id_func.func_value = entry->func_value;
-        bytecode_add(module_value->code, &bc);
-
-        bc.type = BYTECODE_CALL;
-        bytecode_add(module_value->code, &bc);
-
-        bc.type = BYTECODE_LABEL;
-        labelH = bytecode_add(module_value->code, &bc);
-        labelA->mark.addr = labelH->addr;
-
-        bc.type = BYTECODE_HALT;
-        bytecode_add(module_value->code, &bc);
-
-        bc.type = BYTECODE_LABEL;
-        labelE = bytecode_add(module_value->code, &bc);
-        
-        bc.type = BYTECODE_UNHANDLED_EXCEPTION;
-        bytecode_add(module_value->code, &bc);
-        
-        exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr);            
+        functab_add_func(module_value->functab_value, func_value, params, params_count);
     }
-    else
+
+    return 0;
+}
+
+int func_list_entry_params(func_list * list, module * module_value, int * result)
+{
+    func_list_node * node = list->tail;
+    while (node != NULL)
     {
-        *result = EMIT_FAIL;
-        print_error_msg(0, "no %s function defined", main_name);
+        func * func_value = node->value;
+        if (func_value != NULL)
+        {
+            func_entry_params(func_value, module_value, result);
+        }
+        node = node->next;
     }
+
+    return 0;
+}
+
+int func_entry_emit(
+    never * nev, int stack_level,
+    module * module_value, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode *labelA, *labelE, *labelH;
+    bytecode *labelEntry;
+
+    bc.type = BYTECODE_LABEL;
+    labelEntry = bytecode_add(module_value->code, &bc);
+    module_value->code_entry = labelEntry->addr;
+
+    bc.type = BYTECODE_MARK;
+    labelA = bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_PUSH_PARAM;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_GLOBAL_VEC;
+    bc.global_vec.count = 0;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_ID_FUNC_ENTRY;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_CALL;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelH = bytecode_add(module_value->code, &bc);
+    labelA->mark.addr = labelH->addr;
+
+    bc.type = BYTECODE_HALT;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    labelE = bytecode_add(module_value->code, &bc);
+    
+    bc.type = BYTECODE_UNHANDLED_EXCEPTION;
+    bytecode_add(module_value->code, &bc);
+    
+    exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr);            
+
     return 0;
 }
 
@@ -4214,7 +4261,7 @@ int func_list_emit(func_list * list, int stack_level, module * module_value,
     return 0;
 }
 
-int never_emit(const char * main_name, never * nev, module * module_value)
+int never_emit(never * nev, module * module_value)
 {
     int stack_level = 0;
     int gencode_res = 0;
@@ -4227,7 +4274,11 @@ int never_emit(const char * main_name, never * nev, module * module_value)
     }
 
     func_list_emit(nev->funcs, stack_level, module_value, list_weak, &gencode_res);
-    func_main_emit(main_name, nev, stack_level, module_value, &gencode_res);
+
+    /* generate module entry function list */
+    func_list_entry_params(nev->funcs, module_value, &gencode_res);
+
+    func_entry_emit(nev, stack_level, module_value, &gencode_res);
         
     while (list_weak->count > 0)
     {

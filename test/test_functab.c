@@ -1,5 +1,5 @@
-/**
- * Copyright 2018 Slawomir Maludzinski
+/** 
+ * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,28 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "program.h"
-#include "bytecode.h"
-#include "module.h"
-#include <stdlib.h>
+#include "functab.h"
 
-program * program_new()
+void test_one()
 {
-    program * value = malloc(sizeof(program));
+    functab * tab = functab_new(8);
 
-    value->params = NULL;
-    value->params_count = 0;
-    value->entry_addr = 0;
-    value->module_value = module_new();
-
-    return value;
+    functab_delete(tab);
 }
 
-void program_delete(program * value)
+int main(int argc, char * argv[])
 {
-    if (value->module_value != NULL)
-    {
-        module_delete(value->module_value);
-    }
-    free(value);
+    test_one();
+
+    return 0;
 }

@@ -56,20 +56,30 @@ int never(const char * src)
 {
     int ret = 0;
 
-    object result = { 0 };
     program * prog = program_new();
 
     ret = nev_compile_str(src, prog);
     if (ret == 0)
     {
-        ret = nev_execute(prog, &result,  DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
-        if (ret == 0) {
-            ret = get_result(&result);
+        object result = { 0 };
+        
+        vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
+
+        ret = nev_prepare(prog, "main");
+        if (ret == 0)
+        {
+            ret = nev_execute(prog, machine, &result);
+            if (ret == 0)
+            {
+                ret = get_result(&result);
+            }
         }
+
+        vm_delete(machine);
     }
 
-#ifndef NO_FFI
-    printf("\n");
+#ifdef NO_FFI
+    printf("\r\n");
     fflush(stdout);
 #endif
 

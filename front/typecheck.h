@@ -165,10 +165,11 @@ int decl_list_check_type(symtab * stab, decl_list * list, int * result);
 
 int never_check_type(never * nev, int * result);
 
-int func_main_check_num_params(param_list * params);
-int func_main_check_type(const char * main_name, symtab * tab, int * result);
+int func_entry_check_num_params(param_list * params);
+int func_entry_check_type(func * func_value, int * result);
+int func_list_entry_check_type(func_list * list, int * result);
 
-int never_sem_check(const char * main_name, never * nev);
+int never_sem_check(never * nev);
 
 #endif /* __TYPECHECK_H__ */
 

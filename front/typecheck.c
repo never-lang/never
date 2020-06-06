@@ -3106,7 +3106,7 @@ int never_check_type(never * nev, int * result)
     return 0;
 }
 
-int func_main_check_num_params(param_list * params)
+int func_entry_check_num_params(param_list * params)
 {
     param_list_node * node = params->tail;
     while (node != NULL)
@@ -3121,57 +3121,45 @@ int func_main_check_num_params(param_list * params)
     return 1;
 }
 
-int func_main_check_type(const char * main_name, symtab * tab, int * result)
+int func_entry_check_type(func * func_value, int * result)
 {
-    symtab_entry * entry = NULL;
+    int is_entry = 1;
 
-    entry = symtab_lookup(tab, main_name, SYMTAB_LOOKUP_LOCAL);
-    if (entry != NULL)
+    if (func_value->decl->params != NULL &&
+        func_entry_check_num_params(func_value->decl->params) == 0)
     {
-        if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
-        {
-            func * func_value = entry->func_value;
-            if (func_value->decl->params != NULL &&
-                func_main_check_num_params(func_value->decl->params) == 0)
-            {
-                *result = TYPECHECK_FAIL;
-                print_error_msg(
-                    func_value->line_no,
-                    "function main can take only numerical parameters",
-                    func_value->decl->params->count);
-            }
-            if (func_value->decl->ret == NULL)
-            {
-                *result = TYPECHECK_FAIL;
-                print_error_msg(func_value->line_no,
-                                "incorrect function main return type");
-            }
-            else
-            {
-                if (param_is_num(func_value->decl->ret) == TYPECHECK_FAIL)
-                {
-                    *result = TYPECHECK_FAIL;
-                    print_error_msg(func_value->line_no,
-                                    "incorrect function main return type");
-                }
-            }
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            print_error_msg(0, "incorrect function main, expected function");
-        }
+        is_entry = 0;
     }
-    else
+    if (func_value->decl->ret == NULL || param_is_num(func_value->decl->ret) == TYPECHECK_FAIL)
     {
-        *result = TYPECHECK_FAIL;
-        print_error_msg(0, "function %s is not defined", main_name);
+        is_entry = 0;
+    }
+
+    if (is_entry)
+    {
+        func_value->entry = 1;
     }
 
     return 0;
 }
 
-int never_sem_check(const char * main_name, never * nev)
+int func_list_entry_check_type(func_list * list, int * result)
+{
+    func_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        func * func_value = node->value;
+        if (func_value != NULL)
+        {
+            func_entry_check_type(func_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int never_sem_check(never * nev)
 {
     int typecheck_res = TYPECHECK_SUCC;
 
@@ -3183,8 +3171,8 @@ int never_sem_check(const char * main_name, never * nev)
     /* printf("---- check types ---\n"); */
     never_check_type(nev, &typecheck_res);
 
-    /* printf("---- check function main\n"); */
-    func_main_check_type(main_name, nev->stab, &typecheck_res);
+    /* printf("---- check program entries\n"); */
+    func_list_entry_check_type(nev->funcs, &typecheck_res);
 
     return typecheck_res;
 }

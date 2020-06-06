@@ -38,12 +38,13 @@ typedef enum func_type
 {
     FUNC_TYPE_UNKNOWN = 0,
     FUNC_TYPE_NATIVE = 1,
-    FUNC_TYPE_FFI = 2
+    FUNC_TYPE_FFI = 2,
 } func_type;
 
 typedef struct func
 {
     func_type type;
+    int entry;
     int index;
     func_decl * decl;
     symtab * stab;

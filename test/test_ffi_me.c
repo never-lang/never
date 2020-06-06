@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -106,40 +106,6 @@ int program_one(program * prog)
     return nev_compile_str(prog_str, prog);
 }
 
-int program_two(program * prog)
-{
-    const char * prog_str =
-        "var cnt = 0;"
-        " "
-        "extern \"host\" func turn_left() -> int "
-        "extern \"host\" func turn_right() -> int "
-        "extern \"host\" func go_ahead(dist : int) -> int "
-        "extern \"host\" func get_x() -> int "
-        "extern \"host\" func get_y() -> int "
-        "extern \"host\" func fire(at_x : int, at_y : int) -> int "
-        " "
-        " "
-        "func on_click() -> int"
-        "{ "
-        "  cnt = cnt + 1; "
-        "  print(cnt); "
-        "  0 "
-        "} "
-        " "
-        "func on_key(dist : int) -> int "
-        "{ "
-        "   turn_right(); "
-        "   go_ahead(dist); "
-        "  "
-        "   fire(get_x() + 20, get_y() + 30); "
-        "   fire(get_x() + 25, get_y() + 35); "
-        "  "
-        "   0 "
-        "}";
-
-    return nev_compile_str(prog_str, prog);
-}
-
 int execute_prog(program * prog, int param1)
 {
     int i = 0;
@@ -181,18 +147,14 @@ int execute_prog(program * prog, int param1)
 void test_two()
 {
     program * prog_one = program_new();
-    program * prog_two = program_new();
 
     int ret1 = program_one(prog_one);
-    int ret2 = program_two(prog_two);
-    if (ret1 == 0 && ret2 == 0)
+    if (ret1 == 0)
     {
         execute_prog(prog_one, 60);
-        execute_prog(prog_two, 40);
     }
 
     program_delete(prog_one);
-    program_delete(prog_two);
 }
 
 int main(int argc, char * argv[])

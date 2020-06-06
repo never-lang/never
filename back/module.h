@@ -25,16 +25,21 @@
 #include "bytecode.h"
 #include "exctab.h"
 #include "strtab.h"
+#include "functab.h"
 
 typedef struct module {
     strtab * strtab_value;
     char ** strtab_array;
     unsigned int strtab_size;
     
+    functab * functab_value;
+
     bytecode_list * code;
     bytecode * code_arr;
     unsigned int code_size;
-    
+
+    unsigned int code_entry;
+
     exctab * exctab_value;
 } module;
 
