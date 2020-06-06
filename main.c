@@ -78,8 +78,8 @@ int never(const char * src)
         vm_delete(machine);
     }
 
-#ifndef NO_FFI
-    printf("\n");
+#ifdef NO_FFI
+    printf("\r\n");
     fflush(stdout);
 #endif
 

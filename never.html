@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <div>
+            <label for="input">Input:</label>
+        </div>
+        <div>
+            <textarea id="input" rows="25" cols="80"></textarea>
+        </div>
+
+        <div>
+            <button onclick="runNever()">   Run   </button>
+        </div>
+        <hr/>
+
+        <div>
+            <label for="output">Output:</label>
+        </div>
+        <div>
+            <textarea id="output" rows="25" cols="80"></textarea>
+        </div>
+        <script src="never.js"></script>
+        <script language="javascript">
+            var never = Module.cwrap('never','number',['string']);
+
+            function runNever() {
+                var input = document.getElementById("input")
+                var output = document.getElementById("output")
+
+                output.value = "";
+                val = never(input.value);
+                output.value += val;
+            }
+        </script>
+    </body>
+</html>
