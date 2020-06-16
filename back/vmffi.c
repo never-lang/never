@@ -52,6 +52,11 @@ static ffi_type * vm_execute_func_ffi_record_type(vm * machine, unsigned int cou
         bytecode bc = machine->prog->module_value->code_arr[machine->ip++];
         switch (bc.type)
         {
+            case BYTECODE_FUNC_FFI_BOOL:
+            {
+                type->elements[i] = &ffi_type_schar;
+            }
+            break;
             case BYTECODE_FUNC_FFI_INT:
             {
                 type->elements[i] = &ffi_type_sint;
@@ -105,6 +110,16 @@ static int vm_execute_func_ffi_record_value(vm * machine, mem_ptr rec_addr, unsi
         bytecode bc = machine->prog->module_value->code_arr[machine->ip++];
         switch (bc.type)
         {
+            case BYTECODE_FUNC_FFI_BOOL:
+            {
+                mem_ptr int_addr = gc_get_vec(machine->collector, rec_addr, i);
+                int * bool_value = gc_get_int_ptr(machine->collector, int_addr);
+
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                *(char *)((char *)data + *offset) = *bool_value;
+                *offset += type->elements[i]->size;
+            }
+            break;
             case BYTECODE_FUNC_FFI_INT:
             {
                 mem_ptr int_addr = gc_get_vec(machine->collector, rec_addr, i);
@@ -208,6 +223,18 @@ static mem_ptr vm_execute_func_ffi_record_new(vm * machine, unsigned int count,
         bytecode bc = machine->prog->module_value->code_arr[machine->ip++];
         switch (bc.type)
         {
+            case BYTECODE_FUNC_FFI_BOOL:
+            {
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+
+                char bool_value = *(char *)((char *)data + *offset);
+                mem_ptr bool_addr = gc_alloc_int(machine->collector, bool_value);
+
+                *offset += type->elements[i]->size;
+
+                gc_set_vec(machine->collector, rec, i, bool_addr);
+            }
+            break;
             case BYTECODE_FUNC_FFI_INT:
             {
                 *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
@@ -315,6 +342,9 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         bc = machine->prog->module_value->code_arr[machine->ip++];
         switch (bc.type)
         {
+            case BYTECODE_FUNC_FFI_BOOL:
+                ffi_decl_set_param_type(fd, i, &ffi_type_schar);
+            break;
             case BYTECODE_FUNC_FFI_INT:
                 ffi_decl_set_param_type(fd, i, &ffi_type_sint);
             break;
@@ -348,6 +378,9 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     bc = machine->prog->module_value->code_arr[machine->ip++];
     switch (bc.type)
     {
+        case BYTECODE_FUNC_FFI_BOOL:
+            ffi_decl_set_ret_type(fd, &ffi_type_schar);
+        break;
         case BYTECODE_FUNC_FFI_INT:
             ffi_decl_set_ret_type(fd, &ffi_type_sint);
         break;
@@ -395,6 +428,12 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         bc = machine->prog->module_value->code_arr[machine->ip++];
         switch (bc.type)
         {
+            case BYTECODE_FUNC_FFI_BOOL:
+            {
+                int * int_value = gc_get_int_ptr(machine->collector, machine->stack[machine->sp--].addr);
+                ffi_decl_set_param_value(fd, i, int_value);
+            }
+            break;
             case BYTECODE_FUNC_FFI_INT:
             {
                 int * int_value = gc_get_int_ptr(machine->collector, machine->stack[machine->sp--].addr);
@@ -503,6 +542,9 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     bc = machine->prog->module_value->code_arr[machine->ip++];
     switch (bc.type)
     {
+        case BYTECODE_FUNC_FFI_BOOL:
+            addr = gc_alloc_int(machine->collector, fd->ret_char_value);
+        break;
         case BYTECODE_FUNC_FFI_INT:
             addr = gc_alloc_int(machine->collector, fd->ret_int_value);
         break;
@@ -545,6 +587,11 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
 
     machine->stack[machine->sp] = entry;
 #endif /* NO_FFI */
+}
+
+void vm_execute_func_ffi_bool(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
 }
 
 void vm_execute_func_ffi_int(vm * machine, bytecode * code)

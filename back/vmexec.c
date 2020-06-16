@@ -188,6 +188,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
     { BYTECODE_FUNC_OBJ, vm_execute_func_obj },
     { BYTECODE_FUNC_FFI, vm_execute_func_ffi },
+    { BYTECODE_FUNC_FFI_BOOL, vm_execute_func_ffi_bool },
     { BYTECODE_FUNC_FFI_INT, vm_execute_func_ffi_int },
     { BYTECODE_FUNC_FFI_FLOAT, vm_execute_func_ffi_float },
     { BYTECODE_FUNC_FFI_CHAR, vm_execute_func_ffi_char },

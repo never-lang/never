@@ -179,6 +179,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
     { BYTECODE_FUNC_OBJ, bytecode_print_func_obj },
     { BYTECODE_FUNC_FFI, bytecode_print_func_ffi },
+    { BYTECODE_FUNC_FFI_BOOL, bytecode_print_func_ffi_bool },
     { BYTECODE_FUNC_FFI_INT, bytecode_print_func_ffi_int },
     { BYTECODE_FUNC_FFI_FLOAT, bytecode_print_func_ffi_float },
     { BYTECODE_FUNC_FFI_CHAR, bytecode_print_func_ffi_char },
@@ -856,6 +857,11 @@ void bytecode_print_func_ffi(bytecode * code)
 {
     printf("%d: func ffi %d %d %d\n", code->addr, code->ffi.count,
                                       code->ffi.fname_index, code->ffi.libname_index);
+}
+
+void bytecode_print_func_ffi_bool(bytecode * code)
+{
+    printf("%d: ffi bool\n", code->addr);
 }
 
 void bytecode_print_func_ffi_int(bytecode * code)

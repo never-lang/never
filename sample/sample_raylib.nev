@@ -27,20 +27,15 @@ let screenHeight = 450;
 
 extern "../../raylib/src/libraylib.so" func InitWindow(width : int, height : int, title : string) -> void
 extern "../../raylib/src/libraylib.so" func SetTargetFPS(fps : int) -> void
-extern "../../raylib/src/libraylib.so" func WindowShouldClose() -> char
+extern "../../raylib/src/libraylib.so" func WindowShouldClose() -> bool
 extern "../../raylib/src/libraylib.so" func CloseWindow() -> void
 extern "../../raylib/src/libraylib.so" func GetMousePosition() -> Vector2
-extern "../../raylib/src/libraylib.so" func IsMouseButtonPressed(button : int) -> char
+extern "../../raylib/src/libraylib.so" func IsMouseButtonPressed(button : int) -> bool
 extern "../../raylib/src/libraylib.so" func BeginDrawing() -> void
 extern "../../raylib/src/libraylib.so" func EndDrawing() -> void
 extern "../../raylib/src/libraylib.so" func ClearBackground(color : Color) -> void
 extern "../../raylib/src/libraylib.so" func DrawCircleV(center : Vector2, radius : float, color : Color) -> void
 extern "../../raylib/src/libraylib.so" func DrawText(text : string, posX : int, posY : int, fontSize : int, color : Color) -> void
-
-func c2b(c : char) -> bool
-{
-    c != chr(0) ? true : false
-}
 
 func main() -> int
 {
@@ -53,19 +48,19 @@ func main() -> int
     InitWindow(screenWidth, screenHeight, "Never meets raylib");
     SetTargetFPS(60);
 
-    while (!c2b(WindowShouldClose()))
+    while (!WindowShouldClose())
     {
         ballPosition = GetMousePosition();
 
-        if (c2b(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)))
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
             ballColor = MAROON
         }
-        else if (c2b(IsMouseButtonPressed(MOUSE_MIDDLE_BUTTON)))
+        else if (IsMouseButtonPressed(MOUSE_MIDDLE_BUTTON))
         {
             ballColor = LIME
         }
-        else if (c2b(IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)))
+        else if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON))
         {
             ballColor = DARKBLUE
         }
@@ -85,6 +80,5 @@ func main() -> int
 
     CloseWindow();
 */
-
     0
 }

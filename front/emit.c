@@ -3858,6 +3858,10 @@ unsigned int func_body_emit_ffi_param(param * value, module * module_value, int 
 
     switch (value->type)
     {
+        case PARAM_BOOL:
+            bc.type = BYTECODE_FUNC_FFI_BOOL;
+            bytecode_add(module_value->code, &bc);
+        break;
         case PARAM_INT:
             bc.type = BYTECODE_FUNC_FFI_INT;
             bytecode_add(module_value->code, &bc);
@@ -3904,7 +3908,6 @@ unsigned int func_body_emit_ffi_param(param * value, module * module_value, int 
             ffi_rec->ffi_record.total_count = total_count;
         }
         break;
-        case PARAM_BOOL:
         case PARAM_DIM:
         case PARAM_ARRAY:
         case PARAM_RANGE_DIM:

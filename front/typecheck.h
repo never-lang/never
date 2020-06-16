@@ -87,6 +87,8 @@ int param_ffi_check_type(symtab * tab, param * param_value,
                          unsigned int syn_level, int * result);
 int param_check_type(symtab * tab, param * param_value,
                      unsigned int syn_level, int * result);
+int param_list_ffi_check_type(symtab * tab, param_list * list,
+                              unsigned int syn_level, int * result);
 int param_list_check_type(symtab * tab, param_list * list,
                           unsigned int syn_level, int * result);                     
 

@@ -933,6 +933,7 @@ int param_ffi_check_type(symtab * tab, param * param_value,
 {
     switch (param_value->type)
     {
+        case PARAM_BOOL:
         case PARAM_CHAR:
         case PARAM_INT:
         case PARAM_FLOAT:
@@ -945,7 +946,6 @@ int param_ffi_check_type(symtab * tab, param * param_value,
             param_enum_record_check_type(tab, param_value, syn_level, result);
         break;
 
-        case PARAM_BOOL:
         case PARAM_DIM:
         case PARAM_ARRAY:
         case PARAM_RANGE_DIM:
@@ -955,7 +955,7 @@ int param_ffi_check_type(symtab * tab, param * param_value,
         case PARAM_ENUMTYPE:
         case PARAM_FUNC:
             *result = TYPECHECK_FAIL;
-            print_error_msg(param_value->line_no, "ffi type %s not supported\n",
+            print_error_msg(param_value->line_no, "ffi type %s not supported",
                             param_type_str(param_value->type));
         break;
     }
@@ -1028,6 +1028,22 @@ int param_check_type(symtab * tab, param * param_value,
         break;
     }
 
+    return 0;
+}
+
+int param_list_ffi_check_type(symtab * tab, param_list * list,
+                              unsigned int syn_level, int * result)
+{
+    param_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        param * param_value = node->value;
+        if (param_value != NULL)
+        {
+            param_ffi_check_type(tab, param_value, syn_level, result);
+        }
+        node = node->next;
+    }
     return 0;
 }
 
@@ -2729,8 +2745,8 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 
     if (func_value->decl->params != NULL)
     {
-        param_list_check_type(func_value->stab, func_value->decl->params, syn_level,
-                              result);
+        param_list_ffi_check_type(func_value->stab, func_value->decl->params, syn_level,
+                                  result);
     }
     if (func_value->decl->ret != NULL)
     {

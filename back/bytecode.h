@@ -180,6 +180,7 @@ typedef enum bytecode_type
     BYTECODE_FUNC_OBJ,
 
     BYTECODE_FUNC_FFI,
+    BYTECODE_FUNC_FFI_BOOL,
     BYTECODE_FUNC_FFI_INT,
     BYTECODE_FUNC_FFI_FLOAT,
     BYTECODE_FUNC_FFI_CHAR,
@@ -518,6 +519,7 @@ void bytecode_print_func_def(bytecode * code);
 void bytecode_print_func_obj(bytecode * code);
 
 void bytecode_print_func_ffi(bytecode * code);
+void bytecode_print_func_ffi_bool(bytecode * code);
 void bytecode_print_func_ffi_int(bytecode * code);
 void bytecode_print_func_ffi_float(bytecode * code);
 void bytecode_print_func_ffi_char(bytecode * code);

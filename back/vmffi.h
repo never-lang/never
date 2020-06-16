@@ -29,6 +29,7 @@ typedef struct vm vm;
 typedef struct bytecode bytecode;
 
 void vm_execute_func_ffi(vm * machine, bytecode * code);
+void vm_execute_func_ffi_bool(vm * machine, bytecode * code);
 void vm_execute_func_ffi_int(vm * machine, bytecode * code);
 void vm_execute_func_ffi_float(vm * machine, bytecode * code);
 void vm_execute_func_ffi_char(vm * machine, bytecode * code);
