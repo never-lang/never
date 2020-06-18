@@ -24,9 +24,11 @@
 #include "module.h"
 #include "fficall.h"
 #include "dlcache.h"
+#include "utils.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #ifndef NO_FFI
 
@@ -332,7 +334,12 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
     int ret = FFI_SUCC;
     unsigned int i = 0;
     unsigned int ffi_count = code->ffi.count;
-        
+
+    if (sizeof(bool) != 1)
+    {
+        print_warning_msg(0, "sizeof(bool) != 1");
+    }
+
     ffi_decl * fd = ffi_decl_new(code->ffi.count);
 
     /* prepare param types */
