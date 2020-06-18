@@ -269,8 +269,9 @@ test_Point * test_types_get_ptr()
     return &p1;
 }
 
-void test_types_call(int i, float f, char c, char * str, test_Point * ptr, test_Types rec)
+void test_types_call(bool b, int i, float f, char c, char * str, test_Point * ptr, test_Types rec)
 {
+    assert(b == true);
     assert(i == 10);
     assert(f == 10.0);
     assert(c == 'A');
@@ -292,6 +293,7 @@ test_Types test_types_get_rec()
 {
     test_Types ret;
 
+    ret.b = false;
     ret.i = 10;
     ret.f = 10.0;
     ret.c = 'A';

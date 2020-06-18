@@ -7,6 +7,7 @@ record Point
 
 record Types
 {
+    b : bool;
     i : int;
     f : float;
     c : char;
@@ -20,14 +21,14 @@ extern "host" func test_types_get_float() -> float
 extern "host" func test_types_get_char() -> char
 extern "host" func test_types_get_string() -> string
 extern "host" func test_types_get_ptr() -> c_ptr
-extern "host" func test_types_call(i : int, f : float, c : char, str : string, ptr : c_ptr, rec : Types) -> void
+extern "host" func test_types_call(b : bool, i : int, f : float, c : char, str : string, ptr : c_ptr, rec : Types) -> void
 extern "host" func test_types_get_rec() -> Types
 
 func main() -> int
 {
     let p = Point(30, 40);
     let ptr = test_types_get_ptr();
-    let t = Types(20, 20.0, 'B', "BBB", ptr, p);
+    let t = Types(true, 20, 20.0, 'B', "BBB", ptr, p);
     let g = test_types_get_rec();
 
     assert(test_types_get_int() == 10);
@@ -35,8 +36,9 @@ func main() -> int
     assert(test_types_get_char() == 'C');
     assert(test_types_get_string() == "CCC");
 
-    test_types_call(10, 10.0, 'A', "AAA", ptr, t);
+    test_types_call(true, 10, 10.0, 'A', "AAA", ptr, t);
 
+    assert(g.b == false);
     assert(g.i == 10);
     assert(g.f == 10.0);
     assert(g.c == 'A');

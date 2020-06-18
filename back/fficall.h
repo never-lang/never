@@ -25,6 +25,7 @@
 #ifndef NO_FFI
 
 #include <ffi.h>
+#include <stdbool.h>
 
 #define FFI_SUCC 0
 #define FFI_FAIL 1
@@ -75,6 +76,7 @@ typedef struct test_Rect
 
 typedef struct test_Types
 {
+    bool b;
     int i;
     float f;
     char c;
@@ -99,7 +101,7 @@ float test_types_get_float();
 char test_types_get_char();
 char * test_types_get_string();
 test_Point * test_types_get_ptr();
-void test_types_call(int i, float f, char c, char * str, test_Point * ptr, test_Types rec);
+void test_types_call(bool b, int i, float f, char c, char * str, test_Point * ptr, test_Types rec);
 test_Types test_types_get_rec();
 
 #endif /* NO_FFI */
