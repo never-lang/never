@@ -236,6 +236,18 @@ range {
     return TOK_RANGE;
 }
 
+module {
+    tokp->line_no = line_no;
+    scanner_printf("module\n");
+    return TOK_MODULE;
+}
+
+use {
+    tokp->line_no = line_no;
+    scanner_printf("use\n");
+    return TOK_USE;
+}
+
 "::" {
     tokp->line_no = line_no;
     scanner_printf("::\n");

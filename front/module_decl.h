@@ -1,5 +1,5 @@
-/**
- * Copyright 2018 Slawomir Maludzinski
+/** 
+ * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,47 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef __MODULE_DECL_H__
+#define __MODULE_DECL_H__
 
-#include "never.h"
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+typedef struct never never;
 
-never * never_new(use_list * uses, decl_list * decls, bind_list * binds, func_list * funcs)
+typedef struct module_decl
 {
-    never * n = (never *)malloc(sizeof(never));
+    char * id;
+    never * nev;
+} module_decl;
 
-    n->stab = NULL;
-    n->uses = uses;
-    n->decls = decls;
-    n->binds = binds;
-    n->funcs = funcs;
+module_decl * module_decl_new(char * id, never * nev);
+void module_decl_delete(module_decl * value);
 
-    return n;
-}
+void module_decl_print(module_decl * value);
 
-void never_delete(never * nev)
-{
-    if (nev->uses)
-    {
-        use_list_delete(nev->uses);
-    }
-    if (nev->decls)
-    {
-        decl_list_delete(nev->decls);
-    }
-    if (nev->binds)
-    {
-        bind_list_delete(nev->binds);
-    }
-    if (nev->funcs)
-    {
-        func_list_delete(nev->funcs);
-    }
-    if (nev->stab)
-    {
-        symtab_delete(nev->stab);
-    }
-    free(nev);
-}
+#endif /* __MODULE_DECL_H__ */

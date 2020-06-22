@@ -1,5 +1,5 @@
-/**
- * Copyright 2018 Slawomir Maludzinski
+/** 
+ * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,47 +19,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef __USE_H__
+#define __USE_H__
 
-#include "never.h"
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+typedef struct module_decl module_decl;
 
-never * never_new(use_list * uses, decl_list * decls, bind_list * binds, func_list * funcs)
+typedef struct use
 {
-    never * n = (never *)malloc(sizeof(never));
+    char * id;
+    module_decl * decl;
+} use;
 
-    n->stab = NULL;
-    n->uses = uses;
-    n->decls = decls;
-    n->binds = binds;
-    n->funcs = funcs;
-
-    return n;
-}
-
-void never_delete(never * nev)
+typedef struct use_list_node
 {
-    if (nev->uses)
-    {
-        use_list_delete(nev->uses);
-    }
-    if (nev->decls)
-    {
-        decl_list_delete(nev->decls);
-    }
-    if (nev->binds)
-    {
-        bind_list_delete(nev->binds);
-    }
-    if (nev->funcs)
-    {
-        func_list_delete(nev->funcs);
-    }
-    if (nev->stab)
-    {
-        symtab_delete(nev->stab);
-    }
-    free(nev);
-}
+    use * value;
+    struct use_list_node * prev;
+    struct use_list_node * next;
+} use_list_node;
+
+typedef struct use_list
+{
+    unsigned int count;
+    use_list_node * head;
+    use_list_node * tail;
+} use_list;
+
+use * use_new(char * id, module_decl * decl);
+void use_delete(use * value);
+void use_print(use * value);
+
+use_list_node * use_list_node_new(use * value);
+void use_list_node_delete(use_list_node * node);
+
+use_list * use_list_new();
+void use_list_delete(use_list * list);
+
+void use_list_add_beg(use_list * list, use * value);
+void use_list_add_end(use_list * list, use * value);
+
+void use_list_print(use_list * list);
+
+#endif /* __USE_H__ */

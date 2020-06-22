@@ -82,6 +82,8 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_DDOT
 %token <val.str_value> TOK_TODOTS
 %token <val.str_value> TOK_RANGE
+%token <val.str_value> TOK_MODULE
+%token <val.str_value> TOK_USE
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -127,7 +129,11 @@ int yyerror(never ** nev, char * str)
 %type <val.record_value> record
 %type <val.decl_value> decl
 %type <val.decl_list_value> decl_list
+%type <val.use_value> use
+%type <val.use_list_value> use_list
+%type <val.module_decl_value> module_decl
 %type <val.never_value> never
+%type <val.never_value> start
 
 %right TOK_IF TOK_ELSE TOK_FOR
 %right TOK_RET
@@ -143,7 +149,7 @@ int yyerror(never ** nev, char * str)
 %right TOK_NOT /* %precedence NEG */
 %left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END TOK_DOT
 
-%start never
+%start start
 
 %destructor { if ($$) free($$); } TOK_ID
 %destructor { if ($$) param_delete($$); } dim
@@ -188,7 +194,11 @@ int yyerror(never ** nev, char * str)
 %destructor { if ($$) match_guard_record_delete($$); } match_guard_record
 %destructor { if ($$) match_guard_delete($$); } match_guard
 %destructor { if ($$) match_guard_list_delete($$); } match_guard_list
-%destructor {  } never
+%destructor { if ($$) use_delete($$); } use
+%destructor { if ($$) use_list_delete($$); } use_list
+%destructor { if ($$) module_decl_delete($$); } module_decl
+%destructor { if ($$) never_delete($$); } never
+%destructor { } start
 
 %pure-parser
 %parse-param { never ** nev }
@@ -1122,24 +1132,71 @@ decl_list: decl_list decl
     $$ = $1;
 };
 
+use: TOK_USE TOK_ID module_decl
+{
+    $$ = use_new($2, $3);
+};
+
+use_list: use
+{
+    $$ = use_list_new();
+    use_list_add_end($$, $1);
+};
+
+use_list: use_list use
+{
+    use_list_add_end($1, $2);
+    $$ = $1;
+};
+
 never: func_list
 {
-    $$ = *nev = never_new(NULL, NULL, $1);
+    $$ = never_new(NULL, NULL, NULL, $1);
 };
 
 never: bind_list func_list
 {
-    $$ = *nev = never_new(NULL, $1, $2);
+    $$ = never_new(NULL, NULL, $1, $2);
 };
 
 never: decl_list func_list
 {
-    $$ = *nev = never_new($1, NULL, $2);
+    $$ = never_new(NULL, $1, NULL, $2);
 };
 
 never: decl_list bind_list func_list
 {
-    $$ = *nev = never_new($1, $2, $3);
+    $$ = never_new(NULL, $1, $2, $3);
+};
+
+never: use_list func_list
+{
+    $$ = never_new($1, NULL, NULL, $2);
+};
+
+never: use_list bind_list func_list
+{
+    $$ = never_new($1, NULL, $2, $3);
+};
+
+never: use_list decl_list func_list
+{
+    $$ = never_new($1, $2, NULL, $3);
+};
+
+never: use_list decl_list bind_list func_list
+{
+    $$ = never_new($1, $2, $3, $4);
+};
+
+module_decl: TOK_MODULE TOK_ID '{' never '}'
+{
+    $$ = module_decl_new($2, $4);
+};
+
+start: never
+{
+    $$ = *nev = $1;
 };
 
 %%

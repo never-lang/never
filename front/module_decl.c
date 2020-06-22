@@ -1,5 +1,5 @@
-/**
- * Copyright 2018 Slawomir Maludzinski
+/** 
+ * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -19,47 +19,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
+#include "module_decl.h"
 #include "never.h"
-#include <errno.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdio.h>
 
-never * never_new(use_list * uses, decl_list * decls, bind_list * binds, func_list * funcs)
+module_decl * module_decl_new(char * id, never * nev)
 {
-    never * n = (never *)malloc(sizeof(never));
+    module_decl * value = (module_decl *)malloc(sizeof(module_decl));
 
-    n->stab = NULL;
-    n->uses = uses;
-    n->decls = decls;
-    n->binds = binds;
-    n->funcs = funcs;
+    value->id = id;
+    value->nev = nev;
 
-    return n;
+    return value;
 }
 
-void never_delete(never * nev)
+void module_decl_delete(module_decl * value)
 {
-    if (nev->uses)
+    if (value->id != NULL)
     {
-        use_list_delete(nev->uses);
+        free(value->id);
     }
-    if (nev->decls)
+    if (value->nev != NULL)
     {
-        decl_list_delete(nev->decls);
+        never_delete(value->nev);
     }
-    if (nev->binds)
+    free(value);
+}
+
+void module_decl_print(module_decl * value)
+{
+    if (value->id != NULL)
     {
-        bind_list_delete(nev->binds);
+        printf("module %s\n", value->id);
     }
-    if (nev->funcs)
-    {
-        func_list_delete(nev->funcs);
-    }
-    if (nev->stab)
-    {
-        symtab_delete(nev->stab);
-    }
-    free(nev);
 }

@@ -38,6 +38,8 @@
 #include "iflet.h"
 #include "match.h"
 #include "matchbind.h"
+#include "use.h"
+#include "module_decl.h"
 
 typedef union token_value {
     int int_value;
@@ -81,6 +83,9 @@ typedef union token_value {
     record * record_value;
     decl * decl_value;
     decl_list * decl_list_value;
+    use * use_value;
+    use_list * use_list_value;
+    module_decl * module_decl_value;
     never * never_value;
 } token_value;
 
