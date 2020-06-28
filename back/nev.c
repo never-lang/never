@@ -98,24 +98,12 @@ int nev_compile(const char * input, program * prog, int type)
     }
     else if (type == PARSE_FILE)
     {
-        set_utils_file_name(input);
-
-        yyin = fopen(input, "r");
-        if (yyin == NULL)
-        {
-            fprintf(stderr, "cannot open %s. %s\n", input, strerror(errno));
-            exit(1);
-        }
+        scan_file(input);
     }
 
     ret = nev_compile_prog(prog);
 
-    if (type == PARSE_FILE)
-    {
-        fclose(yyin);
-    }
-
-    yylex_destroy();
+    scanner_destroy();
 
     return ret;
 }

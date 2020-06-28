@@ -29,11 +29,25 @@
 #include "parser.h"
 #include "utils.h"
 #include "strutil.h"
+#include "moduletab.h"
 
+#define MAX_USE_DEPTH 10
 #define YY_DECL int lex_scan(token * tokp)
 
 unsigned int line_no = 1;
 string * string_value = NULL;
+
+typedef struct use_descr
+{
+    unsigned int line_no;
+    const char * file_name;
+    FILE * yyin;
+    YY_BUFFER_STATE buffer_state;
+} use_descr;
+
+int use_stack_ptr = 0;
+use_descr use_stack[MAX_USE_DEPTH];
+moduletab * modtab = NULL;
 
 void set_line_no(unsigned int value)
 {
@@ -62,11 +76,13 @@ ID [a-zA-Z_][a-zA-Z0-9_]*
 
 %x C_COMMENT
 %x C_STRING
+%x USE
+%x MODULE_REF
 
 %%
-[ \t\r]+
+<INITIAL,USE>[ \t\r]+
 
-\n {
+<INITIAL,USE>\n {
 	line_no++;
 }
 
@@ -245,6 +261,10 @@ module {
 use {
     tokp->line_no = line_no;
     scanner_printf("use\n");
+
+    printf("use\n");
+
+    BEGIN(USE);
     return TOK_USE;
 }
 
@@ -420,8 +440,67 @@ use {
     BEGIN(C_STRING);
 }
 
-<C_STRING>\" {
+<MODULE_REF>[.\n] {
     BEGIN(INITIAL);
+    return TOK_MODULE_REF;
+}
+
+<USE>[a-zA-Z_./]+ {
+    if (use_stack_ptr >= MAX_USE_DEPTH)
+    {
+        fprintf(stderr, "module uses are nested too deep\n");
+
+        tokp->line_no = line_no;
+        tokp->val.str_value = strdup(yytext);
+        scanner_printf("id %s\n", yytext);
+
+        BEGIN(MODULE_REF);
+        return TOK_NUM_STRING;
+    }
+
+    moduletab_entry * entry = moduletab_lookup_module(modtab, yytext);
+    if (entry != NULL)
+    {
+        printf("use ref id %s\n", yytext);
+
+        tokp->line_no = line_no;
+        tokp->val.str_value = strdup(yytext);
+        scanner_printf("id %s\n", yytext);
+
+        BEGIN(MODULE_REF);
+        return TOK_NUM_STRING;
+    }
+
+    use_descr descr = { line_no, get_utils_file_name(), yyin, YY_CURRENT_BUFFER };
+
+    printf("use id %s\n", yytext);
+
+    FILE * current_yyin = yyin;
+    yyin = fopen(yytext, "r");
+    if (!yyin)
+    {
+        fprintf(stderr, "cannot open module %s\n", yytext);
+        yyin = current_yyin;
+        return yytext[0];
+    }
+
+    use_stack[use_stack_ptr++] = descr;
+
+    moduletab_add_module(modtab, strdup(yytext));
+
+    yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
+    line_no = 1;
+    set_utils_file_name(yytext);
+
+    tokp->line_no = line_no;
+    tokp->val.str_value = strdup(yytext);
+    scanner_printf("id %s\n", yytext);
+
+    BEGIN(INITIAL);
+    return TOK_NUM_STRING;
+}
+
+<C_STRING>\" {
     string_add_char(string_value, '\0');
 
     tokp->line_no = line_no;
@@ -435,6 +514,7 @@ use {
         string_value = NULL;
     }
 
+    BEGIN(INITIAL);
     return TOK_NUM_STRING;    
 }
 
@@ -442,6 +522,7 @@ use {
     print_error_msg(line_no, "unterminated string\n");
 
     if (string_value) { string_delete(string_value); string_value = NULL; }
+
     yyterminate();
     return yytext[0];
 }
@@ -455,6 +536,7 @@ use {
         print_error_msg(line_no, "constant out of range\n");
         
         if (string_value) { string_delete(string_value); string_value = NULL; }
+
         yyterminate();
         return yytext[0];
     }
@@ -465,6 +547,7 @@ use {
     print_error_msg(line_no, "bad escape sequence\n");
 
     if (string_value) { string_delete(string_value); string_value = NULL; }
+
     yyterminate();
     return yytext[0];
 }
@@ -504,8 +587,23 @@ use {
 <C_COMMENT>.    { }
 
 <<EOF>> {
-    yyterminate();
-    return yytext[0];
+    if (yyin)
+    {
+        fclose(yyin);
+        yyin = NULL;
+    }
+
+    if (--use_stack_ptr < 0)
+    {
+        yyterminate();
+    }
+    else
+    {
+        line_no = use_stack[use_stack_ptr].line_no;
+        set_utils_file_name(use_stack[use_stack_ptr].file_name);
+        yy_delete_buffer(YY_CURRENT_BUFFER);
+        yy_switch_to_buffer(use_stack[use_stack_ptr].buffer_state);
+    }
 }
 
 %%
@@ -515,3 +613,45 @@ void scan_string(const char *src)
     yy_switch_to_buffer(yy_scan_string(src));
 }
 
+void scan_file(const char * file)
+{
+    set_utils_file_name(file);
+
+    yyin = fopen(file, "r");
+    if (yyin == NULL)
+    {
+        fprintf(stderr, "cannot open %s. %s\n", file, strerror(errno));
+        exit(1);
+    }
+
+    modtab = moduletab_new(8);
+    moduletab_add_module(modtab, strdup(file));
+}
+
+void scanner_destroy()
+{
+    if (yyin)
+    {
+        fclose(yyin);
+        yyin = NULL;
+    }
+
+    while (--use_stack_ptr >= 0)
+    {
+        if (use_stack[use_stack_ptr].yyin)
+        {
+            fclose(use_stack[use_stack_ptr].yyin);
+        }
+        if (use_stack[use_stack_ptr].buffer_state)
+        {
+            yy_delete_buffer(use_stack[use_stack_ptr].buffer_state);
+        }
+    }
+
+    if (modtab)
+    {
+        moduletab_delete(modtab);
+    }
+
+    yylex_destroy();
+}

@@ -25,6 +25,11 @@
 
 const char * utils_file_name = "line";
 
+const char * get_utils_file_name()
+{
+    return utils_file_name;
+}
+
 void set_utils_file_name(const char * file_name)
 {
     utils_file_name = file_name;

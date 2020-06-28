@@ -22,6 +22,7 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__ 1
 
+const char * get_utils_file_name();
 void set_utils_file_name(const char * file_name);
 
 void print_error_msg(int line_no, const char * format, ...);

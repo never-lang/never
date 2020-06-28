@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include "use.h"
+#include "module_decl.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -41,7 +42,7 @@ void use_delete(use * value)
     }
     if (value->decl != NULL)
     {
-        free(value->decl);
+        module_decl_delete(value->decl);
     }
     free(value);
 }
@@ -95,7 +96,7 @@ void use_list_delete(use_list * list)
         use_list_node_delete(node);
         node = tmp;
     }
-    free(node);
+    free(list);
 }
 
 void use_list_add_beg(use_list * list, use * value)

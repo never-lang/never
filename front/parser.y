@@ -40,7 +40,7 @@ int yylex(token * tokp)
 int yyerror(never ** nev, char * str)
 {
     parse_result = 1;
-    print_error_msg(line_no, "%s\n", str);
+    print_error_msg(line_no, "%s", str);
     
     return 1;
 }
@@ -84,6 +84,7 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_RANGE
 %token <val.str_value> TOK_MODULE
 %token <val.str_value> TOK_USE
+%token <val.int_value> TOK_MODULE_REF
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
@@ -152,6 +153,7 @@ int yyerror(never ** nev, char * str)
 %start start
 
 %destructor { if ($$) free($$); } TOK_ID
+%destructor { if ($$) free($$); } TOK_NUM_STRING
 %destructor { if ($$) param_delete($$); } dim
 %destructor { if ($$) param_list_delete($$); } dim_list
 %destructor { if ($$) range_delete($$); } range_dim
@@ -1132,7 +1134,7 @@ decl_list: decl_list decl
     $$ = $1;
 };
 
-use: TOK_USE TOK_ID module_decl
+use: TOK_USE TOK_NUM_STRING module_decl
 {
     $$ = use_new($2, $3);
 };
@@ -1187,6 +1189,11 @@ never: use_list decl_list func_list
 never: use_list decl_list bind_list func_list
 {
     $$ = never_new($1, $2, $3, $4);
+};
+
+module_decl: TOK_MODULE_REF
+{
+    $$ = NULL;
 };
 
 module_decl: TOK_MODULE TOK_ID '{' never '}'

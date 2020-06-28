@@ -27,10 +27,12 @@
 extern unsigned int line_no;
 void set_line_no(unsigned int value);
 
-int yylex_destroy();
-
 int lex_scan(token * tokp);
 
 void scan_string(const char * src);
+void scan_file(const char * file);
 
-#endif
+void scanner_destroy();
+
+#endif /* __SCANNER_H__ */
+
