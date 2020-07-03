@@ -31,6 +31,7 @@
 #include "range.h"
 #include "forin.h"
 #include "tcforin.h"
+#include "module_decl.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -690,6 +691,14 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
                             entry->id, al_record->line_no);
         }
         break;
+        case SYMTAB_MODULE_DECL:
+        {
+            module_decl * al_module_decl = entry->module_decl_value;
+            print_error_msg(line_no,
+                            "module decl %s already defined at line %u",
+                            entry->id, al_module_decl->line_no);
+        }
+        break;
     }
 
     return 0;
@@ -1135,6 +1144,13 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
                     value->comb.comb = COMB_TYPE_ERR;
 
                     print_error_msg(value->line_no, "found enumerator %s", value->id.id);
+                }
+            break;
+            case SYMTAB_MODULE_DECL:
+                if (entry->module_decl_value != NULL)
+                {
+                    value->comb.comb = COMB_TYPE_MODULE;
+                    value->comb.comb_module_decl = entry->module_decl_value;
                 }
             break;
         }
@@ -2115,6 +2131,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
     case COMB_TYPE_ERR:
     case COMB_TYPE_NIL:
     case COMB_TYPE_RECORD:
+    case COMB_TYPE_MODULE:
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
@@ -2250,6 +2267,46 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
                 value->comb.comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no, "cannot find attribute %s in record %s",
                                 value->attr.id, record_value->id);
+            }
+        }
+    }
+    else if (value->attr.record_value->comb.comb == COMB_TYPE_MODULE)
+    {
+        module_decl * module_decl_value = value->attr.record_value->comb.comb_module_decl;
+        if (module_decl_value != NULL && value->attr.id != NULL)
+        {
+            never * nev = NULL;
+
+            if (module_decl_value->type == MODULE_DECL_TYPE_MOD)
+            {
+                nev = module_decl_value->nev;
+            }
+            else if (module_decl_value->type == MODULE_DECL_TYPE_REF)
+            {
+                /* TODO: remove */
+                printf("getting cycle\n");
+
+                module_decl_value = module_decl_value->module_decl_value;
+                assert(module_decl_value->type == MODULE_DECL_TYPE_MOD);
+                nev = module_decl_value->nev;
+            }
+
+            symtab_entry * entry = symtab_lookup(nev->stab, value->attr.id, SYMTAB_LOOKUP_LOCAL);
+            if (entry != NULL)
+            {
+                /* TODO: do something */
+                printf("MODULE %s %d\n\n", module_decl_value->id, module_decl_value->type);
+                printf("%p\n", module_decl_value->nev);
+                printf("id %s\n", value->attr.id);
+
+                printf("entry type %d\n", entry->type);
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no, "cannot find attribute %s in module %s",
+                                value->attr.id, module_decl_value->id);
             }
         }
     }
@@ -2954,6 +3011,114 @@ int never_add_decl_list(symtab * stab, decl_list * list, int * result)
     return 0;
 }
 
+int never_add_module_decl(symtab * mtab, symtab * stab, char * use_id, module_decl * value, int * result)
+{
+    if (value->id != NULL && use_id != NULL)
+    {
+        if (strcmp(value->id, use_id) != 0)
+        {
+            print_error_msg(value->line_no,
+                            "use %s and module id %s are different",
+                            use_id, value->id);
+            *result = TYPECHECK_FAIL;
+        }
+    }
+
+    switch (value->type)
+    {
+        case MODULE_DECL_TYPE_MOD:
+        {
+            module_decl_check_type(mtab, value, result);
+        }
+        break;
+        case MODULE_DECL_TYPE_REF:
+        {
+            value->id = use_id;
+            module_decl_check_type(mtab, value, result);
+        }
+        break;
+    }
+
+    switch (value->type)
+    {
+        case MODULE_DECL_TYPE_MOD:
+        {
+            symtab_entry * entry = NULL;
+
+            entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_LOCAL);
+            if (entry == NULL)
+            {
+                symtab_add_module_decl(stab, value, 0);
+            }
+            else
+            {
+                module_decl * al_module_decl = entry->module_decl_value;                
+                *result = TYPECHECK_FAIL;
+                print_error_msg(value->line_no,
+                                "same use %s already used at %u",
+                                al_module_decl->line_no);
+            }
+        }
+        break;
+        case MODULE_DECL_TYPE_REF:
+        {
+            symtab_entry * entry = NULL;
+            symtab_entry * mentry = NULL;
+
+            entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_LOCAL);
+            if (entry == NULL)
+            {
+                symtab_add_module_decl(stab, value, 0);
+            }
+            else
+            {
+                module_decl * al_module_decl = entry->module_decl_value;
+                *result = TYPECHECK_FAIL;
+                print_error_msg(value->line_no,
+                                "same use %s already used at %u",
+                                al_module_decl->line_no);
+            }
+
+            mentry = symtab_lookup(mtab, use_id, SYMTAB_LOOKUP_LOCAL);
+            if (mentry != NULL)
+            {
+                module_decl * al_module_decl = mentry->module_decl_value;
+                value->module_decl_value = al_module_decl;
+            }
+        }
+        break;
+    }
+
+    return 0;
+}
+
+int never_add_use(symtab * mtab, symtab * stab, use * value, int * result)
+{
+    if (value->id != NULL && value->decl != NULL)
+    {
+        never_add_module_decl(mtab, stab, value->id, value->decl, result);
+    }
+
+    return 0;
+}
+
+int never_add_use_list(symtab * mtab, symtab * stab, use_list * list, int * result)
+{
+    use_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        use * value = node->value;
+        if (value != NULL)
+        {
+            never_add_use(mtab, stab, value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int enumerator_item_check_type(symtab * stab, enumerator * value, int * result)
 {
     symtab_entry * entry = NULL;
@@ -3093,11 +3258,16 @@ int decl_list_check_type(symtab * stab, decl_list * list, int * result)
     return 0;
 }
 
-int never_check_type(never * nev, int * result)
+int never_check_type(symtab * mtab, never * nev, int * result)
 {
     int start = 0;
     unsigned int syn_level = 0;
     
+    if (nev->uses != NULL)
+    {
+        never_add_use_list(mtab, nev->stab, nev->uses, result);
+    }
+
     if (nev->stab != NULL && nev->decls != NULL)
     {
         /* add decls to symtab */
@@ -3175,22 +3345,58 @@ int func_list_entry_check_type(func_list * list, int * result)
     return 0;
 }
 
-int never_sem_check(never * nev)
+int never_sem_check(symtab * mtab, never * nev, int * result)
 {
-    int typecheck_res = TYPECHECK_SUCC;
-
     if (nev->stab == NULL)
     {
-        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
+        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, mtab);
     }
 
-    /* printf("---- check types ---\n"); */
-    never_check_type(nev, &typecheck_res);
+    never_check_type(mtab, nev, result);
 
-    /* printf("---- check program entries\n"); */
-    func_list_entry_check_type(nev->funcs, &typecheck_res);
+    func_list_entry_check_type(nev->funcs, result);
 
-    return typecheck_res;
+    return 0;
 }
 
+int module_decl_check_type(symtab * mtab, module_decl * value, int * result)
+{
+    if (value->id != NULL)
+    {
+        symtab_entry * mentry = NULL;
 
+        mentry = symtab_lookup(mtab, value->id, SYMTAB_LOOKUP_LOCAL);
+        if (mentry == NULL)
+        {
+            symtab_add_module_decl(mtab, value, 0);
+        }
+        else
+        {
+            module_decl * al_module_decl = mentry->module_decl_value;
+            if (al_module_decl->type == MODULE_DECL_TYPE_REF &&
+                value->type == MODULE_DECL_TYPE_MOD)
+            {
+                al_module_decl->module_decl_value = value;
+            }
+        }
+    }
+
+    if (value->type == MODULE_DECL_TYPE_MOD && value->nev != NULL)
+    {
+        never_sem_check(mtab, value->nev, result);
+    }
+
+    return 0;
+}
+
+int main_check_type(never * nev, int * result)
+{
+    symtab * mtab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
+
+    never_sem_check(mtab, nev, result);
+
+    /* TODO: move it outside */
+    symtab_delete(mtab);
+
+    return 0;
+}

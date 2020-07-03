@@ -180,6 +180,7 @@ char * symtab_entry_type_str(symtab_entry_type type)
         case SYMTAB_ENUMTYPE: return "enum";
         case SYMTAB_RECORD: return "record";
         case SYMTAB_FUNC: return "func";
+        case SYMTAB_MODULE_DECL: return "module decl";
     }
     return "unknown";
 }
@@ -336,6 +337,19 @@ void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level)
 
     symtab_entry_add_object(tab->entries, tab->size, SYMTAB_FUNC,
                             func_value->decl->id, func_value, syn_level);
+    tab->count++;
+    symtab_resize(tab);
+}
+
+void symtab_add_module_decl(symtab * tab, module_decl * module_decl_value, unsigned int syn_level)
+{
+    if (module_decl_value->id == NULL)
+    {
+        return;
+    }
+
+    symtab_entry_add_object(tab->entries, tab->size, SYMTAB_MODULE_DECL,
+                            module_decl_value->id, module_decl_value, syn_level);
     tab->count++;
     symtab_resize(tab);
 }

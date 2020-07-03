@@ -28,6 +28,7 @@ typedef struct use
 {
     char * id;
     module_decl * decl;
+    unsigned int line_no;
 } use;
 
 typedef struct use_list_node

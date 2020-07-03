@@ -94,6 +94,7 @@ typedef enum comb_type
     COMB_TYPE_ENUMTYPE = 14,
     COMB_TYPE_RECORD = 15,
     COMB_TYPE_RECORD_ID = 16,
+    COMB_TYPE_MODULE = 17
 } comb_type;
 
 typedef enum id_type
@@ -127,6 +128,7 @@ typedef struct matchbind matchbind;
 typedef struct match_guard_list match_guard_list;
 typedef struct freevar freevar;
 typedef struct param param;
+typedef struct module_decl module_decl;
 
 typedef struct expr_comb
 {
@@ -137,6 +139,7 @@ typedef struct expr_comb
     struct record * comb_record;   /* record */ 
     struct enumtype * comb_enumtype; /* enum */
     struct matchbind * comb_matchbind; /* match bind (id in record match guard) */
+    struct module_decl * comb_module_decl; /* used module */
 } expr_comb;
 
 typedef struct expr

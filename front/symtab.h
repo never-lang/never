@@ -32,6 +32,7 @@
 #include "func.h"
 #include "array.h"
 #include "forin.h"
+#include "module_decl.h"
 
 typedef enum symtab_lookup_op
 {
@@ -55,7 +56,8 @@ typedef enum symtab_entry_type
     SYMTAB_RECORD = 6,
     SYMTAB_ENUMTYPE = 7,
     SYMTAB_ENUMERATOR = 8,
-    SYMTAB_FUNC = 9
+    SYMTAB_FUNC = 9,
+    SYMTAB_MODULE_DECL = 10,
 } symtab_entry_type;
 
 typedef struct symtab_entry
@@ -72,6 +74,7 @@ typedef struct symtab_entry
         enumtype * enumtype_value;
         enumerator * enumerator_value;
         func * func_value;
+        module_decl * module_decl_value;
     };
     unsigned int syn_level;
 } symtab_entry;
@@ -110,6 +113,7 @@ void symtab_add_enumerator(symtab * tab, enumerator * enumerator_value, unsigned
 void symtab_add_enumtype(symtab * tab, enumtype * enumtype_value, unsigned int syn_level);
 void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_level);
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
+void symtab_add_module_decl(symtab * tab, module_decl * module_decl_value, unsigned int syn_level);
 
 symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup);
 

@@ -56,10 +56,11 @@ int nev_compile_prog(program * prog)
     yyparse(&nev);
     if ((ret = parse_result) == 0)
     {
+        int typecheck_res = TYPECHECK_SUCC;
         libmath_add_funcs(nev->funcs);
 
-        ret = never_sem_check(nev);
-        if (ret == 0)
+        main_check_type(nev, &typecheck_res);
+        if (typecheck_res == 0)
         {
             ret = never_optimize(nev);
             if (ret == 0)

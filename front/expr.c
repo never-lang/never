@@ -817,6 +817,8 @@ const char * comb_type_str(comb_type type)
         return "record";
     case COMB_TYPE_RECORD_ID:
         return "record id";
+    case COMB_TYPE_MODULE:
+        return "module";
     }
     return "unknown comb type!";
 }

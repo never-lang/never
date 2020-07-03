@@ -32,6 +32,7 @@
 #include "moduletab.h"
 
 #define MAX_USE_DEPTH 10
+#define MAX_FILE_NAME_LEN 100
 #define YY_DECL int lex_scan(token * tokp)
 
 unsigned int line_no = 1;
@@ -446,6 +447,8 @@ use {
 }
 
 <USE>[a-zA-Z_./]+ {
+    char file_name[MAX_FILE_NAME_LEN];
+    
     if (use_stack_ptr >= MAX_USE_DEPTH)
     {
         fprintf(stderr, "module uses are nested too deep\n");
@@ -473,28 +476,27 @@ use {
 
     use_descr descr = { line_no, get_utils_file_name(), yyin, YY_CURRENT_BUFFER };
 
-    printf("use id %s\n", yytext);
-
     FILE * current_yyin = yyin;
-    yyin = fopen(yytext, "r");
+    snprintf(file_name, MAX_FILE_NAME_LEN, "%s.nev", yytext);
+    yyin = fopen(file_name, "r");
     if (!yyin)
     {
-        fprintf(stderr, "cannot open module %s\n", yytext);
+        fprintf(stderr, "cannot open module %s\n", file_name);
         yyin = current_yyin;
         return yytext[0];
     }
 
     use_stack[use_stack_ptr++] = descr;
 
+    tokp->line_no = line_no;
+    tokp->val.str_value = strdup(yytext);
+    scanner_printf("id %s\n", yytext);
+
     moduletab_add_module(modtab, strdup(yytext));
 
     yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
     line_no = 1;
     set_utils_file_name(yytext);
-
-    tokp->line_no = line_no;
-    tokp->val.str_value = strdup(yytext);
-    scanner_printf("id %s\n", yytext);
 
     BEGIN(INITIAL);
     return TOK_NUM_STRING;

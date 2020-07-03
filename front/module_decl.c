@@ -28,21 +28,42 @@ module_decl * module_decl_new(char * id, never * nev)
 {
     module_decl * value = (module_decl *)malloc(sizeof(module_decl));
 
+    value->type = MODULE_DECL_TYPE_MOD;
     value->id = id;
     value->nev = nev;
+    value->line_no = 0;
+
+    return value;
+}
+
+module_decl * module_decl_new_ref(module_decl * module_decl_value)
+{
+    module_decl * value = (module_decl *)malloc(sizeof(module_decl));
+
+    value->type = MODULE_DECL_TYPE_REF;
+    value->id = NULL;
+    value->module_decl_value = module_decl_value;
+    value->line_no = 0;
 
     return value;
 }
 
 void module_decl_delete(module_decl * value)
 {
-    if (value->id != NULL)
+    switch (value->type)
     {
-        free(value->id);
-    }
-    if (value->nev != NULL)
-    {
-        never_delete(value->nev);
+        case MODULE_DECL_TYPE_MOD:
+            if (value->id != NULL)
+            {
+                free(value->id);
+            }
+            if (value->nev != NULL)
+            {
+                never_delete(value->nev);
+            }
+        break;
+        case MODULE_DECL_TYPE_REF:
+        break;
     }
     free(value);
 }

@@ -154,6 +154,10 @@ int never_add_record(symtab * stab, record * value, int * result);
 int never_add_decl(symtab * stab, decl * value, int * result);
 int never_add_decl_list(symtab * stab, decl_list * list, int * result);
 
+int never_add_module_decl(symtab * mtab, symtab * stab, char * use_id, module_decl * value, int * result);
+int never_add_use(symtab * mtab, symtab * stab, use * value, int * result);
+int never_add_use_list(symtab * mtab, symtab * stab, use_list * list, int * result);
+
 int enumerator_item_check_type(symtab * stab, enumerator * value, int * result);
 int enumerator_record_check_type(symtab * gtab, symtab * stab, enumerator * value, int * result);
 int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
@@ -165,13 +169,17 @@ int record_check_type(symtab * stab, record * record_value, int * result);
 int decl_check_type(symtab * stab, decl * value, int * result);
 int decl_list_check_type(symtab * stab, decl_list * list, int * result);
 
-int never_check_type(never * nev, int * result);
+int never_check_type(symtab * mtab, never * nev, int * result);
 
 int func_entry_check_num_params(param_list * params);
 int func_entry_check_type(func * func_value, int * result);
 int func_list_entry_check_type(func_list * list, int * result);
 
-int never_sem_check(never * nev);
+int never_sem_check(symtab * mtab, never * nev, int * result);
+
+int module_decl_check_type(symtab * mtab, module_decl * value, int * result);
+
+int main_check_type(never * nev, int * result);
 
 #endif /* __TYPECHECK_H__ */
 

@@ -1137,6 +1137,7 @@ decl_list: decl_list decl
 use: TOK_USE TOK_NUM_STRING module_decl
 {
     $$ = use_new($2, $3);
+    $$->line_no = $<line_no>1;
 };
 
 use_list: use
@@ -1193,12 +1194,13 @@ never: use_list decl_list bind_list func_list
 
 module_decl: TOK_MODULE_REF
 {
-    $$ = NULL;
+    $$ = module_decl_new_ref(NULL);
 };
 
 module_decl: TOK_MODULE TOK_ID '{' never '}'
 {
     $$ = module_decl_new($2, $4);
+    $$->line_no = $<line_no>1;
 };
 
 start: never

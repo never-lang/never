@@ -30,6 +30,7 @@ use * use_new(char * id, module_decl * decl)
 
     value->id = id;
     value->decl = decl;
+    value->line_no = 0;
 
     return value;
 }

@@ -22,15 +22,28 @@
 #ifndef __MODULE_DECL_H__
 #define __MODULE_DECL_H__
 
+typedef enum module_decl_type
+{
+    MODULE_DECL_TYPE_MOD = 1,
+    MODULE_DECL_TYPE_REF = 2
+} module_decl_type;
+
 typedef struct never never;
 
 typedef struct module_decl
 {
+    module_decl_type type;
     char * id;
-    never * nev;
+    union
+    {
+        never * nev;
+        struct module_decl * module_decl_value;
+    };
+    unsigned int line_no;
 } module_decl;
 
 module_decl * module_decl_new(char * id, never * nev);
+module_decl * module_decl_new_ref(module_decl * value);
 void module_decl_delete(module_decl * value);
 
 void module_decl_print(module_decl * value);
