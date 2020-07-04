@@ -110,7 +110,9 @@ typedef enum id_type
     ID_TYPE_FUNC_TOP = 8,
     ID_TYPE_FUNC = 9,
     ID_TYPE_FUNC_NEST = 10,
-    ID_TYPE_RECORD = 11
+    ID_TYPE_ENUMTYPE = 11,
+    ID_TYPE_RECORD = 12,
+    ID_TYPE_MODULE = 13
 } id_type;
 
 typedef struct array array;
@@ -155,7 +157,7 @@ typedef struct expr
         struct
         {
             char called;
-            char * enum_id;
+            struct expr * enum_id;
             char * item_id;
             enumerator * id_enumerator_value;
             enumtype * id_enumtype_value;
@@ -174,6 +176,7 @@ typedef struct expr
                 func * id_func_value;
                 record * id_record_value;
                 enumtype * id_enumtype_value;
+                module_decl * id_module_decl_value;
             };
         } id;
         struct func * func_value; /* EXPR_FUNC */
@@ -271,7 +274,7 @@ expr * expr_new_int(int int_value);
 expr * expr_new_float(float float_value);
 expr * expr_new_char(char char_value);
 expr * expr_new_string(char * string_value);
-expr * expr_new_enumtype(char * enum_id, char * item_id);
+expr * expr_new_enumtype(expr * enum_id, char * item_id);
 expr * expr_new_id(char * id);
 expr * expr_new_nil();
 expr * expr_new_c_null();

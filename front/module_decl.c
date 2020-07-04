@@ -36,13 +36,13 @@ module_decl * module_decl_new(char * id, never * nev)
     return value;
 }
 
-module_decl * module_decl_new_ref(module_decl * module_decl_value)
+module_decl * module_decl_new_ref(char * id, never * nev)
 {
     module_decl * value = (module_decl *)malloc(sizeof(module_decl));
 
     value->type = MODULE_DECL_TYPE_REF;
-    value->id = NULL;
-    value->module_decl_value = module_decl_value;
+    value->id = id;
+    value->nev = nev;
     value->line_no = 0;
 
     return value;

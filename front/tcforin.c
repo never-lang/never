@@ -70,6 +70,7 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
         case COMB_TYPE_ENUMTYPE:
         case COMB_TYPE_RECORD:
         case COMB_TYPE_RECORD_ID:
+        case COMB_TYPE_MODULE:
             print_error_msg(value->in_value->line_no,
                             "for in loop expression incorrect type %s",
                             comb_type_str(value->in_value->comb.comb));

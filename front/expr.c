@@ -90,7 +90,7 @@ expr * expr_new_string(char * string_value)
     return ret;
 }
 
-expr * expr_new_enumtype(char * enum_id, char * item_id)
+expr * expr_new_enumtype(expr * enum_id, char * item_id)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
     
@@ -452,7 +452,7 @@ void expr_delete(expr * value)
     case EXPR_ENUMTYPE:
         if (value->enumtype.enum_id != NULL)
         {
-            free(value->enumtype.enum_id);
+            expr_delete(value->enumtype.enum_id);
         }
         if (value->enumtype.item_id != NULL)
         {

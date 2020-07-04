@@ -79,7 +79,6 @@ int yyerror(never ** nev, char * str)
 %token <val.str_value> TOK_ENUM
 %token <val.str_value> TOK_EXTERN
 %token <val.str_value> TOK_MATCH
-%token <val.str_value> TOK_DDOT
 %token <val.str_value> TOK_TODOTS
 %token <val.str_value> TOK_RANGE
 %token <val.str_value> TOK_MODULE
@@ -148,7 +147,7 @@ int yyerror(never ** nev, char * str)
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
 %right TOK_NOT /* %precedence NEG */
-%left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END TOK_DOT
+%left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END TOK_DOT TOK_DDOT
 
 %start start
 
@@ -249,7 +248,7 @@ expr: TOK_NUM_STRING
     $$->line_no = $<line_no>1;
 };
 
-expr: TOK_ID TOK_DDOT TOK_ID
+expr: expr TOK_DDOT TOK_ID
 {
     $$ = expr_new_enumtype($1, $3);
     $$->line_no = $<line_no>1;
@@ -1194,7 +1193,8 @@ never: use_list decl_list bind_list func_list
 
 module_decl: TOK_MODULE_REF
 {
-    $$ = module_decl_new_ref(NULL);
+    $$ = module_decl_new_ref(NULL, NULL);
+    $$->line_no = $<line_no>1;
 };
 
 module_decl: TOK_MODULE TOK_ID '{' never '}'

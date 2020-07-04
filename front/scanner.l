@@ -262,9 +262,6 @@ module {
 use {
     tokp->line_no = line_no;
     scanner_printf("use\n");
-
-    printf("use\n");
-
     BEGIN(USE);
     return TOK_USE;
 }
@@ -442,6 +439,8 @@ use {
 }
 
 <MODULE_REF>[.\n] {
+    tokp->line_no = line_no;
+    line_no++;
     BEGIN(INITIAL);
     return TOK_MODULE_REF;
 }
@@ -464,11 +463,9 @@ use {
     moduletab_entry * entry = moduletab_lookup_module(modtab, yytext);
     if (entry != NULL)
     {
-        printf("use ref id %s\n", yytext);
-
         tokp->line_no = line_no;
         tokp->val.str_value = strdup(yytext);
-        scanner_printf("id %s\n", yytext);
+        scanner_printf("use %s\n", yytext);
 
         BEGIN(MODULE_REF);
         return TOK_NUM_STRING;
@@ -490,7 +487,7 @@ use {
 
     tokp->line_no = line_no;
     tokp->val.str_value = strdup(yytext);
-    scanner_printf("id %s\n", yytext);
+    scanner_printf("use %s\n", yytext);
 
     moduletab_add_module(modtab, strdup(yytext));
 

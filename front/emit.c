@@ -482,6 +482,12 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
     case ID_TYPE_RECORD:
         expr_nil_emit(value, stack_level, module_value, result);
         break;
+    case ID_TYPE_ENUMTYPE:
+        /* TODO: do something with enumtype */
+        break;
+    case ID_TYPE_MODULE:
+        /* TODO: do something with module */
+        break;
     }
     return 0;
 }

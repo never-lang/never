@@ -34,16 +34,12 @@ typedef struct module_decl
 {
     module_decl_type type;
     char * id;
-    union
-    {
-        never * nev;
-        struct module_decl * module_decl_value;
-    };
+    never * nev;
     unsigned int line_no;
 } module_decl;
 
 module_decl * module_decl_new(char * id, never * nev);
-module_decl * module_decl_new_ref(module_decl * value);
+module_decl * module_decl_new_ref(char * id, never * nev);
 void module_decl_delete(module_decl * value);
 
 void module_decl_print(module_decl * value);

@@ -284,10 +284,10 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
         case SYMTAB_ENUMTYPE:
             if (entry->enumtype_value != NULL)
             {
-                *result = GENCODE_FAIL;
-                print_error_msg(value->line_no, "found enum %s, at this stage it is very bad",
-                                value->id.id);
-                assert(0);
+                enumtype * enumtype_value = entry->enumtype_value;
+
+                value->id.id_type_value = ID_TYPE_ENUMTYPE;
+                value->id.id_enumtype_value = enumtype_value;
             }
         break;
         case SYMTAB_ENUMERATOR:
@@ -297,6 +297,15 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 print_error_msg(value->line_no, "found enumerator %s, at this stage it is very bad",
                                 value->id.id);
                 assert(0);
+            }
+        break;
+        case SYMTAB_MODULE_DECL:
+            if (entry->module_decl_value != NULL)
+            {
+                module_decl * module_decl_value = entry->module_decl_value;
+
+                value->id.id_type_value = ID_TYPE_MODULE;
+                value->id.id_module_decl_value = module_decl_value;
             }
         break;
         }

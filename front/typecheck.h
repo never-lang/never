@@ -39,6 +39,7 @@ int func_enum_func_list(func_list * list, int start);
 int enum_matchbind_list(matchbind_list * list);
 
 int expr_set_comb_type(expr * value, param * param_value);
+int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result);
 int expr_qualifier_set_comb_type(expr * value, expr * expr_value);
 
 int array_cmp(int comb_dims_one, param * ret_one,
@@ -93,7 +94,7 @@ int param_list_check_type(symtab * tab, param_list * list,
                           unsigned int syn_level, int * result);                     
 
 int expr_id_check_type(symtab * tab, expr * value, int * result);
-int expr_enumtype_check_type(symtab * tab, expr * value, int * result);
+int expr_enumtype_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
 int expr_neg_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
 int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                             int * result);

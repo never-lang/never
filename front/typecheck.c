@@ -215,6 +215,86 @@ int expr_set_comb_type(expr * value, param * param_value)
     return 0;
 }
 
+int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
+{
+    switch (entry->type)
+    {
+        case SYMTAB_FUNC:
+            if (entry->func_value != NULL)
+            {
+                func * func_value = entry->func_value;
+
+                value->comb.comb = COMB_TYPE_FUNC;
+                value->comb.comb_params = func_value->decl->params;
+                value->comb.comb_ret = func_value->decl->ret;
+            }
+        break;
+        case SYMTAB_PARAM:
+            if (entry->param_value != NULL)
+            {
+                expr_set_comb_type(value, entry->param_value);
+            }
+        break;
+        case SYMTAB_BIND:
+            if (entry->bind_value != NULL)
+            {
+                value->comb = entry->bind_value->expr_value->comb;
+            }
+        break;
+        case SYMTAB_MATCHBIND:
+            if (entry->matchbind_value != NULL)
+            {
+                expr_set_comb_type(value, entry->matchbind_value->param_value);
+            }
+        break;
+        case SYMTAB_QUALIFIER:
+            if (entry->qualifier_value != NULL)
+            {
+                expr_qualifier_set_comb_type(value, entry->qualifier_value->expr_value);
+            }
+        break;
+        case SYMTAB_FORIN:
+            if (entry->forin_value != NULL)
+            {
+                value->comb = entry->forin_value->iter->comb;
+            }
+        break;
+        case SYMTAB_RECORD:
+            if (entry->record_value != NULL)
+            {
+                value->comb.comb = COMB_TYPE_RECORD_ID;
+                value->comb.comb_record = entry->record_value;
+            }
+        break;
+        case SYMTAB_ENUMTYPE:
+            if (entry->enumtype_value != NULL)
+            {
+                enumtype * al_enumtype = entry->enumtype_value;
+                value->comb.comb = COMB_TYPE_ENUMTYPE;
+                value->comb.comb_enumtype = al_enumtype;
+            }
+        break;
+        case SYMTAB_ENUMERATOR:
+            if (entry->enumerator_value != NULL)
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+
+                print_error_msg(value->line_no, "found enumerator %s", value->id.id);
+            }
+        break;
+        case SYMTAB_MODULE_DECL:
+            if (entry->module_decl_value != NULL)
+            {
+                value->comb.comb = COMB_TYPE_MODULE;
+                value->comb.comb_module_decl = entry->module_decl_value;
+            }
+        break;
+    }
+
+    return 0;
+}
+
 int expr_qualifier_set_comb_type(expr * value, expr * expr_value)
 {
     if (expr_value->comb.comb == COMB_TYPE_ARRAY &&
@@ -1079,81 +1159,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     entry = symtab_lookup(tab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
-        switch (entry->type)
-        {
-            case SYMTAB_FUNC:
-                if (entry->func_value != NULL)
-                {
-                    func * func_value = entry->func_value;
-
-                    value->comb.comb = COMB_TYPE_FUNC;
-                    value->comb.comb_params = func_value->decl->params;
-                    value->comb.comb_ret = func_value->decl->ret;
-                }
-            break;
-            case SYMTAB_PARAM:
-                if (entry->param_value != NULL)
-                {
-                    expr_set_comb_type(value, entry->param_value);
-                }
-            break;
-            case SYMTAB_BIND:
-                if (entry->bind_value != NULL)
-                {
-                    value->comb = entry->bind_value->expr_value->comb;
-                }
-            break;
-            case SYMTAB_MATCHBIND:
-                if (entry->matchbind_value != NULL)
-                {
-                    expr_set_comb_type(value, entry->matchbind_value->param_value);
-                }
-            break;
-            case SYMTAB_QUALIFIER:
-                if (entry->qualifier_value != NULL)
-                {
-                    expr_qualifier_set_comb_type(value, entry->qualifier_value->expr_value);
-                }
-            break;
-            case SYMTAB_FORIN:
-                if (entry->forin_value != NULL)
-                {
-                    value->comb = entry->forin_value->iter->comb;
-                }
-            break;
-            case SYMTAB_RECORD:
-                if (entry->record_value != NULL)
-                {
-                    value->comb.comb = COMB_TYPE_RECORD_ID;
-                    value->comb.comb_record = entry->record_value;
-                }
-            break;
-            case SYMTAB_ENUMTYPE:
-                if (entry->enumtype_value != NULL)
-                {
-                    *result = TYPECHECK_FAIL;
-                    value->comb.comb = COMB_TYPE_ERR;
-
-                    print_error_msg(value->line_no, "found enum id %s", value->id.id);
-                }
-            break;
-            case SYMTAB_ENUMERATOR:
-                if (entry->enumerator_value != NULL)
-                {
-                    *result = TYPECHECK_FAIL;
-                    value->comb.comb = COMB_TYPE_ERR;
-
-                    print_error_msg(value->line_no, "found enumerator %s", value->id.id);
-                }
-            break;
-            case SYMTAB_MODULE_DECL:
-                if (entry->module_decl_value != NULL)
-                {
-                    value->comb.comb = COMB_TYPE_MODULE;
-                    value->comb.comb_module_decl = entry->module_decl_value;
-                }
-            break;
-        }
+        expr_set_comb_type_symtab(value, entry, result);
     }
     else
     {
@@ -1164,48 +1170,34 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     return 0;
 }
 
-int expr_enumtype_check_type(symtab * tab, expr * value, int * result)
+int expr_enumtype_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(tab, value->enumtype.enum_id, SYMTAB_LOOKUP_GLOBAL);
-    if (entry != NULL)
+    if (value->enumtype.enum_id != NULL)
     {
-        if (entry->type == SYMTAB_ENUMTYPE && entry->enumtype_value != NULL)
+        expr_check_type(tab, value->enumtype.enum_id, func_value, syn_level, result);
+    }
+
+    if (value->enumtype.enum_id->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        enumtype * enumtype_value = value->enumtype.enum_id->comb.comb_enumtype;
+        enumerator * enumerator_value = enumtype_find_enumerator(enumtype_value, value->enumtype.item_id);
+
+        if (enumerator_value != NULL)
         {
-            enumerator * enumerator_value = enumtype_find_enumerator(entry->enumtype_value, value->enumtype.item_id);
-            if (enumerator_value != NULL)
-            {
-                value->comb.comb = COMB_TYPE_ENUMTYPE;
-                value->comb.comb_enumtype = entry->enumtype_value;
-                
-                value->enumtype.id_enumerator_value = enumerator_value;
-                value->enumtype.id_enumtype_value = entry->enumtype_value;
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no, "cannot find enum %s::%s",
-                                value->enumtype.enum_id,
-                                value->enumtype.item_id);
-            }
+            value->comb.comb = COMB_TYPE_ENUMTYPE;
+            value->comb.comb_enumtype = enumtype_value;
+            
+            value->enumtype.id_enumerator_value = enumerator_value;
+            value->enumtype.id_enumtype_value = enumtype_value;
         }
         else
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "expected enumtype %s but found %s",
-                            value->enumtype.enum_id,
-                            symtab_entry_type_str(entry->type));
+            print_error_msg(value->line_no, "cannot find enum %s::%s",
+                            enumtype_value->id,
+                            value->enumtype.item_id);
         }
-    }
-    else
-    {
-        *result = TYPECHECK_FAIL;
-        value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot find enumtype %s",
-                        value->enumtype.enum_id);
     }
 
     return 0;
@@ -2285,21 +2277,18 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
             {
                 /* TODO: remove */
                 printf("getting cycle\n");
-
-                module_decl_value = module_decl_value->module_decl_value;
-                assert(module_decl_value->type == MODULE_DECL_TYPE_MOD);
                 nev = module_decl_value->nev;
             }
+            assert(nev != NULL);
 
             symtab_entry * entry = symtab_lookup(nev->stab, value->attr.id, SYMTAB_LOOKUP_LOCAL);
             if (entry != NULL)
             {
-                /* TODO: do something */
+                /* TODO: remove */
                 printf("MODULE %s %d\n\n", module_decl_value->id, module_decl_value->type);
-                printf("%p\n", module_decl_value->nev);
                 printf("id %s\n", value->attr.id);
 
-                printf("entry type %d\n", entry->type);
+                expr_set_comb_type_symtab(value, entry, result);
             }
             else
             {
@@ -2308,6 +2297,12 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
                 print_error_msg(value->line_no, "cannot find attribute %s in module %s",
                                 value->attr.id, module_decl_value->id);
             }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "cannot find module or attribute");
         }
     }
     else
@@ -2342,7 +2337,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         value->comb.comb = COMB_TYPE_STRING;
         break;
     case EXPR_ENUMTYPE:
-        expr_enumtype_check_type(tab, value, result);
+        expr_enumtype_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_ID:
         expr_id_check_type(tab, value, result);
@@ -3056,7 +3051,7 @@ int never_add_module_decl(symtab * mtab, symtab * stab, char * use_id, module_de
                 *result = TYPECHECK_FAIL;
                 print_error_msg(value->line_no,
                                 "same use %s already used at %u",
-                                al_module_decl->line_no);
+                                use_id, al_module_decl->line_no);
             }
         }
         break;
@@ -3066,24 +3061,20 @@ int never_add_module_decl(symtab * mtab, symtab * stab, char * use_id, module_de
             symtab_entry * mentry = NULL;
 
             entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_LOCAL);
-            if (entry == NULL)
-            {
-                symtab_add_module_decl(stab, value, 0);
-            }
-            else
+            if (entry != NULL)
             {
                 module_decl * al_module_decl = entry->module_decl_value;
                 *result = TYPECHECK_FAIL;
                 print_error_msg(value->line_no,
                                 "same use %s already used at %u",
-                                al_module_decl->line_no);
+                                use_id, al_module_decl->line_no);
             }
 
             mentry = symtab_lookup(mtab, use_id, SYMTAB_LOOKUP_LOCAL);
             if (mentry != NULL)
             {
                 module_decl * al_module_decl = mentry->module_decl_value;
-                value->module_decl_value = al_module_decl;
+                symtab_add_module_decl(stab, al_module_decl, 0);
             }
         }
         break;
@@ -3376,7 +3367,7 @@ int module_decl_check_type(symtab * mtab, module_decl * value, int * result)
             if (al_module_decl->type == MODULE_DECL_TYPE_REF &&
                 value->type == MODULE_DECL_TYPE_MOD)
             {
-                al_module_decl->module_decl_value = value;
+                al_module_decl->nev = value->nev;
             }
         }
     }
