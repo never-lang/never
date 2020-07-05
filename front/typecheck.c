@@ -966,7 +966,7 @@ int param_enum_record_check_type(symtab * tab, param * param_value,
     {
         symtab_entry * mentry = NULL;
         mentry = symtab_lookup(tab, param_value->module_id, SYMTAB_LOOKUP_GLOBAL);
-        if (mentry != NULL)
+        if (mentry != NULL && mentry->type == SYMTAB_MODULE_DECL)
         {
             tab = mentry->module_decl_value->nev->stab;
         }
@@ -2299,19 +2299,17 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
             }
             else if (module_decl_value->type == MODULE_DECL_TYPE_REF)
             {
-                /* TODO: remove */
-                printf("getting cycle\n");
                 nev = module_decl_value->nev;
+            }
+            else
+            {
+                assert(0);
             }
             assert(nev != NULL);
 
             symtab_entry * entry = symtab_lookup(nev->stab, value->attr.id, SYMTAB_LOOKUP_LOCAL);
             if (entry != NULL)
             {
-                /* TODO: remove */
-                printf("MODULE %s %d\n\n", module_decl_value->id, module_decl_value->type);
-                printf("id %s\n", value->attr.id);
-
                 expr_set_comb_type_symtab(value, entry, result);
             }
             else
@@ -3398,20 +3396,16 @@ int module_decl_check_type(symtab * mtab, module_decl * value, int * result)
 
     if (value->type == MODULE_DECL_TYPE_MOD && value->nev != NULL)
     {
+        set_utils_file_name(value->id);
         never_sem_check(mtab, value->nev, result);
     }
 
     return 0;
 }
 
-int main_check_type(never * nev, int * result)
+int main_check_type(symtab * mtab, never * nev, int * result)
 {
-    symtab * mtab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
-
     never_sem_check(mtab, nev, result);
-
-    /* TODO: move it outside */
-    symtab_delete(mtab);
 
     return 0;
 }

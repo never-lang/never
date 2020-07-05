@@ -119,8 +119,22 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard_record * 
 int expr_match_guard_item_check_type(symtab * tab, match_guard_item * guard_item,
                                      int * result)
 {
-    symtab_entry * entry = NULL;
+    if (guard_item->module_id != NULL)
+    {
+        symtab_entry * mentry = NULL;
+        mentry = symtab_lookup(tab, guard_item->module_id, SYMTAB_LOOKUP_GLOBAL);
+        if (mentry != NULL && mentry->type == SYMTAB_MODULE_DECL)
+        {
+            tab = mentry->module_decl_value->nev->stab;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(guard_item->line_no, "cannot find module %s", guard_item->module_id);
+        }
+    }
 
+    symtab_entry * entry = NULL;
     entry = symtab_lookup(tab, guard_item->enum_id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
@@ -160,8 +174,22 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard_item * guard_item
 int expr_match_guard_record_check_type(symtab * tab, match_guard_record * guard_record,
                                        int * result)
 {
-    symtab_entry * entry = NULL;
+    if (guard_record->module_id != NULL)
+    {
+        symtab_entry * mentry = NULL;
+        mentry = symtab_lookup(tab, guard_record->module_id, SYMTAB_LOOKUP_GLOBAL);
+        if (mentry != NULL && mentry->type == SYMTAB_MODULE_DECL)
+        {
+            tab = mentry->module_decl_value->nev->stab;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(guard_record->line_no, "cannot find module %s", guard_record->module_id);
+        }
+    }
 
+    symtab_entry * entry = NULL;
     entry = symtab_lookup(tab, guard_record->enum_id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {

@@ -180,7 +180,7 @@ int never_sem_check(symtab * mtab, never * nev, int * result);
 
 int module_decl_check_type(symtab * mtab, module_decl * value, int * result);
 
-int main_check_type(never * nev, int * result);
+int main_check_type(symtab * mtab, never * nev, int * result);
 
 #endif /* __TYPECHECK_H__ */
 

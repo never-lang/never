@@ -491,9 +491,9 @@ use {
 
     moduletab_add_module(modtab, strdup(yytext));
 
-    yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
     line_no = 1;
-    set_utils_file_name(yytext);
+    set_utils_file_name(file_name);
+    yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
 
     BEGIN(INITIAL);
     return TOK_NUM_STRING;

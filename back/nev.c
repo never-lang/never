@@ -57,9 +57,11 @@ int nev_compile_prog(program * prog)
     if ((ret = parse_result) == 0)
     {
         int typecheck_res = TYPECHECK_SUCC;
+        symtab * mtab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
+
         libmath_add_funcs(nev->funcs);
 
-        main_check_type(nev, &typecheck_res);
+        main_check_type(mtab, nev, &typecheck_res);
         if (typecheck_res == 0)
         {
             ret = never_optimize(nev);
@@ -79,6 +81,7 @@ int nev_compile_prog(program * prog)
                 }
             }
         }
+        symtab_delete(mtab);
     }
 
     if (nev != NULL)

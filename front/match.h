@@ -39,6 +39,7 @@ typedef struct match_guard_item
 {
     char * enum_id;
     char * item_id;
+    char * module_id;
     enumtype * enumtype_value;
     enumerator * enumerator_value;
     unsigned int line_no;
@@ -55,6 +56,7 @@ typedef struct match_guard_record
     symtab * stab;
     char * enum_id;
     char * item_id;
+    char * module_id;
     matchbind_list * matchbinds;
     enumtype * enumtype_value;
     enumerator * enumerator_value;
@@ -99,9 +101,11 @@ typedef struct match_guard_list
 } match_guard_list;
 
 match_guard_item * match_guard_item_new(char * enum_id, char * item_id);
+match_guard_item * match_guard_item_new_module(char * enum_id, char * item_id, char * module_id);
 void match_guard_item_delete(match_guard_item * value);
 
 match_guard_record * match_guard_record_new(char * enum_id, char * item_id, matchbind_list * matchbinds);
+match_guard_record * match_guard_record_new_module(char * enum_id, char * item_id, char * module_id, matchbind_list * matchbinds);
 void match_guard_record_delete(match_guard_record * value);
 
 match_guard * match_guard_new_item(match_guard_item * guard, expr * expr_value);

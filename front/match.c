@@ -31,6 +31,21 @@ match_guard_item * match_guard_item_new(char * enum_id, char * item_id)
     
     ret->enum_id = enum_id;
     ret->item_id = item_id;
+    ret->module_id = NULL;
+    ret->enumtype_value = NULL;
+    ret->enumerator_value = NULL;
+    ret->line_no = 0;
+    
+    return ret;
+}
+
+match_guard_item * match_guard_item_new_module(char * enum_id, char * item_id, char * module_id)
+{
+    match_guard_item * ret = (match_guard_item *)malloc(sizeof(match_guard_item));
+    
+    ret->enum_id = enum_id;
+    ret->item_id = item_id;
+    ret->module_id = module_id;
     ret->enumtype_value = NULL;
     ret->enumerator_value = NULL;
     ret->line_no = 0;
@@ -48,6 +63,10 @@ void match_guard_item_delete(match_guard_item * value)
     {
         free(value->item_id);
     }
+    if (value->module_id != NULL)
+    {
+        free(value->module_id);
+    }
     free(value);
 }
 
@@ -58,6 +77,23 @@ match_guard_record * match_guard_record_new(char * enum_id, char * item_id, matc
     ret->stab = NULL;
     ret->enum_id = enum_id;
     ret->item_id = item_id;
+    ret->module_id = NULL;
+    ret->matchbinds = matchbinds;
+    ret->enumtype_value = NULL;
+    ret->enumerator_value = NULL;
+    ret->line_no = 0;
+    
+    return ret;
+}
+
+match_guard_record * match_guard_record_new_module(char * enum_id, char * item_id, char * module_id, matchbind_list * matchbinds)
+{
+    match_guard_record * ret = (match_guard_record *)malloc(sizeof(match_guard_record));
+    
+    ret->stab = NULL;
+    ret->enum_id = enum_id;
+    ret->item_id = item_id;
+    ret->module_id = module_id;
     ret->matchbinds = matchbinds;
     ret->enumtype_value = NULL;
     ret->enumerator_value = NULL;
@@ -79,6 +115,10 @@ void match_guard_record_delete(match_guard_record * value)
     if (value->item_id != NULL)
     {
         free(value->item_id);
+    }
+    if (value->module_id != NULL)
+    {
+        free(value->module_id);
     }
     if (value->matchbinds != NULL)
     {
