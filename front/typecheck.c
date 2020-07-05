@@ -270,7 +270,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
             if (entry->enumtype_value != NULL)
             {
                 enumtype * al_enumtype = entry->enumtype_value;
-                value->comb.comb = COMB_TYPE_ENUMTYPE;
+                value->comb.comb = COMB_TYPE_ENUMTYPE_ID;
                 value->comb.comb_enumtype = al_enumtype;
             }
         break;
@@ -962,8 +962,24 @@ int symtab_add_func_from_func_list(symtab * tab, func_list * list,
 int param_enum_record_check_type(symtab * tab, param * param_value,
                                  unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = NULL;
+    if (param_value->module_id != NULL)
+    {
+        symtab_entry * mentry = NULL;
+        mentry = symtab_lookup(tab, param_value->module_id, SYMTAB_LOOKUP_GLOBAL);
+        if (mentry != NULL)
+        {
+            tab = mentry->module_decl_value->nev->stab;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            param_value->record_value = NULL;
+            
+            print_error_msg(param_value->line_no, "cannot find module %s", param_value->module_id);
+        }
+    }
 
+    symtab_entry * entry = NULL;
     entry = symtab_lookup(tab, param_value->record_id, SYMTAB_LOOKUP_GLOBAL);
     if (entry == NULL)
     {
@@ -1177,7 +1193,7 @@ int expr_enumtype_check_type(symtab * tab, expr * value, func * func_value, unsi
         expr_check_type(tab, value->enumtype.enum_id, func_value, syn_level, result);
     }
 
-    if (value->enumtype.enum_id->comb.comb == COMB_TYPE_ENUMTYPE)
+    if (value->enumtype.enum_id->comb.comb == COMB_TYPE_ENUMTYPE_ID)
     {
         enumtype * enumtype_value = value->enumtype.enum_id->comb.comb_enumtype;
         enumerator * enumerator_value = enumtype_find_enumerator(enumtype_value, value->enumtype.item_id);
@@ -1198,6 +1214,13 @@ int expr_enumtype_check_type(symtab * tab, expr * value, func * func_value, unsi
                             enumtype_value->id,
                             value->enumtype.item_id);
         }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot get enumerator on type %s",
+                        comb_type_str(value->enumtype.enum_id->comb.comb));
     }
 
     return 0;
@@ -2122,6 +2145,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
     case COMB_TYPE_UNKNOWN:
     case COMB_TYPE_ERR:
     case COMB_TYPE_NIL:
+    case COMB_TYPE_ENUMTYPE_ID:
     case COMB_TYPE_RECORD:
     case COMB_TYPE_MODULE:
         {

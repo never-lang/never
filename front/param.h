@@ -53,7 +53,6 @@ typedef struct param
     param_type type;
     int index;
     char * id;
-    char * record_id;
     union {
         struct param * array;
         struct param * range;
@@ -61,8 +60,14 @@ typedef struct param
         struct param_list * params;
         struct param_list * dims;
         struct range_list * ranges;
-        struct record * record_value;
-        struct enumtype * enumtype_value;
+        struct {
+            char * record_id;
+            char * module_id;
+            union {
+                struct record * record_value;
+                struct enumtype * enumtype_value;
+            };
+        };
     };
     struct param * ret;
     unsigned int line_no;
@@ -95,6 +100,7 @@ param * param_new_range(char * id, range_list * ranges);
 param * param_new_range_dim(char * id);
 param * param_new_slice(char * id, range_list * ranges, param * ret);
 param * param_new_record(char * id, char * record_id);
+param * param_new_record_module(char * id, char * record_id, char * module_id);
 param * param_new_func(char * id, param_list * params, param * ret);
 void param_delete(param * value);
 

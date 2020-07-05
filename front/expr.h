@@ -92,9 +92,10 @@ typedef enum comb_type
     COMB_TYPE_SLICE = 12,
     COMB_TYPE_FUNC = 13,
     COMB_TYPE_ENUMTYPE = 14,
-    COMB_TYPE_RECORD = 15,
-    COMB_TYPE_RECORD_ID = 16,
-    COMB_TYPE_MODULE = 17
+    COMB_TYPE_ENUMTYPE_ID = 15,
+    COMB_TYPE_RECORD = 16,
+    COMB_TYPE_RECORD_ID = 17,
+    COMB_TYPE_MODULE = 18
 } comb_type;
 
 typedef enum id_type

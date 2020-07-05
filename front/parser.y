@@ -827,9 +827,21 @@ param: TOK_ID %prec TOK_RET
     $$->line_no = $<line_no>1;
 };
 
-param: TOK_ID ':' TOK_ID
+param: TOK_ID TOK_DOT TOK_ID %prec TOK_RET
+{
+    $$ = param_new_record_module(NULL, $3, $1);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID ':' TOK_ID %prec TOK_RET
 {
     $$ = param_new_record($1, $3);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID ':' TOK_ID TOK_DOT TOK_ID %prec TOK_RET
+{
+    $$ = param_new_record_module($1, $5, $3);
     $$->line_no = $<line_no>1;
 };
 

@@ -68,6 +68,7 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
         case COMB_TYPE_C_PTR:
         case COMB_TYPE_FUNC:
         case COMB_TYPE_ENUMTYPE:
+        case COMB_TYPE_ENUMTYPE_ID:
         case COMB_TYPE_RECORD:
         case COMB_TYPE_RECORD_ID:
         case COMB_TYPE_MODULE:
