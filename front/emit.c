@@ -3610,9 +3610,9 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
 
     expr_emit(value->attr.record_value, stack_level, module_value, list_weak, result);
 
-    assert(value->attr.id_param_value != NULL);
+    assert(value->attr.id->id.id_param_value != NULL);
 
-    if (value->attr.id_param_value->type == PARAM_DIM)
+    if (value->attr.id->id.id_param_value->type == PARAM_DIM)
     {
         int dim_index = -1;
         int array_index = -1;
@@ -3636,15 +3636,15 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
 
         slide_q = 2;
     }
-    else if (value->attr.id_param_value->type == PARAM_RANGE_DIM)
+    else if (value->attr.id->id.id_param_value->type == PARAM_RANGE_DIM)
     {
         int index = -1;
         int range_index = -1;
 
-        index = value->attr.id_param_value->index;
+        index = value->attr.id->id.id_param_value->index;
         assert(index != -1);
 
-        range_index = value->attr.id_param_value->range->index;
+        range_index = value->attr.id->id.id_param_value->range->index;
         assert(range_index != -1);
 
         bc.type = BYTECODE_VECREF_VEC_DEREF;
@@ -3659,7 +3659,7 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
 
         slide_q = 2;
     }
-    else if (value->attr.id_param_value->type == PARAM_SLICE_DIM)
+    else if (value->attr.id->id.id_param_value->type == PARAM_SLICE_DIM)
     {
         int dim_index = -1;
         int slice_index = -1;
@@ -3686,7 +3686,7 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
     else
     {
         int index = -1;
-        index = value->attr.id_param_value->index;
+        index = value->attr.id->id.id_param_value->index;
         assert(index != -1);
 
         bc.type = BYTECODE_VECREF_VEC_DEREF;
@@ -4288,7 +4288,7 @@ int never_emit(never * nev, module * module_value)
     if (nev->binds)
     {
         bind_list_emit(nev->binds, stack_level, module_value, list_weak, &gencode_res);
-        /* stack_level += nev->binds->count; */
+        stack_level += nev->binds->count;
     }
 
     func_list_emit(nev->funcs, stack_level, module_value, list_weak, &gencode_res);
@@ -4312,11 +4312,16 @@ int never_emit(never * nev, module * module_value)
     return gencode_res;
 }
 
-int module_decl_emit(module_decl * module_decl, module * module_value)
+int module_decl_emit(module_decl * module_global, module_decl * module_decl, module * module_value)
 {
     if (module_decl->nev)
     {
-        return never_emit(module_decl->nev, module_value);
+        never_emit(module_decl->nev, module_value);
+    }
+
+    if (module_global->nev)
+    {
+        never_emit(module_global->nev, module_value);
     }
 
     return 0;

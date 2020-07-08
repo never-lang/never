@@ -402,14 +402,13 @@ expr * expr_new_listcomp(listcomp * listcomp_value)
     return ret;
 }
 
-expr * expr_new_attr(expr * record_value, char * id)
+expr * expr_new_attr(expr * record_value, expr * id)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_ATTR;
-    ret->attr.id = id;
     ret->attr.record_value = record_value;
-    ret->attr.id_param_value = NULL;
+    ret->attr.id = id;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     
@@ -634,7 +633,7 @@ void expr_delete(expr * value)
     case EXPR_ATTR:
         if (value->attr.id != NULL)
         {
-            free(value->attr.id);
+            expr_delete(value->attr.id);
         }
         if (value->attr.record_value != NULL)
         {

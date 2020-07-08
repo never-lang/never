@@ -250,8 +250,7 @@ typedef struct expr
         struct
         {
             struct expr * record_value; /* record_value . id */
-            char * id;
-            param * id_param_value;
+            struct expr * id;
         } attr;
     };
 } expr;
@@ -300,7 +299,7 @@ expr * expr_new_iflet(iflet * iflet_value);
 expr * expr_new_match(expr * expr_value, match_guard_list * match_guards);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);
-expr * expr_new_attr(expr * record_value, char * id);
+expr * expr_new_attr(expr * record_value, expr * id);
 
 expr * expr_conv(expr * expr_value, expr_type conv);
 

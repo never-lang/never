@@ -89,7 +89,7 @@ int nev_compile_prog(const char * input, program * prog)
                 ret = module_decl_tailrec(module_nev);
                 if (ret == 0)
                 {
-                    ret = module_decl_emit(module_nev, prog->module_value);
+                    ret = module_decl_emit(module_global, module_nev, prog->module_value);
                     if (ret == 0)
                     {
                         module_close(prog->module_value);

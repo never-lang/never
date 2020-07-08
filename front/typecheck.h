@@ -170,13 +170,11 @@ int record_check_type(symtab * stab, record * record_value, int * result);
 int decl_check_type(symtab * stab, decl * value, int * result);
 int decl_list_check_type(symtab * stab, decl_list * list, int * result);
 
-int never_check_type(symtab * gtab, never * nev, int * result);
-
 int func_entry_check_num_params(param_list * params);
 int func_entry_check_type(func * func_value, int * result);
 int func_list_entry_check_type(func_list * list, int * result);
 
-int never_sem_check(symtab * gtab, never * nev, int * result);
+int never_check_type(symtab * gtab, never * nev, int * result);
 
 int module_decl_check_type(symtab * gtab, module_decl * value, int * result);
 

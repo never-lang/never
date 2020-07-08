@@ -1180,6 +1180,7 @@ int expr_id_check_type(symtab * tab, expr * value, int * result)
     else
     {
         *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
         print_error_msg(value->line_no, "cannot find identifier %s",
                         value->id.id);
     }
@@ -2270,10 +2271,11 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
         record * record_value = value->attr.record_value->comb.comb_record;
         if (record_value != NULL && value->attr.id != NULL)
         {
-            param * param_value = record_find_param(record_value, value->attr.id);
+            param * param_value = record_find_param(record_value, value->attr.id->id.id);
             if (param_value != NULL)
             {
-                value->attr.id_param_value = param_value;
+                value->attr.id->id.id_type_value = ID_TYPE_LOCAL;
+                value->attr.id->id.id_param_value = param_value;
 
                 expr_set_comb_type(value, param_value);
             }
@@ -2282,7 +2284,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
                 print_error_msg(value->line_no, "cannot find attribute %s in record %s",
-                                value->attr.id, record_value->id);
+                                value->attr.id->id.id, record_value->id);
             }
         }
     }
@@ -2307,13 +2309,12 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
             }
             assert(nev != NULL);
 
-#if 0            
-            expr_attr_check_type(nev->stab, value, result);
+            expr_id_check_type(nev->stab, value->attr.id, result);
+            value->comb = value->attr.id->comb;
             if (*result == TYPECHECK_SUCC)
             {
-                expr_id_gencode(syn_level, func_value, nev->stab, value, result);
+                expr_id_gencode(syn_level, func_value, nev->stab, value->attr.id, result);
             }
-#endif
         }
         else
         {
@@ -3266,40 +3267,6 @@ int decl_list_check_type(symtab * stab, decl_list * list, int * result)
     return 0;
 }
 
-int never_check_type(symtab * gtab, never * nev, int * result)
-{
-    int start = 0;
-    unsigned int syn_level = 0;
-    
-    if (nev->uses != NULL)
-    {
-        never_add_use_list(gtab, nev->stab, nev->uses, result);
-    }
-
-    if (nev->stab != NULL && nev->decls != NULL)
-    {
-        /* add decls to symtab */
-        never_add_decl_list(nev->stab, nev->decls, result);
-
-        /* check decls */
-        decl_list_check_type(nev->stab, nev->decls, result);
-    }
-
-    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
-
-    if (nev->stab != NULL && nev->binds != NULL)
-    {
-        func_enum_bind_list(nev->binds, start);
-        bind_list_check_type(nev->stab, nev->binds, NULL, syn_level, result);
-        start += nev->binds->count;
-    }
-
-    func_enum_func_list(nev->funcs, start); 
-    func_list_check_type(nev->stab, nev->funcs, syn_level, result);
-
-    return 0;
-}
-
 int func_entry_check_num_params(param_list * params)
 {
     param_list_node * node = params->tail;
@@ -3353,23 +3320,48 @@ int func_list_entry_check_type(func_list * list, int * result)
     return 0;
 }
 
-int never_sem_check(symtab * gtab, never * nev, int * result)
+int never_check_type(symtab * gtab, never * nev, int * result)
 {
+    int start = 0;
+    unsigned int syn_level = 0;
+
     if (nev->stab == NULL)
     {
         nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, gtab);
     }
 
-    never_check_type(gtab, nev, result);
+    if (nev->uses != NULL)
+    {
+        never_add_use_list(gtab, nev->stab, nev->uses, result);
+    }
 
-    func_list_entry_check_type(nev->funcs, result);
+    if (nev->stab != NULL && nev->decls != NULL)
+    {
+        /* add decls to symtab */
+        never_add_decl_list(nev->stab, nev->decls, result);
+
+        /* check decls */
+        decl_list_check_type(nev->stab, nev->decls, result);
+    }
+
+    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
+
+    if (nev->stab != NULL && nev->binds != NULL)
+    {
+        func_enum_bind_list(nev->binds, start);
+        bind_list_check_type(nev->stab, nev->binds, NULL, syn_level, result);
+        start += nev->binds->count;
+    }
+
+    func_enum_func_list(nev->funcs, start); 
+    func_list_check_type(nev->stab, nev->funcs, syn_level, result);
 
     return 0;
 }
 
 int module_decl_check_type(symtab * gtab, module_decl * value, int * result)
 {
-    if (value->id != NULL)
+    if (gtab != NULL && value->id != NULL)
     {
         symtab_entry * mentry = NULL;
 
@@ -3391,8 +3383,11 @@ int module_decl_check_type(symtab * gtab, module_decl * value, int * result)
 
     if (value->type == MODULE_DECL_TYPE_MOD && value->nev != NULL)
     {
+        const char * current_file_name = get_utils_file_name();
+
         set_utils_file_name(value->id);
-        never_sem_check(gtab, value->nev, result);
+        never_check_type(gtab, value->nev, result);
+        set_utils_file_name(current_file_name);
     }
 
     return 0;
@@ -3407,7 +3402,9 @@ int main_check_type(module_decl * module_global, module_decl * module_nev, int *
         gtab = module_global->nev->stab;
     }
 
-    never_sem_check(gtab, module_nev->nev, result);
+    module_decl_check_type(gtab, module_nev, result);
+
+    func_list_entry_check_type(module_nev->nev->funcs, result);
 
     return 0;
 }

@@ -652,7 +652,10 @@ expr: TOK_MATCH expr '{' match_guard_list '}'
 
 expr: expr TOK_DOT TOK_ID
 {
-    $$ = expr_new_attr($1, $3);
+    expr * id = expr_new_id($3);
+    id->line_no = $<line_no>3;
+
+    $$ = expr_new_attr($1, id);
     $$->line_no = $<line_no>1;
 };
 
