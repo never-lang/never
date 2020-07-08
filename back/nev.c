@@ -37,56 +37,74 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #define PARSE_STR 1
 #define PARSE_FILE 2
 
 extern FILE * yyin;
 extern int parse_result;
-extern int yyparse (never ** nev);
 
-int nev_compile_prog(program * prog)
+module_decl * module_decl_new_global()
+{
+    func_list * global_funcs = func_list_new();
+    never * global_never = never_new(NULL, NULL, NULL, global_funcs);
+    module_decl * module_global = module_decl_new(strdup("global"), global_never);
+
+    libmath_add_funcs(global_funcs);
+
+    return module_global;
+}
+
+int nev_compile_prog(const char * input, program * prog)
 {
     int ret = 0;
-    never * nev = NULL;
+    module_decl * module_nev = NULL;
 
     set_line_no(1);
     parse_result = 0;
 
-    yyparse(&nev);
+    yyparse(&module_nev);
     if ((ret = parse_result) == 0)
     {
         int typecheck_res = TYPECHECK_SUCC;
-        symtab * mtab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
 
-        libmath_add_funcs(nev->funcs);
+        module_nev->id = strdup(input);
 
-        main_check_type(mtab, nev, &typecheck_res);
+        module_decl * module_global = module_decl_new_global();
+
+        main_check_type(NULL, module_global, &typecheck_res);
+        if (typecheck_res != 0)
+        {
+            fprintf(stderr, "cannot typecheck module global\n");
+            assert(0);
+        }
+
+        main_check_type(module_global, module_nev, &typecheck_res);
         if (typecheck_res == 0)
         {
-            ret = never_optimize(nev);
+            ret = module_decl_optimize(module_nev);
             if (ret == 0)
             {
-                ret = never_tailrec(nev);
+                ret = module_decl_tailrec(module_nev);
                 if (ret == 0)
                 {
-                    ret = never_emit(nev, prog->module_value);
+                    ret = module_decl_emit(module_nev, prog->module_value);
                     if (ret == 0)
                     {
                         module_close(prog->module_value);
                     }
-
                     /* print_functions(nev);
                     module_print(prog->module_value); */
                 }
             }
         }
-        symtab_delete(mtab);
+        module_decl_delete(module_global);
     }
 
-    if (nev != NULL)
+    if (module_nev != NULL)
     {
-        never_delete(nev);
+        module_decl_delete(module_nev);
     }
 
     return ret;
@@ -105,7 +123,7 @@ int nev_compile(const char * input, program * prog, int type)
         scan_file(input);
     }
 
-    ret = nev_compile_prog(prog);
+    ret = nev_compile_prog(input, prog);
 
     scanner_destroy();
 

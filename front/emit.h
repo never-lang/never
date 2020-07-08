@@ -258,6 +258,7 @@ int func_list_emit(func_list * list, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
 
 int never_emit(never * nev, module * module_value);
+int module_decl_emit(module_decl * module_decl, module * module_value);
 
 #endif /* __EMIT_H__ */
 

@@ -25,5 +25,6 @@
 #include "never.h"
 
 int never_optimize(never * nev);
+int module_decl_optimize(module_decl * module_nev);
 
 #endif /* __OPTIMIZE_H__ */

@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include "libmath.h"
+#include "never.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -399,4 +400,12 @@ const char * libmath_func_to_str(libmath_func math_id)
         return "assertf";
     }
     return "unknown";
+}
+
+void libmath_add_funcs_module_decl(module_decl * module_value)
+{
+    if (module_value->nev && module_value->nev->funcs)
+    {
+        libmath_add_funcs(module_value->nev->funcs);
+    }
 }

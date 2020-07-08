@@ -24,9 +24,15 @@
 
 int never_optimize(never * nev)
 {
-    int ret;
+    return never_constred(nev);
+}
 
-    ret = never_constred(nev);
+int module_decl_optimize(module_decl * module_nev)
+{
+    if (module_nev->nev)
+    {
+        return never_optimize(module_nev->nev);
+    }
 
-    return ret;
+    return 0;
 }

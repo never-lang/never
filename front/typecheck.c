@@ -2307,18 +2307,13 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
             }
             assert(nev != NULL);
 
-            symtab_entry * entry = symtab_lookup(nev->stab, value->attr.id, SYMTAB_LOOKUP_LOCAL);
-            if (entry != NULL)
+#if 0            
+            expr_attr_check_type(nev->stab, value, result);
+            if (*result == TYPECHECK_SUCC)
             {
-                expr_set_comb_type_symtab(value, entry, result);
+                expr_id_gencode(syn_level, func_value, nev->stab, value, result);
             }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no, "cannot find attribute %s in module %s",
-                                value->attr.id, module_decl_value->id);
-            }
+#endif
         }
         else
         {
@@ -3028,7 +3023,7 @@ int never_add_decl_list(symtab * stab, decl_list * list, int * result)
     return 0;
 }
 
-int never_add_module_decl(symtab * mtab, symtab * stab, char * use_id, module_decl * value, int * result)
+int never_add_module_decl(symtab * gtab, symtab * stab, char * use_id, module_decl * value, int * result)
 {
     if (value->id != NULL && use_id != NULL)
     {
@@ -3045,13 +3040,13 @@ int never_add_module_decl(symtab * mtab, symtab * stab, char * use_id, module_de
     {
         case MODULE_DECL_TYPE_MOD:
         {
-            module_decl_check_type(mtab, value, result);
+            module_decl_check_type(gtab, value, result);
         }
         break;
         case MODULE_DECL_TYPE_REF:
         {
             value->id = use_id;
-            module_decl_check_type(mtab, value, result);
+            module_decl_check_type(gtab, value, result);
         }
         break;
     }
@@ -3092,7 +3087,7 @@ int never_add_module_decl(symtab * mtab, symtab * stab, char * use_id, module_de
                                 use_id, al_module_decl->line_no);
             }
 
-            mentry = symtab_lookup(mtab, use_id, SYMTAB_LOOKUP_LOCAL);
+            mentry = symtab_lookup(gtab, use_id, SYMTAB_LOOKUP_LOCAL);
             if (mentry != NULL)
             {
                 module_decl * al_module_decl = mentry->module_decl_value;
@@ -3105,17 +3100,17 @@ int never_add_module_decl(symtab * mtab, symtab * stab, char * use_id, module_de
     return 0;
 }
 
-int never_add_use(symtab * mtab, symtab * stab, use * value, int * result)
+int never_add_use(symtab * gtab, symtab * stab, use * value, int * result)
 {
     if (value->id != NULL && value->decl != NULL)
     {
-        never_add_module_decl(mtab, stab, value->id, value->decl, result);
+        never_add_module_decl(gtab, stab, value->id, value->decl, result);
     }
 
     return 0;
 }
 
-int never_add_use_list(symtab * mtab, symtab * stab, use_list * list, int * result)
+int never_add_use_list(symtab * gtab, symtab * stab, use_list * list, int * result)
 {
     use_list_node * node = list->tail;
 
@@ -3124,7 +3119,7 @@ int never_add_use_list(symtab * mtab, symtab * stab, use_list * list, int * resu
         use * value = node->value;
         if (value != NULL)
         {
-            never_add_use(mtab, stab, value, result);
+            never_add_use(gtab, stab, value, result);
         }
         node = node->next;
     }
@@ -3271,14 +3266,14 @@ int decl_list_check_type(symtab * stab, decl_list * list, int * result)
     return 0;
 }
 
-int never_check_type(symtab * mtab, never * nev, int * result)
+int never_check_type(symtab * gtab, never * nev, int * result)
 {
     int start = 0;
     unsigned int syn_level = 0;
     
     if (nev->uses != NULL)
     {
-        never_add_use_list(mtab, nev->stab, nev->uses, result);
+        never_add_use_list(gtab, nev->stab, nev->uses, result);
     }
 
     if (nev->stab != NULL && nev->decls != NULL)
@@ -3358,30 +3353,30 @@ int func_list_entry_check_type(func_list * list, int * result)
     return 0;
 }
 
-int never_sem_check(symtab * mtab, never * nev, int * result)
+int never_sem_check(symtab * gtab, never * nev, int * result)
 {
     if (nev->stab == NULL)
     {
-        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, mtab);
+        nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, gtab);
     }
 
-    never_check_type(mtab, nev, result);
+    never_check_type(gtab, nev, result);
 
     func_list_entry_check_type(nev->funcs, result);
 
     return 0;
 }
 
-int module_decl_check_type(symtab * mtab, module_decl * value, int * result)
+int module_decl_check_type(symtab * gtab, module_decl * value, int * result)
 {
     if (value->id != NULL)
     {
         symtab_entry * mentry = NULL;
 
-        mentry = symtab_lookup(mtab, value->id, SYMTAB_LOOKUP_LOCAL);
+        mentry = symtab_lookup(gtab, value->id, SYMTAB_LOOKUP_LOCAL);
         if (mentry == NULL)
         {
-            symtab_add_module_decl(mtab, value, 0);
+            symtab_add_module_decl(gtab, value, 0);
         }
         else
         {
@@ -3397,15 +3392,22 @@ int module_decl_check_type(symtab * mtab, module_decl * value, int * result)
     if (value->type == MODULE_DECL_TYPE_MOD && value->nev != NULL)
     {
         set_utils_file_name(value->id);
-        never_sem_check(mtab, value->nev, result);
+        never_sem_check(gtab, value->nev, result);
     }
 
     return 0;
 }
 
-int main_check_type(symtab * mtab, never * nev, int * result)
+int main_check_type(module_decl * module_global, module_decl * module_nev, int * result)
 {
-    never_sem_check(mtab, nev, result);
+    symtab * gtab = NULL;
+    
+    if (module_global && module_global->nev)
+    {
+        gtab = module_global->nev->stab;
+    }
+
+    never_sem_check(gtab, module_nev->nev, result);
 
     return 0;
 }

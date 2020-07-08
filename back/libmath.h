@@ -93,6 +93,7 @@ func * libmath_func_assert_int_new();
 func * libmath_func_assert_float_new();
 
 void libmath_add_funcs(func_list * funcs);
+void libmath_add_funcs_module_decl(module_decl * module_value);
 
 const char * libmath_func_to_str(libmath_func math_id);
 

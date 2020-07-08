@@ -36,6 +36,7 @@ int expr_enumtype_check_call(func * func_value, symtab * stab, expr * value, int
         value->enumtype.called == 0)
     {
         *result = GENCODE_FAIL;
+        /* TODO: correct enum_id printout */
         print_error_msg(value->line_no, "enum type record %s::%s not constructed",
                         value->enumtype.enum_id, value->enumtype.item_id);
     }

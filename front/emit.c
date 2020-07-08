@@ -2717,6 +2717,15 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             expr_record_attr_emit(value, stack_level, module_value, list_weak, result);
         }
+        else if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE ||
+                 value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE_ID)
+        {
+            expr_id_emit(value, stack_level, module_value, result);
+        }
+        else if (value->attr.record_value->comb.comb == COMB_TYPE_MODULE)
+        {
+            expr_id_emit(value, stack_level, module_value, result);
+        }
         else
         {
             assert(0);
@@ -4301,5 +4310,15 @@ int never_emit(never * nev, module * module_value)
     func_list_weak_delete(list_weak);
 
     return gencode_res;
+}
+
+int module_decl_emit(module_decl * module_decl, module * module_value)
+{
+    if (module_decl->nev)
+    {
+        return never_emit(module_decl->nev, module_value);
+    }
+
+    return 0;
 }
 

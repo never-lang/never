@@ -37,7 +37,7 @@ int yylex(token * tokp)
     return lex_scan(tokp);
 }
 
-int yyerror(never ** nev, char * str)
+int yyerror(module_decl ** module_nev, char * str)
 {
     parse_result = 1;
     print_error_msg(line_no, "%s", str);
@@ -133,7 +133,7 @@ int yyerror(never ** nev, char * str)
 %type <val.use_list_value> use_list
 %type <val.module_decl_value> module_decl
 %type <val.never_value> never
-%type <val.never_value> start
+%type <val.module_decl_value> start
 
 %right TOK_IF TOK_ELSE TOK_FOR
 %right TOK_RET
@@ -202,7 +202,7 @@ int yyerror(never ** nev, char * str)
 %destructor { } start
 
 %pure-parser
-%parse-param { never ** nev }
+%parse-param { module_decl ** module_nev }
 
 %%
 
@@ -1229,7 +1229,8 @@ module_decl: TOK_MODULE TOK_ID '{' never '}'
 
 start: never
 {
-    $$ = *nev = $1;
+    *module_nev = module_decl_new(NULL, $1);
+    $$ = *module_nev;
 };
 
 %%

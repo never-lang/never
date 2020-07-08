@@ -538,3 +538,12 @@ int never_tailrec(never * nev)
     return 0;
 }
 
+int module_decl_tailrec(module_decl * module_nev)
+{
+    if (module_nev->nev)
+    {
+        return never_tailrec(module_nev->nev);
+    }
+
+    return 0;
+}
