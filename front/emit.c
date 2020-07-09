@@ -3617,10 +3617,10 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
         int dim_index = -1;
         int array_index = -1;
 
-        dim_index = value->id.id_param_value->index;
+        dim_index = value->attr.id->id.id_param_value->index;
         assert(dim_index != -1);
 
-        array_index = value->id.id_param_value->array->index;
+        array_index = value->attr.id->id.id_param_value->array->index;
         assert(array_index != -1);
 
         bc.type = BYTECODE_VECREF_VEC_DEREF;
@@ -3664,10 +3664,10 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
         int dim_index = -1;
         int slice_index = -1;
 
-        slice_index = value->id.id_param_value->slice->index;
+        slice_index = value->attr.id->id.id_param_value->slice->index;
         assert(slice_index != -1);
 
-        dim_index = value->id.id_param_value->index;
+        dim_index = value->attr.id->id.id_param_value->index;
         assert(dim_index != -1);
 
         bc.type = BYTECODE_VECREF_VEC_DEREF;
@@ -4279,10 +4279,11 @@ int func_list_emit(func_list * list, int stack_level, module * module_value,
     return 0;
 }
 
-int never_emit(never * nev, module * module_value)
+int never_emit(never * nev, module * module_value, int * result)
 {
     int stack_level = 0;
     int gencode_res = 0;
+
     func_list_weak * list_weak = func_list_weak_new();
 
     if (nev->binds)
@@ -4303,7 +4304,7 @@ int never_emit(never * nev, module * module_value)
         func * value = func_list_weak_pop(list_weak);
         if (value != NULL)
         {
-            func_body_emit(value, module_value, list_weak, &gencode_res);    
+            func_body_emit(value, module_value, list_weak, &gencode_res);
         }
     }
  
@@ -4312,17 +4313,55 @@ int never_emit(never * nev, module * module_value)
     return gencode_res;
 }
 
-int module_decl_emit(module_decl * module_global, module_decl * module_decl, module * module_value)
+int use_emit(use * use_value, module * module_value, int * result)
 {
-    if (module_decl->nev)
+    char * use_id = use_value->id;
+    module_decl * module_decl_value = use_value->decl;
+
+    if (use_id != NULL)
     {
-        never_emit(module_decl->nev, module_value);
+        printf("use_emit use_id %s\n", use_id);
     }
 
-    if (module_global->nev)
+    if (module_decl_value->id != NULL)
     {
-        never_emit(module_global->nev, module_value);
+        printf("use_emit module_decl_value->id %s\n", module_decl_value->id);
     }
+
+    return 0;    
+}
+
+int use_list_emit(use_list * list, module * module_value, int * result)
+{
+    use_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        if (node->value != NULL)
+        {
+            use_emit(node->value, module_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int module_decl_emit(module_decl * module_global, module_decl * module_decl, module * module_value)
+{
+    int gencode_res = 0;
+
+    if (module_decl->nev)
+    {
+        never_emit(module_decl->nev, module_value, &gencode_res);
+    }
+
+    /*if (module_global->nev)
+    {
+        never_emit(module_global->nev, module_value, &gencode_res);
+    }*/
+
+    /*use_list_emit(module_global->nev->uses, module_value, &gencode_res);*/
 
     return 0;
 }

@@ -48,10 +48,11 @@ extern int parse_result;
 module_decl * module_decl_new_global()
 {
     func_list * global_funcs = func_list_new();
-    never * global_never = never_new(NULL, NULL, NULL, global_funcs);
+    use_list * global_uses = use_list_new();
+    never * global_never = never_new(global_uses, NULL, NULL, global_funcs);
     module_decl * module_global = module_decl_new(strdup("global"), global_never);
 
-    libmath_add_funcs(global_funcs);
+    /*libmath_add_funcs(global_funcs);*/
 
     return module_global;
 }
@@ -68,10 +69,9 @@ int nev_compile_prog(const char * input, program * prog)
     if ((ret = parse_result) == 0)
     {
         int typecheck_res = TYPECHECK_SUCC;
+        module_decl * module_global = module_decl_new_global();
 
         module_nev->id = strdup(input);
-
-        module_decl * module_global = module_decl_new_global();
 
         main_check_type(NULL, module_global, &typecheck_res);
         if (typecheck_res != 0)
@@ -79,6 +79,8 @@ int nev_compile_prog(const char * input, program * prog)
             fprintf(stderr, "cannot typecheck module global\n");
             assert(0);
         }
+
+        libmath_add_funcs(module_nev->nev->funcs);
 
         main_check_type(module_global, module_nev, &typecheck_res);
         if (typecheck_res == 0)
