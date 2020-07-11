@@ -45,68 +45,82 @@
 extern FILE * yyin;
 extern int parse_result;
 
-module_decl * module_decl_new_global()
+module_decl * module_decl_new_stdlib()
 {
     func_list * global_funcs = func_list_new();
     use_list * global_uses = use_list_new();
     never * global_never = never_new(global_uses, NULL, NULL, global_funcs);
-    module_decl * module_global = module_decl_new(strdup("global"), global_never);
+    module_decl * module_stdlib = module_decl_new(strdup("stdlib"), global_never);
 
     /*libmath_add_funcs(global_funcs);*/
 
-    return module_global;
+    return module_stdlib;
+}
+
+module_decl * module_decl_new_modules()
+{
+    use_list * global_uses = use_list_new();
+    never * global_never = never_new(global_uses, NULL, NULL, NULL);
+    global_never->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
+    module_decl * module_modules = module_decl_new(strdup("modules"), global_never);
+
+    return module_modules;
 }
 
 int nev_compile_prog(const char * input, program * prog)
 {
     int ret = 0;
-    module_decl * module_nev = NULL;
+    module_decl * module_main = NULL;
 
     set_line_no(1);
     parse_result = 0;
 
-    yyparse(&module_nev);
+    yyparse(&module_main);
     if ((ret = parse_result) == 0)
     {
         int typecheck_res = TYPECHECK_SUCC;
-        module_decl * module_global = module_decl_new_global();
+        module_decl * module_stdlib = module_decl_new_stdlib();
+        module_decl * module_modules = module_decl_new_modules();
 
-        module_nev->id = strdup(input);
+        module_main->id = strdup(input);
 
-        main_check_type(NULL, module_global, &typecheck_res);
+        main_check_type(module_modules, NULL, module_stdlib, &typecheck_res);
         if (typecheck_res != 0)
         {
             fprintf(stderr, "cannot typecheck module global\n");
             assert(0);
         }
 
-        libmath_add_funcs(module_nev->nev->funcs);
+        libmath_add_funcs(module_main->nev->funcs);
 
-        main_check_type(module_global, module_nev, &typecheck_res);
+        main_check_type(module_modules, module_stdlib, module_main, &typecheck_res);
         if (typecheck_res == 0)
         {
-            ret = module_decl_optimize(module_nev);
+            ret = module_decl_optimize(module_main);
             if (ret == 0)
             {
-                ret = module_decl_tailrec(module_nev);
+                ret = module_decl_tailrec(module_main);
                 if (ret == 0)
                 {
-                    ret = module_decl_emit(module_global, module_nev, prog->module_value);
+                    ret = module_decl_emit(module_stdlib, module_main, prog->module_value);
                     if (ret == 0)
                     {
                         module_close(prog->module_value);
                     }
-                    /* print_functions(nev);
-                    module_print(prog->module_value); */
+
+                    /*print_functions(nev);*/
+                    /*module_print(prog->module_value);*/
                 }
             }
         }
-        module_decl_delete(module_global);
+
+        module_decl_delete(module_modules);
+        module_decl_delete(module_stdlib);
     }
 
-    if (module_nev != NULL)
+    if (module_main != NULL)
     {
-        module_decl_delete(module_nev);
+        module_decl_delete(module_main);
     }
 
     return ret;
@@ -119,13 +133,13 @@ int nev_compile(const char * input, program * prog, int type)
     if (type == PARSE_STR)
     {
         scan_string(input);
+        ret = nev_compile_prog(get_utils_file_name(), prog);
     }
     else if (type == PARSE_FILE)
     {
         scan_file(input);
+        ret = nev_compile_prog(input, prog);
     }
-
-    ret = nev_compile_prog(input, prog);
 
     scanner_destroy();
 

@@ -4282,35 +4282,34 @@ int func_list_emit(func_list * list, int stack_level, module * module_value,
 int never_emit(never * nev, module * module_value, int * result)
 {
     int stack_level = 0;
-    int gencode_res = 0;
 
     func_list_weak * list_weak = func_list_weak_new();
 
     if (nev->binds)
     {
-        bind_list_emit(nev->binds, stack_level, module_value, list_weak, &gencode_res);
-        stack_level += nev->binds->count;
+        bind_list_emit(nev->binds, stack_level, module_value, list_weak, result);
+        /*stack_level += nev->binds->count;*/
     }
 
-    func_list_emit(nev->funcs, stack_level, module_value, list_weak, &gencode_res);
+    func_list_emit(nev->funcs, stack_level, module_value, list_weak, result);
 
     /* generate module entry function list */
-    func_list_entry_params(nev->funcs, module_value, &gencode_res);
+    func_list_entry_params(nev->funcs, module_value, result);
 
-    func_entry_emit(nev, stack_level, module_value, &gencode_res);
+    func_entry_emit(nev, stack_level, module_value, result);
         
     while (list_weak->count > 0)
     {
         func * value = func_list_weak_pop(list_weak);
         if (value != NULL)
         {
-            func_body_emit(value, module_value, list_weak, &gencode_res);
+            func_body_emit(value, module_value, list_weak, result);
         }
     }
  
     func_list_weak_delete(list_weak);
 
-    return gencode_res;
+    return 0;
 }
 
 int use_emit(use * use_value, module * module_value, int * result)
@@ -4320,12 +4319,12 @@ int use_emit(use * use_value, module * module_value, int * result)
 
     if (use_id != NULL)
     {
-        printf("use_emit use_id %s\n", use_id);
+        fprintf(stderr, "use_emit use_id %s\n", use_id);
     }
 
     if (module_decl_value->id != NULL)
     {
-        printf("use_emit module_decl_value->id %s\n", module_decl_value->id);
+        fprintf(stderr, "use_emit module_decl_value->id %s\n", module_decl_value->id);
     }
 
     return 0;    
@@ -4361,7 +4360,7 @@ int module_decl_emit(module_decl * module_global, module_decl * module_decl, mod
         never_emit(module_global->nev, module_value, &gencode_res);
     }*/
 
-    /*use_list_emit(module_global->nev->uses, module_value, &gencode_res);*/
+    use_list_emit(module_global->nev->uses, module_value, &gencode_res);
 
     return 0;
 }

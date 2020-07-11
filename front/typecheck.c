@@ -3024,7 +3024,7 @@ int never_add_decl_list(symtab * stab, decl_list * list, int * result)
     return 0;
 }
 
-int never_add_module_decl(module_decl * module_global, symtab * stab, use * use_value, int * result)
+int never_add_module_decl(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use * use_value, int * result)
 {
     char * use_id = use_value->id;
     module_decl * value = use_value->decl;
@@ -3044,13 +3044,13 @@ int never_add_module_decl(module_decl * module_global, symtab * stab, use * use_
     {
         case MODULE_DECL_TYPE_MOD:
         {
-            module_decl_check_type(module_global, value, result);
+            module_decl_check_type(module_modules, module_stdlib, value, result);
         }
         break;
         case MODULE_DECL_TYPE_REF:
         {
             value->id = use_id;
-            module_decl_check_type(module_global, value, result);
+            module_decl_check_type(module_modules, module_stdlib, value, result);
         }
         break;
     }
@@ -3090,12 +3090,12 @@ int never_add_module_decl(module_decl * module_global, symtab * stab, use * use_
                                 use_id, al_module_decl->line_no);
             }
 
-            if (module_global != NULL &&
-                module_global->nev != NULL &&
-                module_global->nev->stab != NULL)
+            if (module_modules != NULL &&
+                module_modules->nev != NULL &&
+                module_modules->nev->stab != NULL)
             {
                 symtab_entry * mentry = NULL;
-                symtab * gtab = module_global->nev->stab;
+                symtab * gtab = module_modules->nev->stab;
 
                 mentry = symtab_lookup(gtab, use_id, SYMTAB_LOOKUP_LOCAL);
                 if (mentry != NULL)
@@ -3111,17 +3111,17 @@ int never_add_module_decl(module_decl * module_global, symtab * stab, use * use_
     return 0;
 }
 
-int never_add_use(module_decl * module_global, symtab * stab, use * value, int * result)
+int never_add_use(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use * value, int * result)
 {
     if (value->id != NULL && value->decl != NULL)
     {
-        never_add_module_decl(module_global, stab, value, result);
+        never_add_module_decl(module_modules, module_stdlib, stab, value, result);
     }
 
     return 0;
 }
 
-int never_add_use_list(module_decl * module_global, symtab * stab, use_list * list, int * result)
+int never_add_use_list(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use_list * list, int * result)
 {
     use_list_node * node = list->tail;
 
@@ -3130,7 +3130,7 @@ int never_add_use_list(module_decl * module_global, symtab * stab, use_list * li
         use * value = node->value;
         if (value != NULL)
         {
-            never_add_use(module_global, stab, value, result);
+            never_add_use(module_modules, module_stdlib, stab, value, result);
         }
         node = node->next;
     }
@@ -3330,7 +3330,7 @@ int func_list_entry_check_type(func_list * list, int * result)
     return 0;
 }
 
-int never_check_type(module_decl * module_global, never * nev, int * result)
+int never_check_type(module_decl * module_modules, module_decl * module_stdlib, never * nev, int * result)
 {
     int start = 0;
     unsigned int syn_level = 0;
@@ -3339,9 +3339,9 @@ int never_check_type(module_decl * module_global, never * nev, int * result)
     {
         symtab * gtab = NULL;
 
-        if (module_global != NULL && module_global->nev != NULL)
+        if (module_stdlib != NULL && module_stdlib->nev != NULL)
         {
-            gtab = module_global->nev->stab;
+            gtab = module_stdlib->nev->stab;
         }
 
         nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, gtab);
@@ -3349,7 +3349,7 @@ int never_check_type(module_decl * module_global, never * nev, int * result)
 
     if (nev->uses != NULL)
     {
-        never_add_use_list(module_global, nev->stab, nev->uses, result);
+        never_add_use_list(module_modules, module_stdlib, nev->stab, nev->uses, result);
     }
 
     if (nev->stab != NULL && nev->decls != NULL)
@@ -3376,22 +3376,22 @@ int never_check_type(module_decl * module_global, never * nev, int * result)
     return 0;
 }
 
-int module_decl_check_type(module_decl * module_global, module_decl * value, int * result)
+int module_decl_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * value, int * result)
 {
-    if (module_global != NULL &&
-        module_global->nev != NULL &&
-        module_global->nev->stab != NULL &&
+    if (module_modules != NULL &&
+        module_modules->nev != NULL &&
+        module_modules->nev->stab != NULL &&
         value->id != NULL)
     {
         symtab_entry * mentry = NULL;
-        symtab * gtab = module_global->nev->stab;
+        symtab * gtab = module_modules->nev->stab;
 
         mentry = symtab_lookup(gtab, value->id, SYMTAB_LOOKUP_LOCAL);
         if (mentry == NULL)
         {
             symtab_add_module_decl(gtab, value, 0);
             /* TODO: make it more beautiful */
-            /*use_list_add_end(module_global->nev->uses, use_new(NULL, module_decl_new_ref(value->id, value->nev)));*/
+            use_list_add_end(module_modules->nev->uses, use_new(NULL, module_decl_new_ref(value->id, value->nev)));
         }
         else
         {
@@ -3409,7 +3409,7 @@ int module_decl_check_type(module_decl * module_global, module_decl * value, int
         const char * current_file_name = get_utils_file_name();
         set_utils_file_name(value->id);
 
-        never_check_type(module_global, value->nev, result);
+        never_check_type(module_modules, module_stdlib, value->nev, result);
 
         set_utils_file_name(current_file_name);
     }
@@ -3417,9 +3417,9 @@ int module_decl_check_type(module_decl * module_global, module_decl * value, int
     return 0;
 }
 
-int main_check_type(module_decl * module_global, module_decl * module_nev, int * result)
+int main_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * module_nev, int * result)
 {
-    module_decl_check_type(module_global, module_nev, result);
+    module_decl_check_type(module_modules, module_stdlib, module_nev, result);
 
     func_list_entry_check_type(module_nev->nev->funcs, result);
 

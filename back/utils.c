@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-const char * utils_file_name = "line";
+const char * utils_file_name = "<stdin>";
 
 const char * get_utils_file_name()
 {
@@ -59,7 +59,7 @@ void print_warning_msg(int line_no, const char * format, ...)
 
     va_start(args, format);
 
-    fprintf(stderr, "%s:%d: warning: ", utils_file_name, line_no);
+    fprintf(stderr,"%s:%d: warning: ", utils_file_name, line_no);
     vfprintf(stderr, format, args);
 
 #ifndef NO_FFI
