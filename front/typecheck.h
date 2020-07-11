@@ -23,6 +23,7 @@
 #define __TYPECHECK_H__
 
 #include "never.h"
+#include <stdbool.h>
 
 #define TYPECHECK_SUCC 0
 #define TYPECHECK_FAIL 1
@@ -34,8 +35,6 @@ typedef struct matchbind_list matchbind_list;
 int enumtype_enum_enumerator_list(enumerator_list * list);
 int record_enum_param_list(param_list * params);
 int func_enum_param_list(param_list * params);
-int func_enum_bind_list(bind_list * list, int start);
-int func_enum_func_list(func_list * list, int start);
 int enum_matchbind_list(matchbind_list * list);
 
 int expr_set_comb_type(expr * value, param * param_value);
@@ -176,7 +175,7 @@ int func_list_entry_check_type(func_list * list, int * result);
 
 int never_check_type(module_decl * module_modules, module_decl * module_stdlib, never * nev, int * result);
 
-int module_decl_check_type(module_decl * modules_modules, module_decl * module_stdlib, module_decl * value, int * result);
+int module_decl_check_type(module_decl * modules_modules, module_decl * module_stdlib, module_decl * value, bool is_main, int * result);
 
 int main_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * module_nev, int * result);
 

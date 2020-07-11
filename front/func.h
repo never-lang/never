@@ -119,6 +119,8 @@ void func_list_node_delete(func_list_node * node);
 func_list * func_list_new();
 void func_list_delete(func_list * list);
 
+int func_list_enum(func_list * list, int start);
+
 void func_list_add_beg(func_list * list, func * value);
 void func_list_add_end(func_list * list, func * value);
 

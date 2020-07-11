@@ -59,6 +59,8 @@ bind * bind_new_var(char * id, expr * expr_value);
 
 void bind_delete(bind * value);
 
+int bind_list_enum(bind_list * list, int start);
+
 bind_list_node * bind_list_node_new(bind * value);
 void bind_list_node_delete(bind_list_node * node);
 

@@ -90,42 +90,6 @@ int func_enum_param_list(param_list * params)
     return 0;
 }
 
-int func_enum_bind_list(bind_list * list, int start)
-{
-    int index = start;
-
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * value = node->value;
-        if (value != NULL)
-        {
-            value->index = index++;
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int func_enum_func_list(func_list * list, int start)
-{
-    int index = start;
-
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * value = node->value;
-        if (value != NULL)
-        {
-            value->index = index++;
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
 int enum_matchbind_list(matchbind_list * list)
 {
     int index = 0;
@@ -2870,7 +2834,7 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
     }
     if (func_value->body && func_value->body->binds != NULL)
     {
-        func_enum_bind_list(func_value->body->binds, start);
+        bind_list_enum(func_value->body->binds, start);
         start += func_value->body->binds->count;
     }
     if (func_value->body && func_value->body->binds)
@@ -2880,7 +2844,7 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
     }
     if (func_value->body && func_value->body->funcs != NULL)
     {
-        func_enum_func_list(func_value->body->funcs, start);
+        func_list_enum(func_value->body->funcs, start);
     }
     if (func_value->body && func_value->body->funcs)
     {
@@ -3044,13 +3008,13 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
     {
         case MODULE_DECL_TYPE_MOD:
         {
-            module_decl_check_type(module_modules, module_stdlib, value, result);
+            module_decl_check_type(module_modules, module_stdlib, value, false, result);
         }
         break;
         case MODULE_DECL_TYPE_REF:
         {
             value->id = use_id;
-            module_decl_check_type(module_modules, module_stdlib, value, result);
+            module_decl_check_type(module_modules, module_stdlib, value, false, result);
         }
         break;
     }
@@ -3365,20 +3329,21 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
 
     if (nev->stab != NULL && nev->binds != NULL)
     {
-        func_enum_bind_list(nev->binds, start);
+        bind_list_enum(nev->binds, start);
         bind_list_check_type(nev->stab, nev->binds, NULL, syn_level, result);
         start += nev->binds->count;
     }
 
-    func_enum_func_list(nev->funcs, start); 
+    func_list_enum(nev->funcs, start);
     func_list_check_type(nev->stab, nev->funcs, syn_level, result);
 
     return 0;
 }
 
-int module_decl_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * value, int * result)
+int module_decl_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * value, bool is_main, int * result)
 {
-    if (module_modules != NULL &&
+    if (!is_main &&
+        module_modules != NULL &&
         module_modules->nev != NULL &&
         module_modules->nev->stab != NULL &&
         value->id != NULL)
@@ -3419,7 +3384,7 @@ int module_decl_check_type(module_decl * module_modules, module_decl * module_st
 
 int main_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * module_nev, int * result)
 {
-    module_decl_check_type(module_modules, module_stdlib, module_nev, result);
+    module_decl_check_type(module_modules, module_stdlib, module_nev, true, result);
 
     func_list_entry_check_type(module_nev->nev->funcs, result);
 

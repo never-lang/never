@@ -47,12 +47,12 @@ extern int parse_result;
 
 module_decl * module_decl_new_stdlib()
 {
-    func_list * global_funcs = func_list_new();
-    use_list * global_uses = use_list_new();
-    never * global_never = never_new(global_uses, NULL, NULL, global_funcs);
-    module_decl * module_stdlib = module_decl_new(strdup("stdlib"), global_never);
+    func_list * stdlib_funcs = func_list_new();
+    use_list * stdlib_uses = use_list_new();
+    never * stdlib_never = never_new(stdlib_uses, NULL, NULL, stdlib_funcs);
+    module_decl * module_stdlib = module_decl_new(strdup("stdlib"), stdlib_never);
 
-    /*libmath_add_funcs(global_funcs);*/
+    libmath_add_funcs(stdlib_funcs);
 
     return module_stdlib;
 }
@@ -84,14 +84,14 @@ int nev_compile_prog(const char * input, program * prog)
 
         module_main->id = strdup(input);
 
-        main_check_type(module_modules, NULL, module_stdlib, &typecheck_res);
+        module_decl_check_type(module_modules, NULL, module_stdlib, false, &typecheck_res);
         if (typecheck_res != 0)
         {
             fprintf(stderr, "cannot typecheck module global\n");
             assert(0);
         }
 
-        libmath_add_funcs(module_main->nev->funcs);
+        /*libmath_add_funcs(module_main->nev->funcs);*/
 
         main_check_type(module_modules, module_stdlib, module_main, &typecheck_res);
         if (typecheck_res == 0)
@@ -102,7 +102,7 @@ int nev_compile_prog(const char * input, program * prog)
                 ret = module_decl_tailrec(module_main);
                 if (ret == 0)
                 {
-                    ret = module_decl_emit(module_stdlib, module_main, prog->module_value);
+                    ret = main_emit(module_modules, module_main, prog->module_value);
                     if (ret == 0)
                     {
                         module_close(prog->module_value);

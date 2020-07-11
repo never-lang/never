@@ -63,6 +63,24 @@ void bind_delete(bind * value)
     free(value);
 }
 
+int bind_list_enum(bind_list * list, int start)
+{
+    int index = start;
+
+    bind_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        bind * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 bind_list_node * bind_list_node_new(bind * value)
 {
     bind_list_node * node = (bind_list_node *)malloc(sizeof(bind_list_node));

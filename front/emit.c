@@ -2720,11 +2720,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE ||
                  value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE_ID)
         {
-            expr_id_emit(value, stack_level, module_value, result);
+            expr_id_emit(value->attr.id, stack_level, module_value, result);
         }
         else if (value->attr.record_value->comb.comb == COMB_TYPE_MODULE)
         {
-            expr_id_emit(value, stack_level, module_value, result);
+            expr_id_emit(value->attr.id, stack_level, module_value, result);
         }
         else
         {
@@ -3610,6 +3610,7 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
 
     expr_emit(value->attr.record_value, stack_level, module_value, list_weak, result);
 
+    assert(value->attr.id->id.id_type_value == ID_TYPE_LOCAL);
     assert(value->attr.id->id.id_param_value != NULL);
 
     if (value->attr.id->id.id_param_value->type == PARAM_DIM)
@@ -4279,58 +4280,41 @@ int func_list_emit(func_list * list, int stack_level, module * module_value,
     return 0;
 }
 
-int never_emit(never * nev, module * module_value, int * result)
+int never_emit(never * nev, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result)
 {
-    int stack_level = 0;
-
-    func_list_weak * list_weak = func_list_weak_new();
-
     if (nev->binds)
     {
+        bind_list_enum(nev->binds, *index);
+        *index += nev->binds->count;
+
         bind_list_emit(nev->binds, stack_level, module_value, list_weak, result);
         /*stack_level += nev->binds->count;*/
     }
 
+    func_list_enum(nev->funcs, *index);
+    *index += nev->funcs->count;
+
     func_list_emit(nev->funcs, stack_level, module_value, list_weak, result);
-
-    /* generate module entry function list */
-    func_list_entry_params(nev->funcs, module_value, result);
-
-    func_entry_emit(nev, stack_level, module_value, result);
-        
-    while (list_weak->count > 0)
-    {
-        func * value = func_list_weak_pop(list_weak);
-        if (value != NULL)
-        {
-            func_body_emit(value, module_value, list_weak, result);
-        }
-    }
- 
-    func_list_weak_delete(list_weak);
 
     return 0;
 }
 
-int use_emit(use * use_value, module * module_value, int * result)
+int use_emit(use * use_value, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result)
 {
-    char * use_id = use_value->id;
-    module_decl * module_decl_value = use_value->decl;
-
-    if (use_id != NULL)
+    if (use_value->id != NULL)
     {
-        fprintf(stderr, "use_emit use_id %s\n", use_id);
+        /*fprintf(stderr, "use_id %s\n", use_value->id);*/
     }
 
-    if (module_decl_value->id != NULL)
+    if (use_value->decl != NULL)
     {
-        fprintf(stderr, "use_emit module_decl_value->id %s\n", module_decl_value->id);
+        module_decl_emit(use_value->decl, stack_level, index, module_value, list_weak, result);
     }
 
     return 0;    
 }
 
-int use_list_emit(use_list * list, module * module_value, int * result)
+int use_list_emit(use_list * list, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result)
 {
     use_list_node * node = list->tail;
 
@@ -4338,7 +4322,7 @@ int use_list_emit(use_list * list, module * module_value, int * result)
     {
         if (node->value != NULL)
         {
-            use_emit(node->value, module_value, result);
+            use_emit(node->value, stack_level, index, module_value, list_weak, result);
         }
         node = node->next;
     }
@@ -4346,22 +4330,48 @@ int use_list_emit(use_list * list, module * module_value, int * result)
     return 0;
 }
 
-int module_decl_emit(module_decl * module_global, module_decl * module_decl, module * module_value)
+int module_decl_emit(module_decl * value, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result)
 {
-    int gencode_res = 0;
-
-    if (module_decl->nev)
+    if (value->id != NULL)
     {
-        never_emit(module_decl->nev, module_value, &gencode_res);
+        fprintf(stderr, "module_decl->id %s\n", value->id);
+        fprintf(stderr, "module_decl->nev %p\n", value->nev);
     }
 
-    /*if (module_global->nev)
+    if (value->nev)
     {
-        never_emit(module_global->nev, module_value, &gencode_res);
-    }*/
-
-    use_list_emit(module_global->nev->uses, module_value, &gencode_res);
+        never_emit(value->nev, stack_level, index, module_value, list_weak, result);
+    }
 
     return 0;
 }
 
+int main_emit(module_decl * module_modules, module_decl * module_main, module * module_value)
+{
+    int gencode_res = 0;
+    int stack_level = 0;
+    int index = 0;
+    func_list_weak * list_weak = func_list_weak_new();
+
+    use_list_emit(module_modules->nev->uses, stack_level, &index, module_value, list_weak, &gencode_res);
+
+    module_decl_emit(module_main, stack_level, &index, module_value, list_weak, &gencode_res);
+
+    func_entry_emit(module_main->nev, stack_level, module_value, &gencode_res);
+
+    while (list_weak->count > 0)
+    {
+        func * value = func_list_weak_pop(list_weak);
+        if (value != NULL)
+        {
+            func_body_emit(value, module_value, list_weak, &gencode_res);
+        }
+    }
+
+    func_list_weak_delete(list_weak);
+
+    /* generate module entry function list */
+    func_list_entry_params(module_main->nev->funcs, module_value, &gencode_res);
+
+    return 0;
+}

@@ -257,11 +257,12 @@ int func_entry_emit(never * nev, int stack_level, module * module_value,
 int func_list_emit(func_list * list, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
 
-int use_emit(use * value, module * module_value, int * result);
-int use_list_emit(use_list * list, module * module_value, int * result);
+int use_emit(use * value, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result);
+int use_list_emit(use_list * list, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result);
 
-int never_emit(never * nev, module * module_value, int * result);
-int module_decl_emit(module_decl * module_global, module_decl * module_decl, module * module_value);
+int never_emit(never * nev, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result);
+int module_decl_emit(module_decl * value, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result);
+int main_emit(module_decl * module_modules, module_decl * module_main, module * module_value);
 
 #endif /* __EMIT_H__ */
 

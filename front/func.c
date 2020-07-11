@@ -261,6 +261,24 @@ void func_list_delete(func_list * list)
     free(list);
 }
 
+int func_list_enum(func_list * list, int start)
+{
+    int index = start;
+
+    func_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        func * value = node->value;
+        if (value != NULL)
+        {
+            value->index = index++;
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 void func_list_add_beg(func_list * list, func * value)
 {
     func_list_node * node = func_list_node_new(value);
