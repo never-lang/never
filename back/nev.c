@@ -91,8 +91,6 @@ int nev_compile_prog(const char * input, program * prog)
             assert(0);
         }
 
-        /*libmath_add_funcs(module_main->nev->funcs);*/
-
         main_check_type(module_modules, module_stdlib, module_main, &typecheck_res);
         if (typecheck_res == 0)
         {

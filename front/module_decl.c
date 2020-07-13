@@ -68,6 +68,14 @@ void module_decl_delete(module_decl * value)
     free(value);
 }
 
+void module_decl_add_module_ref(module_decl * value, module_decl * other)
+{
+    module_decl * module_ref = module_decl_new_ref(other->id, other->nev);
+    use * use_value = use_new(NULL, module_ref);
+
+    use_list_add_end(value->nev->uses, use_value);
+}
+
 void module_decl_print(module_decl * value)
 {
     if (value->id != NULL)

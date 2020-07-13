@@ -492,7 +492,7 @@ use {
     moduletab_add_module(modtab, strdup(yytext));
 
     line_no = 1;
-    set_utils_file_name(file_name);
+    set_utils_file_name(tokp->val.str_value);
     yy_switch_to_buffer(yy_create_buffer(yyin, YY_BUF_SIZE));
 
     BEGIN(INITIAL);

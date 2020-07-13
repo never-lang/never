@@ -2259,6 +2259,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
         {
             never * nev = NULL;
 
+            /* TODO: remove this code only assignment left */
             if (module_decl_value->type == MODULE_DECL_TYPE_MOD)
             {
                 nev = module_decl_value->nev;
@@ -2275,6 +2276,15 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
 
             expr_id_check_type(nev->stab, value->attr.id, result);
             value->comb = value->attr.id->comb;
+
+            if (value->attr.id->comb.comb == COMB_TYPE_MODULE)
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no,
+                                "cannot reference into nested modules");
+            }
+
             if (*result == TYPECHECK_SUCC)
             {
                 expr_id_gencode(syn_level, func_value, nev->stab, value->attr.id, result);
@@ -3311,11 +3321,6 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         nev->stab = symtab_new(32, SYMTAB_TYPE_FUNC, gtab);
     }
 
-    if (nev->uses != NULL)
-    {
-        never_add_use_list(module_modules, module_stdlib, nev->stab, nev->uses, result);
-    }
-
     if (nev->stab != NULL && nev->decls != NULL)
     {
         /* add decls to symtab */
@@ -3325,14 +3330,19 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         decl_list_check_type(nev->stab, nev->decls, result);
     }
 
-    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
-
     if (nev->stab != NULL && nev->binds != NULL)
     {
         bind_list_enum(nev->binds, start);
         bind_list_check_type(nev->stab, nev->binds, NULL, syn_level, result);
         start += nev->binds->count;
     }
+
+    if (nev->uses != NULL)
+    {
+        never_add_use_list(module_modules, module_stdlib, nev->stab, nev->uses, result);
+    }
+
+    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
 
     func_list_enum(nev->funcs, start);
     func_list_check_type(nev->stab, nev->funcs, syn_level, result);
@@ -3355,8 +3365,7 @@ int module_decl_check_type(module_decl * module_modules, module_decl * module_st
         if (mentry == NULL)
         {
             symtab_add_module_decl(gtab, value, 0);
-            /* TODO: make it more beautiful */
-            use_list_add_end(module_modules->nev->uses, use_new(NULL, module_decl_new_ref(value->id, value->nev)));
+            module_decl_add_module_ref(module_modules, value);
         }
         else
         {

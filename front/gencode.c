@@ -29,6 +29,33 @@
 #include <assert.h>
 #include <stdio.h>
 
+void expr_enumtype_print(expr * value)
+{
+    if (value->enumtype.enum_id->type == EXPR_ATTR)
+    {
+        if (value->enumtype.enum_id->attr.id->type == EXPR_ID)
+        {
+            print_error_msg(value->line_no, "enum type record %s::%s not constructed",
+                            value->enumtype.enum_id->attr.id->id.id, value->enumtype.item_id);
+        }
+        else
+        {
+            print_error_msg(value->line_no, "enum type record ...%s not constructed",
+                            value->enumtype.item_id);
+        }
+    }
+    else if (value->enumtype.enum_id->type == EXPR_ID)
+    {
+        print_error_msg(value->line_no, "enum type record %s::%s not constructed",
+                        value->enumtype.enum_id->id.id, value->enumtype.item_id);
+    }
+    else
+    {
+        print_error_msg(value->line_no, "enum type record ...%s not constructed",
+                        value->enumtype.item_id);
+    }
+}
+
 int expr_enumtype_check_call(func * func_value, symtab * stab, expr * value, int * result)
 {
     if (value->enumtype.id_enumerator_value != NULL &&
@@ -36,9 +63,7 @@ int expr_enumtype_check_call(func * func_value, symtab * stab, expr * value, int
         value->enumtype.called == 0)
     {
         *result = GENCODE_FAIL;
-        /* TODO: correct enum_id printout */
-        print_error_msg(value->line_no, "enum type record %s::%s not constructed",
-                        value->enumtype.enum_id, value->enumtype.item_id);
+        expr_enumtype_print(value);
     }
     
     return 0;

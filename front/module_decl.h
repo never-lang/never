@@ -42,6 +42,8 @@ module_decl * module_decl_new(char * id, never * nev);
 module_decl * module_decl_new_ref(char * id, never * nev);
 void module_decl_delete(module_decl * value);
 
+void module_decl_add_module_ref(module_decl * value, module_decl * other);
+
 void module_decl_print(module_decl * value);
 
 #endif /* __MODULE_DECL_H__ */

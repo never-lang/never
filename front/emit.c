@@ -483,10 +483,12 @@ int expr_id_emit(expr * value, int stack_level, module * module_value,
         expr_nil_emit(value, stack_level, module_value, result);
         break;
     case ID_TYPE_ENUMTYPE:
-        /* TODO: do something with enumtype */
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no, "cannot emit code for enumtype");
         break;
     case ID_TYPE_MODULE:
-        /* TODO: do something with module */
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no, "cannot emit code for module");
         break;
     }
     return 0;
@@ -2720,6 +2722,8 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         else if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE ||
                  value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE_ID)
         {
+            /* TODO: check this */
+            assert(0);
             expr_id_emit(value->attr.id, stack_level, module_value, result);
         }
         else if (value->attr.record_value->comb.comb == COMB_TYPE_MODULE)
@@ -4301,11 +4305,6 @@ int never_emit(never * nev, int stack_level, int * index, module * module_value,
 
 int use_emit(use * use_value, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result)
 {
-    if (use_value->id != NULL)
-    {
-        /*fprintf(stderr, "use_id %s\n", use_value->id);*/
-    }
-
     if (use_value->decl != NULL)
     {
         module_decl_emit(use_value->decl, stack_level, index, module_value, list_weak, result);
@@ -4332,12 +4331,6 @@ int use_list_emit(use_list * list, int stack_level, int * index, module * module
 
 int module_decl_emit(module_decl * value, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result)
 {
-    if (value->id != NULL)
-    {
-        fprintf(stderr, "module_decl->id %s\n", value->id);
-        fprintf(stderr, "module_decl->nev %p\n", value->nev);
-    }
-
     if (value->nev)
     {
         never_emit(value->nev, stack_level, index, module_value, list_weak, result);
@@ -4373,5 +4366,5 @@ int main_emit(module_decl * module_modules, module_decl * module_main, module * 
     /* generate module entry function list */
     func_list_entry_params(module_main->nev->funcs, module_value, &gencode_res);
 
-    return 0;
+    return gencode_res;
 }
