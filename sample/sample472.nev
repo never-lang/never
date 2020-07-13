@@ -1,0 +1,14 @@
+
+let val = 20;
+
+func one() -> int
+{
+    val
+}
+
+func main() -> int
+{
+    one()
+}
+
+
