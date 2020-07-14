@@ -31,8 +31,10 @@
 #include "strutil.h"
 #include "moduletab.h"
 
+#define NEVER_PATH "NEVER_PATH"
 #define MAX_USE_DEPTH 10
 #define MAX_FILE_NAME_LEN 100
+#define MAX_NEVER_PATH_LEN 1000
 #define YY_DECL int lex_scan(token * tokp)
 
 unsigned int line_no = 1;
@@ -63,6 +65,8 @@ void scanner_printf(const char * format, ...)
     /* vprintf(format, ap); */
     va_end(ap);
 }
+
+FILE * fopen_path(const char * file_name);
 
 %}
 
@@ -475,7 +479,7 @@ use {
 
     FILE * current_yyin = yyin;
     snprintf(file_name, MAX_FILE_NAME_LEN, "%s.nev", yytext);
-    yyin = fopen(file_name, "r");
+    yyin = fopen_path(file_name);
     if (!yyin)
     {
         fprintf(stderr, "cannot open module %s\n", file_name);
@@ -607,6 +611,72 @@ use {
 
 %%
 
+FILE * fopen_path(const char * file_name)
+{
+    char * strp = NULL;
+    char PATH[MAX_NEVER_PATH_LEN];
+
+    strp = getenv(NEVER_PATH);
+    if (strp == NULL || strcmp(strp, "") == 0)
+    {
+        return fopen(file_name, "r");
+    }
+
+    strncpy(PATH, strp, MAX_NEVER_PATH_LEN);
+    PATH[MAX_NEVER_PATH_LEN - 1] = '\0';
+
+    char * cwd = getcwd(NULL, 0);
+    if (cwd == NULL)
+    {
+        print_error_msg(line_no, "cannot getcwd %s: %s", file_name, strerror(errno));
+        return NULL;
+    }
+
+    int ret = chdir(cwd);
+    if (ret < 0)
+    {
+        print_error_msg(line_no, "cannot chdir %s: %s", file_name, strerror(errno));
+        free(cwd);
+        return NULL;
+    }
+
+    strp = PATH;
+    char * path = NULL;
+    FILE * ffile = NULL;
+    while ((path = strtok(strp, ":")) != NULL)
+    {
+        strp = NULL;
+
+        ret = chdir(path);
+        if (ret == 0)
+        {
+            ffile = fopen(file_name, "r");
+            if (ffile != NULL)
+            {
+                ret = chdir(cwd);
+                if (ret < 0)
+                {
+                    print_warning_msg(line_no, "cannot chdir to %s skipped: %s", cwd, strerror(errno));
+                }
+                break;
+            }
+        }
+        else
+        {
+            print_warning_msg(line_no, "cannot chdir to %s skipped: %s", path, strerror(errno));
+        }
+
+        ret = chdir(cwd);
+        if (ret < 0)
+        {
+            print_warning_msg(line_no, "cannot chdir to %s skipped: %s", cwd, strerror(errno));
+        }
+    }
+
+    free(cwd);
+    return ffile;
+}
+
 void scan_string(const char *src)
 {
     yy_switch_to_buffer(yy_scan_string(src));
@@ -619,7 +689,7 @@ void scan_file(const char * file)
     yyin = fopen(file, "r");
     if (yyin == NULL)
     {
-        fprintf(stderr, "cannot open %s. %s\n", file, strerror(errno));
+        fprintf(stderr, "cannot open %s: %s\n", file, strerror(errno));
         exit(1);
     }
 
