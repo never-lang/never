@@ -3018,13 +3018,13 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
     {
         case MODULE_DECL_TYPE_MOD:
         {
-            module_decl_check_type(module_modules, module_stdlib, value, false, result);
+            module_decl_check_type(module_modules, module_stdlib, value, result);
         }
         break;
         case MODULE_DECL_TYPE_REF:
         {
             value->id = use_id;
-            module_decl_check_type(module_modules, module_stdlib, value, false, result);
+            module_decl_check_type(module_modules, module_stdlib, value, result);
         }
         break;
     }
@@ -3064,9 +3064,10 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
                                 use_id, al_module_decl->line_no);
             }
 
-            if (module_modules != NULL &&
-                module_modules->nev != NULL &&
-                module_modules->nev->stab != NULL)
+            assert (module_modules != NULL &&
+                    module_modules->nev != NULL &&
+                    module_modules->nev->stab != NULL);
+
             {
                 symtab_entry * mentry = NULL;
                 symtab * gtab = module_modules->nev->stab;
@@ -3337,12 +3338,12 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         start += nev->binds->count;
     }
 
+    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
+
     if (nev->uses != NULL)
     {
         never_add_use_list(module_modules, module_stdlib, nev->stab, nev->uses, result);
     }
-
-    symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
 
     func_list_enum(nev->funcs, start);
     func_list_check_type(nev->stab, nev->funcs, syn_level, result);
@@ -3350,13 +3351,9 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
     return 0;
 }
 
-int module_decl_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * value, bool is_main, int * result)
+int module_decl_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * value, int * result)
 {
-    if (!is_main &&
-        module_modules != NULL &&
-        module_modules->nev != NULL &&
-        module_modules->nev->stab != NULL &&
-        value->id != NULL)
+    if (!value->is_main && value->id != NULL)
     {
         symtab_entry * mentry = NULL;
         symtab * gtab = module_modules->nev->stab;
@@ -3393,7 +3390,7 @@ int module_decl_check_type(module_decl * module_modules, module_decl * module_st
 
 int main_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * module_nev, int * result)
 {
-    module_decl_check_type(module_modules, module_stdlib, module_nev, true, result);
+    module_decl_check_type(module_modules, module_stdlib, module_nev, result);
 
     func_list_entry_check_type(module_nev->nev->funcs, result);
 

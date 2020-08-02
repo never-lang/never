@@ -454,7 +454,7 @@ use {
     
     if (use_stack_ptr >= MAX_USE_DEPTH)
     {
-        fprintf(stderr, "module uses are nested too deep\n");
+        fprintf(stderr, "module uses are nested too deeply\n");
 
         tokp->line_no = line_no;
         tokp->val.str_value = strdup(yytext);

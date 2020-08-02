@@ -29,6 +29,7 @@ module_decl * module_decl_new(char * id, never * nev)
     module_decl * value = (module_decl *)malloc(sizeof(module_decl));
 
     value->type = MODULE_DECL_TYPE_MOD;
+    value->is_main = 0;
     value->id = id;
     value->nev = nev;
     value->line_no = 0;
@@ -41,6 +42,7 @@ module_decl * module_decl_new_ref(char * id, never * nev)
     module_decl * value = (module_decl *)malloc(sizeof(module_decl));
 
     value->type = MODULE_DECL_TYPE_REF;
+    value->is_main = 0;
     value->id = id;
     value->nev = nev;
     value->line_no = 0;

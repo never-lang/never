@@ -175,7 +175,7 @@ int func_list_entry_check_type(func_list * list, int * result);
 
 int never_check_type(module_decl * module_modules, module_decl * module_stdlib, never * nev, int * result);
 
-int module_decl_check_type(module_decl * modules_modules, module_decl * module_stdlib, module_decl * value, bool is_main, int * result);
+int module_decl_check_type(module_decl * modules_modules, module_decl * module_stdlib, module_decl * value, int * result);
 
 int main_check_type(module_decl * module_modules, module_decl * module_stdlib, module_decl * module_nev, int * result);
 

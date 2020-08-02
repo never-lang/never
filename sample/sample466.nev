@@ -1,7 +1,7 @@
 
 let B = 2;
 let A = 2 + 2 * B;
-let xyz = let func (i : int) -> int { boo(A + B + i) };
+let xyz = let func (i : int) -> int { A + B + i };
 
 func boo(a : int) -> int
 {

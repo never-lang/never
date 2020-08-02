@@ -1230,9 +1230,16 @@ module_decl: TOK_MODULE TOK_ID '{' never '}'
     $$->line_no = $<line_no>1;
 };
 
+start: module_decl
+{
+    *module_nev = $1;
+    $$ = *module_nev;
+};
+
 start: never
 {
     *module_nev = module_decl_new(NULL, $1);
+    (*module_nev)->is_main = 1;
     $$ = *module_nev;
 };
 

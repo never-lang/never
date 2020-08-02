@@ -33,6 +33,7 @@ typedef struct never never;
 typedef struct module_decl
 {
     module_decl_type type;
+    char is_main;
     char * id;
     never * nev;
     unsigned int line_no;
