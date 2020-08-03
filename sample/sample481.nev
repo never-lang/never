@@ -1,0 +1,12 @@
+
+use mtwo
+
+func main() -> int
+{
+    match (mtwo.two())
+    {
+        mtwo.E::ONE -> 1;
+        mtwo.E::TWO -> 2;
+        mtwo.E::THREE -> 3;
+    }
+}

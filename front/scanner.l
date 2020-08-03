@@ -32,9 +32,9 @@
 #include "moduletab.h"
 
 #define NEVER_PATH "NEVER_PATH"
-#define MAX_USE_DEPTH 10
-#define MAX_FILE_NAME_LEN 100
-#define MAX_NEVER_PATH_LEN 1000
+#define MAX_USE_DEPTH 16
+#define MAX_FILE_NAME_LEN 256
+#define MAX_NEVER_PATH_LEN 1024
 #define YY_DECL int lex_scan(token * tokp)
 
 unsigned int line_no = 1;
@@ -450,7 +450,7 @@ use {
 }
 
 <USE>[a-zA-Z_./]+ {
-    char file_name[MAX_FILE_NAME_LEN];
+    char file_name[MAX_FILE_NAME_LEN] = { 0 };
     
     if (use_stack_ptr >= MAX_USE_DEPTH)
     {
@@ -479,12 +479,19 @@ use {
 
     FILE * current_yyin = yyin;
     snprintf(file_name, MAX_FILE_NAME_LEN, "%s.nev", yytext);
+
     yyin = fopen_path(file_name);
     if (!yyin)
     {
         fprintf(stderr, "cannot open module %s\n", file_name);
         yyin = current_yyin;
-        return yytext[0];
+
+        tokp->line_no = line_no;
+        tokp->val.str_value = strdup(yytext);
+        scanner_printf("use %s\n", yytext);
+
+        BEGIN(MODULE_REF);
+        return TOK_NUM_STRING;
     }
 
     use_stack[use_stack_ptr++] = descr;
@@ -604,6 +611,7 @@ use {
     {
         line_no = use_stack[use_stack_ptr].line_no;
         set_utils_file_name(use_stack[use_stack_ptr].file_name);
+        yy_flush_buffer(YY_CURRENT_BUFFER);
         yy_delete_buffer(YY_CURRENT_BUFFER);
         yy_switch_to_buffer(use_stack[use_stack_ptr].buffer_state);
     }
@@ -677,13 +685,18 @@ FILE * fopen_path(const char * file_name)
     return ffile;
 }
 
-void scan_string(const char *src)
+void scan_string(const char * src)
 {
+    use_stack_ptr = 0;
+    set_utils_file_name("<stdin>");
+    modtab = moduletab_new(8);
+
     yy_switch_to_buffer(yy_scan_string(src));
 }
 
 void scan_file(const char * file)
 {
+    use_stack_ptr = 0;
     set_utils_file_name(file);
 
     yyin = fopen(file, "r");
@@ -713,6 +726,7 @@ void scanner_destroy()
         }
         if (use_stack[use_stack_ptr].buffer_state)
         {
+            yy_flush_buffer(use_stack[use_stack_ptr].buffer_state);
             yy_delete_buffer(use_stack[use_stack_ptr].buffer_state);
         }
     }
@@ -720,6 +734,7 @@ void scanner_destroy()
     if (modtab)
     {
         moduletab_delete(modtab);
+        modtab = 0;
     }
 
     yylex_destroy();

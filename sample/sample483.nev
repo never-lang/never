@@ -1,0 +1,19 @@
+
+use mfive
+
+func test() -> int
+{
+    mfive.five(0);
+    assert(false);
+    0
+}
+catch (division_by_zero)
+{
+    10
+}
+
+func main() -> int
+{
+    assert(test() == 10);
+    0
+}

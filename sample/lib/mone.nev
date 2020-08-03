@@ -1,0 +1,10 @@
+
+module mone {
+
+    func one(a : int) -> int
+    {
+        a + 1
+    }
+
+}
+

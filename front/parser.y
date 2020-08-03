@@ -1082,7 +1082,7 @@ func: TOK_EXTERN TOK_NUM_STRING TOK_FUNC func_decl
 
 func: TOK_FUNC TOK_ID error
 {
-    print_error_msg(line_no, "error in function %s defined at %d\n", $2, $<line_no>2);
+    print_error_msg(line_no, "error in function %s defined", $2);
     free($2);
     
     yyclearin;

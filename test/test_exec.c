@@ -161,7 +161,9 @@ void test_samples(const char * dirpath)
     {
         while ((ent = readdir(dir)) != NULL)
         {
-            if (0 == strcmp(".\0", ent->d_name) || 0 == strcmp("..\0", ent->d_name))
+            if (strcmp(".", ent->d_name) == 0 ||
+                strcmp("..", ent->d_name) == 0 ||
+                strcmp("lib", ent->d_name) == 0)
             {
                 continue;
             }
@@ -181,9 +183,11 @@ int main(int argc, char * argv[])
         printf("Current working dir: %s\n", cwd);
     }
 
+    setenv("NEVER_PATH", ".:../sample/lib", 1);
+
     test_one();
     test_two();
-    test_samples((const char *)"../sample\0");
+    test_samples((const char *)"../sample");
 
     return 0;
 }

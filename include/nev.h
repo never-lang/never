@@ -33,7 +33,7 @@ int nev_compile_str(const char * str, program * prog);
 int nev_compile_file(const char * file_name, program * prog);
 
 int nev_prepare(program * prog, const char * entry_name);
-int nev_prepare_argv_argv(program * prog, const char * entry_name, unsigned int argc, char * argv[]);
+int nev_prepare_argc_argv(program * prog, const char * entry_name, unsigned int argc, char * argv[]);
 
 int nev_execute(program * prog, vm * machine, object * result);
 

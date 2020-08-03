@@ -1,0 +1,12 @@
+
+
+module mfive {
+
+    use mthree
+
+    func five(i : int) -> int
+    {
+        mthree.three(i)
+    }
+
+}

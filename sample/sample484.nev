@@ -1,0 +1,8 @@
+
+use msix
+
+func main() -> int
+{
+    assert(msix.six() == 7);
+    0
+}

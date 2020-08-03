@@ -141,7 +141,7 @@ static int nev_compile_prog(const char * input, program * prog)
 
 static int nev_compile(const char * input, program * prog, int type)
 {
-    int ret;
+    int ret = 0;
 
     if (type == PARSE_STR)
     {
@@ -209,7 +209,7 @@ int nev_prepare(program * prog, const char * entry_name)
     return 0;
 }
 
-int nev_prepare_argv_argv(program * prog, const char * entry_name, unsigned int argc, char * argv[])
+int nev_prepare_argc_argv(program * prog, const char * entry_name, unsigned int argc, char * argv[])
 {
     unsigned int i;
 
@@ -261,7 +261,7 @@ int nev_compile_and_exec(const char * input,
     ret = nev_compile(input, prog, type);
     if (ret == 0)
     {
-        ret = nev_prepare_argv_argv(prog, "main", argc, argv);
+        ret = nev_prepare_argc_argv(prog, "main", argc, argv);
         if (ret == 0)
         {
             machine = vm_new(vm_mem_size, vm_stack_size);

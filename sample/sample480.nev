@@ -1,0 +1,8 @@
+
+use mone
+
+func main() -> int
+{
+    mone.one(10)
+}
+

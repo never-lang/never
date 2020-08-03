@@ -1,0 +1,12 @@
+
+
+module msix {
+
+    use mseven
+
+    func six() -> int
+    {
+        mseven.seven()
+    }
+
+}

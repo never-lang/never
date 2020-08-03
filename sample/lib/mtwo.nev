@@ -1,0 +1,13 @@
+
+
+module mtwo {
+
+    enum E { ONE, TWO, THREE }
+
+    func two() -> E
+    {
+        E::TWO
+    }
+
+}
+

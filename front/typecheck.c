@@ -2255,24 +2255,11 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
     else if (value->attr.record_value->comb.comb == COMB_TYPE_MODULE)
     {
         module_decl * module_decl_value = value->attr.record_value->comb.comb_module_decl;
-        if (module_decl_value != NULL && value->attr.id != NULL)
+        if (module_decl_value != NULL &&
+            module_decl_value->nev != NULL &&
+            value->attr.id != NULL)
         {
-            never * nev = NULL;
-
-            /* TODO: remove this code only assignment left */
-            if (module_decl_value->type == MODULE_DECL_TYPE_MOD)
-            {
-                nev = module_decl_value->nev;
-            }
-            else if (module_decl_value->type == MODULE_DECL_TYPE_REF)
-            {
-                nev = module_decl_value->nev;
-            }
-            else
-            {
-                assert(0);
-            }
-            assert(nev != NULL);
+            never * nev = module_decl_value->nev;
 
             expr_id_check_type(nev->stab, value->attr.id, result);
             value->comb = value->attr.id->comb;

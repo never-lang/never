@@ -1,0 +1,10 @@
+
+module mthree {
+    
+    func three(i : int) -> int
+    {
+        10 / i
+    }
+
+}
+
