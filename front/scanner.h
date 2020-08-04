@@ -29,8 +29,8 @@ void set_line_no(unsigned int value);
 
 int lex_scan(token * tokp);
 
-void scan_string(const char * src);
-void scan_file(const char * file);
+int scan_string(const char * src);
+int scan_file(const char * file);
 
 void scanner_destroy();
 

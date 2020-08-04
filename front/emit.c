@@ -2719,13 +2719,6 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             expr_record_attr_emit(value, stack_level, module_value, list_weak, result);
         }
-        else if (value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE ||
-                 value->attr.record_value->comb.comb == COMB_TYPE_ENUMTYPE_ID)
-        {
-            /* TODO: check this */
-            assert(0);
-            expr_id_emit(value->attr.id, stack_level, module_value, result);
-        }
         else if (value->attr.record_value->comb.comb == COMB_TYPE_MODULE)
         {
             expr_id_emit(value->attr.id, stack_level, module_value, result);

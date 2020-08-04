@@ -123,7 +123,10 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard_item * guard_item
     {
         symtab_entry * mentry = NULL;
         mentry = symtab_lookup(tab, guard_item->module_id, SYMTAB_LOOKUP_GLOBAL);
-        if (mentry != NULL && mentry->type == SYMTAB_MODULE_DECL)
+        if (mentry != NULL &&
+            mentry->type == SYMTAB_MODULE_DECL &&
+            mentry->module_decl_value != NULL &&
+            mentry->module_decl_value->nev != NULL)
         {
             tab = mentry->module_decl_value->nev->stab;
         }

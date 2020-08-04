@@ -1,0 +1,14 @@
+
+
+enum E { ONE, TWO, THREE }
+
+func test() -> E
+{
+    E::ONE
+}
+
+func main() -> int
+{
+    test();
+    0
+}

@@ -145,13 +145,19 @@ static int nev_compile(const char * input, program * prog, int type)
 
     if (type == PARSE_STR)
     {
-        scan_string(input);
-        ret = nev_compile_prog(get_utils_file_name(), prog);
+        ret = scan_string(input);
+        if (ret == 0)
+        {
+            ret = nev_compile_prog(get_utils_file_name(), prog);
+        }
     }
     else if (type == PARSE_FILE)
     {
-        scan_file(input);
-        ret = nev_compile_prog(input, prog);
+        ret = scan_file(input);
+        if (ret == 0)
+        {
+            ret = nev_compile_prog(input, prog);
+        }
     }
 
     scanner_destroy();

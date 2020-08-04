@@ -442,8 +442,12 @@ use {
     BEGIN(C_STRING);
 }
 
-<MODULE_REF>[.\n] {
-    tokp->line_no = line_no;
+<MODULE_REF>[. \t] {
+    BEGIN(INITIAL);
+    return TOK_MODULE_REF;
+}
+
+<MODULE_REF>[\n] {
     line_no++;
     BEGIN(INITIAL);
     return TOK_MODULE_REF;
@@ -454,7 +458,7 @@ use {
     
     if (use_stack_ptr >= MAX_USE_DEPTH)
     {
-        fprintf(stderr, "module uses are nested too deeply\n");
+        print_error_msg(line_no, "module uses are nested too deep");
 
         tokp->line_no = line_no;
         tokp->val.str_value = strdup(yytext);
@@ -483,7 +487,7 @@ use {
     yyin = fopen_path(file_name);
     if (!yyin)
     {
-        fprintf(stderr, "cannot open module %s\n", file_name);
+        print_error_msg(line_no, "cannot open module %s", yytext);
         yyin = current_yyin;
 
         tokp->line_no = line_no;
@@ -685,16 +689,18 @@ FILE * fopen_path(const char * file_name)
     return ffile;
 }
 
-void scan_string(const char * src)
+int scan_string(const char * src)
 {
     use_stack_ptr = 0;
     set_utils_file_name("<stdin>");
     modtab = moduletab_new(8);
 
     yy_switch_to_buffer(yy_scan_string(src));
+
+    return 0;
 }
 
-void scan_file(const char * file)
+int scan_file(const char * file)
 {
     use_stack_ptr = 0;
     set_utils_file_name(file);
@@ -702,12 +708,14 @@ void scan_file(const char * file)
     yyin = fopen(file, "r");
     if (yyin == NULL)
     {
-        fprintf(stderr, "cannot open %s: %s\n", file, strerror(errno));
-        exit(1);
+        print_error_msg(line_no, "cannot open %s: %s", file, strerror(errno));
+        return 1;
     }
 
     modtab = moduletab_new(8);
     moduletab_add_module(modtab, strdup(file));
+
+    return 0;
 }
 
 void scanner_destroy()
@@ -734,7 +742,7 @@ void scanner_destroy()
     if (modtab)
     {
         moduletab_delete(modtab);
-        modtab = 0;
+        modtab = NULL;
     }
 
     yylex_destroy();

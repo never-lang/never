@@ -1,0 +1,10 @@
+
+
+use msix
+use mseven
+
+func main() -> int
+{
+    assert(msix.six() == 7);
+    0
+}
