@@ -8,5 +8,11 @@ func main() -> int
         mtwo.E::ONE -> 1;
         mtwo.E::TWO -> 2;
         mtwo.E::THREE -> 3;
+    };
+
+    match (mtwo.twoB())
+    {
+        mtwo.R::A(i) -> i;
+        mtwo.R::B(i) -> i;
     }
 }

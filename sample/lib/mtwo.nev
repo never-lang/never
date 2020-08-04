@@ -3,10 +3,16 @@
 module mtwo {
 
     enum E { ONE, TWO, THREE }
+    enum R { A { i : int; }, B { i : int; } }
 
     func two() -> E
     {
         E::TWO
+    }
+
+    func twoB() -> R
+    {
+        R::A(100)
     }
 
 }

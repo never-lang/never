@@ -181,7 +181,10 @@ int expr_match_guard_record_check_type(symtab * tab, match_guard_record * guard_
     {
         symtab_entry * mentry = NULL;
         mentry = symtab_lookup(tab, guard_record->module_id, SYMTAB_LOOKUP_GLOBAL);
-        if (mentry != NULL && mentry->type == SYMTAB_MODULE_DECL)
+        if (mentry != NULL &&
+            mentry->type == SYMTAB_MODULE_DECL &&
+            mentry->module_decl_value != NULL &&
+            mentry->module_decl_value->nev != NULL)
         {
             tab = mentry->module_decl_value->nev->stab;
         }
