@@ -38,8 +38,14 @@ char * readall(const char * file)
     long fsize = ftell(f);
     fseek(f, 0L, SEEK_SET);
 
+    size_t er = 0;
     char * src = (char *)calloc(fsize + 1, sizeof(char));
-    fread(src, sizeof(char), fsize, f);
+    er = fread(src, sizeof(char), fsize, f);
+    if (er != (size_t)fsize)
+    {
+        fprintf(stderr, "could not read the while file %s expected %lu read %lu\n",
+                        file, fsize, er);
+    }
     fclose(f);
 
     return src;
