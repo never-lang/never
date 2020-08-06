@@ -1,0 +1,51 @@
+
+use raylib
+
+let screenWidth = 800;
+let screenHeight = 450;
+
+func main() -> int
+{
+/*
+    let ballPosition = raylib.Vector2( -100.0, -100.0 );
+    let ballColor = raylib.Color;
+
+    ballColor = raylib.DARKBLUE;
+
+    raylib.InitWindow(screenWidth, screenHeight, "Never meets raylib");
+    raylib.SetTargetFPS(60);
+
+    while (!raylib.WindowShouldClose())
+    {
+        ballPosition = raylib.GetMousePosition();
+
+        if (raylib.IsMouseButtonPressed(raylib.MOUSE_LEFT_BUTTON))
+        {
+            ballColor = raylib.MAROON
+        }
+        else if (raylib.IsMouseButtonPressed(raylib.MOUSE_MIDDLE_BUTTON))
+        {
+            ballColor = raylib.LIME
+        }
+        else if (raylib.IsMouseButtonPressed(raylib.MOUSE_RIGHT_BUTTON))
+        {
+            ballColor = raylib.DARKBLUE
+        }
+        else
+        {
+            ballColor
+        };
+
+        raylib.BeginDrawing();
+
+            raylib.ClearBackground(raylib.RAYWHITE);
+            raylib.DrawCircleV(ballPosition, 40.0, ballColor);
+            raylib.DrawText("move ball with mouse and click mouse button to change color", 10, 10, 20, raylib.DARKGRAY);
+
+        raylib.EndDrawing()
+    };
+
+    raylib.CloseWindow();
+*/
+    0
+}

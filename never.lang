@@ -142,23 +142,25 @@
     </context>
 
     <context id="keywords" style-ref="keyword">
-      <keyword>let</keyword>
-      <keyword>var</keyword>
-      <keyword>func</keyword>
       <keyword>catch</keyword>
-      <keyword>throw</keyword>
-      <keyword>while</keyword>
       <keyword>do</keyword>
-      <keyword>for</keyword>
-      <keyword>if</keyword>
       <keyword>else</keyword>
-      <keyword>record</keyword>
-      <keyword>nil</keyword>
-      <keyword>new</keyword>
       <keyword>enum</keyword>
-      <keyword>in</keyword>
       <keyword>extern</keyword>
+      <keyword>for</keyword>
+      <keyword>func</keyword>
+      <keyword>if</keyword>
+      <keyword>in</keyword>
+      <keyword>let</keyword>
       <keyword>match</keyword>
+      <keyword>module</keyword>
+      <keyword>new</keyword>
+      <keyword>nil</keyword>
+      <keyword>record</keyword>
+      <keyword>throw</keyword>
+      <keyword>use</keyword>
+      <keyword>var</keyword>
+      <keyword>while</keyword>
     </context>
 
     <context id="operators" style-ref="operator">
