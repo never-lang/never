@@ -523,10 +523,42 @@ int func_list_tailrec(unsigned int syn_level, func_list * list)
     return 0;
 }
 
+int use_tailrec(use * value)
+{
+    if (value->decl != NULL &&
+        value->decl->type == MODULE_DECL_TYPE_MOD)
+    {
+        module_decl_tailrec(value->decl);
+    }
+
+    return 0;
+}
+
+int use_list_tailrec(use_list * list)
+{
+    use_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        use * value = node->value;
+        if (value != NULL)
+        {
+            use_tailrec(value);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int never_tailrec(never * nev)
 {
     unsigned int syn_level = 0;
 
+    if (nev->uses)
+    {
+        use_list_tailrec(nev->uses);
+    }
     if (nev->binds)
     {
         bind_list_tailrec(syn_level, nev->stab, nev->binds, TAILREC_OP_SKIP);

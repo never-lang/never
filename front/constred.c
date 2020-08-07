@@ -931,24 +931,63 @@ int func_list_constred(func_list * list, int * result)
         {
             func_constred(value, result);
         }
-
         node = node->next;
     }
     return 0;
 }
 
-int never_constred(never * nev)
+int use_constred(use * value, int * result)
 {
-    int result = CONSTRED_SUCC;
+    if (value->decl != NULL &&
+        value->decl->type == MODULE_DECL_TYPE_MOD)
+    {
+        module_constred(value->decl, result);
+    }
 
+    return 0;
+}
+
+int use_list_constred(use_list * list, int * result)
+{
+    use_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        use * value = node->value;
+        if (value != NULL)
+        {
+            use_constred(value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int never_constred(never * nev, int * result)
+{
+    if (nev->uses)
+    {
+        use_list_constred(nev->uses, result);
+    }
     if (nev->binds)
     {
-        bind_list_constred(nev->binds, &result);
+        bind_list_constred(nev->binds, result);
     }
     if (nev->funcs)
     {
-        func_list_constred(nev->funcs, &result);
+        func_list_constred(nev->funcs, result);
     }
 
-    return result;
+    return 0;
 }
+
+int module_constred(module_decl * value, int * result)
+{
+    if (value->nev != NULL)
+    {
+        never_constred(value->nev, result);
+    }
+
+    return 0;
+}
+

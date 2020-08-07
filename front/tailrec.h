@@ -68,7 +68,8 @@ int func_tailrec_ffi(unsigned int syn_level, func * value);
 int func_tailrec_native(unsigned int syn_level, func * value);
 int func_tailrec(unsigned int syn_level, func * value);
 int func_list_tailrec(unsigned int syn_level, func_list * list);
-
+int use_tailrec(use * value);
+int use_list_tailrec(use_list * list);
 int never_tailrec(never * nev);
 int module_decl_tailrec(module_decl * module_nev);
 

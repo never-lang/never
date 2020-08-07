@@ -21,18 +21,21 @@
  */
 #include "optimize.h"
 #include "constred.h"
+#include <stdlib.h>
 
-int never_optimize(never * nev)
+int module_optimize(module_decl * value, int * result)
 {
-    return never_constred(nev);
+    return module_constred(value, result);
 }
 
 int module_decl_optimize(module_decl * module_nev)
 {
-    if (module_nev->nev)
+    int result = CONSTRED_SUCC;
+
+    if (module_nev != NULL)
     {
-        return never_optimize(module_nev->nev);
+        module_optimize(module_nev, &result);
     }
 
-    return 0;
+    return result;
 }

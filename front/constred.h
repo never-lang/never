@@ -48,6 +48,9 @@ int func_constred_ffi(func * value, int * result);
 int func_constred_native(func * value, int * result);
 int func_constred(func * value, int * result);
 int func_list_constred(func_list * list, int * result);
-int never_constred(never * nev);
+int use_constred(use * value, int * result);
+int use_list_constred(use_list * list, int * result);
+int never_constred(never * nev, int * result);
+int module_constred(module_decl * value, int * result);
 
 #endif /* __CONSTRED_H__ */

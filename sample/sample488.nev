@@ -1,0 +1,9 @@
+
+use mtail
+
+func main() -> int
+{
+    mtail.spaces(200);
+    0
+}
+
