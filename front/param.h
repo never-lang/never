@@ -32,7 +32,9 @@ typedef enum param_type
 {
     PARAM_BOOL = 1,
     PARAM_INT,
+    PARAM_LONG,
     PARAM_FLOAT,
+    PARAM_DOUBLE,
     PARAM_CHAR,
     PARAM_STRING,
     PARAM_VOID,
@@ -89,7 +91,9 @@ typedef struct param_list
 
 param * param_new_bool(char * id);
 param * param_new_int(char * id);
+param * param_new_long(char * id);
 param * param_new_float(char * id);
+param * param_new_double(char * id);
 param * param_new_char(char * id);
 param * param_new_string(char * id);
 param * param_new_void(char * id);

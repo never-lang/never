@@ -31,7 +31,9 @@ typedef enum bytecode_type
     BYTECODE_UNKNOWN = 0,
 
     BYTECODE_INT,
+    BYTECODE_LONG,
     BYTECODE_FLOAT,
+    BYTECODE_DOUBLE,
     BYTECODE_CHAR,
     BYTECODE_STRING,
     BYTECODE_C_NULL,
@@ -52,11 +54,24 @@ typedef enum bytecode_type
     BYTECODE_OP_DIV_INT,
     BYTECODE_OP_MOD_INT,
 
+    BYTECODE_OP_NEG_LONG,
+    BYTECODE_OP_ADD_LONG,
+    BYTECODE_OP_SUB_LONG,
+    BYTECODE_OP_MUL_LONG,
+    BYTECODE_OP_DIV_LONG,
+    BYTECODE_OP_MOD_LONG,
+
     BYTECODE_OP_NEG_FLOAT,
     BYTECODE_OP_ADD_FLOAT,
     BYTECODE_OP_SUB_FLOAT,
     BYTECODE_OP_MUL_FLOAT,
     BYTECODE_OP_DIV_FLOAT,
+
+    BYTECODE_OP_NEG_DOUBLE,
+    BYTECODE_OP_ADD_DOUBLE,
+    BYTECODE_OP_SUB_DOUBLE,
+    BYTECODE_OP_MUL_DOUBLE,
+    BYTECODE_OP_DIV_DOUBLE,
 
     BYTECODE_OP_ADD_STRING,
     BYTECODE_OP_ADD_INT_STRING,
@@ -71,12 +86,26 @@ typedef enum bytecode_type
     BYTECODE_OP_EQ_INT,
     BYTECODE_OP_NEQ_INT,
 
+    BYTECODE_OP_LT_LONG,
+    BYTECODE_OP_GT_LONG,
+    BYTECODE_OP_LTE_LONG,
+    BYTECODE_OP_GTE_LONG,
+    BYTECODE_OP_EQ_LONG,
+    BYTECODE_OP_NEQ_LONG,
+
     BYTECODE_OP_LT_FLOAT,
     BYTECODE_OP_GT_FLOAT,
     BYTECODE_OP_LTE_FLOAT,
     BYTECODE_OP_GTE_FLOAT,
     BYTECODE_OP_EQ_FLOAT,
     BYTECODE_OP_NEQ_FLOAT,
+
+    BYTECODE_OP_LT_DOUBLE,
+    BYTECODE_OP_GT_DOUBLE,
+    BYTECODE_OP_LTE_DOUBLE,
+    BYTECODE_OP_GTE_DOUBLE,
+    BYTECODE_OP_EQ_DOUBLE,
+    BYTECODE_OP_NEQ_DOUBLE,
 
     BYTECODE_OP_LT_CHAR,
     BYTECODE_OP_GT_CHAR,
@@ -134,7 +163,9 @@ typedef enum bytecode_type
     BYTECODE_OP_MUL_ARR_ARR_FLOAT,
 
     BYTECODE_OP_ASS_INT,
+    BYTECODE_OP_ASS_LONG,
     BYTECODE_OP_ASS_FLOAT,
+    BYTECODE_OP_ASS_DOUBLE,
     BYTECODE_OP_ASS_CHAR,
     BYTECODE_OP_ASS_STRING,
     BYTECODE_OP_ASS_C_PTR,
@@ -149,7 +180,9 @@ typedef enum bytecode_type
     BYTECODE_LABEL,
 
     BYTECODE_MK_ARRAY_INT,
+    BYTECODE_MK_ARRAY_LONG,
     BYTECODE_MK_ARRAY_FLOAT,
+    BYTECODE_MK_ARRAY_DOUBLE,
     BYTECODE_MK_ARRAY_CHAR,
     BYTECODE_MK_ARRAY_STRING,
     BYTECODE_MK_ARRAY_ARRAY,
@@ -182,7 +215,9 @@ typedef enum bytecode_type
     BYTECODE_FUNC_FFI,
     BYTECODE_FUNC_FFI_BOOL,
     BYTECODE_FUNC_FFI_INT,
+    BYTECODE_FUNC_FFI_LONG,
     BYTECODE_FUNC_FFI_FLOAT,
+    BYTECODE_FUNC_FFI_DOUBLE,
     BYTECODE_FUNC_FFI_CHAR,
     BYTECODE_FUNC_FFI_STRING,
     BYTECODE_FUNC_FFI_VOID,
@@ -221,8 +256,16 @@ typedef struct bytecode
         } integer;
         struct
         {
+            long long value; /* BYTECODE_LONG */
+        } long_t;
+        struct
+        {
             float value; /* BYTECODE_FLOAT */
         } real;
+        struct
+        {
+            double value; /* BYTECODE_DOUBLE */
+        } double_t;
         struct
         {
             char value; /* BYTECODE_CHAR */
@@ -365,7 +408,9 @@ typedef struct bytecode_op_str
 void bytecode_print_unknown(bytecode * code);
 
 void bytecode_print_int(bytecode * code);
+void bytecode_print_long(bytecode * code);
 void bytecode_print_float(bytecode * code);
+void bytecode_print_double(bytecode * code);
 void bytecode_print_char(bytecode * code);
 void bytecode_print_string(bytecode * code);
 void bytecode_print_c_null(bytecode * code);
@@ -386,11 +431,24 @@ void bytecode_print_op_mul_int(bytecode * code);
 void bytecode_print_op_div_int(bytecode * code);
 void bytecode_print_op_mod_int(bytecode * code);
 
+void bytecode_print_op_neg_long(bytecode * code);
+void bytecode_print_op_add_long(bytecode * code);
+void bytecode_print_op_sub_long(bytecode * code);
+void bytecode_print_op_mul_long(bytecode * code);
+void bytecode_print_op_div_long(bytecode * code);
+void bytecode_print_op_mod_long(bytecode * code);
+
 void bytecode_print_op_neg_float(bytecode * code);
 void bytecode_print_op_add_float(bytecode * code);
 void bytecode_print_op_sub_float(bytecode * code);
 void bytecode_print_op_mul_float(bytecode * code);
 void bytecode_print_op_div_float(bytecode * code);
+
+void bytecode_print_op_neg_double(bytecode * code);
+void bytecode_print_op_add_double(bytecode * code);
+void bytecode_print_op_sub_double(bytecode * code);
+void bytecode_print_op_mul_double(bytecode * code);
+void bytecode_print_op_div_double(bytecode * code);
 
 void bytecode_print_op_add_string(bytecode * code);
 void bytecode_print_op_add_int_string(bytecode * code);
@@ -405,12 +463,26 @@ void bytecode_print_op_gte_int(bytecode * code);
 void bytecode_print_op_eq_int(bytecode * code);
 void bytecode_print_op_neq_int(bytecode * code);
 
+void bytecode_print_op_lt_long(bytecode * code);
+void bytecode_print_op_gt_long(bytecode * code);
+void bytecode_print_op_lte_long(bytecode * code);
+void bytecode_print_op_gte_long(bytecode * code);
+void bytecode_print_op_eq_long(bytecode * code);
+void bytecode_print_op_neq_long(bytecode * code);
+
 void bytecode_print_op_lt_float(bytecode * code);
 void bytecode_print_op_gt_float(bytecode * code);
 void bytecode_print_op_lte_float(bytecode * code);
 void bytecode_print_op_gte_float(bytecode * code);
 void bytecode_print_op_eq_float(bytecode * code);
 void bytecode_print_op_neq_float(bytecode * code);
+
+void bytecode_print_op_lt_double(bytecode * code);
+void bytecode_print_op_gt_double(bytecode * code);
+void bytecode_print_op_lte_double(bytecode * code);
+void bytecode_print_op_gte_double(bytecode * code);
+void bytecode_print_op_eq_double(bytecode * code);
+void bytecode_print_op_neq_double(bytecode * code);
 
 void bytecode_print_op_lt_char(bytecode * code);
 void bytecode_print_op_gt_char(bytecode * code);
@@ -470,7 +542,9 @@ void bytecode_print_op_mul_arr_arr_int(bytecode * code);
 void bytecode_print_op_mul_arr_arr_float(bytecode * code);
 
 void bytecode_print_op_ass_int(bytecode * code);
+void bytecode_print_op_ass_long(bytecode * code);
 void bytecode_print_op_ass_float(bytecode * code);
+void bytecode_print_op_ass_double(bytecode * code);
 void bytecode_print_op_ass_char(bytecode * code);
 void bytecode_print_op_ass_string(bytecode * code);
 void bytecode_print_op_ass_c_ptr(bytecode * code);
@@ -488,7 +562,9 @@ void bytecode_print_jump(bytecode * code);
 void bytecode_print_label(bytecode * code);
 
 void bytecode_print_mk_array_int(bytecode * code);
+void bytecode_print_mk_array_long(bytecode * code);
 void bytecode_print_mk_array_float(bytecode * code);
+void bytecode_print_mk_array_double(bytecode * code);
 void bytecode_print_mk_array_char(bytecode * code);
 void bytecode_print_mk_array_string(bytecode * code);
 void bytecode_print_mk_array_array(bytecode * code);
@@ -521,7 +597,9 @@ void bytecode_print_func_obj(bytecode * code);
 void bytecode_print_func_ffi(bytecode * code);
 void bytecode_print_func_ffi_bool(bytecode * code);
 void bytecode_print_func_ffi_int(bytecode * code);
+void bytecode_print_func_ffi_long(bytecode * code);
 void bytecode_print_func_ffi_float(bytecode * code);
+void bytecode_print_func_ffi_double(bytecode * code);
 void bytecode_print_func_ffi_char(bytecode * code);
 void bytecode_print_func_ffi_string(bytecode * code);
 void bytecode_print_func_ffi_void(bytecode * code);

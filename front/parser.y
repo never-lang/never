@@ -48,7 +48,9 @@ int yyerror(module_decl ** module_nev, char * str)
 
 %token <val.str_value> TOK_ID
 %token <val.float_value> TOK_NUM_FLOAT
+%token <val.double_value> TOK_NUM_DOUBLE
 %token <val.int_value> TOK_NUM_INT
+%token <val.long_value> TOK_NUM_LONG
 %token <val.str_value> TOK_NUM_STRING
 %token <val.char_value> TOK_NUM_CHAR
 %token <val.str_value> TOK_BOOL
@@ -60,7 +62,9 @@ int yyerror(module_decl ** module_nev, char * str)
 %token <val.str_value> TOK_C_PTR
 %token <val.str_value> TOK_C_NULL
 %token <val.str_value> TOK_FLOAT
+%token <val.str_value> TOK_DOUBLE
 %token <val.str_value> TOK_INT
+%token <val.str_value> TOK_LONG
 %token <val.str_value> TOK_LET
 %token <val.str_value> TOK_VAR
 %token <val.str_value> TOK_FUNC
@@ -230,9 +234,21 @@ expr: TOK_NUM_INT
     $$->line_no = $<line_no>1;
 };
 
+expr: TOK_NUM_LONG
+{
+    $$ = expr_new_long($1);
+    $$->line_no = $<line_no>1;
+};
+
 expr: TOK_NUM_FLOAT
 {
     $$ = expr_new_float($1);
+    $$->line_no = $<line_no>1;
+};
+
+expr: TOK_NUM_DOUBLE
+{
+    $$ = expr_new_double($1);
     $$->line_no = $<line_no>1;
 };
 
@@ -782,6 +798,18 @@ param: TOK_ID ':' TOK_INT
     $$->line_no = $<line_no>1;
 };
 
+param: TOK_LONG
+{
+    $$ = param_new_int(NULL);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID ':' TOK_LONG
+{
+    $$ = param_new_long($1);
+    $$->line_no = $<line_no>1;
+}
+
 param: TOK_FLOAT
 {
     $$ = param_new_float(NULL);
@@ -791,6 +819,18 @@ param: TOK_FLOAT
 param: TOK_ID ':' TOK_FLOAT 
 {
     $$ = param_new_float($1);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_DOUBLE
+{
+    $$ = param_new_double(NULL);
+    $$->line_no = $<line_no>1;
+};
+
+param: TOK_ID ':' TOK_DOUBLE
+{
+    $$ = param_new_double($1);
     $$->line_no = $<line_no>1;
 };
 

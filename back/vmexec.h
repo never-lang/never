@@ -35,7 +35,9 @@ void vm_execute_op_test();
 void vm_execute_unknown(vm * machine, bytecode * code);
 
 void vm_execute_int(vm * machine, bytecode * code);
+void vm_execute_long(vm * machine, bytecode * code);
 void vm_execute_float(vm * machine, bytecode * code);
+void vm_execute_double(vm * machine, bytecode * code);
 void vm_execute_char(vm * machine, bytecode * code);
 void vm_execute_string(vm * machine, bytecode * code);
 void vm_execute_c_null(vm * machine, bytecode * code);
@@ -56,11 +58,24 @@ void vm_execute_op_mul_int(vm * machine, bytecode * code);
 void vm_execute_op_div_int(vm * machine, bytecode * code);
 void vm_execute_op_mod_int(vm * machine, bytecode * code);
 
+void vm_execute_op_neg_long(vm * machine, bytecode * code);
+void vm_execute_op_add_long(vm * machine, bytecode * code);
+void vm_execute_op_sub_long(vm * machine, bytecode * code);
+void vm_execute_op_mul_long(vm * machine, bytecode * code);
+void vm_execute_op_div_long(vm * machine, bytecode * code);
+void vm_execute_op_mod_long(vm * machine, bytecode * code);
+
 void vm_execute_op_neg_float(vm * machine, bytecode * code);
 void vm_execute_op_add_float(vm * machine, bytecode * code);
 void vm_execute_op_sub_float(vm * machine, bytecode * code);
 void vm_execute_op_mul_float(vm * machine, bytecode * code);
 void vm_execute_op_div_float(vm * machine, bytecode * code);
+
+void vm_execute_op_neg_double(vm * machine, bytecode * code);
+void vm_execute_op_add_double(vm * machine, bytecode * code);
+void vm_execute_op_sub_double(vm * machine, bytecode * code);
+void vm_execute_op_mul_double(vm * machine, bytecode * code);
+void vm_execute_op_div_double(vm * machine, bytecode * code);
 
 void vm_execute_op_add_string(vm * machine, bytecode * code);
 void vm_execute_op_add_int_string(vm * machine, bytecode * code);
@@ -75,12 +90,26 @@ void vm_execute_op_gte_int(vm * machine, bytecode * code);
 void vm_execute_op_eq_int(vm * machine, bytecode * code);
 void vm_execute_op_neq_int(vm * machine, bytecode * code);
 
+void vm_execute_op_lt_long(vm * machine, bytecode * code);
+void vm_execute_op_gt_long(vm * machine, bytecode * code);
+void vm_execute_op_lte_long(vm * machine, bytecode * code);
+void vm_execute_op_gte_long(vm * machine, bytecode * code);
+void vm_execute_op_eq_long(vm * machine, bytecode * code);
+void vm_execute_op_neq_long(vm * machine, bytecode * code);
+
 void vm_execute_op_lt_float(vm * machine, bytecode * code);
 void vm_execute_op_gt_float(vm * machine, bytecode * code);
 void vm_execute_op_lte_float(vm * machine, bytecode * code);
 void vm_execute_op_gte_float(vm * machine, bytecode * code);
 void vm_execute_op_eq_float(vm * machine, bytecode * code);
 void vm_execute_op_neq_float(vm * machine, bytecode * code);
+
+void vm_execute_op_lt_double(vm * machine, bytecode * code);
+void vm_execute_op_gt_double(vm * machine, bytecode * code);
+void vm_execute_op_lte_double(vm * machine, bytecode * code);
+void vm_execute_op_gte_double(vm * machine, bytecode * code);
+void vm_execute_op_eq_double(vm * machine, bytecode * code);
+void vm_execute_op_neq_double(vm * machine, bytecode * code);
 
 void vm_execute_op_lt_char(vm * machine, bytecode * code);
 void vm_execute_op_gt_char(vm * machine, bytecode * code);
@@ -140,7 +169,9 @@ void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code);
 void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code);
 
 void vm_execute_op_ass_int(vm * machine, bytecode * code);
+void vm_execute_op_ass_long(vm * machine, bytecode * code);
 void vm_execute_op_ass_float(vm * machine, bytecode * code);
+void vm_execute_op_ass_double(vm * machine, bytecode * code);
 void vm_execute_op_ass_char(vm * machine, bytecode * code);
 void vm_execute_op_ass_string(vm * machine, bytecode * code);
 void vm_execute_op_ass_c_ptr(vm * machine, bytecode * code);
@@ -155,7 +186,9 @@ void vm_execute_jump(vm * machine, bytecode * code);
 void vm_execute_label(vm * machine, bytecode * code);
 
 void vm_execute_mk_array_int(vm * machine, bytecode * code);
+void vm_execute_mk_array_long(vm * machine, bytecode * code);
 void vm_execute_mk_array_float(vm * machine, bytecode * code);
+void vm_execute_mk_array_double(vm * machine, bytecode * code);
 void vm_execute_mk_array_char(vm * machine, bytecode * code);
 void vm_execute_mk_array_string(vm * machine, bytecode * code);
 void vm_execute_mk_array_array(vm * machine, bytecode * code);

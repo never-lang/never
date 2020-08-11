@@ -43,7 +43,9 @@
 
 typedef union token_value {
     int int_value;
+    long long long_value;
     float float_value;
+    double double_value;
     char char_value;
     char * str_value;
     matchbind * matchbind_value;

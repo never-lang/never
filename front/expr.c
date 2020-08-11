@@ -54,6 +54,18 @@ expr * expr_new_int(int int_value)
     return ret;
 }
 
+expr * expr_new_long(long long long_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+
+    ret->type = EXPR_LONG;
+    ret->long_value = long_value;
+    ret->comb.comb = COMB_TYPE_LONG;
+    ret->line_no = 0;
+
+    return ret;
+}
+
 expr * expr_new_char(char char_value)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
@@ -73,6 +85,18 @@ expr * expr_new_float(float float_value)
     ret->type = EXPR_FLOAT;
     ret->float_value = float_value;
     ret->comb.comb = COMB_TYPE_FLOAT;
+    ret->line_no = 0;
+
+    return ret;
+}
+
+expr * expr_new_double(double double_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+
+    ret->type = EXPR_DOUBLE;
+    ret->double_value = double_value;
+    ret->comb.comb = COMB_TYPE_DOUBLE;
     ret->line_no = 0;
 
     return ret;
@@ -437,7 +461,9 @@ void expr_delete(expr * value)
     {
     case EXPR_BOOL:
     case EXPR_INT:
+    case EXPR_LONG:
     case EXPR_FLOAT:
+    case EXPR_DOUBLE:
     case EXPR_CHAR:
     case EXPR_NIL:
     case EXPR_C_NULL:
@@ -728,7 +754,9 @@ const char * expr_type_str(expr_type type)
     {
     case EXPR_BOOL: return "bool";
     case EXPR_INT: return "int";
+    case EXPR_LONG: return "long";
     case EXPR_FLOAT: return "float";
+    case EXPR_DOUBLE: return "double";
     case EXPR_CHAR: return "char";
     case EXPR_STRING: return "string";
     case EXPR_ENUMTYPE: return "enumtype";
@@ -792,8 +820,12 @@ const char * comb_type_str(comb_type type)
         return "bool";
     case COMB_TYPE_INT:
         return "int";
+    case COMB_TYPE_LONG:
+        return "long";
     case COMB_TYPE_FLOAT:
         return "float";
+    case COMB_TYPE_DOUBLE:
+        return "double";
     case COMB_TYPE_ENUMTYPE:
         return "enum";
     case COMB_TYPE_ENUMTYPE_ID:

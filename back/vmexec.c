@@ -38,7 +38,9 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_UNKNOWN, vm_execute_unknown },
 
     { BYTECODE_INT, vm_execute_int },
+    { BYTECODE_LONG, vm_execute_long },
     { BYTECODE_FLOAT, vm_execute_float },
+    { BYTECODE_DOUBLE, vm_execute_double },
     { BYTECODE_CHAR, vm_execute_char },
     { BYTECODE_STRING, vm_execute_string },
     { BYTECODE_C_NULL, vm_execute_c_null },
@@ -59,11 +61,24 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_DIV_INT, vm_execute_op_div_int },
     { BYTECODE_OP_MOD_INT, vm_execute_op_mod_int },
 
+    { BYTECODE_OP_NEG_LONG, vm_execute_op_neg_long },
+    { BYTECODE_OP_ADD_LONG, vm_execute_op_add_long },
+    { BYTECODE_OP_SUB_LONG, vm_execute_op_sub_long },
+    { BYTECODE_OP_MUL_LONG, vm_execute_op_mul_long },
+    { BYTECODE_OP_DIV_LONG, vm_execute_op_div_long },
+    { BYTECODE_OP_MOD_LONG, vm_execute_op_mod_long },
+
     { BYTECODE_OP_NEG_FLOAT, vm_execute_op_neg_float },
     { BYTECODE_OP_ADD_FLOAT, vm_execute_op_add_float },
     { BYTECODE_OP_SUB_FLOAT, vm_execute_op_sub_float },
     { BYTECODE_OP_MUL_FLOAT, vm_execute_op_mul_float },
     { BYTECODE_OP_DIV_FLOAT, vm_execute_op_div_float },
+
+    { BYTECODE_OP_NEG_DOUBLE, vm_execute_op_neg_double },
+    { BYTECODE_OP_ADD_DOUBLE, vm_execute_op_add_double },
+    { BYTECODE_OP_SUB_DOUBLE, vm_execute_op_sub_double },
+    { BYTECODE_OP_MUL_DOUBLE, vm_execute_op_mul_double },
+    { BYTECODE_OP_DIV_DOUBLE, vm_execute_op_div_double },
 
     { BYTECODE_OP_ADD_STRING, vm_execute_op_add_string },
     { BYTECODE_OP_ADD_INT_STRING, vm_execute_op_add_int_string },
@@ -78,12 +93,26 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_EQ_INT, vm_execute_op_eq_int },
     { BYTECODE_OP_NEQ_INT, vm_execute_op_neq_int },
 
+    { BYTECODE_OP_LT_LONG, vm_execute_op_lt_long },
+    { BYTECODE_OP_GT_LONG, vm_execute_op_gt_long },
+    { BYTECODE_OP_LTE_LONG, vm_execute_op_lte_long },
+    { BYTECODE_OP_GTE_LONG, vm_execute_op_gte_long },
+    { BYTECODE_OP_EQ_LONG, vm_execute_op_eq_long },
+    { BYTECODE_OP_NEQ_LONG, vm_execute_op_neq_long },
+
     { BYTECODE_OP_LT_FLOAT, vm_execute_op_lt_float },
     { BYTECODE_OP_GT_FLOAT, vm_execute_op_gt_float },
     { BYTECODE_OP_LTE_FLOAT, vm_execute_op_lte_float },
     { BYTECODE_OP_GTE_FLOAT, vm_execute_op_gte_float },
     { BYTECODE_OP_EQ_FLOAT, vm_execute_op_eq_float },
     { BYTECODE_OP_NEQ_FLOAT, vm_execute_op_neq_float },
+
+    { BYTECODE_OP_LT_DOUBLE, vm_execute_op_lt_double },
+    { BYTECODE_OP_GT_DOUBLE, vm_execute_op_gt_double },
+    { BYTECODE_OP_LTE_DOUBLE, vm_execute_op_lte_double },
+    { BYTECODE_OP_GTE_DOUBLE, vm_execute_op_gte_double },
+    { BYTECODE_OP_EQ_DOUBLE, vm_execute_op_eq_double },
+    { BYTECODE_OP_NEQ_DOUBLE, vm_execute_op_neq_double },
 
     { BYTECODE_OP_LT_CHAR, vm_execute_op_lt_char },
     { BYTECODE_OP_GT_CHAR, vm_execute_op_gt_char },
@@ -143,7 +172,9 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_MUL_ARR_ARR_FLOAT, vm_execute_op_mul_arr_arr_float },
 
     { BYTECODE_OP_ASS_INT, vm_execute_op_ass_int },
+    { BYTECODE_OP_ASS_LONG, vm_execute_op_ass_long },
     { BYTECODE_OP_ASS_FLOAT, vm_execute_op_ass_float },
+    { BYTECODE_OP_ASS_DOUBLE, vm_execute_op_ass_double },
     { BYTECODE_OP_ASS_CHAR, vm_execute_op_ass_char },
     { BYTECODE_OP_ASS_STRING, vm_execute_op_ass_string },
     { BYTECODE_OP_ASS_C_PTR, vm_execute_op_ass_c_ptr },
@@ -158,7 +189,9 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_LABEL, vm_execute_label },
 
     { BYTECODE_MK_ARRAY_INT, vm_execute_mk_array_int },
+    { BYTECODE_MK_ARRAY_LONG, vm_execute_mk_array_long },
     { BYTECODE_MK_ARRAY_FLOAT, vm_execute_mk_array_float },
+    { BYTECODE_MK_ARRAY_DOUBLE, vm_execute_mk_array_double },
     { BYTECODE_MK_ARRAY_CHAR, vm_execute_mk_array_char },
     { BYTECODE_MK_ARRAY_STRING, vm_execute_mk_array_string },
     { BYTECODE_MK_ARRAY_ARRAY, vm_execute_mk_array_array },
@@ -190,7 +223,9 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_FUNC_FFI, vm_execute_func_ffi },
     { BYTECODE_FUNC_FFI_BOOL, vm_execute_func_ffi_bool },
     { BYTECODE_FUNC_FFI_INT, vm_execute_func_ffi_int },
+    { BYTECODE_FUNC_FFI_LONG, vm_execute_func_ffi_long },
     { BYTECODE_FUNC_FFI_FLOAT, vm_execute_func_ffi_float },
+    { BYTECODE_FUNC_FFI_DOUBLE, vm_execute_func_ffi_double },
     { BYTECODE_FUNC_FFI_CHAR, vm_execute_func_ffi_char },
     { BYTECODE_FUNC_FFI_STRING, vm_execute_func_ffi_string },
     { BYTECODE_FUNC_FFI_VOID, vm_execute_func_ffi_void },
@@ -256,10 +291,38 @@ void vm_execute_int(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
+void vm_execute_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr addr = gc_alloc_long(machine->collector, code->long_t.value);
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
 void vm_execute_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     mem_ptr addr = gc_alloc_float(machine->collector, code->real.value);
+
+    machine->sp++;
+    vm_check_stack(machine);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr addr = gc_alloc_double(machine->collector, code->double_t.value);
 
     machine->sp++;
     vm_check_stack(machine);
@@ -575,6 +638,113 @@ void vm_execute_op_mod_int(vm * machine, bytecode * code)
     machine->sp--;
 }
 
+void vm_execute_op_neg_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_long(machine->collector, -a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_op_add_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_long(machine->collector, a + b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_sub_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_long(machine->collector, a - b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_mul_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_long(machine->collector, a * b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_div_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = 0;
+
+    if (b == 0)
+    {
+        print_error_msg(machine->line_no, "cannot divide by zero");
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_DIVISION;
+        return;
+    }
+
+    addr = gc_alloc_long(machine->collector, a / b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_mod_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b =
+        gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = 0;
+
+    if (b == 0)
+    {
+        print_error_msg(machine->line_no, "cannot divide by zero");
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_DIVISION;
+        return;
+    }
+
+    addr = gc_alloc_long(machine->collector, a % b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
 void vm_execute_op_neg_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
@@ -654,6 +824,94 @@ void vm_execute_op_div_float(vm * machine, bytecode * code)
     }
 
     addr = gc_alloc_float(machine->collector, a / b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+
+void vm_execute_op_neg_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_double(machine->collector, -a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_op_add_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_double(machine->collector, a + b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_sub_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_double(machine->collector, a - b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_mul_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_double(machine->collector, a * b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_div_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = 0;
+
+    if (b == 0)
+    {
+        print_error_msg(machine->line_no, "cannot divide by zero");
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_DIVISION;
+        return;
+    }
+
+    addr = gc_alloc_double(machine->collector, a / b);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;
@@ -877,6 +1135,96 @@ void vm_execute_op_neq_int(vm * machine, bytecode * code)
     machine->sp--;
 }
 
+void vm_execute_op_lt_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a < b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_gt_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a > b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_lte_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a <= b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_gte_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a >= b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_eq_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a == b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_neq_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    long long a =
+        gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a != b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
 void vm_execute_op_lt_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
@@ -964,6 +1312,103 @@ void vm_execute_op_neq_float(vm * machine, bytecode * code)
         gc_get_float(machine->collector, machine->stack[machine->sp - 1].addr);
     float b =
         gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a != b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+
+void vm_execute_op_lt_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a < b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_gt_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a > b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_lte_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a <= b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_gte_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a >= b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_eq_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, a == b);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_neq_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    double a =
+        gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    double b =
+        gc_get_double(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, a != b);
 
     entry.type = GC_MEM_ADDR;
@@ -1917,11 +2362,29 @@ void vm_execute_op_ass_int(vm * machine, bytecode * code)
     machine->sp--;
 }
 
+void vm_execute_op_ass_long(vm * machine, bytecode * code)
+{
+    long long a = gc_get_long(machine->collector,
+                              machine->stack[machine->sp].addr);
+    gc_set_long(machine->collector, machine->stack[machine->sp - 1].addr, a);
+
+    machine->sp--;
+}
+
 void vm_execute_op_ass_float(vm * machine, bytecode * code)
 {
     float a = gc_get_float(machine->collector,
                            machine->stack[machine->sp].addr);
     gc_set_float(machine->collector, machine->stack[machine->sp - 1].addr, a);
+
+    machine->sp--;
+}
+
+void vm_execute_op_ass_double(vm * machine, bytecode * code)
+{
+    double a = gc_get_double(machine->collector,
+                             machine->stack[machine->sp].addr);
+    gc_set_double(machine->collector, machine->stack[machine->sp - 1].addr, a);
 
     machine->sp--;
 }
@@ -2069,9 +2532,17 @@ void vm_execute_mk_array_num(vm * machine, bytecode * code, param_type value)
         {
             elem = gc_alloc_int(machine->collector, 0);
         }
+        else if (value == PARAM_LONG)
+        {
+            elem = gc_alloc_long(machine->collector, 0);
+        }
         else if (value == PARAM_FLOAT)
         {
             elem = gc_alloc_float(machine->collector, 0.0);
+        }
+        else if (value == PARAM_DOUBLE)
+        {
+            elem = gc_alloc_double(machine->collector, 0.0);
         }
         else if (value == PARAM_CHAR)
         {
@@ -2126,9 +2597,19 @@ void vm_execute_mk_array_int(vm * machine, bytecode * code)
     vm_execute_mk_array_num(machine, code, PARAM_INT);
 }
 
+void vm_execute_mk_array_long(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_LONG);
+}
+
 void vm_execute_mk_array_float(vm * machine, bytecode * code)
 {
     vm_execute_mk_array_num(machine, code, PARAM_FLOAT);
+}
+
+void vm_execute_mk_array_double(vm * machine, bytecode * code)
+{
+    vm_execute_mk_array_num(machine, code, PARAM_DOUBLE);
 }
 
 void vm_execute_mk_array_char(vm * machine, bytecode * code)

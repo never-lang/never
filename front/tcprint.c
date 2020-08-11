@@ -104,7 +104,9 @@ int print_func_expr(expr * value, int depth)
     {
     case EXPR_BOOL:
     case EXPR_INT:
+    case EXPR_LONG:
     case EXPR_FLOAT:
+    case EXPR_DOUBLE:
     case EXPR_CHAR:
     case EXPR_STRING:
     case EXPR_ENUMTYPE:

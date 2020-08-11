@@ -29,7 +29,9 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_UNKNOWN, bytecode_print_unknown },
 
     { BYTECODE_INT, bytecode_print_int },
+    { BYTECODE_LONG, bytecode_print_long },
     { BYTECODE_FLOAT, bytecode_print_float },
+    { BYTECODE_DOUBLE, bytecode_print_double },
     { BYTECODE_CHAR, bytecode_print_char },
     { BYTECODE_STRING, bytecode_print_string },
     { BYTECODE_C_NULL, bytecode_print_c_null },
@@ -50,11 +52,24 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_DIV_INT, bytecode_print_op_div_int },
     { BYTECODE_OP_MOD_INT, bytecode_print_op_mod_int },
 
+    { BYTECODE_OP_NEG_LONG, bytecode_print_op_neg_long },
+    { BYTECODE_OP_ADD_LONG, bytecode_print_op_add_long },
+    { BYTECODE_OP_SUB_LONG, bytecode_print_op_sub_long },
+    { BYTECODE_OP_MUL_LONG, bytecode_print_op_mul_long },
+    { BYTECODE_OP_DIV_LONG, bytecode_print_op_div_long },
+    { BYTECODE_OP_MOD_LONG, bytecode_print_op_mod_long },
+
     { BYTECODE_OP_NEG_FLOAT, bytecode_print_op_neg_float },
     { BYTECODE_OP_ADD_FLOAT, bytecode_print_op_add_float },
     { BYTECODE_OP_SUB_FLOAT, bytecode_print_op_sub_float },
     { BYTECODE_OP_MUL_FLOAT, bytecode_print_op_mul_float },
     { BYTECODE_OP_DIV_FLOAT, bytecode_print_op_div_float },
+
+    { BYTECODE_OP_NEG_DOUBLE, bytecode_print_op_neg_double },
+    { BYTECODE_OP_ADD_DOUBLE, bytecode_print_op_add_double },
+    { BYTECODE_OP_SUB_DOUBLE, bytecode_print_op_sub_double },
+    { BYTECODE_OP_MUL_DOUBLE, bytecode_print_op_mul_double },
+    { BYTECODE_OP_DIV_DOUBLE, bytecode_print_op_div_double },
 
     { BYTECODE_OP_ADD_STRING, bytecode_print_op_add_string },
     { BYTECODE_OP_ADD_INT_STRING, bytecode_print_op_add_int_string },
@@ -69,12 +84,26 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_EQ_INT, bytecode_print_op_eq_int },
     { BYTECODE_OP_NEQ_INT, bytecode_print_op_neq_int },
 
+    { BYTECODE_OP_LT_LONG, bytecode_print_op_lt_long },
+    { BYTECODE_OP_GT_LONG, bytecode_print_op_gt_long },
+    { BYTECODE_OP_LTE_LONG, bytecode_print_op_lte_long },
+    { BYTECODE_OP_GTE_LONG, bytecode_print_op_gte_long },
+    { BYTECODE_OP_EQ_LONG, bytecode_print_op_eq_long },
+    { BYTECODE_OP_NEQ_LONG, bytecode_print_op_neq_long },
+
     { BYTECODE_OP_LT_FLOAT, bytecode_print_op_lt_float },
     { BYTECODE_OP_GT_FLOAT, bytecode_print_op_gt_float },
     { BYTECODE_OP_LTE_FLOAT, bytecode_print_op_lte_float },
     { BYTECODE_OP_GTE_FLOAT, bytecode_print_op_gte_float },
     { BYTECODE_OP_EQ_FLOAT, bytecode_print_op_eq_float },
     { BYTECODE_OP_NEQ_FLOAT, bytecode_print_op_neq_float },
+
+    { BYTECODE_OP_LT_DOUBLE, bytecode_print_op_lt_double },
+    { BYTECODE_OP_GT_DOUBLE, bytecode_print_op_gt_double },
+    { BYTECODE_OP_LTE_DOUBLE, bytecode_print_op_lte_double },
+    { BYTECODE_OP_GTE_DOUBLE, bytecode_print_op_gte_double },
+    { BYTECODE_OP_EQ_DOUBLE, bytecode_print_op_eq_double },
+    { BYTECODE_OP_NEQ_DOUBLE, bytecode_print_op_neq_double },
 
     { BYTECODE_OP_LT_CHAR, bytecode_print_op_lt_char },
     { BYTECODE_OP_GT_CHAR, bytecode_print_op_gt_char },
@@ -134,7 +163,9 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_OP_MUL_ARR_ARR_FLOAT, bytecode_print_op_mul_arr_arr_float },
 
     { BYTECODE_OP_ASS_INT, bytecode_print_op_ass_int },
+    { BYTECODE_OP_ASS_LONG, bytecode_print_op_ass_long },
     { BYTECODE_OP_ASS_FLOAT, bytecode_print_op_ass_float },
+    { BYTECODE_OP_ASS_DOUBLE, bytecode_print_op_ass_double },
     { BYTECODE_OP_ASS_CHAR, bytecode_print_op_ass_char },
     { BYTECODE_OP_ASS_STRING, bytecode_print_op_ass_string },
     { BYTECODE_OP_ASS_C_PTR, bytecode_print_op_ass_c_ptr },
@@ -149,7 +180,9 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_LABEL, bytecode_print_label },
 
     { BYTECODE_MK_ARRAY_INT, bytecode_print_mk_array_int },
+    { BYTECODE_MK_ARRAY_LONG, bytecode_print_mk_array_long },
     { BYTECODE_MK_ARRAY_FLOAT, bytecode_print_mk_array_float },
+    { BYTECODE_MK_ARRAY_DOUBLE, bytecode_print_mk_array_double },
     { BYTECODE_MK_ARRAY_CHAR, bytecode_print_mk_array_char },
     { BYTECODE_MK_ARRAY_STRING, bytecode_print_mk_array_string },
     { BYTECODE_MK_ARRAY_ARRAY, bytecode_print_mk_array_array },
@@ -181,7 +214,9 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_FUNC_FFI, bytecode_print_func_ffi },
     { BYTECODE_FUNC_FFI_BOOL, bytecode_print_func_ffi_bool },
     { BYTECODE_FUNC_FFI_INT, bytecode_print_func_ffi_int },
+    { BYTECODE_FUNC_FFI_LONG, bytecode_print_func_ffi_long },
     { BYTECODE_FUNC_FFI_FLOAT, bytecode_print_func_ffi_float },
+    { BYTECODE_FUNC_FFI_DOUBLE, bytecode_print_func_ffi_double },
     { BYTECODE_FUNC_FFI_CHAR, bytecode_print_func_ffi_char },
     { BYTECODE_FUNC_FFI_STRING, bytecode_print_func_ffi_string },
     { BYTECODE_FUNC_FFI_VOID, bytecode_print_func_ffi_void },
@@ -228,9 +263,19 @@ void bytecode_print_int(bytecode * code)
     printf("%d: int %d\n", code->addr, code->integer.value);
 }
 
+void bytecode_print_long(bytecode * code)
+{
+    printf("%d: long %lld\n", code->addr, code->long_t.value);
+}
+
 void bytecode_print_float(bytecode * code)
 {
     printf("%d: float %f\n", code->addr, code->real.value);
+}
+
+void bytecode_print_double(bytecode * code)
+{
+    printf("%d: double %lf\n", code->addr, code->double_t.value);
 }
 
 void bytecode_print_char(bytecode * code)
@@ -323,6 +368,36 @@ void bytecode_print_op_mod_int(bytecode * code)
     printf("%d: op mod int\n", code->addr);
 }
 
+void bytecode_print_op_neg_long(bytecode * code)
+{
+    printf("%d: op neg long\n", code->addr);
+}
+
+void bytecode_print_op_add_long(bytecode * code)
+{
+    printf("%d: op add long\n", code->addr);
+}
+
+void bytecode_print_op_sub_long(bytecode * code)
+{
+    printf("%d: op sub long\n", code->addr);
+}
+
+void bytecode_print_op_mul_long(bytecode * code)
+{
+    printf("%d: op mul long\n", code->addr);
+}
+
+void bytecode_print_op_div_long(bytecode * code)
+{
+    printf("%d: op div long\n", code->addr);
+}
+
+void bytecode_print_op_mod_long(bytecode * code)
+{
+    printf("%d: op mod long\n", code->addr);
+}
+
 void bytecode_print_op_neg_float(bytecode * code)
 {
     printf("%d: op neg float\n", code->addr);
@@ -346,6 +421,31 @@ void bytecode_print_op_mul_float(bytecode * code)
 void bytecode_print_op_div_float(bytecode * code)
 {
     printf("%d: op div float\n", code->addr);
+}
+
+void bytecode_print_op_neg_double(bytecode * code)
+{
+    printf("%d: op neg double\n", code->addr);
+}
+
+void bytecode_print_op_add_double(bytecode * code)
+{
+    printf("%d: op add double\n", code->addr);
+}
+
+void bytecode_print_op_sub_double(bytecode * code)
+{
+    printf("%d: op sub double\n", code->addr);
+}
+
+void bytecode_print_op_mul_double(bytecode * code)
+{
+    printf("%d: op mul double\n", code->addr);
+}
+
+void bytecode_print_op_div_double(bytecode * code)
+{
+    printf("%d: op div double\n", code->addr);
 }
 
 void bytecode_print_op_add_string(bytecode * code)
@@ -403,6 +503,36 @@ void bytecode_print_op_neq_int(bytecode * code)
     printf("%d: op neq int\n", code->addr);
 }
 
+void bytecode_print_op_lt_long(bytecode * code)
+{
+    printf("%d: op lt long\n", code->addr);
+}
+
+void bytecode_print_op_gt_long(bytecode * code)
+{
+    printf("%d: op gt long\n", code->addr);
+}
+
+void bytecode_print_op_lte_long(bytecode * code)
+{
+    printf("%d: op lte long\n", code->addr);
+}
+
+void bytecode_print_op_gte_long(bytecode * code)
+{
+    printf("%d: op gte long\n", code->addr);
+}
+
+void bytecode_print_op_eq_long(bytecode * code)
+{
+    printf("%d: op eq long\n", code->addr);
+}
+
+void bytecode_print_op_neq_long(bytecode * code)
+{
+    printf("%d: op neq long\n", code->addr);
+}
+
 void bytecode_print_op_lt_float(bytecode * code)
 {
     printf("%d: op lt float\n", code->addr);
@@ -431,6 +561,36 @@ void bytecode_print_op_eq_float(bytecode * code)
 void bytecode_print_op_neq_float(bytecode * code)
 {
     printf("%d: op neq float\n", code->addr);
+}
+
+void bytecode_print_op_lt_double(bytecode * code)
+{
+    printf("%d: op lt double\n", code->addr);
+}
+
+void bytecode_print_op_gt_double(bytecode * code)
+{
+    printf("%d: op gt double\n", code->addr);
+}
+
+void bytecode_print_op_lte_double(bytecode * code)
+{
+    printf("%d: op lte double\n", code->addr);
+}
+
+void bytecode_print_op_gte_double(bytecode * code)
+{
+    printf("%d: op gte double\n", code->addr);
+}
+
+void bytecode_print_op_eq_double(bytecode * code)
+{
+    printf("%d: op eq double\n", code->addr);
+}
+
+void bytecode_print_op_neq_double(bytecode * code)
+{
+    printf("%d: op neq double\n", code->addr);
 }
 
 void bytecode_print_op_lt_char(bytecode * code)
@@ -664,9 +824,19 @@ void bytecode_print_op_ass_int(bytecode * code)
     printf("%d: op ass int\n", code->addr);
 }
 
+void bytecode_print_op_ass_long(bytecode * code)
+{
+    printf("%d: op ass long\n", code->addr);
+}
+
 void bytecode_print_op_ass_float(bytecode * code)
 {
     printf("%d: op ass float\n", code->addr);
+}
+
+void bytecode_print_op_ass_double(bytecode * code)
+{
+    printf("%d: op ass double\n", code->addr);
 }
 
 void bytecode_print_op_ass_char(bytecode * code)
@@ -726,14 +896,24 @@ void bytecode_print_mk_array_int(bytecode * code)
     printf("%d: mk array int %d\n", code->addr, code->mk_array.dims);
 }
 
+void bytecode_print_mk_array_long(bytecode * code)
+{
+    printf("%d: mk array long %d\n", code->addr, code->mk_array.dims);
+}
+
 void bytecode_print_mk_array_float(bytecode * code)
 {
     printf("%d: mk array float %d\n", code->addr, code->mk_array.dims);
 }
 
+void bytecode_print_mk_array_double(bytecode * code)
+{
+    printf("%d: mk array double %d\n", code->addr, code->mk_array.dims);
+}
+
 void bytecode_print_mk_array_char(bytecode * code)
 {
-    printf("%d: mk array float %d\n", code->addr, code->mk_array.dims);
+    printf("%d: mk array char %d\n", code->addr, code->mk_array.dims);
 }
 
 void bytecode_print_mk_array_string(bytecode * code)
@@ -869,9 +1049,19 @@ void bytecode_print_func_ffi_int(bytecode * code)
     printf("%d: ffi int\n", code->addr);
 }
 
+void bytecode_print_func_ffi_long(bytecode * code)
+{
+    printf("%d: ffi long\n", code->addr);
+}
+
 void bytecode_print_func_ffi_float(bytecode * code)
 {
     printf("%d: ffi float\n", code->addr);
+}
+
+void bytecode_print_func_ffi_double(bytecode * code)
+{
+    printf("%d: ffi double\n", code->addr);
 }
 
 void bytecode_print_func_ffi_char(bytecode * code)

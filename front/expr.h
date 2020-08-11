@@ -28,7 +28,9 @@ typedef enum expr_type
 {
     EXPR_BOOL = 1,
     EXPR_INT = 2,
+    EXPR_LONG = 48,
     EXPR_FLOAT = 3,
+    EXPR_DOUBLE = 49,
     EXPR_CHAR = 4,
     EXPR_STRING = 5,
     EXPR_ENUMTYPE = 6,
@@ -82,7 +84,9 @@ typedef enum comb_type
     COMB_TYPE_NIL = 2,
     COMB_TYPE_BOOL = 3,
     COMB_TYPE_INT = 4,
+    COMB_TYPE_LONG = 19,
     COMB_TYPE_FLOAT = 5,
+    COMB_TYPE_DOUBLE = 20,
     COMB_TYPE_CHAR = 6,
     COMB_TYPE_STRING = 7,
     COMB_TYPE_VOID = 8,
@@ -152,7 +156,9 @@ typedef struct expr
     unsigned int line_no;
     union {
         int int_value;       /* EXPR_INT */
+        long long long_value; /* EXPR_LONG */
         float float_value;   /* EXPR_FLOAT */
+        double double_value; /* EXPR_DOUBLE */
         char char_value;     /* EXPR_CHAR */
         char * string_value; /* EXPR_STRING */
         struct
@@ -271,7 +277,9 @@ typedef struct expr_list
 
 expr * expr_new_bool(int int_value);
 expr * expr_new_int(int int_value);
+expr * expr_new_long(long long long_value);
 expr * expr_new_float(float float_value);
+expr * expr_new_double(double double_value);
 expr * expr_new_char(char char_value);
 expr * expr_new_string(char * string_value);
 expr * expr_new_enumtype(expr * enum_id, char * item_id);

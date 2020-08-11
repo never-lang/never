@@ -55,11 +55,39 @@ param * param_new_int(char * id)
     return value;
 }
 
+param * param_new_long(char * id)
+{
+    param * value = (param *)malloc(sizeof(param));
+
+    value->type = PARAM_LONG;
+    value->index = -1;
+    value->id = id;
+    value->params = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
 param * param_new_float(char * id)
 {
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_FLOAT;
+    value->index = -1;
+    value->id = id;
+    value->params = NULL;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_double(char * id)
+{
+    param * value = (param *)malloc(sizeof(param));
+
+    value->type = PARAM_DOUBLE;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -267,7 +295,9 @@ void param_delete(param * value)
     {
         case PARAM_BOOL:
         case PARAM_INT:
+        case PARAM_LONG:
         case PARAM_FLOAT:
+        case PARAM_DOUBLE:
         case PARAM_CHAR:
         case PARAM_STRING:
         case PARAM_VOID:
@@ -627,8 +657,12 @@ char * param_type_str(param_type type)
         return "param bool";
     case PARAM_INT:
         return "param int";
+    case PARAM_LONG:
+        return "param long";
     case PARAM_FLOAT:
         return "param float";
+    case PARAM_DOUBLE:
+        return "param double";
     case PARAM_ENUMTYPE:
         return "param enumtype";
     case PARAM_CHAR:

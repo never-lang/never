@@ -606,7 +606,17 @@ void vm_execute_func_ffi_int(vm * machine, bytecode * code)
     /* func_ffi reads it */
 }
 
+void vm_execute_func_ffi_long(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
+
 void vm_execute_func_ffi_float(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
+
+void vm_execute_func_ffi_double(vm * machine, bytecode * code)
 {
     /* func_ffi reads it */
 }

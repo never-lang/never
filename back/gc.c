@@ -181,7 +181,13 @@ void gc_mark(gc * collector, mem_ptr addr)
         case OBJECT_INT:
             collector->mem[addr].mark = 1;
             break;
+        case OBJECT_LONG:
+            collector->mem[addr].mark = 1;
+            break;
         case OBJECT_FLOAT:
+            collector->mem[addr].mark = 1;
+            break;
+        case OBJECT_DOUBLE:
             collector->mem[addr].mark = 1;
             break;
         case OBJECT_CHAR:
@@ -283,9 +289,19 @@ mem_ptr gc_alloc_int(gc * collector, int value)
     return gc_alloc_any(collector, object_new_int(value));
 }
 
+mem_ptr gc_alloc_long(gc * collector, long long value)
+{
+    return gc_alloc_any(collector, object_new_long(value));
+}
+
 mem_ptr gc_alloc_float(gc * collector, float value)
 {
     return gc_alloc_any(collector, object_new_float(value));
+}
+
+mem_ptr gc_alloc_double(gc * collector, double value)
+{
+    return gc_alloc_any(collector, object_new_double(value));
 }
 
 mem_ptr gc_alloc_char(gc * collector, char value)
@@ -386,7 +402,29 @@ int * gc_get_int_ptr(gc * collector, mem_ptr addr)
     
     return &collector->mem[addr].object_value->int_value;
 }
+long long gc_get_long(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_LONG);
 
+    return collector->mem[addr].object_value->long_value;
+}
+
+void gc_set_long(gc * collector, mem_ptr addr, long long value)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_LONG);
+
+    collector->mem[addr].object_value->long_value = value;
+}
+
+long long * gc_get_long_ptr(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_LONG);
+    
+    return &collector->mem[addr].object_value->long_value;
+}
 
 float gc_get_float(gc * collector, mem_ptr addr)
 {
@@ -410,6 +448,30 @@ float * gc_get_float_ptr(gc * collector, mem_ptr addr)
     assert(collector->mem[addr].object_value->type == OBJECT_FLOAT);
     
     return &collector->mem[addr].object_value->float_value;
+}
+
+double gc_get_double(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_DOUBLE);
+
+    return collector->mem[addr].object_value->double_value;
+}
+
+void gc_set_double(gc * collector, mem_ptr addr, double value)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_DOUBLE);
+
+    collector->mem[addr].object_value->double_value = value;
+}
+
+double * gc_get_double_ptr(gc * collector, mem_ptr addr)
+{
+    assert(collector->mem_size >= addr);
+    assert(collector->mem[addr].object_value->type == OBJECT_DOUBLE);
+    
+    return &collector->mem[addr].object_value->double_value;
 }
 
 char gc_get_char(gc * collector, mem_ptr addr)

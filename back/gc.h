@@ -74,7 +74,9 @@ void gc_run(gc * collector, gc_stack * omfalos, int stack_size,
 
 mem_ptr gc_alloc_any(gc * collector, object * value);
 mem_ptr gc_alloc_int(gc * collector, int value);
+mem_ptr gc_alloc_long(gc * collector, long long value);
 mem_ptr gc_alloc_float(gc * collector, float value);
+mem_ptr gc_alloc_double(gc * collector, double value);
 mem_ptr gc_alloc_char(gc * collector, char value);
 mem_ptr gc_alloc_string(gc * collector, char * value);
 mem_ptr gc_alloc_string_take(gc * collector, char * value);
@@ -94,9 +96,17 @@ void gc_inc_int(gc * collector, mem_ptr addr);
 void gc_dec_int(gc * collector, mem_ptr addr);
 int * gc_get_int_ptr(gc * collector, mem_ptr addr);
 
+long long gc_get_long(gc * collector, mem_ptr addr);
+void gc_set_long(gc * collector, mem_ptr addr, long long value);
+long long * gc_get_long_ptr(gc * collector, mem_ptr addr);
+
 float gc_get_float(gc * collector, mem_ptr addr);
 void gc_set_float(gc * collector, mem_ptr addr, float value);
 float * gc_get_float_ptr(gc * collector, mem_ptr addr);
+
+double gc_get_double(gc * collector, mem_ptr addr);
+void gc_set_double(gc * collector, mem_ptr addr, double value);
+double * gc_get_double_ptr(gc * collector, mem_ptr addr);
 
 char gc_get_char(gc * collector, mem_ptr addr);
 void gc_set_char(gc * collector, mem_ptr addr, char value);

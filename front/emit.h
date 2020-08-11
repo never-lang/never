@@ -42,8 +42,12 @@ typedef struct match_guard_list match_guard_list;
 
 int expr_int_emit(expr * value, int stack_level, module * module_value,
                   int * result);
+int expr_long_emit(expr * value, int stack_level, module * module_value,
+                   int * result);
 int expr_float_emit(expr * value, int stack_level, module * module_value,
                     int * result);
+int expr_double_emit(expr * value, int stack_level, module * module_value,
+                     int * result);
 int expr_char_emit(expr * value, int stack_level, module * module_value,
                    int * result);
 int expr_string_emit(expr * value, int stack_level, module * module_value,
@@ -97,9 +101,21 @@ int expr_sub_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int expr_mul_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
+int expr_div_emit(expr * value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result);
+int expr_mod_emit(expr * value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result);
 int expr_eq_emit(expr * value, int stack_level, module * module_value,
                  func_list_weak * list_weak, int * result);
 int expr_neq_emit(expr * value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result);
+int expr_lt_emit(expr * value, int stack_level, module * module_value,
+                 func_list_weak * list_weak, int * result);
+int expr_gt_emit(expr * value, int stack_level, module * module_value,
+                 func_list_weak * list_weak, int * result);
+int expr_lte_emit(expr * value, int stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result);
+int expr_gte_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int expr_and_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
