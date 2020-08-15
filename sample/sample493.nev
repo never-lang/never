@@ -1,0 +1,21 @@
+
+func check_char() -> int
+{
+    assert('A' == 'A');
+    assert('A' != 'B');
+    assert('A' < 'B');
+    assert('A' <= 'A');
+    assert('A' <= 'B');
+    assert('B' > 'A');
+    assert('A' >= 'A');
+    assert('B' >= 'A');
+
+    0
+}
+
+func main() -> int
+{
+    check_char();
+
+    0
+}

@@ -1,0 +1,28 @@
+
+
+func check_ass() -> int
+{
+    let i = 10;
+    let l = 10L;
+    let f = 10.0;
+    let d = 10.0d;
+
+    i = 20;
+    l = 20L;
+    f = 20.0;
+    d = 20.0d;
+
+    assert(i == 20);
+    assert(l == 20L);
+    assert(f == 20.0);
+    assert(d == 20.0d);
+
+    0
+}
+
+func main() -> int
+{
+    check_ass();
+    0
+}
+
