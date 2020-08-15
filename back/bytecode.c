@@ -168,15 +168,25 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_DOUBLE_TO_FLOAT, bytecode_print_double_to_float },
 
     { BYTECODE_OP_NEG_ARR_INT, bytecode_print_op_neg_arr_int },
+    { BYTECODE_OP_NEG_ARR_LONG, bytecode_print_op_neg_arr_long },
     { BYTECODE_OP_NEG_ARR_FLOAT, bytecode_print_op_neg_arr_float },
+    { BYTECODE_OP_NEG_ARR_DOUBLE, bytecode_print_op_neg_arr_double },
     { BYTECODE_OP_ADD_ARR_INT, bytecode_print_op_add_arr_int },
+    { BYTECODE_OP_ADD_ARR_LONG, bytecode_print_op_add_arr_long },
     { BYTECODE_OP_ADD_ARR_FLOAT, bytecode_print_op_add_arr_float },
+    { BYTECODE_OP_ADD_ARR_DOUBLE, bytecode_print_op_add_arr_double },
     { BYTECODE_OP_SUB_ARR_INT, bytecode_print_op_sub_arr_int },
+    { BYTECODE_OP_SUB_ARR_LONG, bytecode_print_op_sub_arr_long },
     { BYTECODE_OP_SUB_ARR_FLOAT, bytecode_print_op_sub_arr_float },
+    { BYTECODE_OP_SUB_ARR_DOUBLE, bytecode_print_op_sub_arr_double },
     { BYTECODE_OP_MUL_ARR_INT, bytecode_print_op_mul_arr_int },
+    { BYTECODE_OP_MUL_ARR_LONG, bytecode_print_op_mul_arr_long },
     { BYTECODE_OP_MUL_ARR_FLOAT, bytecode_print_op_mul_arr_float },
+    { BYTECODE_OP_MUL_ARR_DOUBLE, bytecode_print_op_mul_arr_double },
     { BYTECODE_OP_MUL_ARR_ARR_INT, bytecode_print_op_mul_arr_arr_int },
+    { BYTECODE_OP_MUL_ARR_ARR_LONG, bytecode_print_op_mul_arr_arr_long },
     { BYTECODE_OP_MUL_ARR_ARR_FLOAT, bytecode_print_op_mul_arr_arr_float },
+    { BYTECODE_OP_MUL_ARR_ARR_DOUBLE, bytecode_print_op_mul_arr_arr_double },
 
     { BYTECODE_OP_ASS_INT, bytecode_print_op_ass_int },
     { BYTECODE_OP_ASS_LONG, bytecode_print_op_ass_long },
@@ -870,9 +880,19 @@ void bytecode_print_op_neg_arr_int(bytecode * code)
     printf("%d: op neg arr int\n", code->addr);
 }
 
+void bytecode_print_op_neg_arr_long(bytecode * code)
+{
+    printf("%d: op neg arr long\n", code->addr);
+}
+
 void bytecode_print_op_neg_arr_float(bytecode * code)
 {
     printf("%d: op neg arr float\n", code->addr);
+}
+
+void bytecode_print_op_neg_arr_double(bytecode * code)
+{
+    printf("%d: op neg arr double\n", code->addr);
 }
 
 void bytecode_print_op_add_arr_int(bytecode * code)
@@ -880,9 +900,19 @@ void bytecode_print_op_add_arr_int(bytecode * code)
     printf("%d: op add arr int\n", code->addr);
 }
 
+void bytecode_print_op_add_arr_long(bytecode * code)
+{
+    printf("%d: op add arr long\n", code->addr);
+}
+
 void bytecode_print_op_add_arr_float(bytecode * code)
 {
     printf("%d: op add arr float\n", code->addr);
+}
+
+void bytecode_print_op_add_arr_double(bytecode * code)
+{
+    printf("%d: op add arr double\n", code->addr);
 }
 
 void bytecode_print_op_sub_arr_int(bytecode * code)
@@ -890,9 +920,19 @@ void bytecode_print_op_sub_arr_int(bytecode * code)
     printf("%d: op sub arr int\n", code->addr);
 }
 
+void bytecode_print_op_sub_arr_long(bytecode * code)
+{
+    printf("%d: op sub arr long\n", code->addr);
+}
+
 void bytecode_print_op_sub_arr_float(bytecode * code)
 {
     printf("%d: op sub arr float\n", code->addr);
+}
+
+void bytecode_print_op_sub_arr_double(bytecode * code)
+{
+    printf("%d: op sub arr double\n", code->addr);
 }
 
 void bytecode_print_op_mul_arr_int(bytecode * code)
@@ -900,9 +940,19 @@ void bytecode_print_op_mul_arr_int(bytecode * code)
     printf("%d: op mul arr int\n", code->addr);
 }
 
+void bytecode_print_op_mul_arr_long(bytecode * code)
+{
+    printf("%d: op mul arr long\n", code->addr);
+}
+
 void bytecode_print_op_mul_arr_float(bytecode * code)
 {
     printf("%d: op mul arr float\n", code->addr);
+}
+
+void bytecode_print_op_mul_arr_double(bytecode * code)
+{
+    printf("%d: op mul arr double\n", code->addr);
 }
 
 void bytecode_print_op_mul_arr_arr_int(bytecode * code)
@@ -910,9 +960,19 @@ void bytecode_print_op_mul_arr_arr_int(bytecode * code)
     printf("%d: op mul arr arr int\n", code->addr);
 }
 
+void bytecode_print_op_mul_arr_arr_long(bytecode * code)
+{
+    printf("%d: op mul arr arr long\n", code->addr);
+}
+
 void bytecode_print_op_mul_arr_arr_float(bytecode * code)
 {
     printf("%d: op mul arr arr float\n", code->addr);
+}
+
+void bytecode_print_op_mul_arr_arr_double(bytecode * code)
+{
+    printf("%d: op mul arr arr double\n", code->addr);
 }
 
 void bytecode_print_op_ass_int(bytecode * code)

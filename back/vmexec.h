@@ -174,15 +174,25 @@ void vm_execute_double_to_long(vm * machine, bytecode * code);
 void vm_execute_double_to_float(vm * machine, bytecode * code);
 
 void vm_execute_op_neg_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_neg_arr_long(vm * machine, bytecode * code);
 void vm_execute_op_neg_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_neg_arr_double(vm * machine, bytecode * code);
 void vm_execute_op_add_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_add_arr_long(vm * machine, bytecode * code);
 void vm_execute_op_add_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_add_arr_double(vm * machine, bytecode * code);
 void vm_execute_op_sub_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_sub_arr_long(vm * machine, bytecode * code);
 void vm_execute_op_sub_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_sub_arr_double(vm * machine, bytecode * code);
 void vm_execute_op_mul_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_mul_arr_long(vm * machine, bytecode * code);
 void vm_execute_op_mul_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_mul_arr_double(vm * machine, bytecode * code);
 void vm_execute_op_mul_arr_arr_int(vm * machine, bytecode * code);
+void vm_execute_op_mul_arr_arr_long(vm * machine, bytecode * code);
 void vm_execute_op_mul_arr_arr_float(vm * machine, bytecode * code);
+void vm_execute_op_mul_arr_arr_double(vm * machine, bytecode * code);
 
 void vm_execute_op_ass_int(vm * machine, bytecode * code);
 void vm_execute_op_ass_long(vm * machine, bytecode * code);
