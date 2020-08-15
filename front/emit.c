@@ -43,7 +43,7 @@ int expr_int_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = value->int_value;
+    bc.int_t.value = value->int_value;
 
     bytecode_add(module_value->code, &bc);
 
@@ -69,7 +69,7 @@ int expr_float_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
 
     bc.type = BYTECODE_FLOAT;
-    bc.real.value = value->float_value;
+    bc.float_t.value = value->float_value;
 
     bytecode_add(module_value->code, &bc);
 
@@ -117,7 +117,7 @@ int expr_char_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
     
     bc.type = BYTECODE_CHAR;
-    bc.chr.value = value->char_value;
+    bc.char_t.value = value->char_value;
     
     bytecode_add(module_value->code, &bc);
 
@@ -1417,7 +1417,7 @@ int expr_and_emit(expr * value, int stack_level, module * module_value,
     condzB = bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = 1;
+    bc.int_t.value = 1;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_JUMP;
@@ -1429,7 +1429,7 @@ int expr_and_emit(expr * value, int stack_level, module * module_value,
     condzB->jump.offset = labelEF->addr - condzB->addr;
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_LABEL;
@@ -1468,7 +1468,7 @@ int expr_or_emit(expr * value, int stack_level, module * module_value,
     jumpET->jump.offset = labelET->addr - jumpET->addr;
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = 1;
+    bc.int_t.value = 1;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_JUMP;
@@ -1479,7 +1479,7 @@ int expr_or_emit(expr * value, int stack_level, module * module_value,
     condzB->jump.offset = labelEF->addr - condzB->addr;
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_LABEL;
@@ -1670,7 +1670,7 @@ int expr_while_emit(expr * value, int stack_level, module * module_value,
 
     /* while loop returns int 0 */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -1709,7 +1709,7 @@ int expr_do_while_emit(expr * value, int stack_level, module * module_value,
 
     /* do while loop returns int 0 */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -1764,7 +1764,7 @@ int expr_for_emit(expr * value, int stack_level, module * module_value,
 
     /* for loop returns int 0 */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -1781,7 +1781,7 @@ int expr_forin_array_emit(expr * value, int stack_level, module * module_value,
 
     /* loop counter */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_LABEL;
@@ -1855,7 +1855,7 @@ int expr_forin_array_emit(expr * value, int stack_level, module * module_value,
 
     /* for loop returns int 0 */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -1880,7 +1880,7 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
 
     /* loop counter set to from value */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_VEC_DEREF;
@@ -2026,7 +2026,7 @@ int expr_forin_range_emit(expr * value, int stack_level, module * module_value,
 
     /* for loop returns int 0 */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -2059,7 +2059,7 @@ int expr_forin_slice_emit(expr * value, int stack_level, module * module_value,
 
     /* loop counter set to from value */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_VEC_DEREF;
@@ -2223,7 +2223,7 @@ int expr_forin_slice_emit(expr * value, int stack_level, module * module_value,
 
     /* for loop returns int 0 */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -2276,7 +2276,7 @@ int expr_iflet_guard_item_emit(match_guard_item * guard_item,
     }
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = guard_item->enumerator_value->index;
+    bc.int_t.value = guard_item->enumerator_value->index;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -2308,7 +2308,7 @@ int expr_iflet_guard_record_emit(match_guard_record * guard_record,
     }
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = guard_record->enumerator_value->index;
+    bc.int_t.value = guard_record->enumerator_value->index;
     bytecode_add(module_value->code, &bc);
 
     return 0;
@@ -2392,7 +2392,7 @@ int expr_match_guard_item_emit(match_guard_item_expr * item_value, bytecode *lab
     }
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = item_value->guard->enumerator_value->index;
+    bc.int_t.value = item_value->guard->enumerator_value->index;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_OP_EQ_INT;
@@ -2442,7 +2442,7 @@ int expr_match_guard_record_emit(match_guard_record_expr * record_value, bytecod
     }
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = record_value->guard->enumerator_value->index;
+    bc.int_t.value = record_value->guard->enumerator_value->index;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_OP_EQ_INT;
@@ -2790,7 +2790,7 @@ int expr_enumtype_record_emit(expr * value, int stack_level, module * module_val
 
     index = value->call.func_expr->enumtype.id_enumerator_value->index;
     bc.type = BYTECODE_INT;
-    bc.integer.value = index;
+    bc.int_t.value = index;
     bytecode_add(module_value->code, &bc);
         
     bc.type = BYTECODE_RECORD;
@@ -3107,7 +3107,7 @@ int generator_array_emit(listcomp * listcomp_value, qualifier_list_node * node,
 
     /* loop counter */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_LABEL;
@@ -3204,7 +3204,7 @@ int generator_range_emit(listcomp * listcomp_value, qualifier_list_node * node,
 
     /* loop counter set to from value */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_VEC_DEREF;
@@ -3380,7 +3380,7 @@ int generator_slice_emit(listcomp * listcomp_value, qualifier_list_node * node,
 
     /* loop counter set to from value */
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_VEC_DEREF;
@@ -3765,7 +3765,7 @@ int listcomp_emit(listcomp * listcomp_value, int stack_level, module * module_va
     listcomp_value->stack_level = stack_level;
 
     bc.type = BYTECODE_INT;
-    bc.integer.value = 0;
+    bc.int_t.value = 0;
     bytecode_add(module_value->code, &bc);    
 
     bc.type = BYTECODE_MK_INIT_ARRAY;
@@ -4000,7 +4000,7 @@ int expr_enumtype_emit(expr * value, int stack_level, module * module_value, int
     assert(index != -1);
     
     bc.type = BYTECODE_INT;
-    bc.integer.value = index;
+    bc.int_t.value = index;
     bytecode_add(module_value->code, &bc);
 
     if (value->enumtype.id_enumtype_value->type == ENUMTYPE_TYPE_RECORD)
@@ -4216,7 +4216,7 @@ int except_emit(except * value, func * func_value, int stack_level,
     labelA = bytecode_add(module_value->code, &bc);
     
     bc.type = BYTECODE_INT;
-    bc.integer.value = value->no;
+    bc.int_t.value = value->no;
     bytecode_add(module_value->code, &bc);
 
     bc.type = BYTECODE_PUSH_EXCEPT;

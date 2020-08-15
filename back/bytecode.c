@@ -286,7 +286,7 @@ void bytecode_print_unknown(bytecode * code)
 
 void bytecode_print_int(bytecode * code)
 {
-    printf("%d: int %d\n", code->addr, code->integer.value);
+    printf("%d: int %d\n", code->addr, code->int_t.value);
 }
 
 void bytecode_print_long(bytecode * code)
@@ -296,7 +296,7 @@ void bytecode_print_long(bytecode * code)
 
 void bytecode_print_float(bytecode * code)
 {
-    printf("%d: float %f\n", code->addr, code->real.value);
+    printf("%d: float %f\n", code->addr, code->float_t.value);
 }
 
 void bytecode_print_double(bytecode * code)
@@ -306,7 +306,7 @@ void bytecode_print_double(bytecode * code)
 
 void bytecode_print_char(bytecode * code)
 {
-    printf("%d: char %c\n", code->addr, code->chr.value);
+    printf("%d: char %c\n", code->addr, code->char_t.value);
 }
 
 void bytecode_print_string(bytecode * code)

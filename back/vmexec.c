@@ -306,7 +306,7 @@ void vm_execute_unknown(vm * machine, bytecode * code)
 void vm_execute_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_int(machine->collector, code->integer.value);
+    mem_ptr addr = gc_alloc_int(machine->collector, code->int_t.value);
 
     machine->sp++;
     vm_check_stack(machine);
@@ -334,7 +334,7 @@ void vm_execute_long(vm * machine, bytecode * code)
 void vm_execute_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_float(machine->collector, code->real.value);
+    mem_ptr addr = gc_alloc_float(machine->collector, code->float_t.value);
 
     machine->sp++;
     vm_check_stack(machine);
@@ -362,7 +362,7 @@ void vm_execute_double(vm * machine, bytecode * code)
 void vm_execute_char(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    mem_ptr addr = gc_alloc_char(machine->collector, code->chr.value);
+    mem_ptr addr = gc_alloc_char(machine->collector, code->char_t.value);
 
     machine->sp++;
     vm_check_stack(machine);

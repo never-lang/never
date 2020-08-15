@@ -279,7 +279,7 @@ typedef struct bytecode
         struct
         {
             int value; /* BYTECODE_INT */
-        } integer;
+        } int_t;
         struct
         {
             long long value; /* BYTECODE_LONG */
@@ -287,7 +287,7 @@ typedef struct bytecode
         struct
         {
             float value; /* BYTECODE_FLOAT */
-        } real;
+        } float_t;
         struct
         {
             double value; /* BYTECODE_DOUBLE */
@@ -295,7 +295,7 @@ typedef struct bytecode
         struct
         {
             char value; /* BYTECODE_CHAR */
-        } chr;
+        } char_t;
         struct
         {
             unsigned int index; /* BYTECODE_STRING */
