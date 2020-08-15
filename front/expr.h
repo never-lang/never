@@ -69,13 +69,32 @@ typedef enum expr_type
     EXPR_IFLET = 39,
     EXPR_MATCH = 40,
     EXPR_BUILD_IN = 41,
-    EXPR_INT_TO_FLOAT = 42,
-    EXPR_FLOAT_TO_INT = 43,
+    EXPR_CONV = 42,
     EXPR_LISTCOMP = 44,
     EXPR_ATTR = 45,
     EXPR_NIL = 46,
     EXPR_C_NULL = 47
 } expr_type;
+
+typedef enum conv_type
+{
+    CONV_UNKNOWN,
+    CONV_INT_TO_LONG,
+    CONV_INT_TO_FLOAT,
+    CONV_INT_TO_DOUBLE,
+
+    CONV_LONG_TO_INT,
+    CONV_LONG_TO_FLOAT,
+    CONV_LONG_TO_DOUBLE,
+
+    CONV_FLOAT_TO_INT,
+    CONV_FLOAT_TO_LONG,
+    CONV_FLOAT_TO_DOUBLE,
+    
+    CONV_DOUBLE_TO_INT,
+    CONV_DOUBLE_TO_LONG,
+    CONV_DOUBLE_TO_FLOAT
+} conv_type;
 
 typedef enum comb_type
 {
@@ -161,6 +180,11 @@ typedef struct expr
         double double_value; /* EXPR_DOUBLE */
         char char_value;     /* EXPR_CHAR */
         char * string_value; /* EXPR_STRING */
+        struct
+        {
+            conv_type type; /* EXPR_CONV */
+            struct expr * expr_value;
+        } conv;
         struct
         {
             char called;
@@ -309,7 +333,8 @@ expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret)
 expr * expr_new_listcomp(listcomp * listcomp_value);
 expr * expr_new_attr(expr * record_value, expr * id);
 
-expr * expr_conv(expr * expr_value, expr_type conv);
+comb_type conv_to_comb_type(conv_type conv);
+expr * expr_conv(expr * expr_value, conv_type conv);
 
 void expr_delete(expr * value);
 
@@ -324,5 +349,6 @@ void expr_list_add_end(expr_list * list, expr * value);
 
 const char * expr_type_str(expr_type type);
 const char * comb_type_str(comb_type type);
+const char * conv_type_str(conv_type conv);
 
 #endif /* __EXPR_H__ */

@@ -1,0 +1,137 @@
+
+func check_neg() -> int
+{
+    assert(--10 == 10);
+    assert(--10L == 10L);
+    assert(--10.0 == 10.0);
+    assert(--10.0d == 10.0d);
+
+    0
+}
+
+func check_add() -> int
+{
+    assert(10 + 10 == 20);
+    assert(10 + 10L == 20L);
+    assert(10 + 10.0 == 20.0);
+    assert(10 + 10.0d == 20.0d);
+
+    assert(10L + 10 == 20L);
+    assert(10L + 10L == 20L);
+    assert(10L + 10.0 == 20.0);
+    assert(10L + 10.0d == 20.0d);
+
+    assert(10.0 + 10 == 20.0);
+    assert(10.0 + 10L == 20.0);
+    assert(10.0 + 10.0 == 20.0);
+    assert(10.0 + 10.0d == 20.0d);
+
+    assert(10.0d + 10 == 20.0d);
+    assert(10.0d + 10L == 20.0d);
+    assert(10.0d + 10.0 == 20.0d);
+    assert(10.0d + 10.0d == 20.0d);
+
+    0
+}
+
+func check_sub() -> int
+{
+    assert(30 - 10 == 20);
+    assert(30 - 10L == 20L);
+    assert(30 - 10.0 == 20.0);
+    assert(30 - 10.0d == 20.0d);
+
+    assert(30L - 10 == 20L);
+    assert(30L - 10L == 20L);
+    assert(30L - 10.0 == 20.0);
+    assert(30L - 10.0d == 20.0d);
+
+    assert(30.0 - 10 == 20.0);
+    assert(30.0 - 10L == 20.0);
+    assert(30.0 - 10.0 == 20.0);
+    assert(30.0 - 10.0d == 20.0d);
+
+    assert(30.0d - 10 == 20.0d);
+    assert(30.0d - 10L == 20.0d);
+    assert(30.0d - 10.0 == 20.0d);
+    assert(30.0d - 10.0d == 20.0d);
+
+    0
+}
+
+func check_mul() -> int
+{
+    assert(2 * 10 == 20);
+    assert(2 * 10L == 20L);
+    assert(2 * 10.0 == 20.0);
+    assert(2 * 10.0d == 20.0d);
+
+    assert(2L * 10 == 20L);
+    assert(2L * 10L == 20L);
+    assert(2L * 10.0 == 20.0);
+    assert(2L * 10.0d == 20.0d);
+
+    assert(2.0 * 10 == 20.0);
+    assert(2.0 * 10L == 20.0);
+    assert(2.0 * 10.0 == 20.0);
+    assert(2.0 * 10.0d == 20.0d);
+
+    assert(2.0d * 10 == 20.0d);
+    assert(2.0d * 10L == 20.0d);
+    assert(2.0d * 10.0 == 20.0d);
+    assert(2.0d * 10.0d == 20.0d);
+
+    0
+}
+
+func check_div() -> int
+{
+    assert(40 / 2 == 20);
+    assert(40 / 2L == 20L);
+    assert(40 / 2.0 == 20.0);
+    assert(40 / 2.0d == 20.0d);
+
+    assert(40L / 2 == 20L);
+    assert(40L / 2L == 20L);
+    assert(40L / 2.0 == 20.0);
+    assert(40L / 2.0d == 20.0d);
+
+    assert(40.0 / 2 == 20.0);
+    assert(40.0 / 2L == 20.0);
+    assert(40.0 / 2.0 == 20.0);
+    assert(40.0 / 2.0d == 20.0d);
+
+    assert(40.0d / 2 == 20.0d);
+    assert(40.0d / 2L == 20.0d);
+    assert(40.0d / 2.0 == 20.0d);
+    assert(40.0d / 2.0d == 20.0d);
+
+    0
+}
+
+func check_mod() -> int
+{
+    assert(6 % 2 == 0);
+    assert(6 % 2L == 0);
+    assert(6L % 2 == 0);
+    assert(6L % 2L == 0);
+
+    assert(7 % 2 == 1);
+    assert(7 % 2L == 1);
+    assert(7L % 2 == 1);
+    assert(7L % 2L == 1);
+
+    0
+}
+
+func main() -> int
+{
+    check_neg();
+    check_add();
+    check_sub();
+    check_mul();
+    check_div();
+    check_mod();
+
+    0
+}

@@ -542,7 +542,7 @@ double {
 }
 
 <C_STRING>\" {
-    string_add_char(string_value, '\0');
+    string_add_char_end(string_value, '\0');
 
     tokp->line_no = line_no;
     tokp->val.str_value = string_take(string_value);
@@ -581,7 +581,7 @@ double {
         yyterminate();
         return yytext[0];
     }
-    string_add_char(string_value, result);
+    string_add_char_end(string_value, result);
 }
 
 <C_STRING>\\[0-9]+ {
@@ -594,31 +594,31 @@ double {
 }
 
 <C_STRING>\\n {
-    string_add_char(string_value, '\n');
+    string_add_char_end(string_value, '\n');
 }
 <C_STRING>\\t {
-    string_add_char(string_value, '\t');
+    string_add_char_end(string_value, '\t');
 }
 <C_STRING>\\r {
-    string_add_char(string_value, '\r');
+    string_add_char_end(string_value, '\r');
 }
 <C_STRING>\\b {
-    string_add_char(string_value, '\b');
+    string_add_char_end(string_value, '\b');
 }
 <C_STRING>\\f {
-    string_add_char(string_value, '\f');
+    string_add_char_end(string_value, '\f');
 }
 
 <C_STRING>\\(.|\n) {
     line_no++;
-    string_add_char(string_value, yytext[1]);
+    string_add_char_end(string_value, yytext[1]);
 }
 
 <C_STRING>[^\\\n\"]+ {
     char *yptr = yytext;
     while (*yptr)
     {
-        string_add_char(string_value, *yptr++);
+        string_add_char_end(string_value, *yptr++);
     }
 }
 

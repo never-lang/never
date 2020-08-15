@@ -234,8 +234,7 @@ int print_func_expr(expr * value, int depth)
             print_func_expr_list(value->func_build_in.param, depth + 1);
         }
         break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
+    case EXPR_CONV:
         if (value->left != NULL)
         {
             print_func_expr(value->left, depth);

@@ -76,8 +76,14 @@ typedef enum bytecode_type
     BYTECODE_OP_ADD_STRING,
     BYTECODE_OP_ADD_INT_STRING,
     BYTECODE_OP_ADD_STRING_INT,
+    BYTECODE_OP_ADD_LONG_STRING,
+    BYTECODE_OP_ADD_STRING_LONG,
     BYTECODE_OP_ADD_FLOAT_STRING,
     BYTECODE_OP_ADD_STRING_FLOAT,
+    BYTECODE_OP_ADD_DOUBLE_STRING,
+    BYTECODE_OP_ADD_STRING_DOUBLE,
+    BYTECODE_OP_ADD_CHAR_STRING,
+    BYTECODE_OP_ADD_STRING_CHAR,
 
     BYTECODE_OP_LT_INT,
     BYTECODE_OP_GT_INT,
@@ -148,9 +154,19 @@ typedef enum bytecode_type
     BYTECODE_OP_DEC_INT,
     BYTECODE_OP_DUP_INT,
 
+    BYTECODE_INT_TO_LONG,
     BYTECODE_INT_TO_FLOAT,
+    BYTECODE_INT_TO_DOUBLE,
+    BYTECODE_LONG_TO_INT,
+    BYTECODE_LONG_TO_FLOAT,
+    BYTECODE_LONG_TO_DOUBLE,
     BYTECODE_FLOAT_TO_INT,
-    
+    BYTECODE_FLOAT_TO_LONG,
+    BYTECODE_FLOAT_TO_DOUBLE,
+    BYTECODE_DOUBLE_TO_INT,
+    BYTECODE_DOUBLE_TO_LONG,
+    BYTECODE_DOUBLE_TO_FLOAT,    
+
     BYTECODE_OP_NEG_ARR_INT,
     BYTECODE_OP_NEG_ARR_FLOAT,
     BYTECODE_OP_ADD_ARR_INT,
@@ -455,6 +471,12 @@ void bytecode_print_op_add_int_string(bytecode * code);
 void bytecode_print_op_add_string_int(bytecode * code);
 void bytecode_print_op_add_float_string(bytecode * code);
 void bytecode_print_op_add_string_float(bytecode * code);
+void bytecode_print_op_add_long_string(bytecode * code);
+void bytecode_print_op_add_string_long(bytecode * code);
+void bytecode_print_op_add_double_string(bytecode * code);
+void bytecode_print_op_add_string_double(bytecode * code);
+void bytecode_print_op_add_char_string(bytecode * code);
+void bytecode_print_op_add_string_char(bytecode * code);
 
 void bytecode_print_op_lt_int(bytecode * code);
 void bytecode_print_op_gt_int(bytecode * code);
@@ -527,8 +549,18 @@ void bytecode_print_op_inc_int(bytecode * code);
 void bytecode_print_op_dec_int(bytecode * code);
 void bytecode_print_op_dup_int(bytecode * code);
 
+void bytecode_print_int_to_long(bytecode * code);
 void bytecode_print_int_to_float(bytecode * code);
+void bytecode_print_int_to_double(bytecode * code);
+void bytecode_print_long_to_int(bytecode * code);
+void bytecode_print_long_to_float(bytecode * code);
+void bytecode_print_long_to_double(bytecode * code);
 void bytecode_print_float_to_int(bytecode * code);
+void bytecode_print_float_to_long(bytecode * code);
+void bytecode_print_float_to_double(bytecode * code);
+void bytecode_print_double_to_int(bytecode * code);
+void bytecode_print_double_to_long(bytecode * code);
+void bytecode_print_double_to_float(bytecode * code);
 
 void bytecode_print_op_neg_arr_int(bytecode * code);
 void bytecode_print_op_neg_arr_float(bytecode * code);

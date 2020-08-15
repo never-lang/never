@@ -75,6 +75,132 @@ int expr_match_constred(expr * value, int * result)
     return 0;
 }
 
+int expr_conv_constred(expr * value, int * result)
+{
+    if (value->conv.expr_value->type == EXPR_INT)
+    {
+        if (value->conv.type == CONV_INT_TO_LONG)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_LONG;
+            value->long_value = (long long)left_value->int_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->conv.type == CONV_INT_TO_FLOAT)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_FLOAT;
+            value->float_value = (float)left_value->int_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->conv.type == CONV_INT_TO_DOUBLE)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_DOUBLE;
+            value->double_value = (double)left_value->int_value;
+
+            expr_delete(left_value);
+        }
+    }
+    else if (value->conv.expr_value->type == EXPR_LONG)
+    {
+        if (value->conv.type == CONV_LONG_TO_INT)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_INT;
+            value->int_value = (int)left_value->long_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->conv.type == CONV_LONG_TO_FLOAT)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_FLOAT;
+            value->float_value = (float)left_value->long_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->conv.type == CONV_LONG_TO_DOUBLE)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_DOUBLE;
+            value->double_value = (double)left_value->long_value;
+
+            expr_delete(left_value);
+        }
+    }
+    else if (value->conv.expr_value->type == EXPR_FLOAT)
+    {
+        if (value->conv.type == CONV_FLOAT_TO_INT)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_INT;
+            value->int_value = (double)left_value->float_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->conv.type == CONV_FLOAT_TO_LONG)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_LONG;
+            value->long_value = (long long)left_value->float_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->conv.type == CONV_FLOAT_TO_DOUBLE)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_DOUBLE;
+            value->double_value = (double)left_value->float_value;
+
+            expr_delete(left_value);
+        }
+    }
+    else if (value->conv.expr_value->type == EXPR_DOUBLE)
+    {
+        if (value->conv.type == CONV_DOUBLE_TO_INT)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_INT;
+            value->int_value = (int)left_value->double_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->conv.type == CONV_DOUBLE_TO_LONG)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_LONG;
+            value->long_value = (long long)left_value->double_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->conv.type == CONV_DOUBLE_TO_FLOAT)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_FLOAT;
+            value->float_value = (float)left_value->double_value;
+
+            expr_delete(left_value);
+        }
+    }
+
+    return 0;
+}
+
 int expr_constred(expr * value, int * result)
 {
     switch (value->type)
@@ -700,31 +826,9 @@ int expr_constred(expr * value, int * result)
             expr_list_constred(value->func_build_in.param, result);
         }
         break;
-    case EXPR_INT_TO_FLOAT:
-        expr_constred(value->left, result);
-
-        if (value->left->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-
-            value->type = EXPR_FLOAT;
-            value->float_value = (float)value->left->int_value;
-
-            expr_delete(left_value);
-        }
-        break;
-    case EXPR_FLOAT_TO_INT:
-        expr_constred(value->left, result);
-
-        if (value->left->type == EXPR_FLOAT)
-        {
-            expr * left_value = value->left;
-
-            value->type = EXPR_INT;
-            value->int_value = (int)value->left->float_value;
-
-            expr_delete(left_value);
-        }
+    case EXPR_CONV:
+        expr_constred(value->conv.expr_value, result);
+        expr_conv_constred(value, result);
         break;
     case EXPR_LISTCOMP:
         if (value->listcomp_value != NULL)

@@ -877,6 +877,42 @@ int expr_add_emit(expr * value, int stack_level, module * module_value,
         bc.type = BYTECODE_OP_ADD_STRING_FLOAT;
         bytecode_add(module_value->code, &bc);
     }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_ADD_LONG_STRING;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        bc.type = BYTECODE_OP_ADD_STRING_LONG;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_ADD_DOUBLE_STRING;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_DOUBLE)
+    {
+        bc.type = BYTECODE_OP_ADD_STRING_DOUBLE;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_CHAR &&
+             value->right->comb.comb == COMB_TYPE_STRING)
+    {
+        bc.type = BYTECODE_OP_ADD_CHAR_STRING;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_STRING &&
+             value->right->comb.comb == COMB_TYPE_CHAR)
+    {
+        bc.type = BYTECODE_OP_ADD_STRING_CHAR;
+        bytecode_add(module_value->code, &bc);
+    }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_INT)
     {
@@ -1080,7 +1116,7 @@ int expr_mod_emit(expr * value, int stack_level, module * module_value,
         bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
-                value->right->comb.comb == COMB_TYPE_LONG)
+             value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_MOD_LONG;
         bytecode_add(module_value->code, &bc);
@@ -1114,7 +1150,7 @@ int expr_lt_emit(expr * value, int stack_level, module * module_value,
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
-        bc.type = BYTECODE_OP_LT_FLOAT;
+        bc.type = BYTECODE_OP_LT_LONG;
         bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
@@ -1126,7 +1162,7 @@ int expr_lt_emit(expr * value, int stack_level, module * module_value,
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
                 value->right->comb.comb == COMB_TYPE_DOUBLE)
     {
-        bc.type = BYTECODE_OP_LT_FLOAT;
+        bc.type = BYTECODE_OP_LT_DOUBLE;
         bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
@@ -1269,7 +1305,7 @@ int expr_gte_emit(expr * value, int stack_level, module * module_value,
         bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
-                value->right->comb.comb == COMB_TYPE_FLOAT)
+             value->right->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_GTE_FLOAT;
         bytecode_add(module_value->code, &bc);
@@ -2897,38 +2933,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         bc.build_in.id = value->func_build_in.id;
         bytecode_add(module_value->code, &bc);
         break;
-    case EXPR_INT_TO_FLOAT:
-        expr_emit(value->left, stack_level, module_value, list_weak, result);
-
-        if (value->left->comb.comb == COMB_TYPE_INT)
-        {
-            bc.type = BYTECODE_INT_TO_FLOAT;
-            bytecode_add(module_value->code, &bc);
-        }
-        else
-        {
-            *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot convert type %s to float",
-                            comb_type_str(value->left->comb.comb));
-            assert(0);
-        }
-
-        break;
-    case EXPR_FLOAT_TO_INT:
-        expr_emit(value->left, stack_level, module_value, list_weak, result);
-
-        if (value->left->comb.comb == COMB_TYPE_FLOAT)
-        {
-            bc.type = BYTECODE_FLOAT_TO_INT;
-            bytecode_add(module_value->code, &bc);
-        }
-        else
-        {
-            *result = EMIT_FAIL;
-            print_error_msg(value->line_no, "cannot convert type %s to int",
-                            comb_type_str(value->left->comb.comb));
-            assert(0);
-        }
+    case EXPR_CONV:
+        expr_emit(value->conv.expr_value, stack_level, module_value, list_weak, result);
+        expr_conv_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_LISTCOMP:
         if (value->listcomp_value != NULL)
@@ -3575,7 +3582,118 @@ int qualifier_stack_emit(listcomp * listcomp_value, qualifier_list_node * node,
 
     return 0;
 }                         
-                 
+
+int expr_conv_emit(expr * value, int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result)
+{
+    int err = 0;
+    bytecode bc = { 0 };
+
+    if (value->conv.expr_value->comb.comb == COMB_TYPE_INT)
+    {
+        if (value->conv.type == CONV_INT_TO_LONG)
+        {
+            bc.type = BYTECODE_INT_TO_LONG;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->conv.type == CONV_INT_TO_FLOAT)
+        {
+            bc.type = BYTECODE_INT_TO_FLOAT;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->conv.type == CONV_INT_TO_DOUBLE)
+        {
+            bc.type = BYTECODE_INT_TO_DOUBLE;
+            bytecode_add(module_value->code, &bc);
+        }
+        else
+        {
+            err = 1;
+        }
+    }
+    else if (value->conv.expr_value->comb.comb == COMB_TYPE_LONG)
+    {
+        if (value->conv.type == CONV_LONG_TO_INT)
+        {
+            bc.type = BYTECODE_LONG_TO_INT;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->conv.type == CONV_LONG_TO_FLOAT)
+        {
+            bc.type = BYTECODE_LONG_TO_FLOAT;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->conv.type == CONV_LONG_TO_DOUBLE)
+        {
+            bc.type = BYTECODE_LONG_TO_DOUBLE;
+            bytecode_add(module_value->code, &bc);
+        }
+        else
+        {
+            err = 1;
+        }
+    }
+    else if (value->conv.expr_value->comb.comb == COMB_TYPE_FLOAT)
+    {
+        if (value->conv.type == CONV_FLOAT_TO_INT)
+        {
+            bc.type = BYTECODE_FLOAT_TO_INT;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->conv.type == CONV_FLOAT_TO_LONG)
+        {
+            bc.type = BYTECODE_FLOAT_TO_LONG;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->conv.type == CONV_FLOAT_TO_DOUBLE)
+        {
+            bc.type = BYTECODE_FLOAT_TO_DOUBLE;
+            bytecode_add(module_value->code, &bc);
+        }
+        else
+        {
+            err = 1;
+        }
+    }
+    else if (value->conv.expr_value->comb.comb == COMB_TYPE_DOUBLE)
+    {
+        if (value->conv.type == CONV_DOUBLE_TO_INT)
+        {
+            bc.type = BYTECODE_DOUBLE_TO_INT;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->conv.type == CONV_DOUBLE_TO_LONG)
+        {
+            bc.type = BYTECODE_DOUBLE_TO_LONG;
+            bytecode_add(module_value->code, &bc);
+        }
+        else if (value->conv.type == CONV_DOUBLE_TO_FLOAT)
+        {
+            bc.type = BYTECODE_DOUBLE_TO_FLOAT;
+            bytecode_add(module_value->code, &bc);
+        }
+        else
+        {
+            err = 1;
+        }
+    }
+    else
+    {
+        err = 1;
+    }
+
+    if (err)
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no, "cannot convert type %s using conversion %s",
+                        comb_type_str(value->conv.expr_value->comb.comb),
+                        conv_type_str(value->conv.type));
+        assert(0);
+    }
+
+    return 0;
+}                
+
 int listcomp_emit(listcomp * listcomp_value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result)
 {

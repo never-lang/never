@@ -439,18 +439,41 @@ expr * expr_new_attr(expr * record_value, expr * id)
     return ret;
 }
 
-expr * expr_conv(expr * expr_value, expr_type conv)
+comb_type conv_to_comb_type(conv_type conv)
+{
+    switch (conv)
+    {
+        case CONV_UNKNOWN: return CONV_UNKNOWN;
+        case CONV_INT_TO_LONG: return COMB_TYPE_LONG;
+        case CONV_INT_TO_FLOAT: return COMB_TYPE_FLOAT;
+        case CONV_INT_TO_DOUBLE: return COMB_TYPE_DOUBLE;
+
+        case CONV_LONG_TO_INT: return COMB_TYPE_INT;
+        case CONV_LONG_TO_FLOAT: return COMB_TYPE_FLOAT;
+        case CONV_LONG_TO_DOUBLE: return COMB_TYPE_DOUBLE;
+
+        case CONV_FLOAT_TO_INT: return COMB_TYPE_INT;
+        case CONV_FLOAT_TO_LONG: return COMB_TYPE_LONG;
+        case CONV_FLOAT_TO_DOUBLE: return COMB_TYPE_DOUBLE;
+
+        case CONV_DOUBLE_TO_INT: return COMB_TYPE_INT;
+        case CONV_DOUBLE_TO_LONG: return COMB_TYPE_LONG;
+        case CONV_DOUBLE_TO_FLOAT: return COMB_TYPE_FLOAT;
+    }
+
+    return CONV_UNKNOWN;
+}
+
+expr * expr_conv(expr * expr_value, conv_type conv)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
 
-    assert(conv == EXPR_INT_TO_FLOAT || conv == EXPR_FLOAT_TO_INT);
-
     *ret = *expr_value;
 
-    expr_value->type = conv;
-    expr_value->comb.comb =
-        (conv == EXPR_INT_TO_FLOAT) ? COMB_TYPE_FLOAT : COMB_TYPE_INT;
-    expr_value->left = ret;
+    expr_value->type = EXPR_CONV;
+    expr_value->conv.type = conv;
+    expr_value->conv.expr_value = ret;
+    expr_value->comb.comb = conv_to_comb_type(conv);
 
     return ret;
 }
@@ -649,9 +672,8 @@ void expr_delete(expr * value)
             match_guard_list_delete(value->match.match_guards);
         }
         break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
-        expr_delete(value->left);
+    case EXPR_CONV:
+        expr_delete(value->conv.expr_value);
         break;
     case EXPR_LISTCOMP:
         listcomp_delete(value->listcomp_value);
@@ -795,8 +817,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_IFLET: return "if let";
     case EXPR_MATCH: return "match";
     case EXPR_BUILD_IN: return "build id";
-    case EXPR_INT_TO_FLOAT: return "int to float";
-    case EXPR_FLOAT_TO_INT: return "float to int";
+    case EXPR_CONV: return "conv";
     case EXPR_LISTCOMP: return "listcomp";
     case EXPR_ATTR: return "attr";
     case EXPR_NIL: return "nil";
@@ -854,4 +875,26 @@ const char * comb_type_str(comb_type type)
         return "module";
     }
     return "unknown comb type!";
+}
+
+const char * conv_type_str(conv_type conv)
+{
+    switch (conv)
+    {
+    case CONV_UNKNOWN: return "unknown";
+    case CONV_INT_TO_LONG: return "int to long";
+    case CONV_INT_TO_FLOAT: return "int to float";
+    case CONV_INT_TO_DOUBLE: return "int to double";
+    case CONV_LONG_TO_INT: return "long to int";
+    case CONV_LONG_TO_FLOAT: return "long to float";
+    case CONV_LONG_TO_DOUBLE: return "long to double";
+    case CONV_FLOAT_TO_INT: return "float to int";
+    case CONV_FLOAT_TO_LONG: return "float to long";
+    case CONV_FLOAT_TO_DOUBLE: return "float to double";
+    case CONV_DOUBLE_TO_INT: return "double to int";
+    case CONV_DOUBLE_TO_LONG: return "double to long";
+    case CONV_DOUBLE_TO_FLOAT: return "double to float";
+    }
+
+    return "unknown";
 }

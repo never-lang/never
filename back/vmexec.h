@@ -82,6 +82,12 @@ void vm_execute_op_add_int_string(vm * machine, bytecode * code);
 void vm_execute_op_add_string_int(vm * machine, bytecode * code);
 void vm_execute_op_add_float_string(vm * machine, bytecode * code);
 void vm_execute_op_add_string_float(vm * machine, bytecode * code);
+void vm_execute_op_add_long_string(vm * machine, bytecode * code);
+void vm_execute_op_add_string_long(vm * machine, bytecode * code);
+void vm_execute_op_add_double_string(vm * machine, bytecode * code);
+void vm_execute_op_add_string_double(vm * machine, bytecode * code);
+void vm_execute_op_add_char_string(vm * machine, bytecode * code);
+void vm_execute_op_add_string_char(vm * machine, bytecode * code);
 
 void vm_execute_op_lt_int(vm * machine, bytecode * code);
 void vm_execute_op_gt_int(vm * machine, bytecode * code);
@@ -154,8 +160,18 @@ void vm_execute_op_inc_int(vm * machine, bytecode * code);
 void vm_execute_op_dec_int(vm * machine, bytecode * code);
 void vm_execute_op_dup_int(vm * machine, bytecode * code);
 
+void vm_execute_int_to_long(vm * machine, bytecode * code);
 void vm_execute_int_to_float(vm * machine, bytecode * code);
+void vm_execute_int_to_double(vm * machine, bytecode * code);
+void vm_execute_long_to_int(vm * machine, bytecode * code);
+void vm_execute_long_to_float(vm * machine, bytecode * code);
+void vm_execute_long_to_double(vm * machine, bytecode * code);
 void vm_execute_float_to_int(vm * machine, bytecode * code);
+void vm_execute_float_to_long(vm * machine, bytecode * code);
+void vm_execute_float_to_double(vm * machine, bytecode * code);
+void vm_execute_double_to_int(vm * machine, bytecode * code);
+void vm_execute_double_to_long(vm * machine, bytecode * code);
+void vm_execute_double_to_float(vm * machine, bytecode * code);
 
 void vm_execute_op_neg_arr_int(vm * machine, bytecode * code);
 void vm_execute_op_neg_arr_float(vm * machine, bytecode * code);

@@ -208,6 +208,8 @@ int qualifier_emit(listcomp * listcomp_value, qualifier_list_node * node,
 int qualifier_stack_emit(listcomp * listcomp_value, qualifier_list_node * node,
                          int stack_level, module * module_value,
                          func_list_weak * list_weak, int * result);
+int expr_conv_emit(expr * value, int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result);
 int listcomp_emit(listcomp * listcomp_value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,

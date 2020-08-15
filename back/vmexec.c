@@ -83,8 +83,14 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_ADD_STRING, vm_execute_op_add_string },
     { BYTECODE_OP_ADD_INT_STRING, vm_execute_op_add_int_string },
     { BYTECODE_OP_ADD_STRING_INT, vm_execute_op_add_string_int },
+    { BYTECODE_OP_ADD_LONG_STRING, vm_execute_op_add_long_string },
+    { BYTECODE_OP_ADD_STRING_LONG, vm_execute_op_add_string_long },
     { BYTECODE_OP_ADD_FLOAT_STRING, vm_execute_op_add_float_string },
     { BYTECODE_OP_ADD_STRING_FLOAT, vm_execute_op_add_string_float },
+    { BYTECODE_OP_ADD_DOUBLE_STRING, vm_execute_op_add_double_string },
+    { BYTECODE_OP_ADD_STRING_DOUBLE, vm_execute_op_add_string_double },
+    { BYTECODE_OP_ADD_CHAR_STRING, vm_execute_op_add_char_string },
+    { BYTECODE_OP_ADD_STRING_CHAR, vm_execute_op_add_string_char },
 
     { BYTECODE_OP_LT_INT, vm_execute_op_lt_int },
     { BYTECODE_OP_GT_INT, vm_execute_op_gt_int },
@@ -157,8 +163,18 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_OP_DEC_INT, vm_execute_op_dec_int },
     { BYTECODE_OP_DUP_INT, vm_execute_op_dup_int },
 
+    { BYTECODE_INT_TO_LONG, vm_execute_int_to_long },
     { BYTECODE_INT_TO_FLOAT, vm_execute_int_to_float },
+    { BYTECODE_INT_TO_DOUBLE, vm_execute_int_to_double },
+    { BYTECODE_LONG_TO_INT, vm_execute_long_to_int },
+    { BYTECODE_LONG_TO_FLOAT, vm_execute_long_to_float },
+    { BYTECODE_LONG_TO_DOUBLE, vm_execute_long_to_double },
     { BYTECODE_FLOAT_TO_INT, vm_execute_float_to_int },
+    { BYTECODE_FLOAT_TO_LONG, vm_execute_float_to_long },
+    { BYTECODE_FLOAT_TO_DOUBLE, vm_execute_float_to_double },
+    { BYTECODE_DOUBLE_TO_INT, vm_execute_double_to_int },
+    { BYTECODE_DOUBLE_TO_LONG, vm_execute_double_to_long },
+    { BYTECODE_DOUBLE_TO_FLOAT, vm_execute_double_to_float },
 
     { BYTECODE_OP_NEG_ARR_INT, vm_execute_op_neg_arr_int },
     { BYTECODE_OP_NEG_ARR_FLOAT, vm_execute_op_neg_arr_float },
@@ -723,9 +739,9 @@ void vm_execute_op_div_long(vm * machine, bytecode * code)
 void vm_execute_op_mod_long(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
-    long long a = gc_get_int(machine->collector, machine->stack[machine->sp - 1].addr);
+    long long a = gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
     long long b =
-        gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+        gc_get_long(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = 0;
 
     if (b == 0)
@@ -996,6 +1012,55 @@ void vm_execute_op_add_string_int(vm * machine, bytecode * code)
     machine->sp--;
 }
 
+void vm_execute_op_add_long_string(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+
+    long long a = gc_get_long(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
+    if (str_b == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    char * b = gc_get_string(machine->collector, str_b);
+    mem_ptr addr = 0;
+
+    addr = gc_alloc_string_take(machine->collector, string_add_long(b, a, 0));
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_string_ref(machine->collector, addr);
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_add_string_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    if (str_a == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    char * a = gc_get_string(machine->collector, str_a);
+    long long b = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = 0;
+
+    addr = gc_alloc_string_take(machine->collector, string_add_long(a, b, 1));
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_string_ref(machine->collector, addr);
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
 void vm_execute_op_add_float_string(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
@@ -1037,6 +1102,104 @@ void vm_execute_op_add_string_float(vm * machine, bytecode * code)
     mem_ptr addr = 0;
 
     addr = gc_alloc_string_take(machine->collector, string_add_float(a, b, 1));
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_string_ref(machine->collector, addr);
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_add_double_string(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+
+    double a = gc_get_double(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
+    if (str_b == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    char * b = gc_get_string(machine->collector, str_b);
+    mem_ptr addr = 0;
+
+    addr = gc_alloc_string_take(machine->collector, string_add_double(b, a, 0));
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_string_ref(machine->collector, addr);
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_add_string_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    if (str_a == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    char * a = gc_get_string(machine->collector, str_a);
+    double b = gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = 0;
+
+    addr = gc_alloc_string_take(machine->collector, string_add_double(a, b, 1));
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_string_ref(machine->collector, addr);
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_add_char_string(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+
+    char a = gc_get_char(machine->collector, machine->stack[machine->sp - 1].addr);
+    mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp].addr);
+    if (str_b == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    char * b = gc_get_string(machine->collector, str_b);
+    mem_ptr addr = 0;
+
+    addr = gc_alloc_string_take(machine->collector, string_add_char(b, a, 0));
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = gc_alloc_string_ref(machine->collector, addr);
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
+}
+
+void vm_execute_op_add_string_char(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    mem_ptr str_a = gc_get_string_ref(machine->collector, machine->stack[machine->sp - 1].addr);
+    if (str_a == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    char * a = gc_get_string(machine->collector, str_a);
+    char b = gc_get_char(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = 0;
+
+    addr = gc_alloc_string_take(machine->collector, string_add_char(a, b, 1));
 
     entry.type = GC_MEM_ADDR;
     entry.addr = gc_alloc_string_ref(machine->collector, addr);
@@ -1910,6 +2073,18 @@ void vm_execute_op_dup_int(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
+void vm_execute_int_to_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_long(machine->collector, (long long)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
 void vm_execute_int_to_float(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
@@ -1922,11 +2097,119 @@ void vm_execute_int_to_float(vm * machine, bytecode * code)
     machine->stack[machine->sp] = entry;
 }
 
+void vm_execute_int_to_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_double(machine->collector, (double)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_long_to_int(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, (int)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;    
+}
+
+void vm_execute_long_to_float(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_float(machine->collector, (float)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_long_to_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_double(machine->collector, (double)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
 void vm_execute_float_to_int(vm * machine, bytecode * code)
 {
     gc_stack entry = { 0 };
     int a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
     mem_ptr addr = gc_alloc_int(machine->collector, (int)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_float_to_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_long(machine->collector, (long long)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_float_to_double(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_float(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_double(machine->collector, (double)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_double_to_int(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_int(machine->collector, (int)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_double_to_long(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_long(machine->collector, (long long)a);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_double_to_float(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+    int a = gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+    mem_ptr addr = gc_alloc_float(machine->collector, (float)a);
 
     entry.type = GC_MEM_ADDR;
     entry.addr = addr;

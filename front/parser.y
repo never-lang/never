@@ -800,7 +800,7 @@ param: TOK_ID ':' TOK_INT
 
 param: TOK_LONG
 {
-    $$ = param_new_int(NULL);
+    $$ = param_new_long(NULL);
     $$->line_no = $<line_no>1;
 };
 

@@ -31,7 +31,6 @@ typedef struct string {
 string * string_new();
 void string_delete(string * value);
 
-void string_add_char(string * value, char c);
 char * string_take(string * value);
 
 char * string_int(int val);
@@ -39,6 +38,11 @@ char * string_float(float val);
 char * string_add(char * str_one, char * str_two);
 char * string_add_int(char * str_one, int val, int order);
 char * string_add_float(char * str_one, float val, int order);
+char * string_add_long(char * str_one, long long val, int order);
+char * string_add_double(char * str_one, double val, int order);
+char * string_add_char(char * str_one, char val, int order);
+
+void string_add_char_end(string * value, char c);
 
 void string_print(char * val);
 void string_print_int(int val);

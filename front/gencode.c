@@ -877,9 +877,8 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
                                             result);
         }
         break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
+    case EXPR_CONV:
+        func_gencode_freevars_expr(func_value, stab, value->conv.expr_value, result);
         break;
     case EXPR_LISTCOMP:
         if (value->listcomp_value != NULL)
