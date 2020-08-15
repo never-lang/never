@@ -1,0 +1,54 @@
+
+func check_int() -> int
+{
+    let a = [ [ 1, 2, 3 ] ] : int;
+    let b = [ [1], [2], [3] ] : int;
+    let c = a * b;
+
+    assert(c[0,0] == 14);
+
+    0
+}
+
+func check_long() -> int
+{
+    let a = [ [ 1L, 2L, 3L ] ] : long;
+    let b = [ [1L], [2L], [3L] ] : long;
+    let c = a * b;
+
+    assert(c[0,0] == 14L);
+
+    0
+}
+
+func check_float() -> int
+{
+    let a = [ [ 1.0, 2.0, 3.0 ] ] : float;
+    let b = [ [1.0], [2.0], [3.0] ] : float;
+    let c = a * b;
+
+    assert(c[0,0] == 14.0);
+
+    0
+}
+
+func check_double() -> int
+{
+    let a = [ [ 1.0d, 2.0d, 3.0d ] ] : double;
+    let b = [ [1.0d], [2.0d], [3.0d] ] : double;
+    let c = a * b;
+
+    assert(c[0,0] == 14.0d);
+
+    0
+}
+
+func main() -> int
+{
+    check_int();
+    check_long();
+    check_float();
+    check_double();
+
+    0
+}

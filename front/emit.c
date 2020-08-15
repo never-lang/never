@@ -1058,9 +1058,21 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
         bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
+             value->left->comb.comb == COMB_TYPE_LONG)
+    {
+        bc.type = BYTECODE_OP_MUL_ARR_LONG;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_MUL_ARR_FLOAT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->comb.comb == COMB_TYPE_ARRAY &&
+             value->left->comb.comb == COMB_TYPE_DOUBLE)
+    {
+        bc.type = BYTECODE_OP_MUL_ARR_DOUBLE;
         bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&

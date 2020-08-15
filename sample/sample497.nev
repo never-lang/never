@@ -1,0 +1,63 @@
+
+func check_int() -> int
+{
+    let a = [ 1, 2, 3, 4 ] : int;
+    let b = -a;
+
+    assert(b[0] == -1);
+    assert(b[1] == -2);
+    assert(b[2] == -3);
+    assert(b[3] == -4);
+
+    0
+}
+
+func check_long() -> int
+{
+    let a = [ 1L, 2L, 3L, 4L ] : long;
+    let b = -a;
+
+    assert(b[0] == -1L);
+    assert(b[1] == -2L);
+    assert(b[2] == -3L);
+    assert(b[3] == -4L);
+
+    0
+}
+
+func check_float() -> int
+{
+    let a = [ 1.0, 2.0, 3.0, 4.0 ] : float;
+    let b = -a;
+
+    assert(b[0] == -1.0);
+    assert(b[1] == -2.0);
+    assert(b[2] == -3.0);
+    assert(b[3] == -4.0);
+
+    0
+}
+
+func check_double() -> int
+{
+    let a = [ 1.0d, 2.0d, 3.0d, 4.0d ] : double;
+    let b = -a;
+
+    assert(b[0] == -1.0d);
+    assert(b[1] == -2.0d);
+    assert(b[2] == -3.0d);
+    assert(b[3] == -4.0d);
+
+    0
+}
+
+func main() -> int
+{
+    check_int();
+    check_long();
+    check_float();
+    check_double();
+
+    0
+}
+

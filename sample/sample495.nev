@@ -1,0 +1,35 @@
+
+
+func check_dyn_arr() -> int
+{
+    let i = {[ 10 ]} : int;
+    let l = {[ 10 ]} : long;
+    let f = {[ 10 ]} : float;
+    let d = {[ 10 ]} : double;
+
+    i[0] = 10; i[9] = 20;
+    l[0] = 10L; l[9] = 20L;
+    f[0] = 10.0; f[9] = 20.0;
+    d[0] = 10.0d; d[9] = 20.0d;
+
+    assert(i[0] == 10);
+    assert(i[9] == 20);
+
+    assert(l[0] == 10L);
+    assert(l[9] == 20L);
+
+    assert(f[0] == 10.0);
+    assert(f[9] == 20.0);
+
+    assert(d[0] == 10.0d);
+    assert(d[9] == 20.0d);
+
+    0
+}
+
+func main() -> int
+{
+    check_dyn_arr();
+
+    0
+}
