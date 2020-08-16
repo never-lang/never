@@ -64,9 +64,19 @@ static ffi_type * vm_execute_func_ffi_record_type(vm * machine, unsigned int cou
                 type->elements[i] = &ffi_type_sint;
             }
             break;
+            case BYTECODE_FUNC_FFI_LONG:
+            {
+                type->elements[i] = &ffi_type_slong;
+            }
+            break;
             case BYTECODE_FUNC_FFI_FLOAT:
             {
                 type->elements[i] = &ffi_type_float;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_DOUBLE:
+            {
+                type->elements[i] = &ffi_type_double;
             }
             break;
             case BYTECODE_FUNC_FFI_CHAR:
@@ -132,6 +142,16 @@ static int vm_execute_func_ffi_record_value(vm * machine, mem_ptr rec_addr, unsi
                 *offset += type->elements[i]->size;
             }
             break;
+            case BYTECODE_FUNC_FFI_LONG:
+            {
+                mem_ptr long_addr = gc_get_vec(machine->collector, rec_addr, i);
+                long long * long_value = gc_get_long_ptr(machine->collector, long_addr);
+
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                *(long long *)((char *)data + *offset) = *long_value;
+                *offset += type->elements[i]->size;
+            }
+            break;
             case BYTECODE_FUNC_FFI_FLOAT:
             {
                 mem_ptr float_addr = gc_get_vec(machine->collector, rec_addr, i);
@@ -139,6 +159,16 @@ static int vm_execute_func_ffi_record_value(vm * machine, mem_ptr rec_addr, unsi
 
                 *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
                 *(float *)((char *)data + *offset) = *float_value;
+                *offset += type->elements[i]->size;
+            }
+            break;
+            case BYTECODE_FUNC_FFI_DOUBLE:
+            {
+                mem_ptr double_addr = gc_get_vec(machine->collector, rec_addr, i);
+                double * double_value = gc_get_double_ptr(machine->collector, double_addr);
+
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                *(double *)((char *)data + *offset) = *double_value;
                 *offset += type->elements[i]->size;
             }
             break;
@@ -249,6 +279,18 @@ static mem_ptr vm_execute_func_ffi_record_new(vm * machine, unsigned int count,
                 gc_set_vec(machine->collector, rec, i, int_addr);
             }
             break;
+            case BYTECODE_FUNC_FFI_LONG:
+            {
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+
+                long long long_value = *(long long *)((char *)data + *offset);
+                mem_ptr long_addr = gc_alloc_long(machine->collector, long_value);
+
+                *offset += type->elements[i]->size;
+
+                gc_set_vec(machine->collector, rec, i, long_addr);
+            }
+            break;
             case BYTECODE_FUNC_FFI_FLOAT:
             {
                 *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
@@ -259,6 +301,18 @@ static mem_ptr vm_execute_func_ffi_record_new(vm * machine, unsigned int count,
                 *offset += type->elements[i]->size;
 
                 gc_set_vec(machine->collector, rec, i, float_addr);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_DOUBLE:
+            {
+                *offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+
+                double double_value = *(double *)((char *)data + *offset);
+                mem_ptr double_addr = gc_alloc_double(machine->collector, double_value);
+
+                *offset += type->elements[i]->size;
+
+                gc_set_vec(machine->collector, rec, i, double_addr);
             }
             break;
             case BYTECODE_FUNC_FFI_CHAR:
@@ -355,8 +409,14 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
             case BYTECODE_FUNC_FFI_INT:
                 ffi_decl_set_param_type(fd, i, &ffi_type_sint);
             break;
+            case BYTECODE_FUNC_FFI_LONG:
+                ffi_decl_set_param_type(fd, i, &ffi_type_slong);
+            break;
             case BYTECODE_FUNC_FFI_FLOAT:
                 ffi_decl_set_param_type(fd, i, &ffi_type_float);
+            break;
+            case BYTECODE_FUNC_FFI_DOUBLE:
+                ffi_decl_set_param_type(fd, i, &ffi_type_double);
             break;
             case BYTECODE_FUNC_FFI_CHAR:
                 ffi_decl_set_param_type(fd, i, &ffi_type_schar);
@@ -391,8 +451,14 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         case BYTECODE_FUNC_FFI_INT:
             ffi_decl_set_ret_type(fd, &ffi_type_sint);
         break;
+        case BYTECODE_FUNC_FFI_LONG:
+            ffi_decl_set_ret_type(fd, &ffi_type_slong);
+        break;
         case BYTECODE_FUNC_FFI_FLOAT:
             ffi_decl_set_ret_type(fd, &ffi_type_float);
+        break;
+        case BYTECODE_FUNC_FFI_DOUBLE:
+            ffi_decl_set_ret_type(fd, &ffi_type_double);
         break;
         case BYTECODE_FUNC_FFI_CHAR:
             ffi_decl_set_ret_type(fd, &ffi_type_schar);
@@ -447,10 +513,22 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
                 ffi_decl_set_param_value(fd, i, int_value);
             }
             break;
+            case BYTECODE_FUNC_FFI_LONG:
+            {
+                long long * long_value = gc_get_long_ptr(machine->collector, machine->stack[machine->sp--].addr);
+                ffi_decl_set_param_value(fd, i, long_value);
+            }
+            break;
             case BYTECODE_FUNC_FFI_FLOAT:
             {
                 float * float_value = gc_get_float_ptr(machine->collector, machine->stack[machine->sp--].addr);
                 ffi_decl_set_param_value(fd, i, float_value);
+            }
+            break;
+            case BYTECODE_FUNC_FFI_DOUBLE:
+            {
+                double * double_value = gc_get_double_ptr(machine->collector, machine->stack[machine->sp--].addr);
+                ffi_decl_set_param_value(fd, i, double_value);
             }
             break;
             case BYTECODE_FUNC_FFI_CHAR:
@@ -555,8 +633,14 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
         case BYTECODE_FUNC_FFI_INT:
             addr = gc_alloc_int(machine->collector, fd->ret_int_value);
         break;
+        case BYTECODE_FUNC_FFI_LONG:
+            addr = gc_alloc_long(machine->collector, fd->ret_long_value);
+        break;
         case BYTECODE_FUNC_FFI_FLOAT:
             addr = gc_alloc_float(machine->collector, fd->ret_float_value);
+        break;
+        case BYTECODE_FUNC_FFI_DOUBLE:
+            addr = gc_alloc_double(machine->collector, fd->ret_double_value);
         break;
         case BYTECODE_FUNC_FFI_CHAR:
             addr = gc_alloc_char(machine->collector, fd->ret_char_value);
@@ -606,7 +690,17 @@ void vm_execute_func_ffi_int(vm * machine, bytecode * code)
     /* func_ffi reads it */
 }
 
+void vm_execute_func_ffi_long(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
+
 void vm_execute_func_ffi_float(vm * machine, bytecode * code)
+{
+    /* func_ffi reads it */
+}
+
+void vm_execute_func_ffi_double(vm * machine, bytecode * code)
 {
     /* func_ffi reads it */
 }

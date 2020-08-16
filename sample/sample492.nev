@@ -1,0 +1,47 @@
+
+func tint(i : int) -> int
+{
+    i
+}
+
+func tlong(l : long) -> long
+{
+    l
+}
+
+func tfloat(f : float) -> float
+{
+    f
+}
+
+func tdouble(d : double) -> double
+{
+    d
+}
+
+func main() -> int
+{
+    assert(tint(10) == 10);
+    assert(tint(10L) == 10);
+    assert(tint(10.0) == 10);
+    assert(tint(10.0d) == 10);
+
+    assert(tlong(10) == 10L);
+    assert(tlong(10L) == 10L);
+    assert(tlong(10.0) == 10L);
+    assert(tlong(10.0d) == 10L);
+
+    assert(tfloat(10) == 10.0);
+    assert(tfloat(10L) == 10.0);
+    assert(tfloat(10.0) == 10.0);
+    assert(tfloat(10.0d) == 10.0);
+
+    assert(tdouble(10) == 10.0d);
+    assert(tdouble(10L) == 10.0d);
+    assert(tdouble(10.0) == 10.0d);
+    assert(tdouble(10.0d) == 10.0d);
+
+    0
+}
+
+

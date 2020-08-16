@@ -103,7 +103,9 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
     {
     case EXPR_BOOL:
     case EXPR_INT:
+    case EXPR_LONG:
     case EXPR_FLOAT:
+    case EXPR_DOUBLE:
     case EXPR_CHAR:
     case EXPR_STRING:
     case EXPR_ENUMTYPE:
@@ -255,9 +257,8 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
                               value->func_build_in.param, TAILREC_OP_SKIP);
         }
     break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
-        expr_tailrec(syn_level, stab, value->left, TAILREC_OP_SKIP);
+    case EXPR_CONV:
+        expr_tailrec(syn_level, stab, value->conv.expr_value, TAILREC_OP_SKIP);
     break;
     case EXPR_LISTCOMP:
         if (value->listcomp_value != NULL)

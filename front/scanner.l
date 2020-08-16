@@ -270,6 +270,18 @@ use {
     return TOK_USE;
 }
 
+long {
+    tokp->line_no = line_no;
+    scanner_printf("long\n");
+    return TOK_LONG;
+}
+
+double {
+    tokp->line_no = line_no;
+    scanner_printf("double\n");
+    return TOK_DOUBLE;
+}
+
 "::" {
     tokp->line_no = line_no;
     scanner_printf("::\n");
@@ -396,31 +408,46 @@ use {
     return TOK_DOT;
 }
 
-{DIGIT}+ {
-    int result;
+{DIGIT}+[lL] {
     tokp->line_no = line_no;
-    sscanf(yytext, "%d", &result);
-    tokp->val.int_value = result;
-    scanner_printf("num_int %d\n", result);
+    sscanf(yytext, "%lld", &tokp->val.long_value);
+    scanner_printf("num_long %lld\n", tokp->val.long_value);
+    return TOK_NUM_LONG;
+}
+
+{DIGIT}+ {
+    tokp->line_no = line_no;
+    sscanf(yytext, "%d", &tokp->val.int_value);
+    scanner_printf("num_int %d\n", tokp->val.int_value);
     return TOK_NUM_INT;
 }
 
-0x{HEX_DIGIT}+|0X{HEX_DIGIT}+ {
-    int result;
+0[xX]{HEX_DIGIT}+[lL] {
     tokp->line_no = line_no;
-    sscanf(yytext, "%x", &result);
-    tokp->val.int_value = result;
-    scanner_printf("num_int %x\n", result);
+    sscanf(yytext, "%llx", &tokp->val.long_value);
+    scanner_printf("long_int %llx\n", tokp->val.long_value);
+    return TOK_NUM_LONG;
+}
+
+0[xX]{HEX_DIGIT}+ {
+    tokp->line_no = line_no;
+    sscanf(yytext, "%x", &tokp->val.int_value);
+    scanner_printf("num_int %x\n", tokp->val.int_value);
     return TOK_NUM_INT;
 }
 
 {DIGIT}+"."{DIGIT}+ {
-    float result;
     tokp->line_no = line_no;
-    sscanf(yytext, "%f", &result);
-    tokp->val.float_value = result;
-    scanner_printf("num_float %f\n", result);
+    sscanf(yytext, "%f", &tokp->val.float_value);
+    scanner_printf("num_float %f\n", tokp->val.float_value);
     return TOK_NUM_FLOAT;
+}
+
+{DIGIT}+"."{DIGIT}+[dD] {
+    tokp->line_no = line_no;
+    sscanf(yytext, "%lf", &tokp->val.double_value);
+    scanner_printf("num_double %f\n", tokp->val.double_value);
+    return TOK_NUM_DOUBLE;
 }
 
 {ID} {
@@ -515,7 +542,7 @@ use {
 }
 
 <C_STRING>\" {
-    string_add_char(string_value, '\0');
+    string_add_char_end(string_value, '\0');
 
     tokp->line_no = line_no;
     tokp->val.str_value = string_take(string_value);
@@ -554,7 +581,7 @@ use {
         yyterminate();
         return yytext[0];
     }
-    string_add_char(string_value, result);
+    string_add_char_end(string_value, result);
 }
 
 <C_STRING>\\[0-9]+ {
@@ -567,31 +594,31 @@ use {
 }
 
 <C_STRING>\\n {
-    string_add_char(string_value, '\n');
+    string_add_char_end(string_value, '\n');
 }
 <C_STRING>\\t {
-    string_add_char(string_value, '\t');
+    string_add_char_end(string_value, '\t');
 }
 <C_STRING>\\r {
-    string_add_char(string_value, '\r');
+    string_add_char_end(string_value, '\r');
 }
 <C_STRING>\\b {
-    string_add_char(string_value, '\b');
+    string_add_char_end(string_value, '\b');
 }
 <C_STRING>\\f {
-    string_add_char(string_value, '\f');
+    string_add_char_end(string_value, '\f');
 }
 
 <C_STRING>\\(.|\n) {
     line_no++;
-    string_add_char(string_value, yytext[1]);
+    string_add_char_end(string_value, yytext[1]);
 }
 
 <C_STRING>[^\\\n\"]+ {
     char *yptr = yytext;
     while (*yptr)
     {
-        string_add_char(string_value, *yptr++);
+        string_add_char_end(string_value, *yptr++);
     }
 }
 

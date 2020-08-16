@@ -39,7 +39,9 @@ typedef struct ffi_decl {
     {
         void * ret_void_value;
         int ret_int_value;
+        long long ret_long_value;
         float ret_float_value;
+        double ret_double_value;
         char ret_char_value;
         char * ret_string_value;
     };
@@ -78,7 +80,9 @@ typedef struct test_Types
 {
     bool b;
     int i;
+    long long l;
     float f;
+    double d;
     char c;
     char * str;
     test_Point * ptr;
@@ -97,11 +101,13 @@ char * test_void();
 void test_void_call(char * str);
 
 int test_types_get_int();
+long long test_types_get_long();
 float test_types_get_float();
+double test_types_get_double();
 char test_types_get_char();
 char * test_types_get_string();
 test_Point * test_types_get_ptr();
-void test_types_call(bool b, int i, float f, char c, char * str, test_Point * ptr, test_Types rec);
+void test_types_call(bool b, int i, long long l, float f, double d, char c, char * str, test_Point * ptr, test_Types rec);
 test_Types test_types_get_rec();
 
 #endif /* NO_FFI */

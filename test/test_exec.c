@@ -123,6 +123,63 @@ void test_two()
     program_delete(prog);
 }
 
+void test_three()
+{
+    int ret = 0;
+    program * prog = program_new();
+    const char * prog_str = 
+        "func on_event(x : int, y : int) -> int { 10 * (x + y) }";
+        
+    ret = nev_compile_str(prog_str, prog);
+    if (ret == 0)
+    {
+        object result = { 0 };
+        vm * machine = vm_new(DEFAULT_VM_MEM_SIZE, DEFAULT_VM_STACK_SIZE);
+
+        ret = nev_prepare(prog, "on_event");
+        if (ret == 0)
+        {
+            prog->params[0].int_value = 1;
+            prog->params[1].int_value = 2;
+
+            ret = nev_execute(prog, machine, &result);
+            if (ret == 0)
+            {
+                assert(result.type == OBJECT_INT && result.int_value == 30);
+            }
+            else
+            {
+                assert(0);
+            }
+
+            prog->params[0].int_value = 10;
+            prog->params[1].int_value = 20;
+
+            ret = nev_execute(prog, machine, &result);
+            if (ret == 0)
+            {
+                assert(result.type == OBJECT_INT && result.int_value == 300);
+            }
+            else
+            {
+                assert(0);
+            }
+        }
+        else
+        {
+            assert(0);
+        }
+
+        vm_delete(machine);
+    }
+    else
+    {
+        assert(0);
+    }
+    
+    program_delete(prog);
+}
+
 void test_sample(const char * samplepath)
 {
     program * prog = program_new();
@@ -193,6 +250,7 @@ int main(int argc, char * argv[])
 
     test_one();
     test_two();
+    test_three();
     test_samples((const char *)"../sample");
 
     return 0;

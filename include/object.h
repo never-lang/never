@@ -31,16 +31,18 @@ typedef enum object_type
 {
     OBJECT_UNKNOWN = 0,
     OBJECT_INT = 1,
-    OBJECT_FLOAT = 2,
-    OBJECT_CHAR = 3,
-    OBJECT_STRING = 4,
-    OBJECT_STRING_REF = 5,
-    OBJECT_C_PTR = 6,
-    OBJECT_ARRAY = 7,
-    OBJECT_ARRAY_REF = 8,
-    OBJECT_VEC = 9,
-    OBJECT_VEC_REF = 10,
-    OBJECT_FUNC = 11
+    OBJECT_LONG = 2,
+    OBJECT_FLOAT = 3,
+    OBJECT_DOUBLE = 4,
+    OBJECT_CHAR = 5,
+    OBJECT_STRING = 6,
+    OBJECT_STRING_REF = 7,
+    OBJECT_C_PTR = 8,
+    OBJECT_ARRAY = 9,
+    OBJECT_ARRAY_REF = 10,
+    OBJECT_VEC = 11,
+    OBJECT_VEC_REF = 12,
+    OBJECT_FUNC = 13
 } object_type;
 
 typedef struct object_vec
@@ -74,7 +76,9 @@ typedef struct object
     object_type type;
     union {
         int int_value;            /* OBJECT_INT */
+        long long long_value;     /* OBJECT_LONG */
         float float_value;        /* OBJECT_FLOAT */
+        double double_value;      /* OBJECT_DOUBLE */
         char char_value;          /* OBJECT_CHAR */
         char * string_value;      /* OBJECT_STRING */
         mem_ptr string_ref_value; /* OBJECT_STRING_REF */
@@ -88,7 +92,9 @@ typedef struct object
 } object;
 
 object * object_new_int(int value);
+object * object_new_long(long long value);
 object * object_new_float(float value);
+object * object_new_double(double value);
 object * object_new_char(float value);
 object * object_new_string(char * value);
 object * object_new_string_take(char * value);

@@ -28,52 +28,73 @@ typedef enum expr_type
 {
     EXPR_BOOL = 1,
     EXPR_INT = 2,
-    EXPR_FLOAT = 3,
-    EXPR_CHAR = 4,
-    EXPR_STRING = 5,
-    EXPR_ENUMTYPE = 6,
-    EXPR_ID = 7,
-    EXPR_NEG = 8,
-    EXPR_ADD = 9,
-    EXPR_SUB = 10,
-    EXPR_MUL = 11,
-    EXPR_DIV = 12,
-    EXPR_MOD = 13,
-    EXPR_LT = 14,
-    EXPR_GT = 15,
-    EXPR_LTE = 16,
-    EXPR_GTE = 17,
-    EXPR_EQ = 18,
-    EXPR_NEQ = 19,
-    EXPR_AND = 20,
-    EXPR_OR = 21,
-    EXPR_NOT = 22,
-    EXPR_SUP = 23,         /* ( expr ) */
-    EXPR_COND = 24,        /* expr ? expr : expr */
-    EXPR_ARRAY = 25,       /* [ expr_list ] */
-    EXPR_ARRAY_DEREF = 26, /* expr [ expr_list ] */
-    EXPR_CALL = 27,        /* ID ( expr_list) */
-    EXPR_LAST_CALL = 28,   /* ID (expr_list */
-    EXPR_FUNC = 29,        /* func ID ( ... ) */
-    EXPR_RANGE_DIM = 30,
-    EXPR_RANGE = 31,
-    EXPR_SLICE = 32,
-    EXPR_SEQ = 33,
-    EXPR_ASS = 34,
-    EXPR_WHILE = 35,
-    EXPR_DO_WHILE = 36,
-    EXPR_FOR = 37,
-    EXPR_FORIN = 38,
-    EXPR_IFLET = 39,
-    EXPR_MATCH = 40,
-    EXPR_BUILD_IN = 41,
-    EXPR_INT_TO_FLOAT = 42,
-    EXPR_FLOAT_TO_INT = 43,
-    EXPR_LISTCOMP = 44,
-    EXPR_ATTR = 45,
-    EXPR_NIL = 46,
-    EXPR_C_NULL = 47
+    EXPR_LONG = 3,
+    EXPR_FLOAT = 4,
+    EXPR_DOUBLE = 5,
+    EXPR_CHAR = 6,
+    EXPR_STRING = 7,
+    EXPR_ENUMTYPE = 8,
+    EXPR_ID = 9,
+    EXPR_NEG = 10,
+    EXPR_ADD = 11,
+    EXPR_SUB = 12,
+    EXPR_MUL = 13,
+    EXPR_DIV = 14,
+    EXPR_MOD = 15,
+    EXPR_LT = 16,
+    EXPR_GT = 17,
+    EXPR_LTE = 18,
+    EXPR_GTE = 19,
+    EXPR_EQ = 20,
+    EXPR_NEQ = 21,
+    EXPR_AND = 22,
+    EXPR_OR = 23,
+    EXPR_NOT = 24,
+    EXPR_SUP = 25,         /* ( expr ) */
+    EXPR_COND = 26,        /* expr ? expr : expr */
+    EXPR_ARRAY = 27,       /* [ expr_list ] */
+    EXPR_ARRAY_DEREF = 28, /* expr [ expr_list ] */
+    EXPR_CALL = 29,        /* ID ( expr_list) */
+    EXPR_LAST_CALL = 30,   /* ID (expr_list */
+    EXPR_FUNC = 31,        /* func ID ( ... ) */
+    EXPR_RANGE_DIM = 32,
+    EXPR_RANGE = 33,
+    EXPR_SLICE = 34,
+    EXPR_SEQ = 35,
+    EXPR_ASS = 36,
+    EXPR_WHILE = 37,
+    EXPR_DO_WHILE = 38,
+    EXPR_FOR = 39,
+    EXPR_FORIN = 40,
+    EXPR_IFLET = 41,
+    EXPR_MATCH = 42,
+    EXPR_BUILD_IN = 43,
+    EXPR_CONV = 44,
+    EXPR_LISTCOMP = 45,
+    EXPR_ATTR = 46,
+    EXPR_NIL = 47,
+    EXPR_C_NULL = 48
 } expr_type;
+
+typedef enum conv_type
+{
+    CONV_UNKNOWN,
+    CONV_INT_TO_LONG,
+    CONV_INT_TO_FLOAT,
+    CONV_INT_TO_DOUBLE,
+
+    CONV_LONG_TO_INT,
+    CONV_LONG_TO_FLOAT,
+    CONV_LONG_TO_DOUBLE,
+
+    CONV_FLOAT_TO_INT,
+    CONV_FLOAT_TO_LONG,
+    CONV_FLOAT_TO_DOUBLE,
+    
+    CONV_DOUBLE_TO_INT,
+    CONV_DOUBLE_TO_LONG,
+    CONV_DOUBLE_TO_FLOAT
+} conv_type;
 
 typedef enum comb_type
 {
@@ -82,20 +103,22 @@ typedef enum comb_type
     COMB_TYPE_NIL = 2,
     COMB_TYPE_BOOL = 3,
     COMB_TYPE_INT = 4,
-    COMB_TYPE_FLOAT = 5,
-    COMB_TYPE_CHAR = 6,
-    COMB_TYPE_STRING = 7,
-    COMB_TYPE_VOID = 8,
-    COMB_TYPE_C_PTR = 9,
-    COMB_TYPE_ARRAY = 10,
-    COMB_TYPE_RANGE = 11,
-    COMB_TYPE_SLICE = 12,
-    COMB_TYPE_FUNC = 13,
-    COMB_TYPE_ENUMTYPE = 14,
-    COMB_TYPE_ENUMTYPE_ID = 15,
-    COMB_TYPE_RECORD = 16,
-    COMB_TYPE_RECORD_ID = 17,
-    COMB_TYPE_MODULE = 18
+    COMB_TYPE_LONG = 5,
+    COMB_TYPE_FLOAT = 6,
+    COMB_TYPE_DOUBLE = 7,
+    COMB_TYPE_CHAR = 8,
+    COMB_TYPE_STRING = 9,
+    COMB_TYPE_VOID = 10,
+    COMB_TYPE_C_PTR = 11,
+    COMB_TYPE_ARRAY = 12,
+    COMB_TYPE_RANGE = 13,
+    COMB_TYPE_SLICE = 14,
+    COMB_TYPE_FUNC = 15,
+    COMB_TYPE_ENUMTYPE = 16,
+    COMB_TYPE_ENUMTYPE_ID = 17,
+    COMB_TYPE_RECORD = 18,
+    COMB_TYPE_RECORD_ID = 19,
+    COMB_TYPE_MODULE = 20
 } comb_type;
 
 typedef enum id_type
@@ -152,9 +175,16 @@ typedef struct expr
     unsigned int line_no;
     union {
         int int_value;       /* EXPR_INT */
+        long long long_value; /* EXPR_LONG */
         float float_value;   /* EXPR_FLOAT */
+        double double_value; /* EXPR_DOUBLE */
         char char_value;     /* EXPR_CHAR */
         char * string_value; /* EXPR_STRING */
+        struct
+        {
+            conv_type type; /* EXPR_CONV */
+            struct expr * expr_value;
+        } conv;
         struct
         {
             char called;
@@ -271,7 +301,9 @@ typedef struct expr_list
 
 expr * expr_new_bool(int int_value);
 expr * expr_new_int(int int_value);
+expr * expr_new_long(long long long_value);
 expr * expr_new_float(float float_value);
+expr * expr_new_double(double double_value);
 expr * expr_new_char(char char_value);
 expr * expr_new_string(char * string_value);
 expr * expr_new_enumtype(expr * enum_id, char * item_id);
@@ -301,7 +333,8 @@ expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret)
 expr * expr_new_listcomp(listcomp * listcomp_value);
 expr * expr_new_attr(expr * record_value, expr * id);
 
-expr * expr_conv(expr * expr_value, expr_type conv);
+comb_type conv_to_comb_type(conv_type conv);
+expr * expr_conv(expr * expr_value, conv_type conv);
 
 void expr_delete(expr * value);
 
@@ -316,5 +349,6 @@ void expr_list_add_end(expr_list * list, expr * value);
 
 const char * expr_type_str(expr_type type);
 const char * comb_type_str(comb_type type);
+const char * conv_type_str(conv_type conv);
 
 #endif /* __EXPR_H__ */

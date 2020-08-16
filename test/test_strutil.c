@@ -35,7 +35,7 @@ void test_two()
     
     for (i = 0; i < 256; i++)
     {
-        string_add_char(value, 'x');
+        string_add_char_end(value, 'x');
     }
     
     string_delete(value);

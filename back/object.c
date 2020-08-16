@@ -44,12 +44,32 @@ object * object_new_int(int value)
     return obj;
 }
 
+object * object_new_long(long long value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+
+    obj->type = OBJECT_LONG;
+    obj->long_value = value;
+
+    return obj;
+}
+
 object * object_new_float(float value)
 {
     object * obj = (object *)malloc(sizeof(object));
 
     obj->type = OBJECT_FLOAT;
     obj->float_value = value;
+
+    return obj;
+}
+
+object * object_new_double(double value)
+{
+    object * obj = (object *)malloc(sizeof(object));
+
+    obj->type = OBJECT_DOUBLE;
+    obj->double_value = value;
 
     return obj;
 }
@@ -192,7 +212,9 @@ void object_delete(object * obj)
         assert(0);
         break;
     case OBJECT_INT:
+    case OBJECT_LONG:
     case OBJECT_FLOAT:
+    case OBJECT_DOUBLE:
     case OBJECT_CHAR:
         break;
     case OBJECT_STRING:
@@ -418,8 +440,14 @@ void object_print(object * obj)
     case OBJECT_INT:
         printf("object_int\n");
         break;
+    case OBJECT_LONG:
+        printf("object_long\n");
+        break;
     case OBJECT_FLOAT:
         printf("object_float\n");
+        break;
+    case OBJECT_DOUBLE:
+        printf("object_double\n");
         break;
     case OBJECT_CHAR:
         printf("object_char\n");

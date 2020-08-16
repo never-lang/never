@@ -1,0 +1,70 @@
+
+func check_char() -> string
+{
+    "" + 'A'
+}
+
+func check_char_rev() -> string
+{
+    'A' + ""
+}
+
+func check_int() -> string
+{
+    "" + 10
+}
+
+func check_int_rev() -> string
+{
+    10 + ""
+}
+
+func check_long() -> string
+{
+    "" + 10L
+}
+
+func check_long_rev() -> string
+{
+    10L + ""
+}
+
+func check_float() -> string
+{
+    "" + 10.00
+}
+
+func check_float_rev() -> string
+{
+    10.00 + ""
+}
+
+func check_double() -> string
+{
+    "" + 10.00d
+}
+
+func check_double_rev() -> string
+{
+    10.00d + ""
+}
+
+func main() -> int
+{
+    assert(check_char() == "A");
+    assert(check_char_rev() == "A");
+
+    assert(check_int() == "10");
+    assert(check_int_rev() == "10");
+
+    assert(check_long() == "10");
+    assert(check_long_rev() == "10");
+
+    assert(check_float() == "10.00");
+    assert(check_float_rev() == "10.00");
+
+    assert(check_double() == "10.00");
+    assert(check_double_rev() == "10.00");
+
+    0
+}

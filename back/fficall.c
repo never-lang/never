@@ -247,7 +247,17 @@ int test_types_get_int()
     return 10;
 }
 
+long long test_types_get_long()
+{
+    return 10L;
+}
+
 float test_types_get_float()
+{
+    return 10.0f;
+}
+
+double test_types_get_double()
 {
     return 10.0;
 }
@@ -269,18 +279,22 @@ test_Point * test_types_get_ptr()
     return &p1;
 }
 
-void test_types_call(bool b, int i, float f, char c, char * str, test_Point * ptr, test_Types rec)
+void test_types_call(bool b, int i, long long l, float f, double d, char c, char * str, test_Point * ptr, test_Types rec)
 {
     assert(b == true);
     assert(i == 10);
-    assert(f == 10.0);
+    assert(l == 10L);
+    assert(f == 10.0f);
+    assert(d == 10.0);
     assert(c == 'A');
     assert(strcmp(str, "AAA") == 0);
     assert(ptr->x == 10);
     assert(ptr->y == 20);
 
     assert(rec.i == 20);
-    assert(rec.f == 20.0);
+    assert(rec.l == 20L);
+    assert(rec.f == 20.0f);
+    assert(rec.d == 20.0);
     assert(rec.c == 'B');
     assert(strcmp(rec.str, "BBB") == 0);
     assert(rec.ptr->x == 10);
@@ -295,7 +309,9 @@ test_Types test_types_get_rec()
 
     ret.b = false;
     ret.i = 10;
-    ret.f = 10.0;
+    ret.l = 10L;
+    ret.f = 10.0f;
+    ret.d = 10.0;
     ret.c = 'A';
     ret.str = "AAA";
     ret.ptr = &p1;

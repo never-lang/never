@@ -104,7 +104,9 @@ int print_func_expr(expr * value, int depth)
     {
     case EXPR_BOOL:
     case EXPR_INT:
+    case EXPR_LONG:
     case EXPR_FLOAT:
+    case EXPR_DOUBLE:
     case EXPR_CHAR:
     case EXPR_STRING:
     case EXPR_ENUMTYPE:
@@ -232,8 +234,7 @@ int print_func_expr(expr * value, int depth)
             print_func_expr_list(value->func_build_in.param, depth + 1);
         }
         break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
+    case EXPR_CONV:
         if (value->left != NULL)
         {
             print_func_expr(value->left, depth);

@@ -1,0 +1,98 @@
+
+
+func check_eq() -> int
+{
+    assert(10 == 10);
+    assert(10 == 10L);
+    assert(10L == 10);
+    assert(10L == 10L);
+    assert(10.0 == 10.0);
+    assert(10.0 == 10.0d);
+    assert(10.0d == 10.0);
+    assert(10.0d == 10.0d);
+
+    0
+}
+
+func check_neq() -> int
+{
+    assert(10 != 20);
+    assert(10 != 20L);
+    assert(10L != 20);
+    assert(10L != 20L);
+    assert(10.0 != 20.0);
+    assert(10.0 != 20.0d);
+    assert(10.0d != 20.0);
+    assert(10.0d != 20.0d);
+
+    0
+}
+
+func check_lt() -> int
+{
+    assert(10 < 20);
+    assert(10 < 20L);
+    assert(10L < 20);
+    assert(10L < 20L);
+    assert(10.0 < 20.0);
+    assert(10.0 < 20.0d);
+    assert(10.0d < 20.0);
+    assert(10.0d < 20.0d);
+
+    0
+}
+
+func check_lte() -> int
+{
+    assert(10 <= 20);
+    assert(10 <= 20L);
+    assert(10L <= 20);
+    assert(10L <= 20L);
+    assert(10.0 <= 20.0);
+    assert(10.0 <= 20.0d);
+    assert(10.0d <= 20.0);
+    assert(10.0d <= 20.0d);
+
+    0
+}
+
+func check_gt() -> int
+{
+    assert(20 > 10);
+    assert(20 > 10L);
+    assert(20L > 10);
+    assert(20L > 10L);
+    assert(20.0 > 10.0);
+    assert(20.0 > 10.0d);
+    assert(20.0d > 10.0);
+    assert(20.0d > 10.0d);
+
+    0
+}
+
+func check_gte() -> int
+{
+    assert(20 >= 10);
+    assert(20 >= 10L);
+    assert(20L >= 10);
+    assert(20L >= 10L);
+    assert(20.0 >= 10.0);
+    assert(20.0 >= 10.0d);
+    assert(20.0d >= 10.0);
+    assert(20.0d >= 10.0d);
+
+    0
+}
+
+func main() -> int
+{
+    check_eq();
+    check_neq();
+    check_lt();
+    check_lte();
+    check_gt();
+    check_gte();
+
+    0
+}
+

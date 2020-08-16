@@ -130,7 +130,9 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 param * param_value = entry->param_value;
                 if (param_value->type == PARAM_BOOL ||
                     param_value->type == PARAM_INT ||
+                    param_value->type == PARAM_LONG ||
                     param_value->type == PARAM_FLOAT ||
+                    param_value->type == PARAM_DOUBLE ||
                     param_value->type == PARAM_CHAR ||
                     param_value->type == PARAM_STRING ||
                     param_value->type == PARAM_ENUMTYPE ||
@@ -741,7 +743,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
     {
     case EXPR_BOOL:
     case EXPR_INT:
+    case EXPR_LONG:
     case EXPR_FLOAT:
+    case EXPR_DOUBLE:
     case EXPR_CHAR:
     case EXPR_STRING:
     case EXPR_ID:
@@ -873,9 +877,8 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
                                             result);
         }
         break;
-    case EXPR_INT_TO_FLOAT:
-    case EXPR_FLOAT_TO_INT:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
+    case EXPR_CONV:
+        func_gencode_freevars_expr(func_value, stab, value->conv.expr_value, result);
         break;
     case EXPR_LISTCOMP:
         if (value->listcomp_value != NULL)

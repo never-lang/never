@@ -47,17 +47,6 @@ void string_delete(string * value)
     free(value);
 }
 
-void string_add_char(string * value, char c)
-{
-    value->buf[value->pos++] = c;
-
-    if (value->pos >= value->size)
-    {
-        value->size += STRING_BUF_SIZE;
-        value->buf = (char *)realloc(value->buf, value->size * sizeof(char));
-    }
-}
-
 char * string_take(string * value)
 {
     char * buf = value->buf;
@@ -148,6 +137,92 @@ char * string_add_float(char * str_one, float val, int order)
     }
     
     return tmpstr;
+}
+
+char * string_add_long(char * str_one, long long val, int order)
+{
+    size_t str_len = 0;
+    size_t long_len = 0;
+    char * tmpstr = NULL;
+    char str_long[STRING_CONV_BUF_SIZE] = { 0 };
+    
+    sprintf(str_long, "%lld", val);
+    str_len = strlen(str_one);
+    long_len = strlen(str_long);
+    tmpstr = (char *) malloc((str_len + long_len + 1) * sizeof(char));
+    
+    if (order)
+    {
+        strcpy(tmpstr, str_one);
+        strcpy(tmpstr + str_len, str_long);
+    }
+    else
+    {
+        strcpy(tmpstr, str_long);
+        strcpy(tmpstr + long_len, str_one);
+    }
+    
+    return tmpstr;
+}
+
+char * string_add_double(char * str_one, double val, int order)
+{
+    size_t str_len = 0;
+    size_t double_len = 0;
+    char * tmpstr = NULL;
+    char str_double[STRING_CONV_BUF_SIZE] = { 0 };
+    
+    sprintf(str_double, "%.2lf", val);
+    str_len = strlen(str_one);
+    double_len = strlen(str_double);
+    tmpstr = (char *) malloc((str_len + double_len + 1) * sizeof(char));
+    
+    if (order)
+    {
+        strcpy(tmpstr, str_one);
+        strcpy(tmpstr + str_len, str_double);
+    }
+    else
+    {
+        strcpy(tmpstr, str_double);
+        strcpy(tmpstr + double_len, str_one);
+    }
+    
+    return tmpstr;
+}
+
+char * string_add_char(char * str_one, char val, int order)
+{
+    size_t str_len = 0;
+    char * tmpstr = NULL;
+    
+    str_len = strlen(str_one);
+    tmpstr = (char *) malloc((str_len + 1 + 1) * sizeof(char));
+    
+    if (order)
+    {
+        strcpy(tmpstr, str_one);
+        tmpstr[str_len] = val;
+        tmpstr[str_len + 1] = '\0';
+    }
+    else
+    {
+        tmpstr[0] = val;
+        strcpy(tmpstr + 1, str_one);
+    }
+    
+    return tmpstr;
+}
+
+void string_add_char_end(string * value, char c)
+{
+    value->buf[value->pos++] = c;
+
+    if (value->pos >= value->size)
+    {
+        value->size += STRING_BUF_SIZE;
+        value->buf = (char *)realloc(value->buf, value->size * sizeof(char));
+    }
 }
 
 void string_print(char * val)

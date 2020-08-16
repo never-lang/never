@@ -1,0 +1,234 @@
+
+func check_int_int() -> int
+{
+    let a = [ 1, 2, 3, 4 ] : int;
+    let b = -2 * a;
+
+    assert(b[0] == -2);
+    assert(b[1] == -4);
+    assert(b[2] == -6);
+    assert(b[3] == -8);
+
+    0
+}
+
+func check_int_long() -> int
+{
+    let a = [ 1, 2, 3, 4 ] : int;
+    let b = -2L * a;
+
+    assert(b[0] == -2);
+    assert(b[1] == -4);
+    assert(b[2] == -6);
+    assert(b[3] == -8);
+
+    0
+}
+
+func check_int_float() -> int
+{
+    let a = [ 1, 2, 3, 4 ] : int;
+    let b = -2.0 * a;
+
+    assert(b[0] == -2);
+    assert(b[1] == -4);
+    assert(b[2] == -6);
+    assert(b[3] == -8);
+
+    0
+}
+
+func check_int_double() -> int
+{
+    let a = [ 1, 2, 3, 4 ] : int;
+    let b = -2.0d * a;
+
+    assert(b[0] == -2);
+    assert(b[1] == -4);
+    assert(b[2] == -6);
+    assert(b[3] == -8);
+
+    0
+}
+
+func check_long_int() -> int
+{
+    let a = [ 1L, 2L, 3L, 4L ] : long;
+    let b = -2 * a;
+
+    assert(b[0] == -2L);
+    assert(b[1] == -4L);
+    assert(b[2] == -6L);
+    assert(b[3] == -8L);
+
+    0
+}
+
+func check_long_long() -> int
+{
+    let a = [ 1L, 2L, 3L, 4L ] : long;
+    let b = -2L * a;
+
+    assert(b[0] == -2L);
+    assert(b[1] == -4L);
+    assert(b[2] == -6L);
+    assert(b[3] == -8L);
+
+    0
+}
+
+func check_long_float() -> int
+{
+    let a = [ 1L, 2L, 3L, 4L ] : long;
+    let b = -2.0 * a;
+
+    assert(b[0] == -2L);
+    assert(b[1] == -4L);
+    assert(b[2] == -6L);
+    assert(b[3] == -8L);
+
+    0
+}
+
+func check_long_double() -> int
+{
+    let a = [ 1L, 2L, 3L, 4L ] : long;
+    let b = -2.0d * a;
+
+    assert(b[0] == -2L);
+    assert(b[1] == -4L);
+    assert(b[2] == -6L);
+    assert(b[3] == -8L);
+
+    0
+}
+
+func check_float_int() -> int
+{
+    let a = [ 1.0, 2.0, 3.0, 4.0 ] : float;
+    let b = -2 * a;
+
+    assert(b[0] == -2.0);
+    assert(b[1] == -4.0);
+    assert(b[2] == -6.0);
+    assert(b[3] == -8.0);
+
+    0
+}
+
+func check_float_long() -> int
+{
+    let a = [ 1.0, 2.0, 3.0, 4.0 ] : float;
+    let b = -2L * a;
+
+    assert(b[0] == -2.0);
+    assert(b[1] == -4.0);
+    assert(b[2] == -6.0);
+    assert(b[3] == -8.0);
+
+    0
+}
+
+func check_float_float() -> int
+{
+    let a = [ 1.0, 2.0, 3.0, 4.0 ] : float;
+    let b = -2.0 * a;
+
+    assert(b[0] == -2.0);
+    assert(b[1] == -4.0);
+    assert(b[2] == -6.0);
+    assert(b[3] == -8.0);
+
+    0
+}
+
+func check_float_double() -> int
+{
+    let a = [ 1.0, 2.0, 3.0, 4.0 ] : float;
+    let b = -2.0d * a;
+
+    assert(b[0] == -2.0);
+    assert(b[1] == -4.0);
+    assert(b[2] == -6.0);
+    assert(b[3] == -8.0);
+
+    0
+}
+
+func check_double_int() -> int
+{
+    let a = [ 1.0d, 2.0d, 3.0d, 4.0d ] : double;
+    let b = -2 * a;
+
+    assert(b[0] == -2.0d);
+    assert(b[1] == -4.0d);
+    assert(b[2] == -6.0d);
+    assert(b[3] == -8.0d);
+
+    0
+}
+
+func check_double_long() -> int
+{
+    let a = [ 1.0d, 2.0d, 3.0d, 4.0d ] : double;
+    let b = -2L * a;
+
+    assert(b[0] == -2.0d);
+    assert(b[1] == -4.0d);
+    assert(b[2] == -6.0d);
+    assert(b[3] == -8.0d);
+
+    0
+}
+
+func check_double_float() -> int
+{
+    let a = [ 1.0d, 2.0d, 3.0d, 4.0d ] : double;
+    let b = -2.0 * a;
+
+    assert(b[0] == -2.0d);
+    assert(b[1] == -4.0d);
+    assert(b[2] == -6.0d);
+    assert(b[3] == -8.0d);
+
+    0
+}
+
+func check_double_double() -> int
+{
+    let a = [ 1.0d, 2.0d, 3.0d, 4.0d ] : double;
+    let b = -2.0d * a;
+
+    assert(b[0] == -2.0d);
+    assert(b[1] == -4.0d);
+    assert(b[2] == -6.0d);
+    assert(b[3] == -8.0d);
+
+    0
+}
+
+func main() -> int
+{
+    check_int_int();
+    check_int_long();
+    check_int_float();
+    check_int_double();
+
+    check_long_int();
+    check_long_long();
+    check_long_float();
+    check_long_double();
+
+    check_float_int();
+    check_float_long();
+    check_float_float();
+    check_float_double();
+
+    check_double_int();
+    check_double_long();
+    check_double_float();
+    check_double_double();
+
+    0
+}
+

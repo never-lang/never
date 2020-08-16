@@ -62,7 +62,9 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
         case COMB_TYPE_NIL:
         case COMB_TYPE_BOOL:
         case COMB_TYPE_INT:
+        case COMB_TYPE_LONG:
         case COMB_TYPE_FLOAT:
+        case COMB_TYPE_DOUBLE:
         case COMB_TYPE_CHAR:
         case COMB_TYPE_VOID:
         case COMB_TYPE_C_PTR:
