@@ -294,122 +294,134 @@ int expr_conv_basic_type(expr * value, expr * expr_left, expr * expr_right)
 {
     int conv = 1;
 
-    if (expr_left->comb.comb == COMB_TYPE_INT &&
-        expr_right->comb.comb == COMB_TYPE_INT)
+    if (expr_left->comb.comb == COMB_TYPE_INT)
     {
-        value->comb.comb = COMB_TYPE_INT;
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_INT &&
-             expr_right->comb.comb == COMB_TYPE_LONG)
-    {
-        expr_conv(expr_left, CONV_INT_TO_LONG);
-        value->comb.comb = COMB_TYPE_LONG;
+        if (expr_right->comb.comb == COMB_TYPE_INT)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_LONG)
+        {
+            expr_conv(expr_left, CONV_INT_TO_LONG);
+            value->comb.comb = COMB_TYPE_LONG;
 
-        print_warning_msg(value->line_no, "converted int to long");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_INT &&
-             expr_right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        expr_conv(expr_left, CONV_INT_TO_FLOAT);
-        value->comb.comb = COMB_TYPE_FLOAT;
+            print_warning_msg(value->line_no, "converted int to long");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            expr_conv(expr_left, CONV_INT_TO_FLOAT);
+            value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_INT &&
-             expr_right->comb.comb == COMB_TYPE_DOUBLE)
-    {
-        expr_conv(expr_left, CONV_INT_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
+            print_warning_msg(value->line_no, "converted int to float");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_DOUBLE)
+        {
+            expr_conv(expr_left, CONV_INT_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
 
-        print_warning_msg(value->line_no, "converted int to double");
-    }
+            print_warning_msg(value->line_no, "converted int to double");
+        }
+        else
+        {
+            conv = 0;
+        }
 
-    else if (expr_left->comb.comb == COMB_TYPE_LONG &&
-             expr_right->comb.comb == COMB_TYPE_INT)
+    }
+    else if (expr_left->comb.comb == COMB_TYPE_LONG)
     {
-        expr_conv(expr_right, CONV_INT_TO_LONG);
-        value->comb.comb = COMB_TYPE_LONG;
+        if (expr_right->comb.comb == COMB_TYPE_INT)
+        {
+            expr_conv(expr_right, CONV_INT_TO_LONG);
+            value->comb.comb = COMB_TYPE_LONG;
 
-        print_warning_msg(value->line_no, "converted int to long");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_LONG &&
-             expr_right->comb.comb == COMB_TYPE_LONG)
-    {
-        value->comb.comb = COMB_TYPE_LONG;
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_LONG &&
-             expr_right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        expr_conv(expr_left, CONV_LONG_TO_FLOAT);
-        value->comb.comb = COMB_TYPE_FLOAT;
+            print_warning_msg(value->line_no, "converted int to long");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_LONG)
+        {
+            value->comb.comb = COMB_TYPE_LONG;
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            expr_conv(expr_left, CONV_LONG_TO_FLOAT);
+            value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted long to float");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_LONG &&
-             expr_right->comb.comb == COMB_TYPE_DOUBLE)
-    {
-        expr_conv(expr_left, CONV_LONG_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
+            print_warning_msg(value->line_no, "converted long to float");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_DOUBLE)
+        {
+            expr_conv(expr_left, CONV_LONG_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
 
-        print_warning_msg(value->line_no, "converted long to double");
+            print_warning_msg(value->line_no, "converted long to double");
+        }
+        else
+        {
+            conv = 0;
+        }
     }
-    else if (expr_left->comb.comb == COMB_TYPE_FLOAT &&
-             expr_right->comb.comb == COMB_TYPE_INT)
+    else if (expr_left->comb.comb == COMB_TYPE_FLOAT)
     {
-        expr_conv(expr_right, CONV_INT_TO_FLOAT);
-        value->comb.comb = COMB_TYPE_FLOAT;
+        if (expr_right->comb.comb == COMB_TYPE_INT)
+        {
+            expr_conv(expr_right, CONV_INT_TO_FLOAT);
+            value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted int to float");
+            print_warning_msg(value->line_no, "converted int to float");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_LONG)
+        {
+            expr_conv(expr_right, CONV_LONG_TO_FLOAT);
+            value->comb.comb = COMB_TYPE_FLOAT;
+    
+            print_warning_msg(value->line_no, "converted long to float");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            value->comb.comb = COMB_TYPE_FLOAT;
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_DOUBLE)
+        {
+            expr_conv(expr_left, CONV_FLOAT_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
+    
+            print_warning_msg(value->line_no, "converted float to double");
+        }
+        else
+        {
+            conv = 0;
+        }
     }
-    else if (expr_left->comb.comb == COMB_TYPE_FLOAT &&
-             expr_right->comb.comb == COMB_TYPE_LONG)
+    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE)
     {
-        expr_conv(expr_right, CONV_LONG_TO_FLOAT);
-        value->comb.comb = COMB_TYPE_FLOAT;
- 
-        print_warning_msg(value->line_no, "converted long to float");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_FLOAT &&
-             expr_right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        value->comb.comb = COMB_TYPE_FLOAT;
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_FLOAT &&
-             expr_right->comb.comb == COMB_TYPE_DOUBLE)
-    {
-        expr_conv(expr_left, CONV_FLOAT_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
- 
-        print_warning_msg(value->line_no, "converted float to double");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE &&
-             expr_right->comb.comb == COMB_TYPE_INT)
-    {
-        expr_conv(expr_right, CONV_INT_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
+        if (expr_right->comb.comb == COMB_TYPE_INT)
+        {
+            expr_conv(expr_right, CONV_INT_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
 
-        print_warning_msg(value->line_no, "converted int to double");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE &&
-             expr_right->comb.comb == COMB_TYPE_LONG)
-    {
-        expr_conv(expr_right, CONV_LONG_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
- 
-        print_warning_msg(value->line_no, "converted long to double");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE &&
-             expr_right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        expr_conv(expr_right, CONV_FLOAT_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
+            print_warning_msg(value->line_no, "converted int to double");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_LONG)
+        {
+            expr_conv(expr_right, CONV_LONG_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
+    
+            print_warning_msg(value->line_no, "converted long to double");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            expr_conv(expr_right, CONV_FLOAT_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
 
-        print_warning_msg(value->line_no, "converted float to double");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE &&
-             expr_right->comb.comb == COMB_TYPE_DOUBLE)
-    {
-        value->comb.comb = COMB_TYPE_DOUBLE;
+            print_warning_msg(value->line_no, "converted float to double");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_DOUBLE)
+        {
+            value->comb.comb = COMB_TYPE_DOUBLE;
+        }
+        else
+        {
+            conv = 0;
+        }
     }
     else
     {
@@ -490,122 +502,133 @@ int expr_conv_ass_type(expr * value, expr * expr_left, expr * expr_right)
 {
     int conv = 1;
 
-    if (expr_left->comb.comb == COMB_TYPE_INT &&
-        expr_right->comb.comb == COMB_TYPE_INT)
+    if (expr_left->comb.comb == COMB_TYPE_INT)
     {
-        value->comb.comb = COMB_TYPE_INT;
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_INT &&
-             expr_right->comb.comb == COMB_TYPE_LONG)
-    {
-        expr_conv(expr_right, CONV_LONG_TO_INT);
-        value->comb.comb = COMB_TYPE_INT;
+        if (expr_right->comb.comb == COMB_TYPE_INT)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_LONG)
+        {
+            expr_conv(expr_right, CONV_LONG_TO_INT);
+            value->comb.comb = COMB_TYPE_INT;
 
-        print_warning_msg(value->line_no, "converted long to int");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_INT &&
-             expr_right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        expr_conv(expr_right, CONV_FLOAT_TO_INT);
-        value->comb.comb = COMB_TYPE_INT;
+            print_warning_msg(value->line_no, "converted long to int");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            expr_conv(expr_right, CONV_FLOAT_TO_INT);
+            value->comb.comb = COMB_TYPE_INT;
 
-        print_warning_msg(value->line_no, "converted float to int");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_INT &&
-             expr_right->comb.comb == COMB_TYPE_DOUBLE)
-    {
-        expr_conv(expr_right, CONV_DOUBLE_TO_INT);
-        value->comb.comb = COMB_TYPE_DOUBLE;
+            print_warning_msg(value->line_no, "converted float to int");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_DOUBLE)
+        {
+            expr_conv(expr_right, CONV_DOUBLE_TO_INT);
+            value->comb.comb = COMB_TYPE_DOUBLE;
 
-        print_warning_msg(value->line_no, "converted int to double");
+            print_warning_msg(value->line_no, "converted int to double");
+        }
+        else
+        {
+            conv = 0;
+        }
     }
+    else if (expr_left->comb.comb == COMB_TYPE_LONG)
+    {
+        if (expr_right->comb.comb == COMB_TYPE_INT)
+        {
+            expr_conv(expr_right, CONV_INT_TO_LONG);
+            value->comb.comb = COMB_TYPE_LONG;
 
-    else if (expr_left->comb.comb == COMB_TYPE_LONG &&
-             expr_right->comb.comb == COMB_TYPE_INT)
-    {
-        expr_conv(expr_right, CONV_INT_TO_LONG);
-        value->comb.comb = COMB_TYPE_LONG;
+            print_warning_msg(value->line_no, "converted int to long");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_LONG)
+        {
+            value->comb.comb = COMB_TYPE_LONG;
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            expr_conv(expr_right, CONV_FLOAT_TO_LONG);
+            value->comb.comb = COMB_TYPE_LONG;
 
-        print_warning_msg(value->line_no, "converted int to long");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_LONG &&
-             expr_right->comb.comb == COMB_TYPE_LONG)
-    {
-        value->comb.comb = COMB_TYPE_LONG;
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_LONG &&
-             expr_right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        expr_conv(expr_right, CONV_FLOAT_TO_LONG);
-        value->comb.comb = COMB_TYPE_LONG;
+            print_warning_msg(value->line_no, "converted float to long");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_DOUBLE)
+        {
+            expr_conv(expr_right, CONV_DOUBLE_TO_LONG);
+            value->comb.comb = COMB_TYPE_LONG;
 
-        print_warning_msg(value->line_no, "converted float to long");
+            print_warning_msg(value->line_no, "converted double to long");
+        }
+        else
+        {
+            conv = 0;
+        }
     }
-    else if (expr_left->comb.comb == COMB_TYPE_LONG &&
-             expr_right->comb.comb == COMB_TYPE_DOUBLE)
+    else if (expr_left->comb.comb == COMB_TYPE_FLOAT)
     {
-        expr_conv(expr_right, CONV_DOUBLE_TO_LONG);
-        value->comb.comb = COMB_TYPE_LONG;
+        if (expr_right->comb.comb == COMB_TYPE_INT)
+        {
+            expr_conv(expr_right, CONV_INT_TO_FLOAT);
+            value->comb.comb = COMB_TYPE_FLOAT;
 
-        print_warning_msg(value->line_no, "converted double to long");
+            print_warning_msg(value->line_no, "converted int to float");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_LONG)
+        {
+            expr_conv(expr_right, CONV_LONG_TO_FLOAT);
+            value->comb.comb = COMB_TYPE_FLOAT;
+    
+            print_warning_msg(value->line_no, "converted long to float");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            value->comb.comb = COMB_TYPE_FLOAT;
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_DOUBLE)
+        {
+            expr_conv(expr_right, CONV_DOUBLE_TO_FLOAT);
+            value->comb.comb = COMB_TYPE_FLOAT;
+    
+            print_warning_msg(value->line_no, "converted double to float");
+        }
+        else
+        {
+            conv = 0;
+        }
     }
-    else if (expr_left->comb.comb == COMB_TYPE_FLOAT &&
-             expr_right->comb.comb == COMB_TYPE_INT)
-    {
-        expr_conv(expr_right, CONV_INT_TO_FLOAT);
-        value->comb.comb = COMB_TYPE_FLOAT;
+    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE)
+    {         
+        if (expr_right->comb.comb == COMB_TYPE_INT)
+        {
+            expr_conv(expr_right, CONV_INT_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
 
-        print_warning_msg(value->line_no, "converted int to float");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_FLOAT &&
-             expr_right->comb.comb == COMB_TYPE_LONG)
-    {
-        expr_conv(expr_right, CONV_LONG_TO_FLOAT);
-        value->comb.comb = COMB_TYPE_FLOAT;
- 
-        print_warning_msg(value->line_no, "converted long to float");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_FLOAT &&
-             expr_right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        value->comb.comb = COMB_TYPE_FLOAT;
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_FLOAT &&
-             expr_right->comb.comb == COMB_TYPE_DOUBLE)
-    {
-        expr_conv(expr_right, CONV_DOUBLE_TO_FLOAT);
-        value->comb.comb = COMB_TYPE_FLOAT;
- 
-        print_warning_msg(value->line_no, "converted double to float");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE &&
-             expr_right->comb.comb == COMB_TYPE_INT)
-    {
-        expr_conv(expr_right, CONV_INT_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
+            print_warning_msg(value->line_no, "converted int to double");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_LONG)
+        {
+            expr_conv(expr_right, CONV_LONG_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
+    
+            print_warning_msg(value->line_no, "converted long to double");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_FLOAT)
+        {
+            expr_conv(expr_right, CONV_FLOAT_TO_DOUBLE);
+            value->comb.comb = COMB_TYPE_DOUBLE;
 
-        print_warning_msg(value->line_no, "converted int to double");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE &&
-             expr_right->comb.comb == COMB_TYPE_LONG)
-    {
-        expr_conv(expr_right, CONV_LONG_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
- 
-        print_warning_msg(value->line_no, "converted long to double");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE &&
-             expr_right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        expr_conv(expr_right, CONV_FLOAT_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_DOUBLE;
-
-        print_warning_msg(value->line_no, "converted float to double");
-    }
-    else if (expr_left->comb.comb == COMB_TYPE_DOUBLE &&
-             expr_right->comb.comb == COMB_TYPE_DOUBLE)
-    {
-        value->comb.comb = COMB_TYPE_DOUBLE;
+            print_warning_msg(value->line_no, "converted float to double");
+        }
+        else if (expr_right->comb.comb == COMB_TYPE_DOUBLE)
+        {
+            value->comb.comb = COMB_TYPE_DOUBLE;
+        }
+        else
+        {
+            conv = 0;
+        }
     }
     else
     {
@@ -2062,7 +2085,7 @@ int expr_lgte_check_type(symtab * tab, expr * value, func * func_value, unsigned
         value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
-                value->right->comb.comb == COMB_TYPE_CHAR)
+             value->right->comb.comb == COMB_TYPE_CHAR)
     {
         value->comb.comb = COMB_TYPE_BOOL;
     }
