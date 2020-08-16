@@ -40,9 +40,17 @@ static int get_result(object * result)
     {
         ret = result->int_value;
     }
+    else if (result->type == OBJECT_LONG)
+    {
+        ret = (int)result->long_value;        
+    }
     else if (result->type == OBJECT_FLOAT)
     {
         ret = (int)result->float_value;
+    }
+    else if (result->type == OBJECT_DOUBLE)
+    {
+        ret = (int)result->double_value;
     }
     else
     {
