@@ -144,7 +144,7 @@ int expr_conv_constred(expr * value, int * result)
             expr * left_value = value->conv.expr_value;
 
             value->type = EXPR_INT;
-            value->int_value = (double)left_value->float_value;
+            value->int_value = (int)left_value->float_value;
 
             expr_delete(left_value);
         }

@@ -544,7 +544,7 @@ int expr_conv_ass_type(expr * value, expr * expr_left, expr * expr_right)
     else if (expr_left->comb.comb == COMB_TYPE_LONG &&
              expr_right->comb.comb == COMB_TYPE_DOUBLE)
     {
-        expr_conv(expr_right, CONV_LONG_TO_DOUBLE);
+        expr_conv(expr_right, CONV_DOUBLE_TO_LONG);
         value->comb.comb = COMB_TYPE_LONG;
 
         print_warning_msg(value->line_no, "converted double to long");
@@ -2055,56 +2055,10 @@ int expr_lgte_check_type(symtab * tab, expr * value, func * func_value, unsigned
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
-    if (value->left->comb.comb == COMB_TYPE_INT &&
-        value->right->comb.comb == COMB_TYPE_INT)
-    {
-        value->comb.comb = COMB_TYPE_BOOL;
-    }
-    else if (value->left->comb.comb == COMB_TYPE_INT &&
-             value->right->comb.comb == COMB_TYPE_LONG)
-    {
-        expr_conv(value->left, CONV_INT_TO_LONG);
-        value->comb.comb = COMB_TYPE_BOOL;
 
-        print_warning_msg(value->line_no, "converted int to long");
-    }
-    else if (value->left->comb.comb == COMB_TYPE_LONG &&
-             value->right->comb.comb == COMB_TYPE_INT)
+    if (expr_conv_basic_type(value, value->left, value->right))
     {
-        expr_conv(value->right, CONV_INT_TO_LONG);
-        value->comb.comb = COMB_TYPE_BOOL;
-
-        print_warning_msg(value->line_no, "converted int to long");
-    }
-    else if (value->left->comb.comb == COMB_TYPE_LONG &&
-             value->right->comb.comb == COMB_TYPE_LONG)
-    {
-        value->comb.comb = COMB_TYPE_BOOL;
-    }
-    else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
-             value->right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        value->comb.comb = COMB_TYPE_BOOL;
-    }
-    else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
-             value->right->comb.comb == COMB_TYPE_DOUBLE)
-    {
-        expr_conv(value->left, CONV_FLOAT_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_BOOL;
-
-        print_warning_msg(value->line_no, "converted float to double");
-    }
-    else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
-             value->right->comb.comb == COMB_TYPE_FLOAT)
-    {
-        expr_conv(value->right, CONV_FLOAT_TO_DOUBLE);
-        value->comb.comb = COMB_TYPE_BOOL;
-
-        print_warning_msg(value->line_no, "converted float to double");
-    }
-    else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
-             value->right->comb.comb == COMB_TYPE_DOUBLE)
-    {
+        /* converted type */
         value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
@@ -2188,7 +2142,7 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     {
         value->comb.comb = COMB_TYPE_CHAR;
     }
-    else if (expr_conv_ass_type(value, value->right, value->left))
+    else if (expr_conv_ass_type(value, value->left, value->right))
     {
         /* converted basic type */
     }
