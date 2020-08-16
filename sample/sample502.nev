@@ -1,0 +1,62 @@
+
+func check_int() -> int
+{
+    let a = 10;
+    let b = 20;
+
+    a = b = 5;
+
+    assert(a == 5);
+    assert(b == 5);
+
+    0
+}
+
+func check_long() -> int
+{
+    let a = 10L;
+    let b = 20L;
+
+    a = b = 5L;
+
+    assert(a == 5L);
+    assert(b == 5L);
+
+    0
+}
+
+func check_float() -> int
+{
+    let a = 10.0;
+    let b = 20.0;
+
+    a = b = 5.0;
+
+    assert(a == 5.0);
+    assert(b == 5.0);
+
+    0
+}
+
+func check_double() -> int
+{
+    let a = 10.0d;
+    let b = 20.0d;
+
+    a = b = 5.0d;
+
+    assert(a == 5.0d);
+    assert(b == 5.0d);
+
+    0
+}
+
+func main() -> int
+{
+    check_int();
+    check_long();
+    check_float();
+    check_double();
+
+    0
+}

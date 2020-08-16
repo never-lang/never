@@ -1,0 +1,41 @@
+
+func gint(i : int) -> int
+{
+    i
+}
+
+func glong(l : long) -> long
+{
+    l
+}
+
+func gfloat(f : float) -> float
+{
+    f
+}
+
+func gdouble(d : double) -> double
+{
+    d
+}
+
+func main() -> int
+{
+    let i = 10;
+    let l = 10L;
+    let f = 10.0;
+    let d = 10.0d;
+
+    assert(gint(i = 20) == 20);
+    assert(glong(l = 20L) == 20L);
+    assert(gfloat(f = 20.0) == 20.0);
+    assert(gdouble(d = 20.0d) == 20.0d);
+
+    assert(i == 20);
+    assert(l == 20L);
+    assert(f == 20.0);
+    assert(d == 20.0d);
+
+    0
+}
+

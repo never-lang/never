@@ -42,6 +42,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result);
 int expr_qualifier_set_comb_type(expr * value, expr * expr_value);
 int expr_conv_basic_type(expr * value, expr * expr_left, expr * expr_right);
 int expr_conv_string_type(expr * value, expr * expr_left, expr * expr_right);
+int expr_conv_ass_type(expr * value, expr * expr_left, expr * expr_right);
 
 int array_cmp(int comb_dims_one, param * ret_one,
               int comb_dims_two, param * ret_two); 
