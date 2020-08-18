@@ -1,5 +1,3 @@
-use raylib
-
 /***
  * A small hack in raylib library is needed
  *
@@ -12,6 +10,8 @@ use raylib
  *  }
  *
  */
+
+use raylib
 
 let MAX_COLUMNS = 20;
 
@@ -92,3 +92,4 @@ func main() -> int
 
     0
 }
+
