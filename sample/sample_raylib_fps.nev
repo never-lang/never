@@ -1,5 +1,18 @@
 use raylib
 
+/***
+ * A small hack in raylib library is needed
+ *
+ * Add the following function:
+ *
+ *  Camera UpdateCameraCopy(Camera camera)
+ *  {
+ *    UpdateCamera(&camera);
+ *    return camera;
+ *  }
+ *
+ */
+
 let MAX_COLUMNS = 20;
 
 func main() -> int
@@ -35,13 +48,13 @@ func main() -> int
     raylib.SetCameraMode(camera, raylib.CAMERA_FIRST_PERSON); 
 
     /* Set our game to run at 60 frames-per-second */
-    raylib.SetTargetFPS(60);                           
+    raylib.SetTargetFPS(200);                           
 
     /* Main game loop */
     while (!raylib.WindowShouldClose()) /* Detect window close button or ESC key */
     {
         /* Update camera */
-        /* raylib.UpdateCamera(&camera); */
+        camera = raylib.UpdateCameraCopy(camera);
 
         /* Draw */
         raylib.BeginDrawing();

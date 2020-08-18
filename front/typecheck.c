@@ -1376,7 +1376,9 @@ int param_enum_record_check_type(symtab * tab, param * param_value,
     {
         symtab_entry * mentry = NULL;
         mentry = symtab_lookup(tab, param_value->module_id, SYMTAB_LOOKUP_GLOBAL);
-        if (mentry != NULL && mentry->type == SYMTAB_MODULE_DECL)
+        if (mentry != NULL &&
+            mentry->type == SYMTAB_MODULE_DECL &&
+            mentry->module_decl_value->nev != NULL)
         {
             tab = mentry->module_decl_value->nev->stab;
         }

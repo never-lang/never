@@ -72,5 +72,6 @@ module raylib
     extern "../../raylib/src/libraylib.so" func Fade(color : Color, alpha : float) -> Color
     extern "../../raylib/src/libraylib.so" func DrawRectangle(posX : int, posY : int, width : int, height : int, color : Color) -> void
     extern "../../raylib/src/libraylib.so" func DrawRectangleLines(posX : int, posY : int, width : int, height : int, color : Color) -> void
+    extern "../../raylib/src/libraylib.so" func UpdateCameraCopy (camera : Camera3D) -> Camera3D
 }
 
