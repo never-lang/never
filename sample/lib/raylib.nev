@@ -7,6 +7,13 @@ module raylib
         y : float;
     }
 
+    record Vector3
+    {
+        x : float;
+        y : float;
+        z : float;
+    }
+
     record Color
     {
         r : char;
@@ -15,15 +22,33 @@ module raylib
         a : char;
     }
 
+    record Camera3D
+    {
+        position : Vector3;
+        target : Vector3;
+        up : Vector3;
+        fovy : float;
+        type : int;
+    }
+
+    let CAMERA_PERSPECTIVE = 0;
+    let CAMERA_ORTHOGRAPHIC = 1;
+    let CAMERA_FIRST_PERSON = 3;
+
     let MOUSE_LEFT_BUTTON = 0;
     let MOUSE_RIGHT_BUTTON = 1;
     let MOUSE_MIDDLE_BUTTON = 2;
 
+    let LIGHTGRAY = Color(chr(200), chr(200), chr(200), chr(255));
+    let GOLD = Color(chr(255), chr(203), chr(0), chr(255));
     let DARKBLUE = Color(chr(0), chr(82), chr(172), chr(255));
     let DARKGRAY = Color(chr(80), chr(80), chr(80), chr(255));
     let LIME = Color(chr(0), chr(158), chr(47), chr(255));
+    let BLUE = Color(chr(0), chr(121), chr(241), chr(255));
+    let SKYBLUE = Color(chr(102), chr(191), chr(255), chr(255));
     let MAROON = Color(chr(190), chr(33), chr(55), chr(255));
     let RAYWHITE = Color(chr(245), chr(245), chr(245), chr(245));
+    let BLACK = Color(chr(0), chr(0), chr(0), chr(255));
 
     extern "../../raylib/src/libraylib.so" func InitWindow(width : int, height : int, title : string) -> void
     extern "../../raylib/src/libraylib.so" func SetTargetFPS(fps : int) -> void
@@ -36,5 +61,16 @@ module raylib
     extern "../../raylib/src/libraylib.so" func ClearBackground(color : Color) -> void
     extern "../../raylib/src/libraylib.so" func DrawCircleV(center : Vector2, radius : float, color : Color) -> void
     extern "../../raylib/src/libraylib.so" func DrawText(text : string, posX : int, posY : int, fontSize : int, color : Color) -> void
+    extern "../../raylib/src/libraylib.so" func GetRandomValue(min : int, max : int) -> int
+
+    extern "../../raylib/src/libraylib.so" func SetCameraMode(camera : Camera3D, mode : int) -> void
+    extern "../../raylib/src/libraylib.so" func BeginMode3D(camera : Camera3D) -> void
+    extern "../../raylib/src/libraylib.so" func EndMode3D() -> void
+    extern "../../raylib/src/libraylib.so" func DrawPlane(centerPos : Vector3, size : Vector2, color : Color) -> void
+    extern "../../raylib/src/libraylib.so" func DrawCube(position : Vector3, width : float, height : float, length : float, color : Color) -> void
+    extern "../../raylib/src/libraylib.so" func DrawCubeWires(position : Vector3, width : float, height : float, length : float, color : Color) -> void
+    extern "../../raylib/src/libraylib.so" func Fade(color : Color, alpha : float) -> Color
+    extern "../../raylib/src/libraylib.so" func DrawRectangle(posX : int, posY : int, width : int, height : int, color : Color) -> void
+    extern "../../raylib/src/libraylib.so" func DrawRectangleLines(posX : int, posY : int, width : int, height : int, color : Color) -> void
 }
 
