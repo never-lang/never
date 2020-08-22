@@ -560,7 +560,7 @@ double {
 }
 
 <C_STRING>\n {
-    print_error_msg(line_no, "unterminated string\n");
+    print_error_msg(line_no, "unterminated string");
 
     if (string_value) { string_delete(string_value); string_value = NULL; }
 
@@ -574,7 +574,7 @@ double {
     sscanf(yytext + 1, "%o", &result);
     if (result > 0xff)
     {
-        print_error_msg(line_no, "constant out of range\n");
+        print_error_msg(line_no, "constant out of range");
         
         if (string_value) { string_delete(string_value); string_value = NULL; }
 
@@ -585,7 +585,7 @@ double {
 }
 
 <C_STRING>\\[0-9]+ {
-    print_error_msg(line_no, "bad escape sequence\n");
+    print_error_msg(line_no, "bad escape sequence");
 
     if (string_value) { string_delete(string_value); string_value = NULL; }
 

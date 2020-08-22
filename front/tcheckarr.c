@@ -208,6 +208,8 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
     }
     else if (value->array.array_value->type == ARRAY_DIMS)
     {
+        int param_result = TYPECHECK_SUCC;
+
         if (value->array.array_value->dims != NULL)
         {
             array_dims_check_type_expr_list(tab, value->array.array_value->dims,
@@ -222,9 +224,9 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
                             param_type_str(value->array.array_value->ret->type));
         }
 
-        param_check_type(tab, value->array.array_value->ret, syn_level, result);
+        param_check_type(tab, value->array.array_value->ret, syn_level, &param_result);
 
-        if (*result == TYPECHECK_SUCC)
+        if (param_result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;
             value->comb.comb_ret = value->array.array_value->ret;
@@ -232,6 +234,7 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         }
         else
         {
+            *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no, "array is not well formed");
         }
