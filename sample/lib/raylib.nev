@@ -117,6 +117,104 @@ module raylib
         zoom : float;             /* Camera zoom (scaling), should be 1.0f by default */
     }
 
+    /* Raycast hit information */
+    record RayHitInfo
+    {
+        hit : bool;               /* Did the ray hit something? */
+        distance : float;         /* Distance to nearest hit */
+        position : Vector3;       /* Position of nearest hit */
+        normal : Vector3;         /* Surface normal of hit */
+    }
+
+    /* Bounding box type */
+    record BoundingBox
+    {
+        min : Vector3;  /* Minimum vertex box-corner */
+        max : Vector3;  /* Maximum vertex box-corner */
+    }
+
+    record Mesh
+    {
+        vertexCount : int;        /* Number of vertices stored in arrays */
+        triangleCount : int;      /* Number of triangles stored (indexed or not) */
+
+        /* Default vertex data */
+        vertices : c_ptr;        /* Vertex position (XYZ - 3 components per vertex) (shader-location = 0) */
+        texcoords : c_ptr;       /* Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1) */
+        texcoords2 : c_ptr;      /* Vertex second texture coordinates (useful for lightmaps) (shader-location = 5) */
+        normals : c_ptr;         /* Vertex normals (XYZ - 3 components per vertex) (shader-location = 2) */
+        tangents : c_ptr;        /* Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4) */
+        colors : c_ptr;  /* Vertex colors (RGBA - 4 components per vertex) (shader-location = 3) */
+        indices : c_ptr; /* Vertex indices (in case vertex data comes indexed)  */
+
+        /* Animation vertex data */
+        animVertices : c_ptr;    /* Animated vertex positions (after bones transformations) */
+        animNormals : c_ptr;     /* Animated normals (after bones transformations) */
+        boneIds : c_ptr;          /* Vertex bone ids, up to 4 bones influence by vertex (skinning) */
+        boneWeights : c_ptr;     /* Vertex bone weight, up to 4 bones influence by vertex (skinning) */
+
+        /* OpenGL identifiers */
+        vaoId : int;     /* OpenGL Vertex Array Object id */
+        vboId : c_ptr;    /* OpenGL Vertex Buffer Objects id (default vertex data) */
+    }
+
+    record Model
+    {
+        transform : Matrix;       /* Local transform matrix */
+
+        meshCount : int;          /* Number of meshes */
+        meshes : c_ptr;           /* Meshes array */
+
+        materialCount : int;       /* Number of materials */
+        materials : c_ptr;    /* Materials array */
+        meshMaterial : c_ptr;      /* Mesh material number */
+
+        /* Animation data */
+        boneCount : int;          /* Number of bones */
+        bones : c_ptr;        /* Bones information (skeleton) */
+        bindPose : c_ptr;    /* Bones base transformation (pose) */
+    }
+
+    /* Ray type (useful for raycast) */
+    record Ray
+    {
+        position : Vector3;       /* Ray position (origin) */
+        direction : Vector3;      /* Ray direction */
+    }
+
+    /* Material texture map */
+    record MaterialMap
+    {
+        texture : Texture2D;      /* Material map texture */
+        color : Color;            /* Material map color */
+        value : float;            /* Material map value */
+    }
+
+    /* Shader type (generic) */
+    record Shader
+    {
+        id : int;        /* Shader program id */
+        locs : c_ptr;              /* Shader locations array (MAX_SHADER_LOCATIONS) */
+    }
+
+    /* Material type (generic) */
+    record Material
+    {
+        shader : Shader;          /* Material shader */
+        maps : c_ptr;      /* Material maps array (MAX_MATERIAL_MAPS) */
+        params : c_ptr;          /* Material generic parameters (if required) */
+    }
+
+/* Model animation */
+    record ModelAnimation
+    {
+        boneCount : int;        /* Number of bones */
+        bones : c_ptr;        /* Bones information (skeleton) */
+
+        frameCount : int;         /* Number of animation frames */
+        framePoses : c_ptr;     /* Poses array by frame */
+    }
+
     /*
     Some Basic Colors
     NOTE: Custom raylib color palette for amazing visuals on WHITE background
@@ -222,79 +320,295 @@ module raylib
 
     /* Input-related funtions: touch */
 
+    /* Gestures and Touch Handling Functions (Module: gestures) */
+
     /* Camera System Functions (Module: camera) */
     extern "libraylib.so" func SetCameraMode(camera : Camera3D, mode : int) -> void
+    /*extern "libraylib.so" func UpdateCamera(Camera *camera) -> void    */                      /* Update camera position for selected mode */
     extern "libraylib.so" func UpdateCameraCopy (camera : Camera3D) -> Camera3D
+    extern "libraylib.so" func SetCameraPanControl(panKey : int) -> void                       /* Set camera pan key to combine with mouse movement (free camera) */
+    extern "libraylib.so" func SetCameraAltControl(altKey : int) -> void                       /* Set camera alt key to combine with mouse movement (free camera) */
+    extern "libraylib.so" func SetCameraSmoothZoomControl(szKey : int) -> void                 /* Set camera smooth zoom key to combine with mouse (free camera) */
+    extern "libraylib.so" func SetCameraMoveControls(frontKey : int, backKey : int, rightKey : int, leftKey : int, upKey : int, downKey : int) -> void /* Set camera move controls (1st person and 3rd person cameras) */
 
     /* Basic Shapes Drawing Functions (Module: shapes) */
 
     /* Basic shapes drawing functions */
-    extern "libraylib.so" func DrawCircleV(center : Vector2, radius : float, color : Color) -> void
-    extern "libraylib.so" func DrawRectangle(posX : int, posY : int, width : int, height : int, color : Color) -> void
-    extern "libraylib.so" func DrawRectangleLines(posX : int, posY : int, width : int, height : int, color : Color) -> void
+    extern "libraylib.so" func DrawPixel(posX : int, posY : int, color : Color) -> void                                             /* Draw a pixel */
+    extern "libraylib.so" func DrawPixelV(position : Vector2, color : Color) -> void                                                    /* Draw a pixel (Vector version) */
+    extern "libraylib.so" func DrawLine(startPosX : int, startPosY : int, endPosX : int, endPosY : int, color : Color) -> void                /* Draw a line */
+    extern "libraylib.so" func DrawLineV(startPos : Vector2, endPos : Vector2, color : Color) -> void                                     /* Draw a line (Vector version) */
+    extern "libraylib.so" func DrawLineEx(startPos : Vector2, endPos : Vector2, thick : float, color : Color) -> void                       /* Draw a line defining thickness */
+    extern "libraylib.so" func DrawLineBezier(startPos : Vector2, endPos : Vector2, thick : float, color : Color) -> void                  /* Draw a line using cubic-bezier curves in-out */
+    /* extern "libraylib.so" func DrawLineStrip(*points : Vector2, numPoints : int, color : Color) -> void */                                  /* Draw lines sequence */
+    extern "libraylib.so" func DrawCircle(centerX : int, centerY : int, radius : float, color : Color) -> void                              /* Draw a color-filled circle */
+    extern "libraylib.so" func DrawCircleSector(center : Vector2, radius : float, startAngle : int, endAngle : int, segments : int, color : Color) -> void     /* Draw a piece of a circle */
+    extern "libraylib.so" func DrawCircleSectorLines(center : Vector2, radius : float, startAngle : int, endAngle : int, segments : int, color : Color) -> void    /* Draw circle sector outline */
+    extern "libraylib.so" func DrawCircleGradient(centerX : int, centerY : int, radius : float, color1 : Color, color2 : Color) -> void      /* Draw a gradient-filled circle */
+    extern "libraylib.so" func DrawCircleV(center : Vector2, radius : float, color : Color) -> void                                       /* Draw a color-filled circle (Vector version) */
+    extern "libraylib.so" func DrawCircleLines(centerX : int, centerY : int, radius : float, color : Color) -> void                         /* Draw circle outline */
+    extern "libraylib.so" func DrawEllipse(centerX : int, centerY : int, radiusH : float, radiusV : float, color : Color) -> void             /* Draw ellipse */
+    extern "libraylib.so" func DrawEllipseLines(centerX : int, centerY : int, radiusH : float, radiusV : float, color : Color) -> void        /* Draw ellipse outline */
+    extern "libraylib.so" func DrawRing(center : Vector2, innerRadius : float, outerRadius : float, startAngle : int, endAngle : int, segments : int, color : Color) -> void /* Draw ring */
+    extern "libraylib.so" func DrawRingLines(center : Vector2, innerRadius : float, outerRadius : float, startAngle : int, endAngle : int, segments : int, color : Color) -> void    /* Draw ring outline */
+    extern "libraylib.so" func DrawRectangle(posX : int, posY : int, width : int, height : int, color : Color) -> void                        /* Draw a color-filled rectangle */
+    extern "libraylib.so" func DrawRectangleV(position : Vector2, size : Vector2, color : Color) -> void                                  /* Draw a color-filled rectangle (Vector version) */
+    extern "libraylib.so" func DrawRectangleRec(rec : Rectangle, color : Color) -> void                                                 /* Draw a color-filled rectangle */
+    extern "libraylib.so" func DrawRectanglePro(rec : Rectangle, origin : Vector2, rotation : float, color : Color) -> void                 /* Draw a color-filled rectangle with pro parameters */
+    extern "libraylib.so" func DrawRectangleGradientV(posX : int, posY : int, width : int, height : int, color1 : Color, color2 : Color) -> void /* Draw a vertical-gradient-filled rectangle */
+    extern "libraylib.so" func DrawRectangleGradientH(posX : int, posY : int, width : int, height : int, color1 : Color, color2 : Color) -> void /* Draw a horizontal-gradient-filled rectangle */
+    extern "libraylib.so" func DrawRectangleGradientEx(rec : Rectangle, col1 : Color, col2 : Color, col3 : Color, col4 : Color) -> void       /* Draw a gradient-filled rectangle with custom vertex colors */    
+    extern "libraylib.so" func DrawRectangleLines(posX : int, posY : int, width : int, height : int, color : Color) -> void                   /* Draw rectangle outline */
+    extern "libraylib.so" func DrawRectangleLinesEx(rec : Rectangle, lineThick : int, color : Color) -> void                              /* Draw rectangle outline with extended parameters */
+    extern "libraylib.so" func DrawRectangleRounded(rec : Rectangle, roundness : float, segments : int, color : Color) -> void              /* Draw rectangle with rounded edges */
+    extern "libraylib.so" func DrawRectangleRoundedLines(rec : Rectangle, roundness : float, segments : int, lineThick : int, color : Color) -> void /* Draw rectangle with rounded edges outline */
+    extern "libraylib.so" func DrawTriangle(v1 : Vector2, v2 : Vector2, v3 : Vector2, color : Color) -> void                                /* Draw a color-filled triangle (vertex in counter-clockwise order!) */
+    extern "libraylib.so" func DrawTriangleLines(v1 : Vector2, v2 : Vector2, v3 : Vector2, color : Color) -> void                           /* Draw triangle outline (vertex in counter-clockwise order!) */
+    /* extern "libraylib.so" func DrawTriangleFan(*points : Vector2, numPoints : int, color : Color) -> void                                 /* Draw a triangle fan defined by points (first vertex is the center) */
+    /* extern "libraylib.so" func DrawTriangleStrip(Vector2 *points, int pointsCount, Color color) -> void */                            /* Draw a triangle strip defined by points */
+    extern "libraylib.so" func DrawPoly(center : Vector2, sides : int, radius : float, rotation : float, color : Color) -> void               /* Draw a regular polygon (Vector version) */
+    extern "libraylib.so" func DrawPolyLines(center : Vector2, sides : int, radius : float, rotation : float, color : Color) -> void          /* Draw a polygon outline of n sides */
 
     /* Basic shapes collision detection functions */
+    extern "libraylib.so" func CheckCollisionRecs(rec1 : Rectangle, rec2 : Rectangle) -> bool                                           /* Check collision between two rectangles */
+    extern "libraylib.so" func CheckCollisionCircles(center1 : Vector2, radius1 : float, center2 : Vector2, radius2 : float) -> bool        /* Check collision between two circles */
+    extern "libraylib.so" func CheckCollisionCircleRec(center : Vector2, radius : float, rec : Rectangle) -> bool                         /* Check collision between circle and rectangle */
+    extern "libraylib.so" func GetCollisionRec(rec1 : Rectangle, rec2 : Rectangle) -> Rectangle                                    /* Get collision rectangle for two rectangles collision */
+    extern "libraylib.so" func CheckCollisionPointRec(point : Vector2, rec : Rectangle) -> bool                                         /* Check if point is inside rectangle */
+    extern "libraylib.so" func CheckCollisionPointCircle(point : Vector2, center : Vector2, radius : float) -> bool                       /* Check if point is inside circle */
+    extern "libraylib.so" func CheckCollisionPointTriangle(point : Vector2, p1 : Vector2, p2 : Vector2, p3 : Vector2) -> bool               /* Check if point is inside a triangle */
 
     /* Texture Loading and Drawing Functions (Module: textures) */
 
     /* Image loading functions */
-    /* NOTE: This functions do not require GPU access */
+    /* NOTE: These functions do not require GPU access */
+    extern "libraylib.so" func LoadImage(fileName : string) -> Image                                                             /* Load image from file into CPU memory (RAM) */
+    /* extern "libraylib.so" func LoadImageEx(Color *pixels, int width, int height) -> Image */                                          /* Load image from Color array data (RGBA - 32bit) */
+    extern "libraylib.so" func LoadImageRaw(fileName : string, width : int, height : int, format : int, headerSize : int) -> Image       /* Load image from RAW file data */
+    extern "libraylib.so" func UnloadImage(image : Image) -> void                                                                     /* Unload image from CPU memory (RAM) */
+    extern "libraylib.so" func ExportImage(image : Image, fileName : string) -> void                                               /* Export image data to file */
+    extern "libraylib.so" func ExportImageAsCode(image : Image, fileName : string) -> void                                         /* Export image as code file defining an array of bytes */
+    /* extern "libraylib.so" func GetImageData(Image image) -> Color * */                                                                /* Get pixel data from image as a Color struct array */
+    /* extern "libraylib.so" func GetImageDataNormalized(Image image) -> Vector4 * */                                                    /* Get pixel data from image as Vector4 array (float normalized) */
 
     /* Image generation functions */
+    extern "libraylib.so" func GenImageColor(width : int, height : int, color : Color) -> Image                                           /* Generate image: plain color */
+    extern "libraylib.so" func GenImageGradientV(width : int, height : int, top : Color, bottom : Color) -> Image                           /* Generate image: vertical gradient */
+    extern "libraylib.so" func GenImageGradientH(width : int, height : int, left : Color, right : Color) -> Image                           /* Generate image: horizontal gradient */
+    extern "libraylib.so" func GenImageGradientRadial(width : int, height : int, density : float, inner : Color, outer : Color) -> Image      /* Generate image: radial gradient */
+    extern "libraylib.so" func GenImageChecked(width : int, height : int, checksX : int, checksY : int, col1 : Color, col2 : Color) -> Image    /* Generate image: checked */
+    extern "libraylib.so" func GenImageWhiteNoise(width : int, height : int, factor : float) -> Image                                     /* Generate image: white noise */
+    extern "libraylib.so" func GenImagePerlinNoise(width : int, height : int, offsetX : int, offsetY : int, scale : float) -> Image           /* Generate image: perlin noise */
+    extern "libraylib.so" func GenImageCellular(width : int, height : int, tileSize : int) -> Image                                       /* Generate image: cellular algorithm. Bigger tileSize means bigger cells */
 
     /* Image manipulation functions */
+    extern "libraylib.so" func ImageCopy(image : Image) -> Image                                                                      /* Create an image duplicate (useful for transformations) */
+    extern "libraylib.so" func ImageFromImage(image : Image, rec : Rectangle) -> Image                                                 /* Create an image from another image piece */
+    extern "libraylib.so" func ImageText(text : string, fontSize : int, color : Color) -> Image                                      /* Create an image from text (default font) */
+    extern "libraylib.so" func ImageTextEx(font : Font, text : string, fontSize : float, spacing : float, tint : Color) -> Image         /* Create an image from text (custom sprite font) */
+    extern "libraylib.so" func ImageToPOT(image : c_ptr, fillColor : Color) -> void                                                    /* Convert image to POT (power-of-two) */
+    extern "libraylib.so" func ImageFormat(image : c_ptr, newFormat : int) -> void                                                     /* Convert image data to desired format */
+    extern "libraylib.so" func ImageAlphaMask(image : c_ptr, alphaMask : Image) -> void                                                /* Apply alpha mask to image */
+    extern "libraylib.so" func ImageAlphaClear(image : c_ptr, color : Color, threshold : float) -> void                                  /* Clear alpha channel to desired color */
+    extern "libraylib.so" func ImageAlphaCrop(image : c_ptr, threshold : float) -> void                                                /* Crop image depending on alpha value */
+    extern "libraylib.so" func ImageAlphaPremultiply(image : c_ptr) -> void                                                          /* Premultiply alpha channel */
+    extern "libraylib.so" func ImageCrop(image : c_ptr, crop : Rectangle) -> void                                                      /* Crop an image to a defined rectangle */
+    extern "libraylib.so" func ImageResize(image : c_ptr, newWidth : int, newHeight : int) -> void                                       /* Resize image (Bicubic scaling algorithm) */
+    extern "libraylib.so" func ImageResizeNN(image : c_ptr, newWidth : int, newHeight : int) -> void                                      /* Resize image (Nearest-Neighbor scaling algorithm) */
+    extern "libraylib.so" func ImageResizeCanvas(image : c_ptr, newWidth : int, newHeight : int, offsetX : int, offsetY : int, color : Color) -> void  /* Resize canvas and fill with color */
+    extern "libraylib.so" func ImageMipmaps(image : c_ptr) -> void                                                                   /* Generate all mipmap levels for a provided image */
+    extern "libraylib.so" func ImageDither(image : c_ptr, rBpp : int, gBpp : int, bBpp : int, aBpp : int) -> void                            /* Dither image data to 16bpp or lower (Floyd-Steinberg dithering) */
+    extern "libraylib.so" func ImageFlipVertical(image : c_ptr) -> void                                                              /* Flip image vertically */
+    extern "libraylib.so" func ImageFlipHorizontal(image : c_ptr) -> void                                                            /* Flip image horizontally */
+    extern "libraylib.so" func ImageRotateCW(image : c_ptr) -> void                                                                  /* Rotate image clockwise 90deg */
+    extern "libraylib.so" func ImageRotateCCW(image : c_ptr) -> void                                                                 /* Rotate image counter-clockwise 90deg */
+    extern "libraylib.so" func ImageColorTint(image : c_ptr, color : Color) -> void                                                    /* Modify image color: tint */
+    extern "libraylib.so" func ImageColorInvert(image : c_ptr) -> void                                                               /* Modify image color: invert */
+    extern "libraylib.so" func ImageColorGrayscale(image : c_ptr) -> void                                                            /* Modify image color: grayscale */
+    extern "libraylib.so" func ImageColorContrast(image : c_ptr, contrast : float) -> void                                             /* Modify image color: contrast (-100 to 100) */
+    extern "libraylib.so" func ImageColorBrightness(image : c_ptr, brightness : int) -> void                                           /* Modify image color: brightness (-255 to 255) */
+    extern "libraylib.so" func ImageColorReplace(image : c_ptr, color : Color, replace : Color) -> void                                  /* Modify image color: replace color */
+    /* extern "libraylib.so" func ImageExtractPalette(image : Image, maxPaletteSize : int, extractCount : c_ptr) -> Color * */           /* Extract color palette from image to maximum size (memory should be freed) */
+    extern "libraylib.so" func GetImageAlphaBorder(image : Image, threshold : float) -> Rectangle                                        /* Get image alpha border rectangle */
 
     /* Image drawing functions */
     /* NOTE: Image software-redering functions (CPU) */
+    extern "libraylib.so" func ImageClearBackground(dst : c_ptr, color : Color) -> void                                                /* Clear image background with given color */
+    extern "libraylib.so" func Pixel(dst : c_ptr, posX : int, posY : int, color : Color) -> void                                  /* Draw pixel within an image */
+    extern "libraylib.so" func ImageDrawPixelV(dst : c_ptr, position : Vector2, color : Color) -> void                                   /* Draw pixel within an image (Vector version) */
+    extern "libraylib.so" func ImageDrawLine(dst : c_ptr, startPosX : int, startPosY : int, endPosX : int, endPosY : int, color : Color) -> void /* Draw line within an image */
+    extern "libraylib.so" func ImageDrawLineV(dst : c_ptr, start : Vector2, end : Vector2, color : Color) -> void                          /* Draw line within an image (Vector version) */
+    extern "libraylib.so" func ImageDrawCircle(dst : c_ptr, centerX : int, centerY : int, radius : int, color : Color) -> void               /* Draw circle within an image */
+    extern "libraylib.so" func ImageDrawCircleV(dst : c_ptr, center : Vector2, radius : int, color : Color) -> void                        /* Draw circle within an image (Vector version) */
+    extern "libraylib.so" func ImageDrawRectangle(dst : c_ptr, posX : int, posY : int, width : int, height : int, color : Color) -> void       /* Draw rectangle within an image */
+    extern "libraylib.so" func ImageDrawRectangleV(dst : c_ptr, position : Vector2, size : Vector2, color : Color) -> void                 /* Draw rectangle within an image (Vector version) */
+    extern "libraylib.so" func ImageDrawRectangleRec(dst : c_ptr, rec : Rectangle, color : Color) -> void                                /* Draw rectangle within an image */
+    extern "libraylib.so" func ImageDrawRectangleLines(dst : c_ptr, rec : Rectangle, thick : int, color : Color) -> void                   /* Draw rectangle lines within an image */
+    extern "libraylib.so" func ImageDraw(dst : c_ptr, src : Image, srcRec : Rectangle, dstRec : Rectangle, tint : Color) -> void             /* Draw a source image within a destination image (tint applied to source) */
+    extern "libraylib.so" func ImageDrawText(dst : c_ptr, text : string, posX : int, posY : int, fontSize : int, color : Color) -> void   /* Draw text (using default font) within an image (destination) */
+    extern "libraylib.so" func ImageDrawTextEx(dst : c_ptr, font : Font, text : string, position : Vector2, fontSize : float, spacing : float, tint : Color) -> void /* Draw text (custom sprite font) within an image (destination) */
 
     /* Texture loading functions */
     /* NOTE: These functions require GPU access */
+    extern "libraylib.so" func LoadTexture(fileName : string) -> Texture2D                                                       /* Load texture from file into GPU memory (VRAM) */
+    extern "libraylib.so" func LoadTextureFromImage(image : Image) -> Texture2D                                                       /* Load texture from image data */
+    extern "libraylib.so" func LoadTextureCubemap(image : Image, layoutType : int) -> Texture2D                                    /* Load cubemap from image, multiple image cubemap layouts supported */
+    extern "libraylib.so" func LoadRenderTexture(width : int, height : int) -> RenderTexture2D                                          /* Load texture for rendering (framebuffer) */
+    extern "libraylib.so" func UnloadTexture(texture : Texture2D) -> void                                                             /* Unload texture from GPU memory (VRAM) */
+    extern "libraylib.so" func UnloadRenderTexture(target : RenderTexture2D) -> void                                                  /* Unload render texture from GPU memory (VRAM) */
+    extern "libraylib.so" func UpdateTexture(texture : Texture2D, pixels : c_ptr) -> void                                         /* Update GPU texture with new data */
+    extern "libraylib.so" func GetTextureData(texture : Texture2D) -> Image                                                           /* Get pixel data from GPU texture and return an Image */
+    extern "libraylib.so" func GetScreenData() -> Image                                                                         /* Get pixel data from screen buffer and return an Image (screenshot) */
 
     /* Texture configuration functions */
+    extern "libraylib.so" func GenTextureMipmaps(texture : c_ptr) -> void                                                        /* Generate GPU mipmaps for a texture */
+    extern "libraylib.so" func SetTextureFilter(texture : Texture2D, filterMode : int) -> void                                          /* Set texture scaling filter mode */
+    extern "libraylib.so" func SetTextureWrap(texture : Texture2D, wrapMode : int) -> void                                              /* Set texture wrapping mode */
 
     /* Texture drawing functions */
+    extern "libraylib.so" func DrawTexture(texture : Texture2D, posX : int, posY : int, tint : Color) -> void                               /* Draw a Texture2D */
+    extern "libraylib.so" func DrawTextureV(texture : Texture2D, position : Vector2, tint : Color) -> void                                /* Draw a Texture2D with position defined as Vector2 */
+    extern "libraylib.so" func DrawTextureEx(texture : Texture2D, position : Vector2, rotation : float, scale : float, tint : Color) -> void  /* Draw a Texture2D with extended parameters */
+    extern "libraylib.so" func DrawTextureRec(texture : Texture2D, sourceRec : Rectangle, position : Vector2, tint : Color) -> void         /* Draw a part of a texture defined by a rectangle */
+    extern "libraylib.so" func DrawTextureQuad(texture : Texture2D, tiling : Vector2, offset : Vector2, quad : Rectangle, tint : Color) -> void  /* Draw texture quad with tiling and offset parameters */
+    extern "libraylib.so" func DrawTexturePro(texture : Texture2D, sourceRec : Rectangle, destRec : Rectangle, origin : Vector2, rotation : float, tint : Color) -> void       /* Draw a part of a texture defined by a rectangle with 'pro' parameters */
+    extern "libraylib.so" func DrawTextureNPatch(texture : Texture2D, nPatchInfo : NPatchInfo, destRec : Rectangle, origin : Vector2, rotation : float, tint : Color) -> void  /* Draws a texture (or part of it) that stretches or shrinks nicely */
 
     /* Image/Texture misc functions */
+    extern "libraylib.so" func GetPixelDataSize(width : int, height : int, format : int) -> int                                           /* Get pixel data size in bytes (image or texture) */
 
-    /* Font Loading and Text Drawing Functions (Module: text) *
+    /* Font Loading and Text Drawing Functions (Module: text) */
 
     /* Font loading/unloading functions */
+    extern "libraylib.so" func GetFontDefault() -> Font                                                            /* Get the default Font */
+    extern "libraylib.so" func LoadFont(fileName : string) -> Font                                                  /* Load font from file into GPU memory (VRAM) */
+    extern "libraylib.so" func LoadFontEx(fileName : string, fontSize : int, fontChars : c_ptr, charsCount : int) -> Font  /* Load font from file with extended parameters */
+    extern "libraylib.so" func LoadFontFromImage(image : Image, key : Color, firstChar : int) -> Font                        /* Load font from Image (XNA style) */
+    extern "libraylib.so" func LoadFontData(fileName :  string, fontSize : int, fontChars : c_ptr, charsCount : int, type : int) -> c_ptr /* Load font data for further use */
+    extern "libraylib.so" func GenImageFontAtlas(chars : c_ptr, recs : c_ptr, charsCount : int, fontSize : int, padding : int, packMethod : int) -> Image  /* Generate image font atlas using chars info */
+    extern "libraylib.so" func UnloadFont(font : Font) -> void                                                           /* Unload Font from GPU memory (VRAM) */
 
     /* Text drawing functions */
     extern "libraylib.so" func DrawFPS(posX : int, posY : int) -> void
     extern "libraylib.so" func DrawText(text : string, posX : int, posY : int, fontSize : int, color : Color) -> void
+    extern "libraylib.so" func DrawTextEx(font : Font, text : string, position : Vector2, fontSize : float, spacing : float, tint : Color) -> void                /* Draw text using font and additional parameters */
+    extern "libraylib.so" func DrawTextRec(font : Font, text : string, rec : Rectangle, fontSize : float, spacing : float, wordWrap : bool, tint : Color) -> void   /* Draw text using font inside rectangle limits */
+    extern "libraylib.so" func DrawTextRecEx(font : Font, text : string, rec : Rectangle, fontSize : float, spacing : float, wordWrap : bool, tint : Color, 
+                          selectStart : int, selectLength : int, selectTint : Color, selectBackTint : Color) -> void /* Draw text using font inside rectangle limits with support for text selection */
+    extern "libraylib.so" func DrawTextCodepoint(font : Font, codepoint : int, position : Vector2, scale : float, tint : Color) -> void   /* Draw one character (codepoint) */
 
     /* Text misc. functions */
+    extern "libraylib.so" func MeasureText(text : string, fontSize : int) -> int                                      /* Measure string width for default font */
+    extern "libraylib.so" func MeasureTextEx(font : Font, text : string, fontSize : float, spacing : float) -> Vector2    /* Measure string size for Font */
+    extern "libraylib.so" func GetGlyphIndex(font : Font, codepoint : int) -> int                                          /* Get index position for a unicode character on font */
 
     /* Text strings management functions (no utf8 strings, only byte chars) */
     /* NOTE: Some strings allocate memory internally for returned strings, just be careful! */
+    extern "libraylib.so" func TextCopy(dst : c_ptr, src : string) -> int                                             /* Copy one string to another, returns bytes copied */
+    extern "libraylib.so" func TextIsEqual(text1 : string, text2 : string) -> bool                               /* Check if two text string are equal */
+    extern "libraylib.so" func TextLength(text : string) -> int                                            /* Get text length, checks for '\0' ending */
+    /* extern "libraylib.so" const char *TextFormat(const char *text, ...);  */                                      /* Text formatting with variables (sprintf style) */
+    extern "libraylib.so" func TextSubtext(text : string, position : int, length : int) -> string                  /* Get a piece of a text string */
+    extern "libraylib.so" func TextReplace(text : c_ptr, replace : string, by : string) -> c_ptr /* Replace text string (memory must be freed!) */
+    extern "libraylib.so" func TextInsert(text : string, insert : string, position : int) -> c_ptr /* Insert text in a position (memory must be freed!) */
+    extern "libraylib.so" func TextJoin(textList : c_ptr, count : int, delimiter : string) -> string        /* Join text strings with delimiter */
+    extern "libraylib.so" func TextSplit(text : string, delimiter : c_ptr, count : c_ptr) -> c_ptr                 /* Split text into multiple strings */
+    extern "libraylib.so" func TextAppend(text : c_ptr, append : string, position : c_ptr) -> c_ptr                       /* Append text at specific position and move cursor! */
+    extern "libraylib.so" func TextFindIndex(text : string, find : string) -> int                                /* Find first text occurrence within a string */
+    extern "libraylib.so" func TextToUpper(text : string) -> string                      /* Get upper case version of provided string */
+    extern "libraylib.so" func TextToLower(text : string) -> string                      /* Get lower case version of provided string */
+    extern "libraylib.so" func TextToPascal(text : string) -> string                     /* Get Pascal case notation version of provided string */
+    extern "libraylib.so" func TextToInteger(text : string) -> int                            /* Get integer value from text (negative values not supported) */
+    extern "libraylib.so" func TextToUtf8(codepoints : c_ptr, length : int) -> string                  /* Encode text codepoint into utf8 text (memory must be freed!) */
 
     /* UTF8 text strings management functions */
+    extern "libraylib.so" func GetCodepoints(text : string, count : c_ptr) -> c_ptr               /* Get all codepoints in a string, codepoints count returned by parameters */
+    extern "libraylib.so" func GetCodepointsCount(text : string) -> int                       /* Get total number of characters (codepoints) in a UTF8 encoded string */
+    extern "libraylib.so" func GetNextCodepoint(text : string, bytesProcessed : c_ptr) -> int    /* Returns next codepoint in a UTF8 encoded string; 0x3f('?') is returned on failure */
+    extern "libraylib.so" func CodepointToUtf8(codepoint : int, byteLength : c_ptr) -> string    /* Encode codepoint into utf8 text (char array length returned as parameter) */
 
     /* Basic 3d Shapes Drawing Functions (Module: models) */
 
     /* Basic geometric 3D shapes drawing functions */
-    extern "libraylib.so" func DrawCube(position : Vector3, width : float, height : float, length : float, color : Color) -> void
-    extern "libraylib.so" func DrawCubeWires(position : Vector3, width : float, height : float, length : float, color : Color) -> void
-    extern "libraylib.so" func DrawPlane(centerPos : Vector3, size : Vector2, color : Color) -> void
-    extern "libraylib.so" func DrawGrid(slices : int, spacing : float) -> void
+    extern "libraylib.so" func DrawLine3D(startPos : Vector3, endPos : Vector3, color : Color) -> void                                    /* Draw a line in 3D world space */
+    extern "libraylib.so" func DrawPoint3D(position : Vector3, color : Color) -> void                                                   /* Draw a point in 3D space, actually a small line */
+    extern "libraylib.so" func DrawCircle3D(center : Vector3, radius : float, rotationAxis : Vector3, rotationAngle : float, color : Color) -> void /* Draw a circle in 3D world space */
+    extern "libraylib.so" func DrawCube(position : Vector3, width : float, height : float, length : float, color : Color) -> void             /* Draw cube */
+    extern "libraylib.so" func DrawCubeV(position : Vector3, size : Vector3, color : Color) -> void                                       /* Draw cube (Vector version) */
+    extern "libraylib.so" func DrawCubeWires(position : Vector3, width : float, height : float, length : float, color : Color) -> void        /* Draw cube wires */
+    extern "libraylib.so" func DrawCubeWiresV(position : Vector3, size : Vector3, color : Color) -> void                                  /* Draw cube wires (Vector version) */
+    extern "libraylib.so" func DrawCubeTexture(texture : Texture2D, position : Vector3, width : float, height : float, length : float, color : Color) -> void /* Draw cube textured */
+    extern "libraylib.so" func DrawSphere(centerPos : Vector3, radius : float, color : Color) -> void                                     /* Draw sphere */
+    extern "libraylib.so" func DrawSphereEx(centerPos : Vector3, radius : float, rings : int, slices : int, color : Color) -> void            /* Draw sphere with extended parameters */
+    extern "libraylib.so" func DrawSphereWires(centerPos : Vector3, radius : float, rings : int, slices : int, color : Color) -> void         /* Draw sphere wires */
+    extern "libraylib.so" func DrawCylinder(position : Vector3, radiusTop : float, radiusBottom : float, height : float, slices : int, color : Color) -> void /* Draw a cylinder/cone */
+    extern "libraylib.so" func DrawCylinderWires(position : Vector3, radiusTop : float, radiusBottom : float, height : float, slices : int, color : Color) -> void /* Draw a cylinder/cone wires */
+    extern "libraylib.so" func DrawPlane(centerPos : Vector3, size : Vector2, color : Color) -> void                                      /* Draw a plane XZ */
+    extern "libraylib.so" func DrawRay(ray : Ray, color : Color) -> void                                                                /* Draw a ray line */
+    extern "libraylib.so" func DrawGrid(slices : int, spacing : float) -> void                                                          /* Draw a grid (centered at (0, 0, 0)) */
+    extern "libraylib.so" func DrawGizmo(position : Vector3) -> void                                                                  /* Draw simple gizmo */
+    /* DrawTorus(), DrawTeapot() could be useful? */
 
     /* Model 3d Loading and Drawing Functions (Module: models) */
 
     /* Model loading/unloading functions */
+    extern "libraylib.so" func LoadModel(fileName : string) -> Model                                                            /* Load model from files (meshes and materials) */
+    extern "libraylib.so" func LoadModelFromMesh(mesh : Mesh) -> Model                                                               /* Load model from generated mesh (default material) */
+    extern "libraylib.so" func UnloadModel(model : Model) -> void                                                                    /* Unload model from memory (RAM and/or VRAM) */
 
     /* Mesh loading/unloading functions */
+    extern "libraylib.so" func LoadMeshes(fileName : string, meshCount : c_ptr) -> c_ptr                                           /* Load meshes from model file */
+    extern "libraylib.so" func ExportMesh(mesh : Mesh, fileName : string) -> void                                                 /* Export mesh data to file */
+    extern "libraylib.so" func UnloadMesh(mesh : Mesh) -> void                                                                       /* Unload mesh from memory (RAM and/or VRAM) */
 
     /* Material loading/unloading functions */
+    extern "libraylib.so" func LoadMaterials(fileName : string, materialCount : c_ptr) -> c_ptr                                /* Load materials from model file */
+    extern "libraylib.so" func LoadMaterialDefault() -> Material                                                               /* Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps) */
+    extern "libraylib.so" func UnloadMaterial(material : Material) -> void                                                           /* Unload material from GPU memory (VRAM) */
+    extern "libraylib.so" func SetMaterialTexture(material : c_ptr, mapType : int, texture : Texture2D) -> void                      /* Set texture for a material map type (MAP_DIFFUSE, MAP_SPECULAR...) */
+    extern "libraylib.so" func SetModelMeshMaterial(model : c_ptr, meshId : int, materialId : int) -> void                              /* Set material for a mesh */
 
     /* Model animations loading/unloading functions */
+    extern "libraylib.so" func LoadModelAnimations(fileName : string, animsCount : c_ptr) -> c_ptr                       /* Load model animations from file */
+    extern "libraylib.so" func UpdateModelAnimation(model : Model, anim : ModelAnimation, frame : int) -> void                           /* Update model animation pose */
+    extern "libraylib.so" func UnloadModelAnimation(anim : ModelAnimation) -> void                                                   /* Unload animation data */
+    extern "libraylib.so" func IsModelAnimationValid(model : Model, anim : ModelAnimation) -> bool                                     /* Check model animation skeleton match */
 
     /* Mesh generation functions */
+    extern "libraylib.so" func GenMeshPoly(sides : int, radius : float) -> Mesh                                                        /* Generate polygonal mesh */
+    extern "libraylib.so" func GenMeshPlane(width : float, length : float, resX : int, resZ : int) -> Mesh                                 /* Generate plane mesh (with subdivisions) */
+    extern "libraylib.so" func GenMeshCube(width : float, height : float, length : float) -> Mesh                                        /* Generate cuboid mesh */
+    extern "libraylib.so" func GenMeshSphere(radius : float, rings : int, slices : int) -> Mesh                                          /* Generate sphere mesh (standard sphere) */
+    extern "libraylib.so" func GenMeshHemiSphere(radius : float, rings : int, slices : int) -> Mesh                                      /* Generate half-sphere mesh (no bottom cap) */
+    extern "libraylib.so" func GenMeshCylinder(radius : float, height : float, slices : int) -> Mesh                                     /* Generate cylinder mesh */
+    extern "libraylib.so" func GenMeshTorus(radius : float, size : float, radSeg : int, sides : int) -> Mesh                               /* Generate torus mesh */
+    extern "libraylib.so" func GenMeshKnot(radius : float, size : float, radSeg : int, sides : int) -> Mesh                                /* Generate trefoil knot mesh */
+    extern "libraylib.so" func GenMeshHeightmap(heightmap : Image, size : Vector3) -> Mesh                                             /* Generate heightmap mesh from image data */
+    extern "libraylib.so" func GenMeshCubicmap(cubicmap : Image, cubeSize : Vector3) -> Mesh                                          /* Generate cubes-based map mesh from image data */
 
     /* Mesh manipulation functions */
+    extern "libraylib.so" func MeshBoundingBox(mesh : Mesh) -> BoundingBox                                                           /* Compute mesh bounding box limits */
+    extern "libraylib.so" func MeshTangents(mesh : c_ptr) -> void                                                                    /* Compute mesh tangents */
+    extern "libraylib.so" func MeshBinormals(mesh : c_ptr) -> void                                                                   /* Compute mesh binormals */
 
     /* Model drawing functions */
+    extern "libraylib.so" func DrawModel(model : Model, position : Vector3, scale : float, tint : Color) -> void                           /* Draw a model (with texture if set) */
+    extern "libraylib.so" func DrawModelEx(model : Model, position : Vector3, rotationAxis : Vector3, rotationAngle : float, scale : Vector3, tint : Color) -> void /* Draw a model with extended parameters */
+    extern "libraylib.so" func DrawModelWires(model : Model, position : Vector3, scale : float, tint : Color) -> void                      /* Draw a model wires (with texture if set) */
+    extern "libraylib.so" func DrawModelWiresEx(model : Model, position : Vector3, rotationAxis : Vector3, rotationAngle : float, scale : Vector3, tint : Color) -> void /* Draw a model wires (with texture if set) with extended parameters */
+    extern "libraylib.so" func DrawBoundingBox(box : BoundingBox, color : Color) -> void                                               /* Draw bounding box (wires) */
+    extern "libraylib.so" func DrawBillboard(camera : Camera3D, texture : Texture2D, center : Vector3, size : float, tint : Color) -> void    /* Draw a billboard texture */
+    extern "libraylib.so" func DrawBillboardRec(camera : Camera3D, texture : Texture2D, sourceRec : Rectangle, center : Vector3, size : float, tint : Color) -> void /* Draw a billboard texture defined by sourceRec */
 
     /* Collision detection functions */
-
+    extern "libraylib.so" func CheckCollisionSpheres(centerA : Vector3, radiusA : float, centerB : Vector3, radiusB : float) -> bool /* Detect collision between two spheres */
+    extern "libraylib.so" func CheckCollisionBoxes(box1 : BoundingBox, box2 : BoundingBox) -> bool /* Detect collision between two bounding boxes */
+    extern "libraylib.so" func CheckCollisionBoxSphere(box : BoundingBox, center : Vector3, radius : float) -> bool /* Detect collision between box and sphere */
+    extern "libraylib.so" func CheckCollisionRaySphere(ray : Ray, center : Vector3, radius : float) -> bool /* Detect collision between ray and sphere */
+    extern "libraylib.so" func CheckCollisionRaySphereEx(ray : Ray, center : Vector3, radius : float, collisionPoint : c_ptr) -> bool /* Detect collision between ray and sphere, returns collision point */
+    extern "libraylib.so" func CheckCollisionRayBox(ray : Ray, box : BoundingBox) -> bool                                              /* Detect collision between ray and box */
+    extern "libraylib.so" func GetCollisionRayModel(ray : Ray, model : Model) -> RayHitInfo                                            /* Get collision info between ray and model */
+    extern "libraylib.so" func GetCollisionRayTriangle(ray : Ray, p1 : Vector3, p2 : Vector3, p3 : Vector3) -> RayHitInfo                  /* Get collision info between ray and triangle */
+    extern "libraylib.so" func GetCollisionRayGround(ray : Ray, groundHeight : float) -> RayHitInfo                                    /* Get collision info between ray and ground plane (Y-normal plane) */
 }
+
