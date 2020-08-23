@@ -250,7 +250,7 @@ module raylib
 
     let CAMERA_CUSTOM = 0;
     let CAMERA_FREE = 1;
-    let CAMERA_ORBITA = 2;
+    let CAMERA_ORBITAL = 2;
     let CAMERA_FIRST_PERSON = 3;
     let CAMERA_THIRD_PERSON = 4;
 
@@ -340,7 +340,7 @@ module raylib
     extern "libraylib.so" func DrawLineV(startPos : Vector2, endPos : Vector2, color : Color) -> void                                     /* Draw a line (Vector version) */
     extern "libraylib.so" func DrawLineEx(startPos : Vector2, endPos : Vector2, thick : float, color : Color) -> void                       /* Draw a line defining thickness */
     extern "libraylib.so" func DrawLineBezier(startPos : Vector2, endPos : Vector2, thick : float, color : Color) -> void                  /* Draw a line using cubic-bezier curves in-out */
-    /* extern "libraylib.so" func DrawLineStrip(*points : Vector2, numPoints : int, color : Color) -> void */                                  /* Draw lines sequence */
+    extern "libraylib.so" func DrawLineStrip(points : c_ptr, numPoints : int, color : Color) -> void                                   /* Draw lines sequence */
     extern "libraylib.so" func DrawCircle(centerX : int, centerY : int, radius : float, color : Color) -> void                              /* Draw a color-filled circle */
     extern "libraylib.so" func DrawCircleSector(center : Vector2, radius : float, startAngle : int, endAngle : int, segments : int, color : Color) -> void     /* Draw a piece of a circle */
     extern "libraylib.so" func DrawCircleSectorLines(center : Vector2, radius : float, startAngle : int, endAngle : int, segments : int, color : Color) -> void    /* Draw circle sector outline */
@@ -364,8 +364,8 @@ module raylib
     extern "libraylib.so" func DrawRectangleRoundedLines(rec : Rectangle, roundness : float, segments : int, lineThick : int, color : Color) -> void /* Draw rectangle with rounded edges outline */
     extern "libraylib.so" func DrawTriangle(v1 : Vector2, v2 : Vector2, v3 : Vector2, color : Color) -> void                                /* Draw a color-filled triangle (vertex in counter-clockwise order!) */
     extern "libraylib.so" func DrawTriangleLines(v1 : Vector2, v2 : Vector2, v3 : Vector2, color : Color) -> void                           /* Draw triangle outline (vertex in counter-clockwise order!) */
-    /* extern "libraylib.so" func DrawTriangleFan(*points : Vector2, numPoints : int, color : Color) -> void                                 /* Draw a triangle fan defined by points (first vertex is the center) */
-    /* extern "libraylib.so" func DrawTriangleStrip(Vector2 *points, int pointsCount, Color color) -> void */                            /* Draw a triangle strip defined by points */
+    extern "libraylib.so" func DrawTriangleFan(points : c_ptr, numPoints : int, color : Color) -> void                                 /* Draw a triangle fan defined by points (first vertex is the center) */
+    extern "libraylib.so" func DrawTriangleStrip(points : c_ptr, int pointsCount, Color color) -> void                              /* Draw a triangle strip defined by points */
     extern "libraylib.so" func DrawPoly(center : Vector2, sides : int, radius : float, rotation : float, color : Color) -> void               /* Draw a regular polygon (Vector version) */
     extern "libraylib.so" func DrawPolyLines(center : Vector2, sides : int, radius : float, rotation : float, color : Color) -> void          /* Draw a polygon outline of n sides */
 
@@ -383,13 +383,13 @@ module raylib
     /* Image loading functions */
     /* NOTE: These functions do not require GPU access */
     extern "libraylib.so" func LoadImage(fileName : string) -> Image                                                             /* Load image from file into CPU memory (RAM) */
-    /* extern "libraylib.so" func LoadImageEx(Color *pixels, int width, int height) -> Image */                                          /* Load image from Color array data (RGBA - 32bit) */
+    extern "libraylib.so" func LoadImageEx(pixels : c_ptr, width : int, height : int) -> Image                                          /* Load image from Color array data (RGBA - 32bit) */
     extern "libraylib.so" func LoadImageRaw(fileName : string, width : int, height : int, format : int, headerSize : int) -> Image       /* Load image from RAW file data */
     extern "libraylib.so" func UnloadImage(image : Image) -> void                                                                     /* Unload image from CPU memory (RAM) */
     extern "libraylib.so" func ExportImage(image : Image, fileName : string) -> void                                               /* Export image data to file */
     extern "libraylib.so" func ExportImageAsCode(image : Image, fileName : string) -> void                                         /* Export image as code file defining an array of bytes */
-    /* extern "libraylib.so" func GetImageData(Image image) -> Color * */                                                                /* Get pixel data from image as a Color struct array */
-    /* extern "libraylib.so" func GetImageDataNormalized(Image image) -> Vector4 * */                                                    /* Get pixel data from image as Vector4 array (float normalized) */
+    extern "libraylib.so" func GetImageData(image : Image) -> c_ptr                                                                /* Get pixel data from image as a Color struct array */
+    extern "libraylib.so" func GetImageDataNormalized(image : Image) -> c_ptr                                                    /* Get pixel data from image as Vector4 array (float normalized) */
 
     /* Image generation functions */
     extern "libraylib.so" func GenImageColor(width : int, height : int, color : Color) -> Image                                           /* Generate image: plain color */
@@ -494,7 +494,7 @@ module raylib
     extern "libraylib.so" func DrawTextEx(font : Font, text : string, position : Vector2, fontSize : float, spacing : float, tint : Color) -> void                /* Draw text using font and additional parameters */
     extern "libraylib.so" func DrawTextRec(font : Font, text : string, rec : Rectangle, fontSize : float, spacing : float, wordWrap : bool, tint : Color) -> void   /* Draw text using font inside rectangle limits */
     extern "libraylib.so" func DrawTextRecEx(font : Font, text : string, rec : Rectangle, fontSize : float, spacing : float, wordWrap : bool, tint : Color, 
-                          selectStart : int, selectLength : int, selectTint : Color, selectBackTint : Color) -> void /* Draw text using font inside rectangle limits with support for text selection */
+                                             selectStart : int, selectLength : int, selectTint : Color, selectBackTint : Color) -> void /* Draw text using font inside rectangle limits with support for text selection */
     extern "libraylib.so" func DrawTextCodepoint(font : Font, codepoint : int, position : Vector2, scale : float, tint : Color) -> void   /* Draw one character (codepoint) */
 
     /* Text misc. functions */
