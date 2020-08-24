@@ -11,8 +11,11 @@
 *   Copyright (c) 2020 Slawomir Maludzinski (Never port)
 *
 ********************************************************************************************/
-
 use raylib
+use raylib_camera
+use raylib_models
+use raylib_text
+use raylib_touch
 
 func main() -> int
 {
@@ -42,7 +45,7 @@ func main() -> int
     camera.target = raylib.Vector3(0.0f, 0.0f, 0.0f);
     camera.up = raylib.Vector3(0.0f, 1.0f, 0.0f);
     camera.fovy = 70.0f;
-    camera.type = raylib.CAMERA_PERSPECTIVE;
+    camera.type = raylib_camera.CAMERA_PERSPECTIVE;
 
     raylib.SetTargetFPS(60);
 
@@ -67,7 +70,7 @@ func main() -> int
 
             raylib.BeginMode3D(camera);
 
-                raylib.DrawGrid(10, 5.0f);
+                raylib_models.DrawGrid(10, 5.0f);
 
                 for (x = 0; x < numBlocks; x = x + 1) 
                 {
@@ -95,14 +98,14 @@ func main() -> int
                             cubeSize = (2.4f - scale)*blockScale;
 
                             /* And finally, draw the cube! */
-                            raylib.DrawCube(cubePos, cubeSize, cubeSize, cubeSize, cubeColor)
+                            raylib_models.DrawCube(cubePos, cubeSize, cubeSize, cubeSize, cubeColor)
                         }
                     }
                 };
                 
             raylib.EndMode3D();
             
-            raylib.DrawFPS(10, 10);
+            raylib_text.DrawFPS(10, 10);
 
         raylib.EndDrawing()
     };

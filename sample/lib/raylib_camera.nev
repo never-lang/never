@@ -1,0 +1,47 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_camera
+{
+    use raylib
+
+    let CAMERA_PERSPECTIVE = 0;
+    let CAMERA_ORTHOGRAPHIC = 1;
+
+    let CAMERA_CUSTOM = 0;
+    let CAMERA_FREE = 1;
+    let CAMERA_ORBITAL = 2;
+    let CAMERA_FIRST_PERSON = 3;
+    let CAMERA_THIRD_PERSON = 4;
+
+    /* Camera System Functions (Module: camera) */
+    extern "libraylib.so" func SetCameraMode(camera : raylib.Camera3D, mode : int) -> void
+    /*extern "libraylib.so" func UpdateCamera(Camera *camera) -> void    */                      /* Update camera position for selected mode */
+    extern "libraylib.so" func UpdateCameraCopy (camera : raylib.Camera3D) -> raylib.Camera3D
+    extern "libraylib.so" func SetCameraPanControl(panKey : int) -> void                       /* Set camera pan key to combine with mouse movement (free camera) */
+    extern "libraylib.so" func SetCameraAltControl(altKey : int) -> void                       /* Set camera alt key to combine with mouse movement (free camera) */
+    extern "libraylib.so" func SetCameraSmoothZoomControl(szKey : int) -> void                 /* Set camera smooth zoom key to combine with mouse (free camera) */
+    extern "libraylib.so" func SetCameraMoveControls(frontKey : int, backKey : int, rightKey : int, leftKey : int, upKey : int, downKey : int) -> void /* Set camera move controls (1st person and 3rd person cameras) */
+}

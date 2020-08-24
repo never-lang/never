@@ -1,0 +1,93 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_gamepad
+{
+    let GAMEPAD_PLAYER1     = 0;
+    let GAMEPAD_PLAYER2     = 1;
+    let GAMEPAD_PLAYER3     = 2;
+    let GAMEPAD_PLAYER4     = 3;
+
+    /* This is here just for error checking */
+    let GAMEPAD_BUTTON_UNKNOWN = 0;
+
+    /* This is normally a DPAD */
+    let GAMEPAD_BUTTON_LEFT_FACE_UP = 1;
+    let GAMEPAD_BUTTON_LEFT_FACE_RIGHT = 2;
+    let GAMEPAD_BUTTON_LEFT_FACE_DOWN = 3;
+    let GAMEPAD_BUTTON_LEFT_FACE_LEFT = 4;
+
+    /* This normally corresponds with PlayStation and Xbox controllers */
+    /* XBOX: [Y;X;A;B] */
+    /* PS3: [Triangle;Square;Cross;Circle] */
+    /* No support for 6 button controllers though.. */
+    let GAMEPAD_BUTTON_RIGHT_FACE_UP = 5;
+    let GAMEPAD_BUTTON_RIGHT_FACE_RIGHT = 6;
+    let GAMEPAD_BUTTON_RIGHT_FACE_DOWN = 7;
+    let GAMEPAD_BUTTON_RIGHT_FACE_LEFT = 8;
+
+    /* Triggers */
+    let GAMEPAD_BUTTON_LEFT_TRIGGER_1 = 9;
+    let GAMEPAD_BUTTON_LEFT_TRIGGER_2 = 10;
+    let GAMEPAD_BUTTON_RIGHT_TRIGGER_1 = 11;
+    let GAMEPAD_BUTTON_RIGHT_TRIGGER_2 = 12;
+
+    /* These are buttons in the center of the gamepad */
+    let GAMEPAD_BUTTON_MIDDLE_LEFT = 13;     /* PS3 Select */
+    let GAMEPAD_BUTTON_MIDDLE = 14;          /* PS Button/XBOX Button */
+    let GAMEPAD_BUTTON_MIDDLE_RIGHT = 15;    /* PS3 Start */
+
+    /* These are the joystick press in buttons */
+    let GAMEPAD_BUTTON_LEFT_THUMB = 16;
+    let GAMEPAD_BUTTON_RIGHT_THUMB = 17;
+
+    /* This is here just for error checking */
+    let GAMEPAD_AXIS_UNKNOWN = 0;
+
+    /* Left stick */
+    let GAMEPAD_AXIS_LEFT_X = 1;
+    let GAMEPAD_AXIS_LEFT_Y = 2;
+
+    /* Right stick */
+    let GAMEPAD_AXIS_RIGHT_X = 3;
+    let GAMEPAD_AXIS_RIGHT_Y = 4;
+
+    /* Pressure levels for the back triggers */
+    let GAMEPAD_AXIS_LEFT_TRIGGER = 5;      /* [1..-1] (pressure-level) */
+    let GAMEPAD_AXIS_RIGHT_TRIGGER = 6;     /* [1..-1] (pressure-level) */   
+
+    /* Input-related functions: gamepads */
+    extern "libraylib.so" func IsGamepadAvailable(gamepad : int) -> bool                   /* Detect if a gamepad is available */
+    extern "libraylib.so" func IsGamepadName(gamepad : int, name : string) -> bool      /* Check gamepad name (if available) */
+    extern "libraylib.so" func GetGamepadName(gamepad : int) -> string                /* Return gamepad internal name id */
+    extern "libraylib.so" func IsGamepadButtonPressed(gamepad : int, button : int) -> bool   /* Detect if a gamepad button has been pressed once */
+    extern "libraylib.so" func IsGamepadButtonDown(gamepad : int, button : int) -> bool      /* Detect if a gamepad button is being pressed */
+    extern "libraylib.so" func IsGamepadButtonReleased(gamepad : int, button : int) -> bool  /* Detect if a gamepad button has been released once */
+    extern "libraylib.so" func IsGamepadButtonUp(gamepad : int, button : int) -> bool        /* Detect if a gamepad button is NOT being pressed */
+    extern "libraylib.so" func GetGamepadButtonPressed() -> int                      /* Get the last gamepad button pressed */
+    extern "libraylib.so" func GetGamepadAxisCount(gamepad : int) -> int                   /* Return gamepad axis count for a gamepad */
+    extern "libraylib.so" func GetGamepadAxisMovement(gamepad : int, axis : int) -> float    /* Return axis movement value for a gamepad axis */
+}
+
