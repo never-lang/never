@@ -1,0 +1,79 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_text
+{
+    use raylib
+
+    /* Font Loading and Text Drawing Functions (Module: text) */
+
+    /* Font loading/unloading functions */
+    extern "libraylib.so" func GetFontDefault() -> raylib.Font                                                            /* Get the default Font */
+    extern "libraylib.so" func LoadFont(fileName : string) -> raylib.Font                                                  /* Load font from file into GPU memory (VRAM) */
+    extern "libraylib.so" func LoadFontEx(fileName : string, fontSize : int, fontChars : c_ptr, charsCount : int) -> raylib.Font  /* Load font from file with extended parameters */
+    extern "libraylib.so" func LoadFontFromImage(image : raylib.Image, key : raylib.Color, firstChar : int) -> raylib.Font                        /* Load font from Image (XNA style) */
+    extern "libraylib.so" func LoadFontData(fileName :  string, fontSize : int, fontChars : c_ptr, charsCount : int, type : int) -> c_ptr /* Load font data for further use */
+    extern "libraylib.so" func GenImageFontAtlas(chars : c_ptr, recs : c_ptr, charsCount : int, fontSize : int, padding : int, packMethod : int) -> raylib.Image  /* Generate image font atlas using chars info */
+    extern "libraylib.so" func UnloadFont(font : raylib.Font) -> void                                                           /* Unload Font from GPU memory (VRAM) */
+
+    /* Text drawing functions */
+    extern "libraylib.so" func DrawFPS(posX : int, posY : int) -> void
+    extern "libraylib.so" func DrawText(text : string, posX : int, posY : int, fontSize : int, color : raylib.Color) -> void
+    extern "libraylib.so" func DrawTextEx(font : raylib.Font, text : string, position : raylib.Vector2, fontSize : float, spacing : float, tint : raylib.Color) -> void                /* Draw text using font and additional parameters */
+    extern "libraylib.so" func DrawTextRec(font : raylib.Font, text : string, rec : raylib.Rectangle, fontSize : float, spacing : float, wordWrap : bool, tint : raylib.Color) -> void   /* Draw text using font inside rectangle limits */
+    extern "libraylib.so" func DrawTextRecEx(font : raylib.Font, text : string, rec : raylib.Rectangle, fontSize : float, spacing : float, wordWrap : bool, tint : raylib.Color, 
+                                             selectStart : int, selectLength : int, selectTint : raylib.Color, selectBackTint : raylib.Color) -> void /* Draw text using font inside rectangle limits with support for text selection */
+    extern "libraylib.so" func DrawTextCodepoint(font : raylib.Font, codepoint : int, position : raylib.Vector2, scale : float, tint : raylib.Color) -> void   /* Draw one character (codepoint) */
+
+    /* Text misc. functions */
+    extern "libraylib.so" func MeasureText(text : string, fontSize : int) -> int                                      /* Measure string width for default font */
+    extern "libraylib.so" func MeasureTextEx(font : raylib.Font, text : string, fontSize : float, spacing : float) -> raylib.Vector2    /* Measure string size for Font */
+    extern "libraylib.so" func GetGlyphIndex(font : raylib.Font, codepoint : int) -> int                                          /* Get index position for a unicode character on font */
+
+    /* Text strings management functions (no utf8 strings, only byte chars) */
+    /* NOTE: Some strings allocate memory internally for returned strings, just be careful! */
+    extern "libraylib.so" func TextCopy(dst : c_ptr, src : string) -> int                                             /* Copy one string to another, returns bytes copied */
+    extern "libraylib.so" func TextIsEqual(text1 : string, text2 : string) -> bool                               /* Check if two text string are equal */
+    extern "libraylib.so" func TextLength(text : string) -> int                                            /* Get text length, checks for '\0' ending */
+    /* extern "libraylib.so" const char *TextFormat(const char *text, ...);  */                                      /* Text formatting with variables (sprintf style) */
+    extern "libraylib.so" func TextSubtext(text : string, position : int, length : int) -> string                  /* Get a piece of a text string */
+    extern "libraylib.so" func TextReplace(text : c_ptr, replace : string, by : string) -> c_ptr /* Replace text string (memory must be freed!) */
+    extern "libraylib.so" func TextInsert(text : string, insert : string, position : int) -> c_ptr /* Insert text in a position (memory must be freed!) */
+    extern "libraylib.so" func TextJoin(textList : c_ptr, count : int, delimiter : string) -> string        /* Join text strings with delimiter */
+    extern "libraylib.so" func TextSplit(text : string, delimiter : c_ptr, count : c_ptr) -> c_ptr                 /* Split text into multiple strings */
+    extern "libraylib.so" func TextAppend(text : c_ptr, append : string, position : c_ptr) -> c_ptr                       /* Append text at specific position and move cursor! */
+    extern "libraylib.so" func TextFindIndex(text : string, find : string) -> int                                /* Find first text occurrence within a string */
+    extern "libraylib.so" func TextToUpper(text : string) -> string                      /* Get upper case version of provided string */
+    extern "libraylib.so" func TextToLower(text : string) -> string                      /* Get lower case version of provided string */
+    extern "libraylib.so" func TextToPascal(text : string) -> string                     /* Get Pascal case notation version of provided string */
+    extern "libraylib.so" func TextToInteger(text : string) -> int                            /* Get integer value from text (negative values not supported) */
+    extern "libraylib.so" func TextToUtf8(codepoints : c_ptr, length : int) -> string                  /* Encode text codepoint into utf8 text (memory must be freed!) */
+
+    /* UTF8 text strings management functions */
+    extern "libraylib.so" func GetCodepoints(text : string, count : c_ptr) -> c_ptr               /* Get all codepoints in a string, codepoints count returned by parameters */
+    extern "libraylib.so" func GetCodepointsCount(text : string) -> int                       /* Get total number of characters (codepoints) in a UTF8 encoded string */
+    extern "libraylib.so" func GetNextCodepoint(text : string, bytesProcessed : c_ptr) -> int    /* Returns next codepoint in a UTF8 encoded string; 0x3f('?') is returned on failure */
+    extern "libraylib.so" func CodepointToUtf8(codepoint : int, byteLength : c_ptr) -> string    /* Encode codepoint into utf8 text (char array length returned as parameter) */
+}

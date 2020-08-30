@@ -436,7 +436,7 @@ double {
     return TOK_NUM_INT;
 }
 
-{DIGIT}+"."{DIGIT}+ {
+{DIGIT}+"."{DIGIT}+[fF]* {
     tokp->line_no = line_no;
     sscanf(yytext, "%f", &tokp->val.float_value);
     scanner_printf("num_float %f\n", tokp->val.float_value);

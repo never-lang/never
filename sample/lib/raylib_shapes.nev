@@ -1,0 +1,76 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_shapes
+{
+    use raylib
+
+    /* Basic Shapes Drawing Functions (Module: shapes) */
+
+    /* Basic shapes drawing functions */
+    extern "libraylib.so" func DrawPixel(posX : int, posY : int, color : raylib.Color) -> void                                             /* Draw a pixel */
+    extern "libraylib.so" func DrawPixelV(position : raylib.Vector2, color : raylib.Color) -> void                                                    /* Draw a pixel (Vector version) */
+    extern "libraylib.so" func DrawLine(startPosX : int, startPosY : int, endPosX : int, endPosY : int, color : raylib.Color) -> void                /* Draw a line */
+    extern "libraylib.so" func DrawLineV(startPos : raylib.Vector2, endPos : raylib.Vector2, color : raylib.Color) -> void                                     /* Draw a line (Vector version) */
+    extern "libraylib.so" func DrawLineEx(startPos : raylib.Vector2, endPos : raylib.Vector2, thick : float, color : raylib.Color) -> void                       /* Draw a line defining thickness */
+    extern "libraylib.so" func DrawLineBezier(startPos : raylib.Vector2, endPos : raylib.Vector2, thick : float, color : raylib.Color) -> void                  /* Draw a line using cubic-bezier curves in-out */
+    extern "libraylib.so" func DrawLineStrip(points : c_ptr, numPoints : int, color : raylib.Color) -> void                                   /* Draw lines sequence */
+    extern "libraylib.so" func DrawCircle(centerX : int, centerY : int, radius : float, color : raylib.Color) -> void                              /* Draw a color-filled circle */
+    extern "libraylib.so" func DrawCircleSector(center : raylib.Vector2, radius : float, startAngle : int, endAngle : int, segments : int, color : raylib.Color) -> void     /* Draw a piece of a circle */
+    extern "libraylib.so" func DrawCircleSectorLines(center : raylib.Vector2, radius : float, startAngle : int, endAngle : int, segments : int, color : raylib.Color) -> void    /* Draw circle sector outline */
+    extern "libraylib.so" func DrawCircleGradient(centerX : int, centerY : int, radius : float, color1 : raylib.Color, color2 : raylib.Color) -> void      /* Draw a gradient-filled circle */
+    extern "libraylib.so" func DrawCircleV(center : raylib.Vector2, radius : float, color : raylib.Color) -> void                                       /* Draw a color-filled circle (Vector version) */
+    extern "libraylib.so" func DrawCircleLines(centerX : int, centerY : int, radius : float, color : raylib.Color) -> void                         /* Draw circle outline */
+    extern "libraylib.so" func DrawEllipse(centerX : int, centerY : int, radiusH : float, radiusV : float, color : raylib.Color) -> void             /* Draw ellipse */
+    extern "libraylib.so" func DrawEllipseLines(centerX : int, centerY : int, radiusH : float, radiusV : float, color : raylib.Color) -> void        /* Draw ellipse outline */
+    extern "libraylib.so" func DrawRing(center : raylib.Vector2, innerRadius : float, outerRadius : float, startAngle : int, endAngle : int, segments : int, color : raylib.Color) -> void /* Draw ring */
+    extern "libraylib.so" func DrawRingLines(center : raylib.Vector2, innerRadius : float, outerRadius : float, startAngle : int, endAngle : int, segments : int, color : raylib.Color) -> void    /* Draw ring outline */
+    extern "libraylib.so" func DrawRectangle(posX : int, posY : int, width : int, height : int, color : raylib.Color) -> void                        /* Draw a color-filled rectangle */
+    extern "libraylib.so" func DrawRectangleV(position : raylib.Vector2, size : raylib.Vector2, color : raylib.Color) -> void                                  /* Draw a color-filled rectangle (Vector version) */
+    extern "libraylib.so" func DrawRectangleRec(rec : raylib.Rectangle, color : raylib.Color) -> void                                                 /* Draw a color-filled rectangle */
+    extern "libraylib.so" func DrawRectanglePro(rec : raylib.Rectangle, origin : raylib.Vector2, rotation : float, color : raylib.Color) -> void                 /* Draw a color-filled rectangle with pro parameters */
+    extern "libraylib.so" func DrawRectangleGradientV(posX : int, posY : int, width : int, height : int, color1 : raylib.Color, color2 : raylib.Color) -> void /* Draw a vertical-gradient-filled rectangle */
+    extern "libraylib.so" func DrawRectangleGradientH(posX : int, posY : int, width : int, height : int, color1 : raylib.Color, color2 : raylib.Color) -> void /* Draw a horizontal-gradient-filled rectangle */
+    extern "libraylib.so" func DrawRectangleGradientEx(rec : raylib.Rectangle, col1 : raylib.Color, col2 : raylib.Color, col3 : raylib.Color, col4 : raylib.Color) -> void       /* Draw a gradient-filled rectangle with custom vertex colors */    
+    extern "libraylib.so" func DrawRectangleLines(posX : int, posY : int, width : int, height : int, color : raylib.Color) -> void                   /* Draw rectangle outline */
+    extern "libraylib.so" func DrawRectangleLinesEx(rec : raylib.Rectangle, lineThick : int, color : raylib.Color) -> void                              /* Draw rectangle outline with extended parameters */
+    extern "libraylib.so" func DrawRectangleRounded(rec : raylib.Rectangle, roundness : float, segments : int, color : raylib.Color) -> void              /* Draw rectangle with rounded edges */
+    extern "libraylib.so" func DrawRectangleRoundedLines(rec : raylib.Rectangle, roundness : float, segments : int, lineThick : int, color : raylib.Color) -> void /* Draw rectangle with rounded edges outline */
+    extern "libraylib.so" func DrawTriangle(v1 : raylib.Vector2, v2 : raylib.Vector2, v3 : raylib.Vector2, color : raylib.Color) -> void                                /* Draw a color-filled triangle (vertex in counter-clockwise order!) */
+    extern "libraylib.so" func DrawTriangleLines(v1 : raylib.Vector2, v2 : raylib.Vector2, v3 : raylib.Vector2, color : raylib.Color) -> void                           /* Draw triangle outline (vertex in counter-clockwise order!) */
+    extern "libraylib.so" func DrawTriangleFan(points : c_ptr, numPoints : int, color : raylib.Color) -> void                                 /* Draw a triangle fan defined by points (first vertex is the center) */
+    extern "libraylib.so" func DrawTriangleStrip(points : c_ptr, pointsCount : int, color : raylib.Color) -> void                              /* Draw a triangle strip defined by points */
+    extern "libraylib.so" func DrawPoly(center : raylib.Vector2, sides : int, radius : float, rotation : float, color : raylib.Color) -> void               /* Draw a regular polygon (Vector version) */
+    extern "libraylib.so" func DrawPolyLines(center : raylib.Vector2, sides : int, radius : float, rotation : float, color : raylib.Color) -> void          /* Draw a polygon outline of n sides */
+
+    /* Basic shapes collision detection functions */
+    extern "libraylib.so" func CheckCollisionRecs(rec1 : raylib.Rectangle, rec2 : raylib.Rectangle) -> bool                                           /* Check collision between two rectangles */
+    extern "libraylib.so" func CheckCollisionCircles(center1 : raylib.Vector2, radius1 : float, center2 : raylib.Vector2, radius2 : float) -> bool        /* Check collision between two circles */
+    extern "libraylib.so" func CheckCollisionCircleRec(center : raylib.Vector2, radius : float, rec : raylib.Rectangle) -> bool                         /* Check collision between circle and rectangle */
+    extern "libraylib.so" func GetCollisionRec(rec1 : raylib.Rectangle, rec2 : raylib.Rectangle) -> raylib.Rectangle                                    /* Get collision rectangle for two rectangles collision */
+    extern "libraylib.so" func CheckCollisionPointRec(point : raylib.Vector2, rec : raylib.Rectangle) -> bool                                         /* Check if point is inside rectangle */
+    extern "libraylib.so" func CheckCollisionPointCircle(point : raylib.Vector2, center : raylib.Vector2, radius : float) -> bool                       /* Check if point is inside circle */
+    extern "libraylib.so" func CheckCollisionPointTriangle(point : raylib.Vector2, p1 : raylib.Vector2, p2 : raylib.Vector2, p3 : raylib.Vector2) -> bool               /* Check if point is inside a triangle */
+}

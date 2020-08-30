@@ -1,0 +1,113 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_models
+{
+    use raylib
+
+    /* Model 3d Loading and Drawing Functions (Module: models) */
+
+    /* Basic 3d Shapes Drawing Functions (Module: models) */
+
+    /* Basic geometric 3D shapes drawing functions */
+    extern "libraylib.so" func DrawLine3D(startPos : raylib.Vector3, endPos : raylib.Vector3, color : raylib.Color) -> void                                    /* Draw a line in 3D world space */
+    extern "libraylib.so" func DrawPoint3D(position : raylib.Vector3, color : raylib.Color) -> void                                                   /* Draw a point in 3D space, actually a small line */
+    extern "libraylib.so" func DrawCircle3D(center : raylib.Vector3, radius : float, rotationAxis : raylib.Vector3, rotationAngle : float, color : raylib.Color) -> void /* Draw a circle in 3D world space */
+    extern "libraylib.so" func DrawCube(position : raylib.Vector3, width : float, height : float, length : float, color : raylib.Color) -> void             /* Draw cube */
+    extern "libraylib.so" func DrawCubeV(position : raylib.Vector3, size : raylib.Vector3, color : raylib.Color) -> void                                       /* Draw cube (Vector version) */
+    extern "libraylib.so" func DrawCubeWires(position : raylib.Vector3, width : float, height : float, length : float, color : raylib.Color) -> void        /* Draw cube wires */
+    extern "libraylib.so" func DrawCubeWiresV(position : raylib.Vector3, size : raylib.Vector3, color : raylib.Color) -> void                                  /* Draw cube wires (Vector version) */
+    extern "libraylib.so" func DrawCubeTexture(texture : raylib.Texture2D, position : raylib.Vector3, width : float, height : float, length : float, color : raylib.Color) -> void /* Draw cube textured */
+    extern "libraylib.so" func DrawSphere(centerPos : raylib.Vector3, radius : float, color : raylib.Color) -> void                                     /* Draw sphere */
+    extern "libraylib.so" func DrawSphereEx(centerPos : raylib.Vector3, radius : float, rings : int, slices : int, color : raylib.Color) -> void            /* Draw sphere with extended parameters */
+    extern "libraylib.so" func DrawSphereWires(centerPos : raylib.Vector3, radius : float, rings : int, slices : int, color : raylib.Color) -> void         /* Draw sphere wires */
+    extern "libraylib.so" func DrawCylinder(position : raylib.Vector3, radiusTop : float, radiusBottom : float, height : float, slices : int, color : raylib.Color) -> void /* Draw a cylinder/cone */
+    extern "libraylib.so" func DrawCylinderWires(position : raylib.Vector3, radiusTop : float, radiusBottom : float, height : float, slices : int, color : raylib.Color) -> void /* Draw a cylinder/cone wires */
+    extern "libraylib.so" func DrawPlane(centerPos : raylib.Vector3, size : raylib.Vector2, color : raylib.Color) -> void                                      /* Draw a plane XZ */
+    extern "libraylib.so" func DrawRay(ray : raylib.Ray, color : raylib.Color) -> void                                                                /* Draw a ray line */
+    extern "libraylib.so" func DrawGrid(slices : int, spacing : float) -> void                                                          /* Draw a grid (centered at (0, 0, 0)) */
+    extern "libraylib.so" func DrawGizmo(position : raylib.Vector3) -> void                                                                  /* Draw simple gizmo */
+    /* DrawTorus(), DrawTeapot() could be useful? */
+
+    /* Model loading/unloading functions */
+    extern "libraylib.so" func LoadModel(fileName : string) -> raylib.Model                                                            /* Load model from files (meshes and materials) */
+    extern "libraylib.so" func LoadModelFromMesh(mesh : raylib.Mesh) -> raylib.Model                                                               /* Load model from generated mesh (default material) */
+    extern "libraylib.so" func UnloadModel(model : raylib.Model) -> void                                                                    /* Unload model from memory (RAM and/or VRAM) */
+
+    /* Mesh loading/unloading functions */
+    extern "libraylib.so" func LoadMeshes(fileName : string, meshCount : c_ptr) -> c_ptr                                           /* Load meshes from model file */
+    extern "libraylib.so" func ExportMesh(mesh : raylib.Mesh, fileName : string) -> void                                                 /* Export mesh data to file */
+    extern "libraylib.so" func UnloadMesh(mesh : raylib.Mesh) -> void                                                                       /* Unload mesh from memory (RAM and/or VRAM) */
+
+    /* Material loading/unloading functions */
+    extern "libraylib.so" func LoadMaterials(fileName : string, materialCount : c_ptr) -> c_ptr                                /* Load materials from model file */
+    extern "libraylib.so" func LoadMaterialDefault() -> raylib.Material                                                               /* Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps) */
+    extern "libraylib.so" func UnloadMaterial(material : raylib.Material) -> void                                                           /* Unload material from GPU memory (VRAM) */
+    extern "libraylib.so" func SetMaterialTexture(material : c_ptr, mapType : int, texture : raylib.Texture2D) -> void                      /* Set texture for a material map type (MAP_DIFFUSE, MAP_SPECULAR...) */
+    extern "libraylib.so" func SetModelMeshMaterial(model : c_ptr, meshId : int, materialId : int) -> void                              /* Set material for a mesh */
+
+    /* Model animations loading/unloading functions */
+    extern "libraylib.so" func LoadModelAnimations(fileName : string, animsCount : c_ptr) -> c_ptr                       /* Load model animations from file */
+    extern "libraylib.so" func UpdateModelAnimation(model : raylib.Model, anim : raylib.ModelAnimation, frame : int) -> void                           /* Update model animation pose */
+    extern "libraylib.so" func UnloadModelAnimation(anim : raylib.ModelAnimation) -> void                                                   /* Unload animation data */
+    extern "libraylib.so" func IsModelAnimationValid(model : raylib.Model, anim : raylib.ModelAnimation) -> bool                                     /* Check model animation skeleton match */
+
+    /* Mesh generation functions */
+    extern "libraylib.so" func GenMeshPoly(sides : int, radius : float) -> raylib.Mesh                                                        /* Generate polygonal mesh */
+    extern "libraylib.so" func GenMeshPlane(width : float, length : float, resX : int, resZ : int) -> raylib.Mesh                                 /* Generate plane mesh (with subdivisions) */
+    extern "libraylib.so" func GenMeshCube(width : float, height : float, length : float) -> raylib.Mesh                                        /* Generate cuboid mesh */
+    extern "libraylib.so" func GenMeshSphere(radius : float, rings : int, slices : int) -> raylib.Mesh                                          /* Generate sphere mesh (standard sphere) */
+    extern "libraylib.so" func GenMeshHemiSphere(radius : float, rings : int, slices : int) -> raylib.Mesh                                      /* Generate half-sphere mesh (no bottom cap) */
+    extern "libraylib.so" func GenMeshCylinder(radius : float, height : float, slices : int) -> raylib.Mesh                                     /* Generate cylinder mesh */
+    extern "libraylib.so" func GenMeshTorus(radius : float, size : float, radSeg : int, sides : int) -> raylib.Mesh                               /* Generate torus mesh */
+    extern "libraylib.so" func GenMeshKnot(radius : float, size : float, radSeg : int, sides : int) -> raylib.Mesh                                /* Generate trefoil knot mesh */
+    extern "libraylib.so" func GenMeshHeightmap(heightmap : raylib.Image, size : raylib.Vector3) -> raylib.Mesh                                             /* Generate heightmap mesh from image data */
+    extern "libraylib.so" func GenMeshCubicmap(cubicmap : raylib.Image, cubeSize : raylib.Vector3) -> raylib.Mesh                                          /* Generate cubes-based map mesh from image data */
+
+    /* Mesh manipulation functions */
+    extern "libraylib.so" func MeshBoundingBox(mesh : raylib.Mesh) -> raylib.BoundingBox                                                           /* Compute mesh bounding box limits */
+    extern "libraylib.so" func MeshTangents(mesh : c_ptr) -> void                                                                    /* Compute mesh tangents */
+    extern "libraylib.so" func MeshBinormals(mesh : c_ptr) -> void                                                                   /* Compute mesh binormals */
+
+    /* Model drawing functions */
+    extern "libraylib.so" func DrawModel(model : raylib.Model, position : raylib.Vector3, scale : float, tint : raylib.Color) -> void                           /* Draw a model (with texture if set) */
+    extern "libraylib.so" func DrawModelEx(model : raylib.Model, position : raylib.Vector3, rotationAxis : raylib.Vector3, rotationAngle : float, scale : raylib.Vector3, tint : raylib.Color) -> void /* Draw a model with extended parameters */
+    extern "libraylib.so" func DrawModelWires(model : raylib.Model, position : raylib.Vector3, scale : float, tint : raylib.Color) -> void                      /* Draw a model wires (with texture if set) */
+    extern "libraylib.so" func DrawModelWiresEx(model : raylib.Model, position : raylib.Vector3, rotationAxis : raylib.Vector3, rotationAngle : float, scale : raylib.Vector3, tint : raylib.Color) -> void /* Draw a model wires (with texture if set) with extended parameters */
+    extern "libraylib.so" func DrawBoundingBox(box : raylib.BoundingBox, color : raylib.Color) -> void                                               /* Draw bounding box (wires) */
+    extern "libraylib.so" func DrawBillboard(camera : raylib.Camera3D, texture : raylib.Texture2D, center : raylib.Vector3, size : float, tint : raylib.Color) -> void    /* Draw a billboard texture */
+    extern "libraylib.so" func DrawBillboardRec(camera : raylib.Camera3D, texture : raylib.Texture2D, sourceRec : raylib.Rectangle, center : raylib.Vector3, size : float, tint : raylib.Color) -> void /* Draw a billboard texture defined by sourceRec */
+
+    /* Collision detection functions */
+    extern "libraylib.so" func CheckCollisionSpheres(centerA : raylib.Vector3, radiusA : float, centerB : raylib.Vector3, radiusB : float) -> bool /* Detect collision between two spheres */
+    extern "libraylib.so" func CheckCollisionBoxes(box1 : raylib.BoundingBox, box2 : raylib.BoundingBox) -> bool /* Detect collision between two bounding boxes */
+    extern "libraylib.so" func CheckCollisionBoxSphere(box : raylib.BoundingBox, center : raylib.Vector3, radius : float) -> bool /* Detect collision between box and sphere */
+    extern "libraylib.so" func CheckCollisionRaySphere(ray : raylib.Ray, center : raylib.Vector3, radius : float) -> bool /* Detect collision between ray and sphere */
+    extern "libraylib.so" func CheckCollisionRaySphereEx(ray : raylib.Ray, center : raylib.Vector3, radius : float, collisionPoint : c_ptr) -> bool /* Detect collision between ray and sphere, returns collision point */
+    extern "libraylib.so" func CheckCollisionRayBox(ray : raylib.Ray, box : raylib.BoundingBox) -> bool                                              /* Detect collision between ray and box */
+    extern "libraylib.so" func GetCollisionRayModel(ray : raylib.Ray, model : raylib.Model) -> raylib.RayHitInfo                                            /* Get collision info between ray and model */
+    extern "libraylib.so" func GetCollisionRayTriangle(ray : raylib.Ray, p1 : raylib.Vector3, p2 : raylib.Vector3, p3 : raylib.Vector3) -> raylib.RayHitInfo                  /* Get collision info between ray and triangle */
+    extern "libraylib.so" func GetCollisionRayGround(ray : raylib.Ray, groundHeight : float) -> raylib.RayHitInfo                                    /* Get collision info between ray and ground plane (Y-normal plane) */
+}

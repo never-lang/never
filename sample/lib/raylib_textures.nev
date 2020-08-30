@@ -1,0 +1,129 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_textures
+{
+    use raylib
+
+   /* Texture Loading and Drawing Functions (Module: textures) */
+
+    /* Image loading functions */
+    /* NOTE: These functions do not require GPU access */
+    extern "libraylib.so" func LoadImage(fileName : string) -> raylib.Image                                                             /* Load image from file into CPU memory (RAM) */
+    extern "libraylib.so" func LoadImageEx(pixels : c_ptr, width : int, height : int) -> raylib.Image                                          /* Load image from Color array data (RGBA - 32bit) */
+    extern "libraylib.so" func LoadImageRaw(fileName : string, width : int, height : int, format : int, headerSize : int) -> raylib.Image       /* Load image from RAW file data */
+    extern "libraylib.so" func UnloadImage(image : raylib.Image) -> void                                                                     /* Unload image from CPU memory (RAM) */
+    extern "libraylib.so" func ExportImage(image : raylib.Image, fileName : string) -> void                                               /* Export image data to file */
+    extern "libraylib.so" func ExportImageAsCode(image : raylib.Image, fileName : string) -> void                                         /* Export image as code file defining an array of bytes */
+    extern "libraylib.so" func GetImageData(image : raylib.Image) -> c_ptr                                                                /* Get pixel data from image as a Color struct array */
+    extern "libraylib.so" func GetImageDataNormalized(image : raylib.Image) -> c_ptr                                                    /* Get pixel data from image as Vector4 array (float normalized) */
+
+    /* Image generation functions */
+    extern "libraylib.so" func GenImageColor(width : int, height : int, color : raylib.Color) -> raylib.Image                                           /* Generate image: plain color */
+    extern "libraylib.so" func GenImageGradientV(width : int, height : int, top : raylib.Color, bottom : raylib.Color) -> raylib.Image                           /* Generate image: vertical gradient */
+    extern "libraylib.so" func GenImageGradientH(width : int, height : int, left : raylib.Color, right : raylib.Color) -> raylib.Image                           /* Generate image: horizontal gradient */
+    extern "libraylib.so" func GenImageGradientRadial(width : int, height : int, density : float, inner : raylib.Color, outer : raylib.Color) -> raylib.Image      /* Generate image: radial gradient */
+    extern "libraylib.so" func GenImageChecked(width : int, height : int, checksX : int, checksY : int, col1 : raylib.Color, col2 : raylib.Color) -> raylib.Image    /* Generate image: checked */
+    extern "libraylib.so" func GenImageWhiteNoise(width : int, height : int, factor : float) -> raylib.Image                                     /* Generate image: white noise */
+    extern "libraylib.so" func GenImagePerlinNoise(width : int, height : int, offsetX : int, offsetY : int, scale : float) -> raylib.Image           /* Generate image: perlin noise */
+    extern "libraylib.so" func GenImageCellular(width : int, height : int, tileSize : int) -> raylib.Image                                       /* Generate image: cellular algorithm. Bigger tileSize means bigger cells */
+
+    /* Image manipulation functions */
+    extern "libraylib.so" func ImageCopy(image : raylib.Image) -> raylib.Image                                                                      /* Create an image duplicate (useful for transformations) */
+    extern "libraylib.so" func ImageFromImage(image : raylib.Image, rec : raylib.Rectangle) -> raylib.Image                                                 /* Create an image from another image piece */
+    extern "libraylib.so" func ImageText(text : string, fontSize : int, color : raylib.Color) -> raylib.Image                                      /* Create an image from text (default font) */
+    extern "libraylib.so" func ImageTextEx(font : raylib.Font, text : string, fontSize : float, spacing : float, tint : raylib.Color) -> raylib.Image         /* Create an image from text (custom sprite font) */
+    extern "libraylib.so" func ImageToPOT(image : c_ptr, fillColor : raylib.Color) -> void                                                    /* Convert image to POT (power-of-two) */
+    extern "libraylib.so" func ImageFormat(image : c_ptr, newFormat : int) -> void                                                     /* Convert image data to desired format */
+    extern "libraylib.so" func ImageAlphaMask(image : c_ptr, alphaMask : raylib.Image) -> void                                                /* Apply alpha mask to image */
+    extern "libraylib.so" func ImageAlphaClear(image : c_ptr, color : raylib.Color, threshold : float) -> void                                  /* Clear alpha channel to desired color */
+    extern "libraylib.so" func ImageAlphaCrop(image : c_ptr, threshold : float) -> void                                                /* Crop image depending on alpha value */
+    extern "libraylib.so" func ImageAlphaPremultiply(image : c_ptr) -> void                                                          /* Premultiply alpha channel */
+    extern "libraylib.so" func ImageCrop(image : c_ptr, crop : raylib.Rectangle) -> void                                                      /* Crop an image to a defined rectangle */
+    extern "libraylib.so" func ImageResize(image : c_ptr, newWidth : int, newHeight : int) -> void                                       /* Resize image (Bicubic scaling algorithm) */
+    extern "libraylib.so" func ImageResizeNN(image : c_ptr, newWidth : int, newHeight : int) -> void                                      /* Resize image (Nearest-Neighbor scaling algorithm) */
+    extern "libraylib.so" func ImageResizeCanvas(image : c_ptr, newWidth : int, newHeight : int, offsetX : int, offsetY : int, color : raylib.Color) -> void  /* Resize canvas and fill with color */
+    extern "libraylib.so" func ImageMipmaps(image : c_ptr) -> void                                                                   /* Generate all mipmap levels for a provided image */
+    extern "libraylib.so" func ImageDither(image : c_ptr, rBpp : int, gBpp : int, bBpp : int, aBpp : int) -> void                            /* Dither image data to 16bpp or lower (Floyd-Steinberg dithering) */
+    extern "libraylib.so" func ImageFlipVertical(image : c_ptr) -> void                                                              /* Flip image vertically */
+    extern "libraylib.so" func ImageFlipHorizontal(image : c_ptr) -> void                                                            /* Flip image horizontally */
+    extern "libraylib.so" func ImageRotateCW(image : c_ptr) -> void                                                                  /* Rotate image clockwise 90deg */
+    extern "libraylib.so" func ImageRotateCCW(image : c_ptr) -> void                                                                 /* Rotate image counter-clockwise 90deg */
+    extern "libraylib.so" func ImageColorTint(image : c_ptr, color : raylib.Color) -> void                                                    /* Modify image color: tint */
+    extern "libraylib.so" func ImageColorInvert(image : c_ptr) -> void                                                               /* Modify image color: invert */
+    extern "libraylib.so" func ImageColorGrayscale(image : c_ptr) -> void                                                            /* Modify image color: grayscale */
+    extern "libraylib.so" func ImageColorContrast(image : c_ptr, contrast : float) -> void                                             /* Modify image color: contrast (-100 to 100) */
+    extern "libraylib.so" func ImageColorBrightness(image : c_ptr, brightness : int) -> void                                           /* Modify image color: brightness (-255 to 255) */
+    extern "libraylib.so" func ImageColorReplace(image : c_ptr, color : raylib.Color, replace : raylib.Color) -> void                                  /* Modify image color: replace color */
+    /* extern "libraylib.so" func ImageExtractPalette(image : Image, maxPaletteSize : int, extractCount : c_ptr) -> Color * */           /* Extract color palette from image to maximum size (memory should be freed) */
+    extern "libraylib.so" func GetImageAlphaBorder(image : raylib.Image, threshold : float) -> raylib.Rectangle                                        /* Get image alpha border rectangle */
+
+    /* Image drawing functions */
+    /* NOTE: Image software-redering functions (CPU) */
+    extern "libraylib.so" func ImageClearBackground(dst : c_ptr, color : raylib.Color) -> void                                                /* Clear image background with given color */
+    extern "libraylib.so" func Pixel(dst : c_ptr, posX : int, posY : int, color : raylib.Color) -> void                                  /* Draw pixel within an image */
+    extern "libraylib.so" func ImageDrawPixelV(dst : c_ptr, position : raylib.Vector2, color : raylib.Color) -> void                                   /* Draw pixel within an image (Vector version) */
+    extern "libraylib.so" func ImageDrawLine(dst : c_ptr, startPosX : int, startPosY : int, endPosX : int, endPosY : int, color : raylib.Color) -> void /* Draw line within an image */
+    extern "libraylib.so" func ImageDrawLineV(dst : c_ptr, start : raylib.Vector2, end : raylib.Vector2, color : raylib.Color) -> void                          /* Draw line within an image (Vector version) */
+    extern "libraylib.so" func ImageDrawCircle(dst : c_ptr, centerX : int, centerY : int, radius : int, color : raylib.Color) -> void               /* Draw circle within an image */
+    extern "libraylib.so" func ImageDrawCircleV(dst : c_ptr, center : raylib.Vector2, radius : int, color : raylib.Color) -> void                        /* Draw circle within an image (Vector version) */
+    extern "libraylib.so" func ImageDrawRectangle(dst : c_ptr, posX : int, posY : int, width : int, height : int, color : raylib.Color) -> void       /* Draw rectangle within an image */
+    extern "libraylib.so" func ImageDrawRectangleV(dst : c_ptr, position : raylib.Vector2, size : raylib.Vector2, color : raylib.Color) -> void                 /* Draw rectangle within an image (Vector version) */
+    extern "libraylib.so" func ImageDrawRectangleRec(dst : c_ptr, rec : raylib.Rectangle, color : raylib.Color) -> void                                /* Draw rectangle within an image */
+    extern "libraylib.so" func ImageDrawRectangleLines(dst : c_ptr, rec : raylib.Rectangle, thick : int, color : raylib.Color) -> void                   /* Draw rectangle lines within an image */
+    extern "libraylib.so" func ImageDraw(dst : c_ptr, src : raylib.Image, srcRec : raylib.Rectangle, dstRec : raylib.Rectangle, tint : raylib.Color) -> void             /* Draw a source image within a destination image (tint applied to source) */
+    extern "libraylib.so" func ImageDrawText(dst : c_ptr, text : string, posX : int, posY : int, fontSize : int, color : raylib.Color) -> void   /* Draw text (using default font) within an image (destination) */
+    extern "libraylib.so" func ImageDrawTextEx(dst : c_ptr, font : raylib.Font, text : string, position : raylib.Vector2, fontSize : float, spacing : float, tint : raylib.Color) -> void /* Draw text (custom sprite font) within an image (destination) */
+
+    /* Texture loading functions */
+    /* NOTE: These functions require GPU access */
+    extern "libraylib.so" func LoadTexture(fileName : string) -> raylib.Texture2D                                                       /* Load texture from file into GPU memory (VRAM) */
+    extern "libraylib.so" func LoadTextureFromImage(image : raylib.Image) -> raylib.Texture2D                                                       /* Load texture from image data */
+    extern "libraylib.so" func LoadTextureCubemap(image : raylib.Image, layoutType : int) -> raylib.Texture2D                                    /* Load cubemap from image, multiple image cubemap layouts supported */
+    extern "libraylib.so" func LoadRenderTexture(width : int, height : int) -> raylib.RenderTexture2D                                          /* Load texture for rendering (framebuffer) */
+    extern "libraylib.so" func UnloadTexture(texture : raylib.Texture2D) -> void                                                             /* Unload texture from GPU memory (VRAM) */
+    extern "libraylib.so" func UnloadRenderTexture(target : raylib.RenderTexture2D) -> void                                                  /* Unload render texture from GPU memory (VRAM) */
+    extern "libraylib.so" func UpdateTexture(texture : raylib.Texture2D, pixels : c_ptr) -> void                                         /* Update GPU texture with new data */
+    extern "libraylib.so" func GetTextureData(texture : raylib.Texture2D) -> raylib.Image                                                           /* Get pixel data from GPU texture and return an Image */
+    extern "libraylib.so" func GetScreenData() -> raylib.Image                                                                         /* Get pixel data from screen buffer and return an Image (screenshot) */
+
+    /* Texture configuration functions */
+    extern "libraylib.so" func GenTextureMipmaps(texture : c_ptr) -> void                                                        /* Generate GPU mipmaps for a texture */
+    extern "libraylib.so" func SetTextureFilter(texture : raylib.Texture2D, filterMode : int) -> void                                          /* Set texture scaling filter mode */
+    extern "libraylib.so" func SetTextureWrap(texture : raylib.Texture2D, wrapMode : int) -> void                                              /* Set texture wrapping mode */
+
+    /* Texture drawing functions */
+    extern "libraylib.so" func DrawTexture(texture : raylib.Texture2D, posX : int, posY : int, tint : raylib.Color) -> void                               /* Draw a Texture2D */
+    extern "libraylib.so" func DrawTextureV(texture : raylib.Texture2D, position : raylib.Vector2, tint : raylib.Color) -> void                                /* Draw a Texture2D with position defined as Vector2 */
+    extern "libraylib.so" func DrawTextureEx(texture : raylib.Texture2D, position : raylib.Vector2, rotation : float, scale : float, tint : raylib.Color) -> void  /* Draw a Texture2D with extended parameters */
+    extern "libraylib.so" func DrawTextureRec(texture : raylib.Texture2D, sourceRec : raylib.Rectangle, position : raylib.Vector2, tint : raylib.Color) -> void         /* Draw a part of a texture defined by a rectangle */
+    extern "libraylib.so" func DrawTextureQuad(texture : raylib.Texture2D, tiling : raylib.Vector2, offset : raylib.Vector2, quad : raylib.Rectangle, tint : raylib.Color) -> void  /* Draw texture quad with tiling and offset parameters */
+    extern "libraylib.so" func DrawTexturePro(texture : raylib.Texture2D, sourceRec : raylib.Rectangle, destRec : raylib.Rectangle, origin : raylib.Vector2, rotation : float, tint : raylib.Color) -> void       /* Draw a part of a texture defined by a rectangle with 'pro' parameters */
+    extern "libraylib.so" func DrawTextureNPatch(texture : raylib.Texture2D, nPatchInfo : raylib.NPatchInfo, destRec : raylib.Rectangle, origin : raylib.Vector2, rotation : float, tint : raylib.Color) -> void  /* Draws a texture (or part of it) that stretches or shrinks nicely */
+
+    /* Image/Texture misc functions */
+    extern "libraylib.so" func GetPixelDataSize(width : int, height : int, format : int) -> int                                           /* Get pixel data size in bytes (image or texture) */
+}
+

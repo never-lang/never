@@ -1,0 +1,46 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_mouse
+{
+    use raylib
+
+    let MOUSE_LEFT_BUTTON = 0;
+    let MOUSE_RIGHT_BUTTON = 1;
+    let MOUSE_MIDDLE_BUTTON = 2;
+
+    /* Input-related functions: mouse */
+    extern "libraylib.so" func IsMouseButtonPressed(button : int) -> bool            /* Detect if a mouse button has been pressed once */
+    extern "libraylib.so" func IsMouseButtonDown(button : int) -> bool               /* Detect if a mouse button is being pressed */
+    extern "libraylib.so" func IsMouseButtonReleased(button : int) -> bool           /* Detect if a mouse button has been released once */
+    extern "libraylib.so" func IsMouseButtonUp(button : int) -> bool                 /* Detect if a mouse button is NOT being pressed */
+    extern "libraylib.so" func GetMouseX() -> int                                    /* Returns mouse position X */
+    extern "libraylib.so" func GetMouseY() -> int                                    /* Returns mouse position Y */
+    extern "libraylib.so" func GetMousePosition() -> raylib.Vector2                         /* Returns mouse position XY */
+    extern "libraylib.so" func SetMousePosition(x : int, y : int) -> void            /* Set mouse position XY */
+    extern "libraylib.so" func SetMouseOffset(offsetX : int, offsetY : int) -> void  /* Set mouse offset */
+    extern "libraylib.so" func SetMouseScale(scaleX : float, scaleY : float) -> void /* Set mouse scaling */
+    extern "libraylib.so" func GetMouseWheelMove() -> int                            /* Returns mouse wheel movement Y */
+}

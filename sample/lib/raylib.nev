@@ -1,10 +1,57 @@
-
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
 module raylib
 {
     record Vector2
     {
         x : float;
         y : float;
+    }
+
+    record Vector3
+    {
+        x : float;
+        y : float;
+        z : float;
+    }
+
+    record Vector4
+    {
+        x : float;
+        y : float;
+        z : float;
+        w : float;
+    }
+
+    record Matrix
+    {
+        m0 : float; m4 : float; m8 : float; m12 : float;
+        m1 : float; m5 : float; m9 : float; m13 : float;
+        m2 : float; m6 : float; m10 : float; m14 : float;
+        m3 : float; m7 : float; m11 : float; m15 : float; 
     }
 
     record Color
@@ -15,26 +62,287 @@ module raylib
         a : char;
     }
 
-    let MOUSE_LEFT_BUTTON = 0;
-    let MOUSE_RIGHT_BUTTON = 1;
-    let MOUSE_MIDDLE_BUTTON = 2;
+    record Rectangle
+    {
+        x : float;
+        y : float;
+        width : float;
+        height : float;
+    }
 
-    let DARKBLUE = Color(chr(0), chr(82), chr(172), chr(255));
-    let DARKGRAY = Color(chr(80), chr(80), chr(80), chr(255));
-    let LIME = Color(chr(0), chr(158), chr(47), chr(255));
-    let MAROON = Color(chr(190), chr(33), chr(55), chr(255));
-    let RAYWHITE = Color(chr(245), chr(245), chr(245), chr(245));
+    record Image
+    {
+        data : c_ptr;  /* Image raw data */
+        width : int;   /* Image base width */
+        height : int;  /* Image base height */
+        mipmaps : int; /* Mipmap levels, 1 by default */
+        format : int;  /* Data format (PixelFormaty type) */
+    }
 
-    extern "../../raylib/src/libraylib.so" func InitWindow(width : int, height : int, title : string) -> void
-    extern "../../raylib/src/libraylib.so" func SetTargetFPS(fps : int) -> void
-    extern "../../raylib/src/libraylib.so" func WindowShouldClose() -> bool
-    extern "../../raylib/src/libraylib.so" func CloseWindow() -> void
-    extern "../../raylib/src/libraylib.so" func GetMousePosition() -> Vector2
-    extern "../../raylib/src/libraylib.so" func IsMouseButtonPressed(button : int) -> bool
-    extern "../../raylib/src/libraylib.so" func BeginDrawing() -> void
-    extern "../../raylib/src/libraylib.so" func EndDrawing() -> void
-    extern "../../raylib/src/libraylib.so" func ClearBackground(color : Color) -> void
-    extern "../../raylib/src/libraylib.so" func DrawCircleV(center : Vector2, radius : float, color : Color) -> void
-    extern "../../raylib/src/libraylib.so" func DrawText(text : string, posX : int, posY : int, fontSize : int, color : Color) -> void
+    record Texture2D
+    {
+        id : int;      /* OpenGL texture id */
+        width : int;
+        height : int;
+        mipmaps : int;
+        format : int;
+    }
+
+    record RenderTexture2D
+    {
+        id : int; /* OpenGL Framebuffer Object (FBO) id */
+        texture : Texture2D; /* Color buffer attachement texture */
+        depth : Texture2D; /* Depth buffer attachement texture */
+        depthTexture : bool; /* Track if depth attachement is a texture or renderbuffer */
+    }
+
+    record NPatchInfo
+    {
+        sourceRec : Rectangle; /* Region in the texture */
+        left : int;            /* left border offset */
+        top : int;             /* top border offset */
+        right : int;           /* right border offset */
+        bottom : int;          /* bottom border offset */
+        type : int;            /* layout of the n-patch: 3x3, 1x3 or 3x1 */
+    }
+
+    record CharInfo
+    {
+        value : int;            /* Character value (Unicode) */
+        offsetX : int;          /* Character offset X when drawing */
+        offsetY : int;          /* Character offset Y when drawing */
+        advanceX : int;         /* Character advance position X */
+        image : Image;          /* Character image data */
+    }
+
+    record Font
+    {
+        baseSize : int;         /* Base size (default chars height) */
+        charsCount : int;       /* Number of characters */
+        texture : Texture2D;    /* Characters texture atlas */
+        recs : c_ptr;           /* Characters rectangles in texture */
+        chars : c_ptr;          /* Characters info data */
+    }
+
+    record Camera3D
+    {
+        position : Vector3;
+        target : Vector3;
+        up : Vector3;
+        fovy : float;
+        type : int;
+    }
+
+    record Camera2D
+    {
+        offset : Vector2;         /* Camera offset (displacement from target) */
+        target : Vector2;         /* Camera target (rotation and zoom origin) */
+        rotation : float;         /* Camera rotation in degrees */
+        zoom : float;             /* Camera zoom (scaling), should be 1.0f by default */
+    }
+
+    /* Raycast hit information */
+    record RayHitInfo
+    {
+        hit : bool;               /* Did the ray hit something? */
+        distance : float;         /* Distance to nearest hit */
+        position : Vector3;       /* Position of nearest hit */
+        normal : Vector3;         /* Surface normal of hit */
+    }
+
+    /* Bounding box type */
+    record BoundingBox
+    {
+        min : Vector3;  /* Minimum vertex box-corner */
+        max : Vector3;  /* Maximum vertex box-corner */
+    }
+
+    record Mesh
+    {
+        vertexCount : int;        /* Number of vertices stored in arrays */
+        triangleCount : int;      /* Number of triangles stored (indexed or not) */
+
+        /* Default vertex data */
+        vertices : c_ptr;        /* Vertex position (XYZ - 3 components per vertex) (shader-location = 0) */
+        texcoords : c_ptr;       /* Vertex texture coordinates (UV - 2 components per vertex) (shader-location = 1) */
+        texcoords2 : c_ptr;      /* Vertex second texture coordinates (useful for lightmaps) (shader-location = 5) */
+        normals : c_ptr;         /* Vertex normals (XYZ - 3 components per vertex) (shader-location = 2) */
+        tangents : c_ptr;        /* Vertex tangents (XYZW - 4 components per vertex) (shader-location = 4) */
+        colors : c_ptr;  /* Vertex colors (RGBA - 4 components per vertex) (shader-location = 3) */
+        indices : c_ptr; /* Vertex indices (in case vertex data comes indexed)  */
+
+        /* Animation vertex data */
+        animVertices : c_ptr;    /* Animated vertex positions (after bones transformations) */
+        animNormals : c_ptr;     /* Animated normals (after bones transformations) */
+        boneIds : c_ptr;          /* Vertex bone ids, up to 4 bones influence by vertex (skinning) */
+        boneWeights : c_ptr;     /* Vertex bone weight, up to 4 bones influence by vertex (skinning) */
+
+        /* OpenGL identifiers */
+        vaoId : int;     /* OpenGL Vertex Array Object id */
+        vboId : c_ptr;    /* OpenGL Vertex Buffer Objects id (default vertex data) */
+    }
+
+    record Model
+    {
+        transform : Matrix;       /* Local transform matrix */
+
+        meshCount : int;          /* Number of meshes */
+        meshes : c_ptr;           /* Meshes array */
+
+        materialCount : int;       /* Number of materials */
+        materials : c_ptr;    /* Materials array */
+        meshMaterial : c_ptr;      /* Mesh material number */
+
+        /* Animation data */
+        boneCount : int;          /* Number of bones */
+        bones : c_ptr;        /* Bones information (skeleton) */
+        bindPose : c_ptr;    /* Bones base transformation (pose) */
+    }
+
+    /* Ray type (useful for raycast) */
+    record Ray
+    {
+        position : Vector3;       /* Ray position (origin) */
+        direction : Vector3;      /* Ray direction */
+    }
+
+    /* Material texture map */
+    record MaterialMap
+    {
+        texture : Texture2D;      /* Material map texture */
+        color : Color;            /* Material map color */
+        value : float;            /* Material map value */
+    }
+
+    /* Shader type (generic) */
+    record Shader
+    {
+        id : int;        /* Shader program id */
+        locs : c_ptr;              /* Shader locations array (MAX_SHADER_LOCATIONS) */
+    }
+
+    /* Material type (generic) */
+    record Material
+    {
+        shader : Shader;          /* Material shader */
+        maps : c_ptr;      /* Material maps array (MAX_MATERIAL_MAPS) */
+        params : c_ptr;          /* Material generic parameters (if required) */
+    }
+
+    /* Model animation */
+    record ModelAnimation
+    {
+        boneCount : int;        /* Number of bones */
+        bones : c_ptr;        /* Bones information (skeleton) */
+
+        frameCount : int;         /* Number of animation frames */
+        framePoses : c_ptr;     /* Poses array by frame */
+    }
+
+    /*
+    Some Basic Colors
+    NOTE: Custom raylib color palette for amazing visuals on WHITE background
+    */
+    let LIGHTGRAY = Color(chr(200), chr(200), chr(200), chr(255)); /* Light Gray */
+    let DARKGRAY = Color(chr(80), chr(80), chr(80), chr(255));     /* Dark Gray */
+    let YELLOW = Color(chr(253), chr(249), chr(0), chr(255));      /* Yellow */
+    let GOLD = Color(chr(255), chr(203), chr(0), chr(255));        /* Gold */
+    let ORANGE = Color(chr(255), chr(161), chr(0), chr(255));      /* Orange */
+    let PINK = Color(chr(255), chr(109), chr(194), chr(255));      /* Pink */
+    let RED = Color(chr(230), chr(41), chr(55), chr(255));         /* Red */
+    let MAROON = Color(chr(190), chr(33), chr(55), chr(255));      /* Maroon */
+    let GREEN = Color(chr(0), chr(228), chr(48), chr(255));        /* Green */
+    let LIME = Color(chr(0), chr(158), chr(47), chr(255));         /* Lime */
+    let DARKGREEN = Color(chr(0), chr(117), chr(44), chr(255));    /* Dark Green */
+    let SKYBLUE = Color(chr(102), chr(191), chr(255), chr(255));   /* Sky Blue */
+    let BLUE = Color(chr(0), chr(121), chr(241), chr(255));        /* Blue */
+    let DARKBLUE = Color(chr(0), chr(82), chr(172), chr(255));     /* Dark Blue */
+    let PURPLE = Color(chr(200), chr(122), chr(255), chr(255));    /* Purple */
+    let VIOLET = Color(chr(135), chr(60), chr(190), chr(255));     /* Violet */
+    let DARKPURPLE = Color(chr(112), chr(31), chr(126), chr(255)); /* Dark Purple */
+    let BEIGE = Color( chr(211), chr(176), chr(131), chr(255));    /* Beige */
+    let BROWN = Color(chr(127), chr(106), chr(79), chr(255));      /* Brown */
+    let DARKBROWN = Color(chr(76), chr(63), chr(47), chr(255));    /* Dark Brown */
+    let WHITE = Color(chr(255), chr(255), chr(255), chr(255));       /* White */
+    let BLACK = Color(chr(0), chr(0), chr(0), chr(255));           /* Black */
+    let BLANK = Color(chr(0), chr(0), chr(0), chr(0));             /* Blank (Transparent) */
+    let RAYWHITE = Color(chr(245), chr(245), chr(245), chr(245));  /* My own White (raylib logo) */
+    let MAGENTA = Color(chr(255), chr(0), chr(255), chr(255));     /* Magenta */
+
+    /* Window-related functions */
+    extern "libraylib.so" func InitWindow(width : int, height : int, title : string) -> void
+    extern "libraylib.so" func WindowShouldClose() -> bool
+    extern "libraylib.so" func CloseWindow() -> void
+    extern "libraylib.so" func IsWindowReady() -> bool                                 /* Check if window has been initialized successfully */
+    extern "libraylib.so" func IsWindowMinimized() -> bool                               /* Check if window has been minimized */
+    extern "libraylib.so" func IsWindowFocused() -> bool                                 /* Check if window has been focused */
+    extern "libraylib.so" func IsWindowResized() -> bool                                 /* Check if window has been resized */
+    extern "libraylib.so" func IsWindowHidden() -> bool                                  /* Check if window is currently hidden */
+    extern "libraylib.so" func IsWindowFullscreen() -> bool                              /* Check if window is currently fullscreen */
+    extern "libraylib.so" func ToggleFullscreen() -> void                                /* Toggle fullscreen mode (only PLATFORM_DESKTOP) */
+    extern "libraylib.so" func UnhideWindow() -> void                                    /* Show the window */
+    extern "libraylib.so" func HideWindow() -> void                                      /* Hide the window */
+    extern "libraylib.so" func SetWindowIcon(image : Image) -> void                            /* Set icon for window (only PLATFORM_DESKTOP) */
+    extern "libraylib.so" func SetWindowTitle(title : string) -> void                     /* Set title for window (only PLATFORM_DESKTOP) */
+    extern "libraylib.so" func SetWindowPosition(x : int, y : int) -> void                       /* Set window position on screen (only PLATFORM_DESKTOP) */
+    extern "libraylib.so" func SetWindowMonitor(monitor : int) -> void                         /* Set monitor for the current window (fullscreen mode) */
+    extern "libraylib.so" func SetWindowMinSize(width : int, height : int) -> void               /* Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE) */
+    extern "libraylib.so" func SetWindowSize(width : int, height : int) -> void                  /* Set window dimensions */
+    extern "libraylib.so" func GetWindowHandle() -> c_ptr                                /* Get native window handle */
+    extern "libraylib.so" func GetScreenWidth() -> int                                   /* Get current screen width */
+    extern "libraylib.so" func GetScreenHeight() -> int                                  /* Get current screen height */
+    extern "libraylib.so" func GetMonitorCount() -> int                                  /* Get number of connected monitors */
+    extern "libraylib.so" func GetMonitorWidth(monitor : int) -> int                           /* Get primary monitor width */
+    extern "libraylib.so" func GetMonitorHeight(monitor : int) -> int                          /* Get primary monitor height */
+    extern "libraylib.so" func GetMonitorPhysicalWidth(monitor : int) -> int                   /* Get primary monitor physical width in millimetres */
+    extern "libraylib.so" func GetMonitorPhysicalHeight(monitor : int) -> int                  /* Get primary monitor physical height in millimetres */
+    extern "libraylib.so" func GetWindowPosition() -> Vector2                            /* Get window position XY on monitor */
+    extern "libraylib.so" func GetWindowScaleDPI() -> Vector2                            /* Get window scale DPI factor */
+    extern "libraylib.so" func GetMonitorName(monitor : int) -> string                    /* Get the human-readable, UTF-8 encoded name of the primary monitor */
+    extern "libraylib.so" func GetClipboardText() -> string                         /* Get clipboard text content */
+    extern "libraylib.so" func SetClipboardText(text : string) -> void                    /* Set clipboard text content */
+
+    /* Cursor-related functions */
+    extern "libraylib.so" func ShowCursor() -> void                                      /* Shows cursor */
+    extern "libraylib.so" func HideCursor() -> void                                      /* Hides cursor */
+    extern "libraylib.so" func IsCursorHidden() -> bool                                  /* Check if cursor is not visible */
+    extern "libraylib.so" func EnableCursor() -> void                                    /* Enables cursor (unlock cursor) */
+    extern "libraylib.so" func DisableCursor() -> void                                  /* Disables cursor (lock cursor) */
+
+    /* Drawing-related functions */
+    extern "libraylib.so" func ClearBackground(color : Color) -> void
+    extern "libraylib.so" func BeginDrawing() -> void
+    extern "libraylib.so" func EndDrawing() -> void
+    extern "libraylib.so" func BeginMode2D(camera : Camera2D) -> void
+    extern "libraylib.so" func EndMode2D() -> void
+    extern "libraylib.so" func BeginMode3D(camera : Camera3D) -> void
+    extern "libraylib.so" func EndMode3D() -> void
+
+    /* Screen-space-related functions */
+    extern "libraylib.so" func GetMouseRay(mousePosition : Vector2, camera : Camera3D) -> Ray      /* Returns a ray trace from mouse position */
+    extern "libraylib.so" func GetCameraMatrix(camera : Camera3D) -> Matrix                      /* Returns camera transform matrix (view matrix) */
+    extern "libraylib.so" func GetCameraMatrix2D(camera : Camera2D) -> Matrix                  /* Returns camera 2d transform matrix */
+    extern "libraylib.so" func GetWorldToScreen(position : Vector3, camera : Camera3D) -> Vector2  /* Returns the screen space position for a 3d world space position */
+    extern "libraylib.so" func GetWorldToScreenEx(position : Vector3, camera : Camera3D, width : int, height : int) -> Vector2 /* Returns size position for a 3d world space position */
+    extern "libraylib.so" func GetWorldToScreen2D(position : Vector2, camera : Camera2D) -> Vector2 /* Returns the screen space position for a 2d camera world space position */
+    extern "libraylib.so" func GetScreenToWorld2D(position : Vector2, camera : Camera2D) -> Vector2 /* Returns the world space position for a 2d camera screen space position */
+
+    /* Timing-related functions */
+    extern "libraylib.so" func SetTargetFPS(fps : int) -> void           /* Set target FPS (maximum) */
+    extern "libraylib.so" func GetFPS() -> int                           /* Returns current FPS */
+    extern "libraylib.so" func GetFrameTime() -> float                   /* Returns time in seconds for last frame drawn */
+    extern "libraylib.so" func GetTime() -> double                       /* Returns elapsed time in seconds since InitWindow() */
+
+    /* Color-related functions */
+    extern "libraylib.so" func ColorToInt(color : Color) -> int                                /* Returns hexadecimal value for a Color */
+    extern "libraylib.so" func ColorNormalize(color : Color) -> Vector4                        /* Returns color normalized as float [0..1] */
+    extern "libraylib.so" func ColorFromNormalized(normalized : Vector4) -> Color             /* Returns color from normalized values [0..1] */
+    extern "libraylib.so" func ColorToHSV(color : Color) -> Vector3                            /* Returns HSV values for a Color */
+    extern "libraylib.so" func ColorFromHSV(hsv : Vector3) -> Color                            /* Returns a Color from HSV values */
+    extern "libraylib.so" func GetColor(hexValue : int) -> Color                               /* Returns a Color struct from hexadecimal value */
+    extern "libraylib.so" func Fade(color : Color, alpha : float) -> Color                       /* Color fade-in or fade-out, alpha goes from 0.0f to 1.0f */
+
+    /* Misc. functions */
+    extern "libraylib.so" func GetRandomValue(min : int, max : int) -> int
 }
 

@@ -1,0 +1,36 @@
+
+func call(a : int, b : int, c : int, d : int) -> int
+{
+    func call_int1(b : int) -> int
+    {
+        func call_int2() -> int
+        {
+            d = 10
+        }
+
+        b = 10;
+        c = 10;
+        call_int2()
+    }
+
+    a = 10;
+    call_int1(b)
+}
+
+
+func main() -> int
+{
+    let a = 20;
+    let b = 30;
+    let c = 40;
+    let d = 50;
+
+    call(a, b, c, d);
+
+    assert(a == 10);
+    assert(b == 10);
+    assert(c == 10);
+    assert(d == 10);
+
+    0
+}

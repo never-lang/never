@@ -1,0 +1,56 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_files
+{
+    /* Files management functions */
+    extern "libraylib.so" func LoadFileData(fileName : string, bytesRead : c_ptr) -> string     /* Load file data as byte array (read) */
+    extern "libraylib.so" func SaveFileData(fileName : string, data : c_ptr, bytesToWrite : int) -> void /* Save data to file from byte array (write) */
+    extern "libraylib.so" func LoadFileText(fileName : string) -> c_ptr /* Load text data from file (read), returns a '\0' terminated string */
+    extern "libraylib.so" func SaveFileText(fileName : string, text : c_ptr) -> void        /* Save text data to file (write), string must be '\0' terminated */
+    extern "libraylib.so" func FileExists(fileName : string) -> bool                      /* Check if file exists */
+    extern "libraylib.so" func IsFileExtension(fileName : string, ext : string) -> bool /* Check file extension */
+    extern "libraylib.so" func DirectoryExists(dirPath : string) -> bool                   /* Check if a directory path exists */
+    extern "libraylib.so" func GetExtension(fileName : string) -> string             /* Get pointer to extension for a filename string */
+    extern "libraylib.so" func GetFileName(filePath : string) -> string              /* Get pointer to filename for a path string */
+    extern "libraylib.so" func GetFileNameWithoutExt(filePath : string) -> string    /* Get filename string without extension (uses static string) */
+    extern "libraylib.so" func GetDirectoryPath(filePath : string) -> string         /* Get full path for a given fileName with path (uses static string) */
+    extern "libraylib.so" func GetPrevDirectoryPath(dirPath : string) -> string      /* Get previous directory path for a given path (uses static string) */
+    extern "libraylib.so" func GetWorkingDirectory() -> string                      /* Get current working directory (uses static string) */
+    extern "libraylib.so" func GetDirectoryFiles(dirPath : string, count : c_ptr) -> c_ptr  /* Get filenames in a directory path (memory should be freed) */
+    extern "libraylib.so" func ClearDirectoryFiles() -> void                             /* Clear directory files paths buffers (free memory) */
+    extern "libraylib.so" func ChangeDirectory(dir : string) -> bool                      /* Change working directory, returns true if success */
+    extern "libraylib.so" func IsFileDropped() -> bool                                   /* Check if a file has been dropped into window */
+    extern "libraylib.so" func GetDroppedFiles(count : c_ptr) -> c_ptr                         /* Get dropped files names (memory should be freed) */
+    extern "libraylib.so" func ClearDroppedFiles() -> void                               /* Clear dropped files paths buffer (free memory) */
+    extern "libraylib.so" func GetFileModTime(fileName : string) -> long                  /* Get file modification time (last write time) */
+
+    extern "libraylib.so" func CompressData(data : string, dataLength : int, compDataLength : c_ptr) -> string        /* Compress data (DEFLATE algorythm) */
+    extern "libraylib.so" func DecompressData(compData : string, compDataLength : int, dataLength : c_ptr) -> string  /* Decompress data (DEFLATE algorythm) */
+
+    /* Persistent storage management */
+    extern "libraylib.so" func SaveStorageValue(position : int, value : int) -> void    /* Save integer value to storage file (to defined position) */
+    extern "libraylib.so" func LoadStorageValue(position : int) -> int                /* Load integer value from storage file (from defined position) */
+}

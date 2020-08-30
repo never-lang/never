@@ -1,0 +1,146 @@
+/**********************************************************************************************
+*   LICENSE: zlib/libpng
+*
+*   raylib is licensed under an unmodified zlib/libpng license, which is an OSI-certified,
+*   BSD-like license that allows static linking with closed source software:
+*
+*   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
+*   Copyright (c) 2020 Slawomir Maludzinski (binding to Never language)
+*
+*   This software is provided "as-is", without any express or implied warranty. In no event
+*   will the authors be held liable for any damages arising from the use of this software.
+*
+*   Permission is granted to anyone to use this software for any purpose, including commercial
+*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+*
+*     1. The origin of this software must not be misrepresented; you must not claim that you
+*     wrote the original software. If you use this software in a product, an acknowledgment
+*     in the product documentation would be appreciated but is not required.
+*
+*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+*     as being the original software.
+*
+*     3. This notice may not be removed or altered from any source distribution.
+*
+**********************************************************************************************/
+module raylib_keyboard
+{
+    let KEY_APOSTROPHE      = 39;
+    let KEY_COMMA           = 44;
+    let KEY_MINUS           = 45;
+    let KEY_PERIOD          = 46;
+    let KEY_SLASH           = 47;
+    let KEY_ZERO            = 48;
+    let KEY_ONE             = 49;
+    let KEY_TWO             = 50;
+    let KEY_THREE           = 51;
+    let KEY_FOUR            = 52;
+    let KEY_FIVE            = 53;
+    let KEY_SIX             = 54;
+    let KEY_SEVEN           = 55;
+    let KEY_EIGHT           = 56;
+    let KEY_NINE            = 57;
+    let KEY_SEMICOLON       = 59;
+    let KEY_EQUAL           = 61;
+    let KEY_A               = 65;
+    let KEY_B               = 66;
+    let KEY_C               = 67;
+    let KEY_D               = 68;
+    let KEY_E               = 69;
+    let KEY_F               = 70;
+    let KEY_G               = 71;
+    let KEY_H               = 72;
+    let KEY_I               = 73;
+    let KEY_J               = 74;
+    let KEY_K               = 75;
+    let KEY_L               = 76;
+    let KEY_M               = 77;
+    let KEY_N               = 78;
+    let KEY_O               = 79;
+    let KEY_P               = 80;
+    let KEY_Q               = 81;
+    let KEY_R               = 82;
+    let KEY_S               = 83;
+    let KEY_T               = 84;
+    let KEY_U               = 85;
+    let KEY_V               = 86;
+    let KEY_W               = 87;
+    let KEY_X               = 88;
+    let KEY_Y               = 89;
+    let KEY_Z               = 90;
+
+    /* Function keys */
+    let KEY_SPACE           = 32;
+    let KEY_ESCAPE          = 256;
+    let KEY_ENTER           = 257;
+    let KEY_TAB             = 258;
+    let KEY_BACKSPACE       = 259;
+    let KEY_INSERT          = 260;
+    let KEY_DELETE          = 261;
+    let KEY_RIGHT           = 262;
+    let KEY_LEFT            = 263;
+    let KEY_DOWN            = 264;
+    let KEY_UP              = 265;
+    let KEY_PAGE_UP         = 266;
+    let KEY_PAGE_DOWN       = 267;
+    let KEY_HOME            = 268;
+    let KEY_END             = 269;
+    let KEY_CAPS_LOCK       = 280;
+    let KEY_SCROLL_LOCK     = 281;
+    let KEY_NUM_LOCK        = 282;
+    let KEY_PRINT_SCREEN    = 283;
+    let KEY_PAUSE           = 284;
+    let KEY_F1              = 290;
+    let KEY_F2              = 291;
+    let KEY_F3              = 292;
+    let KEY_F4              = 293;
+    let KEY_F5              = 294;
+    let KEY_F6              = 295;
+    let KEY_F7              = 296;
+    let KEY_F8              = 297;
+    let KEY_F9              = 298;
+    let KEY_F10             = 299;
+    let KEY_F11             = 300;
+    let KEY_F12             = 301;
+    let KEY_LEFT_SHIFT      = 340;
+    let KEY_LEFT_CONTROL    = 341;
+    let KEY_LEFT_ALT        = 342;
+    let KEY_LEFT_SUPER      = 343;
+    let KEY_RIGHT_SHIFT     = 344;
+    let KEY_RIGHT_CONTROL   = 345;
+    let KEY_RIGHT_ALT       = 346;
+    let KEY_RIGHT_SUPER     = 347;
+    let KEY_KB_MENU         = 348;
+    let KEY_LEFT_BRACKET    = 91;
+    let KEY_BACKSLASH       = 92;
+    let KEY_RIGHT_BRACKET   = 93;
+    let KEY_GRAVE           = 96;
+
+    /* Keypad keys */
+    let KEY_KP_0            = 320;
+    let KEY_KP_1            = 321;
+    let KEY_KP_2            = 322;
+    let KEY_KP_3            = 323;
+    let KEY_KP_4            = 324;
+    let KEY_KP_5            = 325;
+    let KEY_KP_6            = 326;
+    let KEY_KP_7            = 327;
+    let KEY_KP_8            = 328;
+    let KEY_KP_9            = 329;
+    let KEY_KP_DECIMAL      = 330;
+    let KEY_KP_DIVIDE       = 331;
+    let KEY_KP_MULTIPLY     = 332;
+    let KEY_KP_SUBTRACT     = 333;
+    let KEY_KP_ADD          = 334;
+    let KEY_KP_ENTER        = 335;
+    let KEY_KP_EQUAL        = 336;
+
+    /* Input-related functions: keyboard */
+    extern "libraylib.so" func IsKeyPressed(key : int) -> bool                  /* Detect if a key has been pressed once */
+    extern "libraylib.so" func IsKeyDown(key : int) -> bool                     /* Detect if a key is being pressed */
+    extern "libraylib.so" func IsKeyReleased(key : int) -> bool                 /* Detect if a key has been released once */
+    extern "libraylib.so" func IsKeyUp(key : int) -> bool                       /* Detect if a key is NOT being pressed */
+    extern "libraylib.so" func SetExitKey(key : int) -> void                    /* Set a custom key to exit program (default is ESC) */
+    extern "libraylib.so" func GetKeyPressed() -> int                           /* Get key pressed, call it multiple times for chars queued */
+}
+
