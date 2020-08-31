@@ -1,0 +1,28 @@
+
+
+enum E 
+{
+    ONE = 10,
+    TWO = 20,
+    THREE = 30
+}
+
+enum F
+{
+    ONE { i : int; },
+    TWO,
+    THREE = 3
+}
+
+func calc(i : int) -> int
+{
+    F::ONE
+}
+
+func main() -> int
+{   
+    calc(0);
+
+    0
+}
+

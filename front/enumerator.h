@@ -25,7 +25,8 @@
 typedef enum enumerator_type
 {
     ENUMERATOR_TYPE_ITEM = 1,
-    ENUMERATOR_TYPE_RECORD = 2
+    ENUMERATOR_TYPE_VALUE = 2,
+    ENUMERATOR_TYPE_RECORD = 3
 } enumerator_type;
 
 typedef struct record record;
@@ -34,7 +35,11 @@ typedef struct enumerator
 {
     enumerator_type type;
     char * id;
-    record * record_value;
+    union
+    {
+        int int_value;
+        record * record_value;
+    };
     char mark;
     unsigned int index;
     unsigned int line_no;
@@ -54,6 +59,7 @@ typedef struct enumerator_list
 } enumerator_list;
 
 enumerator * enumerator_new(char * id);
+enumerator * enumerator_new_value(char * id, int value);
 enumerator * enumerator_new_record(char * id, record * record_value);
 void enumerator_delete(enumerator * value);
 

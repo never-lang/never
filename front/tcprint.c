@@ -197,6 +197,7 @@ int print_func_expr(expr * value, int depth)
         {
             print_func_expr_list(value->slice.range_dims, depth);
         }
+        break;
     case EXPR_SEQ:
         if (value->seq.list != NULL)
         {

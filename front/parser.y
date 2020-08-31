@@ -72,11 +72,9 @@ int yyerror(module_decl ** module_nev, char * str)
 %token <val.str_value> TOK_WHILE
 %token <val.str_value> TOK_DO
 %token <val.str_value> TOK_IF
-%token <val.str_value> TOK_THEN
 %token <val.str_value> TOK_ELSE
 %token <val.str_value> TOK_FOR
 %token <val.str_value> TOK_CATCH
-%token <val.str_value> TOK_THROW
 %token <val.str_value> TOK_IN
 %token <val.str_value> TOK_RECORD
 %token <val.str_value> TOK_NIL
@@ -1151,6 +1149,12 @@ enum_item: TOK_ID '{' param_seq '}'
 enum_item: TOK_ID
 {
     $$ = enumerator_new($1);
+    $$->line_no = $<line_no>1;
+};
+
+enum_item: TOK_ID '=' TOK_NUM_INT
+{
+    $$ = enumerator_new_value($1, $3);
     $$->line_no = $<line_no>1;
 };
 

@@ -29,11 +29,26 @@ enumerator * enumerator_new(char * id)
     
     value->type = ENUMERATOR_TYPE_ITEM;
     value->id = id;
+    value->int_value = 0;
     value->mark = 0;
     value->index = 0;
     value->line_no = 0;
     
     return value;
+}
+
+enumerator * enumerator_new_value(char * id, int int_value)
+{
+    enumerator * value = (enumerator *)malloc(sizeof(enumerator));
+    
+    value->type = ENUMERATOR_TYPE_VALUE;
+    value->id = id;
+    value->int_value = int_value;
+    value->mark = 0;
+    value->index = 0;
+    value->line_no = 0;
+    
+    return value;   
 }
 
 enumerator * enumerator_new_record(char * id, record * record_value)
@@ -59,6 +74,7 @@ void enumerator_delete(enumerator * value)
     switch (value->type)
     {
         case ENUMERATOR_TYPE_ITEM:
+        case ENUMERATOR_TYPE_VALUE:
         break;
         case ENUMERATOR_TYPE_RECORD:
             if (value->record_value != NULL)

@@ -1,0 +1,16 @@
+
+enum E { ONE, TWO, THREE }
+
+func check(e : int) -> int
+{
+    0
+}
+
+func main() -> int
+{
+    let e = [ E::THREE, E::TWO, E::ONE ] : E;
+
+    check(e[0]);
+
+    0
+}

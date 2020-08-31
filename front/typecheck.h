@@ -32,6 +32,7 @@ typedef struct qualifier qualifier;
 typedef struct qualifier_list qualifier_list;
 typedef struct matchbind_list matchbind_list;
 
+int enumtype_enum_enumerator(enumerator * value, int * index, int * int_value);
 int enumtype_enum_enumerator_list(enumerator_list * list);
 int record_enum_param_list(param_list * params);
 int func_enum_param_list(param_list * params);

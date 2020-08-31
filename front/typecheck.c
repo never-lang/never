@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Slawomir Maludzinski
+ * Copyright 2018-2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,9 +36,28 @@
 #include <stdio.h>
 #include <string.h>
 
+int enumtype_enum_enumerator(enumerator * value, int * index, int * int_value)
+{
+    switch (value->type)
+    {
+        case ENUMTYPE_TYPE_ITEM:
+            value->int_value = *int_value;
+        break;
+        case ENUMERATOR_TYPE_VALUE:
+            *int_value = value->int_value + 1;
+        break;
+        case ENUMERATOR_TYPE_RECORD:
+        break;
+    }
+    value->index = (*index)++;
+
+    return 0;
+}
+
 int enumtype_enum_enumerator_list(enumerator_list * list)
 {
     int index = 0;
+    int int_value = 0;
     enumerator_list_node * node = NULL;
     
     node = list->tail;
@@ -47,7 +66,7 @@ int enumtype_enum_enumerator_list(enumerator_list * list)
         enumerator * value = node->value;
         if (value != NULL)
         {
-            value->index = index++;
+            enumtype_enum_enumerator(value, &index, &int_value);
         }
         node = node->next;
     }
@@ -895,6 +914,11 @@ int param_expr_cmp(param * param_value, expr * expr_value)
         {
             return TYPECHECK_FAIL;
         }
+    }
+    else if (param_value->type == PARAM_INT && expr_value->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        /* TODO: need to convert */
+        return TYPECHECK_SUCC;
     }
     else if (param_value->type == PARAM_RECORD && expr_value->comb.comb == COMB_TYPE_NIL)
     {
@@ -3794,6 +3818,7 @@ int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_valu
     switch (value->type)
     {
         case ENUMERATOR_TYPE_ITEM:
+        case ENUMERATOR_TYPE_VALUE:
             enumerator_item_check_type(stab, value, result);
         break;
         case ENUMERATOR_TYPE_RECORD:

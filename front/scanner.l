@@ -137,12 +137,6 @@ var {
     return TOK_VAR;
 }
 
-throw {
-    tokp->line_no = line_no;
-    scanner_printf("throw\n");
-    return TOK_THROW;
-}
-
 func {
     tokp->line_no = line_no;
     scanner_printf("func\n");
