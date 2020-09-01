@@ -39,7 +39,7 @@ void inttab_entry_delete(inttab_entry * entries)
     free(entries);
 }
 
-void inttab_entry_add_int(inttab_entry * entries, unsigned int size, int value)
+void inttab_entry_add_enumerator(inttab_entry * entries, unsigned int size, int value, enumerator * enumerator_value)
 {
     unsigned int times = 0;
     unsigned int index = 0;
@@ -56,6 +56,7 @@ void inttab_entry_add_int(inttab_entry * entries, unsigned int size, int value)
     }
     entries[index].type = INTTAB_ENTRY_USED;
     entries[index].value = value;
+    entries[index].enumerator_value = enumerator_value;
 }
 
 inttab_entry * inttab_entry_lookup(inttab_entry * entries, unsigned int size, int value)
@@ -90,8 +91,9 @@ void inttab_entry_resize(inttab_entry * entries, unsigned int size,
     {
         if (entries[i].type != INTTAB_ENTRY_EMPTY)
         {
-            inttab_entry_add_int(entries_new, size_new,
-                                 entries[i].value);
+            inttab_entry_add_enumerator(entries_new, size_new,
+                                        entries[i].value,
+                                        entries[i].enumerator_value);
         }
     }
 }                         
@@ -132,9 +134,9 @@ void inttab_resize(inttab * tab)
     }
 }
 
-void inttab_add_int(inttab * tab, int value)
+void inttab_add_enumerator(inttab * tab, int value, enumerator * enumerator_value)
 {
-    inttab_entry_add_int(tab->entries, tab->size, value);
+    inttab_entry_add_enumerator(tab->entries, tab->size, value, enumerator_value);
 
     tab->count++;
     inttab_resize(tab);

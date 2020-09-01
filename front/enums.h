@@ -24,6 +24,7 @@
 
 typedef struct param param;
 typedef struct symtab symtab;
+typedef struct inttab inttab;
 typedef struct enumerator enumerator;
 typedef struct enumerator_list enumerator_list;
 
@@ -39,6 +40,7 @@ typedef struct enumtype
     char * id;
     enumerator_list * enums;
     symtab * stab;
+    inttab * itab;
     unsigned int line_no;
 } enumtype;
 

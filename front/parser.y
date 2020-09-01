@@ -1154,7 +1154,7 @@ enum_item: TOK_ID
 
 enum_item: TOK_ID '=' TOK_NUM_INT
 {
-    $$ = enumerator_new_value($1, $3);
+    $$ = enumerator_new_index($1, $3);
     $$->line_no = $<line_no>1;
 };
 

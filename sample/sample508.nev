@@ -3,25 +3,35 @@
 enum E 
 {
     ONE = 10,
-    TWO = 20,
-    THREE = 30
+    TWO = 1,
+    THREE = 3
 }
 
 enum F
 {
-    ONE { i : int; },
-    TWO,
-    THREE = 3
+    THREE = 10,
+    TWO = 20,
+    ONE { i : int; }
 }
 
-func calc(i : int) -> int
+func calc(f : F) -> int
 {
-    F::ONE
+    if let (F::ONE(i) = f)
+    {
+        prints("OK " + i + "\n")
+    }
+    else
+    {
+        prints("NOK\n")
+    };
+
+    0
 }
 
 func main() -> int
 {   
-    calc(0);
+    calc(F::ONE(12));
+    calc(F::TWO);
 
     0
 }

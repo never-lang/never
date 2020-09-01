@@ -37,7 +37,7 @@ void test_two()
 
     for (value = 0; value < 32; value++)
     {
-        inttab_add_int(tab, value);
+        inttab_add_enumerator(tab, value, NULL);
     }
 
     for (value = 0; value < 32; value++)
@@ -56,7 +56,7 @@ void test_three()
 
     for (value = -16; value < 16; value++)
     {
-        inttab_add_int(tab, value);
+        inttab_add_enumerator(tab, value, NULL);
     }
 
     for (value = 16; value < 16; value++)
@@ -75,7 +75,7 @@ void test_four()
 
     for (value = -16; value < 16; value++)
     {
-        inttab_add_int(tab, value);
+        inttab_add_enumerator(tab, value, NULL);
     }
 
     for (value = 16; value < 16; value++)

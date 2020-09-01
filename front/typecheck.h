@@ -32,7 +32,7 @@ typedef struct qualifier qualifier;
 typedef struct qualifier_list qualifier_list;
 typedef struct matchbind_list matchbind_list;
 
-int enumtype_enum_enumerator(enumerator * value, int * index, int * int_value);
+int enumtype_enum_enumerator(enumerator * value, int * index);
 int enumtype_enum_enumerator_list(enumerator_list * list);
 int record_enum_param_list(param_list * params);
 int func_enum_param_list(param_list * params);
@@ -168,10 +168,10 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
 int never_add_use(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use * value, int * result);
 int never_add_use_list(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use_list * list, int * result);
 
-int enumerator_item_check_type(symtab * stab, enumerator * value, int * result);
-int enumerator_record_check_type(symtab * gtab, symtab * stab, enumerator * value, int * result);
-int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
-int enumerator_list_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, int * result);
+int enumerator_item_check_type(enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_record_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_list_check_type(symtab * stab, enumtype * enumtype_value, enumerator_list * enums, int * result);
 int enumtype_check_type(symtab * stab, enumtype * value, int * result);
 
 int record_check_type(symtab * stab, record * record_value, int * result);

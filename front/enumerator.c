@@ -28,24 +28,22 @@ enumerator * enumerator_new(char * id)
     enumerator * value = (enumerator *)malloc(sizeof(enumerator));
     
     value->type = ENUMERATOR_TYPE_ITEM;
-    value->id = id;
-    value->int_value = 0;
     value->mark = 0;
-    value->index = 0;
+    value->id = id;
+    value->index = -1;
     value->line_no = 0;
     
     return value;
 }
 
-enumerator * enumerator_new_value(char * id, int int_value)
+enumerator * enumerator_new_index(char * id, int index)
 {
     enumerator * value = (enumerator *)malloc(sizeof(enumerator));
     
     value->type = ENUMERATOR_TYPE_VALUE;
-    value->id = id;
-    value->int_value = int_value;
     value->mark = 0;
-    value->index = 0;
+    value->id = id;
+    value->index = index;
     value->line_no = 0;
     
     return value;   

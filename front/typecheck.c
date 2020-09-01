@@ -22,6 +22,7 @@
 #include "typecheck.h"
 #include "gencode.h"
 #include "symtab.h"
+#include "inttab.h"
 #include "tailrec.h"
 #include "tcheckarr.h"
 #include "utils.h"
@@ -36,20 +37,20 @@
 #include <stdio.h>
 #include <string.h>
 
-int enumtype_enum_enumerator(enumerator * value, int * index, int * int_value)
+int enumtype_enum_enumerator(enumerator * value, int * index)
 {
     switch (value->type)
     {
         case ENUMTYPE_TYPE_ITEM:
-            value->int_value = *int_value;
+            value->index = (*index)++;
         break;
         case ENUMERATOR_TYPE_VALUE:
-            *int_value = value->int_value + 1;
+            *index = value->index + 1;
         break;
         case ENUMERATOR_TYPE_RECORD:
+            value->index = (*index)++;
         break;
     }
-    value->index = (*index)++;
 
     return 0;
 }
@@ -57,7 +58,6 @@ int enumtype_enum_enumerator(enumerator * value, int * index, int * int_value)
 int enumtype_enum_enumerator_list(enumerator_list * list)
 {
     int index = 0;
-    int int_value = 0;
     enumerator_list_node * node = NULL;
     
     node = list->tail;
@@ -66,7 +66,7 @@ int enumtype_enum_enumerator_list(enumerator_list * list)
         enumerator * value = node->value;
         if (value != NULL)
         {
-            enumtype_enum_enumerator(value, &index, &int_value);
+            enumtype_enum_enumerator(value, &index);
         }
         node = node->next;
     }
@@ -917,6 +917,14 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     }
     else if (param_value->type == PARAM_INT && expr_value->comb.comb == COMB_TYPE_ENUMTYPE)
     {
+        if (expr_value->comb.comb_enumtype->type == ENUMTYPE_TYPE_ITEM)
+        {
+            /* enum type */
+        }
+        else if (expr_value->comb.comb_enumtype->type == ENUMTYPE_TYPE_RECORD)
+        {
+            /* record type */
+        }
         /* TODO: need to convert */
         return TYPECHECK_SUCC;
     }
@@ -3781,65 +3789,79 @@ int never_add_use_list(module_decl * module_modules, module_decl * module_stdlib
     return 0;
 }
 
-int enumerator_item_check_type(symtab * stab, enumerator * value, int * result)
+int enumerator_item_check_type(enumtype * enumtype_value, enumerator * value, int * result)
 {
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(stab, value->id, SYMTAB_LOOKUP_GLOBAL);
-    if (entry != NULL)
+    symtab_entry * sentry = symtab_lookup(enumtype_value->stab, value->id, SYMTAB_LOOKUP_GLOBAL);
+    if (sentry != NULL)
     {
         *result = TYPECHECK_FAIL;
-        symtab_entry_exists(entry, value->line_no);
+        symtab_entry_exists(sentry, value->line_no);
     }
     else
     {
-        symtab_add_enumerator(stab, value, 0);
+        symtab_add_enumerator(enumtype_value->stab, value, 0);
+    }
+
+    inttab_entry * ientry = inttab_lookup(enumtype_value->itab, value->index);
+    if (ientry != NULL)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no, "enumerator %s::%s = %d with same value as %s::%s at line %d",
+                                         enumtype_value->id, value->id,
+                                         value->index,
+                                         enumtype_value->id, ientry->enumerator_value->id,
+                                         ientry->enumerator_value->line_no);
+    }
+    else
+    {
+        inttab_add_enumerator(enumtype_value->itab, value->index, value);
     }
 
     return 0;
 }
 
-int enumerator_record_check_type(symtab * gtab, symtab * stab, 
+int enumerator_record_check_type(symtab * stab, enumtype * enumtype_value, 
                                  enumerator * value, int * result)
 {
-    enumerator_item_check_type(stab, value, result);
+    enumerator_item_check_type(enumtype_value, value, result);
     
     if (value->record_value != NULL)
     {
-        record_check_type(gtab, value->record_value, result);
+        record_check_type(stab, value->record_value, result);
     }
 
     return 0;
 }
 
-int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, enumerator * value,
-                          int * result)
+int enumerator_check_type(symtab * stab, enumtype * enumtype_value,
+                          enumerator * value, int * result)
 {
     switch (value->type)
     {
         case ENUMERATOR_TYPE_ITEM:
         case ENUMERATOR_TYPE_VALUE:
-            enumerator_item_check_type(stab, value, result);
+            enumerator_item_check_type(enumtype_value, value, result);
         break;
         case ENUMERATOR_TYPE_RECORD:
             enumtype_value->type = ENUMTYPE_TYPE_RECORD;
-            enumerator_record_check_type(gtab, stab, value, result);
+            enumerator_record_check_type(stab, enumtype_value, value, result);
         break;
     }
 
     return 0;
 }
 
-int enumerator_list_check_type(symtab * gtab, symtab * stab,
-                               enumtype * enumtype_value, int * result)
+int enumerator_list_check_type(symtab * stab,
+                               enumtype * enumtype_value,
+                               enumerator_list * enums, int * result)
 {
-    enumerator_list_node * node = enumtype_value->enums->tail;
+    enumerator_list_node * node = enums->tail;
     while (node != NULL)
     {
         enumerator * enumerator_value = node->value;
         if (enumerator_value != NULL)
         {
-            enumerator_check_type(gtab, stab, enumtype_value, enumerator_value, result);
+            enumerator_check_type(stab, enumtype_value, enumerator_value, result);
         }
         node = node->next;
     }
@@ -3856,7 +3878,7 @@ int enumtype_check_type(symtab * stab, enumtype * value, int * result)
 
     if (value->enums != NULL)
     {
-        enumerator_list_check_type(stab, value->stab, value, result);
+        enumerator_list_check_type(stab, value, value->enums, result);
     }
 
     return 0;

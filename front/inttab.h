@@ -22,6 +22,9 @@
 #ifndef __INTTAB_H__
 #define __INTTAB_H__
 
+typedef struct enumtype enumtype;
+typedef struct enumerator enumerator;
+
 typedef enum inttab_entry_type
 {
     INTTAB_ENTRY_EMPTY = 0,
@@ -32,6 +35,7 @@ typedef struct inttab_entry
 {
     inttab_entry_type type;
     int value;
+    enumerator * enumerator_value;
 } inttab_entry;
 
 typedef struct inttab
@@ -44,7 +48,7 @@ typedef struct inttab
 inttab_entry * inttab_entry_new(unsigned int size);
 void inttab_entry_delete(inttab_entry * entries);
 
-void inttab_entry_add_int(inttab_entry * entries, unsigned int size, int value);
+void inttab_entry_add_enumerator(inttab_entry * entries, unsigned int size, int value, enumerator * enumerator_value);
 inttab_entry * inttab_entry_lookup(inttab_entry * entries, unsigned int size, int value);
 
 void inttab_entry_resize(inttab_entry * entries, unsigned int size,
@@ -53,7 +57,7 @@ void inttab_entry_resize(inttab_entry * entries, unsigned int size,
 inttab * inttab_new(unsigned int size);
 void inttab_delete(inttab * tab);
 
-void inttab_add_int(inttab * tab, int value);
+void inttab_add_enumerator(inttab * tab, int value, enumerator * enumerator_value);
 inttab_entry * inttab_lookup(inttab * tab, int value);
 
 void inttab_resize(inttab * tab);
