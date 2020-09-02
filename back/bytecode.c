@@ -166,6 +166,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_DOUBLE_TO_INT, bytecode_print_double_to_int },
     { BYTECODE_DOUBLE_TO_LONG, bytecode_print_double_to_long },
     { BYTECODE_DOUBLE_TO_FLOAT, bytecode_print_double_to_float },
+    { BYTECODE_ENUMTYPE_RECORD_TO_INT, bytecode_print_enumtype_record_to_int },
 
     { BYTECODE_OP_NEG_ARR_INT, bytecode_print_op_neg_arr_int },
     { BYTECODE_OP_NEG_ARR_LONG, bytecode_print_op_neg_arr_long },
@@ -873,6 +874,11 @@ void bytecode_print_double_to_long(bytecode * code)
 void bytecode_print_double_to_float(bytecode * code)
 {
     printf("%d: double to float\n", code->addr);
+}
+
+void bytecode_print_enumtype_record_to_int(bytecode * code)
+{
+    printf("%d: enumtype record to int\n", code->addr);
 }
 
 void bytecode_print_op_neg_arr_int(bytecode * code)

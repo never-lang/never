@@ -175,6 +175,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_DOUBLE_TO_INT, vm_execute_double_to_int },
     { BYTECODE_DOUBLE_TO_LONG, vm_execute_double_to_long },
     { BYTECODE_DOUBLE_TO_FLOAT, vm_execute_double_to_float },
+    { BYTECODE_ENUMTYPE_RECORD_TO_INT, vm_execute_enumtype_record_to_int},
 
     { BYTECODE_OP_NEG_ARR_INT, vm_execute_op_neg_arr_int },
     { BYTECODE_OP_NEG_ARR_LONG, vm_execute_op_neg_arr_long },
@@ -1296,6 +1297,28 @@ vm_execute_type_to_type(float, float, double, double)
 vm_execute_type_to_type(double, double, int, int)
 vm_execute_type_to_type(double, double, long, long long)
 vm_execute_type_to_type(double, double, float, float)
+
+void vm_execute_enumtype_record_to_int(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+
+    mem_ptr record_value = gc_get_vec_ref(machine->collector, machine->stack[machine->sp].addr);
+    if (record_value == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+    }
+
+    mem_ptr index_addr = gc_get_vec(machine->collector, record_value, 0);
+    int a = gc_get_int(machine->collector, index_addr);
+
+    mem_ptr int_addr = gc_alloc_int(machine->collector, a);
+    
+    entry.type = GC_MEM_ADDR;
+    entry.addr = int_addr;
+
+    machine->stack[machine->sp] = entry;
+}
 
 #define vm_execute_op_neg_arr_type(never_type, c_type)                          \
     void vm_execute_op_neg_arr_##never_type(vm * machine, bytecode * code)      \

@@ -93,7 +93,9 @@ typedef enum conv_type
     
     CONV_DOUBLE_TO_INT,
     CONV_DOUBLE_TO_LONG,
-    CONV_DOUBLE_TO_FLOAT
+    CONV_DOUBLE_TO_FLOAT,
+
+    CONV_ENUMTYPE_RECORD_TO_INT
 } conv_type;
 
 typedef enum comb_type

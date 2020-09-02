@@ -172,6 +172,7 @@ void vm_execute_float_to_double(vm * machine, bytecode * code);
 void vm_execute_double_to_int(vm * machine, bytecode * code);
 void vm_execute_double_to_long(vm * machine, bytecode * code);
 void vm_execute_double_to_float(vm * machine, bytecode * code);
+void vm_execute_enumtype_record_to_int(vm * machine, bytecode * code);
 
 void vm_execute_op_neg_arr_int(vm * machine, bytecode * code);
 void vm_execute_op_neg_arr_long(vm * machine, bytecode * code);
