@@ -20,10 +20,8 @@
  * THE SOFTWARE.
  */
 #include "typecheck.h"
-#include "constred.h"
 #include "gencode.h"
 #include "symtab.h"
-#include "inttab.h"
 #include "tailrec.h"
 #include "tcheckarr.h"
 #include "utils.h"
@@ -37,57 +35,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-
-int enumtype_enum_enumerator(symtab * stab, enumerator * value, int * index, int * result)
-{
-    switch (value->type)
-    {
-        case ENUMTYPE_TYPE_ITEM:
-            value->index = (*index)++;
-        break;
-        case ENUMERATOR_TYPE_VALUE:
-            if (value->expr_value)
-            {
-                expr_check_type(stab, value->expr_value, NULL, 0, result);
-                expr_constred(value->expr_value, result);
-
-                if (value->expr_value->type == EXPR_INT)
-                {
-                    value->index = value->expr_value->int_value;
-                }
-                else
-                {
-                    *result = TYPECHECK_FAIL;
-                    print_error_msg(value->line_no, "index value is not an integer, is %s", expr_type_str(value->expr_value->type));
-                }
-            }
-            *index = value->index + 1;
-        break;
-        case ENUMERATOR_TYPE_RECORD:
-            value->index = (*index)++;
-        break;
-    }
-
-    return 0;
-}
-
-int enumtype_enum_enumerator_list(symtab * stab, enumerator_list * list, int * result)
-{
-    int index = 0;
-    enumerator_list_node * node = NULL;
-    
-    node = list->tail;
-    while (node != NULL)
-    {
-        enumerator * value = node->value;
-        if (value != NULL)
-        {
-            enumtype_enum_enumerator(stab, value, &index, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
 
 int record_enum_param_list(param_list * params)
 {
@@ -1714,6 +1661,10 @@ int expr_neg_check_type(symtab * tab, expr * value, func * func_value,
     {
         value->comb.comb = COMB_TYPE_DOUBLE;
     }
+    else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb_ret->type == PARAM_INT)
     {
@@ -1761,6 +1712,21 @@ int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value,
     if (expr_conv_basic_type(value, value->left, value->right))
     {
         /* conversion performed */
+    }
+    else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
+             value->right->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE &&
+             value->right->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        value->comb.comb = COMB_TYPE_INT;
     }
     else if (value->type == EXPR_ADD &&
              expr_conv_string_type(value, value->left, value->right))
@@ -3821,19 +3787,21 @@ int enumerator_item_check_type(enumtype * enumtype_value, enumerator * value, in
         symtab_add_enumerator(enumtype_value->stab, value, 0);
     }
 
-    inttab_entry * ientry = inttab_lookup(enumtype_value->itab, value->index);
-    if (ientry != NULL)
+    return 0;
+}
+
+int enumerator_value_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result)
+{
+    enumerator_item_check_type(enumtype_value, value, result);
+
+    if (value->expr_value)
     {
-        *result = TYPECHECK_FAIL;
-        print_error_msg(value->line_no, "enumerator %s::%s = %d with same value as %s::%s at line %d",
-                                         enumtype_value->id, value->id,
-                                         value->index,
-                                         enumtype_value->id, ientry->enumerator_value->id,
-                                         ientry->enumerator_value->line_no);
-    }
-    else
-    {
-        inttab_add_enumerator(enumtype_value->itab, value->index, value);
+        expr_check_type(stab, value->expr_value, NULL, 0, result);
+        if (value->expr_value->comb.comb != COMB_TYPE_INT)
+        {
+            *result = TYPECHECK_FAIL;
+            print_error_msg(value->line_no, "index value is not an integer, is %s", comb_type_str(value->expr_value->comb.comb));
+        }
     }
 
     return 0;
@@ -3858,8 +3826,10 @@ int enumerator_check_type(symtab * stab, enumtype * enumtype_value,
     switch (value->type)
     {
         case ENUMERATOR_TYPE_ITEM:
-        case ENUMERATOR_TYPE_VALUE:
             enumerator_item_check_type(enumtype_value, value, result);
+        break;
+        case ENUMERATOR_TYPE_VALUE:
+            enumerator_value_check_type(stab, enumtype_value, value, result);
         break;
         case ENUMERATOR_TYPE_RECORD:
             enumtype_value->type = ENUMTYPE_TYPE_RECORD;
@@ -3890,11 +3860,6 @@ int enumerator_list_check_type(symtab * stab,
 
 int enumtype_check_type(symtab * stab, enumtype * value, int * result)
 {
-    if (value->enums != NULL)
-    {
-        enumtype_enum_enumerator_list(stab, value->enums, result);
-    }
-
     if (value->enums != NULL)
     {
         enumerator_list_check_type(stab, value, value->enums, result);

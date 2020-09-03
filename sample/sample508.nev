@@ -4,13 +4,13 @@ enum E
 {
     ONE = 10,
     TWO = 20,
-    THREE = 3
+    THREE = 30
 }
 
 enum F
 {
     ONE { i : int; },
-    THREE = 10 + E::ONE,
+    THREE = -(E::TWO) - E::ONE - E::THREE,
     TWO = 20 + 4
 }
 
@@ -37,6 +37,7 @@ func main() -> int
 {   
     calc2(F::THREE);
     calc2(F::TWO);
+    print(-20 - 10 - 30);
 
     0
 }
