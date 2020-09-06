@@ -3937,7 +3937,7 @@ int enumerator_index_check_type(symtab * stab, enumerator * value, int * result)
     return 0;
 }
 
-int enumerator_index_reduce(symtab * stab, enumerator * value, int * result)
+int enumerator_index_reduce(enumerator * value, int * result)
 {
     if (value->expr_value)
     {
@@ -4024,27 +4024,25 @@ int enumerator_check_type(symtab * stab, enumtype * enumtype_value,
     return 0;
 }
 
-int enumerator_reduce(symtab * stab, enumtype * enumtype_value,
-                          enumerator * value, int * result)
+int enumerator_reduce(enumtype * enumtype_value, enumerator * value, int * result)
 {
     switch (value->type)
     {
         case ENUMERATOR_TYPE_ITEM:
-            enumerator_index_reduce(stab, value, result);
+            enumerator_index_reduce(value, result);
         break;
         case ENUMERATOR_TYPE_VALUE:
-            enumerator_index_reduce(stab, value, result);
+            enumerator_index_reduce(value, result);
         break;
         case ENUMERATOR_TYPE_RECORD:
-            enumerator_index_reduce(stab, value, result);
+            enumerator_index_reduce(value, result);
         break;
     }
 
     return 0;
 }
 
-int enumerator_check_value(symtab * stab, enumtype * enumtype_value,
-                           enumerator * value, int * result)
+int enumerator_check_value(enumtype * enumtype_value, enumerator * value, int * result)
 {
     switch (value->type)
     {
@@ -4080,8 +4078,7 @@ int enumerator_list_check_type(symtab * stab,
     return 0;
 }
 
-int enumerator_list_index_reduce(symtab * stab,
-                                 enumtype * enumtype_value,
+int enumerator_list_index_reduce(enumtype * enumtype_value,
                                  enumerator_list * enums, int * result)
 {
     enumerator_list_node * node = enums->tail;
@@ -4090,7 +4087,7 @@ int enumerator_list_index_reduce(symtab * stab,
         enumerator * enumerator_value = node->value;
         if (enumerator_value != NULL)
         {
-            enumerator_reduce(stab, enumtype_value, enumerator_value, result);
+            enumerator_reduce(enumtype_value, enumerator_value, result);
         }
         node = node->next;
     }
@@ -4098,9 +4095,8 @@ int enumerator_list_index_reduce(symtab * stab,
     return 0;
 }
 
-int enumerator_list_index_check_value(symtab * stab,
-                                      enumtype * enumtype_value,
-                                   enumerator_list * enums, int * result)
+int enumerator_list_index_check_value(enumtype * enumtype_value,
+                                      enumerator_list * enums, int * result)
 {
     enumerator_list_node * node = enums->tail;
     while (node != NULL)
@@ -4108,7 +4104,7 @@ int enumerator_list_index_check_value(symtab * stab,
         enumerator * enumerator_value = node->value;
         if (enumerator_value != NULL)
         {
-            enumerator_check_value(stab, enumtype_value, enumerator_value, result);
+            enumerator_check_value(enumtype_value, enumerator_value, result);
         }
         node = node->next;
     }
@@ -4126,12 +4122,12 @@ int enumtype_check_type(symtab * stab, enumtype * value, int * result)
     return 0;
 }            
 
-int enumtype_index_reduce_check_value(symtab * stab, enumtype * value, int * result)
+int enumtype_index_reduce_check_value(enumtype * value, int * result)
 {
     if (value->enums != NULL)
     {
-        enumerator_list_index_reduce(stab, value, value->enums, result);
-        enumerator_list_index_check_value(stab, value, value->enums, result);
+        enumerator_list_index_reduce(value, value->enums, result);
+        enumerator_list_index_check_value(value, value->enums, result);
     }
 
     return 0;
@@ -4179,14 +4175,14 @@ int decl_check_type(symtab * stab, decl * value, int * result)
     return 0;
 }
 
-int decl_index_reduce_check_value(symtab * stab, decl * value, int * result)
+int decl_index_reduce_check_value(decl * value, int * result)
 {
     switch (value->type)
     {
         case DECL_TYPE_ENUMTYPE:
             if (value->enumtype_value != NULL)
             {
-                enumtype_index_reduce_check_value(stab, value->enumtype_value, result);
+                enumtype_index_reduce_check_value(value->enumtype_value, result);
             }
         break;
         case DECL_TYPE_RECORD:
@@ -4213,7 +4209,7 @@ int decl_list_check_type(symtab * stab, decl_list * list, int * result)
     return 0;
 }
 
-int decl_list_index_reduce_check_value(symtab * stab, decl_list * list, int * result)
+int decl_list_index_reduce_check_value(decl_list * list, int * result)
 {
     decl_list_node * node = list->tail;
     
@@ -4222,7 +4218,7 @@ int decl_list_index_reduce_check_value(symtab * stab, decl_list * list, int * re
         decl * decl_value = node->value;
         if (decl_value != NULL)
         {
-            decl_index_reduce_check_value(stab, decl_value, result);
+            decl_index_reduce_check_value(decl_value, result);
         }
         node = node->next;
     }
@@ -4320,7 +4316,7 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
     {
         /* check decls */
         decl_list_check_type(nev->stab, nev->decls, result);
-        decl_list_index_reduce_check_value(nev->stab, nev->decls, result);
+        decl_list_index_reduce_check_value(nev->decls, result);
     }
 
     if (nev->binds != NULL)
