@@ -43,6 +43,8 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result);
 int expr_qualifier_set_comb_type(expr * value, expr * expr_value);
 int expr_conv_basic_type(expr * value, expr * expr_left, expr * expr_right);
 int expr_conv_string_type(expr * value, expr * expr_left, expr * expr_right);
+int expr_conv_enumerator(expr * value);
+int expr_conv_enumtype(expr * value, expr * expr_left, expr * expr_right);
 int expr_conv_ass_type(expr * value, expr * expr_left, expr * expr_right);
 
 int array_cmp(int comb_dims_one, param * ret_one,
@@ -159,6 +161,8 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result);
 
+int never_add_enumerator(enumtype * enumtype_value, enumerator * value, enumerator * enumerator_prev, int * result);
+int never_add_enumerator_list(enumtype * enumtype_value, enumerator_list * enums, int * result);
 int never_add_enumtype(symtab * stab, enumtype * value, int * result);
 int never_add_record(symtab * stab, record * value, int * result);
 int never_add_decl(symtab * stab, decl * value, int * result);
@@ -168,7 +172,10 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
 int never_add_use(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use * value, int * result);
 int never_add_use_list(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use_list * list, int * result);
 
-int enumerator_item_check_type(enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_item_reduce(symtab * stab, enumerator * value, int * result);
+int enumerator_check_index(enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_item_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_value_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
 int enumerator_record_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
 int enumerator_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
 int enumerator_list_check_type(symtab * stab, enumtype * enumtype_value, enumerator_list * enums, int * result);

@@ -1500,59 +1500,40 @@ int use_list_constred(use_list * list, int * result)
     return 0;
 }
 
-int enumerator_index_constred(enumerator * value, int * index, int * result)
+int enumerator_index_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
 {
-    value->index = (*index)++;
-
     return 0;
 }
 
-int enumerator_value_constred(enumerator * value, int * index, int * result)
+int enumerator_value_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
 {
-    if (value->expr_value)
-    {
-        expr_constred(value->expr_value, result);
-        if (value->expr_value->type == EXPR_INT)
-        {
-            value->index = value->expr_value->int_value;
-        }
-        else
-        {
-            *result = CONSTRED_FAIL;
-            print_error_msg(value->line_no, "index value is not an integer, is %s", expr_type_str(value->expr_value->type));
-        }
-    }
-    *index = value->index + 1;
-
     return 0;
 }
 
-int enumerator_record_constred(enumerator * value, int * index, int * result)
+int enumerator_record_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
 {
-    value->index = (*index)++;
-
     return 0;
 }
 
-int enumerator_constred(enumerator * value, int * index, int * result)
+int enumerator_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
 {
     switch (value->type)
     {
         case ENUMERATOR_TYPE_ITEM:
-            enumerator_index_constred(value, index, result);
+            enumerator_index_constred(enumtype_value, value, index, result);
         break;
         case ENUMERATOR_TYPE_VALUE:
-            enumerator_value_constred(value, index, result);
+            enumerator_value_constred(enumtype_value, value, index, result);
         break;
         case ENUMERATOR_TYPE_RECORD:
-            enumerator_record_constred(value, index, result);
+            enumerator_record_constred(enumtype_value, value, index, result);
         break;
     }
 
     return 0;
 }
 
-int enumerator_list_constred(enumerator_list * list, int * result)
+int enumerator_list_constred(enumtype * enumtype_value, enumerator_list * list, int * result)
 {
     int index = 0;
 
@@ -1562,7 +1543,7 @@ int enumerator_list_constred(enumerator_list * list, int * result)
         enumerator * enumerator_value = node->value;
         if (enumerator_value != NULL)
         {
-            enumerator_constred(enumerator_value, &index, result);
+            enumerator_constred(enumtype_value, enumerator_value, &index, result);
         }
         node = node->next;
     }
@@ -1574,7 +1555,7 @@ int enumtype_constred(enumtype * value, int * result)
 {
     if (value->enums)
     {
-        enumerator_list_constred(value->enums, result);
+        enumerator_list_constred(value, value->enums, result);
     }
 
     return 0;

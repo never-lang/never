@@ -1,0 +1,11 @@
+
+module EN
+{
+    use EM
+
+    enum E { ZERO, ONE = EM.E::ONE, TWO = 2, THREE = EM.E::THREE }
+
+    record R { i : int; j : int; }
+
+}
+

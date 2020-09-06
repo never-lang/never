@@ -4722,10 +4722,13 @@ int never_emit(never * nev, int stack_level, int * index, module * module_value,
         /*stack_level += nev->binds->count;*/
     }
 
-    func_list_enum(nev->funcs, *index);
-    *index += nev->funcs->count;
+    if (nev->funcs)
+    {
+        func_list_enum(nev->funcs, *index);
+        *index += nev->funcs->count;
 
-    func_list_emit(nev->funcs, stack_level, module_value, list_weak, result);
+        func_list_emit(nev->funcs, stack_level, module_value, list_weak, result);
+    }
 
     return 0;
 }

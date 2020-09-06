@@ -1,17 +1,20 @@
 
+use EN
 
 enum E 
 {
-    ONE = 10,
-    TWO = 20,
-    THREE = 30
+    ZERO,
+    ONE,
+    TWO = 2,
+    THREE = E::TWO + 1
 }
 
 enum F
 {
+    ZERO,
     ONE { i : int; },
-    THREE = -(E::TWO) - E::ONE - E::THREE,
-    TWO = 20 + 4
+    TWO = 2,
+    THREE = E::THREE
 }
 
 func calc(f : F) -> int
@@ -34,10 +37,21 @@ func calc2(i : int) -> int
 }
 
 func main() -> int
-{   
-    calc2(F::THREE);
+{
+    calc2(EN.E::ZERO);
+    calc2(EN.E::ONE);
+    calc2(EN.E::TWO);
+    calc2(EN.E::THREE);
+
+    calc2(E::ZERO);
+    calc2(E::ONE);
+    calc2(E::TWO);
+    calc2(E::THREE);
+
+    calc2(F::ZERO);
+    calc2(F::ONE(1));
     calc2(F::TWO);
-    print(-20 - 10 - 30);
+    calc2(F::THREE);
 
     0
 }

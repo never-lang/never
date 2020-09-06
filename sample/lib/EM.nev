@@ -1,0 +1,8 @@
+
+
+module EM
+{
+    use EN
+
+    enum E { ONE = 1, TWO = EN.E::TWO, THREE = E::TWO + 1 }
+}

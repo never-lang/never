@@ -1227,6 +1227,11 @@ never: func_list
     $$ = never_new(NULL, NULL, NULL, $1);
 };
 
+never: decl_list
+{
+    $$ = never_new(NULL, $1, NULL, NULL);
+};
+
 never: bind_list func_list
 {
     $$ = never_new(NULL, NULL, $1, $2);
@@ -1242,6 +1247,11 @@ never: decl_list bind_list func_list
     $$ = never_new(NULL, $1, $2, $3);
 };
 
+never: use_list decl_list
+{
+    $$ = never_new($1, $2, NULL, NULL);
+};
+
 never: use_list func_list
 {
     $$ = never_new($1, NULL, NULL, $2);
@@ -1250,6 +1260,11 @@ never: use_list func_list
 never: use_list bind_list func_list
 {
     $$ = never_new($1, NULL, $2, $3);
+};
+
+never: use_list decl_list bind_list
+{
+    $$ = never_new($1, $2, $3, NULL);
 };
 
 never: use_list decl_list func_list
