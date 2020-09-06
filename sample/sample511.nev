@@ -1,0 +1,18 @@
+
+enum E { ONE = 0,
+         TWO = E::ONE + 1,
+         THREE = E::TWO + 1,
+         FOUR = E::THREE + 1 }
+
+let t = [ 1, 2, 3, 4, 5 ] : int;
+
+func main() -> int
+{
+    assert(t[E::ONE] == 1);
+    assert(t[E::TWO] == 2);
+    assert(t[E::THREE] == 3);
+    assert(t[E::FOUR] == 4);
+
+    0
+}
+
