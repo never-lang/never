@@ -3921,7 +3921,7 @@ int never_add_use_list(module_decl * module_modules, module_decl * module_stdlib
     return 0;
 }
 
-int enumerator_item_reduce(symtab * stab, enumerator * value, int * result)
+int enumerator_index_check_type(symtab * stab, enumerator * value, int * result)
 {
     if (value->expr_value)
     {
@@ -3933,7 +3933,14 @@ int enumerator_item_reduce(symtab * stab, enumerator * value, int * result)
             print_error_msg(value->line_no, "index value is not an integer, is %s", comb_type_str(value->expr_value->comb.comb));
             return 0;
         }
+    }
+    return 0;
+}
 
+int enumerator_index_reduce(symtab * stab, enumerator * value, int * result)
+{
+    if (value->expr_value)
+    {
         expr_enumred(value->expr_value, result);
         if (value->expr_value->type == EXPR_INT)
         {
@@ -3950,7 +3957,7 @@ int enumerator_item_reduce(symtab * stab, enumerator * value, int * result)
     return 0;
 }
 
-int enumerator_check_index(enumtype * enumtype_value, enumerator * value, int * result)
+int enumerator_index_check_value(enumtype * enumtype_value, enumerator * value, int * result)
 {
     inttab_entry * ientry = inttab_lookup(enumtype_value->itab, value->index);
     if (ientry != NULL)
@@ -3972,15 +3979,14 @@ int enumerator_check_index(enumtype * enumtype_value, enumerator * value, int * 
 
 int enumerator_item_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result)
 {
-    enumerator_item_reduce(stab, value, result);
-    enumerator_check_index(enumtype_value, value, result);
+    enumerator_index_check_type(stab, value, result);
 
     return 0;
 }
 
 int enumerator_value_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result)
 {
-    enumerator_item_check_type(stab, enumtype_value, value, result);
+    enumerator_index_check_type(stab, value, result);
 
     return 0;
 }
@@ -4018,6 +4024,44 @@ int enumerator_check_type(symtab * stab, enumtype * enumtype_value,
     return 0;
 }
 
+int enumerator_reduce(symtab * stab, enumtype * enumtype_value,
+                          enumerator * value, int * result)
+{
+    switch (value->type)
+    {
+        case ENUMERATOR_TYPE_ITEM:
+            enumerator_index_reduce(stab, value, result);
+        break;
+        case ENUMERATOR_TYPE_VALUE:
+            enumerator_index_reduce(stab, value, result);
+        break;
+        case ENUMERATOR_TYPE_RECORD:
+            enumerator_index_reduce(stab, value, result);
+        break;
+    }
+
+    return 0;
+}
+
+int enumerator_check_value(symtab * stab, enumtype * enumtype_value,
+                           enumerator * value, int * result)
+{
+    switch (value->type)
+    {
+        case ENUMERATOR_TYPE_ITEM:
+            enumerator_index_check_value(enumtype_value, value, result);
+        break;
+        case ENUMERATOR_TYPE_VALUE:
+            enumerator_index_check_value(enumtype_value, value, result);
+        break;
+        case ENUMERATOR_TYPE_RECORD:
+            enumerator_index_check_value(enumtype_value, value, result);
+        break;
+    }
+
+    return 0;
+}
+
 int enumerator_list_check_type(symtab * stab,
                                enumtype * enumtype_value,
                                enumerator_list * enums, int * result)
@@ -4036,6 +4080,42 @@ int enumerator_list_check_type(symtab * stab,
     return 0;
 }
 
+int enumerator_list_index_reduce(symtab * stab,
+                                 enumtype * enumtype_value,
+                                 enumerator_list * enums, int * result)
+{
+    enumerator_list_node * node = enums->tail;
+    while (node != NULL)
+    {
+        enumerator * enumerator_value = node->value;
+        if (enumerator_value != NULL)
+        {
+            enumerator_reduce(stab, enumtype_value, enumerator_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int enumerator_list_index_check_value(symtab * stab,
+                                      enumtype * enumtype_value,
+                                   enumerator_list * enums, int * result)
+{
+    enumerator_list_node * node = enums->tail;
+    while (node != NULL)
+    {
+        enumerator * enumerator_value = node->value;
+        if (enumerator_value != NULL)
+        {
+            enumerator_check_value(stab, enumtype_value, enumerator_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int enumtype_check_type(symtab * stab, enumtype * value, int * result)
 {
     if (value->enums != NULL)
@@ -4045,6 +4125,17 @@ int enumtype_check_type(symtab * stab, enumtype * value, int * result)
 
     return 0;
 }            
+
+int enumtype_index_reduce_check_value(symtab * stab, enumtype * value, int * result)
+{
+    if (value->enums != NULL)
+    {
+        enumerator_list_index_reduce(stab, value, value->enums, result);
+        enumerator_list_index_check_value(stab, value, value->enums, result);
+    }
+
+    return 0;
+}
 
 int record_check_type(symtab * stab, record * record_value, int * result)
 {
@@ -4088,6 +4179,23 @@ int decl_check_type(symtab * stab, decl * value, int * result)
     return 0;
 }
 
+int decl_index_reduce_check_value(symtab * stab, decl * value, int * result)
+{
+    switch (value->type)
+    {
+        case DECL_TYPE_ENUMTYPE:
+            if (value->enumtype_value != NULL)
+            {
+                enumtype_index_reduce_check_value(stab, value->enumtype_value, result);
+            }
+        break;
+        case DECL_TYPE_RECORD:
+        break;
+    }
+
+    return 0;
+}
+
 int decl_list_check_type(symtab * stab, decl_list * list, int * result)
 {
     decl_list_node * node = list->tail;
@@ -4098,6 +4206,23 @@ int decl_list_check_type(symtab * stab, decl_list * list, int * result)
         if (decl_value != NULL)
         {
             decl_check_type(stab, decl_value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int decl_list_index_reduce_check_value(symtab * stab, decl_list * list, int * result)
+{
+    decl_list_node * node = list->tail;
+    
+    while (node != NULL)
+    {
+        decl * decl_value = node->value;
+        if (decl_value != NULL)
+        {
+            decl_index_reduce_check_value(stab, decl_value, result);
         }
         node = node->next;
     }
@@ -4195,6 +4320,7 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
     {
         /* check decls */
         decl_list_check_type(nev->stab, nev->decls, result);
+        decl_list_index_reduce_check_value(nev->stab, nev->decls, result);
     }
 
     if (nev->binds != NULL)

@@ -172,19 +172,29 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
 int never_add_use(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use * value, int * result);
 int never_add_use_list(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use_list * list, int * result);
 
-int enumerator_item_reduce(symtab * stab, enumerator * value, int * result);
-int enumerator_check_index(enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_index_check_type(symtab * stab, enumerator * value, int * result);
+int enumerator_index_reduce(symtab * stab, enumerator * value, int * result);
+int enumerator_index_check_value(enumtype * enumtype_value, enumerator * value, int * result);
 int enumerator_item_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
 int enumerator_value_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
 int enumerator_record_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_reduce(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_item_reduce(symtab * stab, enumerator * value, int * result);
+int enumerator_check_index(enumtype * enumtype_value, enumerator * value, int * result);
 int enumerator_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_check_value(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
 int enumerator_list_check_type(symtab * stab, enumtype * enumtype_value, enumerator_list * enums, int * result);
+int enumerator_list_index_reduce(symtab * stab, enumtype * enumtype_value, enumerator_list * enums, int * result);
+int enumerator_list_index_check_value(symtab * stab, enumtype * enumtype_value, enumerator_list * enums, int * result);
 int enumtype_check_type(symtab * stab, enumtype * value, int * result);
+int enumtype_index_reduce_check_value(symtab * stab, enumtype * value, int * result);
 
 int record_check_type(symtab * stab, record * record_value, int * result);
 
 int decl_check_type(symtab * stab, decl * value, int * result);
+int decl_index_reduce_check_value(symtab * stab, decl * value, int * result);
 int decl_list_check_type(symtab * stab, decl_list * list, int * result);
+int decl_list_index_reduce_check_value(symtab * stab, decl_list * list, int * result);
 
 int func_entry_check_num_params(param_list * params);
 int func_entry_check_type(func * func_value, int * result);

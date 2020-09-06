@@ -1,0 +1,20 @@
+
+
+enum E { ONE, TWO, THREE }
+
+let e = E::ONE;
+
+func getE(e : E) -> int
+{
+    e
+}
+
+func main() -> int
+{
+    assert(getE(e) == 0);
+    assert(getE(E::ONE) == 0);
+    assert(getE(E::TWO) == 1);
+    assert(getE(E::THREE) == 2);
+
+    0
+}
