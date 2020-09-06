@@ -5,4 +5,17 @@ module EM
     use EN
 
     enum E { ONE = 1, TWO = EN.E::TWO, THREE = E::TWO + 1 }
+
+    let ONE = 10;
+
+    func one() -> int
+    {
+        ONE
+    }
+
+    func two() -> int
+    {
+        E::TWO
+    }
+
 }

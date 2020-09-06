@@ -5,15 +5,15 @@ enum E
 {
     ZERO,
     ONE,
-    TWO = 2,
-    THREE = E::TWO + 1
+    TWO = 2 * E::ONE,
+    THREE = 2 * E::TWO
 }
 
 enum F
 {
     ZERO,
     ONE { i : int; },
-    TWO = 2,
+    TWO,
     THREE = E::THREE
 }
 
@@ -38,6 +38,8 @@ func calc2(i : int) -> int
 
 func main() -> int
 {
+    calc(F::ONE(19));
+
     calc2(EN.E::ZERO);
     calc2(EN.E::ONE);
     calc2(EN.E::TWO);
@@ -52,6 +54,8 @@ func main() -> int
     calc2(F::ONE(1));
     calc2(F::TWO);
     calc2(F::THREE);
+
+    print(EN.one());
 
     0
 }
