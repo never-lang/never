@@ -1,0 +1,159 @@
+
+enum E
+{
+    ZERO,
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    FIVE,
+    SIX,
+    SEVEN,
+    EIGHT,
+    NINE,
+    TEN { i : int; }
+}
+
+func test_neg() -> bool
+{
+    assert(-E::ONE == -1)
+}
+
+func test_add() -> bool
+{
+    assert(E::ONE + E::ONE == E::TWO);
+    assert(E::ONE + 1 == E::TWO);
+    assert(1 + E::ONE == E::TWO)
+}
+
+func test_sub() -> bool
+{
+    assert(E::NINE - E::ONE == E::EIGHT);
+    assert(E::NINE - 1 == E::EIGHT);
+    assert(9 - E::ONE == E::EIGHT)
+}
+
+func test_mul() -> bool
+{
+    assert(E::TWO * E::TWO == E::FOUR);
+    assert(E::TWO * 2 == E::FOUR);
+    assert(2 * E::TWO == E::FOUR)
+}
+
+func test_div() -> bool
+{
+    assert(E::NINE / E::THREE == E::THREE);
+    assert(E::NINE / 3 == E::THREE);
+    assert(9 / E::THREE == E::THREE)
+}
+
+func test_lt() -> bool
+{
+    assert(E::ONE < E::NINE);
+    assert(E::ONE < 9);
+    assert(1 < E::NINE)
+}
+
+func test_lte() -> bool
+{
+    assert(E::ONE <= E::NINE);
+    assert(E::ONE <= 9);
+    assert(1 <= E::NINE);
+
+    assert(E::ONE <= E::ONE);
+    assert(E::ONE <= 1);
+    assert(1 <= E::ONE)
+}
+
+func test_gt() -> bool
+{
+    assert(E::NINE > E::ONE);
+    assert(E::NINE > 1);
+    assert(9 > E::ONE)
+}
+
+func test_gte() -> bool
+{
+    assert(E::NINE >= E::ONE);
+    assert(E::NINE >= 1);
+    assert(9 >= E::ONE);
+
+    assert(E::NINE >= E::NINE);
+    assert(E::NINE >= 9);
+    assert(9 >= E::NINE)
+}
+    
+func test_eq() -> bool
+{
+    assert(E::ONE == E::ONE);
+    assert(E::ONE == 1);
+    assert(1 == E::ONE)
+}
+
+func test_neq() -> bool
+{
+    assert(E::ONE != E::TWO);
+    assert(E::ONE != 2);
+    assert(1 != E::TWO)
+}
+
+func test_bool() -> bool
+{
+    assert(true == true);
+    assert(false == false);
+
+    assert(!true == false);
+    assert(!false == true);
+
+    assert((true && true) == true);
+    assert((true && false) == false);
+    assert((false && true) == false);
+    assert((false && false) == false);
+
+    assert((true || true) == true);
+    assert((true || false) == true);
+    assert((false || true) == true);
+    assert((false || false) == false)
+}
+
+func test_sup() -> bool
+{
+    assert((true) == true);
+    assert((1) == 1);
+    assert((1L) == 1L);
+    assert((1.0f) == 1.0f);
+    assert((1.0d) == 1.0d);
+    assert((E::ONE) == E::ONE);
+
+    assert(((true)) == true);
+    assert(((1)) == 1);
+    assert(((1L)) == 1L);
+    assert(((1.0f)) == 1.0f);
+    assert(((1.0d)) == 1.0d);
+    assert(((E::ONE)) == E::ONE)
+}
+
+func main() -> int
+{
+    test_neg();
+    test_add();
+    test_sub();
+    test_mul();
+    test_div();
+
+    test_lt();
+    test_lte();
+    test_gt();
+    test_gte();
+
+    test_eq();
+    test_neq();
+
+    test_bool();
+
+    test_sup();
+
+    0
+}
+
+

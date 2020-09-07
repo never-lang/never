@@ -1480,7 +1480,7 @@ int expr_constred(expr * value, int * result)
 
             value->type = EXPR_LONG;
             value->comb.comb = COMB_TYPE_LONG;
-            value->int_value = left_value->int_value;
+            value->long_value = left_value->long_value;
 
             expr_delete(left_value);
         }
@@ -1510,7 +1510,7 @@ int expr_constred(expr * value, int * result)
 
             value->type = EXPR_DOUBLE;
             value->comb.comb = COMB_TYPE_DOUBLE;
-            value->float_value = left_value->double_value;
+            value->double_value = left_value->double_value;
 
             expr_delete(left_value);
         }
