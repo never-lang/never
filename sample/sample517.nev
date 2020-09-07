@@ -97,10 +97,22 @@ func test_neq() -> bool
     assert(1 != E::TWO)
 }
 
+func test_mod() -> bool
+{
+    assert(E::SIX % E::TWO == E::ZERO);
+    assert(E::SIX % 2 == E::ZERO);
+    assert(6 % 2 == E::ZERO);
+
+    assert(6L % 2L == 0L)
+}
+
 func test_bool() -> bool
 {
     assert(true == true);
     assert(false == false);
+
+    assert(true != false);
+    assert(false != true);
 
     assert(!true == false);
     assert(!false == true);
@@ -149,6 +161,8 @@ func main() -> int
     test_eq();
     test_neq();
 
+    test_mod();
+    
     test_bool();
 
     test_sup();
