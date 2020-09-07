@@ -7,6 +7,8 @@ module EN
 
     record R { i : int; j : int; }
 
+    let a = 10;
+
     func one() -> int
     {
         EM.one()

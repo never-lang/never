@@ -1,6 +1,11 @@
 
 use EN
 
+record R
+{
+    r : EN.R;
+}
+
 enum E 
 {
     ZERO,

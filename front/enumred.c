@@ -30,6 +30,56 @@
 #include <stdio.h>
 #include <assert.h>
 
+int enumerator_enumred(expr * value, int * result)
+{
+    enumerator * enumerator_value = value->enumtype.id_enumerator_value;
+
+    if (enumerator_value != NULL)
+    {
+        if (enumerator_value->mark == 1)
+        {
+            *result = ENUMRED_FAIL;
+            print_error_msg(value->line_no, "could not reduce value to int, cyclic reference detected");
+            return 0;
+        }
+
+        enumerator_value->mark = 1;
+
+        if (enumerator_value->expr_value != NULL)
+        {
+            expr_enumred(enumerator_value->expr_value, result);
+        }
+
+        enumerator_value->mark = 0;
+
+        if (enumerator_value->expr_value->type == EXPR_INT)
+        {
+            int int_value = enumerator_value->expr_value->int_value;
+
+            if (value->enumtype.enum_id)
+            {
+                expr_delete(value->enumtype.enum_id);
+            }
+            if (value->enumtype.item_id)
+            {
+                free(value->enumtype.item_id);
+            }
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = int_value;
+        }
+        else
+        {
+            *result = ENUMRED_FAIL;
+            print_error_msg(value->line_no, "could not reduce enumerator index to integer");
+            return 0;
+        }            
+    }
+
+    return 0;
+}
+
 int expr_enumred(expr * value, int * result)
 {
     switch (value->type)
@@ -47,52 +97,7 @@ int expr_enumred(expr * value, int * result)
     /* cannot be reduced */
     break;
     case EXPR_ENUMTYPE:
-    {
-        enumerator * enumerator_value = value->enumtype.id_enumerator_value;
-
-        if (enumerator_value != NULL)
-        {
-            if (enumerator_value->mark == 1)
-            {
-                *result = ENUMRED_FAIL;
-                print_error_msg(value->line_no, "could not reduce value to int, cyclic refernce detected");
-                return 0;
-            }
-
-            enumerator_value->mark = 1;
-
-            if (enumerator_value->expr_value != NULL)
-            {
-                expr_enumred(enumerator_value->expr_value, result);
-            }
-
-            enumerator_value->mark = 0;
-
-            if (enumerator_value->expr_value->type == EXPR_INT)
-            {
-                int int_value = enumerator_value->expr_value->int_value;
-
-                if (value->enumtype.enum_id)
-                {
-                    expr_delete(value->enumtype.enum_id);
-                }
-                if (value->enumtype.item_id)
-                {
-                    free(value->enumtype.item_id);
-                }
-
-                value->type = EXPR_INT;
-                value->comb.comb = COMB_TYPE_INT;
-                value->int_value = int_value;
-            }
-            else
-            {
-                *result = ENUMRED_FAIL;
-                print_error_msg(value->line_no, "could not reduce enumerator index to integer");
-                return 0;
-            }            
-        }
-    }
+        enumerator_enumred(value, result);
     break;
     case EXPR_NEG:
         expr_enumred(value->left, result);
@@ -409,6 +414,8 @@ int expr_enumred(expr * value, int * result)
 
                 expr_delete(left_value);
                 expr_delete(right_value);
+
+                expr_enumred(value, result);
             }
             else
             {
@@ -417,6 +424,8 @@ int expr_enumred(expr * value, int * result)
 
                 expr_delete(left_value);
                 expr_delete(middle_value);
+
+                expr_enumred(value, result);
             }
         }
         break;

@@ -1722,6 +1722,7 @@ int expr_neg_check_type(symtab * tab, expr * value, func * func_value,
     else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE)
     {
         value->comb.comb = COMB_TYPE_INT;
+        expr_conv_enumerator(value->left);
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb_ret->type == PARAM_INT)
@@ -2138,6 +2139,7 @@ int expr_mod_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     else if (expr_conv_enumtype(value, value->left, value->right))
     {
         /* conversion performed */
+        value->comb.comb = COMB_TYPE_INT;
     }
     else
     {
@@ -2165,6 +2167,7 @@ int expr_lgte_check_type(symtab * tab, expr * value, func * func_value, unsigned
     else if (expr_conv_enumtype(value, value->left, value->right))
     {
         /* conversion performed */
+        value->comb.comb = COMB_TYPE_BOOL;
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
              value->right->comb.comb == COMB_TYPE_CHAR)
@@ -3020,6 +3023,17 @@ int expr_conv_check_type(symtab * tab, expr * value,
         {
             err = 1;
         }
+    }
+    else if (value->conv.expr_value->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        if (value->conv.type == CONV_ENUMTYPE_RECORD_TO_INT)
+        {
+            value->comb.comb = COMB_TYPE_INT;
+        }
+        else
+        {
+            err = 1;
+        }        
     }
     else
     {

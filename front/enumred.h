@@ -31,6 +31,7 @@ enum
 typedef struct expr expr;
 typedef struct expr_list expr_list;
 
+int enumerator_enumred(expr * value, int * result);
 int expr_enumred(expr * value, int * result);
 int expr_list_enumred(expr_list * list, int * result);
 

@@ -1,16 +1,18 @@
 
-enum E { ONE, TWO, THREE }
+enum E { ZERO, ONE, TWO, THREE }
 
-func check(e : int) -> int
+func check(e : int, v : int) -> bool
 {
-    0
+    assert(e == v)
 }
 
 func main() -> int
 {
     let e = [ E::THREE, E::TWO, E::ONE ] : E;
 
-    check(e[0]);
+    check(e[0], 3);
+    check(e[1], 2);
+    check(e[2], 1);
 
     0
 }

@@ -1,0 +1,27 @@
+
+enum A
+{
+    ZERO = 0,
+    ONE = 1
+}
+
+enum E
+{
+    ZERO,
+    ONE = 1,
+    TWO = (E::ZERO < E::ONE) ? 2 : 0,
+    THREE = (E::ONE < E::TWO) ? 3 : 0
+}
+
+func main() -> int
+{
+    assert(A::ZERO == 0);
+    assert(A::ONE == 1);
+
+    assert(E::ZERO == 0);
+    assert(E::ONE == 1);
+    assert(E::TWO == 2);
+    assert(E::THREE == 3);
+
+    0
+}
