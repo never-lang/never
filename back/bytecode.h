@@ -432,6 +432,8 @@ typedef struct bytecode_op_str
     void (*print)(bytecode * code);
 } bytecode_op_str;
 
+extern bytecode_op_str bytecode_op[];
+
 void bytecode_print_unknown(bytecode * code);
 
 void bytecode_print_int(bytecode * code);

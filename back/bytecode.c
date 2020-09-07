@@ -352,7 +352,7 @@ void bytecode_print_id_global(bytecode * code)
 
 void bytecode_print_id_func_func(bytecode * code)
 {
-    printf("%d: id func func %d\n", code->addr, code->id_func.func_value->addr);
+    printf("%d: id func func %d\n", code->addr, code->id_func.func_value ? code->id_func.func_value->addr : 0);
 }
 
 void bytecode_print_id_func_addr(bytecode * code)
