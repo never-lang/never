@@ -45,7 +45,7 @@ func main() -> int
     camera.target = raylib.Vector3(0.0f, 0.0f, 0.0f);
     camera.up = raylib.Vector3(0.0f, 1.0f, 0.0f);
     camera.fovy = 70.0f;
-    camera.type = raylib_camera.CAMERA_PERSPECTIVE;
+    camera.type = raylib_camera.CameraType::CAMERA_PERSPECTIVE;
 
     raylib.SetTargetFPS(60);
 

@@ -11,7 +11,7 @@ let screenHeight = 450;
 
 func main() -> int
 {
-/*    
+/*
     let ballPosition = raylib.Vector2( -100.0, -100.0 );
     let ballColor = raylib.Color;
 
@@ -24,15 +24,15 @@ func main() -> int
     {
         ballPosition = raylib_mouse.GetMousePosition();
 
-        if (raylib_mouse.IsMouseButtonPressed(raylib_mouse.MOUSE_LEFT_BUTTON))
+        if (raylib_mouse.IsMouseButtonPressed(raylib_mouse.MouseButton::MOUSE_LEFT_BUTTON))
         {
             ballColor = raylib.MAROON
         }
-        else if (raylib_mouse.IsMouseButtonPressed(raylib_mouse.MOUSE_MIDDLE_BUTTON))
+        else if (raylib_mouse.IsMouseButtonPressed(raylib_mouse.MouseButton::MOUSE_MIDDLE_BUTTON))
         {
             ballColor = raylib.LIME
         }
-        else if (raylib_mouse.IsMouseButtonPressed(raylib_mouse.MOUSE_RIGHT_BUTTON))
+        else if (raylib_mouse.IsMouseButtonPressed(raylib_mouse.MouseButton::MOUSE_RIGHT_BUTTON))
         {
             ballColor = raylib.DARKBLUE
         }
