@@ -6,7 +6,7 @@ module EM
 
     enum E { ONE = 1, TWO = EN.E::TWO, THREE = E::TWO + 1 }
 
-    let ONE = 10;
+    let ONE = 11;
 
     func one() -> int
     {

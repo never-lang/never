@@ -11,7 +11,7 @@ module EN
 
     func one() -> int
     {
-        EM.one()
+        EM.ONE
     }
 }
 

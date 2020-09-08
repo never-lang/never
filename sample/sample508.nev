@@ -43,6 +43,9 @@ func calc2(i : int) -> int
 
 func main() -> int
 {
+    let r = R(EN.R(10, 20));
+
+    calc2(EN.one());
     calc(F::ONE(19));
 
     calc2(EN.E::ZERO);

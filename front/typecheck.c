@@ -240,8 +240,18 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
         case SYMTAB_MODULE_DECL:
             if (entry->module_decl_value != NULL)
             {
-                value->comb.comb = COMB_TYPE_MODULE;
-                value->comb.comb_module_decl = entry->module_decl_value;
+                if (entry->module_decl_value->is_active)
+                {
+                    value->comb.comb = COMB_TYPE_MODULE;
+                    value->comb.comb_module_decl = entry->module_decl_value;
+                }
+                else
+                {
+                    *result = TYPECHECK_FAIL;
+                    value->comb.comb = COMB_TYPE_ERR;
+                    print_error_msg(value->line_no, "cannot use modules in this context (bindings?)");
+                }
+                
             }
         break;
     }
@@ -4336,7 +4346,11 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
     if (nev->binds != NULL)
     {
         bind_list_enum(nev->binds, start);
+
+        symtab_module_decl_set_active(nev->stab, 0);
         bind_list_check_type(nev->stab, nev->binds, NULL, syn_level, result);
+        symtab_module_decl_set_active(nev->stab, 1);
+
         start += nev->binds->count;
     }
 
