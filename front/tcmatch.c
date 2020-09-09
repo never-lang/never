@@ -525,6 +525,8 @@ int expr_match_guard_list_exhaustive(expr * value, match_guard_list * list, int 
         expr_match_guard_list_mark_items(value, list);
         
         expr_match_guard_are_all_mark_items(value, result);
+
+        expr_match_guard_unmark_items(value);
     }
 
     return 0;

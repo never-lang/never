@@ -21,8 +21,10 @@
  */
 #include "enumred.h"
 #include "expr.h"
+#include "symtab.h"
 #include "enums.h"
 #include "enumerator.h"
+#include "typecheck.h"
 #include "strutil.h"
 #include "utils.h"
 #include <stdlib.h>
@@ -72,10 +74,16 @@ int enumerator_enumred(expr * value, int * result)
         else
         {
             *result = ENUMRED_FAIL;
-            print_error_msg(value->line_no, "could not reduce enumerator index to integer");
+            print_error_msg(value->line_no, "could not reduce enumerator index to integer, is %s", expr_type_str(value->type));
             return 0;
         }            
     }
+    else
+    {
+        *result = ENUMRED_FAIL;
+        print_error_msg(value->line_no, "enumerator is null");
+    }
+    
 
     return 0;
 }
@@ -471,19 +479,3 @@ int expr_enumred(expr * value, int * result)
     }
     return 0;
 }
-
-int expr_list_enumred(expr_list * list, int * result)
-{
-    expr_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        expr * value = node->value;
-        if (value)
-        {
-            expr_enumred(value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-

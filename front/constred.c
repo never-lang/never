@@ -21,6 +21,7 @@
  */
 #include "constred.h"
 #include "enumred.h"
+#include "inttab.h"
 #include "strutil.h"
 #include "utils.h"
 #include "iflet.h"
@@ -1878,16 +1879,66 @@ int use_list_constred(use_list * list, int * result)
 
 int enumerator_index_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
 {
+    if (value->expr_value)
+    {
+        expr_enumred(value->expr_value, result);
+        if (value->expr_value->type == EXPR_INT)
+        {
+            value->index = value->expr_value->int_value;
+        }
+        else
+        {
+            *result = CONSTRED_FAIL;
+            print_error_msg(value->line_no, "could not reduce enumerator index to integer, is %s", expr_type_str(value->expr_value->type));
+            return 0;
+        }
+    }
+
+    return 0;
+}
+
+int enumerator_index_check_value(enumtype * enumtype_value, enumerator * value, int * result)
+{
+    inttab_entry * ientry = inttab_lookup(enumtype_value->itab, value->index);
+
+    if (ientry != NULL)
+    {
+        *result = CONSTRED_FAIL;
+        print_error_msg(value->line_no, "enumerator %s::%s = %d with same value as %s::%s at line %d",
+                                         enumtype_value->id, value->id,
+                                         value->index,
+                                         enumtype_value->id, ientry->enumerator_value->id,
+                                         ientry->enumerator_value->line_no);
+    }
+    else
+    {
+        inttab_add_enumerator(enumtype_value->itab, value->index, value);
+    }
+
+    return 0;
+}
+
+int enumerator_item_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    enumerator_index_constred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
     return 0;
 }
 
 int enumerator_value_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
 {
+    enumerator_index_constred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
     return 0;
 }
 
 int enumerator_record_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
 {
+    enumerator_index_constred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
     return 0;
 }
 
@@ -1896,7 +1947,7 @@ int enumerator_constred(enumtype * enumtype_value, enumerator * value, int * ind
     switch (value->type)
     {
         case ENUMERATOR_TYPE_ITEM:
-            enumerator_index_constred(enumtype_value, value, index, result);
+            enumerator_item_constred(enumtype_value, value, index, result);
         break;
         case ENUMERATOR_TYPE_VALUE:
             enumerator_value_constred(enumtype_value, value, index, result);
