@@ -22,6 +22,7 @@
 #include "enums.h"
 #include "enumerator.h"
 #include "symtab.h"
+#include "inttab.h"
 #include <stdlib.h>
 #include <assert.h>
 
@@ -33,7 +34,8 @@ enumtype * enumtype_new(char * id, enumerator_list * enums)
     value->id = id;
     value->enums = enums;
     value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
-    
+    value->itab = inttab_new(32);
+
     return value;
 }
 
@@ -50,6 +52,10 @@ void enumtype_delete(enumtype * value)
     if (value->stab != NULL)
     {
         symtab_delete(value->stab);
+    }
+    if (value->itab != NULL)
+    {
+        inttab_delete(value->itab);
     }
 
     free(value);

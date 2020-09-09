@@ -1,0 +1,30 @@
+
+module EN
+{
+    use EM
+
+    enum E { ZERO, 
+             ONE = E::ZERO + 1,
+             TWO = EM.E::TWO,
+             THREE = E::TWO + 1 }
+
+    record R { i : int; j : int; }
+
+    let a = 10;
+
+    func two() -> int
+    {
+        2
+    }
+
+    func one() -> int
+    {
+        EM.ONE
+    }
+
+    func three() -> int
+    {
+        3
+    }
+}
+

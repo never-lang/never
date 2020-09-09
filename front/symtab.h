@@ -115,7 +115,10 @@ void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_lev
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
 void symtab_add_module_decl(symtab * tab, module_decl * module_decl_value, unsigned int syn_level);
 
+void symtab_for_all(symtab * tab, void (*symtab_exe) (symtab_entry * entry));
 symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup);
+
+void symtab_module_decl_set_active(symtab * tab, char is_active);
 
 void symtab_resize(symtab * tab);
 

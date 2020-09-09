@@ -1,0 +1,23 @@
+
+
+module EM
+{
+    use EN
+
+    enum E { ONE = 1,
+             TWO = EN.E::ONE + 1,
+             THREE = EN.E::THREE }
+
+    let ONE = 11;
+
+    func one() -> int
+    {
+        ONE
+    }
+
+    func two() -> int
+    {
+        E::TWO
+    }
+
+}

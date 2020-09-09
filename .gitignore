@@ -10,6 +10,7 @@ never.code-workspace
 nev
 nev.dSYM/
 scanner.c
+parser.txt
 test_freevar
 test_gc
 test_libmath

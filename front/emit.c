@@ -3741,6 +3741,18 @@ int expr_conv_emit(expr * value, int stack_level, module * module_value,
             err = 1;
         }
     }
+    else if (value->conv.expr_value->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        if (value->conv.type == CONV_ENUMTYPE_RECORD_TO_INT)
+        {
+            bc.type = BYTECODE_ENUMTYPE_RECORD_TO_INT;
+            bytecode_add(module_value->code, &bc);
+        }
+        else
+        {
+            err = 1;
+        }        
+    }
     else
     {
         err = 1;
@@ -4710,10 +4722,13 @@ int never_emit(never * nev, int stack_level, int * index, module * module_value,
         /*stack_level += nev->binds->count;*/
     }
 
-    func_list_enum(nev->funcs, *index);
-    *index += nev->funcs->count;
+    if (nev->funcs)
+    {
+        func_list_enum(nev->funcs, *index);
+        *index += nev->funcs->count;
 
-    func_list_emit(nev->funcs, stack_level, module_value, list_weak, result);
+        func_list_emit(nev->funcs, stack_level, module_value, list_weak, result);
+    }
 
     return 0;
 }

@@ -38,7 +38,7 @@ func main() -> int
     camera.target = raylib.Vector3(0.0, 1.8, 0.0);
     camera.up = raylib.Vector3(0.0, 1.0, 0.0);
     camera.fovy = 60.0;
-    camera.type = raylib_camera.CAMERA_PERSPECTIVE;
+    camera.type = raylib_camera.CameraType::CAMERA_PERSPECTIVE;
 
     /* Generates some random columns */
     for (i = 0; i < MAX_COLUMNS; i = i + 1)
@@ -49,7 +49,7 @@ func main() -> int
     };
 
     /* Set a first person camera mode */
-    raylib_camera.SetCameraMode(camera, raylib_camera.CAMERA_FIRST_PERSON); 
+    raylib_camera.SetCameraMode(camera, raylib_camera.CameraMode::CAMERA_FIRST_PERSON); 
 
     /* Set our game to run at 60 frames-per-second */
     raylib.SetTargetFPS(200);                           

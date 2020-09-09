@@ -1,0 +1,67 @@
+
+use EN
+
+record R
+{
+    r : EN.R;
+}
+
+enum E 
+{
+    ZERO,
+    ONE,
+    TWO = E::ONE + 1,
+    THREE = E::TWO + 1
+}
+
+enum F
+{
+    ZERO,
+    ONE { i : int; },
+    TWO,
+    THREE = E::THREE
+}
+
+func calc(f : F) -> int
+{
+    if let (F::ONE(i) = f)
+    {
+        prints("OK " + i + "\n")
+    }
+    else
+    {
+        prints("NOK\n")
+    };
+
+    0
+}
+
+func calc2(i : int) -> int
+{
+    print(i)
+}
+
+func main() -> int
+{
+    let r = R(EN.R(10, 20));
+
+    calc2(EN.E::ZERO);
+    calc2(EN.E::ONE);
+    calc2(EN.E::TWO);
+    calc2(EN.E::THREE);
+
+    calc2(E::ZERO);
+    calc2(E::ONE);
+    calc2(E::TWO);
+    calc2(E::THREE);
+
+    calc2(F::ZERO);
+    calc2(F::ONE(1));
+    calc2(F::TWO);
+    calc2(F::THREE);
+
+    print(EN.one());
+
+    0
+}
+

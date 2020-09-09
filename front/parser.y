@@ -72,11 +72,9 @@ int yyerror(module_decl ** module_nev, char * str)
 %token <val.str_value> TOK_WHILE
 %token <val.str_value> TOK_DO
 %token <val.str_value> TOK_IF
-%token <val.str_value> TOK_THEN
 %token <val.str_value> TOK_ELSE
 %token <val.str_value> TOK_FOR
 %token <val.str_value> TOK_CATCH
-%token <val.str_value> TOK_THROW
 %token <val.str_value> TOK_IN
 %token <val.str_value> TOK_RECORD
 %token <val.str_value> TOK_NIL
@@ -1154,6 +1152,12 @@ enum_item: TOK_ID
     $$->line_no = $<line_no>1;
 };
 
+enum_item: TOK_ID '=' expr
+{
+    $$ = enumerator_new_expr($1, $3);
+    $$->line_no = $<line_no>1;
+};
+
 enum_list: enum_item
 {
     $$ = enumerator_list_new();
@@ -1223,6 +1227,11 @@ never: func_list
     $$ = never_new(NULL, NULL, NULL, $1);
 };
 
+never: decl_list
+{
+    $$ = never_new(NULL, $1, NULL, NULL);
+};
+
 never: bind_list func_list
 {
     $$ = never_new(NULL, NULL, $1, $2);
@@ -1238,6 +1247,11 @@ never: decl_list bind_list func_list
     $$ = never_new(NULL, $1, $2, $3);
 };
 
+never: use_list decl_list
+{
+    $$ = never_new($1, $2, NULL, NULL);
+};
+
 never: use_list func_list
 {
     $$ = never_new($1, NULL, NULL, $2);
@@ -1246,6 +1260,11 @@ never: use_list func_list
 never: use_list bind_list func_list
 {
     $$ = never_new($1, NULL, $2, $3);
+};
+
+never: use_list decl_list bind_list
+{
+    $$ = never_new($1, $2, $3, NULL);
 };
 
 never: use_list decl_list func_list

@@ -21,6 +21,7 @@
  */
 #include "enumerator.h"
 #include "record.h"
+#include "expr.h"
 #include <stdlib.h>
 
 enumerator * enumerator_new(char * id)
@@ -28,12 +29,29 @@ enumerator * enumerator_new(char * id)
     enumerator * value = (enumerator *)malloc(sizeof(enumerator));
     
     value->type = ENUMERATOR_TYPE_ITEM;
-    value->id = id;
     value->mark = 0;
-    value->index = 0;
+    value->id = id;
+    value->record_value = NULL;
+    value->expr_value = NULL;
+    value->index = -1;
     value->line_no = 0;
     
     return value;
+}
+
+enumerator * enumerator_new_expr(char * id, expr * expr_value)
+{
+    enumerator * value = (enumerator *)malloc(sizeof(enumerator));
+    
+    value->type = ENUMERATOR_TYPE_VALUE;
+    value->mark = 0;
+    value->id = id;
+    value->record_value = NULL;
+    value->expr_value = expr_value;
+    value->index = -1;
+    value->line_no = 0;
+    
+    return value;   
 }
 
 enumerator * enumerator_new_record(char * id, record * record_value)
@@ -41,9 +59,10 @@ enumerator * enumerator_new_record(char * id, record * record_value)
     enumerator * value = (enumerator *)malloc(sizeof(enumerator));
     
     value->type = ENUMERATOR_TYPE_RECORD;
+    value->mark = 0;
     value->id = id;
     value->record_value = record_value;
-    value->mark = 0;
+    value->expr_value = NULL;
     value->index = 0;
     value->line_no = 0;
     
@@ -59,6 +78,7 @@ void enumerator_delete(enumerator * value)
     switch (value->type)
     {
         case ENUMERATOR_TYPE_ITEM:
+        case ENUMERATOR_TYPE_VALUE:
         break;
         case ENUMERATOR_TYPE_RECORD:
             if (value->record_value != NULL)
@@ -66,6 +86,10 @@ void enumerator_delete(enumerator * value)
                 record_delete(value->record_value);
             }
         break;
+    }
+    if (value->expr_value)
+    {
+        expr_delete(value->expr_value);
     }
     free(value);
 }

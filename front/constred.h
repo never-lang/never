@@ -51,6 +51,14 @@ int func_constred(func * value, int * result);
 int func_list_constred(func_list * list, int * result);
 int use_constred(use * value, int * result);
 int use_list_constred(use_list * list, int * result);
+int enumerator_index_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result);
+int enumerator_value_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result);
+int enumerator_record_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result);
+int enumerator_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result);
+int enumerator_list_constred(enumtype * enumtype_value, enumerator_list * list, int * result);
+int enumtype_constred(enumtype * value, int * result);
+int decl_constred(decl * value, int * result);
+int decl_list_constred(decl_list * list, int * result);
 int never_constred(never * nev, int * result);
 int module_constred(module_decl * value, int * result);
 

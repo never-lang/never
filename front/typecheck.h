@@ -32,7 +32,8 @@ typedef struct qualifier qualifier;
 typedef struct qualifier_list qualifier_list;
 typedef struct matchbind_list matchbind_list;
 
-int enumtype_enum_enumerator_list(enumerator_list * list);
+int enumtype_enumerator_check_type(symtab * stab, enumerator * value, int * index, int * result);
+int enumtype_enumerator_list_check_type(symtab * stab, enumerator_list * list, int * result);
 int record_enum_param_list(param_list * params);
 int func_enum_param_list(param_list * params);
 int enum_matchbind_list(matchbind_list * list);
@@ -42,6 +43,8 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result);
 int expr_qualifier_set_comb_type(expr * value, expr * expr_value);
 int expr_conv_basic_type(expr * value, expr * expr_left, expr * expr_right);
 int expr_conv_string_type(expr * value, expr * expr_left, expr * expr_right);
+int expr_conv_enumerator(expr * value);
+int expr_conv_enumtype(expr * value, expr * expr_left, expr * expr_right);
 int expr_conv_ass_type(expr * value, expr * expr_left, expr * expr_right);
 
 int array_cmp(int comb_dims_one, param * ret_one,
@@ -158,6 +161,8 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
                          int * result);
 
+int never_add_enumerator(enumtype * enumtype_value, enumerator * value, enumerator * enumerator_prev, int * result);
+int never_add_enumerator_list(enumtype * enumtype_value, enumerator_list * enums, int * result);
 int never_add_enumtype(symtab * stab, enumtype * value, int * result);
 int never_add_record(symtab * stab, record * value, int * result);
 int never_add_decl(symtab * stab, decl * value, int * result);
@@ -167,16 +172,20 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
 int never_add_use(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use * value, int * result);
 int never_add_use_list(module_decl * module_modules, module_decl * module_stdlib, symtab * stab, use_list * list, int * result);
 
-int enumerator_item_check_type(symtab * stab, enumerator * value, int * result);
-int enumerator_record_check_type(symtab * gtab, symtab * stab, enumerator * value, int * result);
-int enumerator_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
-int enumerator_list_check_type(symtab * gtab, symtab * stab, enumtype * enumtype_value, int * result);
+int enumerator_index_check_type(symtab * stab, enumerator * value, int * result);
+int enumerator_item_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_value_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_record_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_check_type(symtab * stab, enumtype * enumtype_value, enumerator * value, int * result);
+int enumerator_list_check_type(symtab * stab, enumtype * enumtype_value, enumerator_list * enums, int * result);
 int enumtype_check_type(symtab * stab, enumtype * value, int * result);
 
 int record_check_type(symtab * stab, record * record_value, int * result);
 
 int decl_check_type(symtab * stab, decl * value, int * result);
+int decl_index_reduce_check_value(symtab * stab, decl * value, int * result);
 int decl_list_check_type(symtab * stab, decl_list * list, int * result);
+int decl_list_index_reduce_check_value(symtab * stab, decl_list * list, int * result);
 
 int func_entry_check_num_params(param_list * params);
 int func_entry_check_type(func * func_value, int * result);

@@ -1,4 +1,4 @@
-/** 
+/**
  * Copyright 2020 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,33 +19,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __MODULE_DECL_H__
-#define __MODULE_DECL_H__
+#ifndef __ENUMRED_H__
+#define __ENUMRED_H__
 
-typedef enum module_decl_type
+enum
 {
-    MODULE_DECL_TYPE_MOD = 1,
-    MODULE_DECL_TYPE_REF = 2
-} module_decl_type;
+    ENUMRED_SUCC = 0,
+    ENUMRED_FAIL = 1
+};
 
-typedef struct never never;
+typedef struct symtab symtab;
+typedef struct expr expr;
+typedef struct expr_list expr_list;
 
-typedef struct module_decl
-{
-    module_decl_type type;
-    char is_main;
-    char is_active;
-    char * id;
-    never * nev;
-    unsigned int line_no;
-} module_decl;
+int enumerator_enumred(expr * value, int * result);
+int expr_enumred(expr * value, int * result);
 
-module_decl * module_decl_new(char * id, never * nev);
-module_decl * module_decl_new_ref(char * id, never * nev);
-void module_decl_delete(module_decl * value);
-
-void module_decl_add_module_ref(module_decl * value, module_decl * other);
-
-void module_decl_print(module_decl * value);
-
-#endif /* __MODULE_DECL_H__ */
+#endif /* __CONSTRED_H__ */

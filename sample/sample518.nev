@@ -1,0 +1,211 @@
+
+enum NEG
+{
+    ONE = 1,
+    MINUS_ONE = -NEG::ONE
+}
+
+enum ADD
+{
+    ONE = 1,
+    TWO = ADD::ONE + ADD::ONE,
+    THREE = 2 + ADD::ONE,
+    FOUR = ADD::THREE + 1
+}
+
+enum SUB
+{
+    ONE = 1,
+    TWO = SUB::THREE - SUB::ONE,
+    THREE = 3,
+    FOUR = SUB::FIVE - 1,
+    FIVE = 5,
+    SIX = 7 - SUB::ONE
+}
+
+enum MUL
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = 3,
+    FOUR = MUL::TWO * MUL::TWO,
+    FIVE = 5,
+    SIX = MUL::TWO * 3,
+    SEVEN = 7,
+    EIGHT = 2 * MUL::FOUR
+}
+
+enum DIV
+{
+    ONE = DIV::TWO / DIV::TWO,
+    TWO = 2,
+    THREE = 3,
+    FOUR = 4 / DIV::ONE,
+    FIVE = DIV::FOUR / 1 + 1
+}
+
+enum MOD
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = MOD::TWO % MOD::ONE + 3,
+    FOUR = MOD::TWO % 1 + 4,
+    FIVE = 5 % MOD::ONE + 5 
+}
+
+enum SUP
+{
+    ONE = 1,
+    TWO = ((SUP::ONE)) + ((SUP::ONE))
+}
+
+enum LT
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = (LT::ONE < LT::TWO) ? 3 : 0,
+    FOUR = (LT::ONE < 2) ? 4 : 0,
+    FIVE = (1 < LT::TWO) ? 5 : 0
+}
+
+enum GT
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = (GT::TWO > GT::ONE) ? 3 : 0,
+    FOUR = (GT::TWO > 1) ? 4 : 0,
+    FIVE = (2 > GT::ONE) ? 5 : 0
+}
+
+enum LTE
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = (LTE::ONE <= LTE::TWO) ? 3 : 0,
+    FOUR = (LTE::ONE <= 2) ? 4 : 0,
+    FIVE = (1 <= LTE::TWO) ? 5 : 0
+}
+
+enum GTE
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = (GTE::TWO >= GTE::ONE) ? 3 : 0,
+    FOUR = (GTE::TWO >= 1) ? 4 : 0,
+    FIVE = (2 >= GTE::ONE) ? 5 : 0
+}
+
+enum AND
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = (true && true) ? 3 : 0,
+    FOUR = (true && false) ? 0 : 4,
+    FIVE = (false && true) ? 0 : 5,
+    SIX = (false && false) ? 0 : 6 
+}
+
+enum OR
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = (true || true) ? 3 : 0,
+    FOUR = (true || false) ? 4 : 0,
+    FIVE = (false || true) ? 5 : 0,
+    SIX = (false || false) ? 0 : 6 
+}
+
+enum NOT
+{
+    ONE = 1,
+    TWO = 2,
+    THREE = (!true) ? 0 : 3,
+    FOUR = (!false) ? 4 : 0
+}
+
+func main() -> int
+{
+    assert(NEG::ONE == 1);
+    assert(NEG::MINUS_ONE == -1);
+
+    assert(ADD::ONE == 1);
+    assert(ADD::TWO == 2);
+    assert(ADD::THREE == 3);
+    assert(ADD::FOUR == 4);
+
+    assert(SUB::ONE == 1);
+    assert(SUB::TWO == 2);
+    assert(SUB::THREE == 3);
+    assert(SUB::FOUR == 4);
+    assert(SUB::FIVE == 5);
+    assert(SUB::SIX == 6);
+
+    assert(MUL::ONE == 1);
+    assert(MUL::TWO == 2);
+    assert(MUL::THREE == 3);
+    assert(MUL::FOUR == 4);
+    assert(MUL::FIVE == 5);
+    assert(MUL::SIX == 6);
+    assert(MUL::SEVEN == 7);
+    assert(MUL::EIGHT == 8);
+
+    assert(DIV::ONE == 1);
+    assert(DIV::TWO == 2);
+    assert(DIV::THREE == 3);
+    assert(DIV::FOUR == 4);
+    assert(DIV::FIVE == 5);
+
+    assert(MOD::ONE == 1);
+    assert(MOD::TWO == 2);
+    assert(MOD::THREE == 3);
+    assert(MOD::FOUR == 4);
+    assert(MOD::FIVE == 5);
+
+    assert(SUP::ONE == 1);
+    assert(SUP::TWO == 2);
+
+    assert(LT::ONE == 1);
+    assert(LT::TWO == 2);
+    assert(LT::THREE == 3);
+    assert(LT::FOUR == 4);
+    assert(LT::FIVE == 5);
+
+    assert(GT::ONE == 1);
+    assert(GT::TWO == 2);
+    assert(GT::THREE == 3);
+    assert(GT::FOUR == 4);
+    assert(GT::FIVE == 5);
+
+    assert(LTE::ONE == 1);
+    assert(LTE::TWO == 2);
+    assert(LTE::THREE == 3);
+    assert(LTE::FOUR == 4);
+    assert(LTE::FIVE == 5);
+
+    assert(GTE::ONE == 1);
+    assert(GTE::TWO == 2);
+    assert(GTE::THREE == 3);
+    assert(GTE::FOUR == 4);
+    assert(GTE::FIVE == 5);
+
+    assert(AND::ONE == 1);
+    assert(AND::TWO == 2);
+    assert(AND::THREE == 3);
+    assert(AND::FOUR == 4);
+    assert(AND::FIVE == 5);
+    assert(AND::SIX == 6);
+
+    assert(OR::ONE == 1);
+    assert(OR::TWO == 2);
+    assert(OR::THREE == 3);
+    assert(OR::FOUR == 4);
+    assert(OR::FIVE == 5);
+    assert(OR::SIX == 6);
+
+    assert(NOT::ONE == 1);
+    assert(NOT::TWO == 2);
+    assert(NOT::THREE == 3);
+    assert(NOT::FOUR == 4);
+
+    0
+}

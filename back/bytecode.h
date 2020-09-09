@@ -165,7 +165,8 @@ typedef enum bytecode_type
     BYTECODE_FLOAT_TO_DOUBLE,
     BYTECODE_DOUBLE_TO_INT,
     BYTECODE_DOUBLE_TO_LONG,
-    BYTECODE_DOUBLE_TO_FLOAT,    
+    BYTECODE_DOUBLE_TO_FLOAT,
+    BYTECODE_ENUMTYPE_RECORD_TO_INT,    
 
     BYTECODE_OP_NEG_ARR_INT,
     BYTECODE_OP_NEG_ARR_LONG,
@@ -431,6 +432,8 @@ typedef struct bytecode_op_str
     void (*print)(bytecode * code);
 } bytecode_op_str;
 
+extern bytecode_op_str bytecode_op[];
+
 void bytecode_print_unknown(bytecode * code);
 
 void bytecode_print_int(bytecode * code);
@@ -571,6 +574,7 @@ void bytecode_print_float_to_double(bytecode * code);
 void bytecode_print_double_to_int(bytecode * code);
 void bytecode_print_double_to_long(bytecode * code);
 void bytecode_print_double_to_float(bytecode * code);
+void bytecode_print_enumtype_record_to_int(bytecode * code);
 
 void bytecode_print_op_neg_arr_int(bytecode * code);
 void bytecode_print_op_neg_arr_long(bytecode * code);

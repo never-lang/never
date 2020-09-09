@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 #include "constred.h"
+#include "enumred.h"
+#include "inttab.h"
 #include "strutil.h"
 #include "utils.h"
 #include "iflet.h"
@@ -231,6 +233,16 @@ int expr_constred(expr * value, int * result)
 
             expr_delete(left_value);
         }
+        else if (value->left->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+
+            value->type = EXPR_LONG;
+            value->comb.comb = COMB_TYPE_LONG;
+            value->long_value = -(left_value->long_value);
+
+            expr_delete(left_value);
+        }
         else if (value->left->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
@@ -238,6 +250,26 @@ int expr_constred(expr * value, int * result)
             value->type = EXPR_FLOAT;
             value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value = -(left_value->float_value);
+
+            expr_delete(left_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+
+            value->type = EXPR_DOUBLE;
+            value->comb.comb = COMB_TYPE_DOUBLE;
+            value->double_value = -(left_value->double_value);
+
+            expr_delete(left_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = -(left_value->enumtype.id_enumerator_value->index);
 
             expr_delete(left_value);
         }
@@ -258,6 +290,57 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_LONG;
+            value->comb.comb = COMB_TYPE_LONG;
+            value->long_value = left_value->long_value + right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value + 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index + 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index + 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
         else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
@@ -267,6 +350,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value =
                 left_value->float_value + right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_DOUBLE;
+            value->comb.comb = COMB_TYPE_DOUBLE;
+            value->double_value =
+                left_value->double_value + right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -301,8 +397,58 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_LONG;
+            value->comb.comb = COMB_TYPE_LONG;
+            value->long_value = left_value->long_value - right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index - 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value -
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index - 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -311,6 +457,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value =
                 left_value->float_value - right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_DOUBLE;
+            value->comb.comb = COMB_TYPE_DOUBLE;
+            value->double_value =
+                left_value->double_value - right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -332,8 +491,58 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_LONG;
+            value->comb.comb = COMB_TYPE_LONG;
+            value->long_value = left_value->int_value * right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index * 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value *
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index * 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -342,6 +551,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value =
                 left_value->float_value * right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_DOUBLE;
+            value->comb.comb = COMB_TYPE_DOUBLE;
+            value->double_value =
+                left_value->double_value * right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -370,8 +592,86 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->long_value == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_LONG;
+            value->comb.comb = COMB_TYPE_LONG;
+            value->long_value = left_value->long_value / right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->enumtype.id_enumerator_value->index == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index / 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->enumtype.id_enumerator_value->index == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value /
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->int_value == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index / 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -387,6 +687,26 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value =
                 left_value->float_value / right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->double_value == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_DOUBLE;
+            value->comb.comb = COMB_TYPE_DOUBLE;
+            value->double_value =
+                left_value->double_value / right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -415,6 +735,86 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->enumtype.id_enumerator_value->index == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index % 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->enumtype.id_enumerator_value->index == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value %
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->int_value == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->enumtype.id_enumerator_value->index % 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            if (right_value->long_value == 0)
+            {
+                *result = CONSTRED_FAIL;
+                print_error_msg(value->line_no, "division by zero");
+                return 0;
+            }
+
+            value->type = EXPR_LONG;
+            value->comb.comb = COMB_TYPE_LONG;
+            value->long_value = left_value->long_value % right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+
         break;
     case EXPR_LT:
         expr_constred(value->left, result);
@@ -432,8 +832,58 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->long_value < right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index < 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->int_value <
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index < 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -442,6 +892,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_BOOL;
             value->int_value =
                 left_value->float_value < right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value =
+                left_value->double_value < right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -463,8 +926,58 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->long_value > right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index > 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->int_value >
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index > 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -473,6 +986,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_BOOL;
             value->int_value =
                 left_value->float_value > right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value =
+                left_value->double_value > right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -494,8 +1020,58 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->long_value <= right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index <= 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->int_value <=
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index <= 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -504,6 +1080,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_BOOL;
             value->int_value =
                 left_value->float_value <= right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value =
+                left_value->double_value <= right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -525,8 +1114,58 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->long_value >= right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index >= 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->int_value >=
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index >= 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -535,6 +1174,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_BOOL;
             value->int_value =
                 left_value->float_value >= right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value =
+                left_value->double_value >= right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -568,8 +1220,58 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->long_value == right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index == 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->int_value ==
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index == 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -578,6 +1280,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_BOOL;
             value->int_value =
                 left_value->float_value == right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value =
+                left_value->double_value == right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -611,8 +1326,58 @@ int expr_constred(expr * value, int * result)
             expr_delete(left_value);
             expr_delete(right_value);
         }
-        else if (value->left->type == EXPR_FLOAT &&
-                 value->right->type == EXPR_FLOAT)
+        else if (value->left->type == EXPR_LONG && value->right->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->long_value != right_value->long_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index != 
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_INT && value->right->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->int_value !=
+                               right_value->enumtype.id_enumerator_value->index;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value = left_value->enumtype.id_enumerator_value->index != 
+                               right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_FLOAT && value->right->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
             expr * right_value = value->right;
@@ -621,6 +1386,19 @@ int expr_constred(expr * value, int * result)
             value->comb.comb = COMB_TYPE_BOOL;
             value->int_value =
                 left_value->float_value != right_value->float_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE && value->right->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_BOOL;
+            value->comb.comb = COMB_TYPE_BOOL;
+            value->int_value =
+                left_value->double_value != right_value->double_value;
 
             expr_delete(left_value);
             expr_delete(right_value);
@@ -697,6 +1475,26 @@ int expr_constred(expr * value, int * result)
 
             expr_delete(left_value);
         }
+        else if (value->left->type == EXPR_LONG)
+        {
+            expr * left_value = value->left;
+
+            value->type = EXPR_LONG;
+            value->comb.comb = COMB_TYPE_LONG;
+            value->long_value = left_value->long_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->left->type == EXPR_ENUMTYPE)
+        {
+            expr * left_value = value->left;
+
+            value->type = EXPR_ENUMTYPE;
+            value->comb = left_value->comb;
+            value->enumtype = left_value->enumtype;
+
+            free(left_value);
+        }
         else if (value->left->type == EXPR_FLOAT)
         {
             expr * left_value = value->left;
@@ -704,6 +1502,16 @@ int expr_constred(expr * value, int * result)
             value->type = EXPR_FLOAT;
             value->comb.comb = COMB_TYPE_FLOAT;
             value->float_value = left_value->float_value;
+
+            expr_delete(left_value);
+        }
+        else if (value->left->type == EXPR_DOUBLE)
+        {
+            expr * left_value = value->left;
+
+            value->type = EXPR_DOUBLE;
+            value->comb.comb = COMB_TYPE_DOUBLE;
+            value->double_value = left_value->double_value;
 
             expr_delete(left_value);
         }
@@ -1069,11 +1877,161 @@ int use_list_constred(use_list * list, int * result)
     return 0;
 }
 
+int enumerator_index_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    if (value->expr_value)
+    {
+        expr_enumred(value->expr_value, result);
+        if (value->expr_value->type == EXPR_INT)
+        {
+            value->index = value->expr_value->int_value;
+        }
+        else
+        {
+            *result = CONSTRED_FAIL;
+            print_error_msg(value->line_no, "could not reduce enumerator index to integer, is %s", expr_type_str(value->expr_value->type));
+            return 0;
+        }
+    }
+
+    return 0;
+}
+
+int enumerator_index_check_value(enumtype * enumtype_value, enumerator * value, int * result)
+{
+    inttab_entry * ientry = inttab_lookup(enumtype_value->itab, value->index);
+
+    if (ientry != NULL)
+    {
+        *result = CONSTRED_FAIL;
+        print_error_msg(value->line_no, "enumerator %s::%s = %d with same value as %s::%s at line %d",
+                                         enumtype_value->id, value->id,
+                                         value->index,
+                                         enumtype_value->id, ientry->enumerator_value->id,
+                                         ientry->enumerator_value->line_no);
+    }
+    else
+    {
+        inttab_add_enumerator(enumtype_value->itab, value->index, value);
+    }
+
+    return 0;
+}
+
+int enumerator_item_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    enumerator_index_constred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
+    return 0;
+}
+
+int enumerator_value_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    enumerator_index_constred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
+    return 0;
+}
+
+int enumerator_record_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    enumerator_index_constred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
+    return 0;
+}
+
+int enumerator_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    switch (value->type)
+    {
+        case ENUMERATOR_TYPE_ITEM:
+            enumerator_item_constred(enumtype_value, value, index, result);
+        break;
+        case ENUMERATOR_TYPE_VALUE:
+            enumerator_value_constred(enumtype_value, value, index, result);
+        break;
+        case ENUMERATOR_TYPE_RECORD:
+            enumerator_record_constred(enumtype_value, value, index, result);
+        break;
+    }
+
+    return 0;
+}
+
+int enumerator_list_constred(enumtype * enumtype_value, enumerator_list * list, int * result)
+{
+    int index = 0;
+
+    enumerator_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        enumerator * enumerator_value = node->value;
+        if (enumerator_value != NULL)
+        {
+            enumerator_constred(enumtype_value, enumerator_value, &index, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int enumtype_constred(enumtype * value, int * result)
+{
+    if (value->enums)
+    {
+        enumerator_list_constred(value, value->enums, result);
+    }
+
+    return 0;
+}
+
+int decl_constred(decl * value, int * result)
+{
+    switch (value->type)
+    {
+        case DECL_TYPE_ENUMTYPE:
+        {
+            if (value->enumtype_value != NULL)
+            {
+                enumtype_constred(value->enumtype_value, result);
+            }
+        }
+        break;
+        case DECL_TYPE_RECORD:
+        break;
+    }
+
+    return 0;
+}
+
+int decl_list_constred(decl_list * list, int * result)
+{
+    decl_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        decl * value = node->value;
+        if (value != NULL)
+        {
+            decl_constred(value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int never_constred(never * nev, int * result)
 {
     if (nev->uses)
     {
         use_list_constred(nev->uses, result);
+    }
+    if (nev->decls)
+    {
+        decl_list_constred(nev->decls, result);
     }
     if (nev->binds)
     {

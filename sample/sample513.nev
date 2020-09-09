@@ -1,0 +1,21 @@
+
+enum E { ONE = 1, TWO = F::TWO, THREE = E::TWO + 1 }
+enum F { ONE = E::ONE, TWO = F::ONE + 1, THREE = E::THREE }
+
+func getVal(e : int) -> int
+{
+    e
+}
+
+func main() -> int
+{
+    assert(getVal(E::ONE) == 1);
+    assert(getVal(E::TWO) == 2);
+    assert(getVal(E::THREE) == 3);
+
+    assert(getVal(F::ONE) == 1);
+    assert(getVal(F::TWO) == 2);
+    assert(getVal(F::THREE) == 3);
+
+    0
+}

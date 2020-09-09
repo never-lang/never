@@ -459,6 +459,8 @@ comb_type conv_to_comb_type(conv_type conv)
         case CONV_DOUBLE_TO_INT: return COMB_TYPE_INT;
         case CONV_DOUBLE_TO_LONG: return COMB_TYPE_LONG;
         case CONV_DOUBLE_TO_FLOAT: return COMB_TYPE_FLOAT;
+
+        case CONV_ENUMTYPE_RECORD_TO_INT: return COMB_TYPE_INT;
     }
 
     return CONV_UNKNOWN;
@@ -894,6 +896,7 @@ const char * conv_type_str(conv_type conv)
     case CONV_DOUBLE_TO_INT: return "double to int";
     case CONV_DOUBLE_TO_LONG: return "double to long";
     case CONV_DOUBLE_TO_FLOAT: return "double to float";
+    case CONV_ENUMTYPE_RECORD_TO_INT: return "enumtype record to int";
     }
 
     return "unknown";

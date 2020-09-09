@@ -27,14 +27,20 @@ module raylib_camera
 {
     use raylib
 
-    let CAMERA_PERSPECTIVE = 0;
-    let CAMERA_ORTHOGRAPHIC = 1;
+    enum CameraType
+    {
+        CAMERA_PERSPECTIVE = 0,
+        CAMERA_ORTHOGRAPHIC = 1
+    }
 
-    let CAMERA_CUSTOM = 0;
-    let CAMERA_FREE = 1;
-    let CAMERA_ORBITAL = 2;
-    let CAMERA_FIRST_PERSON = 3;
-    let CAMERA_THIRD_PERSON = 4;
+    enum CameraMode
+    {
+        CAMERA_CUSTOM = 0,
+        CAMERA_FREE = 1,
+        CAMERA_ORBITAL = 2,
+        CAMERA_FIRST_PERSON = 3,
+        CAMERA_THIRD_PERSON = 4
+    }
 
     /* Camera System Functions (Module: camera) */
     extern "libraylib.so" func SetCameraMode(camera : raylib.Camera3D, mode : int) -> void

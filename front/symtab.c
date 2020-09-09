@@ -354,6 +354,53 @@ void symtab_add_module_decl(symtab * tab, module_decl * module_decl_value, unsig
     symtab_resize(tab);
 }
 
+void symtab_for_all(symtab * tab, void (*symtab_exe) (symtab_entry * entry))
+{
+    unsigned int i = 0;
+
+    for (i = 0; i < tab->size; i++)
+    {
+        if (tab->entries[i].type != 0)
+        {
+            symtab_exe(&tab->entries[i]);
+        }
+    }
+}
+
+static void symtab_exe_module_decl_set_active(symtab_entry * entry)
+{
+    if (entry->type == SYMTAB_MODULE_DECL)
+    {
+        if (entry->module_decl_value)
+        {
+            entry->module_decl_value->is_active = 1;
+        }
+    }
+}
+
+static void symtab_exe_module_decl_set_inactive(symtab_entry * entry)
+{
+    if (entry->type == SYMTAB_MODULE_DECL)
+    {
+        if (entry->module_decl_value)
+        {
+            entry->module_decl_value->is_active = 0;
+        }
+    }
+}
+
+void symtab_module_decl_set_active(symtab * tab, char is_active)
+{
+    if (is_active)
+    {
+        symtab_for_all(tab, symtab_exe_module_decl_set_active);
+    }
+    else
+    {
+        symtab_for_all(tab, symtab_exe_module_decl_set_inactive);        
+    }
+}
+
 symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup)
 {
     symtab_entry * entry = NULL;
