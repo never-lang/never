@@ -46,7 +46,8 @@ typedef enum libmath_func
     LIB_MATH_PRINTS,
     LIB_MATH_LENGTH,
     LIB_MATH_ASSERT,
-    LIB_MATH_ASSERTF
+    LIB_MATH_ASSERTF,
+    LIB_MATH_C_INT_PTR
 } libmath_func;
 
 param_list * params_bool_x();
@@ -91,6 +92,7 @@ func * libmath_func_print_string_new();
 func * libmath_func_length_new();
 func * libmath_func_assert_int_new();
 func * libmath_func_assert_float_new();
+func * libmath_func_c_int_ptr_new();
 
 void libmath_add_funcs(func_list * funcs);
 void libmath_add_funcs_module_decl(module_decl * module_value);

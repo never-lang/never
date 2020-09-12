@@ -241,9 +241,14 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         machine->sp--;
     }
     break;
-    default:
-        fprintf(stderr, "unknown build in function id %d\n", code->build_in.id);
-        assert(0);
+    case LIB_MATH_C_INT_PTR:
+    {
+        int * p =
+            gc_get_int_ptr(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
+    /*  TODO: long float double bool char char * c_ptr */
     }
 
 #ifndef NO_FFI

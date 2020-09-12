@@ -136,6 +136,10 @@ func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
     {
         func_expr = expr_new_build_in(math_id, actual, param_new_string(NULL));
     }
+    else if (param_ret->type == PARAM_C_PTR)
+    {
+        func_expr = expr_new_build_in(math_id, actual, param_new_c_ptr(NULL));
+    }
     else
     {
         printf("build_in with ret type not supported\n");
@@ -328,6 +332,12 @@ func * libmath_func_assert_float_new()
     return libmath_func_float_x_float_y_int_new(LIB_MATH_ASSERTF);
 }
 
+func * libmath_func_c_int_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_INT_PTR, params_int_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
 void libmath_add_funcs(func_list * funcs)
 {
     func_list_add_end(funcs, libmath_func_sin_new());
@@ -350,6 +360,7 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_length_new());
     func_list_add_end(funcs, libmath_func_assert_int_new());
     func_list_add_end(funcs, libmath_func_assert_float_new());
+    func_list_add_end(funcs, libmath_func_c_int_ptr_new());
 }
 
 const char * libmath_func_to_str(libmath_func math_id)
@@ -398,6 +409,8 @@ const char * libmath_func_to_str(libmath_func math_id)
         return "assert";
     case LIB_MATH_ASSERTF:
         return "assertf";
+    case LIB_MATH_C_INT_PTR:
+        return "c_int_ptr";
     }
     return "unknown";
 }

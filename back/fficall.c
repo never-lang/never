@@ -272,6 +272,7 @@ char * test_types_get_string()
     return "CCC";
 }
 
+int int_value = 123;
 test_Point p1 = { 10, 20 };
 
 test_Point * test_types_get_ptr()
@@ -279,7 +280,7 @@ test_Point * test_types_get_ptr()
     return &p1;
 }
 
-void test_types_call(bool b, int i, long long l, float f, double d, char c, char * str, test_Point * ptr, test_Types rec)
+void test_types_call(bool b, int i, long long l, float f, double d, char c, char * str, int * int_ptr, test_Point * ptr, test_Types rec)
 {
     assert(b == true);
     assert(i == 10);
@@ -288,6 +289,7 @@ void test_types_call(bool b, int i, long long l, float f, double d, char c, char
     assert(d == 10.0);
     assert(c == 'A');
     assert(strcmp(str, "AAA") == 0);
+    *int_ptr = int_value;
     assert(ptr->x == 10);
     assert(ptr->y == 20);
 
@@ -315,6 +317,7 @@ test_Types test_types_get_rec()
     ret.c = 'A';
     ret.str = "AAA";
     ret.ptr = &p1;
+    ret.int_ptr = &int_value;
     ret.rec.x = 20;
     ret.rec.y = 30;
 
