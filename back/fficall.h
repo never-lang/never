@@ -85,7 +85,6 @@ typedef struct test_Types
     double d;
     char c;
     char * str;
-    int * int_ptr;
     test_Point * ptr;
     test_Point rec;
 } test_Types;
@@ -108,8 +107,12 @@ double test_types_get_double();
 char test_types_get_char();
 char * test_types_get_string();
 test_Point * test_types_get_ptr();
-void test_types_call(bool b, int i, long long l, float f, double d, char c, char * str, int * int_ptr, test_Point * ptr, test_Types rec);
+void test_types_call(bool b, int i, long long l, float f, double d, char c, char * str, test_Point * ptr, test_Types rec);
 test_Types test_types_get_rec();
+void test_types_ptr(int * int_ptr, long long * long_ptr,
+                    float * float_ptr, double * double_ptr,
+                    bool * bool_ptr, char * char_ptr,
+                    char ** string_ptr, void ** ptr_ptr);
 
 #endif /* NO_FFI */
 

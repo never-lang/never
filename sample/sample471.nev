@@ -14,7 +14,6 @@ record Types
     d : double;
     c : char;
     str : string;
-    int_ptr : c_ptr;
     ptr : c_ptr;
     rec : Point;
 }
@@ -26,15 +25,46 @@ extern "host" func test_types_get_double() -> double
 extern "host" func test_types_get_char() -> char
 extern "host" func test_types_get_string() -> string
 extern "host" func test_types_get_ptr() -> c_ptr
-extern "host" func test_types_call(b : bool, i : int, l : long, f : float, d : double, c : char, str : string, int_ptr : c_ptr, ptr : c_ptr, rec : Types) -> void
+extern "host" func test_types_call(b : bool, i : int, l : long, f : float, d : double, c : char, str : string, ptr : c_ptr, rec : Types) -> void
 extern "host" func test_types_get_rec() -> Types
+extern "host" func test_types_ptr(int_ptr : c_ptr, long_ptr : c_ptr,
+                                  float_ptr : c_ptr, double_ptr : c_ptr,
+                                  bool_ptr : c_ptr, char_ptr : c_ptr,
+                                  string_ptr : c_ptr, ptr_ptr : c_ptr) -> void
+
+func test_ptr() -> int
+{
+    let i = 0;
+    let l = 0L;
+    let f = 0.0f;
+    let d = 0.0d;
+    let b = false;
+    let c = '0';
+    let s = "";
+    let p = 0;
+
+    test_types_ptr(c_int_ptr(i), c_long_ptr(l),
+                   c_float_ptr(f), c_double_ptr(d),
+                   c_bool_ptr(b), c_char_ptr(c),
+                   c_string_ptr(s), c_ptr_ptr(c_int_ptr(p)));
+
+    assert(i == 123);
+    assert(l == 123L);
+    assert(f == 123.0f);
+    assert(d == 123.0d);
+    assert(b == true);
+    assert(c == 'A');
+    assert(s == "AAA");
+    /* TODO: check c_ptr_ptr */
+
+    0
+}
 
 func main() -> int
 {
     let p = Point(30, 40);
     let ptr = test_types_get_ptr();
-    let i = 10;
-    let t = Types(true, 20, 20L, 20.0, 20.0d, 'B', "BBB", c_int_ptr(i), ptr, p);
+    let t = Types(true, 20, 20L, 20.0, 20.0d, 'B', "BBB", ptr, p);
     let g = test_types_get_rec();
 
     assert(test_types_get_int() == 10);
@@ -44,9 +74,8 @@ func main() -> int
     assert(test_types_get_char() == 'C');
     assert(test_types_get_string() == "CCC");
 
-    test_types_call(true, 10, 10L, 10.0, 10.0d, 'A', "AAA", c_int_ptr(i), ptr, t);
+    test_types_call(true, 10, 10L, 10.0, 10.0d, 'A', "AAA", ptr, t);
 
-    assert(i == 123);
     assert(g.b == false);
     assert(g.i == 10);
     assert(g.l == 10L);
@@ -57,6 +86,8 @@ func main() -> int
     assert(g.ptr == ptr);
     assert(g.rec.x == 20);
     assert(g.rec.y == 30);
+
+    test_ptr();
 
     0
 }

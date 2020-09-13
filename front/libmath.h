@@ -47,15 +47,25 @@ typedef enum libmath_func
     LIB_MATH_LENGTH,
     LIB_MATH_ASSERT,
     LIB_MATH_ASSERTF,
-    LIB_MATH_C_INT_PTR
+    LIB_MATH_C_INT_PTR,
+    LIB_MATH_C_LONG_PTR,
+    LIB_MATH_C_FLOAT_PTR,
+    LIB_MATH_C_DOUBLE_PTR,
+    LIB_MATH_C_BOOL_PTR,
+    LIB_MATH_C_CHAR_PTR,
+    LIB_MATH_C_STRING_PTR,
+    LIB_MATH_C_PTR_PTR
 } libmath_func;
 
-param_list * params_bool_x();
 param_list * params_int_x();
+param_list * params_long_x();
 param_list * params_float_x();
+param_list * params_double_x();
 param_list * params_float_x_float_y();
+param_list * params_bool_x();
 param_list * params_char_x();
 param_list * params_string_x();
+param_list * params_c_ptr_x();
 expr_list * params_x();
 expr_list * params_x_y();
 
@@ -93,6 +103,13 @@ func * libmath_func_length_new();
 func * libmath_func_assert_int_new();
 func * libmath_func_assert_float_new();
 func * libmath_func_c_int_ptr_new();
+func * libmath_func_c_long_ptr_new();
+func * libmath_func_c_float_ptr_new();
+func * libmath_func_c_double_ptr_new();
+func * libmath_func_c_bool_ptr_new();
+func * libmath_func_c_char_ptr_new();
+func * libmath_func_c_string_ptr_new();
+func * libmath_func_c_ptr_ptr_new();
 
 void libmath_add_funcs(func_list * funcs);
 void libmath_add_funcs_module_decl(module_decl * module_value);
