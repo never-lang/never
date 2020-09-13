@@ -279,13 +279,13 @@ test_Point * test_types_get_ptr()
     return &p1;
 }
 
-void test_types_call(bool b, int i, long long l, float f, double d, char c, char * str, test_Point * ptr, test_Types rec)
+void test_types_call(int i, long long l, float f, double d, bool b, char c, char * str, test_Point * ptr, test_Types rec)
 {
-    assert(b == true);
     assert(i == 10);
     assert(l == 10L);
     assert(f == 10.0f);
     assert(d == 10.0);
+    assert(b == true);
     assert(c == 'A');
     assert(strcmp(str, "AAA") == 0);
     assert(ptr->x == 10);
@@ -295,6 +295,7 @@ void test_types_call(bool b, int i, long long l, float f, double d, char c, char
     assert(rec.l == 20L);
     assert(rec.f == 20.0f);
     assert(rec.d == 20.0);
+    assert(rec.b == true);
     assert(rec.c == 'B');
     assert(strcmp(rec.str, "BBB") == 0);
     assert(rec.ptr->x == 10);
@@ -319,18 +320,39 @@ void test_types_ptr(int * int_ptr, long long * long_ptr,
         free(*string_ptr);
         *string_ptr = strdup("AAA");
     }
-    /* TODO: check ptr_ptr */
+    **(int **)ptr_ptr = 123;
 }                    
+
+void test_types_struct_ptr(test_PtrTypes ptr_types)
+{
+    *ptr_types.int_ptr = 123;
+    *ptr_types.long_ptr = 123L;
+    *ptr_types.float_ptr = 123.0f;
+    *ptr_types.double_ptr = 123.0;
+    *ptr_types.bool_ptr = true;
+    *ptr_types.char_ptr = 'A';
+    if (*ptr_types.string_ptr != NULL)
+    {
+        free(*ptr_types.string_ptr);
+        *ptr_types.string_ptr = strdup("AAA");
+    }
+    **(int **)(ptr_types.ptr_ptr) = 123;
+}
+
+void test_types_check_int(int * ptr, int value)
+{
+    assert(*ptr == value);
+}
 
 test_Types test_types_get_rec()
 {
     test_Types ret;
 
-    ret.b = false;
     ret.i = 10;
     ret.l = 10L;
     ret.f = 10.0f;
     ret.d = 10.0;
+    ret.b = false;
     ret.c = 'A';
     ret.str = "AAA";
     ret.ptr = &p1;

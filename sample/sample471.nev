@@ -7,15 +7,27 @@ record Point
 
 record Types
 {
-    b : bool;
     i : int;
     l : long;
     f : float;
     d : double;
+    b : bool;
     c : char;
     str : string;
     ptr : c_ptr;
     rec : Point;
+}
+
+record PtrTypes
+{
+    i : c_ptr;
+    l : c_ptr;
+    f : c_ptr;
+    d : c_ptr;
+    b : c_ptr;
+    c : c_ptr;
+    str : c_ptr;
+    ptr : c_ptr;
 }
 
 extern "host" func test_types_get_int() -> int
@@ -25,12 +37,14 @@ extern "host" func test_types_get_double() -> double
 extern "host" func test_types_get_char() -> char
 extern "host" func test_types_get_string() -> string
 extern "host" func test_types_get_ptr() -> c_ptr
-extern "host" func test_types_call(b : bool, i : int, l : long, f : float, d : double, c : char, str : string, ptr : c_ptr, rec : Types) -> void
+extern "host" func test_types_call(i : int, l : long, f : float, d : double, b : bool, c : char, str : string, ptr : c_ptr, rec : Types) -> void
 extern "host" func test_types_get_rec() -> Types
 extern "host" func test_types_ptr(int_ptr : c_ptr, long_ptr : c_ptr,
                                   float_ptr : c_ptr, double_ptr : c_ptr,
                                   bool_ptr : c_ptr, char_ptr : c_ptr,
                                   string_ptr : c_ptr, ptr_ptr : c_ptr) -> void
+extern "host" func test_types_struct_ptr(ptr_types : PtrTypes) -> void                            
+extern "host" func test_types_check_int(i : c_ptr, val : int) -> void
 
 func test_ptr() -> int
 {
@@ -55,7 +69,35 @@ func test_ptr() -> int
     assert(b == true);
     assert(c == 'A');
     assert(s == "AAA");
-    /* TODO: check c_ptr_ptr */
+    assert(p == 123);
+
+    0
+}
+
+func test_struct_ptr() -> int
+{
+    let p = Point(30, 40);
+    let ptr = test_types_get_ptr();
+    let t = Types(20, 20L, 20.0, 20.0d, true, 'B', "BBB", ptr, p);
+    let ptr_t = PtrTypes(c_int_ptr(t.i),
+                         c_long_ptr(t.l),
+                         c_float_ptr(t.f),
+                         c_double_ptr(t.d),
+                         c_bool_ptr(t.b),
+                         c_char_ptr(t.c),
+                         c_string_ptr(t.str),
+                         c_ptr_ptr(t.ptr));
+
+    test_types_struct_ptr(ptr_t);
+
+    assert(t.i == 123);
+    assert(t.l == 123L);
+    assert(t.f == 123.0f);
+    assert(t.d == 123.0d);
+    assert(t.b == true);
+    assert(t.c == 'A');
+    assert(t.str == "AAA");
+    test_types_check_int(t.ptr, 123);
 
     0
 }
@@ -64,7 +106,7 @@ func main() -> int
 {
     let p = Point(30, 40);
     let ptr = test_types_get_ptr();
-    let t = Types(true, 20, 20L, 20.0, 20.0d, 'B', "BBB", ptr, p);
+    let t = Types(20, 20L, 20.0, 20.0d, true, 'B', "BBB", ptr, p);
     let g = test_types_get_rec();
 
     assert(test_types_get_int() == 10);
@@ -74,13 +116,13 @@ func main() -> int
     assert(test_types_get_char() == 'C');
     assert(test_types_get_string() == "CCC");
 
-    test_types_call(true, 10, 10L, 10.0, 10.0d, 'A', "AAA", ptr, t);
+    test_types_call(10, 10L, 10.0, 10.0d, true, 'A', "AAA", ptr, t);
 
-    assert(g.b == false);
     assert(g.i == 10);
     assert(g.l == 10L);
     assert(g.f == 10.0);
     assert(g.d == 10.0d);
+    assert(g.b == false);
     assert(g.c == 'A');
     assert(g.str == "AAA");
     assert(g.ptr == ptr);
@@ -88,6 +130,7 @@ func main() -> int
     assert(g.rec.y == 30);
 
     test_ptr();
+    test_struct_ptr();
 
     0
 }
