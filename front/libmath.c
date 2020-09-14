@@ -25,22 +25,22 @@
 #include <stdio.h>
 #include <string.h>
 
-param_list * params_bool_x()
-{
-    param_list * params = NULL;
-
-    params = param_list_new();
-    param_list_add_end(params, param_new_bool(strdup("x")));
-
-    return params;
-}
-
 param_list * params_int_x()
 {
     param_list * params = NULL;
 
     params = param_list_new();
     param_list_add_end(params, param_new_int(strdup("x")));
+
+    return params;
+}
+
+param_list * params_long_x()
+{
+    param_list * params = NULL;
+
+    params = param_list_new();
+    param_list_add_end(params, param_new_long(strdup("x")));
 
     return params;
 }
@@ -52,6 +52,26 @@ param_list * params_float_x()
     params = param_list_new();
     param_list_add_end(params, param_new_float(strdup("x")));
 
+    return params;
+}
+
+param_list * params_double_x()
+{
+    param_list * params = NULL;
+
+    params = param_list_new();
+    param_list_add_end(params, param_new_double(strdup("x")));
+
+    return params;
+}
+
+param_list * params_bool_x()
+{
+    param_list * params = NULL;
+    
+    params = param_list_new();
+    param_list_add_end(params, param_new_bool(strdup("x")));
+    
     return params;
 }
 
@@ -71,6 +91,16 @@ param_list * params_string_x()
     
     params = param_list_new();
     param_list_add_end(params, param_new_string(strdup("x")));
+    
+    return params;
+}
+
+param_list * params_c_ptr_x()
+{
+    param_list * params = NULL;
+    
+    params = param_list_new();
+    param_list_add_end(params, param_new_c_ptr(strdup("x")));
     
     return params;
 }
@@ -135,6 +165,10 @@ func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
     else if (param_ret->type == PARAM_STRING)
     {
         func_expr = expr_new_build_in(math_id, actual, param_new_string(NULL));
+    }
+    else if (param_ret->type == PARAM_C_PTR)
+    {
+        func_expr = expr_new_build_in(math_id, actual, param_new_c_ptr(NULL));
     }
     else
     {
@@ -328,6 +362,54 @@ func * libmath_func_assert_float_new()
     return libmath_func_float_x_float_y_int_new(LIB_MATH_ASSERTF);
 }
 
+func * libmath_func_c_int_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_INT_PTR, params_int_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
+func * libmath_func_c_long_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_LONG_PTR, params_long_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
+func * libmath_func_c_float_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_FLOAT_PTR, params_float_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
+func * libmath_func_c_double_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_DOUBLE_PTR, params_double_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
+func * libmath_func_c_bool_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_BOOL_PTR, params_bool_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
+func * libmath_func_c_char_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_CHAR_PTR, params_char_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
+func * libmath_func_c_string_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_STRING_PTR, params_string_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
+func * libmath_func_c_ptr_ptr_new()
+{
+    return lib_math_func_any_new(LIB_MATH_C_PTR_PTR, params_c_ptr_x(), params_x(),
+                                 param_new_c_ptr(NULL));
+}
+
 void libmath_add_funcs(func_list * funcs)
 {
     func_list_add_end(funcs, libmath_func_sin_new());
@@ -350,6 +432,14 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_length_new());
     func_list_add_end(funcs, libmath_func_assert_int_new());
     func_list_add_end(funcs, libmath_func_assert_float_new());
+    func_list_add_end(funcs, libmath_func_c_int_ptr_new());
+    func_list_add_end(funcs, libmath_func_c_long_ptr_new());
+    func_list_add_end(funcs, libmath_func_c_float_ptr_new());
+    func_list_add_end(funcs, libmath_func_c_double_ptr_new());
+    func_list_add_end(funcs, libmath_func_c_bool_ptr_new());
+    func_list_add_end(funcs, libmath_func_c_char_ptr_new());
+    func_list_add_end(funcs, libmath_func_c_string_ptr_new());
+    func_list_add_end(funcs, libmath_func_c_ptr_ptr_new());            
 }
 
 const char * libmath_func_to_str(libmath_func math_id)
@@ -398,6 +488,22 @@ const char * libmath_func_to_str(libmath_func math_id)
         return "assert";
     case LIB_MATH_ASSERTF:
         return "assertf";
+    case LIB_MATH_C_INT_PTR:
+        return "c_int_ptr";
+    case LIB_MATH_C_LONG_PTR:
+        return "c_long_ptr";
+    case LIB_MATH_C_FLOAT_PTR:
+        return "c_float_ptr";
+    case LIB_MATH_C_DOUBLE_PTR:
+        return "c_double_ptr";
+    case LIB_MATH_C_BOOL_PTR:
+        return "c_bool_ptr";
+    case LIB_MATH_C_CHAR_PTR:
+        return "c_char_ptr";
+    case LIB_MATH_C_STRING_PTR:
+        return "c_string_ptr";
+    case LIB_MATH_C_PTR_PTR:
+        return "c_ptr_ptr";
     }
     return "unknown";
 }

@@ -558,7 +558,7 @@ void * gc_get_c_ptr(gc * collector, mem_ptr addr)
     return collector->mem[addr].object_value->c_ptr_value;
 }
 
-void * gc_get_c_ptr_ptr(gc * collector, mem_ptr addr)
+void ** gc_get_c_ptr_ptr(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_C_PTR);

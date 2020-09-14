@@ -135,6 +135,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     param_value->type == PARAM_DOUBLE ||
                     param_value->type == PARAM_CHAR ||
                     param_value->type == PARAM_STRING ||
+                    param_value->type == PARAM_C_PTR ||
                     param_value->type == PARAM_ENUMTYPE ||
                     param_value->type == PARAM_DIM ||
                     param_value->type == PARAM_ARRAY ||

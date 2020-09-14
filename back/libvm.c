@@ -26,6 +26,7 @@
 #include "strutil.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <string.h>
 #include <math.h>
 #include <fenv.h>
@@ -241,9 +242,66 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         machine->sp--;
     }
     break;
-    default:
-        fprintf(stderr, "unknown build in function id %d\n", code->build_in.id);
-        assert(0);
+    case LIB_MATH_C_INT_PTR:
+    {
+        int * p =
+            gc_get_int_ptr(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
+    case LIB_MATH_C_LONG_PTR:
+    {
+        long long * p =
+            gc_get_long_ptr(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
+    case LIB_MATH_C_FLOAT_PTR:
+    {
+        float * p =
+            gc_get_float_ptr(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
+    case LIB_MATH_C_DOUBLE_PTR:
+    {
+        double * p =
+            gc_get_double_ptr(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
+    case LIB_MATH_C_BOOL_PTR:
+    {
+        int * p =
+            gc_get_int_ptr(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
+    case LIB_MATH_C_CHAR_PTR:
+    {
+        char * p =
+            gc_get_char_ptr(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
+    case LIB_MATH_C_STRING_PTR:
+    {
+        char ** p = NULL;
+        mem_ptr str_b = gc_get_string_ref(machine->collector, machine->stack[machine->sp--].addr);
+        if (str_b != nil_ptr)
+        {
+            p = gc_get_string_ptr(machine->collector, str_b);
+        }
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
+    case LIB_MATH_C_PTR_PTR:
+    {
+        void ** p =
+            gc_get_c_ptr_ptr(machine->collector, machine->stack[machine->sp].addr);
+        addr = gc_alloc_c_ptr(machine->collector, p);
+    }
+    break;
     }
 
 #ifndef NO_FFI

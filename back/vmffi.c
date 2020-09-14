@@ -553,7 +553,7 @@ void vm_execute_func_ffi(vm * machine, bytecode * code)
             break;
             case BYTECODE_FUNC_FFI_C_PTR:
             {
-                void * c_ptr_value = gc_get_c_ptr_ptr(machine->collector, machine->stack[machine->sp--].addr);
+                void ** c_ptr_value = gc_get_c_ptr_ptr(machine->collector, machine->stack[machine->sp--].addr);
                 ffi_decl_set_param_value(fd, i, c_ptr_value);
             }
             break;

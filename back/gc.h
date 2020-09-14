@@ -121,7 +121,7 @@ mem_ptr gc_get_string_ref(gc * collector, mem_ptr addr);
 void gc_set_string_ref(gc * collector, mem_ptr addr, mem_ptr string_ref);
 
 void * gc_get_c_ptr(gc * collector, mem_ptr addr);
-void * gc_get_c_ptr_ptr(gc * collector, mem_ptr addr);
+void ** gc_get_c_ptr_ptr(gc * collector, mem_ptr addr);
 void gc_set_c_ptr(gc * collector, mem_ptr addr, void * value);
 
 mem_ptr gc_get_vec(gc * collector, mem_ptr addr, unsigned int vec_index);
