@@ -50,6 +50,12 @@ typedef enum expr_type
     EXPR_AND = 22,
     EXPR_OR = 23,
     EXPR_NOT = 24,
+    EXPR_BIN_NOT = 49,
+    EXPR_BIN_AND = 50,
+    EXPR_BIN_OR = 51,
+    EXPR_BIN_XOR = 52,
+    EXPR_BIN_SHL = 53,
+    EXPR_BIN_SHR = 54,
     EXPR_SUP = 25,         /* ( expr ) */
     EXPR_COND = 26,        /* expr ? expr : expr */
     EXPR_ARRAY = 27,       /* [ expr_list ] */

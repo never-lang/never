@@ -144,11 +144,15 @@ int yyerror(module_decl ** module_nev, char * str)
 %right <val.str_value> '?' ':'
 %left TOK_OR
 %left TOK_AND
+%left TOK_BIN_OR
+%left TOK_BIN_AND
+%left TOK_BIN_XOR
 %left TOK_EQ TOK_NEQ
 %left <val.str_value> '<' '>' TOK_LTE TOK_GTE
+%left TOK_BIN_SHL TOK_BIN_SHR
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
-%right TOK_NOT /* %precedence NEG */
+%right TOK_NOT TOK_BIN_NOT /* %precedence NEG */
 %left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END TOK_DOT TOK_DDOT
 
 %start start
@@ -203,7 +207,7 @@ int yyerror(module_decl ** module_nev, char * str)
 %destructor { if ($$) never_delete($$); } never
 %destructor { } start
 
-%pure-parser
+%define api.pure
 %parse-param { module_decl ** module_nev }
 
 %%
@@ -368,6 +372,42 @@ expr: TOK_NOT expr
 {
     $$ = expr_new_one(EXPR_NOT, $2);
     $$->line_no = $<line_no>1;
+};
+
+expr: TOK_BIN_NOT expr
+{
+    $$ = expr_new_one(EXPR_BIN_NOT, $2);
+    $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_BIN_AND expr
+{
+    $$ = expr_new_two(EXPR_BIN_AND, $1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_BIN_OR expr
+{
+    $$ = expr_new_two(EXPR_BIN_OR, $1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_BIN_XOR expr
+{
+    $$ = expr_new_two(EXPR_BIN_XOR, $1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_BIN_SHL expr
+{
+    $$ = expr_new_two(EXPR_BIN_SHL, $1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_BIN_SHR expr
+{
+    $$ = expr_new_two(EXPR_BIN_SHR, $1, $3);
+    $$->line_no = $<line_no>2;
 };
 
 expr: '(' expr ')'

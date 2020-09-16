@@ -2228,8 +2228,68 @@ int expr_not_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot ne types %s",
+        print_error_msg(value->line_no, "cannot ne type %s",
                         comb_type_str(value->left->comb.comb));
+    }
+
+    return 0;
+}
+
+int expr_bin_not_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
+{
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    if (value->left->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG)
+    {
+        value->comb.comb = COMB_TYPE_LONG;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot bin not type %s",
+                        comb_type_str(value->left->comb.comb));
+    }
+    
+    return 0;
+}
+
+int expr_bin_op_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
+{
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    expr_check_type(tab, value->right, func_value, syn_level, result);
+    if (value->left->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+             value->right->comb.comb == COMB_TYPE_INT)
+    {
+        expr_conv(value->right, CONV_INT_TO_LONG);
+        value->comb.comb = COMB_TYPE_LONG;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        expr_conv(value->left, CONV_INT_TO_LONG);
+        value->comb.comb = COMB_TYPE_LONG;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+             value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        value->comb.comb = COMB_TYPE_LONG;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot compare types %s %s",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
     }
 
     return 0;
@@ -3242,6 +3302,16 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         break;
     case EXPR_NOT:
         expr_not_check_type(tab, value, func_value, syn_level, result);
+        break;
+    case EXPR_BIN_NOT:
+        expr_bin_not_check_type(tab, value, func_value, syn_level, result);
+        break;
+    case EXPR_BIN_AND:
+    case EXPR_BIN_OR:
+    case EXPR_BIN_XOR:
+    case EXPR_BIN_SHL:
+    case EXPR_BIN_SHR:
+        expr_bin_op_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_SUP:
         expr_check_type(tab, value->left, func_value, syn_level, result);

@@ -370,6 +370,105 @@ int expr_enumred(expr * value, int * result)
             expr_delete(left_value);
         }
         break;
+    case EXPR_BIN_NOT:
+        expr_enumred(value->left, result);
+
+        if (value->left->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = ~(left_value->int_value);
+
+            expr_delete(left_value);
+        }
+        break;
+    case EXPR_BIN_AND:
+        expr_enumred(value->left, result);
+        expr_enumred(value->right, result);
+
+        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value & right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        break;
+    case EXPR_BIN_OR:
+        expr_enumred(value->left, result);
+        expr_enumred(value->right, result);
+
+        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value | right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        break;
+    case EXPR_BIN_XOR:
+        expr_enumred(value->left, result);
+        expr_enumred(value->right, result);
+
+        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value ^ right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        break;
+    case EXPR_BIN_SHL:
+        expr_enumred(value->left, result);
+        expr_enumred(value->right, result);
+
+        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value << right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        break;
+    case EXPR_BIN_SHR:
+        expr_enumred(value->left, result);
+        expr_enumred(value->right, result);
+
+        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+        {
+            expr * left_value = value->left;
+            expr * right_value = value->right;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value >> right_value->int_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+        }
+        break;
     case EXPR_SUP:
         expr_enumred(value->left, result);
 
