@@ -1516,6 +1516,198 @@ int expr_not_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_bin_not_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    expr_emit(value->left, stack_level, module_value, list_weak, result);
+        
+    if (value->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_BIN_NOT_INT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->comb.comb == COMB_TYPE_LONG)
+    {
+        bc.type = BYTECODE_OP_BIN_NOT_LONG;
+        bytecode_add(module_value->code, &bc);
+    }
+    else
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no, "cannot bin not type %s",
+                        comb_type_str(value->comb.comb));
+        assert(0);
+    }
+
+    return 0;
+}
+
+int expr_bin_and_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->left, stack_level, module_value, list_weak, result);
+    expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_BIN_AND_INT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+                value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        bc.type = BYTECODE_OP_BIN_AND_LONG;
+        bytecode_add(module_value->code, &bc);
+    }
+    else
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no,
+                        "cannot bin and types %s %s",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+        assert(0);
+    }
+
+    return 0;
+}
+
+int expr_bin_or_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->left, stack_level, module_value, list_weak, result);
+    expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_BIN_OR_INT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+                value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        bc.type = BYTECODE_OP_BIN_OR_LONG;
+        bytecode_add(module_value->code, &bc);
+    }
+    else
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no,
+                        "cannot bin or types %s %s",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+        assert(0);
+    }
+
+    return 0;
+}
+
+int expr_bin_xor_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->left, stack_level, module_value, list_weak, result);
+    expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_BIN_XOR_INT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+                value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        bc.type = BYTECODE_OP_BIN_XOR_LONG;
+        bytecode_add(module_value->code, &bc);
+    }
+    else
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no,
+                        "cannot bin xor types %s %s",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+        assert(0);
+    }
+
+    return 0;
+}
+
+int expr_bin_shl_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->left, stack_level, module_value, list_weak, result);
+    expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_BIN_SHL_INT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+                value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        bc.type = BYTECODE_OP_BIN_SHL_LONG;
+        bytecode_add(module_value->code, &bc);
+    }
+    else
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no,
+                        "cannot bin shl types %s %s",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+        assert(0);
+    }
+
+    return 0;
+}
+
+int expr_bin_shr_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->left, stack_level, module_value, list_weak, result);
+    expr_emit(value->right, stack_level + 1, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        bc.type = BYTECODE_OP_BIN_SHR_INT;
+        bytecode_add(module_value->code, &bc);
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+                value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        bc.type = BYTECODE_OP_BIN_SHR_LONG;
+        bytecode_add(module_value->code, &bc);
+    }
+    else
+    {
+        *result = EMIT_FAIL;
+        print_error_msg(value->line_no,
+                        "cannot bin shr types %s %s",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+        assert(0);
+    }
+
+    return 0;
+}
+
 int expr_ass_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result)
 {
@@ -2886,13 +3078,22 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         expr_not_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_BIN_NOT:
+        expr_bin_not_emit(value, stack_level, module_value, list_weak, result);
+        break;
     case EXPR_BIN_AND:
+        expr_bin_and_emit(value, stack_level, module_value, list_weak, result);
+        break;
     case EXPR_BIN_OR:
+        expr_bin_or_emit(value, stack_level, module_value, list_weak, result);
+        break;
     case EXPR_BIN_XOR:
+        expr_bin_xor_emit(value, stack_level, module_value, list_weak, result);
+        break;
     case EXPR_BIN_SHL:
+        expr_bin_shl_emit(value, stack_level, module_value, list_weak, result);
+        break;
     case EXPR_BIN_SHR:
-        /* TODO: emit code for these */
-        assert(0);
+        expr_bin_shr_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_SUP:
         expr_emit(value->left, stack_level, module_value, list_weak, result);

@@ -15,7 +15,7 @@ func cl(z : int) -> [_] : int
 {
     let Z = 2 * z;
     
-    [ Z + x | x in [ 1, 10, 100, 1000 ] : int ] : int
+    [ Z + x <- x in [ 1, 10, 100, 1000 ] : int ] : int
 }
     
 func main() -> int

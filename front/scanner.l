@@ -278,13 +278,13 @@ double {
 
 "~" {
     tokp->line_no = line_no;
-    scanner_printf("|\n", yytext);
+    scanner_printf("~\n", yytext);
     return TOK_BIN_NOT;
 }
 
 "&" {
     tokp->line_no = line_no;
-    scanner_printf("|\n", yytext);
+    scanner_printf("&\n", yytext);
     return TOK_BIN_AND;
 }
 
@@ -296,7 +296,7 @@ double {
 
 "^" {
     tokp->line_no = line_no;
-    scanner_printf("|\n", yytext);
+    scanner_printf("^\n", yytext);
     return TOK_BIN_XOR;
 }
 
@@ -370,6 +370,12 @@ double {
     tokp->line_no = line_no;
     scanner_printf("return %s\n", yytext);
     return TOK_RET;
+}
+
+"<-" {
+    tokp->line_no = line_no;
+    scanner_printf("<-\n", yytext);
+    return TOK_IN;
 }
 
 "&&" {

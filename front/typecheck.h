@@ -40,7 +40,7 @@ int enum_matchbind_list(matchbind_list * list);
 
 int expr_set_comb_type(expr * value, param * param_value);
 int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result);
-int expr_qualifier_set_comb_type(expr * value, expr * expr_value);
+int expr_qualifier_set_comb_type(expr * value, expr * expr_value, int * result);
 int expr_conv_basic_type(expr * value, expr * expr_left, expr * expr_right);
 int expr_conv_string_type(expr * value, expr * expr_left, expr * expr_right);
 int expr_conv_enumerator(expr * value);

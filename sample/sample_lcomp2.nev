@@ -9,7 +9,7 @@ func main() -> int
                        prints("###" + txt + "###\n");
                        0
                    } 
-                   | txt in texts
+                   <- txt in texts
                  ] : () -> int;
 
     for (i = 0; i < 3; i = i + 1)

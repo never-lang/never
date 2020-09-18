@@ -19,7 +19,7 @@ func main() -> int
                 {
                     [ from .. to ]
                 }
-                |
+                <-
                 from in [ 0 .. 10 ];
                 to in [ 0 .. 10 ]
             ] : () -> [..] : range;

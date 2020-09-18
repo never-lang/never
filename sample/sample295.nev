@@ -22,8 +22,8 @@ func print_cl(cl[D] : (float) -> float) -> int
 
 func cl() -> [_] : (float) -> float
 {    
-    [ g | f in [ sin, cos ] : (float) -> float;
-          g in [ let func(x : float) -> float { f(x) } ] : (float) -> float ] : (float) -> float
+    [ g <- f in [ sin, cos ] : (float) -> float;
+           g in [ let func(x : float) -> float { f(x) } ] : (float) -> float ] : (float) -> float
 }
     
 func main() -> int
