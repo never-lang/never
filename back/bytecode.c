@@ -150,20 +150,6 @@ bytecode_op_str bytecode_op[] = {
 
     { BYTECODE_OP_NOT_INT, bytecode_print_op_not_int },
 
-    { BYTECODE_OP_BIN_NOT_INT, bytecode_print_op_bin_not_int },
-    { BYTECODE_OP_BIN_AND_INT, bytecode_print_op_bin_and_int },
-    { BYTECODE_OP_BIN_OR_INT, bytecode_print_op_bin_or_int },
-    { BYTECODE_OP_BIN_XOR_INT, bytecode_print_op_bin_xor_int },
-    { BYTECODE_OP_BIN_SHL_INT, bytecode_print_op_bin_shl_int },
-    { BYTECODE_OP_BIN_SHR_INT, bytecode_print_op_bin_shr_int },
-
-    { BYTECODE_OP_BIN_NOT_LONG, bytecode_print_op_bin_not_long },
-    { BYTECODE_OP_BIN_AND_LONG, bytecode_print_op_bin_and_long },
-    { BYTECODE_OP_BIN_OR_LONG, bytecode_print_op_bin_or_long },
-    { BYTECODE_OP_BIN_XOR_LONG, bytecode_print_op_bin_xor_long },
-    { BYTECODE_OP_BIN_SHL_LONG, bytecode_print_op_bin_shl_long },
-    { BYTECODE_OP_BIN_SHR_LONG, bytecode_print_op_bin_shr_long },
-
     { BYTECODE_OP_INC_INT, bytecode_print_op_inc_int },
     { BYTECODE_OP_DEC_INT, bytecode_print_op_dec_int },
     { BYTECODE_OP_DUP_INT, bytecode_print_op_dup_int },
@@ -807,66 +793,6 @@ void bytecode_print_op_neq_nil_func(bytecode * code)
 void bytecode_print_op_not_int(bytecode * code)
 {
     printf("%d: op not\n", code->addr);
-}
-
-void bytecode_print_op_bin_not_int(bytecode * code)
-{
-    printf("%d: op bin not int\n", code->addr);
-}
-
-void bytecode_print_op_bin_and_int(bytecode * code)
-{
-    printf("%d: op bin and int\n", code->addr);
-}
-
-void bytecode_print_op_bin_or_int(bytecode * code)
-{
-    printf("%d: op bin or int\n", code->addr);
-}
-
-void bytecode_print_op_bin_xor_int(bytecode * code)
-{
-    printf("%d: op bin xor int\n", code->addr);
-}
-
-void bytecode_print_op_bin_shl_int(bytecode * code)
-{
-    printf("%d: op bin shl int\n", code->addr);
-}
-
-void bytecode_print_op_bin_shr_int(bytecode * code)
-{
-    printf("%d: op bin shr int\n", code->addr);
-}
-
-void bytecode_print_op_bin_not_long(bytecode * code)
-{
-    printf("%d: op bin not long\n", code->addr);
-}
-
-void bytecode_print_op_bin_and_long(bytecode * code)
-{
-    printf("%d: op bin and long\n", code->addr);
-}
-
-void bytecode_print_op_bin_or_long(bytecode * code)
-{
-    printf("%d: op bin or long\n", code->addr);
-}
-
-void bytecode_print_op_bin_xor_long(bytecode * code)
-{
-    printf("%d: op bin xor long\n", code->addr);
-}
-
-void bytecode_print_op_bin_shl_long(bytecode * code)
-{
-    printf("%d: op bin shl long\n", code->addr);
-}
-
-void bytecode_print_op_bin_shr_long(bytecode * code)
-{
-    printf("%d: op bin shr long\n", code->addr);
 }
 
 void bytecode_print_op_inc_int(bytecode * code)

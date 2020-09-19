@@ -18,7 +18,7 @@ func cl(z : int) -> [_] : int
         2 * x
     }
 
-    [ y + z <- x in [10, 20, 30, 40, 50] : int; y in [d(x + 1), d(x + 2), d(x + 3)] : int ] : int
+    [ y + z| x in [10, 20, 30, 40, 50] : int; y in [d(x + 1), d(x + 2), d(x + 3)] : int ] : int
 }
     
 func main() -> int

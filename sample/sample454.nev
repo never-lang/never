@@ -15,7 +15,7 @@ func pr_ranges( ranges[D] : [..] : range ) -> int
 
 func main() -> int
 {
-    let r = [ [ from .. to ] <- from in [ 0 .. 10 ]; to in [ 0 .. 10 ] ] : [..] : range;
+    let r = [ [ from .. to ] | from in [ 0 .. 10 ]; to in [ 0 .. 10 ] ] : [..] : range;
 
     pr_ranges(r);
 
