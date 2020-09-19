@@ -138,16 +138,7 @@ int print_func_expr(expr * value, int depth)
         print_func_expr(value->right, depth);
         break;
     case EXPR_NOT:
-    case EXPR_BIN_NOT:
         print_func_expr(value->left, depth);
-        break;
-    case EXPR_BIN_AND:
-    case EXPR_BIN_OR:
-    case EXPR_BIN_XOR:
-    case EXPR_BIN_SHL:
-    case EXPR_BIN_SHR:
-        print_func_expr(value->left, depth);
-        print_func_expr(value->right, depth);
         break;
     case EXPR_SUP:
         print_func_expr(value->left, depth);

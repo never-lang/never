@@ -2885,15 +2885,6 @@ int expr_emit(expr * value, int stack_level, module * module_value,
     case EXPR_NOT:
         expr_not_emit(value, stack_level, module_value, list_weak, result);
         break;
-    case EXPR_BIN_NOT:
-    case EXPR_BIN_AND:
-    case EXPR_BIN_OR:
-    case EXPR_BIN_XOR:
-    case EXPR_BIN_SHL:
-    case EXPR_BIN_SHR:
-        /* TODO: emit code for these */
-        assert(0);
-        break;
     case EXPR_SUP:
         expr_emit(value->left, stack_level, module_value, list_weak, result);
         break;

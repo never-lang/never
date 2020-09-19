@@ -780,16 +780,7 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->right, result);
         break;
     case EXPR_NOT:
-    case EXPR_BIN_NOT:
         func_gencode_freevars_expr(func_value, stab, value->left, result);
-        break;
-    case EXPR_BIN_AND:
-    case EXPR_BIN_OR:
-    case EXPR_BIN_XOR:
-    case EXPR_BIN_SHL:
-    case EXPR_BIN_SHR:
-        func_gencode_freevars_expr(func_value, stab, value->left, result);
-        func_gencode_freevars_expr(func_value, stab, value->right, result);
         break;
     case EXPR_SUP:
         func_gencode_freevars_expr(func_value, stab, value->left, result);

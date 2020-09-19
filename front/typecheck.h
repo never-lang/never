@@ -109,8 +109,6 @@ int expr_mod_check_type(symtab * tab, expr * value, func * func_value, unsigned 
 int expr_lgte_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
 int expr_and_or_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
 int expr_not_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
-int expr_bin_not_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
-int expr_bin_op_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
 int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                         int * result);
 int expr_eq_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
