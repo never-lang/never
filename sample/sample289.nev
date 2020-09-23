@@ -19,7 +19,7 @@ func cl(z : int) -> [_] : (int) -> int
           c + v * u
       }
 
-      <- 
+      : 
 
       u in [ 1, 10, 100, 1000 ] : int
 

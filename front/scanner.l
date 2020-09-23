@@ -372,12 +372,6 @@ double {
     return TOK_RET;
 }
 
-"<-" {
-    tokp->line_no = line_no;
-    scanner_printf("<-\n", yytext);
-    return TOK_IN;
-}
-
 "&&" {
     tokp->line_no = line_no;
     scanner_printf("&&\n", yytext);

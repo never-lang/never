@@ -13,7 +13,7 @@ func print_cl(cl[D] : int) -> int
 
 func cl(sq[D] : int) -> [_] : int
 {
-    [ x * x <- x in sq ] : int
+    [ x * x : x in sq ] : int
 }
     
 func main() -> int

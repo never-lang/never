@@ -9,7 +9,7 @@ func main() -> int
 {
     var i = 0;
     var texts = [ "one", "two", "three" ] : string;
-    var decors = [ decor(txt) <- txt in texts ] : string;
+    var decors = [ decor(txt) : txt in texts ] : string;
 
     for (i = 0; i < 3; i = i + 1)
     {
