@@ -154,6 +154,14 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         addr = gc_alloc_int(machine->collector, x);
     }
     break;
+    case LIB_MATH_PRINTL:
+    {
+        long long x =
+            gc_get_long(machine->collector, machine->stack[machine->sp].addr);
+        string_print_long(x);
+        addr = gc_alloc_long(machine->collector, x);
+    }
+    break;
     case LIB_MATH_PRINTB:
     {
         int x =

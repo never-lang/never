@@ -235,6 +235,11 @@ void string_print_int(int val)
     printf("%d\r\n", val);
 }
 
+void string_print_long(long long val)
+{
+    printf("%lld\r\n", val);
+}
+
 void string_print_float(float val)
 {
     printf("%.2f\r\n", val);
