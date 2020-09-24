@@ -245,6 +245,11 @@ void string_print_float(float val)
     printf("%.2f\r\n", val);
 }
 
+void string_print_double(double val)
+{
+    printf("%.2lf\r\n", val);
+}
+
 void string_print_char(char val)
 {
     printf("%c", val);

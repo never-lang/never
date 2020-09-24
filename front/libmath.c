@@ -162,6 +162,10 @@ func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
     {
         func_expr = expr_new_build_in(math_id, actual, param_new_float(NULL));
     }
+    else if (param_ret->type == PARAM_DOUBLE)
+    {
+        func_expr = expr_new_build_in(math_id, actual, param_new_double(NULL));
+    }
     else if (param_ret->type == PARAM_CHAR)
     {
         func_expr = expr_new_build_in(math_id, actual, param_new_char(NULL));
@@ -210,6 +214,12 @@ func * libmath_func_float_x_new(libmath_func math_id)
 {
     return lib_math_func_any_new(math_id, params_float_x(), params_x(),
                                  param_new_float(NULL));
+}
+
+func * libmath_func_double_x_new(libmath_func math_id)
+{
+    return lib_math_func_any_new(math_id, params_double_x(), params_x(),
+                                 param_new_double(NULL));
 }
 
 func * libmath_func_float_x_float_y_new(libmath_func math_id)
@@ -352,6 +362,11 @@ func * libmath_func_print_float_new()
     return libmath_func_float_x_new(LIB_MATH_PRINTF);
 }
 
+func * libmath_func_print_double_new()
+{
+    return libmath_func_double_x_new(LIB_MATH_PRINTD);
+}
+
 func * libmath_func_print_char_new()
 {
     return libmath_func_char_x_new(LIB_MATH_PRINTC);
@@ -443,6 +458,7 @@ void libmath_add_funcs(func_list * funcs)
     func_list_add_end(funcs, libmath_func_print_int_new());
     func_list_add_end(funcs, libmath_func_print_long_new());
     func_list_add_end(funcs, libmath_func_print_float_new());
+    func_list_add_end(funcs, libmath_func_print_double_new());
     func_list_add_end(funcs, libmath_func_print_char_new());
     func_list_add_end(funcs, libmath_func_print_string_new());
     func_list_add_end(funcs, libmath_func_length_new());
@@ -496,6 +512,8 @@ const char * libmath_func_to_str(libmath_func math_id)
         return "printb";
     case LIB_MATH_PRINTF:
         return "printf";
+    case LIB_MATH_PRINTD:
+        return "printd";
     case LIB_MATH_PRINTC:
         return "printc";
     case LIB_MATH_PRINTS:
