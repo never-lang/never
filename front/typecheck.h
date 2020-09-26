@@ -156,6 +156,10 @@ int func_except_check_type(symtab * tab, func_except * value, func * func_value,
                            unsigned int syn_level, int * result);
 int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                         int * result);
+int func_param_check_type(symtab * tab, func * func_value, unsigned int syn_level,
+                          int * result);
+int func_list_param_check_type(symtab * tab, func_list * list, unsigned int syn_level,
+                         int * result);
 int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                            int * result);
 int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,

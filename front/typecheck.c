@@ -3670,15 +3670,6 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
     {
         func_enum_param_list(func_value->decl->params);
     }
-    if (func_value->decl->params != NULL)
-    {
-        param_list_check_type(func_value->stab, func_value->decl->params, syn_level,
-                              result);
-    }
-    if (func_value->decl->ret != NULL)
-    {
-        param_check_type(func_value->stab, func_value->decl->ret, syn_level, result);
-    }
     if (func_value->decl->params)
     {
         symtab_add_param_from_param_list(func_value->stab, func_value->decl->params,
@@ -3711,6 +3702,8 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
     }
     if (func_value->body && func_value->body->funcs)
     {
+        func_list_param_check_type(func_value->stab, func_value->body->funcs,
+                                   syn_level, result);
         func_list_check_type(func_value->stab, func_value->body->funcs,
                              syn_level, result);
     }
@@ -3731,6 +3724,58 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
 
     /** set subfunction local/global indexes **/
     func_gencode_freevars(func_value, func_value->stab, result);
+
+    return 0;
+}
+
+int func_param_check_type(symtab * tab, func * func_value, unsigned int syn_level,
+                          int * result)
+{
+    switch (func_value->type)
+    {
+        case FUNC_TYPE_FFI:
+            if (func_value->decl->params != NULL)
+            {
+                param_list_ffi_check_type(tab, func_value->decl->params, syn_level,
+                                            result);
+            }
+            if (func_value->decl->ret != NULL)
+            {
+                param_ffi_check_type(tab, func_value->decl->ret, syn_level, result);
+            }
+        break;
+        case FUNC_TYPE_NATIVE:
+            if (func_value->decl->params != NULL)
+            {
+                param_list_check_type(tab, func_value->decl->params, syn_level,
+                                    result);
+            }
+            if (func_value->decl->ret != NULL)
+            {
+                param_check_type(tab, func_value->decl->ret, syn_level, result);
+            }
+        break;
+        case FUNC_TYPE_UNKNOWN:
+            assert(0);
+        break;
+    }
+
+    return 0;
+}                               
+
+int func_list_param_check_type(symtab * tab, func_list * list, unsigned int syn_level,
+                               int * result)
+{
+    func_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        func * func_value = node->value;
+        if (func_value && func_value->decl)
+        {
+            func_param_check_type(tab, func_value, syn_level, result);
+        }
+        node = node->next;
+    }
 
     return 0;
 }
@@ -4271,6 +4316,7 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
 
     if (nev->funcs != NULL)
     {
+        func_list_param_check_type(nev->stab, nev->funcs, syn_level, result);
         func_list_enum(nev->funcs, start);
         func_list_check_type(nev->stab, nev->funcs, syn_level, result);
     }
