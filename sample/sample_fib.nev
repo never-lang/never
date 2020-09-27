@@ -1,11 +1,16 @@
-func fib(n : long) -> long
+func fibL(n : long) -> long
 {
-    (n == 0L) ? 0L : (n == 1L) ? 1L : fib(n - 1L) + fib(n - 2L)
+    (n == 0L) ? 0L : (n == 1L) ? 1L : fibL(n - 1L) + fibL(n - 2L)
+}
+
+func fib(n : int) -> int
+{
+    (n == 0) ? 0 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
 }
 
 func main() -> int 
 {
-    printl(fib(34L));
+    print(fib(34));
 
     0
 }

@@ -48,6 +48,7 @@ void string_print(char * val);
 void string_print_int(int val);
 void string_print_long(long long val);
 void string_print_float(float val);
+void string_print_double(double val);
 void string_print_char(char val);
 
 #endif /* __STRUTIL_H__ */

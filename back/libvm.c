@@ -178,6 +178,14 @@ void libvm_execute_build_in(vm * machine, bytecode * code)
         addr = gc_alloc_float(machine->collector, x);
     }
     break;
+    case LIB_MATH_PRINTD:
+    {
+        double x =
+            gc_get_double(machine->collector, machine->stack[machine->sp].addr);
+        string_print_double(x);
+        addr = gc_alloc_double(machine->collector, x);
+    }
+    break;
     case LIB_MATH_PRINTC:
     {
         char x = gc_get_char(machine->collector, machine->stack[machine->sp].addr);

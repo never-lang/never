@@ -43,6 +43,7 @@ typedef enum libmath_func
     LIB_MATH_PRINTL,
     LIB_MATH_PRINTB,
     LIB_MATH_PRINTF,
+    LIB_MATH_PRINTD,
     LIB_MATH_PRINTC,
     LIB_MATH_PRINTS,
     LIB_MATH_LENGTH,
@@ -100,6 +101,7 @@ func * libmath_func_print_bool_new();
 func * libmath_func_print_long_new();
 func * libmath_func_print_int_new();
 func * libmath_func_print_float_new();
+func * libmath_func_print_double_new();
 func * libmath_func_print_char_new();
 func * libmath_func_print_string_new();
 func * libmath_func_length_new();
