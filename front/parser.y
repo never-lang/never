@@ -203,7 +203,7 @@ int yyerror(module_decl ** module_nev, char * str)
 %destructor { if ($$) never_delete($$); } never
 %destructor { } start
 
-%pure-parser
+%define api.pure
 %parse-param { module_decl ** module_nev }
 
 %%
