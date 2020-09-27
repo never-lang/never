@@ -10,7 +10,7 @@ func fib(n : int) -> int
 
 func main() -> int 
 {
-    print(fib(34));
+    print(fib(14));
 
     0
 }
