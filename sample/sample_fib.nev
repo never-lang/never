@@ -1,10 +1,12 @@
-func fib(n : int) -> int 
+func fib(n : long) -> long
 {
-    (n == 0) ? 1 : (n == 1) ? 1 : fib(n - 1) + fib(n - 2)
+    (n == 0L) ? 0L : (n == 1L) ? 1L : fib(n - 1L) + fib(n - 2L)
 }
 
 func main() -> int 
 {
-    print(fib(20))
+    printl(fib(34L));
+
+    0
 }
 
