@@ -529,8 +529,7 @@ void expr_delete(expr * value)
     case EXPR_NEQ:
     case EXPR_AND:
     case EXPR_OR:
-    case EXPR_COMPL:
-    case EXPR_COMPR:
+    case EXPR_PIPEL:
         expr_delete(value->left);
         expr_delete(value->right);
         break;
@@ -801,8 +800,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_NEQ: return "neq";
     case EXPR_AND: return "and";
     case EXPR_OR: return "or";
-    case EXPR_COMPL: return "compl";
-    case EXPR_COMPR: return "compr";
+    case EXPR_PIPEL: return "compl";
     case EXPR_NOT: return "not";
     case EXPR_SUP: return "sup";
     case EXPR_COND: return "cond";

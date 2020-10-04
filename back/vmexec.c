@@ -2587,7 +2587,7 @@ void vm_execute_func_obj(vm * machine, bytecode * code) { /* no op */ }
 void vm_execute_dup(vm * machine, bytecode * code)
 {
     machine->sp++;
-    machine->stack[machine->sp] = machine->stack[machine->sp - 1];
+    machine->stack[machine->sp] = machine->stack[machine->sp - code->dup.n];
 }
 
 void vm_execute_global_vec(vm * machine, bytecode * code)

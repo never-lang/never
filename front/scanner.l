@@ -405,13 +405,7 @@ double {
 "|>" {
     tokp->line_no = line_no;
     scanner_printf("%s\n", yytext);
-    return TOK_COMPL;
-}
-
-"<|" {
-    tokp->line_no = line_no;
-    scanner_printf("%s\n", yytext);
-    return TOK_COMPR;
+    return TOK_PIPEL;
 }
 
 {DIGIT}+[lL] {

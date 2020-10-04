@@ -1253,7 +1253,7 @@ void bytecode_print_func_ffi_record(bytecode * code)
 
 void bytecode_print_dup(bytecode * code)
 {
-    printf("%d: dup\n", code->addr);
+    printf("%d: dup %u\n", code->addr, code->dup.n);
 }
 
 void bytecode_print_global_vec(bytecode * code)

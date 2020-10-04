@@ -340,6 +340,10 @@ typedef struct bytecode
         {
             int offset;
         } jump;
+        struct /* BYTECODE_DUP */
+        {
+            unsigned int n;
+        } dup;
         struct /* BYTECODE_GLOBAL_VEC */
         {
             unsigned int count;

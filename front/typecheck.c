@@ -3362,8 +3362,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
     case EXPR_OR:
         expr_and_or_check_type(tab, value, func_value, syn_level, result);
         break;
-    case EXPR_COMPL:
-    case EXPR_COMPR:
+    case EXPR_PIPEL:
         expr_complr_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_NOT:

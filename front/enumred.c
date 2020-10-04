@@ -454,8 +454,7 @@ int expr_enumred(expr * value, int * result)
             }
         }
         break;
-    case EXPR_COMPL:
-    case EXPR_COMPR:
+    case EXPR_PIPEL:
     case EXPR_ARRAY:
     case EXPR_ARRAY_DEREF:
     case EXPR_CALL:

@@ -49,8 +49,7 @@ typedef enum expr_type
     EXPR_NEQ = 21,
     EXPR_AND = 22,
     EXPR_OR = 23,
-    EXPR_COMPL = 50,
-    EXPR_COMPR = 51,
+    EXPR_PIPEL = 50,
     EXPR_NOT = 24,
     EXPR_SUP = 25,         /* ( expr ) */
     EXPR_COND = 26,        /* expr ? expr : expr */
