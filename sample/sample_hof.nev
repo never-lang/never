@@ -2,16 +2,20 @@
 record tab
 {
     t[T] : int;
+
+    filter(t : tab, f(e : int) -> bool) -> tab;
+    map(t : tab, f(e : int) -> int) -> tab;
+    reduce(t : tab, i : int, f(a : int, e : int) -> int) -> int;
 }
 
 func filter(t : tab, f(e : int) -> bool) -> tab
 {
-    tab( [ e | e in t.t; f(e) == true ] : int )
+    tab( [ e | e in t.t; f(e) == true ] : int, filter, map, reduce )
 }
 
 func map(t : tab, f(e : int) -> int) -> tab
 {
-    tab( [ f(e) | e in t.t ] : int )
+    tab( [ f(e) | e in t.t ] : int, filter, map, reduce )
 }
 
 func reduce(t : tab, i : int, f(a : int, e : int) -> int) -> int
@@ -41,9 +45,10 @@ func print_tab(t : tab) -> int
 
 func main() -> int
 {
-    let t = tab( [1, 2, 3, 4, 5, 6, 7, 8] : int );
+    let t = tab( [1, 2, 3, 4, 5, 6, 7, 8] : int, filter, map, reduce );
+    let s = t;
 
-    prints("---tab---\n");
+/*    prints("---tab---\n");
     print_tab(t);
 
     prints("---filter---\n");
@@ -54,13 +59,27 @@ func main() -> int
 
     prints("---reduce---\n");
     print( reduce(t, 0, let func(a : int, e : int) -> int { a + e }) );
-
-    prints("---filter.map.reduce----\n");
+*/
+/*
+    prints("---filter.map.reduce--1---\n");
     print(reduce(map(filter(t,
                             let func(e : int) -> bool { (e % 2) == 0 }),
                      let func(e : int) -> int { 10 * e }),
                  0,
                  let func(a : int, e : int) -> int { a + e })
          );
+*/
+/*
+    prints("---filter.map.reduce--2---\n");
+    s = filter(t, let func(e : int) -> bool { (e % 2) == 0 });
+    s = map(s, let func(e : int) -> int { 10 * e });
+    print( reduce(s, 0, let func(a : int, e : int) -> int { a + e }) );
+*/
+    prints("---filter.map.reduce--3---\n");
+    print(  t.filter(let func(e : int) -> bool { (e % 2) == 0 })
+             .map(let func(e : int) -> int { 10 * e })
+             .reduce(0, let func(a : int, e : int) -> int { a + e })
+         );
+
     0
 }

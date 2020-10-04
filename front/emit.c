@@ -2885,6 +2885,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
     case EXPR_NOT:
         expr_not_emit(value, stack_level, module_value, list_weak, result);
         break;
+    case EXPR_COMPL:
+    case EXPR_COMPR:
+        /* TODO: emit code for expr compl and compr */
+        assert(0);
+        break;
     case EXPR_SUP:
         expr_emit(value->left, stack_level, module_value, list_weak, result);
         break;

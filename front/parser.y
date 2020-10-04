@@ -149,6 +149,8 @@ int yyerror(module_decl ** module_nev, char * str)
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
 %right TOK_NOT /* %precedence NEG */
+%left TOK_COMPL
+%right TOK_COMPR /* %precedence TOK_COMPL */
 %left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END TOK_DOT TOK_DDOT
 
 %start start
@@ -361,6 +363,18 @@ expr: expr TOK_AND expr
 expr: expr TOK_OR expr
 {
     $$ = expr_new_two(EXPR_OR, $1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_COMPL expr
+{
+    $$ = expr_new_two(EXPR_COMPL, $1, $3);
+    $$->line_no = $<line_no>2;
+};
+
+expr: expr TOK_COMPR expr %prec TOK_COMPL
+{
+    $$ = expr_new_two(EXPR_COMPR, $1, $3);
     $$->line_no = $<line_no>2;
 };
 

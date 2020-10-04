@@ -1,0 +1,32 @@
+
+func one() -> int
+{
+    prints("one ");
+    1
+}
+
+func two() -> int
+{
+    prints("two ");
+    2
+}
+
+func three() -> int
+{
+    prints("three ");
+    3
+}
+
+func main() -> int
+{
+    /* let i = one() = two() = three(); */
+    let i = 1;
+    let j = 2;
+    
+    i = { two(); j } = { one(); 10 };
+
+    print(i);
+    print(j);
+
+    0
+}

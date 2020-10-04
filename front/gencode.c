@@ -779,6 +779,11 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         func_gencode_freevars_expr(func_value, stab, value->left, result);
         func_gencode_freevars_expr(func_value, stab, value->right, result);
         break;
+    case EXPR_COMPL:
+    case EXPR_COMPR:
+        func_gencode_freevars_expr(func_value, stab, value->left, result);
+        func_gencode_freevars_expr(func_value, stab, value->right, result);
+        break;
     case EXPR_NOT:
         func_gencode_freevars_expr(func_value, stab, value->left, result);
         break;

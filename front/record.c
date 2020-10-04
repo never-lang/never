@@ -77,5 +77,3 @@ param * record_find_param(record * record_value, char * id)
 
     return ret;
 }
-
-
