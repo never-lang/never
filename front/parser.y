@@ -140,8 +140,8 @@ int yyerror(module_decl ** module_nev, char * str)
 %right TOK_IF TOK_ELSE TOK_FOR
 %right TOK_RET
 
-%left TOK_PIPEL
 %right '='
+%left TOK_PIPEL
 %right <val.str_value> '?' ':'
 %left TOK_OR
 %left TOK_AND

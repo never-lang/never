@@ -1,0 +1,17 @@
+
+func getF() -> (int) -> int
+{
+    let func(i : int) -> int
+    {
+        let v = 10 * i;
+        v |> print();
+        v
+    }
+}
+
+func main() -> int
+{
+    2 |> getF()();
+
+    0
+}

@@ -1,0 +1,13 @@
+
+func rec(i : int) -> int
+{
+    print(i);
+    i > 0 ? i - 1 |> rec() : 0
+}
+
+func main() -> int
+{
+    print(rec(10));
+
+    0
+}

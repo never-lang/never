@@ -136,7 +136,6 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         expr_tailrec(syn_level, stab, value->right, TAILREC_OP_SKIP);
     break;
     case EXPR_PIPEL:
-        /* TODO: write test to check this */
         expr_tailrec(syn_level, stab, value->left, TAILREC_OP_SKIP);
         expr_tailrec(syn_level, stab, value->right, op);
     break;

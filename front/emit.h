@@ -123,6 +123,10 @@ int expr_or_emit(expr * value, int stack_level, module * module_value,
                  func_list_weak * list_weak, int * result);
 int expr_not_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
+int expr_pipel_call_emit(expr * value, int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result);
+int expr_pipel_last_call_emit(expr * value, int stack_level, module * module_value,
+                              func_list_weak * list_weak, int * result);
 int expr_pipel_emit(expr * value, int stack_level, module * module_value,
                     func_list_weak * list_weak, int * result);
 int expr_ass_emit(expr * value, int stack_level, module * module_value,
