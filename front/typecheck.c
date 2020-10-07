@@ -1047,7 +1047,6 @@ int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_l
     }
 
     param_list_node * param_node = params->tail;
-
     param * param_value = param_node->value;
     if (param_value == NULL || 
         param_expr_cmp(param_value, expr_value) == TYPECHECK_FAIL)
@@ -1059,6 +1058,10 @@ int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_l
     if (param_node == NULL && list == NULL)
     {
         return TYPECHECK_SUCC;
+    }
+    if (param_node != NULL && list == NULL)
+    {
+        return TYPECHECK_FAIL;
     }
 
     if (params->count != list->count + 1)

@@ -1,0 +1,8 @@
+
+func main() -> int
+{
+    (12 + 19) |> let func(i : int) -> int { prints("aa" + i + "aa" + "\n"); 0 }();
+
+    0
+}
+
