@@ -141,7 +141,6 @@ int yyerror(module_decl ** module_nev, char * str)
 %right TOK_RET
 
 %right '='
-%left TOK_PIPEL
 %right <val.str_value> '?' ':'
 %left TOK_OR
 %left TOK_AND
@@ -150,6 +149,7 @@ int yyerror(module_decl ** module_nev, char * str)
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
 %right TOK_NOT /* %precedence NEG */
+%left TOK_PIPEL
 %left <val.str_value> '(' ')' '[' ']' ARR_DIM_BEG ARR_DIM_END TOK_DOT TOK_DDOT
 
 %start start

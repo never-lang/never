@@ -775,29 +775,6 @@ int param_expr_slice_cmp(param * param_value, expr * expr_value)
     return param_cmp(param_value->ret, expr_value->comb.comb_ret);
 }
 
-/*
-int param_param_cmp(param * left, param * right)
-{
-    if (left == NULL && right == NULL)
-    {
-        return TYPECHECK_SUCC;
-    }
-    if ((left != NULL) && (right == NULL))
-    {
-        return TYPECHECK_FAIL;
-    }
-    if ((left == NULL) && (right != NULL))
-    {
-        return TYPECHECK_FAIL;
-    }
-    if (left->type != right->type)
-    {
-        return TYPECHECK_FAIL;
-    }
-    return 0;
-}
-*/
-
 int param_expr_cmp(param * param_value, expr * expr_value)
 {
     if (param_value == NULL && expr_value == NULL)
