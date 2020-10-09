@@ -137,6 +137,10 @@ int print_func_expr(expr * value, int depth)
         print_func_expr(value->left, depth);
         print_func_expr(value->right, depth);
         break;
+    case EXPR_PIPEL:
+        print_func_expr(value->left, depth);
+        print_func_expr(value->right, depth);
+        break;
     case EXPR_NOT:
         print_func_expr(value->left, depth);
         break;

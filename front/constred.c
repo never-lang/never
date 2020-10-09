@@ -1438,6 +1438,10 @@ int expr_constred(expr * value, int * result)
             expr_delete(right_value);
         }
         break;
+    case EXPR_PIPEL:
+        expr_constred(value->left, result);
+        expr_constred(value->right, result);
+        break;
     case EXPR_NOT:
         expr_constred(value->left, result);
 

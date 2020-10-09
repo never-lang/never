@@ -1,0 +1,25 @@
+
+func one() -> int
+{
+    prints("one ");
+    1
+}
+
+func two() -> int
+{
+    prints("two ");
+    2
+}
+
+func three() -> int
+{
+    prints("three ");
+    3
+}
+
+func main() -> int
+{
+    print(one() + two() * three());
+
+    0
+}

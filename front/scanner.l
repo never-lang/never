@@ -402,6 +402,12 @@ double {
     return TOK_DOT;
 }
 
+"|>" {
+    tokp->line_no = line_no;
+    scanner_printf("%s\n", yytext);
+    return TOK_PIPEL;
+}
+
 {DIGIT}+[lL] {
     tokp->line_no = line_no;
     sscanf(yytext, "%lld", &tokp->val.long_value);

@@ -1,0 +1,20 @@
+
+
+func p( a[B..E] : range ) -> int
+{
+    prints("range from " + B + " to " + E + "\n");
+
+    for (e in a)
+    {
+        e |> print()
+    };
+
+    0
+}
+
+func main() -> int
+{
+    [1 .. 10] |> p();
+
+    0
+}

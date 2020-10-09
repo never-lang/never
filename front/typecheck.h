@@ -54,6 +54,7 @@ int param_is_dynamic_array(param * value);
 int param_expr_array_cmp(param * param_value, expr * expr_value);
 int param_expr_cmp(param * param_value, expr * expr_value);
 int param_expr_list_cmp(param_list * params, expr_list * list);
+int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_list * list);
 
 int expr_comb_is_enum(expr * value, int * result);
 int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result);

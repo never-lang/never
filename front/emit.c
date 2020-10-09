@@ -1516,6 +1516,108 @@ int expr_not_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_pipel_call_emit(expr * value, int stack_level, module * module_value,
+                         func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+    bytecode *mark, *label;
+
+    assert(value->right->type == EXPR_CALL);
+
+    bc.type = BYTECODE_LINE;
+    bc.line.no = value->line_no;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_MARK;
+    mark = bytecode_add(module_value->code, &bc);
+
+    int v = NUM_FRAME_PTRS;
+    expr_emit(value->left, stack_level + v++, module_value, list_weak, result);
+
+    if (value->right->call.params != NULL)
+    {
+        expr_list_emit(value->right->call.params, stack_level + v, module_value, list_weak, result);
+        v += value->right->call.params->count;
+
+        bc.type = BYTECODE_DUP;
+        bc.dup.n = value->right->call.params->count + 1;
+        bytecode_add(module_value->code, &bc);
+
+        bc.type = BYTECODE_SLIDE;
+        bc.slide.m = value->right->call.params->count + 1;
+        bc.slide.q = 1;
+        bytecode_add(module_value->code, &bc);
+    }
+
+    expr_emit(value->right->call.func_expr, stack_level + v, module_value, list_weak, result);
+
+    bc.type = BYTECODE_CALL;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_LABEL;
+    label = bytecode_add(module_value->code, &bc);
+    mark->mark.addr = label->addr;
+
+    return 0;    
+}
+
+int expr_pipel_last_call_emit(expr * value, int stack_level, module * module_value,
+                              func_list_weak * list_weak, int * result)
+{
+    int v = 0;
+    bytecode bc = { 0 };
+
+    assert(value->right->type == EXPR_LAST_CALL);
+
+    expr_emit(value->left, stack_level + v++, module_value, list_weak, result);
+
+    if (value->right->call.params != NULL)
+    {
+        expr_list_emit(value->right->call.params, stack_level + v, module_value, list_weak, result);
+        v += value->right->call.params->count;
+
+        bc.type = BYTECODE_DUP;
+        bc.dup.n = value->right->call.params->count + 1;
+        bytecode_add(module_value->code, &bc);
+
+        bc.type = BYTECODE_SLIDE;
+        bc.slide.m = value->right->call.params->count + 1;
+        bc.slide.q = 1;
+        bytecode_add(module_value->code, &bc);
+    }
+    expr_emit(value->right->call.func_expr, stack_level + v, module_value, list_weak, result);
+
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.q = stack_level + v;
+    bc.slide.m = v + 1;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_CALL;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}
+
+int expr_pipel_emit(expr * value, int stack_level, module * module_value,
+                    func_list_weak * list_weak, int * result)
+{
+    if (value->right->type == EXPR_CALL)
+    {
+        expr_pipel_call_emit(value, stack_level, module_value, list_weak, result);
+    }
+    else if (value->right->type == EXPR_LAST_CALL)
+    {
+        expr_pipel_last_call_emit(value, stack_level, module_value, list_weak, result);
+    }
+    else
+    {
+        /* typechecker should have caught this */
+        assert(0);
+    }
+
+    return 0;    
+}
+
 int expr_ass_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result)
 {
@@ -2265,6 +2367,7 @@ int expr_iflet_guard_item_emit(match_guard_item * guard_item,
     {
         case ENUMTYPE_TYPE_ITEM:
             bc.type = BYTECODE_DUP;
+            bc.dup.n = 1;
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
@@ -2297,6 +2400,7 @@ int expr_iflet_guard_record_emit(match_guard_record * guard_record,
     {
         case ENUMTYPE_TYPE_ITEM:
             bc.type = BYTECODE_DUP;
+            bc.dup.n = 1;
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
@@ -2381,6 +2485,7 @@ int expr_match_guard_item_emit(match_guard_item_expr * item_value, bytecode *lab
     {
         case ENUMTYPE_TYPE_ITEM:
             bc.type = BYTECODE_DUP;
+            bc.dup.n = 1;
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
@@ -2431,6 +2536,7 @@ int expr_match_guard_record_emit(match_guard_record_expr * record_value, bytecod
     {
         case ENUMTYPE_TYPE_ITEM:
             bc.type = BYTECODE_DUP;
+            bc.dup.n = 1;
             bytecode_add(module_value->code, &bc);
         break;
         case ENUMTYPE_TYPE_RECORD:
@@ -2884,6 +2990,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         break;
     case EXPR_NOT:
         expr_not_emit(value, stack_level, module_value, list_weak, result);
+        break;
+    case EXPR_PIPEL:
+        expr_pipel_emit(value, stack_level, module_value, list_weak, result);
         break;
     case EXPR_SUP:
         expr_emit(value->left, stack_level, module_value, list_weak, result);

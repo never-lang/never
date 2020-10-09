@@ -1011,6 +1011,59 @@ int param_expr_list_cmp(param_list * params, expr_list * list)
     return TYPECHECK_SUCC;
 }
 
+int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_list * list)
+{
+    if (params == NULL && expr_value == NULL && list == NULL)
+    {
+        return TYPECHECK_SUCC;
+    }
+
+    if (params == NULL || params->tail == NULL)
+    {
+        return TYPECHECK_FAIL;
+    }
+
+    param_list_node * param_node = params->tail;
+    param * param_value = param_node->value;
+    if (param_value == NULL || 
+        param_expr_cmp(param_value, expr_value) == TYPECHECK_FAIL)
+    {
+        return TYPECHECK_FAIL;
+    }
+
+    param_node = param_node->next;
+    if (param_node == NULL && list == NULL)
+    {
+        return TYPECHECK_SUCC;
+    }
+    if (param_node != NULL && list == NULL)
+    {
+        return TYPECHECK_FAIL;
+    }
+
+    if (params->count != list->count + 1)
+    {
+        return TYPECHECK_FAIL;
+    }
+
+    expr_list_node * expr_node = list->tail;
+    while (param_node != NULL && expr_node != NULL)
+    {
+        param_value = param_node->value;
+        expr * expr_value = expr_node->value;
+
+        if (param_expr_cmp(param_value, expr_value) == TYPECHECK_FAIL)
+        {
+            return TYPECHECK_FAIL;
+        }
+
+        param_node = param_node->next;
+        expr_node = expr_node->next;
+    }
+
+    return TYPECHECK_SUCC;
+}
+
 int expr_comb_is_enum(expr * value, int * result)
 {
     if (value->comb.comb == COMB_TYPE_ENUMTYPE)
@@ -2217,6 +2270,55 @@ int expr_and_or_check_type(symtab * tab, expr * value, func * func_value, unsign
     return 0;
 }
 
+int expr_complr_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
+{
+    expr * value_left = value->left;
+    expr * value_right = value->right;
+
+    expr_check_type(tab, value_left, func_value, syn_level, result);
+
+    if (value_right->type != EXPR_CALL &&
+        value_right->type != EXPR_LAST_CALL)
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot compose expression %s",
+                        expr_type_str(value_right->type));
+        return 0;
+    }
+
+    expr_check_type(tab, value_right->call.func_expr, func_value, syn_level, result);
+    if (value_right->call.params != NULL)
+    {
+        expr_list_check_type(tab, value_right->call.params, func_value, syn_level, result);
+    }
+
+    if (value_right->call.func_expr->comb.comb == COMB_TYPE_FUNC)
+    {
+        if (param_list_expr_expr_list_cmp(value_right->call.func_expr->comb.comb_params,
+                                          value_left,
+                                          value_right->call.params) == TYPECHECK_SUCC)
+        {
+            expr_set_comb_type(value, value_right->call.func_expr->comb.comb_ret);
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "function call type mismatch");
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot compose type %s",
+                        comb_type_str(value_right->comb.comb));        
+    }
+
+    return 0;
+}        
+
 int expr_not_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
@@ -3239,6 +3341,9 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
     case EXPR_AND:
     case EXPR_OR:
         expr_and_or_check_type(tab, value, func_value, syn_level, result);
+        break;
+    case EXPR_PIPEL:
+        expr_complr_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_NOT:
         expr_not_check_type(tab, value, func_value, syn_level, result);
