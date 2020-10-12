@@ -2349,6 +2349,11 @@ int expr_bin_not_check_type(symtab * tab, expr * value, func * func_value, unsig
     {
         value->comb.comb = COMB_TYPE_LONG;
     }
+    else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        expr_conv_enumerator(value->left);
+        value->comb.comb = COMB_TYPE_INT;
+    }
     else
     {
         *result = TYPECHECK_FAIL;
@@ -2364,6 +2369,7 @@ int expr_bin_op_check_type(symtab * tab, expr * value, func * func_value, unsign
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
+
     if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
     {
@@ -2386,11 +2392,15 @@ int expr_bin_op_check_type(symtab * tab, expr * value, func * func_value, unsign
     {
         value->comb.comb = COMB_TYPE_LONG;
     }
+    else if (expr_conv_enumtype(value, value->left, value->right))
+    {
+        /* converted enum type */
+    }
     else
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot compare types %s %s",
+        print_error_msg(value->line_no, "cannot bitwise types %s %s",
                         comb_type_str(value->left->comb.comb),
                         comb_type_str(value->right->comb.comb));
     }

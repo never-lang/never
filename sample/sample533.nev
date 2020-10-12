@@ -1,0 +1,39 @@
+
+enum E
+{
+    ONE       = 1 shl 0,
+    TWO       = 1 shl 1,
+    FOUR      = 1 shl 2,
+    EIGHT     = 1 shl 3,
+    SIXTEEN   = 1 shl 4,
+    THIRTYTWO = 1 shl 5
+}
+
+func main() -> int
+{
+    print(E::ONE);
+    print(E::TWO);
+    print(E::FOUR);
+    print(E::EIGHT);
+    print(E::SIXTEEN);
+    print(E::THIRTYTWO);
+
+    print(E::ONE or E::TWO);
+    print(E::ONE or E::FOUR);
+    print(-E::TWO);
+    print(E::ONE shl 5);
+
+    assert(E::ONE == 1);
+    assert(E::TWO == 2);
+    assert(E::FOUR == 4);
+    assert(E::EIGHT == 8);
+    assert(E::SIXTEEN == 16);
+    assert(E::THIRTYTWO == 32);
+
+    assert((E::ONE or E::TWO) == 3);
+    assert((E::ONE or E::FOUR) == 5);
+    assert((-E::TWO) == -2);
+    /* assert((E::ONE shl 5) == E::THIRTYTWO); */
+
+    0
+}
