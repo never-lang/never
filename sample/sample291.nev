@@ -13,7 +13,7 @@ func print_cl(cl[D] : [_] : int) -> int
 
 func cl(v1[D1] : int, v2[D2] : int) -> [_] : [_] : int
 {
-    [ [x, y] : int <- x in v1; y in v2 ] : [_] : int
+    [ [x, y] : int | x in v1; y in v2 ] : [_] : int
 }
     
 func main() -> int

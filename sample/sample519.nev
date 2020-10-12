@@ -2,9 +2,9 @@
 enum E
 {
     ONE = 1,
-    TWO = 1 << 1,
-    FOUR = 1 << 2,
-    EIGHT = 1 << 3
+    TWO = 1 shl 1,
+    FOUR = 1 shl 2,
+    EIGHT = 1 shl 3
 }
 
 func main() -> int

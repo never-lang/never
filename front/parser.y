@@ -538,7 +538,7 @@ qualifier_list: qualifier_list ';' qualifier
     $$ = $1;
 };
 
-listcomp: '[' expr TOK_IN qualifier_list ']' ':' param
+listcomp: '[' expr '|' qualifier_list ']' ':' param
 {
     $$ = listcomp_new($2, $4, $7);
     $$->line_no = $<line_no>1;

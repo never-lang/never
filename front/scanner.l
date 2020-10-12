@@ -276,39 +276,39 @@ double {
     return TOK_DOUBLE;
 }
 
-"~" {
+not {
     tokp->line_no = line_no;
     scanner_printf("~\n", yytext);
     return TOK_BIN_NOT;
 }
 
-"&" {
+and {
     tokp->line_no = line_no;
     scanner_printf("&\n", yytext);
     return TOK_BIN_AND;
 }
 
-"|" {
+or {
     tokp->line_no = line_no;
-    scanner_printf("|\n", yytext);
+    scanner_printf("or\n", yytext);
     return TOK_BIN_OR;
 }
 
-"^" {
+xor {
     tokp->line_no = line_no;
-    scanner_printf("^\n", yytext);
+    scanner_printf("xor\n", yytext);
     return TOK_BIN_XOR;
 }
 
-"<<" {
+shl {
     tokp->line_no = line_no;
-    scanner_printf("|\n", yytext);
+    scanner_printf("shl\n", yytext);
     return TOK_BIN_SHL;
 }
 
-">>" {
+shr {
     tokp->line_no = line_no;
-    scanner_printf("|\n", yytext);
+    scanner_printf("shr\n", yytext);
     return TOK_BIN_SHR;
 }
 
@@ -327,6 +327,12 @@ double {
 "+"|"-"|"/"|"*"|"%"|"=" {
     tokp->line_no = line_no;
     scanner_printf("operator %s\n", yytext);
+    return yytext[0];
+}
+
+"|" {
+    tokp->line_no = line_no;
+    scanner_printf("|\n", yytext);
     return yytext[0];
 }
 

@@ -1,40 +1,40 @@
 
 func test_not() -> int
 {
-    assert((~~2) == 2);
+    assert((not not 2) == 2);
     0
 }
 
 func test_and() -> int
 {
-    assert((1 & 2) == 0);
-    assert((2 & 2) == 2);
+    assert((1 and 2) == 0);
+    assert((2 and 2) == 2);
     0
 }
 
 func test_or() -> int
 {
-    assert((1 | 2) == 3);
+    assert((1 or 2) == 3);
     0
 }
 
 func test_xor() -> int
 {
-    assert((2 ^ 3 ^ 3) == 2);
+    assert((2 xor 3 xor 3) == 2);
     0
 }
 
 func test_shl() -> int
 {
-    assert((1 << 2) == 4);
-    assert((1 << 2 >> 2) == 1);
+    assert((1 shl 2) == 4);
+    assert((1 shl 2 shr  2) == 1);
     0
 }
 
 func test_shr() -> int
 {
-    assert((4 >> 1) == 2);
-    assert((4 >> 2 << 2) == 4);
+    assert((4 shr 1) == 2);
+    assert((4 shr 2 shl 2) == 4);
     0
 }
 

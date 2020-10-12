@@ -3,7 +3,7 @@ enum V { one, two, three, four }
 
 func testRLC() -> [_] : V
 {
-    [ v <- v in [ V::one, V::four, V::two, V::four, V::three ] : V ] : V
+    [ v | v in [ V::one, V::four, V::two, V::four, V::three ] : V ] : V
 }
 
 func V2str(v : V) -> string
