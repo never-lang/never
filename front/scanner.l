@@ -384,12 +384,6 @@ double {
     return TOK_AND;
 }
 
-"|" {
-    tokp->line_no = line_no;
-    scanner_printf("|\n", yytext);
-    return yytext[0];
-}
-
 "||" {
     tokp->line_no = line_no;
     scanner_printf("||\n", yytext);
