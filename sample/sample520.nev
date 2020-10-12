@@ -1,23 +1,51 @@
 
-record R
+func test_not() -> int
 {
-    i : int;
-    print_R(r : R, s : string) -> R;
+    assert((~~2) == 2);
+    0
 }
 
-func print_R(r : R, s : string) -> R
+func test_and() -> int
 {
-    prints(s + r.i + s + "\n");
-    r
+    assert((1 & 2) == 0);
+    assert((2 & 2) == 2);
+    0
+}
+
+func test_or() -> int
+{
+    assert((1 | 2) == 3);
+    0
+}
+
+func test_xor() -> int
+{
+    assert((2 ^ 3 ^ 3) == 2);
+    0
+}
+
+func test_shl() -> int
+{
+    assert((1 << 2) == 4);
+    assert((1 << 2 >> 2) == 1);
+    0
+}
+
+func test_shr() -> int
+{
+    assert((4 >> 1) == 2);
+    assert((4 >> 2 << 2) == 4);
+    0
 }
 
 func main() -> int
 {
-    let r = R(10, print_R);
-    r |> print_R("+++");
-
-    printf(cos(sin(10.0)));
-    printf(10.0 |> sin() |> cos());
+    test_not();
+    test_and();
+    test_or();
+    test_xor();
+    test_shl();
+    test_shr();
 
     0
 }

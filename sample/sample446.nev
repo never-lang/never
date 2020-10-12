@@ -11,7 +11,7 @@ func pr( a[D] : R ) -> int
 
 func main() -> int
 {
-    let a = [ R(x, y) | x in [ 0 .. 5 ]; y in [ 0 .. x ] ] : R;
+    let a = [ R(x, y) <- x in [ 0 .. 5 ]; y in [ 0 .. x ] ] : R;
 
     pr(a);
 

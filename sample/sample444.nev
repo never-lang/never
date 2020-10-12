@@ -11,9 +11,9 @@ func sum( a[D] : int ) -> int
 func main() -> int
 {
     let a = [ 10, 20, 30, 40, 50 ] : int;
-    let lcr = [ i * 10 | i in [1 .. 5] ] : int;
-    let lcs1 = [ i * 10 | i in [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] : int [ 1 .. 5 ] ] : int;
-    let lcs2 = [ i * 10 | i in [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] : int [ 0 .. 9 ] [ 1 .. 5 ] ] : int;
+    let lcr = [ i * 10 <- i in [1 .. 5] ] : int;
+    let lcs1 = [ i * 10 <- i in [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] : int [ 1 .. 5 ] ] : int;
+    let lcs2 = [ i * 10 <- i in [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] : int [ 0 .. 9 ] [ 1 .. 5 ] ] : int;
 
     assert(sum(a) == 150);
     assert(sum(lcr) == 150);

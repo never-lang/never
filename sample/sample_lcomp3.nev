@@ -9,7 +9,7 @@ func main() -> int
                        prints(d + txt + d + "\n");
                        0
                    } 
-                   | txt in texts
+                   <- txt in texts
                  ] : (string) -> int;
 
     for (i = 0; i < 3; i = i + 1)

@@ -204,7 +204,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
         case SYMTAB_QUALIFIER:
             if (entry->qualifier_value != NULL)
             {
-                expr_qualifier_set_comb_type(value, entry->qualifier_value->expr_value);
+                expr_qualifier_set_comb_type(value, entry->qualifier_value->expr_value, result);
             }
         break;
         case SYMTAB_FORIN:
@@ -259,7 +259,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
     return 0;
 }
 
-int expr_qualifier_set_comb_type(expr * value, expr * expr_value)
+int expr_qualifier_set_comb_type(expr * value, expr * expr_value, int * result)
 {
     if (expr_value->comb.comb == COMB_TYPE_ARRAY &&
         expr_value->comb.comb_dims == 1)
@@ -278,7 +278,8 @@ int expr_qualifier_set_comb_type(expr * value, expr * expr_value)
     }
     else
     {
-        assert(0);
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no, "cannot set qualifier type");
     }
 
     return 0;

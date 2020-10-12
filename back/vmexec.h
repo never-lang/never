@@ -156,6 +156,20 @@ void vm_execute_op_neq_nil_func(vm * machine, bytecode * code);
 
 void vm_execute_op_not_int(vm * machine, bytecode * code);
 
+void vm_execute_op_bin_not_int(vm * machine, bytecode * code);
+void vm_execute_op_bin_and_int(vm * machine, bytecode * code);
+void vm_execute_op_bin_or_int(vm * machine, bytecode * code);
+void vm_execute_op_bin_xor_int(vm * machine, bytecode * code);
+void vm_execute_op_bin_shl_int(vm * machine, bytecode * code);
+void vm_execute_op_bin_shr_int(vm * machine, bytecode * code);
+
+void vm_execute_op_bin_not_long(vm * machine, bytecode * code);
+void vm_execute_op_bin_and_long(vm * machine, bytecode * code);
+void vm_execute_op_bin_or_long(vm * machine, bytecode * code);
+void vm_execute_op_bin_xor_long(vm * machine, bytecode * code);
+void vm_execute_op_bin_shl_long(vm * machine, bytecode * code);
+void vm_execute_op_bin_shr_long(vm * machine, bytecode * code);
+
 void vm_execute_op_inc_int(vm * machine, bytecode * code);
 void vm_execute_op_dec_int(vm * machine, bytecode * code);
 void vm_execute_op_dup_int(vm * machine, bytecode * code);

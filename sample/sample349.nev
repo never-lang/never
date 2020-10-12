@@ -6,7 +6,7 @@ record P {
 
 func testRLC() -> [_] : P
 {
-    [ P(x, y) | x in [ 1, 2, 3 ] : int; y in [ 10, 20, 30 ] : int ] : P
+    [ P(x, y) <- x in [ 1, 2, 3 ] : int; y in [ 10, 20, 30 ] : int ] : P
 }
 
 func printRLC( RLC[D] : P ) -> int

@@ -25,7 +25,7 @@ func getRange() -> [..] : range
 func main() -> int
 {
     let r = getRange();
-    let pitria = [ Triangle(a, b, c) |
+    let pitria = [ Triangle(a, b, c) <-
                      a in r;
                      b in r;
                      c in r;

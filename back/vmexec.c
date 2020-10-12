@@ -159,6 +159,20 @@ vm_execute_str vm_execute_op[] = {
 
     { BYTECODE_OP_NOT_INT, vm_execute_op_not_int },
 
+    { BYTECODE_OP_BIN_NOT_INT, vm_execute_op_bin_not_int },
+    { BYTECODE_OP_BIN_AND_INT, vm_execute_op_bin_and_int },
+    { BYTECODE_OP_BIN_OR_INT, vm_execute_op_bin_or_int },
+    { BYTECODE_OP_BIN_XOR_INT, vm_execute_op_bin_xor_int },
+    { BYTECODE_OP_BIN_SHL_INT, vm_execute_op_bin_shl_int },
+    { BYTECODE_OP_BIN_SHR_INT, vm_execute_op_bin_shr_int },
+
+    { BYTECODE_OP_BIN_NOT_LONG, vm_execute_op_bin_not_long },
+    { BYTECODE_OP_BIN_AND_LONG, vm_execute_op_bin_and_long },
+    { BYTECODE_OP_BIN_OR_LONG, vm_execute_op_bin_or_long },
+    { BYTECODE_OP_BIN_XOR_LONG, vm_execute_op_bin_xor_long },
+    { BYTECODE_OP_BIN_SHL_LONG, vm_execute_op_bin_shl_long },
+    { BYTECODE_OP_BIN_SHR_LONG, vm_execute_op_bin_shr_long },
+
     { BYTECODE_OP_INC_INT, vm_execute_op_inc_int },
     { BYTECODE_OP_DEC_INT, vm_execute_op_dec_int },
     { BYTECODE_OP_DUP_INT, vm_execute_op_dup_int },
@@ -1223,17 +1237,52 @@ void vm_execute_op_neq_nil_func(vm * machine, bytecode * code)
     machine->sp--;
 }
 
-void vm_execute_op_not_int(vm * machine, bytecode * code)
-{
-    gc_stack entry = { 0 };
-    int a = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
-    mem_ptr addr = gc_alloc_int(machine->collector, !a);
+#define vm_execute_op_type(never_type, never_op, c_type, c_op)    \
+    void vm_execute_op_##never_op##_##never_type(vm * machine, bytecode * code)     \
+    {                                                             \
+        gc_stack entry = { 0 };                                   \
+        c_type a = gc_get_##never_type(machine->collector, machine->stack[machine->sp].addr);  \
+        mem_ptr addr = gc_alloc_##never_type(machine->collector, c_op a);                       \
+                                                                  \
+        entry.type = GC_MEM_ADDR;                                 \
+        entry.addr = addr;                                        \
+                                                                  \
+        machine->stack[machine->sp] = entry;                      \
+    }                                                             \
 
-    entry.type = GC_MEM_ADDR;
-    entry.addr = addr;
+vm_execute_op_type(int, not, int, !)
+vm_execute_op_type(int, bin_not, int, ~)
 
-    machine->stack[machine->sp] = entry;
-}
+vm_execute_op_type(long, not, long long, !)
+vm_execute_op_type(long, bin_not, long long, ~)
+
+#define vm_execute_op_bin_type(never_type, never_op, c_type, c_op)                      \
+    void vm_execute_op_bin_##never_op##_##never_type(vm * machine, bytecode * code)  \
+    {                                                                       \
+        gc_stack entry = { 0 };                                             \
+        c_type a =                                                          \
+            gc_get_##never_type(machine->collector, machine->stack[machine->sp - 1].addr);    \
+        c_type b = gc_get_##never_type(machine->collector, machine->stack[machine->sp].addr); \
+        mem_ptr addr = gc_alloc_##never_type(machine->collector, a c_op b);    \
+                                                                            \
+        entry.type = GC_MEM_ADDR;                                           \
+        entry.addr = addr;                                                  \
+                                                                            \
+        machine->stack[machine->sp - 1] = entry;                            \
+        machine->sp--;                                                      \
+    }                                                                       \
+
+vm_execute_op_bin_type(int, and, int, &)
+vm_execute_op_bin_type(int, or, int, |)
+vm_execute_op_bin_type(int, xor, int, ^)
+vm_execute_op_bin_type(int, shl, int, <<)
+vm_execute_op_bin_type(int, shr, int, >>)
+
+vm_execute_op_bin_type(long, and, long long, &)
+vm_execute_op_bin_type(long, or, long long, |)
+vm_execute_op_bin_type(long, xor, long long, ^)
+vm_execute_op_bin_type(long, shl, long long, <<)
+vm_execute_op_bin_type(long, shr, long long, >>)
 
 void vm_execute_op_inc_int(vm * machine, bytecode * code)
 {

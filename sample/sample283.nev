@@ -13,7 +13,7 @@ func print_cl(cl[D] : string) -> int
 
 func cl() -> [_] : string
 {
-    [ "[" + x + "," + y + "]" | x in [1, 2, 3, 4] : int; y in [1, 2, 3, 4, 5] : int ] : string
+    [ "[" + x + "," + y + "]" <- x in [1, 2, 3, 4] : int; y in [1, 2, 3, 4, 5] : int ] : string
 }
     
 func main() -> int
