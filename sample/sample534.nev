@@ -2,12 +2,17 @@
 enum E
 {
     ONE       = 1 shl 0,
-    TWO       = 1 shl 1,
-    FOUR      = 1 shl 2,
-    EIGHT     = 1 shl 3,
-    SIXTEEN   = 1 shl 4,
-    THIRTYTWO = 1 shl 5,
+    TWO       = E::ONE shl 1,
+    FOUR      = E::TWO shl 1,
+    EIGHT     = E::FOUR shl 1,
+    SIXTEEN   = E::EIGHT shl 1,
+    THIRTYTWO = E::SIXTEEN shl 1,
     Some { value : int; }
+}
+
+func getEight() -> E
+{
+    E::EIGHT
 }
 
 func main() -> int
@@ -28,6 +33,11 @@ func main() -> int
     assert(E::TWO == 2);
     assert(E::FOUR == 4);
     assert(E::EIGHT == 8);
+    assert(8 == E::EIGHT);
+    assert(getEight() == 8);
+    assert(8 == getEight());
+    assert(getEight() == E::EIGHT);
+    assert(E::EIGHT == getEight());
     assert(E::SIXTEEN == 16);
     assert(E::THIRTYTWO == 32);
 
@@ -35,6 +45,7 @@ func main() -> int
     assert((E::ONE or E::FOUR) == 5);
     assert(-E::TWO == -2);
     assert((E::ONE shl 5) == E::THIRTYTWO);
+    assert((E::EIGHT xor E::TWO xor E::TWO) == E::EIGHT);
 
     0
 }

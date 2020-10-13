@@ -145,11 +145,11 @@ int yyerror(module_decl ** module_nev, char * str)
 %left TOK_OR
 %left TOK_AND
 %left TOK_BIN_OR
-%left TOK_BIN_AND
 %left TOK_BIN_XOR
-%left TOK_BIN_SHL TOK_BIN_SHR
+%left TOK_BIN_AND
 %left TOK_EQ TOK_NEQ
 %left <val.str_value> '<' '>' TOK_LTE TOK_GTE
+%left TOK_BIN_SHL TOK_BIN_SHR
 %left <val.str_value> '+' '-'
 %left <val.str_value> '*' '/' '%'
 %right TOK_NOT TOK_BIN_NOT /* %precedence NEG */

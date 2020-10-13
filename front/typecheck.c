@@ -2400,7 +2400,8 @@ int expr_bin_op_check_type(symtab * tab, expr * value, func * func_value, unsign
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot bitwise types %s %s",
+        print_error_msg(value->line_no, "cannot %s types %s %s",
+                        expr_type_str(value->type),
                         comb_type_str(value->left->comb.comb),
                         comb_type_str(value->right->comb.comb));
     }

@@ -530,46 +530,38 @@ int expr_neg_emit(expr * value, int stack_level, module * module_value,
     if (value->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_NEG_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_NEG_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_NEG_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_NEG_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_NEG_ARR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_LONG)
     {
         bc.type = BYTECODE_OP_NEG_ARR_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_NEG_ARR_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_DOUBLE)
     {
         bc.type = BYTECODE_OP_NEG_ARR_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -578,6 +570,7 @@ int expr_neg_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -842,112 +835,93 @@ int expr_add_emit(expr * value, int stack_level, module * module_value,
     if (value->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_ADD_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_ADD_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_ADD_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_ADD_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
         bc.type = BYTECODE_OP_ADD_STRING;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_INT &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
         bc.type = BYTECODE_OP_ADD_INT_STRING;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_ADD_STRING_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
         bc.type = BYTECODE_OP_ADD_FLOAT_STRING;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_ADD_STRING_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
         bc.type = BYTECODE_OP_ADD_LONG_STRING;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_ADD_STRING_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
         bc.type = BYTECODE_OP_ADD_DOUBLE_STRING;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_ADD_STRING_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
              value->right->comb.comb == COMB_TYPE_STRING)
     {
         bc.type = BYTECODE_OP_ADD_CHAR_STRING;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_STRING &&
              value->right->comb.comb == COMB_TYPE_CHAR)
     {
         bc.type = BYTECODE_OP_ADD_STRING_CHAR;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_ADD_ARR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_LONG)
     {
         bc.type = BYTECODE_OP_ADD_ARR_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_ADD_ARR_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_DOUBLE)
     {
         bc.type = BYTECODE_OP_ADD_ARR_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -956,6 +930,7 @@ int expr_add_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -971,46 +946,38 @@ int expr_sub_emit(expr * value, int stack_level, module * module_value,
     if (value->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_SUB_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_SUB_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_SUB_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_SUB_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_SUB_ARR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_LONG)
     {
         bc.type = BYTECODE_OP_SUB_ARR_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_SUB_ARR_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_DOUBLE)
     {
         bc.type = BYTECODE_OP_SUB_ARR_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1019,6 +986,7 @@ int expr_sub_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1034,46 +1002,38 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
     if (value->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_MUL_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_MUL_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_MUL_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_MUL_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_MUL_ARR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_MUL_ARR_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_MUL_ARR_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->left->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_MUL_ARR_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_INT &&
@@ -1081,7 +1041,6 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_MUL_ARR_ARR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_LONG &&
@@ -1089,7 +1048,6 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_MUL_ARR_ARR_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_FLOAT &&
@@ -1097,7 +1055,6 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_MUL_ARR_ARR_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
              value->comb.comb_ret->type == PARAM_DOUBLE &&
@@ -1105,7 +1062,6 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_MUL_ARR_ARR_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1114,6 +1070,7 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1133,22 +1090,18 @@ int expr_div_emit(expr * value, int stack_level, module * module_value,
     if (value->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_DIV_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_DIV_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_DIV_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_DIV_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1157,6 +1110,7 @@ int expr_div_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }                  
@@ -1177,13 +1131,11 @@ int expr_mod_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_MOD_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
              value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_MOD_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1193,6 +1145,7 @@ int expr_mod_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }                  
@@ -1209,31 +1162,26 @@ int expr_lt_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_LT_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_LT_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
                 value->right->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_LT_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
                 value->right->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_LT_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
                 value->right->comb.comb == COMB_TYPE_CHAR)
     {
         bc.type = BYTECODE_OP_LT_CHAR;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1243,6 +1191,7 @@ int expr_lt_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1259,31 +1208,26 @@ int expr_gt_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_GT_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_GT_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
                 value->right->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_GT_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
                 value->right->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_GT_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
                 value->right->comb.comb == COMB_TYPE_CHAR)
     {
         bc.type = BYTECODE_OP_GT_CHAR;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1293,6 +1237,7 @@ int expr_gt_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1309,31 +1254,26 @@ int expr_lte_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_LTE_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
              value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_LTE_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_LTE_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
              value->right->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_LTE_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
              value->right->comb.comb == COMB_TYPE_CHAR)
     {
         bc.type = BYTECODE_OP_LTE_CHAR;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1344,6 +1284,7 @@ int expr_lte_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1360,31 +1301,26 @@ int expr_gte_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_GTE_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_GTE_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_FLOAT)
     {
         bc.type = BYTECODE_OP_GTE_FLOAT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
                 value->right->comb.comb == COMB_TYPE_DOUBLE)
     {
         bc.type = BYTECODE_OP_GTE_DOUBLE;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_CHAR &&
                 value->right->comb.comb == COMB_TYPE_CHAR)
     {
         bc.type = BYTECODE_OP_GTE_CHAR;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1395,6 +1331,7 @@ int expr_gte_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1498,12 +1435,10 @@ int expr_not_emit(expr * value, int stack_level, module * module_value,
     if (value->comb.comb == COMB_TYPE_BOOL)
     {
         bc.type = BYTECODE_OP_NOT_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_NOT_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1512,6 +1447,7 @@ int expr_not_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1641,20 +1577,17 @@ int expr_bin_and_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_BIN_AND_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_BIN_AND_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if ((value->left->comb.comb == COMB_TYPE_ENUMTYPE || value->left->comb.comb == COMB_TYPE_INT)
                                                            &&
              (value->right->comb.comb == COMB_TYPE_ENUMTYPE || value->right->comb.comb == COMB_TYPE_INT))
     {
         bc.type = BYTECODE_OP_BIN_AND_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1665,6 +1598,7 @@ int expr_bin_and_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1681,20 +1615,17 @@ int expr_bin_or_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_BIN_OR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_BIN_OR_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if ((value->left->comb.comb == COMB_TYPE_ENUMTYPE || value->left->comb.comb == COMB_TYPE_INT)
                                                            &&
              (value->right->comb.comb == COMB_TYPE_ENUMTYPE || value->right->comb.comb == COMB_TYPE_INT))
     {
         bc.type = BYTECODE_OP_BIN_OR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1705,6 +1636,7 @@ int expr_bin_or_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1721,20 +1653,17 @@ int expr_bin_xor_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_BIN_XOR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_BIN_XOR_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if ((value->left->comb.comb == COMB_TYPE_ENUMTYPE || value->left->comb.comb == COMB_TYPE_INT)
                                                            &&
              (value->right->comb.comb == COMB_TYPE_ENUMTYPE || value->right->comb.comb == COMB_TYPE_INT))
     {
         bc.type = BYTECODE_OP_BIN_XOR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1745,6 +1674,7 @@ int expr_bin_xor_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1761,20 +1691,17 @@ int expr_bin_shl_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_BIN_SHL_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_BIN_SHL_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if ((value->left->comb.comb == COMB_TYPE_ENUMTYPE || value->left->comb.comb == COMB_TYPE_INT)
                                                            &&
              (value->right->comb.comb == COMB_TYPE_ENUMTYPE || value->right->comb.comb == COMB_TYPE_INT))
     {
         bc.type = BYTECODE_OP_BIN_SHL_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1785,6 +1712,7 @@ int expr_bin_shl_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
@@ -1801,20 +1729,17 @@ int expr_bin_shr_emit(expr * value, int stack_level, module * module_value,
         value->right->comb.comb == COMB_TYPE_INT)
     {
         bc.type = BYTECODE_OP_BIN_SHR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
                 value->right->comb.comb == COMB_TYPE_LONG)
     {
         bc.type = BYTECODE_OP_BIN_SHR_LONG;
-        bytecode_add(module_value->code, &bc);
     }
     else if ((value->left->comb.comb == COMB_TYPE_ENUMTYPE || value->left->comb.comb == COMB_TYPE_INT)
                                                            &&
              (value->right->comb.comb == COMB_TYPE_ENUMTYPE || value->right->comb.comb == COMB_TYPE_INT))
     {
         bc.type = BYTECODE_OP_BIN_SHR_INT;
-        bytecode_add(module_value->code, &bc);
     }
     else
     {
@@ -1825,6 +1750,7 @@ int expr_bin_shr_emit(expr * value, int stack_level, module * module_value,
                         comb_type_str(value->right->comb.comb));
         assert(0);
     }
+    bytecode_add(module_value->code, &bc);
 
     return 0;
 }
