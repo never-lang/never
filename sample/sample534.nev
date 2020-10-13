@@ -1,12 +1,12 @@
 
 enum E
 {
-    ONE       = 1 shl 0,
-    TWO       = E::ONE shl 1,
-    FOUR      = E::TWO shl 1,
-    EIGHT     = E::FOUR shl 1,
-    SIXTEEN   = E::EIGHT shl 1,
-    THIRTYTWO = E::SIXTEEN shl 1,
+    ONE       = 1 <<< 0,
+    TWO       = E::ONE <<< 1,
+    FOUR      = E::TWO <<< 1,
+    EIGHT     = E::FOUR <<< 1,
+    SIXTEEN   = E::EIGHT <<< 1,
+    THIRTYTWO = E::SIXTEEN <<< 1,
     Some { value : int; }
 }
 
@@ -24,10 +24,10 @@ func main() -> int
     print(E::SIXTEEN);
     print(E::THIRTYTWO);
 
-    print(E::ONE or E::TWO);
-    print(E::ONE or E::FOUR);
+    print(E::ONE ||| E::TWO);
+    print(E::ONE ||| E::FOUR);
     print(-E::TWO);
-    print(E::ONE shl 5);
+    print(E::ONE <<< 5);
 
     assert(E::ONE == 1);
     assert(E::TWO == 2);
@@ -41,11 +41,11 @@ func main() -> int
     assert(E::SIXTEEN == 16);
     assert(E::THIRTYTWO == 32);
 
-    assert((E::ONE or E::TWO) == 3);
-    assert((E::ONE or E::FOUR) == 5);
+    assert((E::ONE ||| E::TWO) == 3);
+    assert((E::ONE ||| E::FOUR) == 5);
     assert(-E::TWO == -2);
-    assert((E::ONE shl 5) == E::THIRTYTWO);
-    assert((E::EIGHT xor E::TWO xor E::TWO) == E::EIGHT);
+    assert((E::ONE <<< 5) == E::THIRTYTWO);
+    assert((E::EIGHT ^^^ E::TWO ^^^ E::TWO) == E::EIGHT);
 
     0
 }

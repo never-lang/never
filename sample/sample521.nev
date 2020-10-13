@@ -1,40 +1,40 @@
 
 func test_not() -> int
 {
-    assert((not not 2L) == 2L);
+    assert((~~~ ~~~ 2L) == 2L);
     0
 }
 
 func test_and() -> int
 {
-    assert((1L and 2L) == 0L);
-    assert((2L and 2L) == 2L);
+    assert((1L &&& 2L) == 0L);
+    assert((2L &&& 2L) == 2L);
     0
 }
 
 func test_or() -> int
 {
-    assert((1L or 2L) == 3L);
+    assert((1L ||| 2L) == 3L);
     0
 }
 
 func test_xor() -> int
 {
-    assert((2L xor 3L xor 3L) == 2L);
+    assert((2L ^^^ 3L ^^^ 3L) == 2L);
     0
 }
 
 func test_shl() -> int
 {
-    assert((1L shl 2L) == 4L);
-    assert((1L shl 2L shr 2L) == 1L);
+    assert((1L <<< 2L) == 4L);
+    assert((1L <<< 2L >>> 2L) == 1L);
     0
 }
 
 func test_shr() -> int
 {
-    assert((4L shr 1L) == 2L);
-    assert((4L shr 2L shl 2L) == 4L);
+    assert((4L >>> 1L) == 2L);
+    assert((4L >>> 2L <<< 2L) == 4L);
     0
 }
 
