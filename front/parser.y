@@ -384,7 +384,7 @@ expr: TOK_NOT expr
 expr: TOK_BIN_NOT expr
 {
     $$ = expr_new_one(EXPR_BIN_NOT, $2);
-    $$->line_no = $<line_no>2;
+    $$->line_no = $<line_no>1;
 };
 
 expr: expr TOK_BIN_AND expr

@@ -4293,7 +4293,6 @@ int expr_enumtype_emit(expr * value, int stack_level, module * module_value, int
     {
         index = value->enumtype.id_enumerator_value->index;
     }
-    assert(index != -1);
     
     bc.type = BYTECODE_INT;
     bc.int_t.value = index;
