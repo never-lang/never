@@ -1,0 +1,15 @@
+
+func rec_tail(i : int, j : int) -> int
+{
+    prints(i + " " + j + "\n");
+
+    i > 0 ? (i - 1) |> rec_tail(10) : 0
+}
+
+func main() -> int
+{
+    rec_tail(10, 10);
+
+    0
+}
+

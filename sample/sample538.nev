@@ -1,0 +1,16 @@
+
+func test_range(s : string, r[from..to] : range) -> int
+{
+    for (a in r) {
+        prints(a + s)
+    };
+
+    0
+}
+
+func main() -> int
+{
+    "aaa\n" |> test_range([1..6]);
+
+    0
+}
