@@ -1,0 +1,122 @@
+
+enum D
+{
+    ZERO = ~~~0xFFFFFFFF,
+    ONE = 1 &&& 1,
+    TWO = 1 <<< 1,
+    THREE = 1 ||| 2,
+    FOUR = 8 >>> 1,
+    FIVE = 4 ||| 1,
+    SIX = 4 ||| 2,
+    SEVEN = 6 ||| 1,
+    EIGHT = 8 ^^^ 8 ^^^ 8
+}
+
+enum E
+{
+    ZERO = ~~~0xFFFFFFFF,
+    ONE = 1 &&& 1,
+    TWO = E::ONE <<< E::ONE,
+    THREE = E::ONE ||| E::TWO,
+    FOUR = E::EIGHT >>> E::ONE,
+    FIVE = E::FOUR ||| E::ONE,
+    SIX = E::FOUR ||| E::TWO,
+    SEVEN = E::SIX ||| E::ONE,
+    EIGHT = 8 ^^^ E::ONE ^^^ E::ONE
+}
+
+enum F
+{
+    ZERO = ~~~0xFFFFFFFF,
+    ONE = 1 &&& 1,
+    TWO = 1 <<< E::ONE,
+    THREE = 1 ||| E::TWO,
+    FOUR = 8 >>> E::ONE,
+    FIVE = 4 ||| E::ONE,
+    SIX = 4 ||| E::TWO,
+    SEVEN = 6 ||| E::ONE,
+    EIGHT = 8 ^^^ 1 ^^^ E::ONE
+}
+
+enum G
+{
+    ZERO = ~~~0xFFFFFFFF,
+    ONE = 1 &&& 1,
+    TWO = G::ONE <<< 1,
+    THREE = G::ONE ||| 2,
+    FOUR = G::EIGHT >>> 1,
+    FIVE = G::FOUR ||| 1,
+    SIX = G::FOUR ||| 2,
+    SEVEN = G::SIX ||| 1,
+    EIGHT = 8 ^^^ E::ONE ^^^ 1
+}
+
+func test_one() -> int
+{
+    assert(D::ZERO == 0);
+    assert(D::ONE == 1);
+    assert(D::TWO == 2);
+    assert(D::THREE == 3);
+    assert(D::FOUR == 4);
+    assert(D::FIVE == 5);
+    assert(D::SIX == 6);
+    assert(D::SEVEN == 7);
+    assert(D::EIGHT == 8);
+
+    0
+}
+
+func test_two() -> int
+{
+    assert(E::ZERO == 0);
+    assert(E::ONE == 1);
+    assert(E::TWO == 2);
+    assert(E::THREE == 3);
+    assert(E::FOUR == 4);
+    assert(E::FIVE == 5);
+    assert(E::SIX == 6);
+    assert(E::SEVEN == 7);
+    assert(E::EIGHT == 8);
+
+    0
+}
+
+func test_three() -> int
+{
+    assert(F::ZERO == 0);
+    assert(F::ONE == 1);
+    assert(F::TWO == 2);
+    assert(F::THREE == 3);
+    assert(F::FOUR == 4);
+    assert(F::FIVE == 5);
+    assert(F::SIX == 6);
+    assert(F::SEVEN == 7);
+    assert(F::EIGHT == 8);
+
+    0
+}
+
+func test_four() -> int
+{
+    assert(G::ZERO == 0);
+    assert(G::ONE == 1);
+    assert(G::TWO == 2);
+    assert(G::THREE == 3);
+    assert(G::FOUR == 4);
+    assert(G::FIVE == 5);
+    assert(G::SIX == 6);
+    assert(G::SEVEN == 7);
+    assert(G::EIGHT == 8);
+
+    0
+}
+
+func main() -> int
+{
+    test_one();
+    test_two();
+    test_three();
+    test_four();
+
+    0
+}

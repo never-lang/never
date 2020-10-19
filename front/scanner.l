@@ -30,6 +30,7 @@
 #include "utils.h"
 #include "strutil.h"
 #include "moduletab.h"
+#include "assert.h"
 
 #define NEVER_PATH "NEVER_PATH"
 #define MAX_USE_DEPTH 16
@@ -276,6 +277,42 @@ double {
     return TOK_DOUBLE;
 }
 
+"~~~" {
+    tokp->line_no = line_no;
+    scanner_printf("~~~\n", yytext);
+    return TOK_BIN_NOT;
+}
+
+"&&&" {
+    tokp->line_no = line_no;
+    scanner_printf("&&&\n", yytext);
+    return TOK_BIN_AND;
+}
+
+"|||" {
+    tokp->line_no = line_no;
+    scanner_printf("|||\n", yytext);
+    return TOK_BIN_OR;
+}
+
+"^^^" {
+    tokp->line_no = line_no;
+    scanner_printf("^^^\n", yytext);
+    return TOK_BIN_XOR;
+}
+
+"<<<" {
+    tokp->line_no = line_no;
+    scanner_printf("<<<\n", yytext);
+    return TOK_BIN_SHL;
+}
+
+">>>" {
+    tokp->line_no = line_no;
+    scanner_printf(">>>\n", yytext);
+    return TOK_BIN_SHR;
+}
+
 "::" {
     tokp->line_no = line_no;
     scanner_printf("::\n");
@@ -291,6 +328,12 @@ double {
 "+"|"-"|"/"|"*"|"%"|"=" {
     tokp->line_no = line_no;
     scanner_printf("operator %s\n", yytext);
+    return yytext[0];
+}
+
+"|" {
+    tokp->line_no = line_no;
+    scanner_printf("|\n", yytext);
     return yytext[0];
 }
 
@@ -336,16 +379,16 @@ double {
     return TOK_RET;
 }
 
+"<-" {
+    tokp->line_no = line_no;
+    scanner_printf("<-\n", yytext);
+    return TOK_IN;
+}
+
 "&&" {
     tokp->line_no = line_no;
     scanner_printf("&&\n", yytext);
     return TOK_AND;
-}
-
-"|" {
-    tokp->line_no = line_no;
-    scanner_printf("|\n", yytext);
-    return yytext[0];
 }
 
 "||" {
@@ -467,6 +510,11 @@ double {
 \" {
     string_value = string_new();
     BEGIN(C_STRING);
+}
+
+. {
+    scanner_printf("unknown %c\n", yytext[0]);
+    return yytext[0];
 }
 
 <MODULE_REF>[. \t] {

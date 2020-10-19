@@ -1,0 +1,22 @@
+record R
+{
+    i : int;
+    print_R(r : R, s : string) -> R;
+}
+
+func print_R(r : R, s : string) -> R
+{
+    prints(s + r.i + s + "\n");
+    r
+}
+
+func main() -> int
+{
+    let r = R(10, print_R);
+    r |> print_R("+++");
+
+    printf(cos(sin(10.0)));
+    printf(10.0 |> sin() |> cos());
+
+    0
+}

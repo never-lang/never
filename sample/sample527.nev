@@ -6,9 +6,17 @@ func rec(i : int) -> int
     i > 0 ? rec(0) |> rec() : 0
 }
 
+func rec2(i : int, j : int) -> int
+{
+    prints(i + " " + j + "\n");
+
+    i > 0 ? (i - 1) |> rec2(j) : 0
+}
+
 func main() -> int
 {
     rec(10);
+    rec2(10, 10);
 
     0
 }

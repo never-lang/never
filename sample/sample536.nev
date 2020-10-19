@@ -1,0 +1,87 @@
+
+func get_int() -> int
+{
+    1
+}
+
+func get_long() -> long
+{
+    1L
+}
+
+func test_one() -> int
+{
+    assert((~~~1) == (~~~1));
+    assert((~~~1L) == (~~~1L));
+    assert((~~~get_int()) == (~~~1));
+    assert((~~~1) == (~~~get_int()));
+    assert((~~~get_long()) == (~~~1L));
+    assert((~~~1L) == (~~~get_long()));
+    0
+}
+
+func test_two() -> int
+{
+    assert((1 &&& 1) == (1 &&& 1));
+    assert((1L &&& 1L) == (1L &&& 1L));
+    assert((get_int() &&& 1) == (get_int() &&& 1));
+    assert((1 &&& get_int()) == (1 &&& get_int()));
+    assert((get_long() &&& 1) == (get_long() &&& 1));
+    assert((1 &&& get_long()) == (1 &&& get_long()));
+    0
+}
+
+func test_three() -> int
+{
+    assert((1 ||| 1) == (1 ||| 1));
+    assert((1L ||| 1L) == (1L ||| 1L));
+    assert((get_int() ||| 1) == (get_int() ||| 1));
+    assert((1 ||| get_int()) == (1 ||| get_int()));
+    assert((get_long() ||| 1) == (get_long() ||| 1));
+    assert((1 ||| get_long()) == (1 ||| get_long()));
+    0
+}
+
+func test_four() -> int
+{
+    assert((1 ^^^ 1) == (1 ^^^ 1));
+    assert((1L ^^^ 1L) == (1L ^^^ 1L));
+    assert((get_int() ^^^ 1) == (get_int() ^^^ 1));
+    assert((1 ^^^ get_int()) == (1 ^^^ get_int()));
+    assert((get_long() ^^^ 1) == (get_long() ^^^ 1));
+    assert((1 ^^^ get_long()) == (1 ^^^ get_long()));
+    0
+}
+
+func test_five() -> int
+{
+    assert((1 <<< 1) == (1 <<< 1));
+    assert((1L <<< 1L) == (1L <<< 1L));
+    assert((get_int() <<< 1) == (get_int() <<< 1));
+    assert((1 <<< get_int()) == (1 <<< get_int()));
+    assert((get_long() <<< 1) == (get_long() <<< 1));
+    assert((1 <<< get_long()) == (1 <<< get_long()));
+    0    
+}
+
+func test_six() -> int
+{
+    assert((1 >>> 1) == (1 >>> 1));
+    assert((1L >>> 1L) == (1L >>> 1L));
+    assert((get_int() >>> 1) == (get_int() >>> 1));
+    assert((1 >>> get_int()) == (1 >>> get_int()));
+    assert((get_long() >>> 1) == (get_long() >>> 1));
+    assert((1 >>> get_long()) == (1 >>> get_long()));
+    0    
+}
+
+func main() -> int
+{
+    test_one();
+    test_two();
+    test_three();
+    test_four();
+    test_five();
+    test_six();
+    0
+}

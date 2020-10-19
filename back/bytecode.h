@@ -149,7 +149,21 @@ typedef enum bytecode_type
     BYTECODE_OP_NEQ_NIL_FUNC,
 
     BYTECODE_OP_NOT_INT,
-    
+
+    BYTECODE_OP_BIN_NOT_INT,
+    BYTECODE_OP_BIN_AND_INT,
+    BYTECODE_OP_BIN_OR_INT,
+    BYTECODE_OP_BIN_XOR_INT,
+    BYTECODE_OP_BIN_SHL_INT,
+    BYTECODE_OP_BIN_SHR_INT,
+
+    BYTECODE_OP_BIN_NOT_LONG,
+    BYTECODE_OP_BIN_AND_LONG,
+    BYTECODE_OP_BIN_OR_LONG,
+    BYTECODE_OP_BIN_XOR_LONG,
+    BYTECODE_OP_BIN_SHL_LONG,
+    BYTECODE_OP_BIN_SHR_LONG,
+
     BYTECODE_OP_INC_INT,
     BYTECODE_OP_DEC_INT,
     BYTECODE_OP_DUP_INT,
@@ -561,6 +575,20 @@ void bytecode_print_op_neq_nil_record(bytecode * code);
 void bytecode_print_op_neq_nil_func(bytecode * code);
 
 void bytecode_print_op_not_int(bytecode * code);
+
+void bytecode_print_op_bin_not_int(bytecode * code);
+void bytecode_print_op_bin_and_int(bytecode * code);
+void bytecode_print_op_bin_or_int(bytecode * code);
+void bytecode_print_op_bin_xor_int(bytecode * code);
+void bytecode_print_op_bin_shl_int(bytecode * code);
+void bytecode_print_op_bin_shr_int(bytecode * code);
+
+void bytecode_print_op_bin_not_long(bytecode * code);
+void bytecode_print_op_bin_and_long(bytecode * code);
+void bytecode_print_op_bin_or_long(bytecode * code);
+void bytecode_print_op_bin_xor_long(bytecode * code);
+void bytecode_print_op_bin_shl_long(bytecode * code);
+void bytecode_print_op_bin_shr_long(bytecode * code);
 
 void bytecode_print_op_inc_int(bytecode * code);
 void bytecode_print_op_dec_int(bytecode * code);

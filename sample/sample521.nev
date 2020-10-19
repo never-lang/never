@@ -1,19 +1,51 @@
 
-
-func compose(f(i : int) -> int, g(i : int) -> int) -> (int) -> int
+func test_not() -> int
 {
-    let func (i : int) -> int { f(g(i)) }
+    assert((~~~ ~~~ 2L) == 2L);
+    0
 }
 
-func dec(i : int) -> int { 10 * i }
+func test_and() -> int
+{
+    assert((1L &&& 2L) == 0L);
+    assert((2L &&& 2L) == 2L);
+    0
+}
 
-func succ(i : int) -> int { i + 1 }
+func test_or() -> int
+{
+    assert((1L ||| 2L) == 3L);
+    0
+}
+
+func test_xor() -> int
+{
+    assert((2L ^^^ 3L ^^^ 3L) == 2L);
+    0
+}
+
+func test_shl() -> int
+{
+    assert((1L <<< 2L) == 4L);
+    assert((1L <<< 2L >>> 2L) == 1L);
+    0
+}
+
+func test_shr() -> int
+{
+    assert((4L >>> 1L) == 2L);
+    assert((4L >>> 2L <<< 2L) == 4L);
+    0
+}
 
 func main() -> int
 {
-    let h = compose(dec, succ);
-
-    print(h(1));
+    test_not();
+    test_and();
+    test_or();
+    test_xor();
+    test_shl();
+    test_shr();
 
     0
 }

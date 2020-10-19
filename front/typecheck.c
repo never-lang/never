@@ -204,7 +204,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
         case SYMTAB_QUALIFIER:
             if (entry->qualifier_value != NULL)
             {
-                expr_qualifier_set_comb_type(value, entry->qualifier_value->expr_value);
+                expr_qualifier_set_comb_type(value, entry->qualifier_value->expr_value, result);
             }
         break;
         case SYMTAB_FORIN:
@@ -259,7 +259,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
     return 0;
 }
 
-int expr_qualifier_set_comb_type(expr * value, expr * expr_value)
+int expr_qualifier_set_comb_type(expr * value, expr * expr_value, int * result)
 {
     if (expr_value->comb.comb == COMB_TYPE_ARRAY &&
         expr_value->comb.comb_dims == 1)
@@ -278,7 +278,8 @@ int expr_qualifier_set_comb_type(expr * value, expr * expr_value)
     }
     else
     {
-        assert(0);
+        *result = TYPECHECK_FAIL;
+        print_error_msg(value->line_no, "cannot set qualifier type");
     }
 
     return 0;
@@ -2330,8 +2331,79 @@ int expr_not_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     {
         *result = TYPECHECK_FAIL;
         value->comb.comb = COMB_TYPE_ERR;
-        print_error_msg(value->line_no, "cannot ne types %s",
+        print_error_msg(value->line_no, "cannot ne type %s",
                         comb_type_str(value->left->comb.comb));
+    }
+
+    return 0;
+}
+
+int expr_bin_not_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
+{
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    if (value->left->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG)
+    {
+        value->comb.comb = COMB_TYPE_LONG;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_ENUMTYPE)
+    {
+        expr_conv_enumerator(value->left);
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot bin not type %s",
+                        comb_type_str(value->left->comb.comb));
+    }
+    
+    return 0;
+}
+
+int expr_bin_op_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
+{
+    expr_check_type(tab, value->left, func_value, syn_level, result);
+    expr_check_type(tab, value->right, func_value, syn_level, result);
+
+    if (value->left->comb.comb == COMB_TYPE_INT &&
+        value->right->comb.comb == COMB_TYPE_INT)
+    {
+        value->comb.comb = COMB_TYPE_INT;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+             value->right->comb.comb == COMB_TYPE_INT)
+    {
+        expr_conv(value->right, CONV_INT_TO_LONG);
+        value->comb.comb = COMB_TYPE_LONG;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_INT &&
+             value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        expr_conv(value->left, CONV_INT_TO_LONG);
+        value->comb.comb = COMB_TYPE_LONG;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_LONG &&
+             value->right->comb.comb == COMB_TYPE_LONG)
+    {
+        value->comb.comb = COMB_TYPE_LONG;
+    }
+    else if (expr_conv_enumtype(value, value->left, value->right))
+    {
+        /* converted enum type */
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "cannot %s types %s %s",
+                        expr_type_str(value->type),
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
     }
 
     return 0;
@@ -3347,6 +3419,16 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         break;
     case EXPR_NOT:
         expr_not_check_type(tab, value, func_value, syn_level, result);
+        break;
+    case EXPR_BIN_NOT:
+        expr_bin_not_check_type(tab, value, func_value, syn_level, result);
+        break;
+    case EXPR_BIN_AND:
+    case EXPR_BIN_OR:
+    case EXPR_BIN_XOR:
+    case EXPR_BIN_SHL:
+    case EXPR_BIN_SHR:
+        expr_bin_op_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_SUP:
         expr_check_type(tab, value->left, func_value, syn_level, result);

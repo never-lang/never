@@ -129,6 +129,18 @@ int expr_pipel_last_call_emit(expr * value, int stack_level, module * module_val
                               func_list_weak * list_weak, int * result);
 int expr_pipel_emit(expr * value, int stack_level, module * module_value,
                     func_list_weak * list_weak, int * result);
+int expr_bin_not_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result);
+int expr_bin_and_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result);
+int expr_bin_or_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result);
+int expr_bin_xor_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result);
+int expr_bin_shl_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result);
+int expr_bin_shr_emit(expr * value, int stack_level, module * module_value,
+                      func_list_weak * list_weak, int * result);
 int expr_ass_emit(expr * value, int stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int expr_cond_emit(expr * value, int stack_level, module * module_value,

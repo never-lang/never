@@ -514,6 +514,7 @@ void expr_delete(expr * value)
         break;
     case EXPR_NEG:
     case EXPR_NOT:
+    case EXPR_BIN_NOT:
         expr_delete(value->left);
         break;
     case EXPR_ADD:
@@ -530,6 +531,11 @@ void expr_delete(expr * value)
     case EXPR_AND:
     case EXPR_OR:
     case EXPR_PIPEL:
+    case EXPR_BIN_AND:
+    case EXPR_BIN_OR:
+    case EXPR_BIN_XOR:
+    case EXPR_BIN_SHL:
+    case EXPR_BIN_SHR:
         expr_delete(value->left);
         expr_delete(value->right);
         break;
@@ -802,6 +808,12 @@ const char * expr_type_str(expr_type type)
     case EXPR_OR: return "or";
     case EXPR_PIPEL: return "pipel";
     case EXPR_NOT: return "not";
+    case EXPR_BIN_NOT: return "binary not";
+    case EXPR_BIN_AND: return "binary and";
+    case EXPR_BIN_OR: return "binary or";
+    case EXPR_BIN_XOR: return "binary xor";
+    case EXPR_BIN_SHL: return "binary shift left";
+    case EXPR_BIN_SHR: return "binary shift right";
     case EXPR_SUP: return "sup";
     case EXPR_COND: return "cond";
     case EXPR_ARRAY: return "array";
