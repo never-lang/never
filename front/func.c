@@ -178,7 +178,7 @@ void func_except_delete(func_except * value)
     free(value);
 }
 
-func_body * func_body_new(bind_list * binds, func_list * funcs, expr_list * ret)
+func_body * func_body_new(expr_list * binds, func_list * funcs, expr_list * ret)
 {
     func_body * body = (func_body *)malloc(sizeof(func_body));
 
@@ -189,7 +189,7 @@ func_body * func_body_new(bind_list * binds, func_list * funcs, expr_list * ret)
     return body;
 }
 
-func_body * func_body_new_expr(bind_list * binds, func_list * funcs, expr * ret)
+func_body * func_body_new_expr(expr_list * binds, func_list * funcs, expr * ret)
 {
     func_body * body = (func_body *)malloc(sizeof(func_body));
 
@@ -204,7 +204,7 @@ void func_body_delete(func_body * body)
 {
     if (body->binds)
     {
-        bind_list_delete(body->binds);
+        expr_list_delete(body->binds);
     }
     if (body->funcs)
     {

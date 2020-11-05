@@ -573,6 +573,7 @@ int expr_enumred(expr * value, int * result)
     case EXPR_BUILD_IN:
     case EXPR_LISTCOMP:
     case EXPR_ATTR:
+    case EXPR_BIND:
         *result = ENUMRED_FAIL;
         print_error_msg(value->line_no, "enumred %s not supported", expr_type_str(value->type));
         break;

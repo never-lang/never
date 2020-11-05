@@ -1,0 +1,20 @@
+
+func zero() -> int
+{
+    0
+}
+
+func ten() -> int
+{
+    10
+}
+
+func main() -> int
+{
+    func m() -> int { 1000 }
+    func n() -> int { 500 }
+    func k() -> int { 200 }
+
+    9
+}
+

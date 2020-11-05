@@ -3553,6 +3553,14 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
     case EXPR_ATTR:
         expr_attr_check_type(tab, value, func_value, syn_level, result);
         break;
+    case EXPR_BIND:
+        if (value->bind.bind_value != NULL &&
+            value->bind.bind_value->expr_value != NULL)
+        {
+            /* TODO: put indentifier into symbol table */
+            expr_check_type(tab, value->bind.bind_value->expr_value, func_value, syn_level, result);
+            value->comb = value->bind.bind_value->expr_value->comb;
+        }
     }
     return 0;
 }
@@ -3585,7 +3593,6 @@ int expr_seq_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     if (node != NULL && node->value != NULL)
     {
         expr * expr_last = node->value;
-
         value->comb = expr_last->comb;
     }
     else
@@ -3771,7 +3778,7 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                            int * result)
 {
-    int start = 1;
+    /* TODO: check int start = 1; */
 
     if (func_value->stab == NULL)
     {
@@ -3798,17 +3805,21 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
     }
     if (func_value->body && func_value->body->binds != NULL)
     {
+        /* TODO: change bind index enumerator
         bind_list_enum(func_value->body->binds, start);
-        start += func_value->body->binds->count;
+        */
+        /* start += func_value->body->binds->count; */
     }
     if (func_value->body && func_value->body->binds)
     {
-        bind_list_check_type(func_value->stab, func_value->body->binds,
+        expr_list_check_type(func_value->stab, func_value->body->binds,
                              func_value, syn_level, result);
     }
     if (func_value->body && func_value->body->funcs != NULL)
     {
+        /* TODO: change func list index enumerator
         func_list_enum(func_value->body->funcs, start);
+        */
     }
     if (func_value->body && func_value->body->funcs)
     {
@@ -4382,7 +4393,7 @@ int func_list_entry_check_type(func_list * list, int * result)
 
 int never_check_type(module_decl * module_modules, module_decl * module_stdlib, never * nev, int * result)
 {
-    int start = 0;
+    /* int start = 0; */
     unsigned int syn_level = 0;
 
     if (nev->stab == NULL)
@@ -4421,19 +4432,21 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
 
     if (nev->binds != NULL)
     {
-        bind_list_enum(nev->binds, start);
+        /* TODO: enumerator bind index */
+        /* bind_list_enum(nev->binds, start); */
 
         symtab_module_decl_set_active(nev->stab, 0);
-        bind_list_check_type(nev->stab, nev->binds, NULL, syn_level, result);
+        expr_list_check_type(nev->stab, nev->binds, NULL, syn_level, result);
         symtab_module_decl_set_active(nev->stab, 1);
 
-        start += nev->binds->count;
+        /* start += nev->binds->count; */
     }
 
     if (nev->funcs != NULL)
     {
         func_list_param_check_type(nev->stab, nev->funcs, syn_level, result);
-        func_list_enum(nev->funcs, start);
+        /* TODO: enumerate func index */
+        /* func_list_enum(nev->funcs, start); */
         func_list_check_type(nev->stab, nev->funcs, syn_level, result);
     }
 

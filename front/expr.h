@@ -80,7 +80,8 @@ typedef enum expr_type
     EXPR_LISTCOMP = 52,
     EXPR_ATTR = 53,
     EXPR_NIL = 54,
-    EXPR_C_NULL = 55
+    EXPR_C_NULL = 55,
+    EXPR_BIND = 56
 } expr_type;
 
 typedef enum conv_type
@@ -291,6 +292,10 @@ typedef struct expr
             struct expr * record_value; /* record_value . id */
             struct expr * id;
         } attr;
+        struct
+        {
+            struct bind * bind_value; /* EXPR_BIND */
+        } bind;        
     };
 } expr;
 
@@ -341,6 +346,7 @@ expr * expr_new_match(expr * expr_value, match_guard_list * match_guards);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);
 expr * expr_new_attr(expr * record_value, expr * id);
+expr * expr_new_bind(bind * bind_value);
 
 comb_type conv_to_comb_type(conv_type conv);
 expr * expr_conv(expr * expr_value, conv_type conv);

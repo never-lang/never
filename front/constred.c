@@ -1833,6 +1833,12 @@ int expr_constred(expr * value, int * result)
             expr_constred(value->attr.record_value, result);
         }
         break;
+    case EXPR_BIND:
+        if (value->bind.bind_value != NULL &&
+            value->bind.bind_value->expr_value != NULL)
+        {
+            expr_constred(value->bind.bind_value->expr_value, result);
+        }
     }
     return 0;
 }
@@ -1978,7 +1984,7 @@ int func_constred_native(func * value, int * result)
 {
     if (value->body != NULL && value->body->binds != NULL)
     {
-        bind_list_constred(value->body->binds, result);
+        expr_list_constred(value->body->binds, result);
     }
     if (value->body != NULL && value->body->funcs != NULL)
     {
@@ -2218,7 +2224,7 @@ int never_constred(never * nev, int * result)
     }
     if (nev->binds)
     {
-        bind_list_constred(nev->binds, result);
+        expr_list_constred(nev->binds, result);
     }
     if (nev->funcs)
     {

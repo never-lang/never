@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-never * never_new(use_list * uses, decl_list * decls, bind_list * binds, func_list * funcs)
+never * never_new(use_list * uses, decl_list * decls, expr_list * binds, func_list * funcs)
 {
     never * n = (never *)malloc(sizeof(never));
 
@@ -51,7 +51,7 @@ void never_delete(never * nev)
     }
     if (nev->binds)
     {
-        bind_list_delete(nev->binds);
+        expr_list_delete(nev->binds);
     }
     if (nev->funcs)
     {

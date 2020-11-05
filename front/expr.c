@@ -439,6 +439,18 @@ expr * expr_new_attr(expr * record_value, expr * id)
     return ret;
 }
 
+expr * expr_new_bind(bind * bind_value)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+
+    ret->type = EXPR_BIND;
+    ret->bind.bind_value = bind_value;
+    ret->line_no = 0;
+    ret->comb.comb = COMB_TYPE_UNKNOWN;
+
+    return ret;
+}
+
 comb_type conv_to_comb_type(conv_type conv)
 {
     switch (conv)
@@ -697,6 +709,12 @@ void expr_delete(expr * value)
             expr_delete(value->attr.record_value);
         }
         break;
+    case EXPR_BIND:
+        if (value->bind.bind_value != NULL)
+        {
+            bind_delete(value->bind.bind_value);
+        }
+        break;
     }
     free(value);
 }
@@ -838,6 +856,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_ATTR: return "attr";
     case EXPR_NIL: return "nil";
     case EXPR_C_NULL: return "c_null";
+    case EXPR_BIND: return "bind";
     }
     
     return "unknown";

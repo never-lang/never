@@ -263,6 +263,12 @@ int print_func_expr(expr * value, int depth)
     case EXPR_ATTR:
         print_func_attr(value, depth);
         break;
+    case EXPR_BIND:
+        if (value->bind.bind_value != NULL &&
+            value->bind.bind_value->expr_value != NULL)
+        {
+            print_func_expr(value->bind.bind_value->expr_value, depth);
+        }
     }
     return 0;
 }
@@ -436,7 +442,7 @@ int print_func_native(func * value, int depth)
     }
     if (value->body != NULL && value->body->binds != NULL)
     {
-        print_func_bind_list(value->body->binds, depth);
+        print_func_expr_list(value->body->binds, depth);
     }
     if (value->body != NULL && value->body->funcs != NULL)
     {
@@ -496,7 +502,7 @@ int print_functions(never * nev)
 {
     if (nev->binds)
     {
-        print_func_bind_list(nev->binds, 1);
+        print_func_expr_list(nev->binds, 1);
     }
     if (nev->funcs)
     {

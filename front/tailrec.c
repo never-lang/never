@@ -283,6 +283,13 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             expr_tailrec(syn_level, stab, value->attr.record_value, TAILREC_OP_SKIP);
         }
         break;
+    case EXPR_BIND:
+        if (value->bind.bind_value != NULL &&
+            value->bind.bind_value->expr_value != NULL)
+        {
+            expr_tailrec(syn_level, stab, value->bind.bind_value->expr_value, TAILREC_OP_SKIP);
+        }
+        break;
     }
 
     return 0;
@@ -477,7 +484,7 @@ int func_tailrec_native(unsigned int syn_level, func * value)
 {
     if (value->body != NULL && value->body->binds != NULL)
     {
-        bind_list_tailrec(syn_level, value->stab, value->body->binds, TAILREC_OP_SKIP);
+        expr_list_tailrec(syn_level, value->stab, value->body->binds, TAILREC_OP_SKIP);
     }
  
     if (value->body != NULL && value->body->funcs != NULL)
@@ -572,7 +579,7 @@ int never_tailrec(never * nev)
     }
     if (nev->binds)
     {
-        bind_list_tailrec(syn_level, nev->stab, nev->binds, TAILREC_OP_SKIP);
+        expr_list_tailrec(syn_level, nev->stab, nev->binds, TAILREC_OP_SKIP);
     }
     if (nev->funcs)
     {

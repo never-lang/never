@@ -115,8 +115,8 @@ int yyerror(module_decl ** module_nev, char * str)
 %type <val.match_guard_list_value> match_guard_list
 %type <val.let_value> let
 %type <val.var_value> var
-%type <val.bind_value> bind
-%type <val.bind_list_value> bind_list
+%type <val.expr_value> expr_bind
+/* TODO: remove %type <val.bind_list_value> bind_list */
 %type <val.func_decl_value> func_decl
 %type <val.func_value> func
 %type <val.func_list_value> func_list
@@ -180,8 +180,8 @@ int yyerror(module_decl ** module_nev, char * str)
 %destructor { if ($$) expr_list_delete($$); } array_sub_list
 %destructor { if ($$) bind_delete($$); } let
 %destructor { if ($$) bind_delete($$); } var
-%destructor { if ($$) bind_delete($$); } bind
-%destructor { if ($$) bind_list_delete($$); } bind_list
+%destructor { if ($$) expr_delete($$); } expr_bind
+/* TODO: remove %destructor { if ($$) bind_list_delete($$); } bind_list */
 %destructor { if ($$) func_delete($$); } func
 %destructor { if ($$) func_decl_delete($$); } func_decl
 %destructor { if ($$) func_list_delete($$); } func_list
@@ -732,6 +732,42 @@ expr_list: expr_list ',' expr
     $$ = $1;
 };
 
+let: TOK_LET TOK_ID '=' expr
+{
+    $$ = bind_new_let($2, $4);
+    $$->line_no = $<line_no>1;
+};
+
+var: TOK_VAR TOK_ID '=' expr
+{
+    $$ = bind_new_var($2, $4);
+    $$->line_no = $<line_no>1;
+};
+
+expr_bind: let
+{
+    $$ = expr_new_bind($1);
+    $$->line_no = $<line_no>1;
+};
+
+expr_bind: var
+{
+    $$ = expr_new_bind($1);
+    $$->line_no = $<line_no>1;
+};
+
+expr_seq: expr_bind
+{
+    $$ = expr_list_new();
+    expr_list_add_end($$, $1);
+};
+
+expr_seq: expr_seq ';' expr_bind
+{
+    expr_list_add_end($1, $3);
+    $$ = $1;
+};
+
 expr_seq: expr
 {
     $$ = expr_list_new();
@@ -1029,28 +1065,7 @@ param_seq: param_seq param ';'
     $$ = $1;
 };
 
-let: TOK_LET TOK_ID '=' expr
-{
-    $$ = bind_new_let($2, $4);
-    $$->line_no = $<line_no>1;
-};
-
-var: TOK_VAR TOK_ID '=' expr
-{
-    $$ = bind_new_var($2, $4);
-    $$->line_no = $<line_no>1;
-};
-
-bind: let
-{
-    $$ = $1;
-};
-
-bind: var
-{
-    $$ = $1;
-};
-
+/* TODO: remove
 bind_list: bind ';'
 {
     $$ = bind_list_new();
@@ -1062,6 +1077,7 @@ bind_list: bind_list bind ';'
     bind_list_add_end($1, $2);
     $$ = $1;
 };
+*/
 
 func_decl: '(' ')' TOK_RET param
 {
@@ -1083,17 +1099,7 @@ func_decl: TOK_ID '(' param_list ')' TOK_RET param
     $$ = func_decl_new($1, $3, $6);
 };
 
-func_body: '{' bind_list expr_seq '}'
-{
-    $$ = func_body_new($2, NULL, $3);
-};
-
-func_body: '{' func_list expr_seq '}'
-{
-    $$ = func_body_new(NULL, $2, $3);
-};
-
-func_body: '{' bind_list func_list expr_seq '}'
+func_body: '{' expr_seq func_list expr_seq '}'
 {
     $$ = func_body_new($2, $3, $4);
 };
@@ -1269,6 +1275,31 @@ use_list: use_list use
     $$ = $1;
 };
 
+never: expr_seq func_list
+{
+    $$ = never_new(NULL, NULL, $1, $2);
+};
+
+never: decl_list expr_seq func_list
+{
+    $$ = never_new(NULL, $1, $2, $3);
+};
+
+never: use_list expr_seq func_list
+{
+    $$ = never_new($1, NULL, $2, $3);
+};
+
+never: use_list decl_list expr_seq
+{
+    $$ = never_new($1, $2, $3, NULL);
+};
+
+never: use_list decl_list expr_seq func_list
+{
+    $$ = never_new($1, $2, $3, $4);
+};
+
 never: func_list
 {
     $$ = never_new(NULL, NULL, NULL, $1);
@@ -1279,19 +1310,9 @@ never: decl_list
     $$ = never_new(NULL, $1, NULL, NULL);
 };
 
-never: bind_list func_list
-{
-    $$ = never_new(NULL, NULL, $1, $2);
-};
-
 never: decl_list func_list
 {
     $$ = never_new(NULL, $1, NULL, $2);
-};
-
-never: decl_list bind_list func_list
-{
-    $$ = never_new(NULL, $1, $2, $3);
 };
 
 never: use_list decl_list
@@ -1304,24 +1325,9 @@ never: use_list func_list
     $$ = never_new($1, NULL, NULL, $2);
 };
 
-never: use_list bind_list func_list
-{
-    $$ = never_new($1, NULL, $2, $3);
-};
-
-never: use_list decl_list bind_list
-{
-    $$ = never_new($1, $2, $3, NULL);
-};
-
 never: use_list decl_list func_list
 {
     $$ = never_new($1, $2, NULL, $3);
-};
-
-never: use_list decl_list bind_list func_list
-{
-    $$ = never_new($1, $2, $3, $4);
 };
 
 module_decl: TOK_MODULE_REF

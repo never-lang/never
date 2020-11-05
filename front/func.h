@@ -71,7 +71,7 @@ typedef struct func_decl
 
 typedef struct func_body
 {
-    bind_list * binds;
+    expr_list * binds;
     func_list * funcs;
     struct expr * ret;
 } func_body;
@@ -106,8 +106,8 @@ void func_print(func * value);
 func_decl * func_decl_new(char * id, param_list * params, param * ret);
 void func_decl_delete(func_decl * value);
 
-func_body * func_body_new(bind_list * binds, func_list * funcs, expr_list * ret);
-func_body * func_body_new_expr(bind_list * binds, func_list * funcs, expr * ret);
+func_body * func_body_new(expr_list * binds, func_list * funcs, expr_list * ret);
+func_body * func_body_new_expr(expr_list * binds, func_list * funcs, expr * ret);
 void func_body_delete(func_body * body);
 
 func_except * func_except_new(except * all, except_list * list);

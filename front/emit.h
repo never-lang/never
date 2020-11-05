@@ -201,7 +201,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
 int expr_list_emit(expr_list * list, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
-int expr_seq_emit(expr_list * list, int stack_level, module * module_value,
+int expr_seq_emit(expr_list * list, int * stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int expr_yeld_emit(listcomp * listcomp_value, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
@@ -290,14 +290,14 @@ int func_list_entry_params(func_list * list, module * module_value, int * result
 int func_entry_emit(never * nev, int stack_level, module * module_value,
                    int * result);
 
-int func_list_emit(func_list * list, int stack_level, module * module_value,
+int func_list_emit(func_list * list, int * stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
 
-int use_emit(use * value, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result);
-int use_list_emit(use_list * list, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result);
+int use_emit(use * value, int * stack_level, module * module_value, func_list_weak * list_weak, int * result);
+int use_list_emit(use_list * list, int * stack_level, module * module_value, func_list_weak * list_weak, int * result);
 
-int never_emit(never * nev, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result);
-int module_decl_emit(module_decl * value, int stack_level, int * index, module * module_value, func_list_weak * list_weak, int * result);
+int never_emit(never * nev, int * stack_level, module * module_value, func_list_weak * list_weak, int * result);
+int module_decl_emit(module_decl * value, int * stack_level, module * module_value, func_list_weak * list_weak, int * result);
 int main_emit(module_decl * module_modules, module_decl * module_main, module * module_value);
 
 #endif /* __EMIT_H__ */

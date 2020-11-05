@@ -701,7 +701,7 @@ int func_gencode_freevars(func * func_value, symtab * stab, int * result)
 {
     if (func_value->body && func_value->body->binds)
     {
-        func_gencode_freevars_bind_list(func_value, stab, func_value->body->binds,
+        func_gencode_freevars_expr_list(func_value, stab, func_value->body->binds,
                                         result);
     }
     if (func_value->body && func_value->body->funcs)
@@ -905,6 +905,13 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         if (value->attr.record_value != NULL)
         {
             func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
+        }
+        break;
+    case EXPR_BIND:
+        if (value->bind.bind_value != NULL &&
+            value->bind.bind_value->expr_value != NULL)
+        {
+            func_gencode_freevars_expr(func_value, stab, value->bind.bind_value->expr_value, result);
         }
         break;
     }
