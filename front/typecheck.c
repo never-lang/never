@@ -3557,8 +3557,8 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         if (value->bind.bind_value != NULL &&
             value->bind.bind_value->expr_value != NULL)
         {
-            /* TODO: put indentifier into symbol table */
             expr_check_type(tab, value->bind.bind_value->expr_value, func_value, syn_level, result);
+            symtab_add_bind_from_bind(tab, value->bind.bind_value, syn_level, result);
             value->comb = value->bind.bind_value->expr_value->comb;
         }
     }
@@ -3585,11 +3585,14 @@ int expr_list_check_type(symtab * tab, expr_list * list, func * func_value, unsi
 int expr_seq_check_type(symtab * tab, expr * value, func * func_value, unsigned syn_level,
                         int * result)
 {
-    expr_list_node * node = NULL;
+    if (value->seq.stab == NULL)
+    {
+        value->seq.stab = symtab_new(8, SYMTAB_TYPE_BLOCK, tab);
+    }
 
-    expr_list_check_type(tab, value->seq.list, func_value, syn_level, result);
+    expr_list_check_type(value->seq.stab, value->seq.list, func_value, syn_level, result);
 
-    node = value->seq.list->head;
+    expr_list_node * node = value->seq.list->head;
     if (node != NULL && node->value != NULL)
     {
         expr * expr_last = node->value;

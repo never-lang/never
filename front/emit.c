@@ -378,6 +378,8 @@ int expr_id_bind_emit(expr * value, int stack_level, module * module_value,
     bc.id_local.index = value->id.id_bind_value->index;
     bytecode_add(module_value->code, &bc);
 
+    printf("id %s sl %d index %d\n", value->id.id, stack_level, value->id.id_bind_value->index);
+
     return 0;
 }
 
@@ -3311,7 +3313,11 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         if (value->bind.bind_value != NULL &&
             value->bind.bind_value->expr_value != NULL)
         {
-            value->bind.bind_value->index = stack_level;
+            bind * bind_value = value->bind.bind_value;
+            value->bind.bind_value->index = stack_level + 1;
+
+            printf("bind %s %d\n", bind_value->id, bind_value->index);
+
             expr_emit(value->bind.bind_value->expr_value, stack_level, module_value, list_weak, result);
         }
         break;
@@ -3359,7 +3365,7 @@ int expr_seq_emit(expr_list * list, int * stack_level, module * module_value,
 
                 bytecode_add(module_value->code, &bc);
             }
-            
+
             expr_emit(value, *stack_level, module_value, list_weak, result);
 
             if (value->type == EXPR_BIND)
@@ -5001,7 +5007,7 @@ int func_list_emit(func_list * list, int * stack_level, module * module_value,
         {
             /* TODO: check stack_level passed to func_emit */
             func_emit(func_value, (*stack_level) + list->count, module_value, list_weak, result);
-            func_value->index = list->count - n;
+            func_value->index = list->count - n + 1;
 
             bc.type = BYTECODE_REWRITE;
             bc.rewrite.j = n--;

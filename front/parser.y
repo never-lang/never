@@ -1099,9 +1099,14 @@ func_decl: TOK_ID '(' param_list ')' TOK_RET param
     $$ = func_decl_new($1, $3, $6);
 };
 
-func_body: '{' expr_seq func_list expr_seq '}'
+func_body: '{' expr_seq ';' func_list expr_seq '}'
 {
-    $$ = func_body_new($2, $3, $4);
+    $$ = func_body_new($2, $4, $5);
+};
+
+func_body: '{' func_list expr_seq '}'
+{
+    $$ = func_body_new(NULL, $2, $3);
 };
 
 func_body: '{' expr_seq '}'

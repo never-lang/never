@@ -1,20 +1,25 @@
 
-func zero() -> int
-{
-    0
-}
-
-func ten() -> int
-{
-    10
-}
-
 func main() -> int
 {
-    func m() -> int { 1000 }
-    func n() -> int { 500 }
-    func k() -> int { 200 }
+    let i = 10;
+    let j = 20;
 
-    9
+    print(i);
+    print(j);
+    print(i + j);
+
+    let o = i + j;
+
+    print(i);
+    print(j);
+    print(i + j);
+    print(o);
+
+    /*let T = [ 1 .. 4 ];
+    for (a in T) {
+        print(a)
+    };*/
+
+    0
 }
 

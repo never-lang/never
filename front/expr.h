@@ -165,6 +165,7 @@ typedef struct match_guard_list match_guard_list;
 typedef struct freevar freevar;
 typedef struct param param;
 typedef struct module_decl module_decl;
+typedef struct symtab symtab;
 
 typedef struct expr_comb
 {
@@ -230,6 +231,7 @@ typedef struct expr
         };
         struct                        /* EXPR_SEQ */
         {
+            symtab * stab;
             struct expr_list * list;
         } seq;
         struct

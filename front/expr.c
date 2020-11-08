@@ -26,6 +26,7 @@
 #include "iflet.h"
 #include "forin.h"
 #include "match.h"
+#include "symtab.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -277,11 +278,11 @@ expr * expr_new_seq(expr_list * list)
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_SEQ;
-    /* ret->line_no = list->head->value->line_no; */
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
+    ret->seq.stab = NULL;
     ret->seq.list = list;
-    
+
     return ret;
 }
 
@@ -617,6 +618,10 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_SEQ:
+        if (value->seq.stab != NULL)
+        {
+            symtab_delete(value->seq.stab);
+        }
         if (value->seq.list != NULL)
         {
             expr_list_delete(value->seq.list);
