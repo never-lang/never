@@ -26,6 +26,7 @@
 #include "dim.h"
 #include "range.h"
 #include "expr.h"
+#include "seq.h"
 #include "param.h"
 #include "bind.h"
 #include "func.h"
@@ -53,6 +54,9 @@ typedef union token_value {
     expr * expr_value;
     expr_list * expr_list_value;
     expr_list * expr_seq_value;
+    seq_item * seq_item_value;
+    seq_list * seq_list_value;
+    seq * seq_value;
     param * param_value;
     param_list * param_list_value;
     dim * dim_value;
@@ -66,7 +70,7 @@ typedef union token_value {
     bind * let_value;
     bind * var_value;
     bind * bind_value;
-    bind_list * bind_list_value;
+    /* TODO: remove bind_list * bind_list_value; */
     iflet * iflet_value;
     match_guard_item * match_guard_item_value;
     match_guard_record * match_guard_record_value;
@@ -74,7 +78,6 @@ typedef union token_value {
     match_guard_list * match_guard_list_value;
     func_decl * func_decl_value;
     func * func_value;
-    func_list * func_list_value;
     func_body * func_body_value;
     func_except * func_except_value;
     except * except_value;

@@ -22,27 +22,27 @@
 #include "except.h"
 #include <stdlib.h>
 
-except * except_new_all(expr_list * seq)
+except * except_new_all(seq * seq_value)
 {
     except * value = (except *)malloc(sizeof(except));
 
     value->type = EXCEPT_ALL;
     value->no = EXCEPT_NO_UNKNOWN;
     value->id = NULL;
-    value->expr_value = expr_new_seq(seq);
+    value->expr_value = expr_new_seq(seq_value);
     value->line_no = 0;
 
     return value;
 }
 
-except * except_new_id(char * id, expr_list * seq)
+except * except_new_id(char * id, seq * seq_value)
 {
     except * value = (except *)malloc(sizeof(except));
 
     value->type = EXCEPT_ID;
     value->no = EXCEPT_NO_UNKNOWN;
     value->id = id;
-    value->expr_value = expr_new_seq(seq);
+    value->expr_value = expr_new_seq(seq_value);
     value->line_no = 0;
 
     return value;

@@ -25,6 +25,7 @@
 #include "func.h"
 #include "symtab.h"
 #include "expr.h"
+#include "seq.h"
 #include "decl.h"
 #include "bind.h"
 #include "use.h"
@@ -34,11 +35,10 @@ typedef struct never
     symtab * stab;
     use_list * uses;
     decl_list * decls;
-    expr_list * binds;
-    func_list * funcs;
+    seq_list * exprs;
 } never;
 
-never * never_new(use_list * uses, decl_list * decls, expr_list * binds, func_list * funcs);
+never * never_new(use_list * uses, decl_list * decls, seq_list * exprs);
 void never_delete(never * nev);
 
 #endif /* __NEVER_H__ */

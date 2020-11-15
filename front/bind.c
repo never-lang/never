@@ -63,6 +63,8 @@ void bind_delete(bind * value)
     free(value);
 }
 
+#if 0
+TODO : remove bind_list
 int bind_list_enum(bind_list * list, int start)
 {
     int index = start;
@@ -158,6 +160,7 @@ void bind_list_add_end(bind_list * list, bind * value)
         list->head = node;
     }
 }
+#endif
 
 void bind_print(bind * value)
 {

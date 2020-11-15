@@ -1,0 +1,35 @@
+func foo() -> int
+{
+    10
+}
+
+func test(a : int, b : int) -> int
+{
+    let i = 10;
+    let j = 20;
+    let c = 0;
+
+    i;
+    j;
+    i + j;
+
+    c = i;
+    print(c);
+    c = j;
+    print(c);
+    c = i + j;
+    print(c);
+
+    print(i);
+    print(j);
+    print(i + j);
+
+    0
+}
+
+func main() -> int
+{
+    test(0, 0);
+
+    0
+}

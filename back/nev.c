@@ -33,6 +33,7 @@
 #include "utils.h"
 #include "vm.h"
 #include "module.h"
+#include "seq.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,9 +48,9 @@ extern int parse_result;
 
 static module_decl * module_decl_new_stdlib()
 {
-    func_list * stdlib_funcs = func_list_new();
+    seq_list * stdlib_funcs = seq_list_new();
     use_list * stdlib_uses = use_list_new();
-    never * stdlib_never = never_new(stdlib_uses, NULL, NULL, stdlib_funcs);
+    never * stdlib_never = never_new(stdlib_uses, NULL, stdlib_funcs);
     module_decl * module_stdlib = module_decl_new(strdup("stdlib"), stdlib_never);
 
     libmath_add_funcs(stdlib_funcs);
@@ -60,7 +61,7 @@ static module_decl * module_decl_new_stdlib()
 static module_decl * module_decl_new_modules()
 {
     use_list * global_uses = use_list_new();
-    never * global_never = never_new(global_uses, NULL, NULL, NULL);
+    never * global_never = never_new(global_uses, NULL, NULL);
     global_never->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     module_decl * module_modules = module_decl_new(strdup("modules"), global_never);
 
@@ -192,9 +193,9 @@ int nev_execute(program * prog, vm * machine, object * result)
         machine->ip = prog->module_value->code_entry;
     }
 
-    /* printf("machine->ip %u\n", machine->ip);
+    /*printf("machine->ip %u\n", machine->ip);
     bytecode_array_print(prog->module_value->code_arr,
-                        prog->module_value->code_size); */
+                        prog->module_value->code_size);*/
 
     return vm_execute(machine, prog, result);
 }

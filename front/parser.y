@@ -89,7 +89,6 @@ int yyerror(module_decl ** module_nev, char * str)
 
 %type <val.expr_value> expr
 %type <val.expr_list_value> expr_list
-%type <val.expr_seq_value> expr_seq
 %type <val.param_value> dim
 %type <val.param_list_value> dim_list
 %type <val.range_value> range_dim
@@ -115,11 +114,12 @@ int yyerror(module_decl ** module_nev, char * str)
 %type <val.match_guard_list_value> match_guard_list
 %type <val.let_value> let
 %type <val.var_value> var
-%type <val.expr_value> expr_bind
+/* TODO: remove %type <val.expr_value> expr_bind */
+%type <val.seq_list_value> seq_list
+%type <val.seq_value> seq
 /* TODO: remove %type <val.bind_list_value> bind_list */
 %type <val.func_decl_value> func_decl
 %type <val.func_value> func
-%type <val.func_list_value> func_list
 %type <val.func_body_value> func_body
 %type <val.func_except_value> func_except
 %type <val.except_value> except_all
@@ -168,7 +168,8 @@ int yyerror(module_decl ** module_nev, char * str)
 %destructor { if ($$) param_list_delete($$); } param_list
 %destructor { if ($$) expr_delete($$); } expr
 %destructor { if ($$) expr_list_delete($$); } expr_list
-%destructor { if ($$) expr_list_delete($$); } expr_seq
+%destructor { if ($$) seq_list_delete($$); } seq_list
+%destructor { if ($$) seq_delete($$); } seq
 %destructor { if ($$) expr_delete($$); } expr_range_dim
 %destructor { if ($$) expr_list_delete($$); } expr_range_dim_list
 %destructor { if ($$) array_delete($$); } array
@@ -180,11 +181,9 @@ int yyerror(module_decl ** module_nev, char * str)
 %destructor { if ($$) expr_list_delete($$); } array_sub_list
 %destructor { if ($$) bind_delete($$); } let
 %destructor { if ($$) bind_delete($$); } var
-%destructor { if ($$) expr_delete($$); } expr_bind
-/* TODO: remove %destructor { if ($$) bind_list_delete($$); } bind_list */
+/* TODO: %destructor { if ($$) expr_delete($$); } expr_bind */
 %destructor { if ($$) func_delete($$); } func
 %destructor { if ($$) func_decl_delete($$); } func_decl
-%destructor { if ($$) func_list_delete($$); } func_list
 %destructor { if ($$) func_body_delete($$); } func_body
 %destructor { if ($$) func_except_delete($$); } func_except
 %destructor { if ($$) except_delete($$); } except_all
@@ -567,9 +566,9 @@ expr: expr '=' expr
     $$->line_no = $<line_no>2;
 };
 
-expr: '{' expr_seq '}'
+expr: seq
 {
-    $$ = expr_new_seq($2);
+    $$ = expr_new_seq($1);
     $$->line_no = $<line_no>1;
 };
 
@@ -744,7 +743,7 @@ var: TOK_VAR TOK_ID '=' expr
     $$->line_no = $<line_no>1;
 };
 
-expr_bind: let
+/* expr_bind: let
 {
     $$ = expr_new_bind($1);
     $$->line_no = $<line_no>1;
@@ -754,30 +753,66 @@ expr_bind: var
 {
     $$ = expr_new_bind($1);
     $$->line_no = $<line_no>1;
+}; */
+
+seq_list: let
+{
+    $$ = seq_list_new();
+    seq_list_add_end($$, seq_item_new_bind($1));
 };
 
-expr_seq: expr_bind
+seq_list: var
 {
-    $$ = expr_list_new();
-    expr_list_add_end($$, $1);
+    $$ = seq_list_new();
+    seq_list_add_end($$, seq_item_new_bind($1));
 };
 
-expr_seq: expr_seq ';' expr_bind
+seq_list: func
 {
-    expr_list_add_end($1, $3);
+    $$ = seq_list_new();
+    seq_list_add_end($$, seq_item_new_func($1));
+};
+
+seq_list: expr
+{
+    $$ = seq_list_new();
+    seq_list_add_end($$, seq_item_new_expr($1));
+};
+
+seq_list: seq_list ';' let
+{
+    seq_list_add_end($$, seq_item_new_bind($3));
     $$ = $1;
 };
 
-expr_seq: expr
+seq_list: seq_list ';' var
 {
-    $$ = expr_list_new();
-    expr_list_add_end($$, $1);
+    seq_list_add_end($$, seq_item_new_bind($3));
+    $$ = $1;
 };
 
-expr_seq: expr_seq ';' expr
+seq_list: seq_list func
 {
-    expr_list_add_end($1, $3);
+    seq_list_add_end($$, seq_item_new_func($2));
     $$ = $1;
+};
+
+seq_list: seq_list ';' func
+{
+    seq_list_add_end($$, seq_item_new_func($3));
+    $$ = $1;
+};
+
+seq_list: seq_list ';' expr
+{
+    seq_list_add_end($1, seq_item_new_expr($3));
+    $$ = $1;
+};
+
+seq: '{' seq_list '}'
+{
+    $$ = seq_new($2);
+    $$->line_no = $<line_no>1;
 };
 
 expr_range_dim: expr TOK_TODOTS expr
@@ -889,7 +924,7 @@ param: TOK_ID ':' TOK_LONG
 {
     $$ = param_new_long($1);
     $$->line_no = $<line_no>1;
-}
+};
 
 param: TOK_FLOAT
 {
@@ -1099,35 +1134,25 @@ func_decl: TOK_ID '(' param_list ')' TOK_RET param
     $$ = func_decl_new($1, $3, $6);
 };
 
-func_body: '{' expr_seq ';' func_list expr_seq '}'
+func_body: seq
 {
-    $$ = func_body_new($2, $4, $5);
-};
-
-func_body: '{' func_list expr_seq '}'
-{
-    $$ = func_body_new(NULL, $2, $3);
-};
-
-func_body: '{' expr_seq '}'
-{
-    $$ = func_body_new(NULL, NULL, $2);
+    $$ = func_body_new($1);
 };
 
 func_body: '{' '}'
 {
-    $$ = func_body_new(NULL, NULL, NULL);
+    $$ = func_body_new(NULL);
 };
 
-except_all: TOK_CATCH '{' expr_seq '}'
+except_all: TOK_CATCH seq
 {
-    $$ = except_new_all($3);
+    $$ = except_new_all($2);
     $$->line_no = $<line_no>1;
 };
 
-except: TOK_CATCH '(' TOK_ID ')' '{' expr_seq '}'
+except: TOK_CATCH '(' TOK_ID ')' seq
 {
-    $$ = except_new_id($3, $6);
+    $$ = except_new_id($3, $5);
     $$->line_no = $<line_no>1;
 };
 
@@ -1184,18 +1209,6 @@ func: TOK_FUNC TOK_ID error
     yyclearin;
     yyerrok;
     $$ = NULL;
-};
-
-func_list: func
-{
-    $$ = func_list_new();
-    func_list_add_end($$, $1);
-};
-
-func_list: func_list func
-{
-    func_list_add_end($1, $2);
-    $$ = $1;
 };
 
 enum_item: TOK_ID '{' param_seq '}'
@@ -1280,59 +1293,34 @@ use_list: use_list use
     $$ = $1;
 };
 
-never: expr_seq func_list
+never: seq_list
 {
-    $$ = never_new(NULL, NULL, $1, $2);
+    $$ = never_new(NULL, NULL, $1);
 };
 
-never: decl_list expr_seq func_list
+never: decl_list seq_list
 {
-    $$ = never_new(NULL, $1, $2, $3);
+    $$ = never_new(NULL, $1, $2);
 };
 
-never: use_list expr_seq func_list
+never: use_list seq_list
 {
-    $$ = never_new($1, NULL, $2, $3);
+    $$ = never_new($1, NULL, $2);
 };
 
-never: use_list decl_list expr_seq
+never: use_list decl_list seq_list
 {
-    $$ = never_new($1, $2, $3, NULL);
-};
-
-never: use_list decl_list expr_seq func_list
-{
-    $$ = never_new($1, $2, $3, $4);
-};
-
-never: func_list
-{
-    $$ = never_new(NULL, NULL, NULL, $1);
+    $$ = never_new($1, $2, $3);
 };
 
 never: decl_list
 {
-    $$ = never_new(NULL, $1, NULL, NULL);
-};
-
-never: decl_list func_list
-{
-    $$ = never_new(NULL, $1, NULL, $2);
+    $$ = never_new(NULL, $1, NULL);
 };
 
 never: use_list decl_list
 {
-    $$ = never_new($1, $2, NULL, NULL);
-};
-
-never: use_list func_list
-{
-    $$ = never_new($1, NULL, NULL, $2);
-};
-
-never: use_list decl_list func_list
-{
-    $$ = never_new($1, $2, NULL, $3);
+    $$ = never_new($1, $2, NULL);
 };
 
 module_decl: TOK_MODULE_REF

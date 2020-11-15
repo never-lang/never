@@ -178,45 +178,34 @@ void func_except_delete(func_except * value)
     free(value);
 }
 
-func_body * func_body_new(expr_list * binds, func_list * funcs, expr_list * ret)
+func_body * func_body_new(seq * seq_value)
 {
     func_body * body = (func_body *)malloc(sizeof(func_body));
 
-    body->binds = binds;
-    body->funcs = funcs;
-    body->ret = expr_new_seq(ret);
+    body->exprs = expr_new_seq(seq_value);
 
     return body;
 }
 
-func_body * func_body_new_expr(expr_list * binds, func_list * funcs, expr * ret)
+func_body * func_body_new_expr(expr * exprs)
 {
     func_body * body = (func_body *)malloc(sizeof(func_body));
 
-    body->binds = binds;
-    body->funcs = funcs;
-    body->ret = ret;
+    body->exprs = exprs;
 
     return body;
 }
 
 void func_body_delete(func_body * body)
 {
-    if (body->binds)
+    if (body->exprs)
     {
-        expr_list_delete(body->binds);
-    }
-    if (body->funcs)
-    {
-        func_list_delete(body->funcs);
-    }
-    if (body->ret)
-    {
-        expr_delete(body->ret);
+        expr_delete(body->exprs);
     }
     free(body);
 }
 
+#if 0
 func_list_node * func_list_node_new(func * value)
 {
     func_list_node * node = (func_list_node *)malloc(sizeof(func_list_node));
@@ -312,3 +301,4 @@ void func_list_add_end(func_list * list, func * value)
         list->head = node;
     }
 }
+#endif

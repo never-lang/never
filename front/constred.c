@@ -27,6 +27,7 @@
 #include "iflet.h"
 #include "match.h"
 #include "forin.h"
+#include "seq.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -1779,9 +1780,9 @@ int expr_constred(expr * value, int * result)
         }
         break;
     case EXPR_SEQ:
-        if (value->seq.list != NULL)
+        if (value->seq_value != NULL)
         {
-            expr_list_constred(value->seq.list, result);
+            seq_constred(value->seq_value, result);
         }
         break;
     case EXPR_ASS:
@@ -1833,12 +1834,6 @@ int expr_constred(expr * value, int * result)
             expr_constred(value->attr.record_value, result);
         }
         break;
-    case EXPR_BIND:
-        if (value->bind.bind_value != NULL &&
-            value->bind.bind_value->expr_value != NULL)
-        {
-            expr_constred(value->bind.bind_value->expr_value, result);
-        }
     }
     return 0;
 }
@@ -1854,6 +1849,59 @@ int expr_list_constred(expr_list * list, int * result)
             expr_constred(value, result);
         }
         node = node->next;
+    }
+    return 0;
+}
+
+int seq_item_constred(seq_item * value, int * result)
+{
+    switch (value->type)
+    {
+        case SEQ_TYPE_BIND:
+        if (value->bind_value)
+        {
+            bind_constred(value->bind_value, result);
+        }
+        break;
+        case SEQ_TYPE_FUNC:
+        if (value->func_value)
+        {
+            func_constred(value->func_value, result);
+        }
+        break;
+        case SEQ_TYPE_EXPR:
+        if (value->expr_value)
+        {
+            expr_constred(value->expr_value, result);
+        }
+        break;
+        case SEQ_TYPE_UNKNOWN:
+        assert(0);
+        break;
+    }
+    return 0;
+}
+
+int seq_list_constred(seq_list * list, int * result)
+{
+    seq_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        seq_item * value = node->value;
+        if (value != NULL)
+        {
+            seq_item_constred(value, result);
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
+int seq_constred(seq * value, int * result)
+{
+    if (value->list)
+    {
+        seq_list_constred(value->list, result);
     }
     return 0;
 }
@@ -1935,6 +1983,7 @@ int bind_constred(bind * value, int * result)
     return 0;
 }
 
+#if 0
 int bind_list_constred(bind_list * list, int * result)
 {
     bind_list_node * node = list->tail;
@@ -1950,6 +1999,7 @@ int bind_list_constred(bind_list * list, int * result)
     }
     return 0;
 }
+#endif
 
 int except_constred(except * value, int * result)
 {
@@ -1982,6 +2032,7 @@ int func_constred_ffi(func * value, int * result)
 
 int func_constred_native(func * value, int * result)
 {
+#if 0
     if (value->body != NULL && value->body->binds != NULL)
     {
         expr_list_constred(value->body->binds, result);
@@ -1990,9 +2041,11 @@ int func_constred_native(func * value, int * result)
     {
         func_list_constred(value->body->funcs, result);
     }
-    if (value->body != NULL && value->body->ret != NULL)
+#endif
+
+    if (value->body != NULL && value->body->exprs != NULL)
     {
-        expr_constred(value->body->ret, result);
+        expr_constred(value->body->exprs, result);
     }
     if (value->except != NULL && value->except->list != NULL)
     {
@@ -2024,6 +2077,7 @@ int func_constred(func * value, int * result)
     return 0;
 }
 
+#if 0
 int func_list_constred(func_list * list, int * result)
 {
     func_list_node * node = list->tail;
@@ -2038,6 +2092,7 @@ int func_list_constred(func_list * list, int * result)
     }
     return 0;
 }
+#endif
 
 int use_constred(use * value, int * result)
 {
@@ -2222,15 +2277,16 @@ int never_constred(never * nev, int * result)
     {
         decl_list_constred(nev->decls, result);
     }
-    if (nev->binds)
+    if (nev->exprs)
     {
-        expr_list_constred(nev->binds, result);
+        seq_list_constred(nev->exprs, result);
     }
+#if 0
     if (nev->funcs)
     {
         func_list_constred(nev->funcs, result);
     }
-
+#endif
     return 0;
 }
 

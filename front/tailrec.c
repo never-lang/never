@@ -30,9 +30,12 @@
 int expr_id_tailrec(unsigned int syn_level, symtab * stab,
                     expr * value, tailrec_op op)
 {
-    symtab_entry * entry = NULL;
+    if (op == TAILREC_OP_SKIP)
+    {
+        return 0;
+    }
 
-    entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_LOCAL);
+    symtab_entry * entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
@@ -185,7 +188,6 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             expr_id_tailrec(syn_level, stab, value->call.func_expr, op))
         {
             value->type = EXPR_LAST_CALL;
-            
             /* printf("tailrec %s\n", value->call.func_expr->id.id); */
         }
         
@@ -198,7 +200,7 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
     case EXPR_FUNC:
         if (value->func_value != NULL)
         {
-            func_tailrec(syn_level + 2, value->func_value);
+            func_tailrec(syn_level + 1, value->func_value);
         }
     break;
     case EXPR_RANGE_DIM:
@@ -228,9 +230,9 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         }
     break;
     case EXPR_SEQ:
-        if (value->seq.list != NULL)
+        if (value->seq_value != NULL)
         {
-            expr_seq_tailrec(syn_level, stab, value->seq.list, op);
+            seq_tailrec(syn_level, stab, value->seq_value, op);
         }
     break;
     case EXPR_ASS:
@@ -283,13 +285,6 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             expr_tailrec(syn_level, stab, value->attr.record_value, TAILREC_OP_SKIP);
         }
         break;
-    case EXPR_BIND:
-        if (value->bind.bind_value != NULL &&
-            value->bind.bind_value->expr_value != NULL)
-        {
-            expr_tailrec(syn_level, stab, value->bind.bind_value->expr_value, TAILREC_OP_SKIP);
-        }
-        break;
     }
 
     return 0;
@@ -312,32 +307,73 @@ int expr_list_tailrec(unsigned int syn_level, symtab * stab,
     return 0;
 }
 
-int expr_seq_tailrec(unsigned int syn_level, symtab * stab,
-                     expr_list * list, tailrec_op op)
+int seq_item_tailrec(unsigned int syn_level, symtab * stab,
+                     seq_item * value, tailrec_op op)
 {
-    expr_list_node * last = NULL;
-    expr_list_node * node = NULL;
+    switch (value->type)
+    {
+        case SEQ_TYPE_BIND:
+            if (value->bind_value)
+            {
+                bind_tailrec(syn_level, stab, value->bind_value, TAILREC_OP_SKIP);
+            }
+        break;
+        case SEQ_TYPE_FUNC:
+            if (value->func_value)
+            {
+                func_tailrec(syn_level + 1, value->func_value);
+            }
+        break;
+        case SEQ_TYPE_EXPR:
+            if (value->expr_value)
+            {
+                expr_tailrec(syn_level, stab, value->expr_value, op);
+            }
+        break;
+        case SEQ_TYPE_UNKNOWN:
+        break;
+    }
+
+    return 0;
+}
+
+int seq_list_tailrec(unsigned int syn_level, symtab * stab,
+                     seq_list * list, tailrec_op op)
+{
+    seq_list_node * last = NULL;
+    seq_list_node * node = NULL;
     
     last = list->head;
     if (last != NULL)
     {
-        expr * value = last->value;
+        seq_item * value = last->value;
         if (value != NULL)
         {
-            expr_tailrec(syn_level, stab, value, op);
+            seq_item_tailrec(syn_level, stab, value, op);
         }
     }
     
     node = list->tail;
     while (node != last)
     {
-        expr * value = node->value;
+        seq_item * value = node->value;
         if (value != NULL)
         {
-            expr_tailrec(syn_level, stab, value, TAILREC_OP_SKIP);
+            seq_item_tailrec(syn_level, stab, value, TAILREC_OP_SKIP);
         }
         node = node->next;
     }
+    return 0;
+}
+
+int seq_tailrec(unsigned int syn_level, symtab * stab,
+                seq * value, tailrec_op op)
+{
+    if (value->list)
+    {
+        seq_list_tailrec(syn_level, value->stab, value->list, op);
+    }
+
     return 0;
 }
 
@@ -431,6 +467,7 @@ int bind_tailrec(unsigned int syn_level, symtab * stab,
     return 0;
 }
 
+#if 0
 int bind_list_tailrec(unsigned int syn_level, symtab * stab,
                       bind_list * list, tailrec_op op)
 {
@@ -447,6 +484,7 @@ int bind_list_tailrec(unsigned int syn_level, symtab * stab,
     }
     return 0;
 }
+#endif
 
 int except_tailrec(unsigned int syn_level, symtab * stab,
                    except * value, tailrec_op op)
@@ -482,20 +520,22 @@ int func_tailrec_ffi(unsigned int syn_level, func * value)
 
 int func_tailrec_native(unsigned int syn_level, func * value)
 {
-    if (value->body != NULL && value->body->binds != NULL)
+    if (value->body != NULL && value->body->exprs != NULL)
     {
-        expr_list_tailrec(syn_level, value->stab, value->body->binds, TAILREC_OP_SKIP);
+        expr_tailrec(syn_level, value->stab, value->body->exprs, TAILREC_OP_ADD);
     }
- 
+
+    /* TODO: remove
     if (value->body != NULL && value->body->funcs != NULL)
     {
         func_list_tailrec(syn_level, value->body->funcs);
     }
-    
     if (value->body != NULL && value->body->ret != NULL)
     {
         expr_tailrec(syn_level, value->stab, value->body->ret, TAILREC_OP_ADD);
     }
+    */
+
     if (value->except != NULL && value->except->list != NULL)
     {
         except_list_tailrec(syn_level, value->stab, value->except->list, TAILREC_OP_SKIP);
@@ -525,6 +565,7 @@ int func_tailrec(unsigned int syn_level, func * value)
     return 0;
 }
 
+#if 0
 int func_list_tailrec(unsigned int syn_level, func_list * list)
 {
     func_list_node * node = list->tail;
@@ -540,6 +581,7 @@ int func_list_tailrec(unsigned int syn_level, func_list * list)
     }
     return 0;
 }
+#endif
 
 int use_tailrec(use * value)
 {
@@ -577,13 +619,9 @@ int never_tailrec(never * nev)
     {
         use_list_tailrec(nev->uses);
     }
-    if (nev->binds)
+    if (nev->exprs)
     {
-        expr_list_tailrec(syn_level, nev->stab, nev->binds, TAILREC_OP_SKIP);
-    }
-    if (nev->funcs)
-    {
-        func_list_tailrec(syn_level, nev->funcs);
+        seq_list_tailrec(syn_level, nev->stab, nev->exprs, TAILREC_OP_ADD);
     }
     return 0;
 }

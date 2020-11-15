@@ -201,7 +201,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
 int expr_list_emit(expr_list * list, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
-int expr_seq_emit(expr_list * list, int * stack_level, module * module_value,
+int seq_emit(seq * value, int stack_level, module * module_value,
+                  func_list_weak * list_weak,  int * result);
+int seq_list_emit(seq_list * list, int * stack_level, module * module_value,
                   func_list_weak * list_weak, int * result);
 int expr_yeld_emit(listcomp * listcomp_value, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
@@ -256,8 +258,8 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result);
 int bind_emit(bind * bind_value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
-int bind_list_emit(bind_list * list, int stack_level, module * module_value,
-                   func_list_weak * list_weak, int * result);
+/* TODO: remove int bind_list_emit(bind_list * list, int stack_level, module * module_value,
+                   func_list_weak * list_weak, int * result); */
 int except_all_emit(except * value, func * func_value, int stack_level,
                     module * module_value, func_list_weak * list_weak, int * result);
 int except_emit(except * value, func * func_value, int stack_level,
@@ -285,13 +287,12 @@ int func_emit(func * func_value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
 
 int func_entry_params(func * func_value, module * module_value, int * result);
-int func_list_entry_params(func_list * list, module * module_value, int * result);
+int expr_list_entry_params(expr_list * list, module * module_value, int * result);
 
 int func_entry_emit(never * nev, int stack_level, module * module_value,
                    int * result);
-
-int func_list_emit(func_list * list, int * stack_level, module * module_value,
-                   func_list_weak * list_weak, int * result);
+/* TODO: remove int func_list_emit(func_list * list, int * stack_level, module * module_value,
+             func_list_weak * list_weak, int * result); */
 
 int use_emit(use * value, int * stack_level, module * module_value, func_list_weak * list_weak, int * result);
 int use_list_emit(use_list * list, int * stack_level, module * module_value, func_list_weak * list_weak, int * result);

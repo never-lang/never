@@ -46,8 +46,12 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
                  expr * value, tailrec_op op);
 int expr_list_tailrec(unsigned int syn_level, symtab * stab,
                      expr_list * list, tailrec_op op);
-int expr_seq_tailrec(unsigned int syn_level, symtab * stab,
-                     expr_list * list, tailrec_op op);
+int seq_item_tailrec(unsigned int syn_level, symtab * stab,
+                     seq_item * list, tailrec_op op);
+int seq_list_tailrec(unsigned int syn_level, symtab * stab,
+                     seq_list * list, tailrec_op op);
+int seq_tailrec(unsigned int syn_level, symtab * stab,
+                seq * value, tailrec_op op);
 int qualifier_tailrec(unsigned int syn_level, symtab * stab,
                       qualifier * value, tailrec_op op);
 int qualifier_list_tailrec(unsigned int syn_level, symtab * stab,
@@ -58,8 +62,8 @@ int array_tailrec(unsigned int syn_level, symtab * stab,
                   array * value, tailrec_op op);
 int bind_tailrec(unsigned int syn_level, symtab * stab,
                  bind * value, tailrec_op op);
-int bind_list_tailrec(unsigned int syn_level, symtab * stab,
-                      bind_list * list, tailrec_op op);
+/* TODO: remove int bind_list_tailrec(unsigned int syn_level, symtab * stab,
+                      bind_list * list, tailrec_op op); */
 int except_tailrec(unsigned int syn_level, symtab * stab,
                    except * value, tailrec_op op);
 int except_list_tailrec(unsigned int syn_level, symtab * stab,
@@ -67,7 +71,7 @@ int except_list_tailrec(unsigned int syn_level, symtab * stab,
 int func_tailrec_ffi(unsigned int syn_level, func * value);
 int func_tailrec_native(unsigned int syn_level, func * value);
 int func_tailrec(unsigned int syn_level, func * value);
-int func_list_tailrec(unsigned int syn_level, func_list * list);
+/* TODO: remove int func_list_tailrec(unsigned int syn_level, func_list * list); */
 int use_tailrec(use * value);
 int use_list_tailrec(use_list * list);
 int never_tailrec(never * nev);

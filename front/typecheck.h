@@ -72,12 +72,12 @@ int symtab_add_param_from_range_list(symtab * tab, range_list * list,
                                      unsigned int syn_level, int * result);
 int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
                               unsigned int syn_level, int * result);
-int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
-                                   unsigned int syn_level, int * result);
+/* TODO: remove int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
+                                   unsigned int syn_level, int * result); */
 int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result);
-int symtab_add_func_from_func_list(symtab * tab, func_list * list,
-                                   unsigned int syn_level, int * result);
+/*TODO: remove int symtab_add_func_from_func_list(symtab * tab, func_list * list,
+                                   unsigned int syn_level, int * result); */
 
 int array_dims_check_type_expr(symtab * tab, expr * value, func * func_value,
                                unsigned syn_level, int * result);
@@ -143,12 +143,16 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
                     int * result);
 int expr_list_check_type(symtab * tab, expr_list * list, func * func_value, unsigned int syn_level,
                          int * result);
+int seq_item_check_type(symtab * tab, seq_item * value, func * func_value, unsigned syn_level,
+                        int * result);
+int seq_list_check_type(symtab * tab, seq_list * list, func * func_value, unsigned syn_level,
+                        int * result);
 int expr_seq_check_type(symtab * tab, expr * value, func * func_value, unsigned syn_level,
                         int * result);
 int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int syn_level,
                     int * result);
-int bind_list_check_type(symtab * tab, bind_list * list, func * func_value, unsigned int syn_level,
-                         int * result);
+/* TODO: remove int bind_list_check_type(symtab * tab, bind_list * list, func * func_value, unsigned int syn_level,
+                         int * result); */
 int except_check_type(symtab * tab, except * value, func * func_value,
                       unsigned int syn_level, int * result);
 int except_list_check_type(symtab * tab, except_list * list, func * func_value,
@@ -159,14 +163,14 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                         int * result);
 int func_param_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                           int * result);
-int func_list_param_check_type(symtab * tab, func_list * list, unsigned int syn_level,
-                         int * result);
+/*TODO: remove int func_list_param_check_type(symtab * tab, func_list * list, unsigned int syn_level,
+                         int * result); */
 int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                            int * result);
 int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                     int * result);
-int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
-                         int * result);
+/*TODO remove int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
+                         int * result); */
 
 int never_add_enumerator(enumtype * enumtype_value, enumerator * value, enumerator * enumerator_prev, int * result);
 int never_add_enumerator_list(enumtype * enumtype_value, enumerator_list * enums, int * result);
@@ -196,7 +200,8 @@ int decl_list_index_reduce_check_value(symtab * stab, decl_list * list, int * re
 
 int func_entry_check_num_params(param_list * params);
 int func_entry_check_type(func * func_value, int * result);
-int func_list_entry_check_type(func_list * list, int * result);
+int seq_item_func_entry_check_type(seq_item * value, int * result);
+int seq_list_func_entry_check_type(seq_list * list, int * result);
 
 int never_check_type(module_decl * module_modules, module_decl * module_stdlib, never * nev, int * result);
 

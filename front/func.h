@@ -30,7 +30,7 @@
 #include "except.h"
 
 typedef struct func_body func_body;
-typedef struct func_list func_list;
+/* TODO: remove typedef struct func_list func_list; */
 typedef struct func_decl func_decl;
 typedef struct func_except func_except;
 
@@ -71,9 +71,7 @@ typedef struct func_decl
 
 typedef struct func_body
 {
-    expr_list * binds;
-    func_list * funcs;
-    struct expr * ret;
+    expr * exprs;
 } func_body;
 
 typedef struct func_except
@@ -82,6 +80,7 @@ typedef struct func_except
     except * all;
 } func_except;
 
+#if 0
 typedef struct func_list_node
 {
     func * value;
@@ -95,6 +94,7 @@ typedef struct func_list
     func_list_node * head;
     func_list_node * tail;
 } func_list;
+#endif
 
 func * func_new(func_decl * decl, func_body * body);
 func * func_new_except(func_decl * decl, func_body * body, func_except * except);
@@ -106,13 +106,14 @@ void func_print(func * value);
 func_decl * func_decl_new(char * id, param_list * params, param * ret);
 void func_decl_delete(func_decl * value);
 
-func_body * func_body_new(expr_list * binds, func_list * funcs, expr_list * ret);
-func_body * func_body_new_expr(expr_list * binds, func_list * funcs, expr * ret);
+func_body * func_body_new(seq * seq_value);
+func_body * func_body_new_expr(expr * exprs);
 void func_body_delete(func_body * body);
 
 func_except * func_except_new(except * all, except_list * list);
 void func_except_delete(func_except * value);
 
+#if 0
 func_list_node * func_list_node_new(func * value);
 void func_list_node_delete(func_list_node * node);
 
@@ -123,6 +124,7 @@ int func_list_enum(func_list * list, int start);
 
 void func_list_add_beg(func_list * list, func * value);
 void func_list_add_end(func_list * list, func * value);
+#endif
 
 #endif /* __FUNC_H__ */
 

@@ -39,16 +39,18 @@ int expr_match_constred(expr * value, int * result);
 int expr_conv_constred(expr * value, int * result);
 int expr_constred(expr * value, int * result);
 int expr_list_constred(expr_list * list, int * result);
+int seq_constred(seq * value, int * result);
+int seq_list_constred(seq_list * list, int * result);
 int qualifier_constred(qualifier * value, int * result);
 int qualifier_list_constred(qualifier_list * list, int * result);
 int listcomp_constred(listcomp * value, int * result);
 int array_constread(array * value, int * result);
 int bind_constred(bind * value, int * result);
-int bind_list_constred(bind_list * list, int * result);
+/* TODO: remove int bind_list_constred(bind_list * list, int * result); */
 int func_constred_ffi(func * value, int * result);
 int func_constred_native(func * value, int * result);
 int func_constred(func * value, int * result);
-int func_list_constred(func_list * list, int * result);
+/* TODO: remove int func_list_constred(func_list * list, int * result); */
 int use_constred(use * value, int * result);
 int use_list_constred(use_list * list, int * result);
 int enumerator_index_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result);

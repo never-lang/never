@@ -183,7 +183,8 @@ func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
         printf("build_in with ret type not supported\n");
         assert(0);
     }
-    body = func_body_new_expr(NULL, NULL, func_expr);
+
+    body = func_body_new_expr(func_expr);
 
     func_name = strdup(libmath_func_to_str(math_id));
     decl = func_decl_new(func_name, formal, param_ret);
@@ -440,38 +441,38 @@ func * libmath_func_c_ptr_ptr_new()
                                  param_new_c_ptr(NULL));
 }
 
-void libmath_add_funcs(func_list * funcs)
+void libmath_add_funcs(seq_list * funcs)
 {
-    func_list_add_end(funcs, libmath_func_sin_new());
-    func_list_add_end(funcs, libmath_func_cos_new());
-    func_list_add_end(funcs, libmath_func_tan_new());
-    func_list_add_end(funcs, libmath_func_exp_new());
-    func_list_add_end(funcs, libmath_func_log_new());
-    func_list_add_end(funcs, libmath_func_sqrt_new());
-    func_list_add_end(funcs, libmath_func_pow_new());
-    func_list_add_end(funcs, libmath_func_str_int_new());
-    func_list_add_end(funcs, libmath_func_str_float_new());
-    func_list_add_end(funcs, libmath_func_ord_new());
-    func_list_add_end(funcs, libmath_func_chr_new());
-    func_list_add_end(funcs, libmath_func_read_new());
-    func_list_add_end(funcs, libmath_func_print_bool_new());
-    func_list_add_end(funcs, libmath_func_print_int_new());
-    func_list_add_end(funcs, libmath_func_print_long_new());
-    func_list_add_end(funcs, libmath_func_print_float_new());
-    func_list_add_end(funcs, libmath_func_print_double_new());
-    func_list_add_end(funcs, libmath_func_print_char_new());
-    func_list_add_end(funcs, libmath_func_print_string_new());
-    func_list_add_end(funcs, libmath_func_length_new());
-    func_list_add_end(funcs, libmath_func_assert_int_new());
-    func_list_add_end(funcs, libmath_func_assert_float_new());
-    func_list_add_end(funcs, libmath_func_c_int_ptr_new());
-    func_list_add_end(funcs, libmath_func_c_long_ptr_new());
-    func_list_add_end(funcs, libmath_func_c_float_ptr_new());
-    func_list_add_end(funcs, libmath_func_c_double_ptr_new());
-    func_list_add_end(funcs, libmath_func_c_bool_ptr_new());
-    func_list_add_end(funcs, libmath_func_c_char_ptr_new());
-    func_list_add_end(funcs, libmath_func_c_string_ptr_new());
-    func_list_add_end(funcs, libmath_func_c_ptr_ptr_new());            
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_sin_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_cos_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_tan_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_exp_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_log_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_sqrt_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_pow_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_str_int_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_str_float_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_ord_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_chr_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_read_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_print_bool_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_print_int_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_print_long_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_print_float_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_print_double_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_print_char_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_print_string_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_length_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_assert_int_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_assert_float_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_c_int_ptr_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_c_long_ptr_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_c_float_ptr_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_c_double_ptr_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_c_bool_ptr_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_c_char_ptr_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_c_string_ptr_new()));
+    seq_list_add_end(funcs, seq_item_new_func(libmath_func_c_ptr_ptr_new()));
 }
 
 const char * libmath_func_to_str(libmath_func math_id)
@@ -546,8 +547,8 @@ const char * libmath_func_to_str(libmath_func math_id)
 
 void libmath_add_funcs_module_decl(module_decl * module_value)
 {
-    if (module_value->nev && module_value->nev->funcs)
+    if (module_value->nev && module_value->nev->exprs)
     {
-        libmath_add_funcs(module_value->nev->funcs);
+        libmath_add_funcs(module_value->nev->exprs);
     }
 }

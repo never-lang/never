@@ -265,6 +265,8 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
         bc.id_local.stack_level = stack_level;
         bc.id_local.index = value->src.func_value->index;
 
+        /* TODO: remove printf("freevar_func %s %d %d\n", value->src.func_value->decl->id, stack_level, value->src.func_value->index); */
+
         bytecode_add(module_value->code, &bc);
         break;
     }
@@ -378,7 +380,7 @@ int expr_id_bind_emit(expr * value, int stack_level, module * module_value,
     bc.id_local.index = value->id.id_bind_value->index;
     bytecode_add(module_value->code, &bc);
 
-    printf("id %s sl %d index %d\n", value->id.id, stack_level, value->id.id_bind_value->index);
+    /* printf("id %s sl %d index %d\n", value->id.id, stack_level, value->id.id_bind_value->index); */
 
     return 0;
 }
@@ -3246,9 +3248,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_SEQ:
-        if (value->seq.list != NULL)
+        if (value->seq_value != NULL)
         {
-            expr_seq_emit(value->seq.list, &stack_level, module_value, list_weak, result);
+            seq_emit(value->seq_value, stack_level, module_value, list_weak, result);
         }
         break;
     case EXPR_ASS:
@@ -3309,6 +3311,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             assert(0);
         }
         break;
+#if 0
     case EXPR_BIND:
         if (value->bind.bind_value != NULL &&
             value->bind.bind_value->expr_value != NULL)
@@ -3321,6 +3324,7 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             expr_emit(value->bind.bind_value->expr_value, stack_level, module_value, list_weak, result);
         }
         break;
+#endif
     }
     return 0;
 }
@@ -3343,46 +3347,124 @@ int expr_list_emit(expr_list * list, int stack_level, module * module_value,
     return 0;
 }
 
-int expr_seq_emit(expr_list * list, int * stack_level, module * module_value,
-                 func_list_weak * list_weak,  int * result)
+int seq_list_emit(seq_list * list, int * stack_level, module * module_value,
+                  func_list_weak * list_weak,  int * result)
 {
-    int prev_not_bind = 0;
+    int pop_prev = 0;
 
-    expr_list_node * node = list->tail;
+    seq_list_node * node = list->tail;
     while (node != NULL)
     {
-        expr * value = node->value;
-        if (value != NULL)
+        seq_item * value = node->value;
+        if (value == NULL)
         {
-            if (prev_not_bind)
+            node = node->next;
+            continue;
+        }
+        if (pop_prev)
+        {
+            bytecode bc = { 0 };
+
+            /* pop previous value of stack */
+            bc.type = BYTECODE_SLIDE;
+            bc.slide.m = 0;
+            bc.slide.q = 1;            
+            bytecode_add(module_value->code, &bc);
+        }
+        switch (value->type)
+        {
+            case SEQ_TYPE_EXPR:
+            {
+                expr_emit(value->expr_value, *stack_level, module_value, list_weak, result);
+
+                pop_prev = 1;
+                node = node->next;
+            }
+            break;
+            case SEQ_TYPE_BIND:
+            {
+                bind_emit(value->bind_value, *stack_level, module_value, list_weak, result);
+                (*stack_level)++;
+
+                pop_prev = 0;
+                node = node->next;
+            }
+            break;
+            case SEQ_TYPE_FUNC:
             {
                 bytecode bc = { 0 };
+                unsigned int count = 0;
+                seq_list_node * func_first_node = node;
 
-                /* pop previous value of stack */
-                bc.type = BYTECODE_SLIDE;
-                bc.slide.m = 0;
-                bc.slide.q = 1;            
+                while (node != NULL &&
+                       node->value != NULL &&
+                       node->value->type == SEQ_TYPE_FUNC)
+                {
+                    func * func_value = node->value->func_value;
+                    if (func_value)
+                    {
+                        func_value->index = (*stack_level) + count + 1;
+                        count++;
+                    }
+                    node = node->next;
+                }
 
+                bc.type = BYTECODE_ALLOC;
+                bc.alloc.n = count;
                 bytecode_add(module_value->code, &bc);
-            }
 
-            expr_emit(value, *stack_level, module_value, list_weak, result);
+                node = func_first_node;
+                (*stack_level) = (*stack_level) + count;
 
-            if (value->type == EXPR_BIND)
-            {
-                (*stack_level)++;
-                prev_not_bind = 0;
+                while (node != NULL &&
+                       node->value != NULL &&
+                       node->value->type == SEQ_TYPE_FUNC)
+                {
+                    func * func_value = node->value->func_value;
+                    if (func_value)
+                    {
+                        func_emit(func_value, (*stack_level), module_value, list_weak, result);
+
+                        bc.type = BYTECODE_REWRITE;
+                        bc.rewrite.j = count--;
+                        bytecode_add(module_value->code, &bc);
+                    }
+                    node = node->next;
+                }
+
+                pop_prev = 0;
             }
-            else
-            {
-                prev_not_bind = 1;
-            }
+            break;
+            default:
+                assert(0);
         }
-        node = node->next;
     }
 
     return 0;
 }
+
+int seq_emit(seq * value, int stack_level, module * module_value,
+                  func_list_weak * list_weak,  int * result)
+{
+    if (value->list)
+    {
+        int stack_before = stack_level;
+        seq_list_emit(value->list, &stack_level, module_value, list_weak, result);
+
+        if (stack_level - stack_before > 0)
+        {
+            bytecode bc = { 0 };
+
+            bc.type = BYTECODE_SLIDE;
+            bc.slide.m = stack_level - stack_before;
+            bc.slide.q = 1;
+
+            bytecode_add(module_value->code, &bc);
+        }
+    }
+
+    return 0;
+}                
 
 int expr_yeld_emit(listcomp * listcomp_value, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result)
@@ -4448,6 +4530,10 @@ int bind_emit(bind * bind_value, int stack_level, module * module_value,
         case BIND_VAR:
             if (bind_value->expr_value != NULL)
             {
+                bind_value->index = stack_level + 1;
+
+                /* printf("bind %s %d\n", bind_value->id, bind_value->index); */
+
                 expr_emit(bind_value->expr_value, stack_level, module_value, list_weak, result);
             }
         break;
@@ -4455,6 +4541,7 @@ int bind_emit(bind * bind_value, int stack_level, module * module_value,
     return 0;
 }
 
+#if 0
 int bind_list_emit(bind_list * list, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result)
 {
@@ -4472,6 +4559,7 @@ int bind_list_emit(bind_list * list, int stack_level, module * module_value,
     }
     return 0;
 }
+#endif
 
 int except_implicit_emit(func * func_value, int stack_level, module * module_value,
                          func_list_weak * list_weak, int * result)
@@ -4749,28 +4837,31 @@ int func_body_emit_native(func * func_value, module * module_value,
     labelA = bytecode_add(module_value->code, &bc);
     func_value->addr = labelA->addr;
 
-    if (func_value->body && func_value->body->binds)
+    if (func_value->body && func_value->body->exprs)
     {
-        expr_seq_emit(func_value->body->binds, &stack_level, module_value, list_weak, result);
+        expr_emit(func_value->body->exprs, stack_level, module_value, list_weak, result);
         /* TODO: remove this stack_level += func_value->body->binds->count; */
     }
+    /* TODO: remove
     if (func_value->body && func_value->body->funcs)
     {
         func_list_emit(func_value->body->funcs, &stack_level, module_value,
                        list_weak, result);
-        /* TODO: remove this stack_level += func_value->body->funcs->count; */
     }
+    */
+    /* TODO: remove
     if (func_value->body && func_value->body->ret)
     {
         expr_emit(func_value->body->ret, stack_level, module_value, list_weak, result);
     }
-    if (func_value->body && func_value->body->ret && func_value->body->ret->line_no > 0)
+    */
+    if (func_value->body && func_value->body->exprs && func_value->body->exprs->line_no > 0)
     {
         bc.type = BYTECODE_LINE;
-        bc.line.no = func_value->body->ret->line_no;
+        bc.line.no = func_value->body->exprs->line_no;
         bytecode_add(module_value->code, &bc);
     }
-    
+
     bc.type = BYTECODE_RET;
     bytecode_add(module_value->code, &bc);
 
@@ -4927,15 +5018,17 @@ int func_entry_params(func * func_value, module * module_value, int * result)
     return 0;
 }
 
-int func_list_entry_params(func_list * list, module * module_value, int * result)
+int seq_list_entry_params(seq_list * list, module * module_value, int * result)
 {
-    func_list_node * node = list->tail;
+    seq_list_node * node = list->tail;
     while (node != NULL)
     {
-        func * func_value = node->value;
-        if (func_value != NULL)
+        seq_item * seq_item_value = node->value;
+        if (seq_item_value != NULL &&
+            seq_item_value->type == SEQ_TYPE_FUNC &&
+            seq_item_value->func_value != NULL)
         {
-            func_entry_params(func_value, module_value, result);
+            func_entry_params(seq_item_value->func_value, module_value, result);
         }
         node = node->next;
     }
@@ -4989,6 +5082,7 @@ int func_entry_emit(
     return 0;
 }
 
+#if 0
 int func_list_emit(func_list * list, int * stack_level, module * module_value,
                    func_list_weak * list_weak, int * result)
 {
@@ -5019,16 +5113,13 @@ int func_list_emit(func_list * list, int * stack_level, module * module_value,
 
     return 0;
 }
+#endif
 
 int never_emit(never * nev, int * stack_level, module * module_value, func_list_weak * list_weak, int * result)
 {
-    if (nev->binds)
+    if (nev->exprs)
     {
-        expr_seq_emit(nev->binds, stack_level, module_value, list_weak, result);
-    }
-    if (nev->funcs)
-    {
-        func_list_emit(nev->funcs, stack_level, module_value, list_weak, result);
+        seq_list_emit(nev->exprs, stack_level, module_value, list_weak, result);
     }
 
     return 0;
@@ -5073,7 +5164,7 @@ int module_decl_emit(module_decl * value, int * stack_level, module * module_val
 int main_emit(module_decl * module_modules, module_decl * module_main, module * module_value)
 {
     int gencode_res = 0;
-    int stack_level = 0;
+    int stack_level = -1;
     func_list_weak * list_weak = func_list_weak_new();
 
     use_list_emit(module_modules->nev->uses, &stack_level, module_value, list_weak, &gencode_res);
@@ -5092,7 +5183,7 @@ int main_emit(module_decl * module_modules, module_decl * module_main, module * 
     func_list_weak_delete(list_weak);
 
     /* generate module entry function list */
-    func_list_entry_params(module_main->nev->funcs, module_value, &gencode_res);
+    seq_list_entry_params(module_main->nev->exprs, module_value, &gencode_res);
 
     return gencode_res;
 }

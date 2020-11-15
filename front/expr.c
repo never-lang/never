@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 #include "expr.h"
+#include "seq.h"
 #include "array.h"
 #include "func.h"
 #include "listcomp.h"
@@ -273,15 +274,14 @@ expr * expr_new_slice(expr * array_expr, expr_list * range_dims)
     return ret;
 }
 
-expr * expr_new_seq(expr_list * list)
+expr * expr_new_seq(seq * value)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_SEQ;
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
-    ret->seq.stab = NULL;
-    ret->seq.list = list;
+    ret->seq_value = value;
 
     return ret;
 }
@@ -437,18 +437,6 @@ expr * expr_new_attr(expr * record_value, expr * id)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     
-    return ret;
-}
-
-expr * expr_new_bind(bind * bind_value)
-{
-    expr * ret = (expr *)malloc(sizeof(expr));
-
-    ret->type = EXPR_BIND;
-    ret->bind.bind_value = bind_value;
-    ret->line_no = 0;
-    ret->comb.comb = COMB_TYPE_UNKNOWN;
-
     return ret;
 }
 
@@ -618,13 +606,9 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_SEQ:
-        if (value->seq.stab != NULL)
+        if (value->seq_value != NULL)
         {
-            symtab_delete(value->seq.stab);
-        }
-        if (value->seq.list != NULL)
-        {
-            expr_list_delete(value->seq.list);
+            seq_delete(value->seq_value);
         }
         break;
     case EXPR_BUILD_IN:
@@ -712,12 +696,6 @@ void expr_delete(expr * value)
         if (value->attr.record_value != NULL)
         {
             expr_delete(value->attr.record_value);
-        }
-        break;
-    case EXPR_BIND:
-        if (value->bind.bind_value != NULL)
-        {
-            bind_delete(value->bind.bind_value);
         }
         break;
     }
@@ -861,7 +839,6 @@ const char * expr_type_str(expr_type type)
     case EXPR_ATTR: return "attr";
     case EXPR_NIL: return "nil";
     case EXPR_C_NULL: return "c_null";
-    case EXPR_BIND: return "bind";
     }
     
     return "unknown";

@@ -80,8 +80,7 @@ typedef enum expr_type
     EXPR_LISTCOMP = 52,
     EXPR_ATTR = 53,
     EXPR_NIL = 54,
-    EXPR_C_NULL = 55,
-    EXPR_BIND = 56
+    EXPR_C_NULL = 55
 } expr_type;
 
 typedef enum conv_type
@@ -154,6 +153,7 @@ typedef struct bind bind;
 typedef struct func func;
 typedef struct qualifier qualifier;
 typedef struct expr_list expr_list;
+typedef struct seq seq;
 typedef struct listcomp listcomp;
 typedef struct record record;
 typedef struct enumtype enumtype;
@@ -165,7 +165,6 @@ typedef struct match_guard_list match_guard_list;
 typedef struct freevar freevar;
 typedef struct param param;
 typedef struct module_decl module_decl;
-typedef struct symtab symtab;
 
 typedef struct expr_comb
 {
@@ -229,11 +228,7 @@ typedef struct expr
             struct expr * middle; /* in ternary left_expr ? middle_expr :
                                      right_expr */
         };
-        struct                        /* EXPR_SEQ */
-        {
-            symtab * stab;
-            struct expr_list * list;
-        } seq;
+        struct seq * seq_value;
         struct
         {
             struct expr * cond;
@@ -335,7 +330,7 @@ expr * expr_new_array_deref(expr * array_expr, expr_list * ref);
 expr * expr_new_range(expr_list * range_dims);
 expr * expr_new_range_dim(expr * from, expr * to);
 expr * expr_new_slice(expr * array_expr, expr_list * range_dims);
-expr * expr_new_seq(expr_list * list);
+expr * expr_new_seq(seq * value);
 expr * expr_new_func(func * value);
 expr * expr_new_call(expr * func_expr, expr_list * params);
 expr * expr_new_ass(expr * left, expr * right);
@@ -348,7 +343,6 @@ expr * expr_new_match(expr * expr_value, match_guard_list * match_guards);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);
 expr * expr_new_attr(expr * record_value, expr * id);
-expr * expr_new_bind(bind * bind_value);
 
 comb_type conv_to_comb_type(conv_type conv);
 expr * expr_conv(expr * expr_value, conv_type conv);

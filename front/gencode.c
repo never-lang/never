@@ -599,6 +599,7 @@ int func_gencode_freevars_bind(func * func_value, symtab * stab, bind * bind_val
     return 0;
 }
 
+#if 0
 int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
                                     int * result)
 {
@@ -614,6 +615,7 @@ int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list 
     }
     return 0;
 }
+#endif
 
 int func_gencode_freevars_except(func * func_value, symtab * stab, except * except_value,
                                  int * result)
@@ -679,6 +681,7 @@ int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_
     return 0;
 }
 
+#if 0
 int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list * list,
                                     int * result)
 {
@@ -696,14 +699,16 @@ int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list 
 
     return 0;
 }
+#endif
 
 int func_gencode_freevars(func * func_value, symtab * stab, int * result)
 {
-    if (func_value->body && func_value->body->binds)
+    if (func_value->body && func_value->body->exprs)
     {
-        func_gencode_freevars_expr_list(func_value, stab, func_value->body->binds,
-                                        result);
+        func_gencode_freevars_expr(func_value, stab, func_value->body->exprs,
+                                   result);
     }
+#if 0
     if (func_value->body && func_value->body->funcs)
     {
         func_gencode_freevars_func_list(func_value, stab, func_value->body->funcs,
@@ -713,6 +718,7 @@ int func_gencode_freevars(func * func_value, symtab * stab, int * result)
     {
         func_gencode_freevars_expr(func_value, stab, func_value->body->ret, result);
     }
+#endif
     if (func_value->except)
     {
         func_gencode_freevars_func_except(func_value, stab, func_value->except, result);
@@ -854,9 +860,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         }
         break;
     case EXPR_SEQ:
-        if (value->seq.list != NULL)
+        if (value->seq_value != NULL)
         {
-            func_gencode_freevars_expr_list(func_value, stab, value->seq.list, result);
+            func_gencode_freevars_seq(func_value, stab, value->seq_value, result);
         }
         break;
     case EXPR_ASS:
@@ -907,13 +913,63 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
             func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
         }
         break;
-    case EXPR_BIND:
-        if (value->bind.bind_value != NULL &&
-            value->bind.bind_value->expr_value != NULL)
-        {
-            func_gencode_freevars_expr(func_value, stab, value->bind.bind_value->expr_value, result);
-        }
+    }
+
+    return 0;
+}
+
+int func_gencode_freevars_seq_item(func * func_value, symtab * stab, seq_item * value, int * result)
+{
+    switch (value->type)
+    {
+        case SEQ_TYPE_BIND:
+            if (value->bind_value)
+            {
+                func_gencode_freevars_bind(func_value, stab, value->bind_value, result);
+            }
         break;
+        case SEQ_TYPE_FUNC:
+            if (value->func_value)
+            {
+                func_gencode_freevars_func(func_value, stab, value->func_value, result);
+            }
+        break;
+        case SEQ_TYPE_EXPR:
+            if (value->expr_value)
+            {
+                func_gencode_freevars_expr(func_value, stab, value->expr_value, result);
+            }
+        break;
+        case SEQ_TYPE_UNKNOWN:
+        break;
+    }
+
+    return 0;
+}
+
+int func_gencode_freevars_seq_list(func * func_value, symtab * stab, seq_list * list,
+                                    int * result)
+{
+    seq_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        seq_item * value = node->value;
+        if (value)
+        {
+            func_gencode_freevars_seq_item(func_value, stab, value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int func_gencode_freevars_seq(func * func_value, symtab * stab, seq * seq_value,
+                              int * result)
+{
+    if (seq_value->list)
+    {
+        func_gencode_freevars_seq_list(func_value, seq_value->stab, seq_value->list, result);
     }
 
     return 0;

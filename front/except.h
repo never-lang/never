@@ -25,13 +25,6 @@
 #include "vm.h"
 #include "expr.h"
 
-typedef enum except_type
-{
-    EXCEPT_UNKNOWN = 0,
-    EXCEPT_ALL = 1,
-    EXCEPT_ID = 2
-} except_type;
-
 #define EXCEPT_NO_UNKNOWN_NAME "unknown_exception"
 #define EXCEPT_NO_DIVISION_NAME "division_by_zero"
 #define EXCEPT_NO_ARR_SIZE_NAME "wrong_array_size"
@@ -42,6 +35,15 @@ typedef enum except_type
 #define EXCEPT_NO_INEXACT_NAME "inexact"
 #define EXCEPT_NIL_POINTER_NAME "nil_pointer"
 #define EXCEPT_FFI_FAIL_NAME "ffi_fail"
+
+typedef struct seq_list seq_list;
+
+typedef enum except_type
+{
+    EXCEPT_UNKNOWN = 0,
+    EXCEPT_ALL = 1,
+    EXCEPT_ID = 2
+} except_type;
 
 typedef struct except
 {
@@ -66,8 +68,8 @@ typedef struct except_list
     except_list_node * tail;
 } except_list;
 
-except * except_new_all(expr_list * seq);
-except * except_new_id(char * id, expr_list * seq);
+except * except_new_all(seq * seq_value);
+except * except_new_id(char * id, seq * seq_value);
 
 void except_delete(except * value);
 
