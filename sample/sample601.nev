@@ -1,16 +1,10 @@
 
-let Z = 1000;
-
-func rec(i : int) -> int { rec(i - 1) }
-
 func main() -> int
 {
-    let i = 10;
+    /* let i = 10;
     let j = 20;
     let K = 100;
 
-    print(Z);
-    printf(sin(1.57f));
     print(i);
     print(j);
     print(i + j);
@@ -20,16 +14,18 @@ func main() -> int
     print(i);
     print(j);
     print(i + j);
-    print(o);
+    print(o); */
 
     func foo(i : int) -> int { prints("foo\n"); i > 0 ? bar(i - 1) : 0 }
     func bar(i : int) -> int { prints("bar\n"); i > 0 ? foo(i - 1) : 0 };
-    let f = let func rec2(i : int) -> int { 10 * i };
+    /* let f = let func rec2(i : int) -> int { 10 * i }; */
 
     foo(5);
-    print(f(2));
+    /* print(f(2));
 
-    print( { var i = 30; func add (a : int, b : int) -> int { 2 * (a + b) }; var x = 100; x + i } );
+    print( { var i = 99; i } );
+    print( 100 ); */
+    print( { var i = 30; func add (a : int, b : int) -> int { add(a, b) }; var x = 100; x + i } );
 
     /*let T = [ 1 .. 4 ];
     for (a in T) {

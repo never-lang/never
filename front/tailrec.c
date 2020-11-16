@@ -34,8 +34,7 @@ int expr_id_tailrec(unsigned int syn_level, symtab * stab,
     {
         return 0;
     }
-
-    symtab_entry * entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
+    symtab_entry * entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_FUNC);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_FUNC && entry->func_value != NULL)
@@ -188,7 +187,7 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             expr_id_tailrec(syn_level, stab, value->call.func_expr, op))
         {
             value->type = EXPR_LAST_CALL;
-            /* printf("tailrec %s\n", value->call.func_expr->id.id); */
+            printf("tailrec %s\n", value->call.func_expr->id.id);
         }
         
         if (value->call.params != NULL)

@@ -3,7 +3,7 @@ module mtail {
     func spaces(n: int) -> string {
         func spaces0(s:string, n:int) -> string {
             (n == 0) ? s : spaces0(s+" ", n-1)
-        }
+        };
         spaces0(" ", n-1)
     }
 }

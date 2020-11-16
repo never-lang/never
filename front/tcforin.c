@@ -108,7 +108,7 @@ int expr_forin_check_type(symtab * tab, expr * value, func * func_value,
 
     if (value->forin_value->stab == NULL)
     {
-        value->forin_value->stab = symtab_new(8, SYMTAB_TYPE_FUNC, tab);
+        value->forin_value->stab = symtab_new(8, SYMTAB_TYPE_BLOCK, tab);
     }
 
     symtab_add_param_from_forin(value->forin_value->stab, value->forin_value, syn_level, result);

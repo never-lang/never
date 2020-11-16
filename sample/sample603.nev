@@ -1,0 +1,10 @@
+
+func main() -> bool 
+{
+    let z = 20;
+
+    print( { let x = 10; print(x); z } );
+
+    assert(1 == 1)
+}
+

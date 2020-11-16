@@ -1,0 +1,18 @@
+
+func test() -> int
+{
+    let f = 10;
+
+    for (f in [ 10 * x + y | x in [1 .. 4]; y in [ 1 .. 4 ] ] : int)
+    {
+        print(f)
+    };
+    
+    0
+}
+
+func main() -> int
+{
+    test();
+    0
+}

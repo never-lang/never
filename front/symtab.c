@@ -407,7 +407,7 @@ symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op loo
 
     entry = symtab_entry_lookup_object(tab->entries, tab->size, id);
     if (((lookup == SYMTAB_LOOKUP_GLOBAL) ||
-         ((lookup == SYMTAB_LOOKUP_LOCAL) && (tab->type == SYMTAB_TYPE_BLOCK))) &&
+         ((lookup == SYMTAB_LOOKUP_FUNC) && (tab->type == SYMTAB_TYPE_BLOCK))) &&
         (entry == NULL) && 
         (tab->parent != NULL))
     {

@@ -13,9 +13,9 @@ func twice(c1 : float, c2 : float) -> (float, float) -> float
         func twice_func_nest(a : float, b : float) -> float
         {
             mult()
-        }
+        };
         twice_func_nest(a, b)
-    }
+    };
     
     twice_func
 }

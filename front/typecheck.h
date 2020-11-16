@@ -39,7 +39,7 @@ int func_enum_param_list(param_list * params);
 int enum_matchbind_list(matchbind_list * list);
 
 int expr_set_comb_type(expr * value, param * param_value);
-int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result);
+int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int syn_level, int * result);
 int expr_qualifier_set_comb_type(expr * value, expr * expr_value, int * result);
 int expr_conv_basic_type(expr * value, expr * expr_left, expr * expr_right);
 int expr_conv_string_type(expr * value, expr * expr_left, expr * expr_right);
@@ -99,7 +99,7 @@ int param_list_ffi_check_type(symtab * tab, param_list * list,
 int param_list_check_type(symtab * tab, param_list * list,
                           unsigned int syn_level, int * result);                     
 
-int expr_id_check_type(symtab * tab, expr * value, int * result);
+int expr_id_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result);
 int expr_enumtype_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
 int expr_neg_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
 int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,

@@ -7,16 +7,15 @@ func gf(v : int) -> (int) -> int
      }
      catch
      {
-         v
-     }
+         func inc(i : int) -> int { i + 1 };
+         inc(v)
+     };
      
      f
 }
 
-func main() -> int
+func main() -> bool
 {
     var f = gf(87);
-    
-    f(0)
+    assert(f(0) == 88)
 }
-

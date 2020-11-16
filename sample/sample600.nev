@@ -1,5 +1,7 @@
-func foo() -> int
+func foo(a : int, b : int) -> int
 {
+    let a = 100;
+
     10
 }
 
@@ -7,11 +9,12 @@ func test(a : int, b : int) -> int
 {
     let i = 10;
     let j = 20;
-    let c = 0;
 
     i;
     j;
     i + j;
+
+    let c = 0;
 
     c = i;
     print(c);

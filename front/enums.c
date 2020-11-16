@@ -68,7 +68,7 @@ enumerator * enumtype_find_enumerator(enumtype * enumtype_value, char * id)
 
     if (enumtype_value->stab != NULL && id != NULL)
     {    
-        entry = symtab_lookup(enumtype_value->stab, id, SYMTAB_LOOKUP_LOCAL);
+        entry = symtab_lookup(enumtype_value->stab, id, SYMTAB_LOOKUP_FUNC);
     }
 
     if (entry != NULL && entry->type == SYMTAB_ENUMERATOR)

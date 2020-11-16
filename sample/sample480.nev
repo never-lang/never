@@ -3,6 +3,7 @@ use mone
 
 func main() -> int
 {
+    print(mone.Z);
     mone.one(10)
 }
 

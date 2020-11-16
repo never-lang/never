@@ -63,7 +63,7 @@ param * record_find_param(record * record_value, char * id)
 
     if (record_value->stab != NULL && id != NULL)
     {    
-        entry = symtab_lookup(record_value->stab, id, SYMTAB_LOOKUP_LOCAL);
+        entry = symtab_lookup(record_value->stab, id, SYMTAB_LOOKUP_FUNC);
     }
 
     if (entry != NULL && entry->type == SYMTAB_PARAM)

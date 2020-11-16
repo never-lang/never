@@ -43,13 +43,13 @@ void test_two()
     symtab_add_func(tab, func_one, 0);
     symtab_add_func(tab, func_three, 0);
 
-    entry = symtab_lookup(tab, "func_one", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(tab, "func_one", SYMTAB_LOOKUP_FUNC);
     assert(entry->func_value == func_one);
 
-    entry = symtab_lookup(tab, "func_two", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(tab, "func_two", SYMTAB_LOOKUP_FUNC);
     assert(entry == NULL);
 
-    entry = symtab_lookup(tab, "func_three", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(tab, "func_three", SYMTAB_LOOKUP_FUNC);
     assert(entry->func_value == func_three);
 
     func_delete(func_one);
@@ -84,13 +84,13 @@ void test_three()
     symtab_add_func(tab, func_six, 0);
     symtab_add_func(tab, func_seven, 0);
 
-    entry = symtab_lookup(tab, "func_one", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(tab, "func_one", SYMTAB_LOOKUP_FUNC);
     assert(entry->func_value == func_one);
 
-    entry = symtab_lookup(tab, "func_two", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(tab, "func_two", SYMTAB_LOOKUP_FUNC);
     assert(entry->func_value == func_two);
 
-    entry = symtab_lookup(tab, "func_three", SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(tab, "func_three", SYMTAB_LOOKUP_FUNC);
     assert(entry->func_value == func_three);
 
     func_delete(func_one);

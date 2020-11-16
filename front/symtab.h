@@ -36,8 +36,9 @@
 
 typedef enum symtab_lookup_op
 {
-    SYMTAB_LOOKUP_LOCAL = 0,
-    SYMTAB_LOOKUP_GLOBAL = 1
+    SYMTAB_LOOKUP_BLOCK = 0,
+    SYMTAB_LOOKUP_FUNC = 1,
+    SYMTAB_LOOKUP_GLOBAL = 2
 } symtab_lookup_op;
 
 typedef enum symtab_type

@@ -32,7 +32,7 @@ int symtab_add_matchbind_from_matchbind(symtab * tab, matchbind * matchbind_valu
                                         param * param_value, enumerator * enumerator_value,
                                         enumtype * enumtype_value, unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = symtab_lookup(tab, matchbind_value->id, SYMTAB_LOOKUP_LOCAL);
+    symtab_entry * entry = symtab_lookup(tab, matchbind_value->id, SYMTAB_LOOKUP_BLOCK);
     if (entry == NULL)
     {
         matchbind_value->param_value = param_value;
@@ -58,7 +58,7 @@ int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard_record * 
 
     if (guard_record->stab == NULL)
     {
-        guard_record->stab = symtab_new(8, SYMTAB_TYPE_FUNC, tab);
+        guard_record->stab = symtab_new(8, SYMTAB_TYPE_BLOCK, tab);
     }
 
     if (matchbinds == NULL || enumtype_value == NULL || enumerator_value == NULL)

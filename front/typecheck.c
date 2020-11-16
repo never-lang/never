@@ -169,7 +169,7 @@ int expr_set_comb_type(expr * value, param * param_value)
     return 0;
 }
 
-int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
+int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int syn_level, int * result)
 {
     switch (entry->type)
     {
@@ -240,7 +240,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, int * result)
         case SYMTAB_MODULE_DECL:
             if (entry->module_decl_value != NULL)
             {
-                if (entry->module_decl_value->is_active)
+                if (entry->module_decl_value && syn_level > 0)
                 {
                     value->comb.comb = COMB_TYPE_MODULE;
                     value->comb.comb_module_decl = entry->module_decl_value;
@@ -1322,7 +1322,7 @@ int symtab_add_param_from_basic_param(symtab * tab, param * param_value,
         return 0;
     }
 
-    symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_LOOKUP_LOCAL);
+    symtab_entry * entry = symtab_lookup(tab, param_value->id, SYMTAB_LOOKUP_BLOCK);
     if (entry == NULL)
     {
         symtab_add_param(tab, param_value, syn_level);
@@ -1406,7 +1406,7 @@ int symtab_add_param_from_range_list(symtab * tab, range_list * list,
 int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
                               unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = symtab_lookup(tab, bind_value->id, SYMTAB_LOOKUP_LOCAL);
+    symtab_entry * entry = symtab_lookup(tab, bind_value->id, SYMTAB_LOOKUP_BLOCK);
     if (entry == NULL)
     {
         symtab_add_bind(tab, bind_value, syn_level);
@@ -1440,7 +1440,7 @@ int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
 int symtab_add_qualifier_from_qualifier(symtab * tab, qualifier * value,
                                         unsigned int syn_level, int * result)
 {
-    symtab_entry * entry = symtab_lookup(tab, value->id, SYMTAB_LOOKUP_LOCAL);
+    symtab_entry * entry = symtab_lookup(tab, value->id, SYMTAB_LOOKUP_BLOCK);
     if (entry == NULL)
     {
         symtab_add_qualifier(tab, value, syn_level);
@@ -1458,7 +1458,7 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result)
 {
     symtab_entry * entry = symtab_lookup(tab, func_value->decl->id,
-                                         SYMTAB_LOOKUP_LOCAL);
+                                         SYMTAB_LOOKUP_BLOCK);
     if (entry == NULL)
     {
         symtab_add_func(tab, func_value, syn_level);
@@ -1467,6 +1467,27 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
     {
         *result = TYPECHECK_FAIL;
         symtab_entry_exists(entry, func_value->line_no);
+    }
+
+    return 0;
+}
+
+int symtab_add_func_from_seq_list(symtab * tab, seq_list * list,
+                                   unsigned int syn_level, int * result)
+{
+    seq_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        seq_item * value = node->value;
+        if (value != NULL &&
+            value->type == SEQ_TYPE_FUNC &&
+            value->func_value != NULL &&
+            value->func_value->decl != NULL &&
+            value->func_value->decl->id)
+        {
+            symtab_add_func_from_func(tab, value->func_value, syn_level, result);
+        }
+        node = node->next;
     }
 
     return 0;
@@ -1708,14 +1729,14 @@ int param_list_check_type(symtab * tab, param_list * list,
     return 0;
 }
  
-int expr_id_check_type(symtab * tab, expr * value, int * result)
+int expr_id_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result)
 {
     symtab_entry * entry = NULL;
 
     entry = symtab_lookup(tab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
-        expr_set_comb_type_symtab(value, entry, result);
+        expr_set_comb_type_symtab(value, entry, syn_level, result);
     }
     else
     {
@@ -3312,7 +3333,7 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
         {
             never * nev = module_decl_value->nev;
 
-            expr_id_check_type(nev->stab, value->attr.id, result);
+            expr_id_check_type(nev->stab, value->attr.id, syn_level, result);
             value->comb = value->attr.id->comb;
 
             if (value->attr.id->comb.comb == COMB_TYPE_MODULE)
@@ -3376,7 +3397,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         expr_enumtype_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_ID:
-        expr_id_check_type(tab, value, result);
+        expr_id_check_type(tab, value, syn_level, result);
         if (*result == TYPECHECK_SUCC)
         {
             expr_id_gencode(syn_level, func_value, tab, value, result);
@@ -3675,7 +3696,7 @@ int expr_seq_check_type(symtab * tab, expr * value, func * func_value, unsigned 
 
     if (seq_value->stab == NULL)
     {
-        seq_value->stab = symtab_new(8, SYMTAB_TYPE_FUNC, tab);
+        seq_value->stab = symtab_new(8, SYMTAB_TYPE_BLOCK, tab);
     }
 
     seq_list_check_type(seq_value->stab, seq_value->list, func_value, syn_level, result);
@@ -3856,17 +3877,11 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 #ifndef NO_FFI
     if (func_value->stab == NULL)
     {
-        func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);
+        func_value->stab = symtab_new(8, SYMTAB_TYPE_FUNC, tab);
     }
-
-    if (func_value->decl->params != NULL)
+    if (func_value->decl != NULL)
     {
-        param_list_ffi_check_type(func_value->stab, func_value->decl->params, syn_level,
-                                  result);
-    }
-    if (func_value->decl->ret != NULL)
-    {
-        param_ffi_check_type(func_value->stab, func_value->decl->ret, syn_level, result);
+        func_param_check_type(func_value->stab, func_value, syn_level, result);
     }
 #else
     *result = TYPECHECK_FAIL;
@@ -3881,10 +3896,9 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
                            int * result)
 {
     /* TODO: check int start = 1; */
-
     if (func_value->stab == NULL)
     {
-        func_value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, tab);
+        func_value->stab = symtab_new(8, SYMTAB_TYPE_FUNC, tab);
     }
     if (func_value->decl->id)
     {
@@ -3900,6 +3914,11 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
         symtab_add_param_from_param_list(func_value->stab, func_value->decl->params,
                                          syn_level, result);
     }
+    if (func_value->decl != NULL)
+    {
+        func_param_check_type(func_value->stab, func_value, syn_level, result);
+    }
+
     if (func_value->except)
     {
         func_except_check_type(func_value->stab, func_value->except, func_value,
@@ -4219,7 +4238,7 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
         {
             symtab_entry * entry = NULL;
 
-            entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_LOCAL);
+            entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_FUNC);
             if (entry == NULL)
             {
                 symtab_add_module_decl(stab, value, 0);
@@ -4238,7 +4257,7 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
         {
             symtab_entry * entry = NULL;
 
-            entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_LOCAL);
+            entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_FUNC);
             if (entry != NULL)
             {
                 module_decl * al_module_decl = entry->module_decl_value;
@@ -4256,7 +4275,7 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
                 symtab_entry * mentry = NULL;
                 symtab * gtab = module_modules->nev->stab;
 
-                mentry = symtab_lookup(gtab, use_id, SYMTAB_LOOKUP_LOCAL);
+                mentry = symtab_lookup(gtab, use_id, SYMTAB_LOOKUP_FUNC);
                 if (mentry != NULL)
                 {
                     module_decl * al_module_decl = mentry->module_decl_value;
@@ -4301,7 +4320,7 @@ int enumerator_index_check_type(symtab * stab, enumerator * value, int * result)
 {
     if (value->expr_value)
     {
-        expr_check_type(stab, value->expr_value, NULL, 0, result);
+        expr_check_type(stab, value->expr_value, NULL, 1, result);
         if (value->expr_value->comb.comb != COMB_TYPE_INT &&
             value->expr_value->comb.comb != COMB_TYPE_ENUMTYPE)
         {
@@ -4541,6 +4560,12 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
     }
 #endif
+#if 0
+    if (nev->exprs != NULL)
+    {
+        symtab_add_func_from_seq_list(nev->stab, nev->exprs, syn_level, result);
+    }
+#endif
 
     if (nev->uses != NULL)
     {
@@ -4557,10 +4582,9 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
     {
         /* TODO: enumerator bind index */
         /* bind_list_enum(nev->binds, start); */
-
-        symtab_module_decl_set_active(nev->stab, 0);
+        /* symtab_module_decl_set_active(nev->stab, 0); */
         seq_list_check_type(nev->stab, nev->exprs, NULL, syn_level, result);
-        symtab_module_decl_set_active(nev->stab, 1);
+        /* symtab_module_decl_set_active(nev->stab, 1); */
 
         /* start += nev->binds->count; */
     }
@@ -4585,7 +4609,7 @@ int module_decl_check_type(module_decl * module_modules, module_decl * module_st
         symtab_entry * mentry = NULL;
         symtab * gtab = module_modules->nev->stab;
 
-        mentry = symtab_lookup(gtab, value->id, SYMTAB_LOOKUP_LOCAL);
+        mentry = symtab_lookup(gtab, value->id, SYMTAB_LOOKUP_FUNC);
         if (mentry == NULL)
         {
             symtab_add_module_decl(gtab, value, 0);

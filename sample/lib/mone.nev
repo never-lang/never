@@ -1,6 +1,8 @@
 
 module mone {
 
+    var Z = 1000;
+
     func one(a : int) -> int
     {
         a + 1

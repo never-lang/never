@@ -383,7 +383,7 @@ int func_gencode_freevars_freevar(func * func_value, symtab * stab, freevar * fr
     /** otherwise mark as global and set index */
     symtab_entry * entry = NULL;
 
-    entry = symtab_lookup(stab, freevar_value->id, SYMTAB_LOOKUP_LOCAL);
+    entry = symtab_lookup(stab, freevar_value->id, SYMTAB_LOOKUP_FUNC);
     if (entry != NULL)
     {
         if (entry->type == SYMTAB_PARAM && freevar_value->orig.type == FREEVAR_PARAM &&

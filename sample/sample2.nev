@@ -11,9 +11,9 @@ func twice(single_func(float, float) -> float) -> (float, float) -> float
         func one_more() -> float
         {
             10.00
-        }
+        };
         one_more() * single_func(a, b)
-    }
+    };
     twice_func
 }
 
