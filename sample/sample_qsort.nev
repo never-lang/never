@@ -30,7 +30,7 @@ func randomize(seed : int) -> () -> int
     func rand() -> int
     {
         v = (v * 11 + 12) % 21474
-    }
+    };
     rand
 }
 

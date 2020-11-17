@@ -14,7 +14,7 @@ func main() -> int
                 loop(i + 1) 
             } : 
             10
-    }
+    };
     
     loop(0)
 }

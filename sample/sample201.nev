@@ -8,7 +8,7 @@ func main() -> int
         let t3 = [ 1, 2 ] : int;
     
         i < 10 ? { t2 = t1; t3 = t1; loop(i + 1) } : 10
-    }
+    };
     
     loop(0)
 }

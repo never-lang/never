@@ -15,9 +15,9 @@ func test() -> int
             assert(v2 == 20);
 
             0
-        }
+        };
         nested()
-    }
+    };
     n();
     
     0

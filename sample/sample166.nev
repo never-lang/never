@@ -6,7 +6,7 @@ func main() -> int
         let val = i > 10 ? loop(5) : 5;
 
         i < 10 ? { print(i); loop(i + 1) } : 10
-    }
+    };
     
     loop(0)
 }

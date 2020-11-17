@@ -9,7 +9,7 @@ func foreachTab( tab[dim] : int, each(e : int) -> int ) -> int
     func __foreachTab( val : int, i : int, tab[dim] : int ) -> int
     {
         i < dim ? __foreachTab( each(tab[i]), i + 1, tab) : i
-    }
+    };
     __foreachTab(0, 0, tab)
 }
 
@@ -18,7 +18,7 @@ func foreach2Tab( tab[dim] : [D] : int, eachTab(t[D] : int, (int) -> int) -> int
     func __foreach2Tab( val : int, i : int, tab[dim] : [D] : int ) -> int
     {
         i < dim ? __foreach2Tab( eachTab(tab[i], each), i + 1, tab ) : i
-    }
+    };
     __foreach2Tab(0, 0, tab)
 }
 

@@ -5,7 +5,7 @@ func adder(start : int) -> () -> int
     func add() -> int
     {
         v = v + 1
-    }
+    };
     add
 }
 

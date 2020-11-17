@@ -147,6 +147,8 @@ int seq_item_check_type(symtab * tab, seq_item * value, func * func_value, unsig
                         int * result);
 int seq_list_check_type(symtab * tab, seq_list * list, func * func_value, unsigned syn_level,
                         int * result);
+int seq_list_top_check_type(symtab * tab, seq_list * list, func * func_value, unsigned syn_level,
+                            int * result);
 int expr_seq_check_type(symtab * tab, expr * value, func * func_value, unsigned syn_level,
                         int * result);
 int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int syn_level,

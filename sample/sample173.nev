@@ -6,7 +6,7 @@ func outer(a : float, b : float) -> (float) -> float
     func inner(c : float) -> float
     {
         c * p
-    }
+    };
     
     inner
 }

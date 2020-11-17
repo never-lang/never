@@ -4,7 +4,7 @@ func try(i : int) -> int
     func pr() -> int {
         prints("iii" + i + "iii\n");
         0
-    }
+    };
 
     pr()
 }

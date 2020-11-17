@@ -14,7 +14,7 @@ func funGen2(f1(a : float, b : float) -> float) -> (a : float, b : float) -> flo
     func twice(a : float, b : float) -> float
     {
         2.0 * f1(a, b)
-    }
+    };
     twice
 }
 

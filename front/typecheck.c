@@ -3636,13 +3636,6 @@ int seq_list_check_type(symtab * tab, seq_list * list, func * func_value, unsign
     while (node != NULL)
     {
         seq_item * value = node->value;
-        /*
-           1. for consequitive functions
-             a. symtab_add_func_from_func(tab, func, syn_level, result)
-           2. for consequitive functions
-             a. func_param_check_type(tab, func, syn_level, result)
-             b. func_check_type(tab, func, syn_level + 1, result)
-         */
         if (value == NULL)
         {
             node = node->next;
@@ -3650,6 +3643,11 @@ int seq_list_check_type(symtab * tab, seq_list * list, func * func_value, unsign
         }
         if (value->type == SEQ_TYPE_FUNC)
         {
+            /* 1. for consequitive functions
+                  a. symtab_add_func_from_func(tab, func, syn_level, result)
+               2. for consequitive functions
+                  b. func_check_type(tab, func, syn_level + 1, result)
+            */
             seq_list_node * func_first_node = node;
 
             while (node != NULL &&
@@ -3679,6 +3677,23 @@ int seq_list_check_type(symtab * tab, seq_list * list, func * func_value, unsign
             seq_item_check_type(tab, value, func_value, syn_level, result);
             node = node->next;
         }
+    }
+
+    return 0;
+}
+
+int seq_list_top_check_type(symtab * tab, seq_list * list, func * func_value, unsigned syn_level,
+                            int * result)
+{
+    seq_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        seq_item * value = node->value;
+        if (value != NULL)
+        {
+            seq_item_check_type(tab, value, func_value, syn_level, result);
+        }
+        node = node->next;
     }
 
     return 0;
@@ -4560,13 +4575,10 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
     }
 #endif
-#if 0
     if (nev->exprs != NULL)
     {
         symtab_add_func_from_seq_list(nev->stab, nev->exprs, syn_level, result);
     }
-#endif
-
     if (nev->uses != NULL)
     {
         never_add_use_list(module_modules, module_stdlib, nev->stab, nev->uses, result);
@@ -4583,9 +4595,8 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         /* TODO: enumerator bind index */
         /* bind_list_enum(nev->binds, start); */
         /* symtab_module_decl_set_active(nev->stab, 0); */
-        seq_list_check_type(nev->stab, nev->exprs, NULL, syn_level, result);
+        seq_list_top_check_type(nev->stab, nev->exprs, NULL, syn_level, result);
         /* symtab_module_decl_set_active(nev->stab, 1); */
-
         /* start += nev->binds->count; */
     }
 

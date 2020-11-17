@@ -10,9 +10,9 @@ func rodCut( to : int ) -> int
         func __cuts( i : int, to : int, val : int ) -> int
         {
             i < to ? __cuts( i + 1, to - i - 1, from_to( 0, to, 0 ) ) : to
-        }
+        };
         __cuts( 0, to, 0 )
-    }
+    };
     cuts( to )
 }
 

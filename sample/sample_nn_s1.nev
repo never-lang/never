@@ -107,11 +107,6 @@ func print_matrix(W[D1, D2] : float) -> int
 
 func nn() -> int
 {
-    let x = [ [0, 1, 0],
-              [1, 0, 0],
-              [1, 1, 1],
-              [0, 0, 1] ] : float;
-    let xT = T_matrix(x);
     let y = [ [1, 0, 1, 0] ] : float;
     let yT = T_matrix(y);
     let W = {[ 3, 1 ]} : float;
@@ -121,13 +116,20 @@ func nn() -> int
     let err = {[ 4, 1 ]} : float;
     let one = {[ 4, 1 ]} : float;
     let rand = randomize(165);
-    let i = 0;
 
     one_matrix(one);
     rand_matrix(W, rand);
 
+    let i = 0;
+
     for (i = 0; i < 1000; i = i + 1)
     {
+        let x = [ [0, 1, 0],
+                [1, 0, 0],
+                [1, 1, 1],
+                [0, 0, 1] ] : float;
+        let xT = T_matrix(x);
+
         z = x * W;
         s = sigmoid_matrix(z);
 

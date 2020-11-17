@@ -3456,8 +3456,8 @@ int seq_emit(seq * value, int stack_level, module * module_value,
             bytecode bc = { 0 };
 
             bc.type = BYTECODE_SLIDE;
-            bc.slide.m = stack_level - stack_before;
-            bc.slide.q = 1;
+            bc.slide.m = 1;
+            bc.slide.q = stack_level - stack_before;
 
             bytecode_add(module_value->code, &bc);
         }

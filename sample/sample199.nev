@@ -6,7 +6,7 @@ func main() -> int
     func loop(i : int) -> int
     {
         i < 10 ? { print(i); count = count + 2; loop(i + 1) } : 10
-    }
+    };
     
     loop(0);
     count

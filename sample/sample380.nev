@@ -7,7 +7,7 @@ func get_func() -> () -> int
     func f() -> int {
         prints("a " + r.a + " b " + r.b + "\n");
         0
-    }
+    };
     
     r.a = 20;
     r.b = 40;

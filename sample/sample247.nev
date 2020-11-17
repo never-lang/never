@@ -3,7 +3,7 @@ func print_str(hw[L] : float) -> int
     func __print(hw[L] : float, i : int) -> int
     {
         i < L ? { printf(hw[i]); __print(hw, i + 1) } : 0
-    }
+    };
     __print(hw, 0)
 }
 
@@ -14,7 +14,7 @@ func reverse(hw[L] : float) -> [_] : float
     func __reverse(hw[L1] : float, rev[L2] : float, i : int) -> int
     {
         i < L1 ? { rev[L2 - i - 1] = hw[i]; __reverse(hw, rev, i + 1) } : 0 
-    }
+    };
     __reverse(hw, rev, 0);
 
     rev

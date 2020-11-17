@@ -4,7 +4,7 @@ func printTab( tab[dim] : int ) -> int
     func __printTab( val : int, i : int, tab[dim] : int ) -> int
     {
         i < dim ? __printTab( print(2 * tab[i]), i + 1, tab) : i
-    }
+    };
     __printTab(0, 0, tab)
 }
 
@@ -13,7 +13,7 @@ func print2Tab( tab[dim] : [D] : int ) -> int
     func __print2Tab( val : int, i : int, tab[dim] : [D] : int ) -> int
     {
         i < dim ? __print2Tab( printTab(tab[i]), i + 1, tab ) : i
-    }
+    };
     __print2Tab(0, 0, tab)
 }
 

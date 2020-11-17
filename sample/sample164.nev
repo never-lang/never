@@ -18,7 +18,7 @@ func main() -> int
         {
             10
         }
-    }
+    };
     
     loop(0)
 }

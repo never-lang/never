@@ -193,9 +193,9 @@ int nev_execute(program * prog, vm * machine, object * result)
         machine->ip = prog->module_value->code_entry;
     }
 
-    printf("machine->ip %u\n", machine->ip);
+    /*printf("machine->ip %u\n", machine->ip);
     bytecode_array_print(prog->module_value->code_arr,
-                        prog->module_value->code_size);
+                        prog->module_value->code_size);*/
 
     return vm_execute(machine, prog, result);
 }

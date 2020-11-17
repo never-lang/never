@@ -8,7 +8,7 @@ func test() -> () -> int
         var f2 = let func () -> int { x };
                 
         f1
-    }
+    };
     
     nested()
 }
