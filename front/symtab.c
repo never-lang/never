@@ -45,7 +45,8 @@ void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
     unsigned int index = 0;
 
     index = hash_string(id) % size;
-    while (entries[index].type != 0)
+    while (entries[index].type != 0 &&
+           entries[index].type != SYMTAB_REMOVED)
     {
         index = (index + 1) % size;
         if (times++ > size)
@@ -56,8 +57,33 @@ void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
     }
     entries[index].type = type;
     entries[index].id = id;
-    entries[index].param_value = object_value;
+    entries[index].object_value = object_value;
     entries[index].syn_level = syn_level;
+}
+
+void symtab_entry_remove_object(symtab_entry * entries, unsigned int size,
+                                int type, const char * id, void * object_value,
+                                unsigned int syn_level)
+{
+    unsigned int times = 0;
+    unsigned int index = 0;
+
+    index = hash_string(id) % size;
+    while (entries[index].type != 0)
+    {
+        if (entries[index].type != SYMTAB_REMOVED &&
+            strcmp(entries[index].id, id) == 0)
+        {
+            entries[index].type = SYMTAB_REMOVED;
+            return;
+        }
+
+        index = (index + 1) % size;
+        if (times++ > size)
+        {
+            return;
+        }
+    }
 }
 
 symtab_entry * symtab_entry_lookup_object(symtab_entry * entries,
@@ -69,7 +95,8 @@ symtab_entry * symtab_entry_lookup_object(symtab_entry * entries,
     index = hash_string(id) % size;
     while (entries[index].type != 0)
     {
-        if (strcmp(entries[index].id, id) == 0)
+        if (entries[index].type != SYMTAB_REMOVED &&
+            strcmp(entries[index].id, id) == 0)
         {
             return &entries[index];
         }
@@ -91,10 +118,11 @@ void symtab_entry_resize(symtab_entry * entries, int size,
 
     for (i = 0; i < size; i++)
     {
-        if (entries[i].id != NULL)
+        if (entries[i].id != NULL &&
+            entries[i].type != SYMTAB_REMOVED)
         {
             symtab_entry_add_object(entries_new, size_new, entries[i].type,
-                                    entries[i].id, entries[i].param_value,
+                                    entries[i].id, entries[i].object_value,
                                     entries[i].syn_level);
         }
     }
@@ -181,6 +209,7 @@ char * symtab_entry_type_str(symtab_entry_type type)
         case SYMTAB_RECORD: return "record";
         case SYMTAB_FUNC: return "func";
         case SYMTAB_MODULE_DECL: return "module decl";
+        case SYMTAB_REMOVED: return "symtab entry removed";
     }
     return "unknown";
 }
@@ -352,6 +381,17 @@ void symtab_add_module_decl(symtab * tab, module_decl * module_decl_value, unsig
                             module_decl_value->id, module_decl_value, syn_level);
     tab->count++;
     symtab_resize(tab);
+}
+
+void symtab_remove_func(symtab * tab, func * func_value, unsigned int syn_level)
+{
+    if (func_value->decl->id == NULL)
+    {
+        return;
+    }
+
+    symtab_entry_remove_object(tab->entries, tab->size, SYMTAB_FUNC,
+                               func_value->decl->id, func_value, syn_level);
 }
 
 void symtab_for_all(symtab * tab, void (*symtab_exe) (symtab_entry * entry))

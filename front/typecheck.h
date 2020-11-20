@@ -76,6 +76,12 @@ int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
                                    unsigned int syn_level, int * result); */
 int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result);
+int symtab_add_func_from_seq_list(symtab * tab, seq_list * list,
+                                   unsigned int syn_level, int * result);
+int symtab_remove_func_from_func(symtab * tab, func * func_value,
+                                 unsigned int syn_level, int * result);
+int symtab_remove_func_from_seq_list(symtab * tab, seq_list * list,
+                                     unsigned int syn_level, int * result);
 /*TODO: remove int symtab_add_func_from_func_list(symtab * tab, func_list * list,
                                    unsigned int syn_level, int * result); */
 

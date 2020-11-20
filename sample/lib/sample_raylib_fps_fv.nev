@@ -1,0 +1,98 @@
+/***
+ * A small hack in raylib library is needed
+ *
+ * Add the following function:
+ *
+ *  Camera UpdateCameraCopy(Camera camera)
+ *  {
+ *    UpdateCamera(&camera);
+ *    return camera;
+ *  }
+ *
+ */
+
+use raylib
+use raylib_camera
+use raylib_models
+use raylib_shapes
+use raylib_text
+
+let MAX_COLUMNS = 20;
+
+func main() -> int
+{
+    /* Initalization */
+    let screenWidth = 800;
+    let screenHeight = 450;
+
+    raylib.InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera first person");
+
+    /* Define the camera to look into our 3d world (position, target, up vector) */
+    let camera = raylib.Camera3D(nil, nil, nil, 0.0, 0);
+    camera.position = raylib.Vector3(4.0, 2.0, 4.0);
+    camera.target = raylib.Vector3(0.0, 1.8, 0.0);
+    camera.up = raylib.Vector3(0.0, 1.0, 0.0);
+    camera.fovy = 60.0;
+    camera.type = raylib_camera.CameraType::CAMERA_PERSPECTIVE;
+
+    /* Generates some random columns */
+    let heights = {[ MAX_COLUMNS ]} : float;
+    let positions = {[ MAX_COLUMNS ]} : raylib.Vector3;
+    let colors = {[ MAX_COLUMNS ]} : raylib.Color;
+    let i = 0;
+    for (i = 0; i < MAX_COLUMNS; i = i + 1)
+    {
+        heights[i] = raylib.GetRandomValue(1, 12);
+        positions[i] = raylib.Vector3( raylib.GetRandomValue(-15, 15), heights[i]/2, raylib.GetRandomValue(-15, 15) );
+        colors[i] = raylib.Color( chr(raylib.GetRandomValue(20, 255)), chr(raylib.GetRandomValue(10, 55)), chr(30), chr(255) )
+    };
+
+    /* Set a first person camera mode */
+    raylib_camera.SetCameraMode(camera, raylib_camera.CameraMode::CAMERA_FIRST_PERSON); 
+
+    /* Set our game to run at 60 frames-per-second */
+    raylib.SetTargetFPS(200);                           
+
+    /* Main game loop */
+    while (!raylib.WindowShouldClose()) /* Detect window close button or ESC key */
+    {
+        /* Update camera */
+        camera = raylib_camera.UpdateCameraCopy(camera);
+
+        /* Draw */
+        raylib.BeginDrawing();
+
+            raylib.ClearBackground(raylib.RAYWHITE);
+
+            raylib.BeginMode3D(camera);
+
+                raylib_models.DrawPlane(raylib.Vector3(0.0, 0.0, 0.0), raylib.Vector2(32.0, 32.0), raylib.LIGHTGRAY); /* Draw ground */
+                raylib_models.DrawCube(raylib.Vector3(-16.0, 2.5, 0.0), 1.0, 5.0, 32.0, raylib.BLUE);     /* Draw a blue wall */
+                raylib_models.DrawCube(raylib.Vector3(16.0, 2.5, 0.0), 1.0, 5.0, 32.0, raylib.LIME);      /* Draw a green wall */
+                raylib_models.DrawCube(raylib.Vector3(0.0, 2.5, 16.0), 32.0, 5.0, 1.0, raylib.GOLD);      /* Draw a yellow wall */
+
+                /* Draw some cubes around */
+                for (i = 0; i < MAX_COLUMNS; i = i + 1)
+                {
+                    raylib_models.DrawCube(positions[i], 2.0, heights[i], 2.0, colors[i]);
+                    raylib_models.DrawCubeWires(positions[i], 2.0, heights[i], 2.0, raylib.MAROON)
+                };
+
+            raylib.EndMode3D();
+
+            raylib_shapes.DrawRectangle( 10, 10, 220, 70, raylib.Fade(raylib.SKYBLUE, 0.5));
+            raylib_shapes.DrawRectangleLines( 10, 10, 220, 70, raylib.BLUE);
+
+            raylib_text.DrawText("First person camera default controls:", 20, 20, 10, raylib.BLACK);
+            raylib_text.DrawText("- Move with keys: W, A, S, D", 40, 40, 10, raylib.DARKGRAY);
+            raylib_text.DrawText("- Mouse move to look around", 40, 60, 10, raylib.DARKGRAY);
+
+        raylib.EndDrawing()
+    };
+
+    /* De-Initialization */
+    raylib.CloseWindow();  /* Close window and OpenGL context */
+
+    0
+}
+

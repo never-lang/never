@@ -254,6 +254,9 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 
             }
         break;
+        case SYMTAB_REMOVED:
+            assert(0);
+        break;
     }
 
     return 0;
@@ -1309,6 +1312,9 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
                             entry->id, al_module_decl->line_no);
         }
         break;
+        case SYMTAB_REMOVED:
+            assert(0);
+        break;
     }
 
     return 0;
@@ -1472,6 +1478,14 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
     return 0;
 }
 
+int symtab_remove_func_from_func(symtab * tab, func * func_value,
+                                 unsigned int syn_level, int * result)
+{
+    symtab_remove_func(tab, func_value, syn_level);
+
+    return 0;
+}
+
 int symtab_add_func_from_seq_list(symtab * tab, seq_list * list,
                                    unsigned int syn_level, int * result)
 {
@@ -1486,6 +1500,27 @@ int symtab_add_func_from_seq_list(symtab * tab, seq_list * list,
             value->func_value->decl->id)
         {
             symtab_add_func_from_func(tab, value->func_value, syn_level, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int symtab_remove_func_from_seq_list(symtab * tab, seq_list * list,
+                                     unsigned int syn_level, int * result)
+{
+    seq_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        seq_item * value = node->value;
+        if (value != NULL &&
+            value->type == SEQ_TYPE_FUNC &&
+            value->func_value != NULL &&
+            value->func_value->decl != NULL &&
+            value->func_value->decl->id)
+        {
+            symtab_remove_func_from_func(tab, value->func_value, syn_level, result);
         }
         node = node->next;
     }
@@ -4595,7 +4630,8 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         /* TODO: enumerator bind index */
         /* bind_list_enum(nev->binds, start); */
         /* symtab_module_decl_set_active(nev->stab, 0); */
-        seq_list_top_check_type(nev->stab, nev->exprs, NULL, syn_level, result);
+        symtab_remove_func_from_seq_list(nev->stab, nev->exprs, syn_level, result);
+        seq_list_check_type(nev->stab, nev->exprs, NULL, syn_level, result);
         /* symtab_module_decl_set_active(nev->stab, 1); */
         /* start += nev->binds->count; */
     }

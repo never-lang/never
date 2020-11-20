@@ -162,12 +162,56 @@ void test_four()
     symtab_delete(tab_two);
 }
 
+void test_five()
+{
+    symtab_entry * entry = NULL;
+    symtab * tab_one = symtab_new(2, SYMTAB_TYPE_FUNC, NULL);
+
+    func_decl * decl_one = func_decl_new(strdup("func_one"), NULL, NULL);
+    func * func_one = func_new(decl_one, NULL);
+    func_decl * decl_two = func_decl_new(strdup("func_two"), NULL, NULL);
+    func * func_two = func_new(decl_two, NULL);
+
+    /* add */
+    symtab_add_func(tab_one, func_one, 0);
+    symtab_add_func(tab_one, func_two, 0);
+
+    entry = symtab_lookup(tab_one, "func_one", SYMTAB_LOOKUP_GLOBAL);
+    assert(entry->func_value == func_one);
+
+    entry = symtab_lookup(tab_one, "func_two", SYMTAB_LOOKUP_GLOBAL);
+    assert(entry->func_value == func_two);
+
+    /* remove */
+    symtab_remove_func(tab_one, func_one, 0);
+    symtab_remove_func(tab_one, func_two, 0);
+
+    entry = symtab_lookup(tab_one, "func_one", SYMTAB_LOOKUP_GLOBAL);
+    assert(entry == NULL);
+
+    entry = symtab_lookup(tab_one, "func_two", SYMTAB_LOOKUP_GLOBAL);
+    assert(entry == NULL);
+
+    /* add again */
+    symtab_add_func(tab_one, func_one, 0);
+    symtab_add_func(tab_one, func_two, 0);
+
+    entry = symtab_lookup(tab_one, "func_one", SYMTAB_LOOKUP_GLOBAL);
+    assert(entry->func_value == func_one);
+
+    entry = symtab_lookup(tab_one, "func_two", SYMTAB_LOOKUP_GLOBAL);
+    assert(entry->func_value == func_two);
+
+    symtab_delete(tab_one);
+}
+
 int main(int argc, char * argv[])
 {
     test_one();
     test_two();
     test_three();
     test_four();
+    test_five();
 
     return 0;
 }

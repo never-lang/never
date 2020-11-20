@@ -1,0 +1,18 @@
+
+use mone
+
+var I = 0
+
+func test() -> int
+{
+    I = mone.Z
+}
+
+func main() -> int
+{
+    test();
+
+    print(I);
+
+    0
+}

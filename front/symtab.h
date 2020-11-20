@@ -59,6 +59,7 @@ typedef enum symtab_entry_type
     SYMTAB_ENUMERATOR = 8,
     SYMTAB_FUNC = 9,
     SYMTAB_MODULE_DECL = 10,
+    SYMTAB_REMOVED = 11
 } symtab_entry_type;
 
 typedef struct symtab_entry
@@ -66,6 +67,7 @@ typedef struct symtab_entry
     symtab_entry_type type;
     const char * id;
     union {
+        void * object_value;
         param * param_value;
         bind * bind_value;
         matchbind * matchbind_value;
@@ -94,6 +96,9 @@ void symtab_entry_delete(symtab_entry * entries);
 void symtab_entry_add_object(symtab_entry * entries, unsigned int size,
                              int type, const char * id, void * param_func_value,
                              unsigned int syn_level);
+void symtab_entry_remove_object(symtab_entry * entries, unsigned int size,
+                                int type, const char * id, void * object_value,
+                                unsigned int syn_level);
 symtab_entry * symtab_entry_lookup_object(symtab_entry * entries,
                                           unsigned int size, const char * id);
 void symtab_entry_resize(symtab_entry * entries, int size,
@@ -115,6 +120,8 @@ void symtab_add_enumtype(symtab * tab, enumtype * enumtype_value, unsigned int s
 void symtab_add_record(symtab * tab, record * record_value, unsigned int syn_level);
 void symtab_add_func(symtab * tab, func * func_value, unsigned int syn_level);
 void symtab_add_module_decl(symtab * tab, module_decl * module_decl_value, unsigned int syn_level);
+
+void symtab_remove_func(symtab * tab, func * func_value, unsigned int syn_level);
 
 void symtab_for_all(symtab * tab, void (*symtab_exe) (symtab_entry * entry));
 symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup);
