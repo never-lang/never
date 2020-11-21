@@ -4,9 +4,12 @@ module msix {
 
     use mseven
 
+    var SIX = 6
+
     func six() -> int
     {
-        mseven.seven()
+        print(SIX);
+        mseven.seven() - 1
     }
 
 }

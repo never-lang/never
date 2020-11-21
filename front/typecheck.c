@@ -240,7 +240,8 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
         case SYMTAB_MODULE_DECL:
             if (entry->module_decl_value != NULL)
             {
-                if (entry->module_decl_value && syn_level > 0)
+                /* if (entry->module_decl_value && syn_level > 0) */
+                if (entry->module_decl_value && entry->module_decl_value->is_checked == 1)
                 {
                     value->comb.comb = COMB_TYPE_MODULE;
                     value->comb.comb_module_decl = entry->module_decl_value;
@@ -249,7 +250,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 {
                     *result = TYPECHECK_FAIL;
                     value->comb.comb = COMB_TYPE_ERR;
-                    print_error_msg(value->line_no, "cannot use modules in this context (bindings?)");
+                    print_error_msg(value->line_no, "cannot use modules in this context as they may not be yet initialized");
                 }
                 
             }
@@ -4286,9 +4287,7 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
     {
         case MODULE_DECL_TYPE_MOD:
         {
-            symtab_entry * entry = NULL;
-
-            entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_FUNC);
+            symtab_entry * entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_FUNC);
             if (entry == NULL)
             {
                 symtab_add_module_decl(stab, value, 0);
@@ -4305,9 +4304,7 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
         break;
         case MODULE_DECL_TYPE_REF:
         {
-            symtab_entry * entry = NULL;
-
-            entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_FUNC);
+            symtab_entry * entry = symtab_lookup(stab, use_id, SYMTAB_LOOKUP_FUNC);
             if (entry != NULL)
             {
                 module_decl * al_module_decl = entry->module_decl_value;
@@ -4322,10 +4319,9 @@ int never_add_module_decl(module_decl * module_modules, module_decl * module_std
                     module_modules->nev->stab != NULL);
 
             {
-                symtab_entry * mentry = NULL;
                 symtab * gtab = module_modules->nev->stab;
 
-                mentry = symtab_lookup(gtab, use_id, SYMTAB_LOOKUP_FUNC);
+                symtab_entry * mentry = symtab_lookup(gtab, use_id, SYMTAB_LOOKUP_FUNC);
                 if (mentry != NULL)
                 {
                     module_decl * al_module_decl = mentry->module_decl_value;
@@ -4653,10 +4649,9 @@ int module_decl_check_type(module_decl * module_modules, module_decl * module_st
 {
     if (!value->is_main && value->id != NULL)
     {
-        symtab_entry * mentry = NULL;
         symtab * gtab = module_modules->nev->stab;
 
-        mentry = symtab_lookup(gtab, value->id, SYMTAB_LOOKUP_FUNC);
+        symtab_entry * mentry = symtab_lookup(gtab, value->id, SYMTAB_LOOKUP_FUNC);
         if (mentry == NULL)
         {
             symtab_add_module_decl(gtab, value, 0);
@@ -4679,6 +4674,7 @@ int module_decl_check_type(module_decl * module_modules, module_decl * module_st
         set_utils_file_name(value->id);
 
         never_check_type(module_modules, module_stdlib, value->nev, result);
+        value->is_checked = 1;
 
         set_utils_file_name(current_file_name);
     }

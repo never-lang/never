@@ -390,6 +390,7 @@ void symtab_remove_func(symtab * tab, func * func_value, unsigned int syn_level)
         return;
     }
 
+    tab->count--;
     symtab_entry_remove_object(tab->entries, tab->size, SYMTAB_FUNC,
                                func_value->decl->id, func_value, syn_level);
 }
@@ -407,6 +408,7 @@ void symtab_for_all(symtab * tab, void (*symtab_exe) (symtab_entry * entry))
     }
 }
 
+#if 0
 static void symtab_exe_module_decl_set_active(symtab_entry * entry)
 {
     if (entry->type == SYMTAB_MODULE_DECL)
@@ -417,7 +419,9 @@ static void symtab_exe_module_decl_set_active(symtab_entry * entry)
         }
     }
 }
+#endif
 
+#if 0
 static void symtab_exe_module_decl_set_inactive(symtab_entry * entry)
 {
     if (entry->type == SYMTAB_MODULE_DECL)
@@ -428,7 +432,9 @@ static void symtab_exe_module_decl_set_inactive(symtab_entry * entry)
         }
     }
 }
+#endif
 
+#if 0
 void symtab_module_decl_set_active(symtab * tab, char is_active)
 {
     if (is_active)
@@ -440,6 +446,7 @@ void symtab_module_decl_set_active(symtab * tab, char is_active)
         symtab_for_all(tab, symtab_exe_module_decl_set_inactive);        
     }
 }
+#endif
 
 symtab_entry * symtab_lookup(symtab * tab, const char * id, symtab_lookup_op lookup)
 {

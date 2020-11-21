@@ -6,7 +6,7 @@ module mseven {
 
     func seven() -> int
     {
-        7
+        msix.SIX + 1
     }
 
 }

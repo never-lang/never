@@ -5,6 +5,6 @@ use msix
 
 func main() -> int
 {
-    assert(msix.six() == 7);
+    assert(msix.six() == 6);
     0
 }

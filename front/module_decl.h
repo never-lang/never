@@ -34,7 +34,8 @@ typedef struct module_decl
 {
     module_decl_type type;
     char is_main;
-    char is_active;
+    /* TODO: remove char is_active; */
+    char is_checked;
     char * id;
     never * nev;
     unsigned int line_no;
