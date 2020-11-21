@@ -60,10 +60,6 @@ int func_gencode_freevars_array(func * func_value, symtab * stab, array * array_
                                 int * result);
 int func_gencode_freevars_bind(func * func_value, symtab * stab, bind * bind_value,
                                int * result);
-/* TODO: remove int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
-                                    int * result); */
-/* TODO: remove int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
-                                    int * result); */
 int func_gencode_freevars_except(func * func_value, symtab * stab, except * except_value,
                                  int * result);
 int func_gencode_freevars_except_list(func * func_value, symtab * stab, except_list * list,
@@ -72,8 +68,6 @@ int func_gencode_freevars_func_except(func * func_value, symtab * stab, func_exc
                                  int * result);
 int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_value,
                                int * result);
-/* TODO: remove int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list * list,
-                                    int * result); */
 int func_gencode_freevars(func * func_value, symtab * stab, int * result);
 int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, int * result);
 int func_gencode_freevars_expr_list(func * func_value, symtab * stab, expr_list * list,

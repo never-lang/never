@@ -114,10 +114,8 @@ int yyerror(module_decl ** module_nev, char * str)
 %type <val.match_guard_list_value> match_guard_list
 %type <val.let_value> let
 %type <val.var_value> var
-/* TODO: remove %type <val.expr_value> expr_bind */
 %type <val.seq_list_value> seq_list
 %type <val.seq_value> seq
-/* TODO: remove %type <val.bind_list_value> bind_list */
 %type <val.func_decl_value> func_decl
 %type <val.func_value> func
 %type <val.func_body_value> func_body
@@ -181,7 +179,6 @@ int yyerror(module_decl ** module_nev, char * str)
 %destructor { if ($$) expr_list_delete($$); } array_sub_list
 %destructor { if ($$) bind_delete($$); } let
 %destructor { if ($$) bind_delete($$); } var
-/* TODO: %destructor { if ($$) expr_delete($$); } expr_bind */
 %destructor { if ($$) func_delete($$); } func
 %destructor { if ($$) func_decl_delete($$); } func_decl
 %destructor { if ($$) func_body_delete($$); } func_body
@@ -1099,20 +1096,6 @@ param_seq: param_seq param ';'
     param_list_add_end($1, $2);
     $$ = $1;
 };
-
-/* TODO: remove
-bind_list: bind ';'
-{
-    $$ = bind_list_new();
-    bind_list_add_end($$, $1);
-};
-
-bind_list: bind_list bind ';'
-{
-    bind_list_add_end($1, $2);
-    $$ = $1;
-};
-*/
 
 func_decl: '(' ')' TOK_RET param
 {

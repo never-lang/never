@@ -4531,35 +4531,12 @@ int bind_emit(bind * bind_value, int stack_level, module * module_value,
             if (bind_value->expr_value != NULL)
             {
                 bind_value->index = stack_level + 1;
-
-                /* printf("bind %s %d\n", bind_value->id, bind_value->index); */
-
                 expr_emit(bind_value->expr_value, stack_level, module_value, list_weak, result);
             }
         break;
     }
     return 0;
 }
-
-#if 0
-int bind_list_emit(bind_list * list, int stack_level, module * module_value,
-                   func_list_weak * list_weak, int * result)
-{
-    int b = 0;
-    
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * bind_value = node->value;
-        if (bind_value != NULL)
-        {
-            bind_emit(bind_value, stack_level + b++, module_value, list_weak, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-#endif
 
 int except_implicit_emit(func * func_value, int stack_level, module * module_value,
                          func_list_weak * list_weak, int * result)
@@ -4840,21 +4817,8 @@ int func_body_emit_native(func * func_value, module * module_value,
     if (func_value->body && func_value->body->exprs)
     {
         expr_emit(func_value->body->exprs, stack_level, module_value, list_weak, result);
-        /* TODO: remove this stack_level += func_value->body->binds->count; */
     }
-    /* TODO: remove
-    if (func_value->body && func_value->body->funcs)
-    {
-        func_list_emit(func_value->body->funcs, &stack_level, module_value,
-                       list_weak, result);
-    }
-    */
-    /* TODO: remove
-    if (func_value->body && func_value->body->ret)
-    {
-        expr_emit(func_value->body->ret, stack_level, module_value, list_weak, result);
-    }
-    */
+
     if (func_value->body && func_value->body->exprs && func_value->body->exprs->line_no > 0)
     {
         bc.type = BYTECODE_LINE;
@@ -5081,39 +5045,6 @@ int func_entry_emit(
 
     return 0;
 }
-
-#if 0
-int func_list_emit(func_list * list, int * stack_level, module * module_value,
-                   func_list_weak * list_weak, int * result)
-{
-    bytecode bc = { 0 };
-    unsigned int n = list->count;
-
-    bc.type = BYTECODE_ALLOC;
-    bc.alloc.n = n;
-    bytecode_add(module_value->code, &bc);
-
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * func_value = node->value;
-        if (func_value != NULL)
-        {
-            /* TODO: check stack_level passed to func_emit */
-            func_emit(func_value, (*stack_level) + list->count, module_value, list_weak, result);
-            func_value->index = list->count - n + 1;
-
-            bc.type = BYTECODE_REWRITE;
-            bc.rewrite.j = n--;
-            bytecode_add(module_value->code, &bc);
-        }
-        node = node->next;
-    }
-    (*stack_level) += list->count;
-
-    return 0;
-}
-#endif
 
 int never_emit(never * nev, int * stack_level, module * module_value, func_list_weak * list_weak, int * result)
 {

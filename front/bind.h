@@ -40,39 +40,10 @@ typedef struct bind
     unsigned int line_no;
 } bind;
 
-#if 0
-typedef struct bind_list_node
-{
-    bind * value;
-    struct bind_list_node * prev;
-    struct bind_list_node * next;
-} bind_list_node;
-
-typedef struct bind_list
-{
-    unsigned int count;
-    bind_list_node * head;
-    bind_list_node * tail;
-} bind_list;
-#endif
-
 bind * bind_new_let(char * id, expr * expr_value);
 bind * bind_new_var(char * id, expr * expr_value);
 
 void bind_delete(bind * value);
-
-#if 0
-int bind_list_enum(bind_list * list, int start);
-
-bind_list_node * bind_list_node_new(bind * value);
-void bind_list_node_delete(bind_list_node * node);
-
-bind_list * bind_list_new();
-void bind_list_delete(bind_list * list);
-
-void bind_list_add_beg(bind_list * list, bind * value);
-void bind_list_add_end(bind_list * list, bind * value);
-#endif
 
 void bind_print(bind * value);
 

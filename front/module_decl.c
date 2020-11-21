@@ -30,7 +30,6 @@ module_decl * module_decl_new(char * id, never * nev)
 
     value->type = MODULE_DECL_TYPE_MOD;
     value->is_main = 0;
-    /* TODO: remove value->is_active = 1; */
     value->is_checked = 0;
     value->id = id;
     value->nev = nev;
@@ -45,7 +44,6 @@ module_decl * module_decl_new_ref(char * id, never * nev)
 
     value->type = MODULE_DECL_TYPE_REF;
     value->is_main = 0;
-    /* TODO: remove value->is_active = 1; */
     value->is_checked = 0;
     value->id = id;
     value->nev = nev;

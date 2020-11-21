@@ -466,25 +466,6 @@ int bind_tailrec(unsigned int syn_level, symtab * stab,
     return 0;
 }
 
-#if 0
-int bind_list_tailrec(unsigned int syn_level, symtab * stab,
-                      bind_list * list, tailrec_op op)
-{
-    bind_list_node * node = list->tail;
-
-    while (node != NULL)
-    {
-        bind * value = node->value;
-        if (value != NULL)
-        {
-            bind_tailrec(syn_level, stab, value, op);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-#endif
-
 int except_tailrec(unsigned int syn_level, symtab * stab,
                    except * value, tailrec_op op)
 {
@@ -523,18 +504,6 @@ int func_tailrec_native(unsigned int syn_level, func * value)
     {
         expr_tailrec(syn_level, value->stab, value->body->exprs, TAILREC_OP_ADD);
     }
-
-    /* TODO: remove
-    if (value->body != NULL && value->body->funcs != NULL)
-    {
-        func_list_tailrec(syn_level, value->body->funcs);
-    }
-    if (value->body != NULL && value->body->ret != NULL)
-    {
-        expr_tailrec(syn_level, value->stab, value->body->ret, TAILREC_OP_ADD);
-    }
-    */
-
     if (value->except != NULL && value->except->list != NULL)
     {
         except_list_tailrec(syn_level, value->stab, value->except->list, TAILREC_OP_SKIP);
@@ -563,24 +532,6 @@ int func_tailrec(unsigned int syn_level, func * value)
 
     return 0;
 }
-
-#if 0
-int func_list_tailrec(unsigned int syn_level, func_list * list)
-{
-    func_list_node * node = list->tail;
-
-    while (node != NULL)
-    {
-        func * value = node->value;
-        if (value != NULL)
-        {
-            func_tailrec(syn_level + 1, value);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-#endif
 
 int use_tailrec(use * value)
 {

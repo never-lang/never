@@ -1983,24 +1983,6 @@ int bind_constred(bind * value, int * result)
     return 0;
 }
 
-#if 0
-int bind_list_constred(bind_list * list, int * result)
-{
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * value = node->value;
-        if (value != NULL)
-        {
-            bind_constred(value, result);
-        }
-
-        node = node->next;
-    }
-    return 0;
-}
-#endif
-
 int except_constred(except * value, int * result)
 {
     if (value->expr_value != NULL)
@@ -2032,17 +2014,6 @@ int func_constred_ffi(func * value, int * result)
 
 int func_constred_native(func * value, int * result)
 {
-#if 0
-    if (value->body != NULL && value->body->binds != NULL)
-    {
-        expr_list_constred(value->body->binds, result);
-    }
-    if (value->body != NULL && value->body->funcs != NULL)
-    {
-        func_list_constred(value->body->funcs, result);
-    }
-#endif
-
     if (value->body != NULL && value->body->exprs != NULL)
     {
         expr_constred(value->body->exprs, result);
@@ -2076,23 +2047,6 @@ int func_constred(func * value, int * result)
     
     return 0;
 }
-
-#if 0
-int func_list_constred(func_list * list, int * result)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * value = node->value;
-        if (value != NULL)
-        {
-            func_constred(value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-#endif
 
 int use_constred(use * value, int * result)
 {
@@ -2281,12 +2235,7 @@ int never_constred(never * nev, int * result)
     {
         seq_list_constred(nev->exprs, result);
     }
-#if 0
-    if (nev->funcs)
-    {
-        func_list_constred(nev->funcs, result);
-    }
-#endif
+
     return 0;
 }
 

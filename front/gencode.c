@@ -602,24 +602,6 @@ int func_gencode_freevars_bind(func * func_value, symtab * stab, bind * bind_val
     return 0;
 }
 
-#if 0
-int func_gencode_freevars_bind_list(func * func_value, symtab * stab, bind_list * list,
-                                    int * result)
-{
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * bind_value = node->value;
-        if (bind_value != NULL)
-        {
-            func_gencode_freevars_bind(func_value, stab, bind_value, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-#endif
-
 int func_gencode_freevars_except(func * func_value, symtab * stab, except * except_value,
                                  int * result)
 {
@@ -684,26 +666,6 @@ int func_gencode_freevars_func(func * func_value, symtab * stab, func * subfunc_
     return 0;
 }
 
-#if 0
-int func_gencode_freevars_func_list(func * func_value, symtab * stab, func_list * list,
-                                    int * result)
-{
-    func_list_node * node = list->tail;
-
-    while (node != NULL)
-    {
-        func * subfunc_value = node->value;
-        if (subfunc_value != NULL)
-        {
-            func_gencode_freevars_func(func_value, stab, subfunc_value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-#endif
-
 int func_gencode_freevars(func * func_value, symtab * stab, int * result)
 {
     if (func_value->body && func_value->body->exprs)
@@ -711,17 +673,6 @@ int func_gencode_freevars(func * func_value, symtab * stab, int * result)
         func_gencode_freevars_expr(func_value, stab, func_value->body->exprs,
                                    result);
     }
-#if 0
-    if (func_value->body && func_value->body->funcs)
-    {
-        func_gencode_freevars_func_list(func_value, stab, func_value->body->funcs,
-                                        result);
-    }
-    if (func_value->body && func_value->body->ret)
-    {
-        func_gencode_freevars_expr(func_value, stab, func_value->body->ret, result);
-    }
-#endif
     if (func_value->except)
     {
         func_gencode_freevars_func_except(func_value, stab, func_value->except, result);

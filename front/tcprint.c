@@ -414,24 +414,6 @@ int print_func_bind(bind * value, int depth)
     return 0;
 }
 
-#if 0
-int print_func_bind_list(bind_list * list, int depth)
-{
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * value = node->value;
-        if (value != NULL)
-        {
-            print_func_bind(value, depth);
-        }
-
-        node = node->next;
-    }
-    return 0;
-}
-#endif
-
 int print_func_except(except * value, int depth)
 {
     if (value->id != NULL)
@@ -493,16 +475,6 @@ int print_func_native(func * value, int depth)
     {
         print_func_expr(value->body->exprs, depth);
     }
-#if 0
-    if (value->body != NULL && value->body->funcs != NULL)
-    {
-        print_func_list(value->body->funcs, depth + 1);
-    }
-    if (value->body != NULL && value->body->ret != NULL)
-    {
-        print_func_expr(value->body->ret, depth);
-    }
-#endif
     if (value->except != NULL && value->except->list != NULL)
     {
         print_func_except_list(value->except->list, depth);
@@ -533,36 +505,13 @@ int print_func(func * value, int depth)
     return 0;
 }
 
-#if 0
-int print_func_list(func_list * list, int depth)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * value = node->value;
-        if (value != NULL)
-        {
-            print_func(value, depth);
-        }
-
-        node = node->next;
-    }
-    return 0;
-}
-#endif
-
 int print_functions(never * nev)
 {
     if (nev->exprs)
     {
         print_func_seq_list(nev->exprs, 1);
     }
-#if 0
-    if (nev->funcs)
-    {
-        print_func_list(nev->funcs, 1);
-    }
-#endif
+
     return 0;
 }
 

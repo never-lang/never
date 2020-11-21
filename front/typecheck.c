@@ -240,8 +240,8 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
         case SYMTAB_MODULE_DECL:
             if (entry->module_decl_value != NULL)
             {
-                /* if (entry->module_decl_value && syn_level > 0) */
-                if (entry->module_decl_value && entry->module_decl_value->is_checked == 1)
+                if (entry->module_decl_value && syn_level > 0)
+                /* if (entry->module_decl_value && entry->module_decl_value->is_checked == 1) */
                 {
                     value->comb.comb = COMB_TYPE_MODULE;
                     value->comb.comb_module_decl = entry->module_decl_value;
@@ -1426,24 +1426,6 @@ int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
     return 0;
 }
 
-#if 0
-int symtab_add_bind_from_bind_list(symtab * tab, bind_list * list,
-                                   unsigned int syn_level, int * result)
-{
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * bind_value = node->value;
-        if (bind_value && bind_value->id)
-        {
-            symtab_add_bind_from_bind(tab, bind_value, syn_level, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-#endif
-
 int symtab_add_qualifier_from_qualifier(symtab * tab, qualifier * value,
                                         unsigned int syn_level, int * result)
 {
@@ -1528,24 +1510,6 @@ int symtab_remove_func_from_seq_list(symtab * tab, seq_list * list,
 
     return 0;
 }
-
-#if 0
-int symtab_add_func_from_func_list(symtab * tab, func_list * list,
-                                   unsigned int syn_level, int * result)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * func_value = node->value;
-        if (func_value && func_value->decl->id)
-        {
-            symtab_add_func_from_func(tab, func_value, syn_level, result);
-        }
-        node = node->next;
-    }
-    return 0;
-}
-#endif
 
 /*
  * check types
@@ -3800,25 +3764,6 @@ int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int 
     return 0;
 }
 
-#if 0
-int bind_list_check_type(symtab * tab, bind_list * list, func * func_value, unsigned int syn_level,
-                         int * result)
-{
-    bind_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        bind * bind_value = node->value;
-        if (bind_value != NULL)
-        {
-            bind_check_type(tab, bind_value, func_value, syn_level, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-#endif
-
 int except_check_id(except * value, int * result)
 {
     if (strcmp(value->id, EXCEPT_NO_INDEX_OOB_NAME) == 0)
@@ -3946,7 +3891,6 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                            int * result)
 {
-    /* TODO: check int start = 1; */
     if (func_value->stab == NULL)
     {
         func_value->stab = symtab_new(8, SYMTAB_TYPE_FUNC, tab);
@@ -3975,39 +3919,6 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
         func_except_check_type(func_value->stab, func_value->except, func_value,
                                syn_level, result);
     }
-#if 0
-    if (func_value->body && func_value->body->binds != NULL)
-    {
-        /* TODO: change bind index enumerator
-        bind_list_enum(func_value->body->binds, start);
-        */
-        /* start += func_value->body->binds->count; */
-    }
-    if (func_value->body && func_value->body->binds)
-    {
-        expr_list_check_type(func_value->stab, func_value->body->binds,
-                             func_value, syn_level, result);
-    }
-    if (func_value->body && func_value->body->funcs != NULL)
-    {
-        /* TODO: change func list index enumerator
-        func_list_enum(func_value->body->funcs, start);
-        */
-    }
-    if (func_value->body && func_value->body->funcs)
-    {
-        symtab_add_func_from_func_list(func_value->stab,
-                                       func_value->body->funcs, syn_level,
-                                       result);
-    }
-    if (func_value->body && func_value->body->funcs)
-    {
-        func_list_param_check_type(func_value->stab, func_value->body->funcs,
-                                   syn_level, result);
-        func_list_check_type(func_value->stab, func_value->body->funcs,
-                             syn_level, result);
-    }
-#endif
 
     if (func_value->body && func_value->body->exprs)
     {
@@ -4065,25 +3976,6 @@ int func_param_check_type(symtab * tab, func * func_value, unsigned int syn_leve
     return 0;
 }                               
 
-#if 0
-int func_list_param_check_type(symtab * tab, func_list * list, unsigned int syn_level,
-                               int * result)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * func_value = node->value;
-        if (func_value && func_value->decl)
-        {
-            func_param_check_type(tab, func_value, syn_level, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-#endif
-
 int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                     int * result)
 {
@@ -4102,25 +3994,6 @@ int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
 
     return 0;
 }
-
-#if 0                    
-int func_list_check_type(symtab * tab, func_list * list, unsigned int syn_level,
-                         int * result)
-{
-    func_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        func * func_value = node->value;
-        if (func_value != NULL)
-        {
-            func_check_type(tab, func_value, syn_level + 1, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-#endif
 
 int never_add_enumerator(enumtype * enumtype_value, enumerator * value, enumerator * enumerator_prev, int * result)
 {
@@ -4579,7 +4452,6 @@ int seq_list_func_entry_check_type(seq_list * list, int * result)
 
 int never_check_type(module_decl * module_modules, module_decl * module_stdlib, never * nev, int * result)
 {
-    /* int start = 0; */
     unsigned int syn_level = 0;
 
     if (nev->stab == NULL)
@@ -4600,12 +4472,6 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         never_add_decl_list(nev->stab, nev->decls, result);
     }
 
-#if 0
-    if (nev->funcs != NULL)
-    {
-        symtab_add_func_from_func_list(nev->stab, nev->funcs, syn_level, result);
-    }
-#endif
     if (nev->exprs != NULL)
     {
         symtab_add_func_from_seq_list(nev->stab, nev->exprs, syn_level, result);
@@ -4623,24 +4489,9 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
 
     if (nev->exprs != NULL)
     {
-        /* TODO: enumerator bind index */
-        /* bind_list_enum(nev->binds, start); */
-        /* symtab_module_decl_set_active(nev->stab, 0); */
         symtab_remove_func_from_seq_list(nev->stab, nev->exprs, syn_level, result);
         seq_list_check_type(nev->stab, nev->exprs, NULL, syn_level, result);
-        /* symtab_module_decl_set_active(nev->stab, 1); */
-        /* start += nev->binds->count; */
     }
-
-#if 0
-    if (nev->funcs != NULL)
-    {
-        func_list_param_check_type(nev->stab, nev->funcs, syn_level, result);
-        /* TODO: enumerate func index */
-        /* func_list_enum(nev->funcs, start); */
-        func_list_check_type(nev->stab, nev->funcs, syn_level, result);
-    }
-#endif
 
     return 0;
 }

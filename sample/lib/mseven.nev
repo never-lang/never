@@ -1,12 +1,11 @@
 
-
 module mseven {
 
-    use msix
+    var SEVEN = 7
 
     func seven() -> int
     {
-        msix.SIX + 1
+        SEVEN
     }
 
 }

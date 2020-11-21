@@ -30,7 +30,6 @@
 #include "except.h"
 
 typedef struct func_body func_body;
-/* TODO: remove typedef struct func_list func_list; */
 typedef struct func_decl func_decl;
 typedef struct func_except func_except;
 
@@ -80,22 +79,6 @@ typedef struct func_except
     except * all;
 } func_except;
 
-#if 0
-typedef struct func_list_node
-{
-    func * value;
-    struct func_list_node * prev;
-    struct func_list_node * next;
-} func_list_node;
-
-typedef struct func_list
-{
-    unsigned int count;
-    func_list_node * head;
-    func_list_node * tail;
-} func_list;
-#endif
-
 func * func_new(func_decl * decl, func_body * body);
 func * func_new_except(func_decl * decl, func_body * body, func_except * except);
 func * func_new_ffi(char * libname, func_decl * decl);
@@ -112,19 +95,6 @@ void func_body_delete(func_body * body);
 
 func_except * func_except_new(except * all, except_list * list);
 void func_except_delete(func_except * value);
-
-#if 0
-func_list_node * func_list_node_new(func * value);
-void func_list_node_delete(func_list_node * node);
-
-func_list * func_list_new();
-void func_list_delete(func_list * list);
-
-int func_list_enum(func_list * list, int start);
-
-void func_list_add_beg(func_list * list, func * value);
-void func_list_add_end(func_list * list, func * value);
-#endif
 
 #endif /* __FUNC_H__ */
 

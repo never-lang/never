@@ -1,14 +1,12 @@
 
 use mone
 
-var I = mone.Z
+var I = 10
 
 func test() -> int
 {
-    I
-};
-
-print(mone.Z)
+    mone.Z
+}
 
 func main() -> int
 {
