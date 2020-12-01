@@ -337,9 +337,6 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                 value->id.id_module_decl_value = module_decl_value;
             }
         break;
-        case SYMTAB_REMOVED:
-            assert(0);
-        break;
         }
     }
     else

@@ -76,10 +76,6 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result);
 int symtab_add_func_from_seq_list(symtab * tab, seq_list * list,
                                    unsigned int syn_level, int * result);
-int symtab_remove_func_from_func(symtab * tab, func * func_value,
-                                 unsigned int syn_level, int * result);
-int symtab_remove_func_from_seq_list(symtab * tab, seq_list * list,
-                                     unsigned int syn_level, int * result);
 int array_dims_check_type_expr(symtab * tab, expr * value, func * func_value,
                                unsigned syn_level, int * result);
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,

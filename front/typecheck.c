@@ -255,9 +255,6 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 
             }
         break;
-        case SYMTAB_REMOVED:
-            assert(0);
-        break;
     }
 
     return 0;
@@ -1313,9 +1310,6 @@ int symtab_entry_exists(symtab_entry * entry, unsigned int line_no)
                             entry->id, al_module_decl->line_no);
         }
         break;
-        case SYMTAB_REMOVED:
-            assert(0);
-        break;
     }
 
     return 0;
@@ -1461,14 +1455,6 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
     return 0;
 }
 
-int symtab_remove_func_from_func(symtab * tab, func * func_value,
-                                 unsigned int syn_level, int * result)
-{
-    symtab_remove_func(tab, func_value, syn_level);
-
-    return 0;
-}
-
 int symtab_add_func_from_seq_list(symtab * tab, seq_list * list,
                                    unsigned int syn_level, int * result)
 {
@@ -1483,27 +1469,6 @@ int symtab_add_func_from_seq_list(symtab * tab, seq_list * list,
             value->func_value->decl->id)
         {
             symtab_add_func_from_func(tab, value->func_value, syn_level, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int symtab_remove_func_from_seq_list(symtab * tab, seq_list * list,
-                                     unsigned int syn_level, int * result)
-{
-    seq_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        seq_item * value = node->value;
-        if (value != NULL &&
-            value->type == SEQ_TYPE_FUNC &&
-            value->func_value != NULL &&
-            value->func_value->decl != NULL &&
-            value->func_value->decl->id)
-        {
-            symtab_remove_func_from_func(tab, value->func_value, syn_level, result);
         }
         node = node->next;
     }
