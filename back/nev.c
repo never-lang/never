@@ -101,9 +101,7 @@ static int nev_compile_prog_modules(const char * input, program * prog, module_d
                 {
                     module_close(prog->module_value);
                 }
-
-                /*print_functions(nev);*/
-                /*module_print(prog->module_value);*/
+                /* module_print(prog->module_value); */
             }
         }
     }

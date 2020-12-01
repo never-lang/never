@@ -50,6 +50,11 @@ func main() -> int
     calc2(EN.E::TWO);
     calc2(EN.E::THREE);
 
+    calc2(EN.F::ZERO);
+    calc2(EN.F::ONE);
+    calc2(EN.F::TWO);
+    calc2(EN.F::THREE);
+
     calc2(E::ZERO);
     calc2(E::ONE);
     calc2(E::TWO);

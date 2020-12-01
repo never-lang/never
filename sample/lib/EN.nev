@@ -5,8 +5,13 @@ module EN
 
     enum E { ZERO, 
              ONE = E::ZERO + 1,
-             TWO = EM.E::TWO,
+             TWO = F::TWO,
              THREE = E::TWO + 1 }
+
+    enum F { ZERO = 0,
+             ONE,
+             TWO = E::ONE + 1,
+             THREE = E::THREE }
 
     record R { i : int; j : int; }
 

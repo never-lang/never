@@ -240,8 +240,8 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
         case SYMTAB_MODULE_DECL:
             if (entry->module_decl_value != NULL)
             {
-                if (entry->module_decl_value && syn_level > 0)
-                /* if (entry->module_decl_value && entry->module_decl_value->is_checked == 1) */
+                /* if (entry->module_decl_value && syn_level > 0) */
+                if (entry->module_decl_value && entry->module_decl_value->is_checked == 1)
                 {
                     value->comb.comb = COMB_TYPE_MODULE;
                     value->comb.comb_module_decl = entry->module_decl_value;
@@ -4474,7 +4474,7 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
 
     if (nev->exprs != NULL)
     {
-        symtab_add_func_from_seq_list(nev->stab, nev->exprs, syn_level, result);
+        /* symtab_add_func_from_seq_list(nev->stab, nev->exprs, syn_level, result); */
     }
     if (nev->uses != NULL)
     {
@@ -4489,7 +4489,7 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
 
     if (nev->exprs != NULL)
     {
-        symtab_remove_func_from_seq_list(nev->stab, nev->exprs, syn_level, result);
+        /* symtab_remove_func_from_seq_list(nev->stab, nev->exprs, syn_level, result); */
         seq_list_check_type(nev->stab, nev->exprs, NULL, syn_level, result);
     }
 

@@ -5041,7 +5041,8 @@ int func_entry_emit(
     bc.type = BYTECODE_UNHANDLED_EXCEPTION;
     bytecode_add(module_value->code, &bc);
     
-    exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr);            
+    /* exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr); */
+    exception_tab_insert(module_value->exctab_value, 0, labelE->addr);
 
     return 0;
 }
