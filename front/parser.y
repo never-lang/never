@@ -740,18 +740,6 @@ var: TOK_VAR TOK_ID '=' expr
     $$->line_no = $<line_no>1;
 };
 
-/* expr_bind: let
-{
-    $$ = expr_new_bind($1);
-    $$->line_no = $<line_no>1;
-};
-
-expr_bind: var
-{
-    $$ = expr_new_bind($1);
-    $$->line_no = $<line_no>1;
-}; */
-
 seq_list: let
 {
     $$ = seq_list_new();
