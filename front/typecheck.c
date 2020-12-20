@@ -100,6 +100,19 @@ int expr_set_comb_type(expr * value, param * param_value)
         return 0;
     }
 
+    switch (param_value->const_type)
+    {
+        case PARAM_CONST_TYPE_CONST:
+            value->comb.comb_const = COMB_CONST_TYPE_CONST;
+        break;
+        case PARAM_CONST_TYPE_VAR:
+            value->comb.comb_const = COMB_CONST_TYPE_VAR;
+        break;
+        case PARAM_CONST_TYPE_UNKNOWN:
+            assert(0);
+        break;
+    }
+
     switch (param_value->type)
     {
         case PARAM_BOOL:
@@ -179,6 +192,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 func * func_value = entry->func_value;
 
                 value->comb.comb = COMB_TYPE_FUNC;
+                value->comb.comb_const = COMB_CONST_TYPE_CONST;
                 value->comb.comb_params = func_value->decl->params;
                 value->comb.comb_ret = func_value->decl->ret;
             }
@@ -217,6 +231,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
             if (entry->record_value != NULL)
             {
                 value->comb.comb = COMB_TYPE_RECORD_ID;
+                value->comb.comb_const = COMB_CONST_TYPE_CONST;
                 value->comb.comb_record = entry->record_value;
             }
         break;
@@ -225,6 +240,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
             {
                 enumtype * al_enumtype = entry->enumtype_value;
                 value->comb.comb = COMB_TYPE_ENUMTYPE_ID;
+                value->comb.comb_const = COMB_CONST_TYPE_CONST;
                 value->comb.comb_enumtype = al_enumtype;
             }
         break;
@@ -244,6 +260,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 if (entry->module_decl_value && entry->module_decl_value->is_checked == 1)
                 {
                     value->comb.comb = COMB_TYPE_MODULE;
+                    value->comb.comb_const = COMB_CONST_TYPE_CONST;
                     value->comb.comb_module_decl = entry->module_decl_value;
                 }
                 else
@@ -276,6 +293,7 @@ int expr_qualifier_set_comb_type(expr * value, expr * expr_value, int * result)
              expr_value->comb.comb_dims == 1)
     {
         value->comb.comb = COMB_TYPE_INT;
+        value->comb.comb_const = COMB_CONST_TYPE_CONST;
     }
     else
     {
@@ -2414,6 +2432,16 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
                           expr_type_str(value->left->type));
     }
 
+    if (value->left->comb.comb_const == COMB_CONST_TYPE_CONST)
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "cannot assign to type const %s %s",
+                        comb_type_str(value->left->comb.comb),
+                        comb_type_str(value->right->comb.comb));
+    }
+
     if (value->left->comb.comb == COMB_TYPE_BOOL &&
         value->right->comb.comb == COMB_TYPE_BOOL)
     {
@@ -3717,10 +3745,18 @@ int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int 
             assert(0);
         break;
         case BIND_LET:
+            if (value->expr_value != NULL)
+            {
+                expr_check_type(tab, value->expr_value, func_value, syn_level, result);
+                value->expr_value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                symtab_add_bind_from_bind(tab, value, syn_level, result);
+            }
+        break;
         case BIND_VAR:
             if (value->expr_value != NULL)
             {
                 expr_check_type(tab, value->expr_value, func_value, syn_level, result);
+                value->expr_value->comb.comb_const = COMB_CONST_TYPE_VAR;
                 symtab_add_bind_from_bind(tab, value, syn_level, result);
             }
         break;

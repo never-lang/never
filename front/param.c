@@ -32,6 +32,7 @@ param * param_new_bool(char * id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_BOOL;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -46,6 +47,7 @@ param * param_new_int(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_INT;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -60,6 +62,7 @@ param * param_new_long(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_LONG;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -74,6 +77,7 @@ param * param_new_float(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_FLOAT;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -88,6 +92,7 @@ param * param_new_double(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_DOUBLE;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -102,6 +107,7 @@ param * param_new_char(char * id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_CHAR;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -116,6 +122,7 @@ param * param_new_string(char * id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_STRING;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -130,6 +137,7 @@ param * param_new_void(char * id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_VOID;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = NULL;
     value->params = NULL;
@@ -144,6 +152,7 @@ param * param_new_c_ptr(char * id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_C_PTR;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -158,6 +167,7 @@ param * param_new_dim(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_DIM;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->array = NULL;
@@ -172,6 +182,7 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_ARRAY;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->dims = dims;
@@ -191,6 +202,7 @@ param * param_new_range(char * id, range_list * ranges)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_RANGE;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->ranges = ranges;
@@ -211,6 +223,7 @@ param * param_new_range_dim(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_RANGE_DIM;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->ret = NULL;
@@ -224,6 +237,7 @@ param * param_new_slice(char * id, range_list * ranges, param * ret)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_SLICE;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->ranges = ranges;
@@ -243,6 +257,7 @@ param * param_new_record(char * id, char * record_id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_RECORD;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->record_id = record_id;
@@ -259,6 +274,7 @@ param * param_new_record_module(char * id, char * record_id, char * module_id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_RECORD;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->record_id = record_id;
@@ -275,6 +291,7 @@ param * param_new_func(char * id, param_list * params, param * ret)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_FUNC;
+    value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
     value->params = params;

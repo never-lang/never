@@ -1,0 +1,11 @@
+
+
+func main() -> int
+{
+    let i = 10;
+    var j = i;
+
+    print(j);
+
+    0
+}

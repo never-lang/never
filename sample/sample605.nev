@@ -1,0 +1,26 @@
+
+record R
+{
+    i : int;
+    j : float;
+}
+
+func test(var i : int, var j : int) -> int
+{
+    0
+}
+
+func main() -> int
+{
+    let i = 20;
+    var j = 20 + i;
+    let r = R(10, 10.0);
+
+    r.i = 20;
+    r.j = 20.0;
+
+    print(j);
+    prints(r.i + " " + r.j + "\n");
+
+    0
+}

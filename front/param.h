@@ -50,9 +50,17 @@ typedef enum param_type
     PARAM_FUNC
 } param_type;
 
+typedef enum param_const_type
+{
+    PARAM_CONST_TYPE_UNKNOWN = 0,
+    PARAM_CONST_TYPE_CONST,
+    PARAM_CONST_TYPE_VAR
+} param_const_type;
+
 typedef struct param
 {
     param_type type;
+    param_const_type const_type;
     int index;
     char * id;
     union {

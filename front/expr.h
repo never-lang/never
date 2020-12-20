@@ -130,6 +130,13 @@ typedef enum comb_type
     COMB_TYPE_MODULE = 20
 } comb_type;
 
+typedef enum comb_const_type
+{
+    COMB_CONST_TYPE_UNKNOWN = 0,
+    COMB_CONST_TYPE_CONST,
+    COMB_CONST_TYPE_VAR
+} comb_const_type;
+
 typedef enum id_type
 {
     ID_TYPE_UNKNOWN = 0,
@@ -169,6 +176,7 @@ typedef struct module_decl module_decl;
 typedef struct expr_comb
 {
     comb_type comb;
+    comb_const_type comb_const; /* constness */
     struct param_list * comb_params; /* function arguments */
     struct param * comb_ret;       /* function ret */
     unsigned int comb_dims;               /* array dimensions */
