@@ -625,6 +625,20 @@ param * param_list_find(param_list * list, char * id)
     return ret;
 }
 
+void param_list_set_const(param_list * list, param_const_type type)
+{
+    param_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL)
+        {
+            value->const_type = type;
+        }
+        node = node->next;
+    }
+}
+
 void param_dim_set_array(param_list * dims, param * array)
 {
     int index = 0;

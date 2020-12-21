@@ -1,11 +1,19 @@
 
 
+func f1(var i : int, j : int) -> int
+{
+    i = 100;
+    i + j
+}
+
 func main() -> int
 {
-    let i = 10;
+    var i = 10;
     var j = i;
 
-    print(j);
+    f1(i, j);
+
+    print(i);
 
     0
 }

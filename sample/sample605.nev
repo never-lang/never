@@ -2,25 +2,24 @@
 record R
 {
     i : int;
-    j : float;
+    j : int;
 }
 
-func test(var i : int, var j : int) -> int
+func print_R(r : R) -> int
 {
+    prints(r.i + " " + r.j + "\n");
     0
 }
 
 func main() -> int
 {
-    let i = 20;
-    var j = 20 + i;
-    let r = R(10, 10.0);
+    var i = 10;
+    var r = R(i, 20);
 
     r.i = 20;
-    r.j = 20.0;
+    r.j = 20;
 
-    print(j);
-    prints(r.i + " " + r.j + "\n");
+    print_R(r);
 
     0
 }
