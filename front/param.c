@@ -32,7 +32,7 @@ param * param_new_bool(char * id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_BOOL;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -42,17 +42,35 @@ param * param_new_bool(char * id)
     return value;
 }
 
+param * param_new_const_bool(char * id)
+{
+    param * value = param_new_bool(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
+
+    return value;
+}
+
 param * param_new_int(char * id)
 {
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_INT;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_const_int(char * id)
+{
+    param * value = param_new_int(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
 
     return value;
 }
@@ -62,12 +80,21 @@ param * param_new_long(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_LONG;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_const_long(char * id)
+{
+    param * value = param_new_long(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
 
     return value;
 }
@@ -77,12 +104,21 @@ param * param_new_float(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_FLOAT;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_const_float(char * id)
+{
+    param * value = param_new_float(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
 
     return value;
 }
@@ -92,12 +128,21 @@ param * param_new_double(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_DOUBLE;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_const_double(char * id)
+{
+    param * value = param_new_double(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
 
     return value;
 }
@@ -107,7 +152,7 @@ param * param_new_char(char * id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_CHAR;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = NULL;
@@ -117,17 +162,35 @@ param * param_new_char(char * id)
     return value;
 }
 
+param * param_new_const_char(char * id)
+{
+    param * value = param_new_char(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
+
+    return value;
+}
+
 param * param_new_string(char * id)
 {
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_STRING;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_const_string(char * id)
+{
+    param * value = param_new_string(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
 
     return value;
 }
@@ -137,7 +200,7 @@ param * param_new_void(char * id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_VOID;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = NULL;
     value->params = NULL;
@@ -147,17 +210,35 @@ param * param_new_void(char * id)
     return value;
 }
 
+param * param_new_const_void(char * id)
+{
+    param * value = param_new_void(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
+
+    return value;
+}
+
 param * param_new_c_ptr(char * id)
 {
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_C_PTR;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = NULL;
     value->ret = NULL;
     value->line_no = 0;
+
+    return value;
+}
+
+param * param_new_const_c_ptr(char * id)
+{
+    param * value = param_new_c_ptr(id);
+
+    value->const_type = PARAM_CONST_TYPE_CONST;
 
     return value;
 }
@@ -182,7 +263,7 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_ARRAY;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->dims = dims;
@@ -237,7 +318,7 @@ param * param_new_slice(char * id, range_list * ranges, param * ret)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_SLICE;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->ranges = ranges;
@@ -257,7 +338,7 @@ param * param_new_record(char * id, char * record_id)
     param * value = (param *)malloc(sizeof(param));
     
     value->type = PARAM_RECORD;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->record_id = record_id;
@@ -524,6 +605,14 @@ int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_li
     }
 }
 
+void param_init_const(param * value, param_const_type const_type)
+{
+    if (value->const_type == PARAM_CONST_TYPE_UNKNOWN)
+    {
+        value->const_type = const_type;
+    }
+}
+
 param_list_node * param_list_node_new(param * value)
 {
     param_list_node * node = (param_list_node *)malloc(sizeof(param_list_node));
@@ -625,20 +714,6 @@ param * param_list_find(param_list * list, char * id)
     return ret;
 }
 
-void param_list_set_const(param_list * list, param_const_type type)
-{
-    param_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        param * value = node->value;
-        if (value != NULL)
-        {
-            value->const_type = type;
-        }
-        node = node->next;
-    }
-}
-
 void param_dim_set_array(param_list * dims, param * array)
 {
     int index = 0;
@@ -650,6 +725,20 @@ void param_dim_set_array(param_list * dims, param * array)
         {
             value->index = index++;
             value->array = array;
+        }
+        node = node->next;
+    }
+}
+
+void param_list_init_const(param_list * list, param_const_type const_type)
+{
+    param_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL)
+        {
+            param_init_const(value, const_type);
         }
         node = node->next;
     }

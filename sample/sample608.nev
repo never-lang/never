@@ -13,12 +13,11 @@ func print_R(r : R) -> int
 
 func main() -> int
 {
-    var r = R(10, 20);
+    var t = [ R(100, 100), R(200, 200), R(300, 300), R(400, 400) ] : R;
 
-    r.i = 20;
-    r.j = 20;
+    t[2] = R(100, 100);
 
-    print_R(r);
+    print_R(t[2]);
 
     0
 }

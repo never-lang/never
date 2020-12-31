@@ -1,0 +1,19 @@
+
+
+func f1(i : int) -> int
+{
+    print(i);
+    0
+}
+
+func main() -> int
+{
+    var v = 100;
+    var t = [ 100, 200, 300, 400 ] : int;
+
+    t[2] = 10;
+
+    f1(t[2]);
+
+    0
+}

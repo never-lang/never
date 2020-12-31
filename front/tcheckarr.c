@@ -43,7 +43,7 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
         {
             if (node->distance == first_distance)
             {
-                if (param_expr_cmp(ret, value, true) == TYPECHECK_FAIL)
+                if (param_expr_cmp(ret, value) == TYPECHECK_FAIL)
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(

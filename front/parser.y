@@ -85,6 +85,7 @@ int yyerror(module_decl ** module_nev, char * str)
 %token <val.str_value> TOK_RANGE
 %token <val.str_value> TOK_MODULE
 %token <val.str_value> TOK_USE
+%token <val.str_value> TOK_CONST
 %token <val.int_value> TOK_MODULE_REF
 
 %type <val.expr_value> expr
@@ -799,7 +800,6 @@ seq_list: seq_list ';' expr
 seq: '{' seq_list '}'
 {
     $$ = seq_new($2);
-    $$->line_no = $<line_no>1;
 };
 
 expr_range_dim: expr TOK_TODOTS expr
@@ -1066,6 +1066,12 @@ param_decl: TOK_ID '(' param_list ')' TOK_RET param
 param: param_decl
 {
     $$ = $1;
+};
+
+param: TOK_LET param_decl
+{
+    $2->const_type = PARAM_CONST_TYPE_CONST;
+    $$ = $2;
 };
 
 param: TOK_VAR param_decl

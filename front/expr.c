@@ -52,7 +52,7 @@ expr * expr_new_int(int int_value)
     ret->type = EXPR_INT;
     ret->int_value = int_value;
     ret->comb.comb = COMB_TYPE_INT;
-    ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_const = COMB_CONST_TYPE_VAR;
     ret->line_no = 0;
 
     return ret;
@@ -298,7 +298,7 @@ expr * expr_new_seq(seq * value)
     expr * ret = (expr *)malloc(sizeof(expr));
     
     ret->type = EXPR_SEQ;
-    ret->line_no = 0;
+    ret->line_no = value != NULL ? value->line_no : 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
     ret->seq_value = value;
