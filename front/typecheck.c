@@ -105,9 +105,11 @@ int expr_set_comb_type(expr * value, param * param_value)
     {
         case PARAM_CONST_TYPE_CONST:
             value->comb.comb_const = COMB_CONST_TYPE_CONST;
+            value->comb.comb_lr = COMB_LR_TYPE_LEFT;
         break;
         case PARAM_CONST_TYPE_VAR:
             value->comb.comb_const = COMB_CONST_TYPE_VAR;
+            value->comb.comb_lr = COMB_LR_TYPE_LEFT;
         break;
         case PARAM_CONST_TYPE_UNKNOWN:
             assert(0);
@@ -194,6 +196,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
 
                 value->comb.comb = COMB_TYPE_FUNC;
                 value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                value->comb.comb_lr = COMB_LR_TYPE_LEFT;
                 value->comb.comb_params = func_value->decl->params;
                 value->comb.comb_ret = func_value->decl->ret;
             }
@@ -233,6 +236,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
             {
                 value->comb.comb = COMB_TYPE_RECORD_ID;
                 value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                value->comb.comb_lr = COMB_LR_TYPE_LEFT;
                 value->comb.comb_record = entry->record_value;
             }
         break;
@@ -242,6 +246,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 enumtype * al_enumtype = entry->enumtype_value;
                 value->comb.comb = COMB_TYPE_ENUMTYPE_ID;
                 value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                value->comb.comb_lr = COMB_LR_TYPE_LEFT;
                 value->comb.comb_enumtype = al_enumtype;
             }
         break;
@@ -262,6 +267,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 {
                     value->comb.comb = COMB_TYPE_MODULE;
                     value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                    value->comb.comb_lr = COMB_LR_TYPE_LEFT;
                     value->comb.comb_module_decl = entry->module_decl_value;
                 }
                 else
@@ -295,6 +301,7 @@ int expr_qualifier_set_comb_type(expr * value, expr * expr_value, int * result)
     {
         value->comb.comb = COMB_TYPE_INT;
         value->comb.comb_const = COMB_CONST_TYPE_CONST;
+        value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     }
     else
     {
@@ -796,7 +803,7 @@ int param_expr_slice_cmp(param * param_value, expr * expr_value)
     return param_cmp(param_value->ret, expr_value->comb.comb_ret);
 }
 
-int param_expr_cmp(param * param_value, expr * expr_value)
+int param_expr_cmp(param * param_value, expr * expr_value, bool init)
 {
     if (param_value == NULL && expr_value == NULL)
     {
@@ -808,13 +815,23 @@ int param_expr_cmp(param * param_value, expr * expr_value)
         return TYPECHECK_FAIL;
     }
 
-    if (param_value->const_type == PARAM_CONST_TYPE_VAR &&
-        expr_value->comb.comb_const == COMB_CONST_TYPE_CONST)
+    if (init)
     {
-        print_error_msg(expr_value->line_no,
-                        "passing const expression to variable param %s at line %u",
-                        param_value->id, param_value->line_no);
-        return TYPECHECK_FAIL;
+        if (param_expr_cmp_init(param_value->const_type, expr_value) == TYPECHECK_FAIL)
+        {
+            return TYPECHECK_FAIL;
+        }
+    }
+    else
+    {
+        if (param_value->const_type == PARAM_CONST_TYPE_VAR &&
+            expr_value->comb.comb_const == COMB_CONST_TYPE_CONST)
+        {
+            print_error_msg(expr_value->line_no,
+                            "passing const expression to variable param %s at line %u",
+                            param_value->id, param_value->line_no);
+            return TYPECHECK_FAIL;
+        }
     }
 
     if (param_value->type == PARAM_BOOL && expr_value->comb.comb == COMB_TYPE_BOOL)
@@ -1007,7 +1024,7 @@ int param_expr_cmp(param * param_value, expr * expr_value)
     return 0;
 }
 
-int param_expr_list_cmp(param_list * params, expr_list * list)
+int param_expr_list_cmp(param_list * params, expr_list * list, bool init)
 {
     if (params == NULL && list == NULL)
     {
@@ -1029,7 +1046,7 @@ int param_expr_list_cmp(param_list * params, expr_list * list)
         param * param_value = param_node->value;
         expr * expr_value = expr_node->value;
 
-        if (param_expr_cmp(param_value, expr_value) == TYPECHECK_FAIL)
+        if (param_expr_cmp(param_value, expr_value, init) == TYPECHECK_FAIL)
         {
             return TYPECHECK_FAIL;
         }
@@ -1056,7 +1073,7 @@ int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_l
     param_list_node * param_node = params->tail;
     param * param_value = param_node->value;
     if (param_value == NULL || 
-        param_expr_cmp(param_value, expr_value) == TYPECHECK_FAIL)
+        param_expr_cmp(param_value, expr_value, false) == TYPECHECK_FAIL)
     {
         return TYPECHECK_FAIL;
     }
@@ -1082,13 +1099,53 @@ int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_l
         param_value = param_node->value;
         expr * expr_value = expr_node->value;
 
-        if (param_expr_cmp(param_value, expr_value) == TYPECHECK_FAIL)
+        if (param_expr_cmp(param_value, expr_value, false) == TYPECHECK_FAIL)
         {
             return TYPECHECK_FAIL;
         }
 
         param_node = param_node->next;
         expr_node = expr_node->next;
+    }
+
+    return TYPECHECK_SUCC;
+}
+
+int param_expr_cmp_init(param_const_type param_const, expr * expr_value)
+{
+    switch (param_const)
+    {
+        case PARAM_CONST_TYPE_CONST:
+            if (expr_value->comb.comb_const == COMB_CONST_TYPE_VAR &&
+                expr_value->comb.comb_lr == COMB_LR_TYPE_LEFT)
+            {
+                expr_value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(expr_value->line_no, "cannot assign variable to const");
+                return TYPECHECK_FAIL;
+            }
+            else
+            {
+                expr_value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                expr_value->comb.comb_lr = COMB_LR_TYPE_LEFT;
+            }
+        break;
+        case PARAM_CONST_TYPE_VAR:
+            if (expr_value->comb.comb_const == COMB_CONST_TYPE_CONST &&
+                expr_value->comb.comb_lr == COMB_LR_TYPE_LEFT)
+            {
+                expr_value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(expr_value->line_no, "cannot assign const to variable");
+                return TYPECHECK_FAIL;
+            }
+            else
+            {
+                expr_value->comb.comb_const = COMB_CONST_TYPE_VAR;
+                expr_value->comb.comb_lr = COMB_LR_TYPE_LEFT;
+            }
+        break;
+        case PARAM_CONST_TYPE_UNKNOWN:
+            assert(0);
+        break;
     }
 
     return TYPECHECK_SUCC;
@@ -2741,6 +2798,10 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                 {
                     value->comb.comb_const = COMB_CONST_TYPE_CONST;
                 }
+                if (value->array_deref.array_expr->comb.comb_lr == COMB_LR_TYPE_LEFT)
+                {
+                    value->comb.comb_lr = COMB_LR_TYPE_LEFT;
+                }
             }
             else
             {
@@ -3016,7 +3077,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
     {
     case COMB_TYPE_FUNC:
         if (param_expr_list_cmp(value->call.func_expr->comb.comb_params,
-                                value->call.params) == TYPECHECK_SUCC)
+                                value->call.params, false) == TYPECHECK_SUCC)
         {
             expr_set_comb_type(value, value->call.func_expr->comb.comb_ret);
         }
@@ -3030,11 +3091,12 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
         break;
     case COMB_TYPE_RECORD_ID:
         if (param_expr_list_cmp(value->call.func_expr->comb.comb_record->params,
-                                value->call.params) == TYPECHECK_SUCC)
+                                     value->call.params, true) == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_RECORD;
             value->comb.comb_record = value->call.func_expr->comb.comb_record;
-            value->comb.comb_const = COMB_CONST_TYPE_VAR;
+            value->comb.comb_const = COMB_CONST_TYPE_CONST;
+            value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
         }
         else
         {
@@ -3053,7 +3115,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
             value->call.func_expr->enumtype.id_enumerator_value->type == ENUMERATOR_TYPE_RECORD &&
             value->call.func_expr->enumtype.id_enumerator_value->record_value != NULL &&
             param_expr_list_cmp(value->call.func_expr->enumtype.id_enumerator_value->record_value->params,
-                                value->call.params) == TYPECHECK_SUCC)
+                                value->call.params, true) == TYPECHECK_SUCC)
         {
             value->call.func_expr->enumtype.called = 1;
 
@@ -3291,7 +3353,7 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
         param_check_type(listcomp_value->stab, listcomp_value->ret, syn_level, result);
     }
 
-    if (param_expr_cmp(listcomp_value->ret, listcomp_value->expr_value)
+    if (param_expr_cmp(listcomp_value->ret, listcomp_value->expr_value, false)
                        == TYPECHECK_FAIL)
     {
         *result = TYPECHECK_FAIL;
@@ -3329,6 +3391,10 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
                 if (value->attr.record_value->comb.comb_const == COMB_CONST_TYPE_CONST)
                 {
                     value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                }
+                if (value->attr.record_value->comb.comb_lr == COMB_LR_TYPE_LEFT)
+                {
+                    value->comb.comb_lr = COMB_LR_TYPE_LEFT;
                 }
             }
             else
@@ -3772,10 +3838,16 @@ int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int 
     switch (value->type)
     {
         case BIND_LET:
-            value->expr_value->comb.comb_const = COMB_CONST_TYPE_CONST;
+            if (param_expr_cmp_init(PARAM_CONST_TYPE_CONST, value->expr_value) == TYPECHECK_FAIL)
+            {
+                *result = TYPECHECK_FAIL;
+            }
         break;
         case BIND_VAR:
-            value->expr_value->comb.comb_const = COMB_CONST_TYPE_VAR;
+            if (param_expr_cmp_init(PARAM_CONST_TYPE_VAR, value->expr_value) == TYPECHECK_FAIL)
+            {
+                *result = TYPECHECK_FAIL;
+            }
         break;
         case BIND_UNKNOWN:
             assert(0);
@@ -3847,7 +3919,7 @@ int except_check_type(symtab * tab, except * value,
     {
         expr_check_type(tab, value->expr_value, func_value, syn_level, result);
     }
-    if (param_expr_cmp(func_value->decl->ret, value->expr_value) == TYPECHECK_FAIL)
+    if (param_expr_cmp(func_value->decl->ret, value->expr_value, false) == TYPECHECK_FAIL)
     {
         *result = TYPECHECK_FAIL;
         print_error_msg(value->line_no,
@@ -3948,7 +4020,7 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
         expr_check_type(func_value->stab, func_value->body->exprs, func_value, syn_level,
                         result);
 
-        if (param_expr_cmp(func_value->decl->ret, func_value->body->exprs) ==
+        if (param_expr_cmp(func_value->decl->ret, func_value->body->exprs, false) ==
             TYPECHECK_FAIL)
         {
             *result = TYPECHECK_FAIL;

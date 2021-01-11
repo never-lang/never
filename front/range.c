@@ -47,6 +47,18 @@ void range_delete(range * value)
     free(value);
 }
 
+void range_init_const(range * value, param_const_type const_type)
+{
+    if (value->from != NULL)
+    {
+        param_init_const(value->from, const_type);
+    }
+    if (value->to != NULL)
+    {
+        param_init_const(value->to, const_type);
+    }
+}
+
 range_list_node * range_list_node_new(range * value)
 {
     range_list_node * node = (range_list_node *)malloc(sizeof(range_list_node));
@@ -181,6 +193,20 @@ void range_dim_set_slice(range_list * list, param * slice_value)
                 value->to->slice = slice_value;
             }
             index++;
+        }
+        node = node->next;
+    }
+}
+
+void range_list_init_const(range_list * list, param_const_type const_type)
+{
+    range_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        range * value = node->value;
+        if (value != NULL)
+        {
+            range_init_const(value, const_type);
         }
         node = node->next;
     }

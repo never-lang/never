@@ -137,6 +137,13 @@ typedef enum comb_const_type
     COMB_CONST_TYPE_VAR
 } comb_const_type;
 
+typedef enum comb_lr_type
+{
+    COMB_LR_TYPE_UNKNOWN = 0,
+    COMB_LR_TYPE_LEFT = 1,
+    COMB_LR_TYPE_RIGHT = 2
+} comb_lr_type;
+
 typedef enum id_type
 {
     ID_TYPE_UNKNOWN = 0,
@@ -177,6 +184,7 @@ typedef struct expr_comb
 {
     comb_type comb;
     comb_const_type comb_const; /* constness */
+    comb_lr_type comb_lr; /* lr type */
     struct param_list * comb_params; /* function arguments */
     struct param * comb_ret;       /* function ret */
     unsigned int comb_dims;               /* array dimensions */

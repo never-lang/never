@@ -611,6 +611,53 @@ void param_init_const(param * value, param_const_type const_type)
     {
         value->const_type = const_type;
     }
+
+    switch (value->type)
+    {
+        case PARAM_BOOL:
+        case PARAM_INT:
+        case PARAM_LONG:
+        case PARAM_FLOAT:
+        case PARAM_DOUBLE:
+        case PARAM_CHAR:
+        case PARAM_STRING:
+        case PARAM_VOID:
+        case PARAM_C_PTR:
+        case PARAM_DIM:
+        case PARAM_RANGE_DIM:
+        case PARAM_SLICE_DIM:
+        case PARAM_ENUMTYPE:
+        case PARAM_RECORD:
+        break;
+        case PARAM_ARRAY:
+            if (value->ret != NULL)
+            {
+                param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
+            }
+        break;
+        case PARAM_RANGE:
+            if (value->ranges != NULL)
+            {
+                range_list_init_const(value->ranges, PARAM_CONST_TYPE_CONST);
+            }
+        break;
+        case PARAM_SLICE:
+            if (value->ranges != NULL)
+            {
+                range_list_init_const(value->ranges, PARAM_CONST_TYPE_VAR);
+            }
+        break;
+        case PARAM_FUNC:
+            if (value->params != NULL)
+            {
+                param_list_init_const(value->params, PARAM_CONST_TYPE_CONST);
+            }
+            if (value->ret != NULL)
+            {
+                param_init_const(value->ret, PARAM_CONST_TYPE_CONST);
+            }
+        break;
+    }
 }
 
 param_list_node * param_list_node_new(param * value)

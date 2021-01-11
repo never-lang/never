@@ -22,7 +22,7 @@
 #ifndef __RANGE_H__
 #define __RANGE_H__
 
-typedef struct param param;
+#include "param.h"
 
 typedef struct range
 {
@@ -47,6 +47,7 @@ typedef struct range_list
 
 range * range_new(param * from, param * to);
 void range_delete(range * value);
+void range_init_const(range * value, param_const_type const_type);
 
 range_list_node * range_list_node_new(range * value);
 void range_list_node_delete(range_list_node * node);
@@ -59,5 +60,6 @@ void range_list_add_end(range_list * list, range * value);
 
 void range_dim_set_range(range_list * list, param * range_value);
 void range_dim_set_slice(range_list * list, param * slice_value);
+void range_list_init_const(range_list * list, param_const_type const_type);
 
 #endif /* __RANGE_H__ */

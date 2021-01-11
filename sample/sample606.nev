@@ -9,7 +9,7 @@ func f1(var i : int, j : int) -> int
 func main() -> int
 {
     var i = 10;
-    var j = i;
+    let j = 1000;
 
     f1(i, j);
 

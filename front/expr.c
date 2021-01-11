@@ -40,6 +40,7 @@ expr * expr_new_bool(int int_value)
     ret->int_value = int_value;
     ret->comb.comb = COMB_TYPE_BOOL;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
 
     return ret;
@@ -52,7 +53,8 @@ expr * expr_new_int(int int_value)
     ret->type = EXPR_INT;
     ret->int_value = int_value;
     ret->comb.comb = COMB_TYPE_INT;
-    ret->comb.comb_const = COMB_CONST_TYPE_VAR;
+    ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
 
     return ret;
@@ -66,6 +68,7 @@ expr * expr_new_long(long long long_value)
     ret->long_value = long_value;
     ret->comb.comb = COMB_TYPE_LONG;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
 
     return ret;
@@ -79,6 +82,7 @@ expr * expr_new_char(char char_value)
     ret->char_value = char_value;
     ret->comb.comb = COMB_TYPE_CHAR;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     
     return ret;
@@ -92,6 +96,7 @@ expr * expr_new_float(float float_value)
     ret->float_value = float_value;
     ret->comb.comb = COMB_TYPE_FLOAT;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
 
     return ret;
@@ -105,6 +110,7 @@ expr * expr_new_double(double double_value)
     ret->double_value = double_value;
     ret->comb.comb = COMB_TYPE_DOUBLE;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
 
     return ret;
@@ -118,6 +124,7 @@ expr * expr_new_string(char * string_value)
     ret->string_value = string_value;
     ret->comb.comb = COMB_TYPE_STRING;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     
     return ret;
@@ -135,6 +142,7 @@ expr * expr_new_enumtype(expr * enum_id, char * item_id)
     ret->enumtype.id_enumtype_value = NULL;
     ret->comb.comb = COMB_TYPE_ENUMTYPE;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     
     return ret;
@@ -148,6 +156,7 @@ expr * expr_new_id(char * id)
     ret->id.id = id;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
 
     return ret;
@@ -160,6 +169,7 @@ expr * expr_new_nil()
     ret->type = EXPR_NIL;
     ret->comb.comb = COMB_TYPE_NIL;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     
     return ret;
@@ -172,6 +182,7 @@ expr * expr_new_c_null()
     ret->type = EXPR_C_NULL;
     ret->comb.comb = COMB_TYPE_C_PTR;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     
     return ret;
@@ -184,6 +195,7 @@ expr * expr_new_one(int type, expr * left)
     ret->type = type;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     ret->left = left;
     ret->middle = NULL;
@@ -199,6 +211,7 @@ expr * expr_new_two(int type, expr * left, expr * right)
     ret->type = type;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     ret->left = left;
     ret->middle = NULL;
@@ -214,6 +227,7 @@ expr * expr_new_three(int type, expr * left, expr * middle, expr * right)
     ret->type = type;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     ret->left = left;
     ret->middle = middle;
@@ -229,6 +243,7 @@ expr * expr_new_array(array * value)
     ret->type = EXPR_ARRAY;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->comb.comb_params = NULL;
     ret->comb.comb_ret = NULL;
     ret->line_no = 0;
@@ -244,6 +259,7 @@ expr * expr_new_array_deref(expr * array_expr, expr_list * ref)
     ret->type = EXPR_ARRAY_DEREF;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     ret->array_deref.array_expr = array_expr;
     ret->array_deref.ref = ref;
@@ -258,6 +274,7 @@ expr * expr_new_range_dim(expr * from, expr * to)
     ret->type = EXPR_RANGE_DIM;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     ret->range_dim.from = from;
     ret->range_dim.to = to;
@@ -272,6 +289,7 @@ expr * expr_new_range(expr_list * range_dims)
     ret->type = EXPR_RANGE;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     ret->range.ret = param_new_int(NULL);
     ret->range.range_dims = range_dims;
@@ -286,6 +304,7 @@ expr * expr_new_slice(expr * array_expr, expr_list * range_dims)
     ret->type = EXPR_SLICE;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
     ret->slice.array_expr = array_expr;
     ret->slice.range_dims = range_dims;
@@ -301,6 +320,7 @@ expr * expr_new_seq(seq * value)
     ret->line_no = value != NULL ? value->line_no : 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->seq_value = value;
 
     return ret;
@@ -314,6 +334,7 @@ expr * expr_new_func(func * value)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->func_value = value;
 
     return ret;
@@ -327,6 +348,7 @@ expr * expr_new_call(expr * func_expr, expr_list * params)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->call.func_expr = func_expr;
     ret->call.params = params;
 
@@ -341,6 +363,7 @@ expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->func_build_in.id = id;
     ret->func_build_in.param = params;
     ret->func_build_in.ret = param_ret;
@@ -356,6 +379,7 @@ expr * expr_new_ass(expr * left, expr * right)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->left = left;
     ret->right = right;
     
@@ -370,6 +394,7 @@ expr * expr_new_while(expr * cond, expr * do_value)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->whileloop.cond = cond;
     ret->whileloop.do_value = do_value;
     
@@ -384,6 +409,7 @@ expr * expr_new_do_while(expr * cond, expr * do_value)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->whileloop.cond = cond;
     ret->whileloop.do_value = do_value;
     
@@ -398,6 +424,7 @@ expr * expr_new_for(expr * init, expr * cond, expr * incr, expr * do_value)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->forloop.init = init;
     ret->forloop.cond = cond;
     ret->forloop.incr = incr;
@@ -414,6 +441,7 @@ expr * expr_new_for_in(char * id, expr * in_value, expr * do_value)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->forin_value = forin_new(id, in_value, do_value);
 
     return ret;
@@ -427,6 +455,7 @@ expr * expr_new_iflet(iflet * iflet_value)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->iflet_value = iflet_value;
     
     return ret;
@@ -440,6 +469,7 @@ expr * expr_new_match(expr * expr_value, match_guard_list * match_guards)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->match.expr_value = expr_value;
     ret->match.match_guards = match_guards;
 
@@ -454,6 +484,7 @@ expr * expr_new_listcomp(listcomp * listcomp_value)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->listcomp_value = listcomp_value;    
         
     return ret;
@@ -467,6 +498,7 @@ expr * expr_new_attr(expr * record_value, expr * id)
     ret->line_no = 0;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
+    ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->attr.record_value = record_value;
     ret->attr.id = id;
     
