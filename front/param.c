@@ -289,7 +289,7 @@ param * param_new_range(char * id, range_list * ranges)
     value->ranges = ranges;
     value->line_no = 0;
 
-    value->ret = param_new_int(NULL);
+    value->ret = param_new_const_int(NULL);
 
     if (value->ranges != NULL)
     {
@@ -372,7 +372,7 @@ param * param_new_func(char * id, param_list * params, param * ret)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_FUNC;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->params = params;
@@ -452,6 +452,10 @@ int param_cmp(param * param_one, param * param_two)
     }
     if ((param_one == NULL && param_two != NULL) ||
         (param_one != NULL && param_two == NULL))
+    {
+        return PARAM_CMP_FAIL;
+    }
+    if (param_one->const_type != param_two->const_type)
     {
         return PARAM_CMP_FAIL;
     }
@@ -607,11 +611,6 @@ int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_li
 
 void param_init_const(param * value, param_const_type const_type)
 {
-    if (value->const_type == PARAM_CONST_TYPE_UNKNOWN)
-    {
-        value->const_type = const_type;
-    }
-
     switch (value->type)
     {
         case PARAM_BOOL:
@@ -630,6 +629,10 @@ void param_init_const(param * value, param_const_type const_type)
         case PARAM_RECORD:
         break;
         case PARAM_ARRAY:
+            if (value->const_type == PARAM_CONST_TYPE_UNKNOWN)
+            {
+                value->const_type = const_type;
+            }
             if (value->ret != NULL)
             {
                 param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
@@ -646,6 +649,10 @@ void param_init_const(param * value, param_const_type const_type)
             {
                 range_list_init_const(value->ranges, PARAM_CONST_TYPE_VAR);
             }
+            if (value->ret != NULL)
+            {
+                param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
+            }
         break;
         case PARAM_FUNC:
             if (value->params != NULL)
@@ -657,6 +664,10 @@ void param_init_const(param * value, param_const_type const_type)
                 param_init_const(value->ret, PARAM_CONST_TYPE_CONST);
             }
         break;
+    }
+    if (value->const_type == PARAM_CONST_TYPE_UNKNOWN)
+    {
+        value->const_type = const_type;
     }
 }
 

@@ -6,11 +6,11 @@ record Node
     right : Node;
 }
 
-func btree_insert(tree : Node, value : int) -> Node
+func btree_insert(var tree : Node, value : int) -> Node
 {
     if (tree == nil)
     {
-        Node(value, nil, nil)
+        Node(value + 0, nil, nil)
     }
     else if (value < tree.value)
     {
@@ -41,7 +41,7 @@ func btree_min(tree : Node) -> Node
     min
 }
 
-func btree_delete(tree : Node, value : int) -> Node
+func btree_delete(var tree : Node, value : int) -> Node
 {
     if (tree != nil)
     {
@@ -79,7 +79,7 @@ func btree_delete(tree : Node, value : int) -> Node
     }
     else
     {
-        Node(value, nil, nil)
+        Node(value + 0, nil, nil)
     }
 }
 

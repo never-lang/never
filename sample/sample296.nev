@@ -1,5 +1,5 @@
 
-func print_cl(cl[D] : (float) -> float) -> int
+func print_cl(let cl[D] : (float) -> float) -> int
 {
     var i = 0;
 
@@ -15,14 +15,14 @@ func print_cl(cl[D] : (float) -> float) -> int
     0
 }
 
-func cl() -> [_] : (float) -> float
+func cl() -> let [_] : (float) -> float
 {    
     func grad(d : float) -> float
     {
         d * 2.0 * 3.14159265 / 360.0
     };
     
-    [ g | f in [ sin, cos ] : (float) -> float;
+    [ g | f in [ sin, cos ] : (float) -> float;    
           g in [ let func(x : float) -> float { f(grad(x)) } ] : (float) -> float ] : (float) -> float
 }
     

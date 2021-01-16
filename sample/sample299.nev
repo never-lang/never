@@ -1,8 +1,8 @@
 
-enum Variant { Int { value : int; },
-               Float { value : float; },
-               Char { value : char; },
-               String { value : string; } }
+enum Variant { Int { let value : int; },
+               Float { let value : float; },
+               Char { let value : char; },
+               String { let value : string; } }
 
 func printv ( v : Variant ) -> Variant
 {

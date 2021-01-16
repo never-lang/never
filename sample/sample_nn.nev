@@ -1,7 +1,7 @@
 
 func randomize(seed : int) -> () -> int
 {
-    let v = seed;
+    var v = seed + 0;
     func rand() -> int
     {
         v = (v * 1103515245 + 12345) % 2147483648
@@ -14,10 +14,10 @@ func sigmoid(x : float) -> float
     1.0 / (1.0 + exp(-x))
 }
 
-func one_matrix(W[D1, D2] : float) -> int
+func one_matrix(var W[D1, D2] : float) -> int
 {
-    let r = 0;
-    let c = 0;
+    var r = 0;
+    var c = 0;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -28,10 +28,10 @@ func one_matrix(W[D1, D2] : float) -> int
     }
 }
 
-func rand_matrix(W[D1, D2] : float, rand() -> int) -> int
+func rand_matrix(var W[D1, D2] : float, rand() -> int) -> int
 {
-    let r = 0;
-    let c = 0;
+    var r = 0;
+    var c = 0;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -44,9 +44,9 @@ func rand_matrix(W[D1, D2] : float, rand() -> int) -> int
 
 func sigmoid_matrix(W[D1, D2] : float) -> [_,_] : float
 {
-    let r = 0;
-    let c = 0;
-    let S = {[ D1, D2 ]} : float;
+    var r = 0;
+    var c = 0;
+    var S = {[ D1, D2 ]} : float;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -60,9 +60,9 @@ func sigmoid_matrix(W[D1, D2] : float) -> [_,_] : float
 
 func T_matrix(W[D1, D2] : float) -> [_,_] : float
 {
-    let r = 0;
-    let c = 0;
-    let T = {[ D2, D1 ]} : float;
+    var r = 0;
+    var c = 0;
+    var T = {[ D2, D1 ]} : float;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -76,9 +76,9 @@ func T_matrix(W[D1, D2] : float) -> [_,_] : float
 
 func Hadamard_matrix(W1[D1, D2] : float, W2[D3, D4] : float) -> [_,_] : float
 {
-    let r = 0;
-    let c = 0;
-    let H = {[ D1, D2 ]} : float;
+    var r = 0;
+    var c = 0;
+    var H = {[ D1, D2 ]} : float;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -92,8 +92,8 @@ func Hadamard_matrix(W1[D1, D2] : float, W2[D3, D4] : float) -> [_,_] : float
 
 func print_matrix(W[D1, D2] : float) -> int
 {
-    let r = 0;
-    let c = 0;
+    var r = 0;
+    var c = 0;
     
     for (r = 0; r < D1; r = r + 1)
     {
@@ -114,14 +114,14 @@ func nn() -> int
     let xT = T_matrix(x);
     let y = [ [1, 0, 1, 0] ] : float;
     let yT = T_matrix(y);
-    let W = {[ 3, 1 ]} : float;
-    let z = {[ 4, 1 ]} : float;
-    let s = {[ 4, 1 ]} : float;
-    let sD = {[ 4, 1 ]} : float;
-    let err = {[ 4, 1 ]} : float;
-    let one = {[ 4, 1 ]} : float;
+    var W = {[ 3, 1 ]} : float;
+    var z = {[ 4, 1 ]} : float;
+    var s = {[ 4, 1 ]} : float;
+    var sD = {[ 4, 1 ]} : float;
+    var err = {[ 4, 1 ]} : float;
+    var one = {[ 4, 1 ]} : float;
     let rand = randomize(165);
-    let i = 0;
+    var i = 0;
 
     one_matrix(one);
     rand_matrix(W, rand);

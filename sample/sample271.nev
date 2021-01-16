@@ -1,7 +1,7 @@
 
 func adder(start : int) -> () -> int
 {
-    let v = start;
+    var v = start + 0;
     func add() -> int
     {
         v = v + 1

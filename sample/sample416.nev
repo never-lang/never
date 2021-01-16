@@ -15,7 +15,7 @@ func getF(o : Optional) -> () -> () -> int
 
 func main() -> int
 {
-    let o = Optional::Some(10);
+    var o = Optional::Some(10);
     o = Optional::None;
     
     assert(getF(o)()() == 1000);

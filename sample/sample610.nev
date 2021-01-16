@@ -1,0 +1,25 @@
+
+func f (var s : int) -> var [D] : int
+{
+    var t = [ s, s, s, s, s, s ] : int;
+    t
+}
+
+func main() -> int
+{
+    var s = 10;
+    var t = f(s);
+
+    print(f(s)[0]);
+    print(f(s)[1]);
+
+    s = 20;
+    print(f(s)[0]);
+    print(f(s)[1]);
+
+    f(s)[0] = 30;
+    print(f(s)[0]);
+    print(f(s)[1]);
+
+    0
+}

@@ -2,7 +2,7 @@ record R { a : int; b : int; }
 
 func get_func() -> () -> int
 {
-    let r = R(10, 20);
+    var r = R(10, 20);
 
     func f() -> int {
         prints("a " + r.a + " b " + r.b + "\n");

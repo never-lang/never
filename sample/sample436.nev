@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    let a = {[ 10 ]} : bool;
+    var a = {[ 10 ]} : bool;
     
     a[0] = false;
     a[1] = true;

@@ -1,8 +1,8 @@
 
 func check_int() -> int
 {
-    let a = 10;
-    let b = 20;
+    var a = 10;
+    var b = 20;
 
     a = b = 5;
 
@@ -14,8 +14,8 @@ func check_int() -> int
 
 func check_long() -> int
 {
-    let a = 10L;
-    let b = 20L;
+    var a = 10L;
+    var b = 20L;
 
     a = b = 5L;
 
@@ -27,8 +27,8 @@ func check_long() -> int
 
 func check_float() -> int
 {
-    let a = 10.0;
-    let b = 20.0;
+    var a = 10.0;
+    var b = 20.0;
 
     a = b = 5.0;
 
@@ -40,8 +40,8 @@ func check_float() -> int
 
 func check_double() -> int
 {
-    let a = 10.0d;
-    let b = 20.0d;
+    var a = 10.0d;
+    var b = 20.0d;
 
     a = b = 5.0d;
 

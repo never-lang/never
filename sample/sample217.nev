@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    let n = 32;
+    var n = 32;
 
     do
     {

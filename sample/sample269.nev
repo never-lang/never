@@ -5,10 +5,10 @@ func print_vect(vect[D1, D2] : float) -> int
     0
 }
 
-func rotate_matrix(alpha : float) -> [_,_] : float
+func rotate_matrix(alpha : float) -> [_,_] : let float
 {
     [ [ cos(alpha), -sin(alpha) ],
-      [ sin(alpha), cos(alpha)  ] ] : float
+      [ sin(alpha), cos(alpha)  ] ] : let float
 }
 
 func main() -> int

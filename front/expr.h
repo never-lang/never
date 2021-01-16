@@ -363,6 +363,8 @@ expr * expr_new_attr(expr * record_value, expr * id);
 comb_type conv_to_comb_type(conv_type conv);
 expr * expr_conv(expr * expr_value, conv_type conv);
 
+int comb_type_is_basic(comb_type comb);
+
 void expr_delete(expr * value);
 
 expr_list_node * expr_list_node_new(expr * value);

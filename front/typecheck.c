@@ -196,7 +196,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
 
                 value->comb.comb = COMB_TYPE_FUNC;
                 value->comb.comb_const = COMB_CONST_TYPE_CONST;
-                value->comb.comb_lr = COMB_LR_TYPE_LEFT;
+                value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
                 value->comb.comb_params = func_value->decl->params;
                 value->comb.comb_ret = func_value->decl->ret;
             }
@@ -236,7 +236,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
             {
                 value->comb.comb = COMB_TYPE_RECORD_ID;
                 value->comb.comb_const = COMB_CONST_TYPE_CONST;
-                value->comb.comb_lr = COMB_LR_TYPE_LEFT;
+                value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
                 value->comb.comb_record = entry->record_value;
             }
         break;
@@ -246,7 +246,7 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 enumtype * al_enumtype = entry->enumtype_value;
                 value->comb.comb = COMB_TYPE_ENUMTYPE_ID;
                 value->comb.comb_const = COMB_CONST_TYPE_CONST;
-                value->comb.comb_lr = COMB_LR_TYPE_LEFT;
+                value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
                 value->comb.comb_enumtype = al_enumtype;
             }
         break;
@@ -1116,6 +1116,7 @@ int param_expr_cmp_init(param_const_type param_const, expr * expr_value)
     switch (param_const)
     {
         case PARAM_CONST_TYPE_CONST:
+#if 0
             if (expr_value->comb.comb_const == COMB_CONST_TYPE_VAR &&
                 expr_value->comb.comb_lr == COMB_LR_TYPE_LEFT)
             {
@@ -1124,6 +1125,7 @@ int param_expr_cmp_init(param_const_type param_const, expr * expr_value)
                 return TYPECHECK_FAIL;
             }
             else
+#endif
             {
                 expr_value->comb.comb_const = COMB_CONST_TYPE_CONST;
                 expr_value->comb.comb_lr = COMB_LR_TYPE_LEFT;
@@ -2883,6 +2885,8 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
             {
                 value->comb.comb = COMB_TYPE_CHAR;
+                value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
             }
             else
             {
@@ -2997,6 +3001,8 @@ int expr_range_check_type(symtab * tab, expr * value, func * func_value,
     expr_range_list_check_type(tab, value->range.range_dims, func_value, syn_level, result);
 
     value->comb.comb = COMB_TYPE_RANGE;
+    value->comb.comb_const = COMB_CONST_TYPE_CONST;
+    value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     value->comb.comb_dims = value->range.range_dims->count;
     value->comb.comb_ret = value->range.ret;
 
@@ -3080,6 +3086,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
                                 value->call.params, false) == TYPECHECK_SUCC)
         {
             expr_set_comb_type(value, value->call.func_expr->comb.comb_ret);
+            value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
         }
         else
         {
@@ -3118,7 +3125,6 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
                                 value->call.params, true) == TYPECHECK_SUCC)
         {
             value->call.func_expr->enumtype.called = 1;
-
             value->comb.comb = COMB_TYPE_ENUMTYPE;
             value->comb.comb_enumtype = value->call.func_expr->comb.comb_enumtype;
         }
@@ -3353,7 +3359,7 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
         param_check_type(listcomp_value->stab, listcomp_value->ret, syn_level, result);
     }
 
-    if (param_expr_cmp(listcomp_value->ret, listcomp_value->expr_value, false)
+    if (param_expr_cmp(listcomp_value->ret, listcomp_value->expr_value, true)
                        == TYPECHECK_FAIL)
     {
         *result = TYPECHECK_FAIL;

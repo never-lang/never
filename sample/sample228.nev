@@ -1,12 +1,12 @@
 
-func ass(v : int) -> int
+func ass(var v : int) -> int
 {
     v = 10
 }
 
 func main() -> int
 {
-    let i = 1;
+    var i = 1;
     
     print(i);
     

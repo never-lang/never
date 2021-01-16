@@ -20,6 +20,8 @@ func main() -> int
 
     prints(r.i + " " + r.j + "\n");
 
+    { var i = 10; i } = 40;
+
     0
 }
 

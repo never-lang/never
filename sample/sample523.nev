@@ -20,8 +20,8 @@ func three() -> int
 func main() -> int
 {
     /* let i = one() = two() = three(); */
-    let i = 1;
-    let j = 2;
+    var i = 1;
+    var j = 2;
     
     i = { two(); j } = { one(); 10 };
 

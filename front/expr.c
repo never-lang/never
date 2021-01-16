@@ -291,7 +291,7 @@ expr * expr_new_range(expr_list * range_dims)
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
     ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
-    ret->range.ret = param_new_int(NULL);
+    ret->range.ret = param_new_const_int(NULL);
     ret->range.range_dims = range_dims;
 
     return ret;
@@ -544,6 +544,42 @@ expr * expr_conv(expr * expr_value, conv_type conv)
     expr_value->comb.comb = conv_to_comb_type(conv);
 
     return ret;
+}
+
+int comb_type_is_basic(comb_type comb)
+{
+    switch(comb)
+    {
+        case COMB_TYPE_NIL:
+        case COMB_TYPE_BOOL:
+        case COMB_TYPE_INT:
+        case COMB_TYPE_LONG:
+        case COMB_TYPE_FLOAT:
+        case COMB_TYPE_DOUBLE:
+        case COMB_TYPE_CHAR:
+        case COMB_TYPE_VOID:
+        case COMB_TYPE_C_PTR:
+            return 1;
+        break;
+        case COMB_TYPE_ERR:
+        case COMB_TYPE_STRING:
+        case COMB_TYPE_ARRAY:
+        case COMB_TYPE_RANGE:
+        case COMB_TYPE_SLICE:
+        case COMB_TYPE_FUNC:
+        case COMB_TYPE_ENUMTYPE:
+        case COMB_TYPE_ENUMTYPE_ID:
+        case COMB_TYPE_RECORD:
+        case COMB_TYPE_RECORD_ID:
+        case COMB_TYPE_MODULE:
+            return 0;
+        break;
+        case COMB_TYPE_UNKNOWN:
+            assert(0);
+        break;
+    }
+
+    return 0;
 }
 
 void expr_delete(expr * value)

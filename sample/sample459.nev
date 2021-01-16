@@ -2,7 +2,7 @@
 record R
 {
     x : int;
-    a[D] : int;
+    let a[D] : int;
     [from .. to] : range;
     s [ from_s .. to_s ] : string;
 }

@@ -1,8 +1,8 @@
 
 func testdo() -> int
 {
-    let i = 10;
-    let sum = 0;
+    var i = 10;
+    var sum = 0;
     
     do
     {

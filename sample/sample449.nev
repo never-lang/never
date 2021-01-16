@@ -21,7 +21,7 @@ func main() -> int
 {
     let i = 0;
     let arr = [ 10, 11, 12, 13, 14, 15 ] : int;
-    let slice1 = arr[ 1 .. 4 ];
+    var slice1 = arr[ 1 .. 4 ];
     let slice2 = arr[ 0 .. 5 ];
 
     slice1 = slice2;

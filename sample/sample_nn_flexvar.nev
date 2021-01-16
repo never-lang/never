@@ -1,7 +1,7 @@
 
 func randomize(seed : int) -> () -> int
 {
-    let v = seed;
+    var v = seed + 0;
     func rand() -> int
     {
         v = (v * 1103515245 + 12345) % 2147483648
@@ -14,12 +14,12 @@ func sigmoid(x : float) -> float
     1.0 / (1.0 + exp(-x))
 }
 
-func one_matrix(W[D1, D2] : float) -> int
+func one_matrix(var W[D1, D2] : float) -> int
 {
-    let r = 0;
+    var r = 0;
     for (r = 0; r < D1; r = r + 1)
     {
-        let c = 0;
+        var c = 0;
         for (c = 0; c < D2; c = c + 1)
         {
             W[r, c] = 1.0
@@ -27,12 +27,12 @@ func one_matrix(W[D1, D2] : float) -> int
     }
 }
 
-func rand_matrix(W[D1, D2] : float, rand() -> int) -> int
+func rand_matrix(var W[D1, D2] : float, rand() -> int) -> int
 {
-    let r = 0;
+    var r = 0;
     for (r = 0; r < D1; r = r + 1)
     {
-        let c = 0;
+        var c = 0;
         for (c = 0; c < D2; c = c + 1)
         {
             W[r, c] = (rand() % 1000) / 1000.0
@@ -42,12 +42,12 @@ func rand_matrix(W[D1, D2] : float, rand() -> int) -> int
 
 func sigmoid_matrix(W[D1, D2] : float) -> [_,_] : float
 {
-    let S = {[ D1, D2 ]} : float;
+    var S = {[ D1, D2 ]} : float;
     
-    let r = 0;
+    var r = 0;
     for (r = 0; r < D1; r = r + 1)
     {
-        let c = 0;
+        var c = 0;
         for (c = 0; c < D2; c = c + 1)
         {
             S[r, c] = sigmoid(W[r, c])
@@ -58,12 +58,12 @@ func sigmoid_matrix(W[D1, D2] : float) -> [_,_] : float
 
 func T_matrix(W[D1, D2] : float) -> [_,_] : float
 {
-    let T = {[ D2, D1 ]} : float;
+    var T = {[ D2, D1 ]} : float;
     
-    let r = 0;
+    var r = 0;
     for (r = 0; r < D1; r = r + 1)
     {
-        let c = 0;
+        var c = 0;
         for (c = 0; c < D2; c = c + 1)
         {
             T[c, r] = W[r, c]
@@ -74,12 +74,12 @@ func T_matrix(W[D1, D2] : float) -> [_,_] : float
 
 func Hadamard_matrix(W1[D1, D2] : float, W2[D3, D4] : float) -> [_,_] : float
 {
-    let H = {[ D1, D2 ]} : float;
+    var H = {[ D1, D2 ]} : float;
     
-    let r = 0;
+    var r = 0;
     for (r = 0; r < D1; r = r + 1)
     {
-        let c = 0;
+        var c = 0;
         for (c = 0; c < D2; c = c + 1)
         {
             H[r, c] = W1[r, c] * W2[r, c]
@@ -90,10 +90,10 @@ func Hadamard_matrix(W1[D1, D2] : float, W2[D3, D4] : float) -> [_,_] : float
 
 func print_matrix(W[D1, D2] : float) -> int
 {
-    let r = 0;
+    var r = 0;
     for (r = 0; r < D1; r = r + 1)
     {
-        let c = 0;
+        var c = 0;
         for (c = 0; c < D2; c = c + 1)
         {
             prints(W[r, c] + " ")
@@ -104,17 +104,17 @@ func print_matrix(W[D1, D2] : float) -> int
 
 func nn() -> int
 {
-    let W = {[ 3, 1 ]} : float;
-    let one = {[ 4, 1 ]} : float;
+    var W = {[ 3, 1 ]} : float;
+    var one = {[ 4, 1 ]} : float;
     let rand = randomize(165);
 
     one_matrix(one);
     rand_matrix(W, rand);
 
-    let z = {[ 4, 1 ]} : float;
-    let s = {[ 4, 1 ]} : float;
+    var z = {[ 4, 1 ]} : float;
+    var s = {[ 4, 1 ]} : float;
 
-    let i = 0;
+    var i = 0;
     for (i = 0; i < 1000; i = i + 1)
     {
         let x = [ [0.0f, 1.0f, 0.0f],

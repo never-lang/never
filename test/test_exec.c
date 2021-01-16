@@ -180,7 +180,7 @@ void test_three()
     program_delete(prog);
 }
 
-void test_sample(const char * samplepath)
+void test_sample(const char * samplepath, unsigned int current, unsigned int count)
 {
     program * prog = program_new();
     char * prog_str = readall(samplepath);
@@ -190,7 +190,7 @@ void test_sample(const char * samplepath)
         int ret = nev_compile_str(prog_str, prog);
         if (ret != 0)
         {
-            printf("path: %s\nprog_str: %s\n", samplepath, prog_str);
+            printf("[%d/%d] path: %s\nprog_str: %s\n", current, count, samplepath, prog_str);
         }
         assert(ret == 0);
 
@@ -216,23 +216,44 @@ void test_sample(const char * samplepath)
     program_delete(prog);
 }
 
+int skip_dir(struct dirent * ent)
+{
+    return strcmp(".", ent->d_name) == 0 ||
+           strcmp("..", ent->d_name) == 0 ||
+           strcmp("lib", ent->d_name) == 0;
+}
+
 void test_samples(const char * dirpath)
 {
     DIR * dir;
     struct dirent * ent;
+    unsigned int count = 0;
+    unsigned int current = 0;
+
     if ((dir = opendir(dirpath)) != NULL)
     {
         while ((ent = readdir(dir)) != NULL)
         {
-            if (strcmp(".", ent->d_name) == 0 ||
-                strcmp("..", ent->d_name) == 0 ||
-                strcmp("lib", ent->d_name) == 0)
+            if (skip_dir(ent))
+            {
+                continue;
+            }
+            count++;
+        }
+        closedir(dir);
+    }
+
+    if ((dir = opendir(dirpath)) != NULL)
+    {
+        while ((ent = readdir(dir)) != NULL)
+        {
+            if (skip_dir(ent))
             {
                 continue;
             }
             char samplepath[PATH_MAX + 1] = { 0 };
             snprintf(samplepath, PATH_MAX, "%s/%s", dirpath, ent->d_name);
-            test_sample((const char *)samplepath);
+            test_sample((const char *)samplepath, current++, count);
         }
         closedir(dir);
     }

@@ -3,10 +3,10 @@ record R
 {
     i : int;
     j : int;
-    let t[D] : int;
+    t[D] : int;
 }
 
-func print_R(var r : R) -> int
+func print_R(r : R) -> int
 {
     prints(r.i + " " + r.j + "\n");
     0

@@ -1,11 +1,11 @@
 
 record Tree {
-    value : int;
+    let value : int;
     left : Tree;
     right : Tree;
 }
 
-func get_Tree(value : int) -> Tree
+func get_Tree(value : int) -> var Tree
 {
     var t = Tree(value, nil, nil);
     t

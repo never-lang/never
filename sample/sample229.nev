@@ -1,12 +1,12 @@
 
-func ass(tab[_] : int) -> int
+func ass(var tab[_] : int) -> int
 {
     tab[0] = 10
 }
 
 func main() -> int
 {
-    let tab = [ 1, 2, 3, 4 ] : int;
+    var tab = [ 1, 2, 3, 4 ] : int;
     
     print(tab[0]);
 

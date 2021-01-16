@@ -1,7 +1,7 @@
 
 record R { x : int; y : int; }
 
-func pr( a[D] : R ) -> int
+func pr( let a[D] : R ) -> int
 {
     for ( i in [ 0 .. D - 1 ] )
     {

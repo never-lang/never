@@ -13,7 +13,7 @@ func print_tab(tab[D] : int) -> int
     0
 }
 
-func swap(a : int, b : int) -> int
+func swap(var a : int, var b : int) -> int
 {
     var t = 0;
     
@@ -26,7 +26,7 @@ func swap(a : int, b : int) -> int
 
 func randomize(seed : int) -> () -> int
 {
-    let v = seed;
+    var v = seed + 0;
     func rand() -> int
     {
         v = (v * 11 + 12) % 21474
@@ -34,7 +34,7 @@ func randomize(seed : int) -> () -> int
     rand
 }
 
-func qsort_rec(tab[D] : int,
+func qsort_rec(var tab[D] : int,
                beg : int, end : int,
                rand() -> int) -> int
 {
@@ -72,7 +72,7 @@ func qsort_rec(tab[D] : int,
     0
 }
 
-func qsort(tab[D] : int) -> int
+func qsort(var tab[D] : int) -> int
 {
     var rand = randomize(6);
 

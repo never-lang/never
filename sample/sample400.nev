@@ -12,7 +12,7 @@ func calc() -> Optional
 func main() -> int
 {
     let V = 10;
-    let c = Optional::None;
+    var c = Optional::None;
     let z = 1000;
 
     c = calc();

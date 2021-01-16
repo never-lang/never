@@ -3,7 +3,7 @@ enum Optional_Array { Some { array[D] : int; }, None }
 
 func array_print(array[D] : int) -> int
 {
-    let i = 0;
+    var i = 0;
     
     for (i = 0; i < D; i = i + 1)
     {
@@ -15,8 +15,8 @@ func array_print(array[D] : int) -> int
 
 func optional_array_new(len : int) -> Optional_Array
 {
-    let i = 0;
-    let arr = [ 0 ] : int;
+    var i = 0;
+    var arr = [ 0 ] : int;
 
     if (len < 10)
     {

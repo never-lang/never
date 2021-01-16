@@ -6,7 +6,7 @@ enum A {
 }
 
 record R {
-    v : A;
+    let v : A;
 }
 
 func getA(b : A) -> R

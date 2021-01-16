@@ -2,6 +2,7 @@
 func sum_digits(n : int, base : int) -> int
 {
     var sum = 0;
+    var n = n + 0;
     
     do
     {

@@ -14,8 +14,8 @@ record Types
     b : bool;
     c : char;
     str : string;
-    ptr : c_ptr;
-    rec : Point;
+    let ptr : c_ptr;
+    let rec : Point;
 }
 
 record PtrTypes

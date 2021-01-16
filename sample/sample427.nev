@@ -9,7 +9,7 @@ enum Result { Ok { rects[D] : Rect; }, Err { msg : string; } }
 
 func printRect(rects[D] : Rect) -> int
 {
-    let i = 0;
+    var i = 0;
 
     for (i = 0; i < D; i = i + 1)
     {
@@ -27,7 +27,7 @@ func rects() -> Result
 func main() -> int
 {
     let i = 0;
-    let j = if let (Result::Ok(rects) = rects())
+    var j = if let (Result::Ok(rects) = rects())
             {
                 printRect(rects);
                 1

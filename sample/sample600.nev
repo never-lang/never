@@ -14,7 +14,7 @@ func test(a : int, b : int) -> int
     j;
     i + j;
 
-    let c = 0;
+    var c = 0;
 
     c = i;
     print(c);

@@ -18,7 +18,7 @@ func pr_arr( rs[D] : [..] : string ) -> int
 func main() -> int
 {
     let ss = [ "one", "two", "three", "four", "five", "six" ] : string;
-    let rs = {[ 5 ]} : [..] : string;
+    var rs = {[ 5 ]} : [..] : string;
 
     rs[0] = ss[0..1];
     rs[1] = ss[1..2];

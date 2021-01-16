@@ -1,7 +1,7 @@
-func f(i : int) -> [_] : int
+func f(i : int) -> var [_] : int
 {
-    let t1 = [ 1, 2, 3 ] : int;
-    let t2 = [ 11, 12, 13, 14 ] : int;
+    var t1 = [ 1, 2, 3 ] : int;
+    var t2 = [ 11, 12, 13, 14 ] : int;
     
     t1 = t2;
     t1
