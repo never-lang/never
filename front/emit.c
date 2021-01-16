@@ -2501,12 +2501,12 @@ int expr_forin_emit(expr * value, int stack_level, module * module_value,
         expr_forin_array_emit(value, stack_level, module_value, list_weak, result);
     }
     else if (value->forin_value->in_value->comb.comb == COMB_TYPE_RANGE &&
-             value->forin_value->in_value->comb.array.comb_dims == 1)
+             value->forin_value->in_value->comb.range.comb_dims == 1)
     {
         expr_forin_range_emit(value, stack_level, module_value, list_weak, result);
     }
     else if (value->forin_value->in_value->comb.comb == COMB_TYPE_SLICE &&
-            value->forin_value->in_value->comb.array.comb_dims == 1)
+            value->forin_value->in_value->comb.slice.comb_dims == 1)
     {
         expr_forin_slice_emit(value, stack_level, module_value, list_weak, result);
     }
