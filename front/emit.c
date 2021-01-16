@@ -548,22 +548,22 @@ int expr_neg_emit(expr * value, int stack_level, module * module_value,
         bc.type = BYTECODE_OP_NEG_DOUBLE;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_INT)
+             value->comb.array.comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_NEG_ARR_INT;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_LONG)
+             value->comb.array.comb_ret->type == PARAM_LONG)
     {
         bc.type = BYTECODE_OP_NEG_ARR_LONG;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_FLOAT)
+             value->comb.array.comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_NEG_ARR_FLOAT;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_DOUBLE)
+             value->comb.array.comb_ret->type == PARAM_DOUBLE)
     {
         bc.type = BYTECODE_OP_NEG_ARR_DOUBLE;
     }
@@ -908,22 +908,22 @@ int expr_add_emit(expr * value, int stack_level, module * module_value,
         bc.type = BYTECODE_OP_ADD_STRING_CHAR;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_INT)
+             value->comb.array.comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_ADD_ARR_INT;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_LONG)
+             value->comb.array.comb_ret->type == PARAM_LONG)
     {
         bc.type = BYTECODE_OP_ADD_ARR_LONG;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_FLOAT)
+             value->comb.array.comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_ADD_ARR_FLOAT;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_DOUBLE)
+             value->comb.array.comb_ret->type == PARAM_DOUBLE)
     {
         bc.type = BYTECODE_OP_ADD_ARR_DOUBLE;
     }
@@ -964,22 +964,22 @@ int expr_sub_emit(expr * value, int stack_level, module * module_value,
         bc.type = BYTECODE_OP_SUB_DOUBLE;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_INT)
+             value->comb.array.comb_ret->type == PARAM_INT)
     {
         bc.type = BYTECODE_OP_SUB_ARR_INT;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_LONG)
+             value->comb.array.comb_ret->type == PARAM_LONG)
     {
         bc.type = BYTECODE_OP_SUB_ARR_LONG;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_FLOAT)
+             value->comb.array.comb_ret->type == PARAM_FLOAT)
     {
         bc.type = BYTECODE_OP_SUB_ARR_FLOAT;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_DOUBLE)
+             value->comb.array.comb_ret->type == PARAM_DOUBLE)
     {
         bc.type = BYTECODE_OP_SUB_ARR_DOUBLE;
     }
@@ -1040,28 +1040,28 @@ int expr_mul_emit(expr * value, int stack_level, module * module_value,
         bc.type = BYTECODE_OP_MUL_ARR_DOUBLE;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_INT &&
+             value->comb.array.comb_ret->type == PARAM_INT &&
              value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_MUL_ARR_ARR_INT;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_LONG &&
+             value->comb.array.comb_ret->type == PARAM_LONG &&
              value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_MUL_ARR_ARR_LONG;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_FLOAT &&
+             value->comb.array.comb_ret->type == PARAM_FLOAT &&
              value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_MUL_ARR_ARR_FLOAT;
     }
     else if (value->comb.comb == COMB_TYPE_ARRAY &&
-             value->comb.comb_ret->type == PARAM_DOUBLE &&
+             value->comb.array.comb_ret->type == PARAM_DOUBLE &&
              value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
@@ -2496,17 +2496,17 @@ int expr_forin_emit(expr * value, int stack_level, module * module_value,
                     func_list_weak * list_weak, int * result)
 {
     if (value->forin_value->in_value->comb.comb == COMB_TYPE_ARRAY &&
-        value->forin_value->in_value->comb.comb_dims == 1)
+        value->forin_value->in_value->comb.array.comb_dims == 1)
     {
         expr_forin_array_emit(value, stack_level, module_value, list_weak, result);
     }
     else if (value->forin_value->in_value->comb.comb == COMB_TYPE_RANGE &&
-             value->forin_value->in_value->comb.comb_dims == 1)
+             value->forin_value->in_value->comb.array.comb_dims == 1)
     {
         expr_forin_range_emit(value, stack_level, module_value, list_weak, result);
     }
     else if (value->forin_value->in_value->comb.comb == COMB_TYPE_SLICE &&
-            value->forin_value->in_value->comb.comb_dims == 1)
+            value->forin_value->in_value->comb.array.comb_dims == 1)
     {
         expr_forin_slice_emit(value, stack_level, module_value, list_weak, result);
     }
@@ -3939,19 +3939,19 @@ int generator_emit(listcomp * listcomp_value, qualifier_list_node * node,
                    func_list_weak * list_weak, int * result)
 {
     if (node->value->expr_value->comb.comb == COMB_TYPE_ARRAY &&
-        node->value->expr_value->comb.comb_dims == 1)
+        node->value->expr_value->comb.array.comb_dims == 1)
     {
         generator_array_emit(listcomp_value, node, stack_level, module_value,
                              list_weak, result);
     }
     else if (node->value->expr_value->comb.comb == COMB_TYPE_RANGE &&
-             node->value->expr_value->comb.comb_dims == 1)
+             node->value->expr_value->comb.range.comb_dims == 1)
     {
         generator_range_emit(listcomp_value, node, stack_level, module_value,
                              list_weak, result);
     }
     else if (node->value->expr_value->comb.comb == COMB_TYPE_SLICE &&
-             node->value->expr_value->comb.comb_dims == 1)
+             node->value->expr_value->comb.slice.comb_dims == 1)
     {
         generator_slice_emit(listcomp_value, node, stack_level, module_value,
                              list_weak, result);

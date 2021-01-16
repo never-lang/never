@@ -188,8 +188,8 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         if (arr_result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;
-            value->comb.comb_ret = value->array.array_value->ret;
-            value->comb.comb_dims = value->array.array_value->dims->count;
+            value->comb.array.comb_ret = value->array.array_value->ret;
+            value->comb.array.comb_dims = value->array.array_value->dims->count;
         }
         else
         {
@@ -229,8 +229,8 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         if (param_result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;
-            value->comb.comb_ret = value->array.array_value->ret;
-            value->comb.comb_dims = value->array.array_value->dims->count;
+            value->comb.array.comb_ret = value->array.array_value->ret;
+            value->comb.array.comb_dims = value->array.array_value->dims->count;
         }
         else
         {

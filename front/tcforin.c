@@ -35,19 +35,19 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
     {
         case COMB_TYPE_ARRAY:
             value->type = FORIN_TYPE_ARRAY;
-            expr_set_comb_type(value->iter, value->in_value->comb.comb_ret);            
+            expr_set_comb_type(value->iter, value->in_value->comb.array.comb_ret);            
 
             symtab_add_forin(tab, value, syn_level);
         break;
         case COMB_TYPE_RANGE:
             value->type = FORIN_TYPE_RANGE;
-            expr_set_comb_type(value->iter, value->in_value->comb.comb_ret);
+            expr_set_comb_type(value->iter, value->in_value->comb.range.comb_ret);
 
             symtab_add_forin(tab, value, syn_level);
         break;
         case COMB_TYPE_SLICE:
             value->type = FORIN_TYPE_SLICE;
-            expr_set_comb_type(value->iter, value->in_value->comb.comb_ret);
+            expr_set_comb_type(value->iter, value->in_value->comb.slice.comb_ret);
 
             symtab_add_forin(tab, value, syn_level);
         break;
@@ -89,11 +89,11 @@ int expr_forin_check_type(symtab * tab, expr * value, func * func_value,
     expr_check_type(tab, value->forin_value->in_value, func_value, syn_level, result);
 
     if ((value->forin_value->in_value->comb.comb == COMB_TYPE_ARRAY &&
-            value->forin_value->in_value->comb.comb_dims == 1) ||
+            value->forin_value->in_value->comb.array.comb_dims == 1) ||
         (value->forin_value->in_value->comb.comb == COMB_TYPE_RANGE &&
-            value->forin_value->in_value->comb.comb_dims == 1) ||
+            value->forin_value->in_value->comb.range.comb_dims == 1) ||
         (value->forin_value->in_value->comb.comb == COMB_TYPE_SLICE &&
-            value->forin_value->in_value->comb.comb_dims == 1))
+            value->forin_value->in_value->comb.slice.comb_dims == 1))
     {
         value->comb.comb = COMB_TYPE_INT;
     }

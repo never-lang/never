@@ -214,8 +214,8 @@ expr * expr_new_array(array * value)
 
     ret->type = EXPR_ARRAY;
     ret->comb.comb = COMB_TYPE_UNKNOWN;
-    ret->comb.comb_params = NULL;
-    ret->comb.comb_ret = NULL;
+    ret->comb.array.comb_dims = 0;
+    ret->comb.array.comb_ret = NULL;
     ret->line_no = 0;
     ret->array.array_value = value;
 
