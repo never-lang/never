@@ -244,8 +244,8 @@ expr * expr_new_array(array * value)
     ret->comb.comb = COMB_TYPE_UNKNOWN;
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
     ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
-    ret->comb.comb_params = NULL;
-    ret->comb.comb_ret = NULL;
+    ret->comb.array.comb_dims = 0;
+    ret->comb.array.comb_ret = NULL;
     ret->line_no = 0;
     ret->array.array_value = value;
 

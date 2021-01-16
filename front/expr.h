@@ -185,13 +185,33 @@ typedef struct expr_comb
     comb_type comb;
     comb_const_type comb_const; /* constness */
     comb_lr_type comb_lr; /* lr type */
-    struct param_list * comb_params; /* function arguments */
-    struct param * comb_ret;       /* function ret */
-    unsigned int comb_dims;               /* array dimensions */
-    struct record * comb_record;   /* record */ 
-    struct enumtype * comb_enumtype; /* enum */
-    struct matchbind * comb_matchbind; /* match bind (id in record match guard) */
-    struct module_decl * comb_module_decl; /* used module */
+    union
+    {
+        struct
+        {
+            unsigned int comb_dims;        /* array dimensions */
+            struct param * comb_ret;       /* array type */
+        } array;
+        struct
+        {
+            unsigned int comb_dims;        /* range dimensions */
+            struct param * comb_ret;       /* range type */
+        } range;
+        struct
+        {
+            unsigned int comb_dims;        /* slice dimensions */
+            struct param * comb_ret;       /* slice type */
+        } slice;
+        struct
+        {
+            struct param_list * comb_params; /* function arguments */
+            struct param * comb_ret;         /* function ret */
+        } func;
+        struct record * comb_record;           /* record */ 
+        struct enumtype * comb_enumtype;       /* enum */
+        struct matchbind * comb_matchbind;     /* match bind (id in record match guard) */
+        struct module_decl * comb_module_decl; /* used module */
+    };
 } expr_comb;
 
 typedef struct expr

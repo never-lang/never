@@ -154,13 +154,13 @@ int expr_set_comb_type(expr * value, param * param_value)
         break;
         case PARAM_ARRAY:
             value->comb.comb = COMB_TYPE_ARRAY;
-            value->comb.comb_dims = param_value->dims->count;
-            value->comb.comb_ret = param_value->ret;
+            value->comb.array.comb_dims = param_value->dims->count;
+            value->comb.array.comb_ret = param_value->ret;
         break;
         case PARAM_RANGE:
             value->comb.comb = COMB_TYPE_RANGE;
-            value->comb.comb_dims = param_value->ranges->count;
-            value->comb.comb_ret = param_value->ret;
+            value->comb.range.comb_dims = param_value->ranges->count;
+            value->comb.range.comb_ret = param_value->ret;
         break;
         case PARAM_SLICE_DIM:
         case PARAM_RANGE_DIM:
@@ -168,8 +168,8 @@ int expr_set_comb_type(expr * value, param * param_value)
         break;
         case PARAM_SLICE:
             value->comb.comb = COMB_TYPE_SLICE;
-            value->comb.comb_dims = param_value->ranges->count;
-            value->comb.comb_ret = param_value->ret;
+            value->comb.slice.comb_dims = param_value->ranges->count;
+            value->comb.slice.comb_ret = param_value->ret;
         break;
         case PARAM_RECORD:
             value->comb.comb = COMB_TYPE_RECORD;
@@ -177,8 +177,8 @@ int expr_set_comb_type(expr * value, param * param_value)
         break;
         case PARAM_FUNC:
             value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.comb_params = param_value->params;
-            value->comb.comb_ret = param_value->ret;
+            value->comb.func.comb_params = param_value->params;
+            value->comb.func.comb_ret = param_value->ret;
         break;
     }
 
@@ -197,8 +197,8 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
                 value->comb.comb = COMB_TYPE_FUNC;
                 value->comb.comb_const = COMB_CONST_TYPE_CONST;
                 value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
-                value->comb.comb_params = func_value->decl->params;
-                value->comb.comb_ret = func_value->decl->ret;
+                value->comb.func.comb_params = func_value->decl->params;
+                value->comb.func.comb_ret = func_value->decl->ret;
             }
         break;
         case SYMTAB_PARAM:
@@ -287,17 +287,17 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
 int expr_qualifier_set_comb_type(expr * value, expr * expr_value, int * result)
 {
     if (expr_value->comb.comb == COMB_TYPE_ARRAY &&
-        expr_value->comb.comb_dims == 1)
+        expr_value->comb.array.comb_dims == 1)
     {
-        expr_set_comb_type(value, expr_value->comb.comb_ret);
+        expr_set_comb_type(value, expr_value->comb.array.comb_ret);
     }
     else if (expr_value->comb.comb == COMB_TYPE_SLICE &&
-             expr_value->comb.comb_dims == 1)
+             expr_value->comb.slice.comb_dims == 1)
     {
-        expr_set_comb_type(value, expr_value->comb.comb_ret);
+        expr_set_comb_type(value, expr_value->comb.slice.comb_ret);
     }
     else if (expr_value->comb.comb == COMB_TYPE_RANGE &&
-             expr_value->comb.comb_dims == 1)
+             expr_value->comb.range.comb_dims == 1)
     {
         value->comb.comb = COMB_TYPE_INT;
         value->comb.comb_const = COMB_CONST_TYPE_CONST;
@@ -778,16 +778,16 @@ int param_is_dynamic_array(param * value)
 
 int param_expr_array_cmp(param * param_value, expr * expr_value)
 {
-    if (param_value->dims->count != expr_value->comb.comb_dims)
+    if (param_value->dims->count != expr_value->comb.array.comb_dims)
     {
         return TYPECHECK_FAIL;
     }
-    return param_cmp(param_value->ret, expr_value->comb.comb_ret);
+    return param_cmp(param_value->ret, expr_value->comb.array.comb_ret);
 }
 
 int param_expr_range_cmp(param * param_value, expr * expr_value)
 {
-    if (param_value->ranges->count == expr_value->comb.comb_dims)
+    if (param_value->ranges->count == expr_value->comb.range.comb_dims)
     {
         return TYPECHECK_SUCC;
     }
@@ -796,11 +796,11 @@ int param_expr_range_cmp(param * param_value, expr * expr_value)
 
 int param_expr_slice_cmp(param * param_value, expr * expr_value)
 {
-    if (param_value->ranges->count != expr_value->comb.comb_dims)
+    if (param_value->ranges->count != expr_value->comb.slice.comb_dims)
     {
         return TYPECHECK_FAIL;
     }
-    return param_cmp(param_value->ret, expr_value->comb.comb_ret);
+    return param_cmp(param_value->ret, expr_value->comb.slice.comb_ret);
 }
 
 int param_expr_cmp(param * param_value, expr * expr_value, bool init)
@@ -1013,8 +1013,8 @@ int param_expr_cmp(param * param_value, expr * expr_value, bool init)
     }
     else if (param_value->type == PARAM_FUNC && expr_value->comb.comb == COMB_TYPE_FUNC)
     {
-        return func_cmp(param_value->params, param_value->ret, expr_value->comb.comb_params,
-                        expr_value->comb.comb_ret);
+        return func_cmp(param_value->params, param_value->ret, expr_value->comb.func.comb_params,
+                        expr_value->comb.func.comb_ret);
     }
     else
     {
@@ -1208,14 +1208,14 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
     else if (left->comb.comb == COMB_TYPE_ARRAY &&
              right->comb.comb == COMB_TYPE_ARRAY)
     {
-         if (array_cmp(left->comb.comb_dims,
-                       left->comb.comb_ret,
-                       right->comb.comb_dims,
-                       right->comb.comb_ret) == TYPECHECK_SUCC)
+         if (array_cmp(left->comb.array.comb_dims,
+                       left->comb.array.comb_ret,
+                       right->comb.array.comb_dims,
+                       right->comb.array.comb_ret) == TYPECHECK_SUCC)
          {
              value->comb.comb = COMB_TYPE_ARRAY;
-             value->comb.comb_dims = left->comb.comb_dims;
-             value->comb.comb_ret = left->comb.comb_ret;
+             value->comb.array.comb_dims = left->comb.array.comb_dims;
+             value->comb.array.comb_ret = left->comb.array.comb_ret;
          }
          else
          {
@@ -1230,24 +1230,24 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
     else if (left->comb.comb == COMB_TYPE_RANGE &&
              right->comb.comb == COMB_TYPE_RANGE)
     {
-        if (value->left->comb.comb_dims == value->right->comb.comb_dims)
+        if (value->left->comb.range.comb_dims == value->right->comb.range.comb_dims)
         {
             value->comb.comb = COMB_TYPE_RANGE;
-            value->comb.comb_dims = value->left->comb.comb_dims;
-            value->comb.comb_ret = value->left->comb.comb_ret;
+            value->comb.range.comb_dims = value->left->comb.range.comb_dims;
+            value->comb.range.comb_ret = value->left->comb.range.comb_ret;
         }
     }
     else if (left->comb.comb == COMB_TYPE_SLICE &&
              right->comb.comb == COMB_TYPE_SLICE)
     {
-         if (array_cmp(left->comb.comb_dims,
-                       left->comb.comb_ret,
-                       right->comb.comb_dims,
-                       right->comb.comb_ret) == TYPECHECK_SUCC)
+         if (array_cmp(left->comb.slice.comb_dims,
+                       left->comb.slice.comb_ret,
+                       right->comb.slice.comb_dims,
+                       right->comb.slice.comb_ret) == TYPECHECK_SUCC)
          {
              value->comb.comb = COMB_TYPE_SLICE;
-             value->comb.comb_dims = left->comb.comb_dims;
-             value->comb.comb_ret = left->comb.comb_ret;
+             value->comb.slice.comb_dims = left->comb.slice.comb_dims;
+             value->comb.slice.comb_ret = left->comb.slice.comb_ret;
          }
          else
          {
@@ -1262,14 +1262,14 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
     else if (left->comb.comb == COMB_TYPE_FUNC &&
              right->comb.comb == COMB_TYPE_FUNC)
     {
-        if (func_cmp(left->comb.comb_params,
-                     left->comb.comb_ret,
-                     right->comb.comb_params,
-                     right->comb.comb_ret) == TYPECHECK_SUCC)
+        if (func_cmp(left->comb.func.comb_params,
+                     left->comb.func.comb_ret,
+                     right->comb.func.comb_params,
+                     right->comb.func.comb_ret) == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.comb_params = left->comb.comb_params;
-            value->comb.comb_ret = left->comb.comb_ret;
+            value->comb.func.comb_params = left->comb.func.comb_params;
+            value->comb.func.comb_ret = left->comb.func.comb_ret;
         }
         else
         {
@@ -1866,32 +1866,32 @@ int expr_neg_check_type(symtab * tab, expr * value, func * func_value,
         expr_conv_enumerator(value->left);
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_INT)
+             value->left->comb.array.comb_ret->type == PARAM_INT)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_LONG)
+             value->left->comb.array.comb_ret->type == PARAM_LONG)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_FLOAT)
+             value->left->comb.array.comb_ret->type == PARAM_FLOAT)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_DOUBLE)
+             value->left->comb.array.comb_ret->type == PARAM_DOUBLE)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else
     {
@@ -1926,44 +1926,44 @@ int expr_add_sub_check_type(symtab * tab, expr * value, func * func_value,
         /* conversion performed */
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_INT &&
+             value->left->comb.array.comb_ret->type == PARAM_INT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_INT &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->right->comb.array.comb_ret->type == PARAM_INT &&
+             value->left->comb.array.comb_dims == value->right->comb.array.comb_dims)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_LONG &&
+             value->left->comb.array.comb_ret->type == PARAM_LONG &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_LONG &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->right->comb.array.comb_ret->type == PARAM_LONG &&
+             value->left->comb.array.comb_dims == value->right->comb.array.comb_dims)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_FLOAT &&
+             value->left->comb.array.comb_ret->type == PARAM_FLOAT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_FLOAT &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->right->comb.array.comb_ret->type == PARAM_FLOAT &&
+             value->left->comb.array.comb_dims == value->right->comb.array.comb_dims)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_DOUBLE &&
+             value->left->comb.array.comb_ret->type == PARAM_DOUBLE &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_DOUBLE &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->right->comb.array.comb_ret->type == PARAM_DOUBLE &&
+             value->left->comb.array.comb_dims == value->right->comb.array.comb_dims)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
     }
     else
     {
@@ -1993,223 +1993,223 @@ int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     }
     else if (value->left->comb.comb == COMB_TYPE_INT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_INT)
+             value->right->comb.array.comb_ret->type == PARAM_INT)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_INT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_LONG)
+             value->right->comb.array.comb_ret->type == PARAM_LONG)
     {
         expr_conv(value->left, CONV_INT_TO_LONG);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted int to long");
     }
     else if (value->left->comb.comb == COMB_TYPE_INT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_FLOAT)
+             value->right->comb.array.comb_ret->type == PARAM_FLOAT)
     {
         expr_conv(value->left, CONV_INT_TO_FLOAT);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted int to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_INT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_DOUBLE)
+             value->right->comb.array.comb_ret->type == PARAM_DOUBLE)
     {
         expr_conv(value->left, CONV_INT_TO_DOUBLE);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted int to double");
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_INT)
+             value->right->comb.array.comb_ret->type == PARAM_INT)
     {
         expr_conv(value->left, CONV_LONG_TO_INT);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted long to int");
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_LONG)
+             value->right->comb.array.comb_ret->type == PARAM_LONG)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_FLOAT)
+             value->right->comb.array.comb_ret->type == PARAM_FLOAT)
     {
         expr_conv(value->left, CONV_LONG_TO_FLOAT);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted long to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_LONG &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_DOUBLE)
+             value->right->comb.array.comb_ret->type == PARAM_DOUBLE)
     {
         expr_conv(value->left, CONV_LONG_TO_DOUBLE);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted long to double");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_INT)
+             value->right->comb.array.comb_ret->type == PARAM_INT)
     {
         expr_conv(value->left, CONV_FLOAT_TO_INT);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted float to int");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_LONG)
+             value->right->comb.array.comb_ret->type == PARAM_LONG)
     {
         expr_conv(value->left, CONV_FLOAT_TO_LONG);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted float to long");
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_FLOAT)
+             value->right->comb.array.comb_ret->type == PARAM_FLOAT)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_FLOAT &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_DOUBLE)
+             value->right->comb.array.comb_ret->type == PARAM_DOUBLE)
     {
         expr_conv(value->left, CONV_FLOAT_TO_DOUBLE);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted float to double");
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_INT)
+             value->right->comb.array.comb_ret->type == PARAM_INT)
     {
         expr_conv(value->left, CONV_DOUBLE_TO_INT);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted double to int");
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_LONG)
+             value->right->comb.array.comb_ret->type == PARAM_LONG)
     {
         expr_conv(value->left, CONV_DOUBLE_TO_LONG);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted double to long");
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_FLOAT)
+             value->right->comb.array.comb_ret->type == PARAM_FLOAT)
     {
         expr_conv(value->left, CONV_DOUBLE_TO_FLOAT);
     
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
 
         print_warning_msg(value->line_no, "converted double to float");
     }
     else if (value->left->comb.comb == COMB_TYPE_DOUBLE &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->right->comb.comb_ret->type == PARAM_DOUBLE)
+             value->right->comb.array.comb_ret->type == PARAM_DOUBLE)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->right->comb.comb_dims;
-        value->comb.comb_ret = value->right->comb.comb_ret;
+        value->comb.array.comb_dims = value->right->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->right->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_INT &&
-             value->right->comb.comb_ret->type == PARAM_INT &&
-             value->left->comb.comb_dims == 2 &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->left->comb.array.comb_ret->type == PARAM_INT &&
+             value->right->comb.array.comb_ret->type == PARAM_INT &&
+             value->left->comb.array.comb_dims == 2 &&
+             value->left->comb.array.comb_dims == value->right->comb.array.comb_dims)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_LONG &&
-             value->right->comb.comb_ret->type == PARAM_LONG &&
-             value->left->comb.comb_dims == 2 &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->left->comb.array.comb_ret->type == PARAM_LONG &&
+             value->right->comb.array.comb_ret->type == PARAM_LONG &&
+             value->left->comb.array.comb_dims == 2 &&
+             value->left->comb.array.comb_dims == value->right->comb.array.comb_dims)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_FLOAT &&
-             value->right->comb.comb_ret->type == PARAM_FLOAT &&
-             value->left->comb.comb_dims == 2 &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->left->comb.array.comb_ret->type == PARAM_FLOAT &&
+             value->right->comb.array.comb_ret->type == PARAM_FLOAT &&
+             value->left->comb.array.comb_dims == 2 &&
+             value->left->comb.array.comb_dims == value->right->comb.array.comb_dims)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             value->left->comb.comb_ret->type == PARAM_DOUBLE &&
-             value->right->comb.comb_ret->type == PARAM_DOUBLE &&
-             value->left->comb.comb_dims == 2 &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->left->comb.array.comb_ret->type == PARAM_DOUBLE &&
+             value->right->comb.array.comb_ret->type == PARAM_DOUBLE &&
+             value->left->comb.array.comb_dims == 2 &&
+             value->left->comb.array.comb_dims == value->right->comb.array.comb_dims)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else
     {
@@ -2376,11 +2376,11 @@ int expr_complr_check_type(symtab * tab, expr * value, func * func_value, unsign
 
     if (value_right->call.func_expr->comb.comb == COMB_TYPE_FUNC)
     {
-        if (param_list_expr_expr_list_cmp(value_right->call.func_expr->comb.comb_params,
+        if (param_list_expr_expr_list_cmp(value_right->call.func_expr->comb.func.comb_params,
                                           value_left,
                                           value_right->call.params) == TYPECHECK_SUCC)
         {
-            expr_set_comb_type(value, value_right->call.func_expr->comb.comb_ret);
+            expr_set_comb_type(value, value_right->call.func_expr->comb.func.comb_ret);
         }
         else
         {
@@ -2562,44 +2562,44 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
     }
     else if (value->left->comb.comb == COMB_TYPE_FUNC &&
              value->right->comb.comb == COMB_TYPE_FUNC &&
-             func_cmp(value->left->comb.comb_params,
-                      value->left->comb.comb_ret,
-                      value->right->comb.comb_params,
-                      value->right->comb.comb_ret) == TYPECHECK_SUCC)
+             func_cmp(value->left->comb.func.comb_params,
+                      value->left->comb.func.comb_ret,
+                      value->right->comb.func.comb_params,
+                      value->right->comb.func.comb_ret) == TYPECHECK_SUCC)
     {
         value->comb.comb = COMB_TYPE_FUNC;
-        value->comb.comb_params = value->left->comb.comb_params;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.func.comb_params = value->left->comb.func.comb_params;
+        value->comb.func.comb_ret = value->left->comb.func.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_ARRAY &&
              value->right->comb.comb == COMB_TYPE_ARRAY &&
-             array_cmp(value->left->comb.comb_dims,
-                       value->left->comb.comb_ret,
-                       value->right->comb.comb_dims,
-                       value->right->comb.comb_ret) == TYPECHECK_SUCC)
+             array_cmp(value->left->comb.array.comb_dims,
+                       value->left->comb.array.comb_ret,
+                       value->right->comb.array.comb_dims,
+                       value->right->comb.array.comb_ret) == TYPECHECK_SUCC)
     {
         value->comb.comb = COMB_TYPE_ARRAY;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.array.comb_dims = value->left->comb.array.comb_dims;
+        value->comb.array.comb_ret = value->left->comb.array.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_RANGE &&
              value->right->comb.comb == COMB_TYPE_RANGE &&
-             value->left->comb.comb_dims == value->right->comb.comb_dims)
+             value->left->comb.range.comb_dims == value->right->comb.range.comb_dims)
     {
         value->comb.comb = COMB_TYPE_RANGE;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.range.comb_dims = value->left->comb.range.comb_dims;
+        value->comb.range.comb_ret = value->left->comb.range.comb_ret;
     }
     else if (value->left->comb.comb == COMB_TYPE_SLICE &&
              value->right->comb.comb == COMB_TYPE_SLICE &&
-             array_cmp(value->left->comb.comb_dims,
-                       value->left->comb.comb_ret,
-                       value->right->comb.comb_dims,
-                       value->right->comb.comb_ret) == TYPECHECK_SUCC)
+             array_cmp(value->left->comb.slice.comb_dims,
+                       value->left->comb.slice.comb_ret,
+                       value->right->comb.slice.comb_dims,
+                       value->right->comb.slice.comb_ret) == TYPECHECK_SUCC)
     {
         value->comb.comb = COMB_TYPE_SLICE;
-        value->comb.comb_dims = value->left->comb.comb_dims;
-        value->comb.comb_ret = value->left->comb.comb_ret;
+        value->comb.slice.comb_dims = value->left->comb.slice.comb_dims;
+        value->comb.slice.comb_ret = value->left->comb.slice.comb_ret;
     }
     else
     {
@@ -2788,13 +2788,13 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
 
     if (value->array_deref.array_expr->comb.comb == COMB_TYPE_ARRAY)
     {
-        if (value->array_deref.array_expr->comb.comb_dims == value->array_deref.ref->count)
+        if (value->array_deref.array_expr->comb.array.comb_dims == value->array_deref.ref->count)
         {
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
             {
                 expr_set_comb_type(value,
-                                   value->array_deref.array_expr->comb.comb_ret);
+                                   value->array_deref.array_expr->comb.array.comb_ret);
 
                 if (value->array_deref.array_expr->comb.comb_const == COMB_CONST_TYPE_CONST)
                 {
@@ -2825,14 +2825,14 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_RANGE)
     {
-        if (value->array_deref.array_expr->comb.comb_dims == value->array_deref.ref->count)
+        if (value->array_deref.array_expr->comb.range.comb_dims == value->array_deref.ref->count)
         {
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
             {
                 value->comb.comb = COMB_TYPE_ARRAY;
-                value->comb.comb_dims = 1;
-                value->comb.comb_ret = value->array_deref.array_expr->comb.comb_ret;
+                value->comb.range.comb_dims = 1;
+                value->comb.range.comb_ret = value->array_deref.array_expr->comb.range.comb_ret;
             }
             else
             {
@@ -2852,13 +2852,13 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_SLICE)
     {
-        if (value->array_deref.array_expr->comb.comb_dims == 
+        if (value->array_deref.array_expr->comb.slice.comb_dims == 
             value->array_deref.ref->count)
         {
             if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
                                                 func_value, syn_level, result) == TYPECHECK_SUCC)
             {
-                expr_set_comb_type(value, value->array_deref.array_expr->comb.comb_ret);
+                expr_set_comb_type(value, value->array_deref.array_expr->comb.slice.comb_ret);
             }
             else
             {
@@ -2924,11 +2924,11 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
 
     if (value->slice.array_expr->comb.comb == COMB_TYPE_ARRAY)
     {
-        if (value->slice.array_expr->comb.comb_dims == value->slice.range_dims->count)
+        if (value->slice.array_expr->comb.array.comb_dims == value->slice.range_dims->count)
         {
             value->comb.comb = COMB_TYPE_SLICE;
-            value->comb.comb_dims = value->slice.array_expr->comb.comb_dims;
-            value->comb.comb_ret = value->slice.array_expr->comb.comb_ret;
+            value->comb.slice.comb_dims = value->slice.array_expr->comb.array.comb_dims;
+            value->comb.slice.comb_ret = value->slice.array_expr->comb.array.comb_ret;
         }
         else
         {
@@ -2940,11 +2940,11 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
     }
     else if (value->slice.array_expr->comb.comb == COMB_TYPE_RANGE)
     {
-        if (value->slice.array_expr->comb.comb_dims == value->slice.range_dims->count)
+        if (value->slice.array_expr->comb.range.comb_dims == value->slice.range_dims->count)
         {
             value->comb.comb = COMB_TYPE_RANGE;
-            value->comb.comb_dims = value->slice.array_expr->comb.comb_dims;
-            value->comb.comb_ret = value->slice.array_expr->comb.comb_ret;
+            value->comb.range.comb_dims = value->slice.array_expr->comb.range.comb_dims;
+            value->comb.range.comb_ret = value->slice.array_expr->comb.range.comb_ret;
         }
         else
         {
@@ -2956,11 +2956,11 @@ int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigne
     }
     else if (value->slice.array_expr->comb.comb == COMB_TYPE_SLICE)
     {
-        if (value->slice.array_expr->comb.comb_dims == value->slice.range_dims->count)
+        if (value->slice.array_expr->comb.slice.comb_dims == value->slice.range_dims->count)
         {
             value->comb.comb = COMB_TYPE_SLICE;
-            value->comb.comb_dims = value->slice.array_expr->comb.comb_dims;
-            value->comb.comb_ret = value->slice.array_expr->comb.comb_ret;
+            value->comb.slice.comb_dims = value->slice.array_expr->comb.slice.comb_dims;
+            value->comb.slice.comb_ret = value->slice.array_expr->comb.slice.comb_ret;
         }
         else
         {
@@ -3003,8 +3003,8 @@ int expr_range_check_type(symtab * tab, expr * value, func * func_value,
     value->comb.comb = COMB_TYPE_RANGE;
     value->comb.comb_const = COMB_CONST_TYPE_CONST;
     value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
-    value->comb.comb_dims = value->range.range_dims->count;
-    value->comb.comb_ret = value->range.ret;
+    value->comb.range.comb_dims = value->range.range_dims->count;
+    value->comb.range.comb_ret = value->range.ret;
 
     return 0;
 }
@@ -3082,10 +3082,10 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
     switch (value->call.func_expr->comb.comb)
     {
     case COMB_TYPE_FUNC:
-        if (param_expr_list_cmp(value->call.func_expr->comb.comb_params,
+        if (param_expr_list_cmp(value->call.func_expr->comb.func.comb_params,
                                 value->call.params, false) == TYPECHECK_SUCC)
         {
-            expr_set_comb_type(value, value->call.func_expr->comb.comb_ret);
+            expr_set_comb_type(value, value->call.func_expr->comb.func.comb_ret);
             value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
         }
         else
@@ -3182,11 +3182,11 @@ int qualifier_check_type(symtab * tab, qualifier * value, func * func_value, uns
                 expr_check_type(tab, value->expr_value, func_value, syn_level, result);
                 
                 if (!((value->expr_value->comb.comb == COMB_TYPE_ARRAY &&
-                       value->expr_value->comb.comb_dims == 1) ||
+                       value->expr_value->comb.array.comb_dims == 1) ||
                       (value->expr_value->comb.comb == COMB_TYPE_RANGE &&
-                       value->expr_value->comb.comb_dims == 1) ||
+                       value->expr_value->comb.range.comb_dims == 1) ||
                       (value->expr_value->comb.comb == COMB_TYPE_SLICE &&
-                       value->expr_value->comb.comb_dims == 1)))
+                       value->expr_value->comb.slice.comb_dims == 1)))
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(value->line_no,
@@ -3578,8 +3578,8 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
             func_check_type(tab, value->func_value, syn_level + 1, result);
 
             value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.comb_params = value->func_value->decl->params;
-            value->comb.comb_ret = value->func_value->decl->ret;
+            value->comb.func.comb_params = value->func_value->decl->params;
+            value->comb.func.comb_ret = value->func_value->decl->ret;
         }
         break;
     case EXPR_SEQ:
@@ -3653,8 +3653,8 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         if (*result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;
-            value->comb.comb_ret = value->listcomp_value->ret;
-            value->comb.comb_dims = 1;
+            value->comb.array.comb_ret = value->listcomp_value->ret;
+            value->comb.array.comb_dims = 1;
         }
         else
         {
