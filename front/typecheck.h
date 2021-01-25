@@ -52,9 +52,9 @@ int array_cmp(int comb_dims_one, param * ret_one,
 int param_is_num(param * value);
 int param_is_dynamic_array(param * value);
 int param_expr_array_cmp(param * param_value, expr * expr_value);
-int param_expr_cmp(param * param_value, expr * expr_value, bool init);
-int param_expr_list_cmp(param_list * params, expr_list * list, bool init);
-int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_list * list);
+int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp);
+int param_expr_list_cmp(param_list * params, expr_list * list, bool const_cmp);
+int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_list * list, bool const_cmp);
 
 int param_expr_cmp_init(param_const_type param_const, expr * expr_value);
 

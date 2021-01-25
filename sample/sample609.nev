@@ -5,7 +5,7 @@ record R
     j : int;
 }
 
-func getR() -> var R
+func getR() -> R
 {
     var r = R(10, 10);
     r

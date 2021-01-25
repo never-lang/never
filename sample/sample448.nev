@@ -1,5 +1,5 @@
 
-func pr_dim ( dim[D] : let int ) -> int
+func pr_dim ( dim[D] : int ) -> int
 {
     for (i in [0 .. D - 1])
     {

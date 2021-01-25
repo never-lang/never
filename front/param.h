@@ -22,6 +22,8 @@
 #ifndef __PARAM_H__
 #define __PARAM_H__
 
+#include <stdbool.h>
+
 #define PARAM_CMP_SUCC 0
 #define PARAM_CMP_FAIL 1
 
@@ -125,10 +127,10 @@ param * param_new_record_module(char * id, char * record_id, char * module_id);
 param * param_new_func(char * id, param_list * params, param * ret);
 void param_delete(param * value);
 
-int param_cmp(param * param_one, param * param_two);
-int param_list_cmp(param_list * param_one, param_list * param_two);
+int param_cmp(param * param_one, param * param_two, bool const_cmp);
+int param_list_cmp(param_list * param_one, param_list * param_two, bool const_cmp);
 int func_cmp(param_list * param_list_one, param * ret_one,
-             param_list * param_list_two, param * ret_two);
+             param_list * param_list_two, param * ret_two, bool const_cmp);
 void param_init_const(param * value, param_const_type const_type);
 
 param_list_node * param_list_node_new(param * value);

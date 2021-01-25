@@ -1,5 +1,5 @@
 
-func f (var s : int) -> var [D] : int
+func f (s : int) -> [D] : int
 {
     var t = [ s, s, s, s, s, s ] : int;
     t

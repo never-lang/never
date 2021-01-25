@@ -1,5 +1,5 @@
 
-func print_cl(let cl[D] : (float) -> float) -> int
+func print_cl(cl[D] : (float) -> float) -> int
 {
     var i = 0;
 
@@ -15,7 +15,7 @@ func print_cl(let cl[D] : (float) -> float) -> int
     0
 }
 
-func cl() -> let [_] : (float) -> float
+func cl() -> [_] : (float) -> float
 {    
     func grad(d : float) -> float
     {

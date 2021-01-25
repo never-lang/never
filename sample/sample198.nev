@@ -1,4 +1,4 @@
-func f(i : int) -> var [_] : int
+func f(i : int) -> [_] : int
 {
     var t2 = i * [ 11, 12, 13, 14 ] : int;
     

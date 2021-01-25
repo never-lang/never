@@ -141,7 +141,7 @@ func_decl * func_decl_new(char * id, param_list * params, param * ret)
     }
     if (decl->ret != NULL)
     {
-        param_init_const(decl->ret, PARAM_CONST_TYPE_CONST);
+        param_init_const(decl->ret, PARAM_CONST_TYPE_VAR);
     }
 
     return decl;

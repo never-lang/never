@@ -15,12 +15,12 @@ func print_R(r : R) -> int
 func main() -> int
 {
     var r1 = R(10, 20, [1, 2, 3, 4] : int);
-    var r2 = r1;
+    let r2 = r1;
 
     r1.i = 20;
     r1.j = 20;
 
-    print_R(r1);
+    print_R(r2);
 
     0
 }

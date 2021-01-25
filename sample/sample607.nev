@@ -6,13 +6,21 @@ func f1(i : int) -> int
     0
 }
 
+func pT( t[D] : int) -> int
+{
+    print(D);
+
+    for (a in t)
+        print(a);
+
+    0
+}
+
 func main() -> int
 {
     var t = [ 100, 200, 300, 400 ] : int;
 
-    t[2] = 10;
-
-    f1(t[2]);
+    pT(t);
 
     0
 }

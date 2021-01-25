@@ -1,7 +1,7 @@
 
 enum A { one, two, three }
 
-record R { let v : A; }
+record R { v : A; }
 
 func getA(b : A) -> R
 {

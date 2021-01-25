@@ -27,7 +27,7 @@ func rects() -> Result
 func main() -> int
 {
     let i = 0;
-    var j = if let (Result::Ok(rects) = rects())
+    let j = if let (Result::Ok(rects) = rects())
             {
                 printRect(rects);
                 1

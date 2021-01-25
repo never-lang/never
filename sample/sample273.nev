@@ -1,13 +1,13 @@
 
-func tab(a : int) -> [_] : let int
+func tab(a : int) -> [_] : int
 {
-    [ a, a, a, a ] : let int
+    [ a, a, a, a ] : int
 }
 
 func main() -> int
 {
     var a = 12;
-    var v = {[ 1 ]} : let int;
+    var v = {[ 1 ]} : int;
 
     v = tab(a);
     print(v[0]);

@@ -43,7 +43,7 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
         {
             if (node->distance == first_distance)
             {
-                if (param_expr_cmp(ret, value, true) == TYPECHECK_FAIL)
+                if (param_expr_cmp(ret, value, false) == TYPECHECK_FAIL)
                 {
                     *result = TYPECHECK_FAIL;
                     print_error_msg(
@@ -188,6 +188,8 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         if (arr_result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;
+            value->comb.comb_const = value->array.array_value->ret->const_type;
+            value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
             value->comb.array.comb_ret = value->array.array_value->ret;
             value->comb.array.comb_dims = value->array.array_value->dims->count;
         }
@@ -229,6 +231,8 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         if (param_result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;
+            value->comb.comb_const = value->array.array_value->ret->const_type;
+            value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
             value->comb.array.comb_ret = value->array.array_value->ret;
             value->comb.array.comb_dims = value->array.array_value->dims->count;
         }

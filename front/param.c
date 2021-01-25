@@ -274,6 +274,10 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     {
         param_dim_set_array(dims, value);
     }
+    if (value->ret)
+    {
+        param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
+    }
 
     return value;
 }
@@ -283,13 +287,13 @@ param * param_new_range(char * id, range_list * ranges)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_RANGE;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->ranges = ranges;
     value->line_no = 0;
 
-    value->ret = param_new_const_int(NULL);
+    value->ret = param_new_int(NULL);
 
     if (value->ranges != NULL)
     {
@@ -304,7 +308,7 @@ param * param_new_range_dim(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_RANGE_DIM;
-    value->const_type = PARAM_CONST_TYPE_CONST;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
     value->ret = NULL;
@@ -444,7 +448,7 @@ void param_delete(param * value)
     free(value);
 }
 
-int param_cmp(param * param_one, param * param_two)
+int param_cmp(param * param_one, param * param_two, bool const_cmp)
 {
     if (param_one == NULL && param_two == NULL)
     {
@@ -455,7 +459,8 @@ int param_cmp(param * param_one, param * param_two)
     {
         return PARAM_CMP_FAIL;
     }
-    if (param_one->const_type != param_two->const_type)
+    if (const_cmp &&
+        param_one->const_type != param_two->const_type)
     {
         return PARAM_CMP_FAIL;
     }
@@ -490,7 +495,7 @@ int param_cmp(param * param_one, param * param_two)
     else if (param_one->type == PARAM_ARRAY && param_two->type == PARAM_ARRAY)
     {
         if ((param_one->dims->count == param_two->dims->count) &&
-            (param_cmp(param_one->ret, param_two->ret) == PARAM_CMP_SUCC))
+            (param_cmp(param_one->ret, param_two->ret, false) == PARAM_CMP_SUCC))
         {
             return PARAM_CMP_SUCC;
         }
@@ -517,7 +522,7 @@ int param_cmp(param * param_one, param * param_two)
     else if (param_one->type == PARAM_SLICE && param_two->type == PARAM_SLICE)
     {
         if ((param_one->ranges->count == param_two->ranges->count) &&
-            (param_cmp(param_one->ret, param_two->ret) == PARAM_CMP_SUCC))
+            (param_cmp(param_one->ret, param_two->ret, false) == PARAM_CMP_SUCC))
         {
             return PARAM_CMP_SUCC;
         }
@@ -551,7 +556,7 @@ int param_cmp(param * param_one, param * param_two)
     else if (param_one->type == PARAM_FUNC && param_two->type == PARAM_FUNC)
     {
         return func_cmp(param_one->params, param_one->ret, param_two->params,
-                        param_one->ret);
+                        param_one->ret, const_cmp);
     }
     else
     {
@@ -559,7 +564,7 @@ int param_cmp(param * param_one, param * param_two)
     }
 }
 
-int param_list_cmp(param_list * param_one, param_list * param_two)
+int param_list_cmp(param_list * param_one, param_list * param_two, bool const_cmp)
 {
     if (param_one == NULL && param_two == NULL)
     {
@@ -583,7 +588,7 @@ int param_list_cmp(param_list * param_one, param_list * param_two)
         param * param_one_value = param_one_node->value;
         param * param_two_value = param_two_node->value;
 
-        if (param_cmp(param_one_value, param_two_value) == PARAM_CMP_FAIL)
+        if (param_cmp(param_one_value, param_two_value, const_cmp) == PARAM_CMP_FAIL)
         {
             return PARAM_CMP_FAIL;
         }
@@ -596,10 +601,10 @@ int param_list_cmp(param_list * param_one, param_list * param_two)
 }
 
 int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_list_two,
-             param * ret_two)
+             param * ret_two, bool const_cmp)
 {
-    if (param_list_cmp(param_list_one, param_list_two) == PARAM_CMP_SUCC &&
-        param_cmp(ret_one, ret_two) == PARAM_CMP_SUCC)
+    if (param_list_cmp(param_list_one, param_list_two, true) == PARAM_CMP_SUCC &&
+        param_cmp(ret_one, ret_two, false) == PARAM_CMP_SUCC)
     {
         return PARAM_CMP_SUCC;
     }
@@ -611,6 +616,10 @@ int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_li
 
 void param_init_const(param * value, param_const_type const_type)
 {
+    if (value->const_type == PARAM_CONST_TYPE_UNKNOWN)
+    {
+        value->const_type = const_type;
+    }
     switch (value->type)
     {
         case PARAM_BOOL:
@@ -629,9 +638,9 @@ void param_init_const(param * value, param_const_type const_type)
         case PARAM_RECORD:
         break;
         case PARAM_ARRAY:
-            if (value->const_type == PARAM_CONST_TYPE_UNKNOWN)
+            if (value->dims != NULL)
             {
-                value->const_type = const_type;
+                param_list_init_const(value->dims, PARAM_CONST_TYPE_CONST);
             }
             if (value->ret != NULL)
             {
@@ -639,19 +648,23 @@ void param_init_const(param * value, param_const_type const_type)
             }
         break;
         case PARAM_RANGE:
+            if (value->ret != NULL)
+            {
+                param_init_const(value->ret, value->const_type);
+            }
             if (value->ranges != NULL)
             {
-                range_list_init_const(value->ranges, PARAM_CONST_TYPE_CONST);
+                range_list_init_const(value->ranges, value->const_type);
             }
         break;
         case PARAM_SLICE:
             if (value->ranges != NULL)
             {
-                range_list_init_const(value->ranges, PARAM_CONST_TYPE_VAR);
+                range_list_init_const(value->ranges, const_type);
             }
             if (value->ret != NULL)
             {
-                param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
+                param_init_const(value->ret, const_type);
             }
         break;
         case PARAM_FUNC:
@@ -661,13 +674,9 @@ void param_init_const(param * value, param_const_type const_type)
             }
             if (value->ret != NULL)
             {
-                param_init_const(value->ret, PARAM_CONST_TYPE_CONST);
+                param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
             }
         break;
-    }
-    if (value->const_type == PARAM_CONST_TYPE_UNKNOWN)
-    {
-        value->const_type = const_type;
     }
 }
 

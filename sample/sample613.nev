@@ -1,0 +1,22 @@
+
+record R
+{
+    x : int;
+    y : int;
+}
+
+func main() -> int
+{
+    var r = R(10, 20);
+    var t = r;
+    var s = t;
+
+    s.x = 20;
+    prints(r.x + " " + r.y + "\n");
+
+    s = R(30, 40);
+
+    prints(r.x + " " + r.y + "\n");
+
+    0
+}

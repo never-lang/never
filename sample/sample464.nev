@@ -5,7 +5,7 @@ func pr_range( [from..to] : range ) -> int
     0
 }
 
-func pr_arr( rs[D] : var [..] : range ) -> int
+func pr_arr( rs[D] : [..] : range ) -> int
 {
     for (r in rs)
     {
@@ -15,7 +15,7 @@ func pr_arr( rs[D] : var [..] : range ) -> int
 
 func main() -> int
 {
-    var rs = {[ 5 ]} : var [..] : range;
+    var rs = {[ 5 ]} : [..] : range;
 
     rs[0] = [1..10];
     rs[1] = [10..20];
