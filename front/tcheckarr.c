@@ -181,7 +181,7 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
 
         if (value->array.array_value->ret != NULL)
         {
-            param_check_type(tab, value->array.array_value->ret, syn_level, result);
+            param_check_type(tab, value->array.array_value->ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
         }
 
         array_well_formed(value, &arr_result);
@@ -226,7 +226,7 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
                             param_type_str(value->array.array_value->ret->type));
         }
 
-        param_check_type(tab, value->array.array_value->ret, syn_level, &param_result);
+        param_check_type(tab, value->array.array_value->ret, syn_level, false, PARAM_CONST_TYPE_VAR, &param_result);
 
         if (param_result == TYPECHECK_SUCC)
         {

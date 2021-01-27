@@ -6,17 +6,27 @@ record R
 
 func getR(i : int) -> R
 {
-    R(i, i)
+    var r = R(i, i);
+    r
 }
 
 func main() -> int
 {
-    var i = 10;
+    var i = 20;
     var r = getR(i);
 
-    i = 20;
+    func processR(r : R) -> int
+    {
+        printR(r);
+        0
+    }
+    func printR(r : R) -> int
+    {
+        prints(r.x + " " + r.y + "\n");
+        0
+    };
 
-    prints(r.x + " " + r.y + "\n");
+    processR(r);
 
     0
 }

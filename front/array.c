@@ -32,10 +32,12 @@ array * array_new(expr_list * elements, param * ret)
     value->ret = ret;
     value->line_no = 0;
 
+#if 0
     if (value->ret != NULL)
     {
         param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
     }
+#endif
 
     return value;
 }
@@ -63,10 +65,12 @@ array * array_new_dims(expr_list * dims, param * ret)
     value->ret = ret;
     value->line_no = 0;
 
+#if 0
     if (value->ret != NULL)
     {
         param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
     }
+#endif
 
     return value;
 }

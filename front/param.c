@@ -274,10 +274,12 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     {
         param_dim_set_array(dims, value);
     }
+#if 0
     if (value->ret)
     {
         param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
     }
+#endif
 
     return value;
 }
@@ -614,6 +616,7 @@ int func_cmp(param_list * param_list_one, param * ret_one, param_list * param_li
     }
 }
 
+#if 0
 void param_init_const(param * value, param_const_type const_type)
 {
     if (value->const_type == PARAM_CONST_TYPE_UNKNOWN)
@@ -648,13 +651,13 @@ void param_init_const(param * value, param_const_type const_type)
             }
         break;
         case PARAM_RANGE:
-            if (value->ret != NULL)
-            {
-                param_init_const(value->ret, value->const_type);
-            }
             if (value->ranges != NULL)
             {
                 range_list_init_const(value->ranges, value->const_type);
+            }
+            if (value->ret != NULL)
+            {
+                param_init_const(value->ret, value->const_type);
             }
         break;
         case PARAM_SLICE:
@@ -679,6 +682,7 @@ void param_init_const(param * value, param_const_type const_type)
         break;
     }
 }
+#endif
 
 param_list_node * param_list_node_new(param * value)
 {
@@ -797,6 +801,7 @@ void param_dim_set_array(param_list * dims, param * array)
     }
 }
 
+#if 0
 void param_list_init_const(param_list * list, param_const_type const_type)
 {
     param_list_node * node = list->tail;
@@ -810,6 +815,7 @@ void param_list_init_const(param_list * list, param_const_type const_type)
         node = node->next;
     }
 }
+#endif
 
 void param_print(param * value)
 {

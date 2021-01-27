@@ -134,7 +134,9 @@ func_decl * func_decl_new(char * id, param_list * params, param * ret)
     decl->id = id;
     decl->params = params;
     decl->ret = ret;
-    
+    decl->checked = false;
+
+#if 0
     if (decl->params != NULL)
     {
         param_list_init_const(decl->params, PARAM_CONST_TYPE_CONST);
@@ -143,6 +145,7 @@ func_decl * func_decl_new(char * id, param_list * params, param * ret)
     {
         param_init_const(decl->ret, PARAM_CONST_TYPE_VAR);
     }
+#endif
 
     return decl;
 }

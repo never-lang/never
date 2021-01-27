@@ -1,7 +1,7 @@
 
 enum E { 
     S,
-    R { x : int; let a[D] : int; [from .. to] : range; s [ from_s .. to_s ] : string; }
+    R { x : int; a[D] : int; [from .. to] : range; s [ from_s .. to_s ] : string; }
 }
 
 func pr_array( let a[D] : int ) -> int

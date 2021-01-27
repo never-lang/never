@@ -76,8 +76,6 @@ int symtab_add_bind_from_bind(symtab * tab, bind * bind_value,
                               unsigned int syn_level, int * result);
 int symtab_add_func_from_func(symtab * tab, func * func_value,
                               unsigned int syn_level, int * result);
-int symtab_add_func_from_seq_list(symtab * tab, seq_list * list,
-                                   unsigned int syn_level, int * result);
 int array_dims_check_type_expr(symtab * tab, expr * value, func * func_value,
                                unsigned syn_level, int * result);
 int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
@@ -86,17 +84,22 @@ int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
 int param_enum_record_check_type(symtab * tab, param * param_value,
                                  unsigned int syn_level, int * result);
 int param_range_check_type(symtab * tab, range * value,
-                           unsigned int syn_level, int * result);
+                           unsigned int syn_level, bool change_const_allowed,
+                           param_const_type const_type, int * result);
 int param_range_list_check_type(symtab * tab, range_list * list,
-                                unsigned int syn_level, int * result);
+                                unsigned int syn_level, 
+                                bool change_const_allowed,
+                                param_const_type const_type, int * result);
 int param_ffi_check_type(symtab * tab, param * param_value,
                          unsigned int syn_level, int * result);
 int param_check_type(symtab * tab, param * param_value,
-                     unsigned int syn_level, int * result);
+                     unsigned int syn_level, bool change_const_allowed,
+                     param_const_type const_type, int * result);
 int param_list_ffi_check_type(symtab * tab, param_list * list,
                               unsigned int syn_level, int * result);
 int param_list_check_type(symtab * tab, param_list * list,
-                          unsigned int syn_level, int * result);                     
+                          unsigned int syn_level, bool change_const_allowed,
+                          param_const_type const_type, int * result);
 
 int expr_id_check_type(symtab * tab, expr * value, unsigned int syn_level, int * result);
 int expr_enumtype_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
@@ -162,6 +165,8 @@ int func_ffi_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                         int * result);
 int func_param_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                           int * result);
+int func_decl_check_type(symtab * tab, func * func_value, unsigned int syn_level,
+                         int * result);
 int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_level,
                            int * result);
 int func_check_type(symtab * tab, func * func_value, unsigned int syn_level,
