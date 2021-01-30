@@ -1648,7 +1648,6 @@ int param_check_type(symtab * tab, param * param_value,
                      bool change_const_allowed,
                      param_const_type const_type, int * result)
 {
-#if 0    
     if (change_const_allowed == false &&
         param_value->const_type != PARAM_CONST_TYPE_UNKNOWN &&
         param_value->const_type != const_type)
@@ -1657,7 +1656,7 @@ int param_check_type(symtab * tab, param * param_value,
         print_error_msg(param_value->line_no, "cannot change param %s constness",
                         param_value->id);
     }
-#endif
+
     if (param_value->const_type == PARAM_CONST_TYPE_UNKNOWN)
     {
         param_value->const_type = const_type;
@@ -4042,11 +4041,6 @@ int func_native_check_type(symtab * tab, func * func_value, unsigned int syn_lev
             print_error_msg(func_value->line_no,
                             "incorrect return type in function %s",
                             func_value->decl->id);
-        }
-
-        if (func_value->body->exprs->comb.comb_const == COMB_CONST_TYPE_CONST)
-        {
-            func_value->decl->ret->const_type = PARAM_CONST_TYPE_CONST;
         }
     }
 

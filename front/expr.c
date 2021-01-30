@@ -291,7 +291,8 @@ expr * expr_new_range(expr_list * range_dims)
     ret->comb.comb_const = COMB_CONST_TYPE_CONST;
     ret->comb.comb_lr = COMB_LR_TYPE_RIGHT;
     ret->line_no = 0;
-    ret->range.ret = param_new_const_int(NULL);
+    ret->range.ret = param_new_int(NULL);
+    ret->range.ret->const_type = PARAM_CONST_TYPE_CONST;
     ret->range.range_dims = range_dims;
 
     return ret;

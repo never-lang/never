@@ -3311,20 +3311,6 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             assert(0);
         }
         break;
-#if 0
-    case EXPR_BIND:
-        if (value->bind.bind_value != NULL &&
-            value->bind.bind_value->expr_value != NULL)
-        {
-            bind * bind_value = value->bind.bind_value;
-            value->bind.bind_value->index = stack_level + 1;
-
-            printf("bind %s %d\n", bind_value->id, bind_value->index);
-
-            expr_emit(value->bind.bind_value->expr_value, stack_level, module_value, list_weak, result);
-        }
-        break;
-#endif
     }
     return 0;
 }

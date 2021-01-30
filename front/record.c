@@ -35,13 +35,6 @@ record * record_new(char * id, param_list * params)
     value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     value->line_no = 0;
 
-#if 0
-    if (value->params != NULL)
-    {
-        param_list_init_const(value->params, PARAM_CONST_TYPE_VAR);
-    }
-#endif
-
     return value;
 }
 

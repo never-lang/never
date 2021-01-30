@@ -1,0 +1,17 @@
+
+func set(var i : int) -> int
+{
+    i = 30;
+    0
+}
+
+func main() -> int
+{
+    var i = 10;
+
+    set(i);
+
+    print(i);
+
+    0
+}

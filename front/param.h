@@ -100,23 +100,14 @@ typedef struct param_list
 } param_list;
 
 param * param_new_bool(char * id);
-param * param_new_const_bool(char * id);
 param * param_new_int(char * id);
-param * param_new_const_int(char * id);
 param * param_new_long(char * id);
-param * param_new_const_long(char * id);
 param * param_new_float(char * id);
-param * param_new_const_float(char * id);
 param * param_new_double(char * id);
-param * param_new_const_double(char * id);
 param * param_new_char(char * id);
-param * param_new_const_char(char * id);
 param * param_new_string(char * id);
-param * param_new_const_string(char * id);
 param * param_new_void(char * id);
-param * param_new_const_void(char * id);
 param * param_new_c_ptr(char * id);
-param * param_new_const_c_ptr(char * id);
 param * param_new_dim(char * id);
 param * param_new_array(char * id, param_list * dims, param * ret);
 param * param_new_range(char * id, range_list * ranges);
@@ -131,7 +122,6 @@ int param_cmp(param * param_one, param * param_two, bool const_cmp);
 int param_list_cmp(param_list * param_one, param_list * param_two, bool const_cmp);
 int func_cmp(param_list * param_list_one, param * ret_one,
              param_list * param_list_two, param * ret_two, bool const_cmp);
-/* void param_init_const(param * value, param_const_type const_type); */
 
 param_list_node * param_list_node_new(param * value);
 void param_list_node_delete(param_list_node * node);
@@ -145,7 +135,6 @@ void param_list_add_end(param_list * list, param * value);
 param * param_list_find(param_list * list, char * id);
 
 void param_dim_set_array(param_list * dims, param * array);
-/* void param_list_init_const(param_list * list, param_const_type const_type); */
 
 void param_print(param * value);
 void param_list_print(param_list * list);

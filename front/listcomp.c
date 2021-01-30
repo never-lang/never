@@ -165,13 +165,6 @@ listcomp * listcomp_new(expr * expr_value, qualifier_list * list, param * ret)
     value->ret = ret;
     value->stab = NULL;
 
-#if 0
-    if (value->ret != NULL)
-    {
-        param_init_const(value->ret, PARAM_CONST_TYPE_VAR);
-    }
-#endif
-
     return value;
 }
 
