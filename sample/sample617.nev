@@ -1,0 +1,24 @@
+
+func main() -> int
+{
+    let t1 = [ 1, 2, 3, 4 ] : int;
+    var t2 = t1[2..3];
+
+    t2[0] = 10;
+    t2[1] = 20;
+
+    print(t1[0]);
+    print(t1[1]);
+    print(t1[2]);
+    print(t1[3]);
+
+    print(t2[0]);
+    print(t2[1]);
+
+    assert(t1[2] == 10);
+    assert(t1[3] == 20);
+    assert(t2[0] == 10);
+    assert(t2[1] == 20);
+
+    0
+}

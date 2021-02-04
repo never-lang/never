@@ -12,5 +12,10 @@ func main() -> int
     print(t2[0]);
     print(t2[1]);
 
+    assert(t1[0] == 10);
+    assert(t1[1] == 20);
+    assert(t2[0] == 10);
+    assert(t2[1] == 20);
+
     0
 }

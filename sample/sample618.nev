@@ -1,0 +1,25 @@
+
+
+func ra(var r[from..to] : range) -> int
+{
+    from = 10;
+    to = 20;
+    0
+}
+
+func main() -> int
+{
+    let f = 0;
+    let t = 0;
+    var r = [ f .. t ];
+
+    ra(r);
+
+    print(f);
+    print(t);
+
+    assert(f == 10);
+    assert(t == 20);
+
+    0
+}

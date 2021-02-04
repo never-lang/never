@@ -1,7 +1,10 @@
 
-func set(var i : int) -> int
+func set(i : int) -> int
 {
-    i = 30;
+    var j = i;
+
+    j = 20;
+
     0
 }
 
@@ -12,6 +15,8 @@ func main() -> int
     set(i);
 
     print(i);
+
+    assert(i == 20);
 
     0
 }

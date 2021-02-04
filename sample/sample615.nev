@@ -28,5 +28,7 @@ func main() -> int
 
     processR(r);
 
+    assert(r.x == 20 && r.y == 20);
+
     0
 }
