@@ -3,7 +3,7 @@ enum Option { Some { value : int; }, None }
 
 func main() -> int
 {
-    let o = {[ 2 ]} : Option;
+    var o = {[ 2 ]} : Option;
     let p = [ Option::Some(10), Option::None ] : Option;
     
     o[0] = Option::Some(10);

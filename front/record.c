@@ -34,7 +34,7 @@ record * record_new(char * id, param_list * params)
     value->params = params;
     value->stab = symtab_new(32, SYMTAB_TYPE_FUNC, NULL);
     value->line_no = 0;
-    
+
     return value;
 }
 

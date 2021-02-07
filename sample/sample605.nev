@@ -1,0 +1,26 @@
+
+record R
+{
+    i : int;
+    j : int;
+    t[D] : int;
+}
+
+func print_R(r : R) -> int
+{
+    prints(r.i + " " + r.j + "\n");
+    0
+}
+
+func main() -> int
+{
+    var r1 = R(10, 20, [1, 2, 3, 4] : int);
+    let r2 = r1;
+
+    r1.i = 20;
+    r1.j = 20;
+
+    print_R(r2);
+
+    0
+}

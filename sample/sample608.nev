@@ -1,0 +1,23 @@
+
+record R
+{
+    i : int;
+    j : int;
+}
+
+func print_R(r : R) -> int
+{
+    prints(r.i + " " + r.j + "\n");
+    0
+}
+
+func main() -> int
+{
+    var t = [ R(100, 100), R(200, 200), R(300, 300), R(400, 400) ] : R;
+
+    t[2] = R(100, 100);
+
+    print_R(t[2]);
+
+    0
+}

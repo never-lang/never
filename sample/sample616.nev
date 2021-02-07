@@ -1,0 +1,22 @@
+
+func set(i : int) -> int
+{
+    var j = i;
+
+    j = 20;
+
+    0
+}
+
+func main() -> int
+{
+    var i = 10;
+
+    set(i);
+
+    print(i);
+
+    assert(i == 20);
+
+    0
+}

@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    let i = 1;
+    var i = 1;
 
     while (i <= 15)
     {

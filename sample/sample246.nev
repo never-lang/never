@@ -10,9 +10,9 @@ func print_str(hw[L] : int) -> int
 
 func reverse(hw[L] : int) -> [_] : int
 {
-    let rev = {[ L ]} : int;
+    var rev = {[ L ]} : int;
     
-    func __reverse(hw[L1] : int, rev[L2] : int, i : int) -> int
+    func __reverse(hw[L1] : int, var rev[L2] : int, i : int) -> int
     {
         i < L1 ? { rev[L2 - i - 1] = hw[i]; __reverse(hw, rev, i + 1) } : 0 
     };

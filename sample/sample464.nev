@@ -15,7 +15,7 @@ func pr_arr( rs[D] : [..] : range ) -> int
 
 func main() -> int
 {
-    let rs = {[ 5 ]} : [..] : range;
+    var rs = {[ 5 ]} : [..] : range;
 
     rs[0] = [1..10];
     rs[1] = [10..20];

@@ -27,91 +27,131 @@
 
 param_list * params_int_x()
 {
+    param * param_value = NULL;
     param_list * params = NULL;
 
+    param_value = param_new_int(strdup("x"));
+    param_value->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_int(strdup("x")));
+    param_list_add_end(params, param_value);
 
     return params;
 }
 
 param_list * params_long_x()
 {
+    param * param_value = NULL;
     param_list * params = NULL;
 
+    param_value = param_new_long(strdup("x"));
+    param_value->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_long(strdup("x")));
+    param_list_add_end(params, param_value);
 
     return params;
 }
 
 param_list * params_float_x()
 {
+    param * param_value = NULL;
     param_list * params = NULL;
 
+    param_value = param_new_float(strdup("x"));
+    param_value->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_float(strdup("x")));
+    param_list_add_end(params, param_value);
 
     return params;
 }
 
 param_list * params_double_x()
 {
+    param * param_value = NULL;
     param_list * params = NULL;
 
+    param_value = param_new_double(strdup("x"));
+    param_value->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_double(strdup("x")));
+    param_list_add_end(params, param_value);
 
     return params;
 }
 
 param_list * params_bool_x()
 {
+    param * param_value = NULL;
     param_list * params = NULL;
-    
+
+    param_value = param_new_bool(strdup("x"));
+    param_value->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_bool(strdup("x")));
+    param_list_add_end(params, param_value);
     
     return params;
 }
 
 param_list * params_char_x()
 {
+    param * param_value = NULL;
     param_list * params = NULL;
-    
+
+    param_value = param_new_char(strdup("x"));
+    param_value->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_char(strdup("x")));
+    param_list_add_end(params, param_value);
     
     return params;
 }
 
 param_list * params_string_x()
 {
+    param * param_value = NULL;
     param_list * params = NULL;
-    
+
+    param_value = param_new_string(strdup("x"));
+    param_value->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_string(strdup("x")));
+    param_list_add_end(params, param_value);
     
     return params;
 }
 
 param_list * params_c_ptr_x()
 {
+    param * param_value = NULL;
     param_list * params = NULL;
-    
+
+    param_value = param_new_c_ptr(strdup("x"));
+    param_value->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_c_ptr(strdup("x")));
+    param_list_add_end(params, param_value);
     
     return params;
 }
 
 param_list * params_float_x_float_y()
 {
+    param * param_value_x = NULL;
+    param * param_value_y = NULL;
     param_list * params = NULL;
 
+    param_value_x = param_new_float(strdup("x"));
+    param_value_x->const_type = PARAM_CONST_TYPE_CONST;
+
+    param_value_y = param_new_float(strdup("y"));
+    param_value_y->const_type = PARAM_CONST_TYPE_CONST;
+
     params = param_list_new();
-    param_list_add_end(params, param_new_float(strdup("x")));
-    param_list_add_end(params, param_new_float(strdup("y")));
+    param_list_add_end(params, param_value_x);
+    param_list_add_end(params, param_value_y);
 
     return params;
 }
@@ -183,6 +223,9 @@ func * lib_math_func_any_new(libmath_func math_id, param_list * formal,
         printf("build_in with ret type not supported\n");
         assert(0);
     }
+
+    param_ret->const_type = PARAM_CONST_TYPE_VAR;
+    func_expr->func_build_in.ret->const_type = PARAM_CONST_TYPE_VAR;
 
     body = func_body_new_expr(func_expr);
 

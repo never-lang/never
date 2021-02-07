@@ -12,7 +12,7 @@ func printOptional(o : Optional) -> bool
 
 func main() -> int
 {
-    let o = Optional::None;
+    var o = Optional::None;
     
     o = Optional::Some(1000);
     

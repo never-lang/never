@@ -3,7 +3,7 @@ record R { x : int; y : int; }
 
 func pr( a[D] : R ) -> int
 {
-    let i = 0;
+    var i = 0;
 
     for (i = 0; i < D; i = i + 1)
     {

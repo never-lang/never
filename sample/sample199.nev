@@ -1,7 +1,7 @@
 
 func main() -> int
 {
-    let count = 0;
+    var count = 0;
 
     func loop(i : int) -> int
     {

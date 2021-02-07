@@ -1,7 +1,7 @@
 func f(i : int) -> int
 {
-    let a = 2;
-    let b = i * i * i;
+    var a = 2;
+    var b = i * i * i;
     
     a = a * 10;
     b = a;

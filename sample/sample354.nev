@@ -12,7 +12,7 @@ func getR() -> R
 
 func main() -> int
 {
-    var r = getR();
+    let r = getR();
 
     assert(r.x == 110);
     assert(r.r.x == 130);

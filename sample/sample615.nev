@@ -1,0 +1,34 @@
+record R
+{
+    x : int;
+    y : int;
+}
+
+func getR(i : int) -> R
+{
+    var r = R(i, i);
+    r
+}
+
+func main() -> int
+{
+    var i = 20;
+    var r = getR(i);
+
+    func processR(r : R) -> int
+    {
+        printR(r);
+        0
+    }
+    func printR(r : R) -> int
+    {
+        prints(r.x + " " + r.y + "\n");
+        0
+    };
+
+    processR(r);
+
+    assert(r.x == 20 && r.y == 20);
+
+    0
+}

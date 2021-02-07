@@ -1,0 +1,25 @@
+
+func f (s : int) -> [D] : int
+{
+    var t = [ s, s, s, s, s, s ] : int;
+    t
+}
+
+func main() -> int
+{
+    var s = 10;
+    var t = f(s);
+
+    assert(f(s)[0] == 10);
+    assert(f(s)[1] == 10);
+
+    s = 20;
+    assert(f(s)[0] == 20);
+    assert(f(s)[1] == 20);
+
+    f(s)[0] = 30;
+    assert(f(s)[0] == 30);
+    assert(f(s)[1] == 30);
+
+    0
+}

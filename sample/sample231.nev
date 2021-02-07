@@ -1,5 +1,5 @@
 
-func ass(a : float) -> float
+func ass(var a : float) -> float
 {
     printf(a);
     a = 12.5
@@ -7,7 +7,7 @@ func ass(a : float) -> float
 
 func main() -> int
 {
-    let i = 10.0;
+    var i = 10.0;
     
     print(i);
     ass(i);    

@@ -32,7 +32,7 @@ seq_item * seq_item_new_bind(bind * bind_value)
 
     ret->type = SEQ_TYPE_BIND;
     ret->bind_value = bind_value;
-    ret->line_no = 0;
+    ret->line_no = (bind_value != NULL ? bind_value->line_no : 0);
 
     return ret;
 }
@@ -43,7 +43,7 @@ seq_item * seq_item_new_func(func * func_value)
 
     ret->type = SEQ_TYPE_FUNC;
     ret->func_value = func_value;
-    ret->line_no = 0;
+    ret->line_no = (func_value != NULL ? func_value->line_no : 0);
 
     return ret;
 }
@@ -54,7 +54,7 @@ seq_item * seq_item_new_expr(expr * expr_value)
 
     ret->type = SEQ_TYPE_EXPR;
     ret->expr_value = expr_value;
-    ret->line_no = 0;
+    ret->line_no = (expr_value != NULL ? expr_value->line_no : 0);
 
     return ret;
 }
@@ -137,7 +137,7 @@ seq * seq_new(seq_list * list)
 
     ret->list = list;
     ret->stab = NULL;
-    ret->line_no = 0;
+    ret->line_no = (list->head != NULL && list->head->value != NULL ? list->head->value->line_no : 0);
 
     return ret;
 }

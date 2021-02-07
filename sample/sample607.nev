@@ -1,0 +1,36 @@
+
+
+func f1(i : int) -> int
+{
+    print(i);
+    0
+}
+
+func pT( t[D] : int, var [ F .. T ] : range ) -> int
+{
+    print(F);
+    print(T);
+
+    F = 40;
+    T = 60;
+
+    for (a in t)
+        print(a);
+
+    0
+}
+
+func main() -> int
+{
+    var F = 20;
+    var T = 30;
+    var r = [ F .. T ];
+    var t = [ 100, 200, 300, 400 ] : int;
+
+    pT(t, r );
+
+    print(F);
+    print(T);
+
+    0
+}

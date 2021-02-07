@@ -28,6 +28,7 @@
 #include "param.h"
 #include "bind.h"
 #include "except.h"
+#include <stdbool.h>
 
 typedef struct func_body func_body;
 typedef struct func_decl func_decl;
@@ -66,6 +67,7 @@ typedef struct func_decl
     char * id;
     param_list * params;
     param * ret;
+    bool checked;
 } func_decl;
 
 typedef struct func_body

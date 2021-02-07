@@ -1,5 +1,5 @@
 
-func test(c : char) -> int
+func test(var c : char) -> int
 {
     var i = 'A';
     

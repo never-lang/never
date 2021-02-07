@@ -2,7 +2,7 @@ enum E { one }
 
 func getE(e : E) -> int
 {
-    let v = 1;
+    var v = 1;
     
     v = match e
     {

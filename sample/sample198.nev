@@ -1,13 +1,13 @@
 func f(i : int) -> [_] : int
 {
-    let t2 = i * [ 11, 12, 13, 14 ] : int;
+    var t2 = i * [ 11, 12, 13, 14 ] : int;
     
     t2
 }
 
 func main() -> int
 {
-    let t = f(5);
+    var t = f(5);
     
     t[0] = 120;
     

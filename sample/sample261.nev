@@ -2,7 +2,7 @@
 func main() -> int
 {
     let s1 = "string one\n";
-    let s2 = "text two\n";
+    var s2 = "text two\n";
 
     prints(s1);
     prints(s2);

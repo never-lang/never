@@ -130,6 +130,20 @@ typedef enum comb_type
     COMB_TYPE_MODULE = 20
 } comb_type;
 
+typedef enum comb_const_type
+{
+    COMB_CONST_TYPE_UNKNOWN = 0,
+    COMB_CONST_TYPE_CONST,
+    COMB_CONST_TYPE_VAR
+} comb_const_type;
+
+typedef enum comb_lr_type
+{
+    COMB_LR_TYPE_UNKNOWN = 0,
+    COMB_LR_TYPE_LEFT = 1,
+    COMB_LR_TYPE_RIGHT = 2
+} comb_lr_type;
+
 typedef enum id_type
 {
     ID_TYPE_UNKNOWN = 0,
@@ -169,6 +183,8 @@ typedef struct module_decl module_decl;
 typedef struct expr_comb
 {
     comb_type comb;
+    comb_const_type comb_const; /* constness */
+    comb_lr_type comb_lr; /* lr type */
     union
     {
         struct
@@ -366,6 +382,8 @@ expr * expr_new_attr(expr * record_value, expr * id);
 
 comb_type conv_to_comb_type(conv_type conv);
 expr * expr_conv(expr * expr_value, conv_type conv);
+
+int comb_type_is_basic(comb_type comb);
 
 void expr_delete(expr * value);
 

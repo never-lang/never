@@ -5,7 +5,7 @@ let D = 20;
 
 func main() -> int
 {
-    let a = {[ D ]} : float;
+    var a = {[ D ]} : float;
 
     a[0] = 10.0;
 

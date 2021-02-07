@@ -1,0 +1,27 @@
+
+record R 
+{
+    i : int;
+    j : int;
+}
+
+func getR() -> R
+{
+    var r = R(10, 10);
+    r
+}
+
+func main() -> int
+{
+    var r = getR();
+
+    r.i = 20;
+    r.j = 30;
+
+    prints(r.i + " " + r.j + "\n");
+
+    { var i = 10; i } = 40;
+
+    0
+}
+

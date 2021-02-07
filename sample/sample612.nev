@@ -1,0 +1,21 @@
+
+func main() -> int
+{
+    var t1 = [ 1, 2, 3, 4 ] : int;
+    var t2 = t1;
+
+    t2 = [ 10, 20, 30, 40 ] : int;
+
+    print(t1[0]);
+    print(t1[1]);
+
+    print(t2[0]);
+    print(t2[1]);
+
+    assert(t1[0] == 10);
+    assert(t1[1] == 20);
+    assert(t2[0] == 10);
+    assert(t2[1] == 20);
+
+    0
+}

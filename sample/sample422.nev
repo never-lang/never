@@ -8,7 +8,7 @@ func calc() -> Result
 
 func main() -> int
 {
-    let i = match calc()
+    var i = match calc()
             {
                 Result::Ok(value) -> value;
                 Result::Err(msg) -> 90;

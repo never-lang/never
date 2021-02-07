@@ -1,0 +1,14 @@
+
+func main() -> int
+{
+    var t = [1, 2, 3, 4, 5] : int;
+
+    for (a in t)
+        a = 10 * a;
+
+    for (a in t)
+        print(a);
+
+    0
+}
+

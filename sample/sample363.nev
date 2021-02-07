@@ -6,8 +6,8 @@ func sinhf(x : float) -> float
 
 func main() -> int
 {
-    var v1 = sinhf(1.0);
-    var sinhf = let func (x : float) -> float { 3.0 * x };
+    let v1 = sinhf(1.0);
+    let sinhf = let func (x : float) -> float { 3.0 * x };
 
     printf(v1);
     printf(sinhf(2.0));

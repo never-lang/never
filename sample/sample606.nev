@@ -1,0 +1,22 @@
+
+
+func f1(var i : int, j : int) -> int
+{
+    var k = i;
+
+    k = 100;
+
+    i + j
+}
+
+func main() -> int
+{
+    var i = 10;
+    let j = 20;
+
+    f1(i, j);
+
+    print(i);
+
+    0
+}

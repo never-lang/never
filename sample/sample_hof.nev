@@ -16,8 +16,8 @@ func map(t : tab, f(e : int) -> int) -> tab
 
 func reduce(t : tab, i : int, f(a : int, e : int) -> int) -> int
 {
-    let a = i;
-    let j = 0;
+    var a = i + 0;
+    var j = 0;
 
     for (j = 0; j < t.T; j = j + 1)
     {
@@ -29,7 +29,7 @@ func reduce(t : tab, i : int, f(a : int, e : int) -> int) -> int
 
 func print_tab(t : tab) -> int
 {
-    let i = 0;
+    var i = 0;
 
     for (i = 0; i < t.T; i = i + 1)
     {
@@ -41,8 +41,8 @@ func print_tab(t : tab) -> int
 
 func main() -> int
 {
-    let t = tab( [1, 2, 3, 4, 5, 6, 7, 8] : int );
-    let s = tab;
+    var t = tab( [1, 2, 3, 4, 5, 6, 7, 8] : int );
+    var s = tab;
 
     prints("---filter.map.reduce--1---\n");
     s = filter(t, let func(e : int) -> bool { (e % 2) == 0 });

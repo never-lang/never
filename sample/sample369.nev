@@ -8,7 +8,7 @@ func printa(a[D] : int) -> int
     0
 }
 
-func set(c : char, i : int, f : float, s : string, a[D] : int) -> int
+func set(var c : char, var i : int, var f : float, var s : string, var a[D] : int) -> int
 {
     c = 'B';
     i = 11;

@@ -1,0 +1,36 @@
+
+enum U
+{
+    ONE
+    {
+        i : int;
+        f(var i : int) -> int;
+    },
+ 
+    TWO
+    {
+        m : string;
+    }
+}
+
+func getU() -> U
+{
+    U::ONE(10, let func(var i : int) -> int { i = 10 * i })
+}
+
+func getUE() -> U
+{
+    U::TWO("error\n")
+}
+
+func main() -> int
+{
+    match getUE()
+    {
+        U::ONE(i, f) -> { var i = 2; print(i); f(i); print(i) };
+        U::TWO(m) -> { prints(m); 0 };
+    };
+
+    0
+}
+

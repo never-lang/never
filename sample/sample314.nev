@@ -1,7 +1,7 @@
 
 func test() -> int
 {
-    var f1 = let func(a : int) -> int { 2 * a };
+    let f1 = let func(a : int) -> int { 2 * a };
     
     assert(f1 != nil);
     assert(nil != f1);

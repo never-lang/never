@@ -2,10 +2,10 @@
 
 func check_ass() -> int
 {
-    let i = 10;
-    let l = 10L;
-    let f = 10.0;
-    let d = 10.0d;
+    var i = 10;
+    var l = 10L;
+    var f = 10.0;
+    var d = 10.0d;
 
     i = 20;
     l = 20L;

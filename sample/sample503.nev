@@ -21,10 +21,10 @@ func gdouble(d : double) -> double
 
 func main() -> int
 {
-    let i = 10;
-    let l = 10L;
-    let f = 10.0;
-    let d = 10.0d;
+    var i = 10;
+    var l = 10L;
+    var f = 10.0;
+    var d = 10.0d;
 
     assert(gint(i = 20) == 20);
     assert(glong(l = 20L) == 20L);

@@ -6,8 +6,8 @@ func tab(a : int) -> [_] : int
 
 func main() -> int
 {
-    let a = 12;
-    let v = {[ 1 ]} : int;
+    var a = 12;
+    var v = {[ 1 ]} : int;
 
     v = tab(a);
     print(v[0]);

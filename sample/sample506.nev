@@ -1,7 +1,7 @@
 
-func call(a : int, b : int, c : int, d : int) -> int
+func call(var a : int, var b : int, var c : int, var d : int) -> int
 {
-    func call_int1(b : int) -> int
+    func call_int1(var b : int) -> int
     {
         func call_int2() -> int
         {
@@ -20,10 +20,10 @@ func call(a : int, b : int, c : int, d : int) -> int
 
 func main() -> int
 {
-    let a = 20;
-    let b = 30;
-    let c = 40;
-    let d = 50;
+    var a = 20;
+    var b = 30;
+    var c = 40;
+    var d = 50;
 
     call(a, b, c, d);
 

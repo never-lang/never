@@ -4,7 +4,7 @@ record Point {
     y : int;
 }
 
-func get(r : Point, x : int, y : int) -> int
+func get(var r : Point, x : int, y : int) -> int
 {
     r.x = x;
     r.y = y;

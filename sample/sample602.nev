@@ -1,7 +1,7 @@
 
 func test() -> int
 {
-    let f = 10;
+    var f = 10;
 
     for (f in [ 10 * x + y | x in [1 .. 4]; y in [ 1 .. 4 ] ] : int)
     {

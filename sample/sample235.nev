@@ -1,7 +1,7 @@
 
 func three(d : int, c : int) -> int
 {
-    let t = [ 1, 2, 3 ] : int;
+    var t = [ 1, 2, 3 ] : int;
 
     t[0] = d;
     17770 / d

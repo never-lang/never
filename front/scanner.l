@@ -120,6 +120,12 @@ catch {
     return TOK_CATCH;
 }
 
+const {
+    tokp->line_no = line_no;
+    scanner_printf("const\n");
+    return TOK_CONST;
+}
+
 for {
     tokp->line_no = line_no;
     scanner_printf("for\n");

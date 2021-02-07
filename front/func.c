@@ -134,7 +134,8 @@ func_decl * func_decl_new(char * id, param_list * params, param * ret)
     decl->id = id;
     decl->params = params;
     decl->ret = ret;
-    
+    decl->checked = false;
+
     return decl;
 }
 

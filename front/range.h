@@ -22,7 +22,7 @@
 #ifndef __RANGE_H__
 #define __RANGE_H__
 
-typedef struct param param;
+#include "param.h"
 
 typedef struct range
 {
