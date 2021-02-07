@@ -1,0 +1,34 @@
+
+enum F { ONE, TWO }
+
+func getF(f : F) -> (var int) -> int
+{
+    func f1(var a : int) -> int
+    {
+        a = 10
+    }
+
+    func f2(var a : int) -> int
+    {
+        a = 20
+    };
+
+    match f
+    {
+        F::ONE -> f1;
+        F::TWO -> f2;
+    }
+}
+
+func main() -> int
+{
+    var i = 0;
+    var f = getF(F::ONE);
+
+    f(i);
+
+    print(i);
+    assert(i == 10);
+
+    0
+}

@@ -814,9 +814,18 @@ int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp)
         param_value->const_type == PARAM_CONST_TYPE_VAR &&
         expr_value->comb.comb_const == COMB_CONST_TYPE_CONST)
     {
-        print_error_msg(expr_value->line_no,
-                        "passing const expression to variable param %s at line %u",
-                        param_value->id, param_value->line_no);
+        if (param_value->id != NULL)
+        {
+            print_error_msg(expr_value->line_no,
+                            "passing const expression to variable param %s at line %u",
+                            param_value->id, param_value->line_no);
+        }
+        else
+        {
+            print_error_msg(expr_value->line_no,
+                            "passing const expression to variable param at line %u",
+                            param_value->line_no);
+        }
         return TYPECHECK_FAIL;
     }
 
@@ -1241,9 +1250,9 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no,
-                            "functions are different %s:%u %s:%u",
-                            left->id, left->line_no,
-                            right->id, right->line_no);
+                            "functions are different %s at line %u and %s at line %u",
+                            left->id.id, left->line_no,
+                            right->id.id, right->line_no);
         }
     }
     else if (left->comb.comb == COMB_TYPE_ENUMTYPE &&
@@ -1653,8 +1662,15 @@ int param_check_type(symtab * tab, param * param_value,
         param_value->const_type != const_type)
     {
         *result = TYPECHECK_FAIL;
-        print_error_msg(param_value->line_no, "cannot change param %s constness",
-                        param_value->id);
+        if (param_value->id != NULL)
+        {
+            print_error_msg(param_value->line_no, "cannot change param %s constness",
+                            param_value->id);
+        }
+        else
+        {
+            print_error_msg(param_value->line_no, "cannot change param constness");
+        }
     }
 
     if (param_value->const_type == PARAM_CONST_TYPE_UNKNOWN)
