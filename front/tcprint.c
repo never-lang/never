@@ -263,6 +263,12 @@ int print_func_expr(expr * value, int depth)
     case EXPR_ATTR:
         print_func_attr(value, depth);
         break;
+    case EXPR_TOUPLE:
+        if (value->touple.dims != NULL)
+        {
+            print_func_expr_list(value->touple.dims, depth);
+        }
+        break;
     }
     return 0;
 }

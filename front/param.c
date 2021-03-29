@@ -301,6 +301,20 @@ param * param_new_func(char * id, param_list * params, param * ret)
     return value;
 }
 
+param * param_new_touple(char * id, param_list * dims)
+{
+    param * value = (param *)malloc(sizeof(param));
+
+    value->type = PARAM_TOUPLE;
+    value->const_type = PARAM_CONST_TYPE_UNKNOWN;
+    value->id = id;
+    value->dims = dims;
+    value->ret = NULL;
+    value->line_no = 0;
+
+    return value;
+}
+
 void param_delete(param * value)
 {
     if (value->id)
@@ -351,6 +365,12 @@ void param_delete(param * value)
             if (value->params != NULL)
             {
                 param_list_delete(value->params);
+            }
+        break;
+        case PARAM_TOUPLE:
+            if (value->dims != NULL)
+            {
+                param_list_delete(value->dims);
             }
         break;
     }
@@ -472,6 +492,10 @@ int param_cmp(param * param_one, param * param_two, bool const_cmp)
     {
         return func_cmp(param_one->params, param_one->ret, param_two->params,
                         param_one->ret, const_cmp);
+    }
+    else if (param_one->type == PARAM_TOUPLE && param_two->type == PARAM_TOUPLE)
+    {
+        return param_list_cmp(param_one->dims, param_two->dims, false);
     }
     else
     {
@@ -711,6 +735,8 @@ char * param_type_str(param_type type)
         return "param slice dim";
     case PARAM_FUNC:
         return "param func";
+    case PARAM_TOUPLE:
+        return "param touple";
     }
     return "unknown param";
 }

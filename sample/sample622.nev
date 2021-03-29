@@ -1,0 +1,12 @@
+
+func t ( (int, (int, char, float)) ) -> (int, (int) -> int)
+{
+    (10, let func lambda (a : int) -> int { 2 * a })
+}
+
+func main() -> int
+{
+    t( (1, (30, 'A', 1.0)) );
+    
+    0
+}

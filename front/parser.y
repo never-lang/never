@@ -719,6 +719,14 @@ expr: expr TOK_DOT TOK_ID
     $$->line_no = $<line_no>1;
 };
 
+expr: '(' expr ',' expr_list ')'
+{
+    expr_list_add_beg($4, $2);
+    
+    $$ = expr_new_touple($4);
+    $$->line_no = $<line_no>1;
+};
+
 expr_list: expr
 {
     $$ = expr_list_new();
@@ -1061,6 +1069,18 @@ param_decl: TOK_ID '(' param_list ')' TOK_RET param
 {
     $$ = param_new_func($1, $3, $6);
     $$->line_no = $<line_no>6;
+};
+
+param_decl: '(' param_list ')'
+{
+    $$ = param_new_touple(NULL, $2);
+    $$->line_no = $<line_no>1;
+};
+
+param_decl: TOK_ID ':' '(' param_list ')'
+{
+    $$ = param_new_touple($1, $4);
+    $$->line_no = $<line_no>3;
 };
 
 param: param_decl

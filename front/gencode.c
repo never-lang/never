@@ -864,6 +864,12 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
             func_gencode_freevars_expr(func_value, stab, value->attr.record_value, result);
         }
         break;
+    case EXPR_TOUPLE:
+        if (value->touple.dims != NULL)
+        {
+            func_gencode_freevars_expr_list(func_value, stab, value->touple.dims, result);
+        }
+        break;
     }
 
     return 0;

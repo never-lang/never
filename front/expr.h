@@ -80,7 +80,8 @@ typedef enum expr_type
     EXPR_LISTCOMP = 52,
     EXPR_ATTR = 53,
     EXPR_NIL = 54,
-    EXPR_C_NULL = 55
+    EXPR_C_NULL = 55,
+    EXPR_TOUPLE = 56
 } expr_type;
 
 typedef enum conv_type
@@ -127,6 +128,7 @@ typedef enum comb_type
     COMB_TYPE_ENUMTYPE_ID = 17,
     COMB_TYPE_RECORD = 18,
     COMB_TYPE_RECORD_ID = 19,
+    COMB_TYPE_TOUPLE = 21,
     COMB_TYPE_MODULE = 20
 } comb_type;
 
@@ -207,6 +209,10 @@ typedef struct expr_comb
             struct param_list * comb_params; /* function arguments */
             struct param * comb_ret;         /* function ret */
         } func;
+        struct
+        {
+            struct expr_list * comb_dims;
+        } touple;
         struct record * comb_record;           /* record */ 
         struct enumtype * comb_enumtype;       /* enum */
         struct matchbind * comb_matchbind;     /* match bind (id in record match guard) */
@@ -328,7 +334,11 @@ typedef struct expr
         struct
         {
             struct bind * bind_value; /* EXPR_BIND */
-        } bind;        
+        } bind;
+        struct
+        {
+            struct expr_list * dims;
+        } touple;
     };
 } expr;
 
@@ -379,6 +389,7 @@ expr * expr_new_match(expr * expr_value, match_guard_list * match_guards);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);
 expr * expr_new_attr(expr * record_value, expr * id);
+expr * expr_new_touple(expr_list * dims);
 
 comb_type conv_to_comb_type(conv_type conv);
 expr * expr_conv(expr * expr_value, conv_type conv);

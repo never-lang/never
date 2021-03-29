@@ -1834,6 +1834,12 @@ int expr_constred(expr * value, int * result)
             expr_constred(value->attr.record_value, result);
         }
         break;
+    case EXPR_TOUPLE:
+        if (value->touple.dims != NULL)
+        {
+            
+        }
+        break;
     }
     return 0;
 }

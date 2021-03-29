@@ -180,6 +180,10 @@ int expr_set_comb_type(expr * value, param * param_value)
             value->comb.func.comb_params = param_value->params;
             value->comb.func.comb_ret = param_value->ret;
         break;
+        case PARAM_TOUPLE:
+            value->comb.comb = COMB_TYPE_TOUPLE;
+            /* value->comb.touple.comb_dims = param_value->dims; */
+        break;
     }
 
     return 0;
@@ -1011,6 +1015,10 @@ int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp)
         return func_cmp(param_value->params, param_value->ret, expr_value->comb.func.comb_params,
                         expr_value->comb.func.comb_ret, true);
     }
+    else if (param_value->type == PARAM_TOUPLE && expr_value->comb.comb == COMB_TYPE_TOUPLE)
+    {
+        return param_expr_list_cmp(param_value->dims, expr_value->comb.touple.comb_dims, false);
+    }
     else
     {
         return TYPECHECK_FAIL;
@@ -1634,7 +1642,9 @@ int param_ffi_check_type(symtab * tab, param * param_value,
         case PARAM_RECORD:
             param_enum_record_check_type(tab, param_value, syn_level, result);
         break;
-
+        case PARAM_TOUPLE:
+            assert(0);
+        break;
         case PARAM_DIM:
         case PARAM_ARRAY:
         case PARAM_RANGE_DIM:
@@ -1742,6 +1752,12 @@ int param_check_type(symtab * tab, param * param_value,
             if (param_value->ret != NULL)
             {
                 param_check_type(tab, param_value->ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
+            }
+        break;
+        case PARAM_TOUPLE:
+            if (param_value->dims != NULL)
+            {
+                param_list_check_type(tab, param_value->dims, syn_level, false, PARAM_CONST_TYPE_VAR, result);
             }
         break;
     }
@@ -3163,6 +3179,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
     case COMB_TYPE_ENUMTYPE_ID:
     case COMB_TYPE_RECORD:
     case COMB_TYPE_MODULE:
+    case COMB_TYPE_TOUPLE:
         {
             *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
@@ -3460,6 +3477,96 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
     return 0;
 }        
 
+#if 0 /* TODO: remove or something */
+param * expr_comb_to_param(expr * value, int * result)
+{
+    switch (value->comb.comb)
+    {
+        case COMB_TYPE_UNKNOWN:
+        case COMB_TYPE_ERR:
+            *result = TYPECHECK_FAIL;
+            print_error_msg(value->line_no, "cannot check expression type %s", comb_type_str(value->comb.comb));
+            break;
+        case COMB_TYPE_NIL:
+            /* TODO: what to insert ? */
+            assert(0);
+            break;
+        case COMB_TYPE_BOOL:
+            return param_new_bool(NULL);
+        case COMB_TYPE_INT:
+            return param_new_int(NULL);
+        case COMB_TYPE_LONG:
+            return param_new_long(NULL);
+        case COMB_TYPE_FLOAT:
+            return param_new_float(NULL);
+        case COMB_TYPE_DOUBLE:
+            return param_new_double(NULL);
+        case COMB_TYPE_CHAR:
+            return param_new_char(NULL);
+        case COMB_TYPE_STRING:
+            return param_new_string(NULL);
+        case COMB_TYPE_VOID:
+            return param_new_void(NULL);
+        case COMB_TYPE_C_PTR:
+            return param_new_c_ptr(NULL);
+        case COMB_TYPE_ARRAY:
+            break;
+        case COMB_TYPE_RANGE:
+            break;
+        case COMB_TYPE_SLICE:
+            break;
+        case COMB_TYPE_FUNC:
+            break;
+        case COMB_TYPE_ENUMTYPE:
+            break;
+        case COMB_TYPE_ENUMTYPE_ID:
+            break;
+        case COMB_TYPE_RECORD:
+            break;
+        case COMB_TYPE_RECORD_ID:
+            break;
+        case COMB_TYPE_TOUPLE:
+            {
+                param_list * list = expr_comb_list_to_param_list(value->touple.dims, result);
+                if (*result == TYPECHECK_SUCC)
+                {
+                    return param_new_touple(NULL, list);
+                }
+                else
+                {
+                    *result = TYPECHECK_FAIL;
+                    print_error_msg(value->line_no, "cannot convert touple type");
+                    return NULL;
+                }
+            }
+        case COMB_TYPE_MODULE:
+            break;
+    }
+
+    print_error_msg(value->line_no, "cannot convert %s", comb_type_str(value->comb.comb));
+    return NULL;
+}
+
+param_list * expr_comb_list_to_param_list(expr_list * list, int * result)
+{
+    param_list * ret = param_list_new();
+    expr_list_node * node = list->tail;
+
+    while (node != NULL)
+    {
+        expr * value = node->value;
+        if (value)
+        {
+            param * param_value = expr_comb_to_param(value, result);
+            param_list_add_end(ret, param_value);
+        }
+        node = node->next;
+    }
+
+    return ret;    
+}
+#endif
+
 int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                     int * result)
 {
@@ -3667,13 +3774,25 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         }
         else
         {
-            *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no, "list comprehension is not well formed");
         }
         break;
     case EXPR_ATTR:
         expr_attr_check_type(tab, value, func_value, syn_level, result);
+        break;
+    case EXPR_TOUPLE:
+        expr_list_check_type(tab, value->touple.dims, func_value, syn_level, result);
+        if (*result == TYPECHECK_SUCC)
+        {
+            value->comb.comb = COMB_TYPE_TOUPLE;
+            value->comb.touple.comb_dims =  value->touple.dims;
+        }
+        else
+        {
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "touple is not well formed");
+        }
         break;
     }
     return 0;

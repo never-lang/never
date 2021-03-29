@@ -49,7 +49,8 @@ typedef enum param_type
     PARAM_SLICE_DIM,
     PARAM_ENUMTYPE,
     PARAM_RECORD,
-    PARAM_FUNC
+    PARAM_FUNC,
+    PARAM_TOUPLE
 } param_type;
 
 typedef enum param_const_type
@@ -116,6 +117,7 @@ param * param_new_slice(char * id, range_list * ranges, param * ret);
 param * param_new_record(char * id, char * record_id);
 param * param_new_record_module(char * id, char * record_id, char * module_id);
 param * param_new_func(char * id, param_list * params, param * ret);
+param * param_new_touple(char * id, param_list * dims);
 void param_delete(param * value);
 
 int param_cmp(param * param_one, param * param_two, bool const_cmp);

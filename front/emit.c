@@ -3311,6 +3311,9 @@ int expr_emit(expr * value, int stack_level, module * module_value,
             assert(0);
         }
         break;
+    case EXPR_TOUPLE:
+            assert(0);
+        break;
     }
     return 0;
 }
@@ -4711,6 +4714,9 @@ unsigned int func_body_emit_ffi_param(param * value, module * module_value, int 
 
             ffi_rec->ffi_record.total_count = total_count;
         }
+        break;
+        case PARAM_TOUPLE:
+            assert(0);
         break;
         case PARAM_DIM:
         case PARAM_ARRAY:

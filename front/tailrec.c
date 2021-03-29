@@ -284,6 +284,11 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             expr_tailrec(syn_level, stab, value->attr.record_value, TAILREC_OP_SKIP);
         }
         break;
+    case EXPR_TOUPLE:
+        if (value->touple.dims != NULL)
+        {
+            expr_list_tailrec(syn_level, stab, value->touple.dims, TAILREC_OP_SKIP);
+        }
     }
 
     return 0;

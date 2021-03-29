@@ -506,6 +506,17 @@ expr * expr_new_attr(expr * record_value, expr * id)
     return ret;
 }
 
+expr * expr_new_touple(expr_list * dims)
+{
+    expr * ret = (expr *)malloc(sizeof(expr));
+
+    ret->type = EXPR_TOUPLE;
+    ret->touple.dims = dims;
+    ret->line_no = 0;
+
+    return ret;
+}
+
 comb_type conv_to_comb_type(conv_type conv)
 {
     switch (conv)
@@ -573,6 +584,7 @@ int comb_type_is_basic(comb_type comb)
         case COMB_TYPE_RECORD:
         case COMB_TYPE_RECORD_ID:
         case COMB_TYPE_MODULE:
+        case COMB_TYPE_TOUPLE:
             return 0;
         break;
         case COMB_TYPE_UNKNOWN:
@@ -800,6 +812,18 @@ void expr_delete(expr * value)
             expr_delete(value->attr.record_value);
         }
         break;
+    case EXPR_TOUPLE:
+        if (value->touple.dims)
+        {
+            expr_list_delete(value->touple.dims);
+        }
+#if 0 /* TODO: delete or something */
+        if (value->comb.comb == COMB_TYPE_TOUPLE &&
+            value->comb.touple.comb_dims != NULL)
+        {
+            param_list_delete(value->comb.touple.comb_dims);
+        }
+#endif
     }
     free(value);
 }
@@ -941,6 +965,7 @@ const char * expr_type_str(expr_type type)
     case EXPR_ATTR: return "attr";
     case EXPR_NIL: return "nil";
     case EXPR_C_NULL: return "c_null";
+    case EXPR_TOUPLE: return "touple";
     }
     
     return "unknown";
@@ -992,6 +1017,8 @@ const char * comb_type_str(comb_type type)
         return "record type";
     case COMB_TYPE_MODULE:
         return "module";
+    case COMB_TYPE_TOUPLE:
+        return "touple";
     }
     return "unknown comb type!";
 }

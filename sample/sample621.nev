@@ -1,0 +1,12 @@
+
+func t ( (int, float) ) -> (int, int)
+{
+    (0, 9)
+}
+
+func main() -> int
+{
+    t( (1, 'A') );
+    
+    0
+}

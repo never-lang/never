@@ -35,7 +35,7 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
     {
         case COMB_TYPE_ARRAY:
             value->type = FORIN_TYPE_ARRAY;
-            expr_set_comb_type(value->iter, value->in_value->comb.array.comb_ret);            
+            expr_set_comb_type(value->iter, value->in_value->comb.array.comb_ret);
 
             value->iter->comb.comb_const = value->in_value->comb.comb_const;
             value->iter->comb.comb_lr = COMB_LR_TYPE_LEFT;
@@ -77,6 +77,7 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
         case COMB_TYPE_RECORD:
         case COMB_TYPE_RECORD_ID:
         case COMB_TYPE_MODULE:
+        case COMB_TYPE_TOUPLE:
             print_error_msg(value->in_value->line_no,
                             "for in loop expression incorrect type %s",
                             comb_type_str(value->in_value->comb.comb));
