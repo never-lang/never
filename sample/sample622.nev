@@ -1,12 +1,12 @@
 
-func t ( (int, (int, char, float)) ) -> (int, (int) -> int)
+func t ( (int, (int, char, float)) ) -> (int, (string) -> int)
 {
-    (10, let func lambda (a : int) -> int { 2 * a })
+    (10, let func lambda (a : string) -> int { 20 }) : (int, (string) -> int)
 }
 
 func main() -> int
 {
-    t( (1, (30, 'A', 1.0)) );
+    t( (10, (30, 'A', 1.0) : (int, char, float)) : (int, (int, char, float)) );
     
     0
 }

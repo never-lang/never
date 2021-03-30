@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2018-2021 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,7 @@
 #include "iflet.h"
 #include "match.h"
 #include "forin.h"
+#include "touple.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -139,6 +140,7 @@ int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     param_value->type == PARAM_ENUMTYPE ||
                     param_value->type == PARAM_DIM ||
                     param_value->type == PARAM_ARRAY ||
+                    param_value->type == PARAM_TOUPLE ||
                     param_value->type == PARAM_RANGE ||
                     param_value->type == PARAM_RANGE_DIM ||
                     param_value->type == PARAM_SLICE ||
@@ -865,9 +867,9 @@ int func_gencode_freevars_expr(func * func_value, symtab * stab, expr * value, i
         }
         break;
     case EXPR_TOUPLE:
-        if (value->touple.dims != NULL)
+        if (value->touple_value != NULL)
         {
-            func_gencode_freevars_expr_list(func_value, stab, value->touple.dims, result);
+            func_gencode_freevars_expr_list(func_value, stab, value->touple_value->values, result);
         }
         break;
     }

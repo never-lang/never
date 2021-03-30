@@ -1,5 +1,5 @@
 /**
- * Copyright 2018-2020 Slawomir Maludzinski
+ * Copyright 2018-2021 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -100,6 +100,7 @@ int yyerror(module_decl ** module_nev, char * str)
 %type <val.param_value> param
 %type <val.param_list_value> param_list
 %type <val.param_list_value> param_seq
+%type <val.touple_value> touple;
 %type <val.array_value> array;
 %type <val.array_value> array_sub;
 %type <val.listcomp_value> listcomp
@@ -173,6 +174,7 @@ int yyerror(module_decl ** module_nev, char * str)
 %destructor { if ($$) seq_delete($$); } seq
 %destructor { if ($$) expr_delete($$); } expr_range_dim
 %destructor { if ($$) expr_list_delete($$); } expr_range_dim_list
+%destructor { if ($$) touple_delete($$); } touple
 %destructor { if ($$) array_delete($$); } array
 %destructor { if ($$) array_delete($$); } array_sub
 %destructor { if ($$) listcomp_delete($$); } listcomp
@@ -719,11 +721,17 @@ expr: expr TOK_DOT TOK_ID
     $$->line_no = $<line_no>1;
 };
 
-expr: '(' expr ',' expr_list ')'
+touple: '(' expr ',' expr_list ')' ':' '(' param_list ')'
 {
     expr_list_add_beg($4, $2);
-    
-    $$ = expr_new_touple($4);
+
+    $$ = touple_new($4, $8);
+    $$->line_no = $<line_no>1;
+};
+
+expr: touple
+{
+    $$ = expr_new_touple($1);
     $$->line_no = $<line_no>1;
 };
 

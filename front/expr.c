@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2018-2021 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,6 +21,7 @@
  */
 #include "expr.h"
 #include "seq.h"
+#include "touple.h"
 #include "array.h"
 #include "func.h"
 #include "listcomp.h"
@@ -506,12 +507,12 @@ expr * expr_new_attr(expr * record_value, expr * id)
     return ret;
 }
 
-expr * expr_new_touple(expr_list * dims)
+expr * expr_new_touple(touple * touple_value)
 {
     expr * ret = (expr *)malloc(sizeof(expr));
 
     ret->type = EXPR_TOUPLE;
-    ret->touple.dims = dims;
+    ret->touple_value = touple_value;
     ret->line_no = 0;
 
     return ret;
@@ -813,9 +814,9 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_TOUPLE:
-        if (value->touple.dims)
+        if (value->touple_value)
         {
-            expr_list_delete(value->touple.dims);
+            touple_delete(value->touple_value);
         }
 #if 0 /* TODO: delete or something */
         if (value->comb.comb == COMB_TYPE_TOUPLE &&

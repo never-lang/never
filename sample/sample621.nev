@@ -1,12 +1,12 @@
 
-func t ( (int, float) ) -> (int, int)
+func t ( a : (int, float) ) -> (int, float)
 {
-    (0, 9)
+    ((10, 10.0) : (int, float))
 }
 
 func main() -> int
 {
-    t( (1, 'A') );
+    t( (1, 2.0) : (int, float) );
     
     0
 }

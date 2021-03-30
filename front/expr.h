@@ -181,6 +181,7 @@ typedef struct match_guard_list match_guard_list;
 typedef struct freevar freevar;
 typedef struct param param;
 typedef struct module_decl module_decl;
+typedef struct touple touple;
 
 typedef struct expr_comb
 {
@@ -211,7 +212,7 @@ typedef struct expr_comb
         } func;
         struct
         {
-            struct expr_list * comb_dims;
+            struct param_list * comb_dims;
         } touple;
         struct record * comb_record;           /* record */ 
         struct enumtype * comb_enumtype;       /* enum */
@@ -335,10 +336,7 @@ typedef struct expr
         {
             struct bind * bind_value; /* EXPR_BIND */
         } bind;
-        struct
-        {
-            struct expr_list * dims;
-        } touple;
+        touple * touple_value;
     };
 } expr;
 
@@ -389,7 +387,7 @@ expr * expr_new_match(expr * expr_value, match_guard_list * match_guards);
 expr * expr_new_build_in(unsigned int id, expr_list * params, param * param_ret);
 expr * expr_new_listcomp(listcomp * listcomp_value);
 expr * expr_new_attr(expr * record_value, expr * id);
-expr * expr_new_touple(expr_list * dims);
+expr * expr_new_touple(touple * touple_value);
 
 comb_type conv_to_comb_type(conv_type conv);
 expr * expr_conv(expr * expr_value, conv_type conv);

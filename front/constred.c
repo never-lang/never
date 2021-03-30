@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2018-2021 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@
 #include "match.h"
 #include "forin.h"
 #include "seq.h"
+#include "touple.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -1835,9 +1836,9 @@ int expr_constred(expr * value, int * result)
         }
         break;
     case EXPR_TOUPLE:
-        if (value->touple.dims != NULL)
+        if (value->touple_value != NULL)
         {
-            
+            expr_list_constred(value->touple_value->values, result);
         }
         break;
     }

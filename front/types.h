@@ -22,6 +22,7 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
+#include "touple.h"
 #include "array.h"
 #include "dim.h"
 #include "range.h"
@@ -63,6 +64,7 @@ typedef union token_value {
     dim_list * dim_list_value;
     range * range_value;
     range_list * range_list_value;
+    touple * touple_value;
     array * array_value;
     listcomp * listcomp_value;
     qualifier * qualifier_value;

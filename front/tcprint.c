@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2018-2021 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 #include "match.h"
 #include "iflet.h"
 #include "forin.h"
+#include "touple.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -264,9 +265,9 @@ int print_func_expr(expr * value, int depth)
         print_func_attr(value, depth);
         break;
     case EXPR_TOUPLE:
-        if (value->touple.dims != NULL)
+        if (value->touple_value->dims != NULL)
         {
-            print_func_expr_list(value->touple.dims, depth);
+            print_func_expr_list(value->touple_value->values, depth);
         }
         break;
     }

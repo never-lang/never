@@ -1,5 +1,5 @@
 /**
- * Copyright 2018-2020 Slawomir Maludzinski
+ * Copyright 2018-2021 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,6 +34,7 @@
 #include "tcforin.h"
 #include "module_decl.h"
 #include "enumred.h"
+#include "touple.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -182,7 +183,7 @@ int expr_set_comb_type(expr * value, param * param_value)
         break;
         case PARAM_TOUPLE:
             value->comb.comb = COMB_TYPE_TOUPLE;
-            /* value->comb.touple.comb_dims = param_value->dims; */
+            value->comb.touple.comb_dims = param_value->dims;
         break;
     }
 
@@ -1017,7 +1018,7 @@ int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp)
     }
     else if (param_value->type == PARAM_TOUPLE && expr_value->comb.comb == COMB_TYPE_TOUPLE)
     {
-        return param_expr_list_cmp(param_value->dims, expr_value->comb.touple.comb_dims, false);
+        return param_list_cmp(param_value->dims, expr_value->comb.touple.comb_dims, false);
     }
     else
     {
@@ -3782,17 +3783,26 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         expr_attr_check_type(tab, value, func_value, syn_level, result);
         break;
     case EXPR_TOUPLE:
-        expr_list_check_type(tab, value->touple.dims, func_value, syn_level, result);
-        if (*result == TYPECHECK_SUCC)
-        {
-            value->comb.comb = COMB_TYPE_TOUPLE;
-            value->comb.touple.comb_dims =  value->touple.dims;
+        expr_list_check_type(tab, value->touple_value->values, func_value, syn_level, result);
+
+        if (value->touple_value->dims != NULL)
+        {   
+            param_list_check_type(tab, value->touple_value->dims, syn_level, false, PARAM_CONST_TYPE_VAR, result);
         }
-        else
+
+        if (*result == TYPECHECK_FAIL ||
+            param_expr_list_cmp(value->touple_value->dims, value->touple_value->values, false) == TYPECHECK_FAIL)
         {
+            *result = TYPECHECK_FAIL;
             value->comb.comb = COMB_TYPE_ERR;
             print_error_msg(value->line_no, "touple is not well formed");
         }
+        else
+        {
+            value->comb.comb = COMB_TYPE_TOUPLE;
+            value->comb.touple.comb_dims = value->touple_value->dims;
+        }
+
         break;
     }
     return 0;

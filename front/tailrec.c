@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Slawomir Maludzinski
+ * Copyright 2018-2021 Slawomir Maludzinski
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@
 #include "iflet.h"
 #include "match.h"
 #include "forin.h"
+#include "touple.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -285,9 +286,9 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
         }
         break;
     case EXPR_TOUPLE:
-        if (value->touple.dims != NULL)
+        if (value->touple_value != NULL)
         {
-            expr_list_tailrec(syn_level, stab, value->touple.dims, TAILREC_OP_SKIP);
+            expr_list_tailrec(syn_level, stab, value->touple_value->values, TAILREC_OP_SKIP);
         }
     }
 
