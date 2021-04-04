@@ -721,6 +721,15 @@ expr: expr TOK_DOT TOK_ID
     $$->line_no = $<line_no>1;
 };
 
+touple: '(' expr ',' ')' ':' '(' param_list ')'
+{
+    expr_list * expr_value = expr_list_new();
+    expr_list_add_beg(expr_value, $2);
+
+    $$ = touple_new(expr_value, $7);
+    $$->line_no = $<line_no>1;
+};
+
 touple: '(' expr ',' expr_list ')' ':' '(' param_list ')'
 {
     expr_list_add_beg($4, $2);

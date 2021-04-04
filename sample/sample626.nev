@@ -1,0 +1,15 @@
+
+func t1000( a : int, b : int ) -> int
+{
+    prints("func t1000(" + a + ", " + b + ")\n");
+    10
+}
+
+func main() -> int
+{
+    let p = (10, 10) : (int, int);
+
+    p |> t1000();
+
+    0
+}

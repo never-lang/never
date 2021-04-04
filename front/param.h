@@ -135,6 +135,7 @@ void param_list_add_beg(param_list * list, param * value);
 void param_list_add_end(param_list * list, param * value);
 
 param * param_list_find(param_list * list, char * id);
+param * param_list_get_nth(param_list * list, unsigned int index);
 
 void param_dim_set_array(param_list * dims, param * array);
 

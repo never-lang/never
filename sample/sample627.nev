@@ -1,0 +1,12 @@
+
+func t ( a : (int) ) -> (int)
+{
+    ((10,) : (int))
+}
+
+func main() -> int
+{
+    t( (1,) : (int) );
+    
+    0
+}

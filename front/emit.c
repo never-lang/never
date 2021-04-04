@@ -24,6 +24,7 @@
 #include "symtab.h"
 #include "iflet.h"
 #include "object.h"
+#include "touple.h"
 #include "match.h"
 #include "utils.h"
 #include <assert.h>
@@ -3016,6 +3017,28 @@ int expr_last_call_emit(expr * value, int stack_level, module * module_value,
     return 0;
 }
 
+int expr_touple_emit(expr * value, int stack_level, module * module_value,
+                     func_list_weak * list_weak, int * result)
+{
+    int count = -1;
+    bytecode bc = { 0 };
+
+    if (value->touple_value->values != NULL)
+    {
+        count = value->touple_value->values->count;
+        expr_list_emit(value->touple_value->values, stack_level, module_value,
+                       list_weak, result);
+    }
+
+    assert(count >= 0);
+
+    bc.type = BYTECODE_RECORD;
+    bc.record.count = count;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}                     
+
 int expr_record_emit(expr * value, int stack_level, module * module_value,
                      func_list_weak * list_weak, int * result)
 {
@@ -3190,6 +3213,10 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         {
             expr_array_deref_emit(value, stack_level, module_value, list_weak, result);
         }
+        else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_TOUPLE)
+        {
+            expr_touple_deref_emit(value, stack_level, module_value, list_weak, result);
+        }
         else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_RANGE)
         {
             expr_range_deref_emit(value, stack_level, module_value, list_weak, result);
@@ -3312,7 +3339,10 @@ int expr_emit(expr * value, int stack_level, module * module_value,
         }
         break;
     case EXPR_TOUPLE:
-            assert(0);
+        if (value->touple_value != NULL)
+        {
+            expr_touple_emit(value, stack_level, module_value, list_weak, result);
+        }
         break;
     }
     return 0;
@@ -4332,6 +4362,32 @@ int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
 
     return 0;
 }
+
+int expr_touple_deref_emit(expr * value, int stack_level, module * module_value,
+                           func_list_weak * list_weak, int * result)
+{
+    bytecode bc = { 0 };
+
+    expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
+    /* TODO: make it beautiful */
+    /* expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result); */
+
+    int index = -1;
+    index = value->array_deref.ref->tail->value->int_value;
+    assert(index != -1);
+
+    bc.type = BYTECODE_VECREF_VEC_DEREF;
+    bc.attr.stack_level = 0;
+    bc.attr.index = index;
+    bytecode_add(module_value->code, &bc);
+
+    bc.type = BYTECODE_SLIDE;
+    bc.slide.m = 1;
+    bc.slide.q = 1;
+    bytecode_add(module_value->code, &bc);
+
+    return 0;
+}                           
 
 int expr_range_deref_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result)

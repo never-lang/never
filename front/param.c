@@ -654,6 +654,30 @@ param * param_list_find(param_list * list, char * id)
     return ret;
 }
 
+param * param_list_get_nth(param_list * list, unsigned int index)
+{
+    if (list == NULL)
+    {
+        return NULL;
+    }
+
+    unsigned int i = 0;
+    param_list_node * node = list->tail;
+    for (i = 0; node != NULL && i < index; i++)
+    {
+        node = node->next;
+    }
+
+    if (node != NULL)
+    {
+        return node->value;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
 void param_dim_set_array(param_list * dims, param * array)
 {
     int index = 0;

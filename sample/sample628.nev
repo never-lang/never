@@ -1,0 +1,16 @@
+
+func print_two(a : float, b : int) -> int
+{
+    prints(a + " " + b + "\n");
+    0
+}
+
+func main() -> int
+{
+    let t = (10.0, 20, 30, 40) : (float, int, int, int);
+
+    print_two(t[0], t[1]);
+
+    0
+}
+

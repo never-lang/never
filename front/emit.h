@@ -243,12 +243,16 @@ int expr_array_emit(expr * value, int stack_level, module * module_value,
                     func_list_weak * list_weak, int * result);
 int expr_array_deref_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result);
+int expr_touple_deref_emit(expr * value, int stack_level, module * module_value,
+                           func_list_weak * list_weak, int * result);
 int expr_range_deref_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result);
 int expr_slice_deref_emit(expr * value, int stack_level, module * module_value,
                           func_list_weak * list_weak, int * result);
 int expr_string_deref_emit(expr * value, int stack_level, module * module_value,
                            func_list_weak * list_weak, int * result);
+int expr_touple_emit(expr * value, int stack_level, module * module_value,
+                     func_list_weak * list_weak, int * result);
 int expr_record_emit(expr * value, int stack_level, module * module_value,
                      func_list_weak * list_weak, int * result);
 int expr_enumtype_emit(expr * value, int stack_level, module * module_value, int * result);

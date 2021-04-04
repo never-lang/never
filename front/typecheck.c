@@ -2842,6 +2842,50 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
 
         }
     }
+    else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_TOUPLE)
+    {
+        if (value->array_deref.ref->count == 1)
+        {
+            if (value->array_deref.ref->tail != NULL &&
+                value->array_deref.ref->tail->value != NULL &&
+                value->array_deref.ref->tail->value->type == EXPR_INT)
+            {
+                int index = value->array_deref.ref->tail->value->int_value;
+                if (index >= 0 && index < (int)value->array_deref.array_expr->comb.touple.comb_dims->count)
+                {
+                    param * param_value = param_list_get_nth(value->array_deref.array_expr->comb.touple.comb_dims, (unsigned int)index);
+                    if (param_value != NULL)
+                    {
+                        expr_set_comb_type(value, param_value);
+                    }
+                    else
+                    {
+                        *result = TYPECHECK_FAIL;
+                        value->comb.comb = COMB_TYPE_ERR;
+                        print_error_msg(value->line_no, "touple cannot be dereferenced %u", index);
+                    }
+                }
+                else
+                {
+                    *result = TYPECHECK_FAIL;
+                    value->comb.comb = COMB_TYPE_ERR;
+                    print_error_msg(value->line_no, "touples index out of bounds %u", index);
+                }
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no, "touples can be dereferenced with int type only");
+            }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "touples can be dereferenced in 1 dimension only");
+        }
+    }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_RANGE)
     {
         if (value->array_deref.array_expr->comb.range.comb_dims == value->array_deref.ref->count)
