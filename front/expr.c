@@ -818,13 +818,6 @@ void expr_delete(expr * value)
         {
             touple_delete(value->touple_value);
         }
-#if 0 /* TODO: delete or something */
-        if (value->comb.comb == COMB_TYPE_TOUPLE &&
-            value->comb.touple.comb_dims != NULL)
-        {
-            param_list_delete(value->comb.touple.comb_dims);
-        }
-#endif
     }
     free(value);
 }
@@ -905,6 +898,16 @@ void expr_list_add_end(expr_list * list, expr * value)
         node->prev = list->head;
         list->head = node;
     }
+}
+
+expr * expr_list_get_first(expr_list * list)
+{
+    if (list == NULL || list->tail == NULL)
+    {
+        return NULL;
+    }
+
+    return list->tail->value;
 }
 
 const char * expr_type_str(expr_type type)

@@ -55,16 +55,12 @@ int param_expr_array_cmp(param * param_value, expr * expr_value);
 int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp);
 int param_expr_list_cmp(param_list * params, expr_list * list, bool const_cmp);
 int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_list * list, bool const_cmp);
+int param_list_param_list_expr_list_cmp(param_list * params, param_list * list_one, expr_list * list_two, bool const_cmp);
 
 int param_expr_cmp_init(param_const_type param_const, expr * expr_value);
 
 int expr_comb_is_enum(expr * value, int * result);
 int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result);
-
-#if 0 /* TODO: remove */
-param * expr_comb_to_param(expr * value, int * result);
-param_list * expr_comb_list_to_param_list(expr_list * list, int * result);
-#endif
 
 int symtab_entry_exists(symtab_entry * entry, unsigned int line_no);
 int symtab_add_param_from_basic_param(symtab * tab, param * param_value,

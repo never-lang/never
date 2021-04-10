@@ -404,6 +404,7 @@ void expr_list_delete(expr_list * list);
 
 void expr_list_add_beg(expr_list * list, expr * value);
 void expr_list_add_end(expr_list * list, expr * value);
+expr * expr_list_get_first(expr_list * list);
 
 const char * expr_type_str(expr_type type);
 const char * comb_type_str(comb_type type);

@@ -4369,11 +4369,12 @@ int expr_touple_deref_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
 
     expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
-    /* TODO: make it beautiful */
     /* expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result); */
 
-    int index = -1;
-    index = value->array_deref.ref->tail->value->int_value;
+    expr * expr_value = expr_list_get_first(value->array_deref.ref);
+    assert(expr_value != NULL);
+
+    int index = expr_value->int_value;
     assert(index != -1);
 
     bc.type = BYTECODE_VECREF_VEC_DEREF;

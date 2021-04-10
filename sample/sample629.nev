@@ -1,7 +1,7 @@
 
 func t1000( a : (int, int) ) -> int
 {
-    prints("func t1000\n");
+    prints("func t1000 " + a[0] + " " + a[1] + "\n");
     10
 }
 

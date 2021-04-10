@@ -72,7 +72,6 @@ typedef union token_value {
     bind * let_value;
     bind * var_value;
     bind * bind_value;
-    /* TODO: remove bind_list * bind_list_value; */
     iflet * iflet_value;
     match_guard_item * match_guard_item_value;
     match_guard_record * match_guard_record_value;
