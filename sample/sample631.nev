@@ -1,0 +1,34 @@
+
+
+func fst( t : (int, float) ) -> int
+{
+    prints("fst " + t[0] + "\n");
+    t[0]
+}
+
+func snd( t : (int, float) ) -> float
+{
+    prints("snd " + t[1] + "\n");
+    t[1]
+}
+
+func main() -> int
+{
+    let t1 = (10, 10.0) : (int, float);
+    let t2 = (20, 20.0) : (int, float);
+    let t3 = ( (30, 30.0) : (int, float), (40, 40.0) : (int, float) ) : ( (int, float), (int, float) );
+
+    assert(fst(t1) == 10);
+    assert(snd(t1) == 10.0);
+
+    assert(fst(t2) == 20);
+    assert(snd(t2) == 20.0);
+
+    assert(fst(t3[0]) == 30);
+    assert(snd(t3[0]) == 30.0);
+
+    assert(fst(t3[1]) == 40);
+    assert(snd(t3[1]) == 40.0);
+
+    0
+}

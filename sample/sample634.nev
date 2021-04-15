@@ -1,0 +1,17 @@
+
+
+func main() -> int
+{
+    var t1 = (10, 10.0) : (int, float);
+    var t2 = (20, 20.0) : (int, float);
+
+    t1 = t2;
+
+    assert(t1[0] == 20);
+    assert(t1[1] == 20.0);
+
+    assert(t2[0 + 0] == 20);
+    assert(t2[1 * 1] == 20.0);
+
+    0
+}

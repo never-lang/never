@@ -257,6 +257,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_VEC_DEREF, vm_execute_vec_deref },
     { BYTECODE_VECREF_DEREF, vm_execute_vecref_deref },
     { BYTECODE_VECREF_VEC_DEREF, vm_execute_vecref_vec_deref },
+    { BYTECODE_RECORD_UNPACK, vm_execute_record_unpack },
     { BYTECODE_NIL_RECORD_REF, vm_execute_nil_record_ref },
 
     { BYTECODE_FUNC_DEF, vm_execute_func_def },
@@ -2613,6 +2614,36 @@ void vm_execute_vecref_vec_deref(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_record_unpack(vm * machine, bytecode * code)
+{
+    mem_ptr record_value = machine->stack[machine->sp].addr;
+
+    unsigned int size = gc_get_vec_size(machine->collector, record_value);
+    if (code->record.count != size)
+    {
+        print_error_msg(machine->line_no, "record size out of bounds");
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_INDEX_OOB;
+        return;
+    }
+
+    unsigned int i = size;
+    for (i = size; i > 0; i--)
+    {
+        gc_stack entry = { 0 };
+        mem_ptr addr = gc_get_vec(machine->collector, record_value, size - i);
+
+        entry.type = GC_MEM_ADDR;
+        entry.addr = addr;
+
+        machine->stack[machine->sp + (i - 1)] = entry;
+    }
+
+    machine->sp += size - 1;
+
+    vm_check_stack(machine);
 }
 
 void vm_execute_nil_record_ref(vm * machine, bytecode * code)

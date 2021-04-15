@@ -782,3 +782,11 @@ void gc_stack_print(gc_stack * stack, int stack_size)
         }
     }
 }
+
+void gc_object_print(gc * collector, mem_ptr addr)
+{
+    printf("mem_size %u\n", collector->mem_size);
+    printf("addr %u\n", addr);
+
+    object_print(collector->mem[addr].object_value);
+}

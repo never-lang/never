@@ -1,0 +1,29 @@
+
+func printT( t : (int, float) ) -> (int, float)
+{
+    prints("(" + t[0] + ", " + t[1] + ")\n");
+    t
+}
+
+func main() -> int
+{
+    var t1 = [ (10, 10.0) : (int, float),
+               (20, 20.0) : (int, float),
+               (30, 30.0) : (int, float)  ] : (int, float);
+
+    for (t in t1)
+    {
+        printT(t)
+    };
+
+    assert(t1[0][0] == 10);
+    assert(t1[0][1] == 10.0);
+
+    assert(t1[1][0] == 20);
+    assert(t1[1][1] == 20.0);
+
+    assert(t1[2][0] == 30);
+    assert(t1[2][1] == 30.0);
+
+    0
+}

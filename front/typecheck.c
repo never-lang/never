@@ -35,6 +35,7 @@
 #include "module_decl.h"
 #include "enumred.h"
 #include "touple.h"
+#include "constred.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -767,6 +768,7 @@ int param_is_dynamic_array(param * value)
         value->type == PARAM_ARRAY ||
         value->type == PARAM_RANGE ||
         value->type == PARAM_SLICE ||
+        value->type == PARAM_TOUPLE ||
         value->type == PARAM_RECORD ||
         value->type == PARAM_FUNC)
     {
@@ -2664,6 +2666,13 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         value->comb.comb = COMB_TYPE_RECORD;
         value->comb.comb_record = value->left->comb.comb_record;
     }
+    else if (value->left->comb.comb == COMB_TYPE_TOUPLE &&
+             value->right->comb.comb == COMB_TYPE_TOUPLE &&
+             param_list_cmp(value->left->comb.touple.comb_dims, value->right->comb.touple.comb_dims, false) == PARAM_CMP_SUCC)
+    {
+        value->comb.comb = COMB_TYPE_TOUPLE;
+        value->comb.touple.comb_dims = value->left->comb.touple.comb_dims;
+    }
     else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
               value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
              value->right->comb.comb == COMB_TYPE_NIL)
@@ -2936,11 +2945,12 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
     {
         if (value->array_deref.ref->count == 1)
         {
-            if (value->array_deref.ref->tail != NULL &&
-                value->array_deref.ref->tail->value != NULL &&
-                value->array_deref.ref->tail->value->type == EXPR_INT)
+            expr * expr_ref = expr_list_get_first(value->array_deref.ref);
+            if (expr_ref != NULL &&
+                expr_constred(expr_ref, result) == CONSTRED_SUCC &&
+                expr_ref->type == EXPR_INT)
             {
-                int index = value->array_deref.ref->tail->value->int_value;
+                int index = expr_ref->int_value;
                 if (index >= 0 && index < (int)value->array_deref.array_expr->comb.touple.comb_dims->count)
                 {
                     param * param_value = param_list_get_nth(value->array_deref.array_expr->comb.touple.comb_dims, (unsigned int)index);

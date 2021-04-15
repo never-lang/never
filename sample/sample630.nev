@@ -1,15 +1,19 @@
 
+func getT() -> (int, int, char)
+{
+    prints("getT\n");
+    (10, 20, 'A') : (int, int, char)
+}
+
 func t1000( a : int, b : int, c : char ) -> int
 {
     prints("func t1000(" + a + ", " + b + ", " + c + ")\n");
-    10
+    100
 }
 
 func main() -> int
 {
-    let p = (10, 20) : (int, int);
-
-    p |> t1000('A');
+    getT() |> t1000() |> print();
 
     0
 }

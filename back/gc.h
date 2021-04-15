@@ -158,4 +158,6 @@ gc_stack * gc_stack_new(int stack_size);
 void gc_stack_delete(gc_stack * stack);
 void gc_stack_print(gc_stack * stack, int stack_size);
 
+void gc_object_print(gc * collector, mem_ptr addr);
+
 #endif /* __GC_H__ */

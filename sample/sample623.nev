@@ -6,7 +6,7 @@ func t ( a : (int, float), b : (int, int) ) -> (int, float)
 
 func main() -> int
 {
-    t( (1, 2.0) : (int, float) );
+    t( (1, 2.0) : (int, float), (10, 20) : (int, int) );
     
     0
 }

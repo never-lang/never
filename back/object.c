@@ -438,7 +438,7 @@ void object_print(object * obj)
         printf("object_unknown\n");
         break;
     case OBJECT_INT:
-        printf("object_int\n");
+        printf("object_int %d\n", obj->int_value);
         break;
     case OBJECT_LONG:
         printf("object_long\n");

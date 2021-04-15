@@ -1473,21 +1473,24 @@ int expr_pipel_call_emit(expr * value, int stack_level, module * module_value,
     mark = bytecode_add(module_value->code, &bc);
 
     int v = NUM_FRAME_PTRS;
-    expr_emit(value->left, stack_level + v++, module_value, list_weak, result);
-
     if (value->right->call.params != NULL)
     {
         expr_list_emit(value->right->call.params, stack_level + v, module_value, list_weak, result);
         v += value->right->call.params->count;
+    }
 
-        bc.type = BYTECODE_DUP;
-        bc.dup.n = value->right->call.params->count + 1;
+    expr_emit(value->left, stack_level + v++, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_TOUPLE)
+    {
+        bc.type = BYTECODE_VECREF_DEREF;
         bytecode_add(module_value->code, &bc);
 
-        bc.type = BYTECODE_SLIDE;
-        bc.slide.m = value->right->call.params->count + 1;
-        bc.slide.q = 1;
+        bc.type = BYTECODE_RECORD_UNPACK;
+        bc.record.count = value->left->comb.touple.comb_dims->count;
         bytecode_add(module_value->code, &bc);
+
+        v += value->left->comb.touple.comb_dims->count - 1;
     }
 
     expr_emit(value->right->call.func_expr, stack_level + v, module_value, list_weak, result);
@@ -1510,22 +1513,26 @@ int expr_pipel_last_call_emit(expr * value, int stack_level, module * module_val
 
     assert(value->right->type == EXPR_LAST_CALL);
 
-    expr_emit(value->left, stack_level + v++, module_value, list_weak, result);
-
     if (value->right->call.params != NULL)
     {
         expr_list_emit(value->right->call.params, stack_level + v, module_value, list_weak, result);
         v += value->right->call.params->count;
-
-        bc.type = BYTECODE_DUP;
-        bc.dup.n = value->right->call.params->count + 1;
-        bytecode_add(module_value->code, &bc);
-
-        bc.type = BYTECODE_SLIDE;
-        bc.slide.m = value->right->call.params->count + 1;
-        bc.slide.q = 1;
-        bytecode_add(module_value->code, &bc);
     }
+
+    expr_emit(value->left, stack_level + v++, module_value, list_weak, result);
+
+    if (value->left->comb.comb == COMB_TYPE_TOUPLE)
+    {
+        bc.type = BYTECODE_VECREF_DEREF;
+        bytecode_add(module_value->code, &bc);
+
+        bc.type = BYTECODE_RECORD_UNPACK;
+        bc.record.count = value->left->comb.touple.comb_dims->count;
+        bytecode_add(module_value->code, &bc);
+
+        v += value->left->comb.touple.comb_dims->count - 1;
+    }
+
     expr_emit(value->right->call.func_expr, stack_level + v, module_value, list_weak, result);
 
     bc.type = BYTECODE_SLIDE;
@@ -1853,6 +1860,10 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     else if (value->comb.comb == COMB_TYPE_FUNC)
     {
         bc.type = BYTECODE_OP_ASS_FUNC;
+    }
+    else if (value->comb.comb == COMB_TYPE_TOUPLE)
+    {
+        bc.type = BYTECODE_OP_ASS_RECORD;
     }
     else if (value->comb.comb == COMB_TYPE_RECORD)
     {
@@ -4253,6 +4264,10 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
         bc.type = BYTECODE_MK_ARRAY_RECORD;
     }
     else if (array_value->ret->type == PARAM_SLICE)
+    {
+        bc.type = BYTECODE_MK_ARRAY_RECORD;
+    }
+    else if (array_value->ret->type == PARAM_TOUPLE)
     {
         bc.type = BYTECODE_MK_ARRAY_RECORD;
     }

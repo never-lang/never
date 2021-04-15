@@ -248,6 +248,7 @@ bytecode_op_str bytecode_op[] = {
     { BYTECODE_VEC_DEREF, bytecode_print_vec_deref },
     { BYTECODE_VECREF_DEREF, bytecode_print_vecref_deref },
     { BYTECODE_VECREF_VEC_DEREF, bytecode_print_vecref_vec_deref },
+    { BYTECODE_RECORD_UNPACK, bytecode_print_record_unpack },
     { BYTECODE_NIL_RECORD_REF, bytecode_print_nil_record_ref },
 
     { BYTECODE_FUNC_DEF, bytecode_print_func_def },
@@ -1257,6 +1258,11 @@ void bytecode_print_vecref_vec_deref(bytecode * code)
 void bytecode_print_nil_record_ref(bytecode * code)
 {
     printf("%d: nil record ref\n", code->addr);
+}
+
+void bytecode_print_record_unpack(bytecode * code)
+{
+    printf("%d: record unpack %u\n", code->addr, code->record.count);
 }
 
 void bytecode_print_func_def(bytecode * code)

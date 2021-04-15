@@ -258,6 +258,7 @@ void vm_execute_record(vm * machine, bytecode * code);
 void vm_execute_vec_deref(vm * machine, bytecode * code);
 void vm_execute_vecref_deref(vm * machine, bytecode * code);
 void vm_execute_vecref_vec_deref(vm * machine, bytecode * code);
+void vm_execute_record_unpack(vm * machine, bytecode * code);
 void vm_execute_nil_record_ref(vm * machine, bytecode * code);
 
 void vm_execute_func_def(vm * machine, bytecode * code);
