@@ -669,6 +669,16 @@ int expr_eq_emit(expr * value, int stack_level, module * module_value,
     {
         bc.type = BYTECODE_OP_EQ_NIL_ARRAY;
     }
+    else if (value->left->comb.comb == COMB_TYPE_TOUPLE &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_EQ_RECORD_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_TOUPLE)
+    {
+        bc.type = BYTECODE_OP_EQ_NIL_RECORD;
+    }
     else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
               value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
               value->right->comb.comb == COMB_TYPE_NIL)
@@ -792,6 +802,16 @@ int expr_neq_emit(expr * value, int stack_level, module * module_value,
              value->right->comb.comb == COMB_TYPE_ARRAY)
     {
         bc.type = BYTECODE_OP_NEQ_NIL_ARRAY;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_TOUPLE &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_NEQ_RECORD_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_NIL &&
+             value->right->comb.comb == COMB_TYPE_TOUPLE)
+    {
+        bc.type = BYTECODE_OP_NEQ_NIL_RECORD;
     }
     else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
               value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
@@ -1798,6 +1818,11 @@ int expr_ass_emit(expr * value, int stack_level, module * module_value,
     if ((value->left->comb.comb == COMB_TYPE_RECORD ||
          value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
          value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        bc.type = BYTECODE_OP_ASS_RECORD_NIL;
+    }
+    else if (value->left->comb.comb == COMB_TYPE_TOUPLE &&
+             value->right->comb.comb == COMB_TYPE_NIL)
     {
         bc.type = BYTECODE_OP_ASS_RECORD_NIL;
     }

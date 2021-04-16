@@ -1344,6 +1344,12 @@ int expr_comb_cmp_and_set(expr * left, expr * right, expr * value, int * result)
         value->comb.comb = COMB_TYPE_ENUMTYPE;
         value->comb.comb_enumtype = left->comb.comb_enumtype;
     }
+    else if (left->comb.comb == COMB_TYPE_TOUPLE &&
+             right->comb.comb == COMB_TYPE_TOUPLE)
+    {
+        value->comb.comb = COMB_TYPE_TOUPLE;
+        value->comb.touple = left->comb.touple;
+    }
     else if ((left->comb.comb == COMB_TYPE_RECORD ||
               left->comb.comb == COMB_TYPE_RECORD_ID) &&
              (right->comb.comb == COMB_TYPE_RECORD ||
@@ -2673,9 +2679,15 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
         value->comb.comb = COMB_TYPE_TOUPLE;
         value->comb.touple.comb_dims = value->left->comb.touple.comb_dims;
     }
+    else if (value->left->comb.comb == COMB_TYPE_TOUPLE &&
+             value->right->comb.comb == COMB_TYPE_NIL)
+    {
+        value->comb.comb = COMB_TYPE_TOUPLE;
+        value->comb.touple.comb_dims = value->left->comb.touple.comb_dims;
+    }
     else if ((value->left->comb.comb == COMB_TYPE_RECORD ||
               value->left->comb.comb == COMB_TYPE_RECORD_ID) &&
-             value->right->comb.comb == COMB_TYPE_NIL)
+              value->right->comb.comb == COMB_TYPE_NIL)
     {
         value->comb.comb = COMB_TYPE_RECORD;
         value->comb.comb_record = value->left->comb.comb_record;
@@ -2791,6 +2803,13 @@ int expr_eq_check_type(symtab * tab, expr * value, func * func_value, unsigned i
               value->right->comb.comb == COMB_TYPE_NIL) ||
              (value->left->comb.comb == COMB_TYPE_NIL &&
               value->right->comb.comb == COMB_TYPE_ARRAY))
+    {
+        value->comb.comb = COMB_TYPE_BOOL;
+    }
+    else if ((value->left->comb.comb == COMB_TYPE_TOUPLE &&
+              value->right->comb.comb == COMB_TYPE_NIL) ||
+             (value->left->comb.comb == COMB_TYPE_NIL &&
+              value->right->comb.comb == COMB_TYPE_TOUPLE))
     {
         value->comb.comb = COMB_TYPE_BOOL;
     }
