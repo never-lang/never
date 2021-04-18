@@ -118,6 +118,18 @@ int expr_bin_op_check_type(symtab * tab, expr * value, func * func_value, unsign
 int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                         int * result);
 int expr_eq_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result);
+
+int expr_array_deref_array_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result);
+int expr_array_deref_touple_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result);
+int expr_array_deref_range_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result);
+int expr_array_deref_slice_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result);
+int expr_array_deref_string_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result);
+
 int expr_array_deref_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,
                                 int * result);
 int expr_slice_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level,

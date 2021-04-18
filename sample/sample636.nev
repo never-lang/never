@@ -8,17 +8,21 @@ func main() -> int
     print(((Index::Zero)));
     print(((Index::One + 0)));
     print(((Index::One + Index::Zero)));
+    print(Index::One + Index::Zero);
     print(Index::Two);
     print(Index::Three);
 
     print(t[((Index::Zero))]);
     print(t[((Index::One + 0))]);
     print(t[((Index::One + Index::Zero))]);
+    print(t[Index::One + Index::Zero]);
     print(t[Index::Two]);
     print(t[Index::Three]);
 
     assert(t[((Index::Zero))] == 10);
+    assert(t[((Index::One + 0))] == 20);
     assert(t[((Index::One + Index::Zero))] == 20);
+    assert(t[Index::One + Index::Zero] == 20);
     assert(t[Index::Two] == 30);
     assert(t[Index::Three] == 40);
 

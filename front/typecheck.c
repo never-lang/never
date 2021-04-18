@@ -265,7 +265,6 @@ int expr_set_comb_type_symtab(expr * value, symtab_entry * entry, unsigned int s
         case SYMTAB_MODULE_DECL:
             if (entry->module_decl_value != NULL)
             {
-                /* if (entry->module_decl_value && syn_level > 0) */
                 if (entry->module_decl_value && entry->module_decl_value->is_checked == 1)
                 {
                     value->comb.comb = COMB_TYPE_MODULE;
@@ -2917,6 +2916,225 @@ int array_dims_check_type_expr_list(symtab * tab, expr_list * list,
     return res;
 }
 
+int expr_array_deref_array_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result)
+{
+    if (value->array_deref.array_expr->comb.array.comb_dims == value->array_deref.ref->count)
+    {
+        if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
+                                            func_value, syn_level, result) == TYPECHECK_SUCC)
+        {
+            expr_set_comb_type(value,
+                                value->array_deref.array_expr->comb.array.comb_ret);
+
+            if (value->array_deref.array_expr->comb.comb_const == COMB_CONST_TYPE_CONST)
+            {
+                value->comb.comb_const = COMB_CONST_TYPE_CONST;
+            }
+            value->comb.comb_lr = COMB_LR_TYPE_LEFT;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "incorrect types of arguments passed to deref array");
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(
+            value->line_no,
+            "incorrect number of dimesions passed to deref array");
+
+    }
+
+    return 0;
+}                                    
+
+int expr_array_deref_touple_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result)
+{
+    if (value->array_deref.ref->count == 1)
+    {
+        expr * expr_ref = expr_list_get_first(value->array_deref.ref);
+        if (expr_ref != NULL &&
+            (expr_ref->comb.comb == COMB_TYPE_INT ||
+             expr_ref->comb.comb == COMB_TYPE_ENUMTYPE))
+        {
+            int index = -1;
+            char proper = false;
+            if (expr_ref->comb.comb == COMB_TYPE_INT)
+            {
+                if (expr_constred(expr_ref, result) == CONSTRED_SUCC && expr_ref->type == EXPR_INT)
+                {
+                    proper = true;
+                    index = expr_ref->int_value;
+                }
+            }
+            else if (expr_ref->comb.comb == COMB_TYPE_ENUMTYPE)
+            {
+                if (expr_constred(expr_ref, result) == CONSTRED_SUCC)
+                {
+                    if (expr_ref->type == EXPR_INT)
+                    {
+                        proper = true;
+                        index = expr_ref->int_value;
+                    }
+                    else if (expr_ref->type == EXPR_ENUMTYPE)
+                    {
+                        proper = true;
+                        index = expr_ref->enumtype.id_enumerator_value->index;
+                    }
+                }
+            }
+            int index_max = (int)value->array_deref.array_expr->comb.touple.comb_dims->count;
+            if (proper && index >= 0 && index < index_max)
+            {
+                param * param_value = param_list_get_nth(value->array_deref.array_expr->comb.touple.comb_dims, (unsigned int)index);
+                if (param_value != NULL)
+                {
+                    expr_set_comb_type(value, param_value);
+                }
+                else
+                {
+                    *result = TYPECHECK_FAIL;
+                    value->comb.comb = COMB_TYPE_ERR;
+                    print_error_msg(value->line_no, "touple cannot be dereferenced %u", index);
+                }
+            }
+            else if (proper)
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no, "touples index %d out of bounds [0..%d]", index, index_max - 1);
+            }
+            else
+            {
+                *result = TYPECHECK_FAIL;
+                value->comb.comb = COMB_TYPE_ERR;
+                print_error_msg(value->line_no, "touples index not proper");
+            }
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no, "touples can be dereferenced with int type only using %s", expr_ref != NULL ? comb_type_str(expr_ref->comb.comb) : "unknown");
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no, "touples can be dereferenced in 1 dimension only");
+    }
+
+    return 0;
+}
+
+int expr_array_deref_range_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result)
+{
+    if (value->array_deref.array_expr->comb.range.comb_dims == value->array_deref.ref->count)
+    {
+        if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
+                                            func_value, syn_level, result) == TYPECHECK_SUCC)
+        {
+            value->comb.comb = COMB_TYPE_ARRAY;
+            value->comb.range.comb_dims = 1;
+            value->comb.range.comb_ret = value->array_deref.array_expr->comb.range.comb_ret;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "incorrect types of arguments passed to deref range");
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "incorrect number of dimensions passed to deref range");
+    }
+
+    return 0;
+}
+
+int expr_array_deref_slice_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result)
+{
+    if (value->array_deref.array_expr->comb.slice.comb_dims == 
+        value->array_deref.ref->count)
+    {
+        if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
+                                            func_value, syn_level, result) == TYPECHECK_SUCC)
+        {
+            expr_set_comb_type(value, value->array_deref.array_expr->comb.slice.comb_ret);
+
+            if (value->array_deref.array_expr->comb.comb_const == COMB_CONST_TYPE_CONST)
+            {
+                value->comb.comb_const = COMB_CONST_TYPE_CONST;
+            }
+            value->comb.comb_lr = COMB_LR_TYPE_LEFT;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "incorrect types of arguments passed to deref slice");
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(value->line_no,
+                        "incorrect number of dimensions passed to deref slice");
+
+    }
+
+    return 0;
+}
+
+int expr_array_deref_string_check_type(symtab * tab, expr * value,
+                                      func * func_value, unsigned int syn_level, int * result)
+{
+    if (value->array_deref.ref->count == 1)
+    {
+        if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
+                                            func_value, syn_level, result) == TYPECHECK_SUCC)
+        {
+            value->comb.comb = COMB_TYPE_CHAR;
+            value->comb.comb_const = COMB_CONST_TYPE_CONST;
+            value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
+        }
+        else
+        {
+            *result = TYPECHECK_FAIL;
+            value->comb.comb = COMB_TYPE_ERR;
+            print_error_msg(value->line_no,
+                            "incorrect types to deref string");
+        }
+    }
+    else
+    {
+        *result = TYPECHECK_FAIL;
+        value->comb.comb = COMB_TYPE_ERR;
+        print_error_msg(
+            value->line_no,
+            "strings can be deref only using one dimesion");
+    }
+
+    return 0;
+}
+
 int expr_array_deref_check_type(symtab * tab, expr * value,
                                 func * func_value, unsigned int syn_level, int * result)
 {
@@ -2928,184 +3146,23 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
 
     if (value->array_deref.array_expr->comb.comb == COMB_TYPE_ARRAY)
     {
-        if (value->array_deref.array_expr->comb.array.comb_dims == value->array_deref.ref->count)
-        {
-            if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
-                                                func_value, syn_level, result) == TYPECHECK_SUCC)
-            {
-                expr_set_comb_type(value,
-                                   value->array_deref.array_expr->comb.array.comb_ret);
-
-                if (value->array_deref.array_expr->comb.comb_const == COMB_CONST_TYPE_CONST)
-                {
-                    value->comb.comb_const = COMB_CONST_TYPE_CONST;
-                }
-                value->comb.comb_lr = COMB_LR_TYPE_LEFT;
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no,
-                                "incorrect types of arguments passed to deref array");
-            }
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(
-                value->line_no,
-                "incorrect number of dimesions passed to deref array");
-
-        }
+        expr_array_deref_array_check_type(tab, value, func_value, syn_level, result);
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_TOUPLE)
     {
-        if (value->array_deref.ref->count == 1)
-        {
-            expr * expr_ref = expr_list_get_first(value->array_deref.ref);
-            if (expr_ref != NULL &&
-                (expr_ref->comb.comb == COMB_TYPE_INT ||
-                 expr_ref->comb.comb == COMB_TYPE_ENUMTYPE))
-            {
-                int index = -1;
-                if (expr_ref->comb.comb == COMB_TYPE_INT)
-                {
-                    if (expr_constred(expr_ref, result) == CONSTRED_SUCC && expr_ref->type == EXPR_INT)
-                    {
-                        index = expr_ref->int_value;
-                    }
-                }
-                else if (expr_ref->comb.comb == COMB_TYPE_ENUMTYPE)
-                {
-                    if (expr_enumred(expr_ref, result) == ENUMRED_SUCC && expr_ref->type == EXPR_INT)
-                    {
-                        index = expr_ref->int_value;
-                    }
-                }
-                if (index >= 0 && index < (int)value->array_deref.array_expr->comb.touple.comb_dims->count)
-                {
-                    param * param_value = param_list_get_nth(value->array_deref.array_expr->comb.touple.comb_dims, (unsigned int)index);
-                    if (param_value != NULL)
-                    {
-                        expr_set_comb_type(value, param_value);
-                    }
-                    else
-                    {
-                        *result = TYPECHECK_FAIL;
-                        value->comb.comb = COMB_TYPE_ERR;
-                        print_error_msg(value->line_no, "touple cannot be dereferenced %u", index);
-                    }
-                }
-                else
-                {
-                    *result = TYPECHECK_FAIL;
-                    value->comb.comb = COMB_TYPE_ERR;
-                    print_error_msg(value->line_no, "touples index out of bounds %u", index);
-                }
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no, "touples can be dereferenced with int type only using %s", expr_ref != NULL ? comb_type_str(expr_ref->comb.comb) : "unknown");
-            }
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no, "touples can be dereferenced in 1 dimension only");
-        }
+        expr_array_deref_touple_check_type(tab, value, func_value, syn_level, result);
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_RANGE)
     {
-        if (value->array_deref.array_expr->comb.range.comb_dims == value->array_deref.ref->count)
-        {
-            if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
-                                                func_value, syn_level, result) == TYPECHECK_SUCC)
-            {
-                value->comb.comb = COMB_TYPE_ARRAY;
-                value->comb.range.comb_dims = 1;
-                value->comb.range.comb_ret = value->array_deref.array_expr->comb.range.comb_ret;
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no,
-                                "incorrect types of arguments passed to deref range");
-            }
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to deref range");
-        }
+        expr_array_deref_range_check_type(tab, value, func_value, syn_level, result);
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_SLICE)
     {
-        if (value->array_deref.array_expr->comb.slice.comb_dims == 
-            value->array_deref.ref->count)
-        {
-            if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
-                                                func_value, syn_level, result) == TYPECHECK_SUCC)
-            {
-                expr_set_comb_type(value, value->array_deref.array_expr->comb.slice.comb_ret);
-
-                if (value->array_deref.array_expr->comb.comb_const == COMB_CONST_TYPE_CONST)
-                {
-                    value->comb.comb_const = COMB_CONST_TYPE_CONST;
-                }
-                value->comb.comb_lr = COMB_LR_TYPE_LEFT;
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no,
-                                "incorrect types of arguments passed to deref slice");
-            }
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(value->line_no,
-                            "incorrect number of dimensions passed to deref slice");
-
-        }
+        expr_array_deref_slice_check_type(tab, value, func_value, syn_level, result);
     }
     else if (value->array_deref.array_expr->comb.comb == COMB_TYPE_STRING)
     {
-        if (value->array_deref.ref->count == 1)
-        {
-            if (array_dims_check_type_expr_list(tab, value->array_deref.ref,
-                                                func_value, syn_level, result) == TYPECHECK_SUCC)
-            {
-                value->comb.comb = COMB_TYPE_CHAR;
-                value->comb.comb_const = COMB_CONST_TYPE_CONST;
-                value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
-            }
-            else
-            {
-                *result = TYPECHECK_FAIL;
-                value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no,
-                                "incorrect types to deref string");
-            }
-        }
-        else
-        {
-            *result = TYPECHECK_FAIL;
-            value->comb.comb = COMB_TYPE_ERR;
-            print_error_msg(
-                value->line_no,
-                "strings can be deref only using one dimesion");
-        }
+        expr_array_deref_string_check_type(tab, value, func_value, syn_level, result);
     }
     else
     {

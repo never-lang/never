@@ -36,12 +36,6 @@ typedef struct expr_list expr_list;
 
 int expr_enumerator_enumred(expr * value, int * result);
 int expr_enumred(expr * value, int * result);
-
-#if 0
-int use_enumred(use * value, int * result);
-int use_list_enumred(use_list * list, int * result);
-#endif
-
 int enumerator_index_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result);
 int enumerator_value_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result);
 int enumerator_record_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result);
@@ -52,6 +46,8 @@ int decl_enumred(decl * value, int * result);
 int decl_list_enumred(decl_list * list, int * result);
 
 #if 0
+int use_enumred(use * value, int * result);
+int use_list_enumred(use_list * list, int * result);
 int never_enumred(never * nev, int * result);
 int module_enumred(module_decl * value, int * result);
 #endif

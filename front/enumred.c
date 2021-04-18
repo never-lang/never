@@ -582,35 +582,6 @@ int expr_enumred(expr * value, int * result)
     return 0;
 }
 
-#if 0
-int use_enumred(use * value, int * result)
-{
-    if (value->decl != NULL &&
-        value->decl->type == MODULE_DECL_TYPE_MOD)
-    {
-        module_enumred(value->decl, result);
-    }
-
-    return 0;
-}
-
-int use_list_enumred(use_list * list, int * result)
-{
-    use_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        use * value = node->value;
-        if (value != NULL)
-        {
-            use_enumred(value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-#endif
-
 int enumerator_index_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
 {
     if (value->expr_value)
@@ -758,16 +729,43 @@ int decl_list_enumred(decl_list * list, int * result)
 }
 
 #if 0
+int use_enumred(use * value, int * result)
+{
+    if (value->decl != NULL &&
+        value->decl->type == MODULE_DECL_TYPE_MOD)
+    {
+        module_enumred(value->decl, result);
+    }
+
+    return 0;
+}
+
+int use_list_enumred(use_list * list, int * result)
+{
+    use_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        use * value = node->value;
+        if (value != NULL)
+        {
+            use_enumred(value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
 int never_enumred(never * nev, int * result)
 {
-    /*if (nev->uses)
+    if (nev->uses)
     {
         use_list_enumred(nev->uses, result);
     }
     if (nev->decls)
     {
         decl_list_enumred(nev->decls, result);
-    }*/
+    }
 
     return 0;
 }
