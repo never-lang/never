@@ -21,7 +21,6 @@
  */
 #include "constred.h"
 #include "enumred.h"
-#include "inttab.h"
 #include "strutil.h"
 #include "utils.h"
 #include "iflet.h"
@@ -1733,7 +1732,7 @@ int expr_constred(expr * value, int * result)
     case EXPR_ARRAY:
         if (value->array.array_value != NULL)
         {
-            array_constread(value->array.array_value, result);
+            array_constred(value->array.array_value, result);
         }
         break;
     case EXPR_ARRAY_DEREF:
@@ -1968,7 +1967,7 @@ int listcomp_constred(listcomp * value, int * result)
     return 0;
 }
 
-int array_constread(array * value, int * result)
+int array_constred(array * value, int * result)
 {
     if (value->elements != NULL)
     {
@@ -2055,189 +2054,8 @@ int func_constred(func * value, int * result)
     return 0;
 }
 
-int use_constred(use * value, int * result)
-{
-    if (value->decl != NULL &&
-        value->decl->type == MODULE_DECL_TYPE_MOD)
-    {
-        module_constred(value->decl, result);
-    }
-
-    return 0;
-}
-
-int use_list_constred(use_list * list, int * result)
-{
-    use_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        use * value = node->value;
-        if (value != NULL)
-        {
-            use_constred(value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int enumerator_index_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
-{
-    if (value->expr_value)
-    {
-        expr_enumred(value->expr_value, result);
-        if (value->expr_value->type == EXPR_INT)
-        {
-            value->index = value->expr_value->int_value;
-        }
-        else
-        {
-            *result = CONSTRED_FAIL;
-            print_error_msg(value->line_no, "could not reduce enumerator index to integer, is %s", expr_type_str(value->expr_value->type));
-            return 0;
-        }
-    }
-
-    return 0;
-}
-
-int enumerator_index_check_value(enumtype * enumtype_value, enumerator * value, int * result)
-{
-    inttab_entry * ientry = inttab_lookup(enumtype_value->itab, value->index);
-
-    if (ientry != NULL)
-    {
-        *result = CONSTRED_FAIL;
-        print_error_msg(value->line_no, "enumerator %s::%s = %d with same value as %s::%s at line %d",
-                                         enumtype_value->id, value->id,
-                                         value->index,
-                                         enumtype_value->id, ientry->enumerator_value->id,
-                                         ientry->enumerator_value->line_no);
-    }
-    else
-    {
-        inttab_add_enumerator(enumtype_value->itab, value->index, value);
-    }
-
-    return 0;
-}
-
-int enumerator_item_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
-{
-    enumerator_index_constred(enumtype_value, value, index, result);
-    enumerator_index_check_value(enumtype_value, value, result);
-
-    return 0;
-}
-
-int enumerator_value_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
-{
-    enumerator_index_constred(enumtype_value, value, index, result);
-    enumerator_index_check_value(enumtype_value, value, result);
-
-    return 0;
-}
-
-int enumerator_record_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
-{
-    enumerator_index_constred(enumtype_value, value, index, result);
-    enumerator_index_check_value(enumtype_value, value, result);
-
-    return 0;
-}
-
-int enumerator_constred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
-{
-    switch (value->type)
-    {
-        case ENUMERATOR_TYPE_ITEM:
-            enumerator_item_constred(enumtype_value, value, index, result);
-        break;
-        case ENUMERATOR_TYPE_VALUE:
-            enumerator_value_constred(enumtype_value, value, index, result);
-        break;
-        case ENUMERATOR_TYPE_RECORD:
-            enumerator_record_constred(enumtype_value, value, index, result);
-        break;
-    }
-
-    return 0;
-}
-
-int enumerator_list_constred(enumtype * enumtype_value, enumerator_list * list, int * result)
-{
-    int index = 0;
-
-    enumerator_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        enumerator * enumerator_value = node->value;
-        if (enumerator_value != NULL)
-        {
-            enumerator_constred(enumtype_value, enumerator_value, &index, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
-int enumtype_constred(enumtype * value, int * result)
-{
-    if (value->enums)
-    {
-        enumerator_list_constred(value, value->enums, result);
-    }
-
-    return 0;
-}
-
-int decl_constred(decl * value, int * result)
-{
-    switch (value->type)
-    {
-        case DECL_TYPE_ENUMTYPE:
-        {
-            if (value->enumtype_value != NULL)
-            {
-                enumtype_constred(value->enumtype_value, result);
-            }
-        }
-        break;
-        case DECL_TYPE_RECORD:
-        break;
-    }
-
-    return 0;
-}
-
-int decl_list_constred(decl_list * list, int * result)
-{
-    decl_list_node * node = list->tail;
-    while (node != NULL)
-    {
-        decl * value = node->value;
-        if (value != NULL)
-        {
-            decl_constred(value, result);
-        }
-        node = node->next;
-    }
-
-    return 0;
-}
-
 int never_constred(never * nev, int * result)
 {
-    if (nev->uses)
-    {
-        use_list_constred(nev->uses, result);
-    }
-    if (nev->decls)
-    {
-        decl_list_constred(nev->decls, result);
-    }
     if (nev->exprs)
     {
         seq_list_constred(nev->exprs, result);
@@ -2255,4 +2073,3 @@ int module_constred(module_decl * value, int * result)
 
     return 0;
 }
-

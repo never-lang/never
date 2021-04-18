@@ -4409,22 +4409,9 @@ int expr_touple_deref_emit(expr * value, int stack_level, module * module_value,
     bytecode bc = { 0 };
 
     expr_emit(value->array_deref.array_expr, stack_level, module_value, list_weak, result);
-    /* expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result); */
+    expr_list_emit(value->array_deref.ref, stack_level + 1, module_value, list_weak, result);
 
-    expr * expr_value = expr_list_get_first(value->array_deref.ref);
-    assert(expr_value != NULL);
-
-    int index = expr_value->int_value;
-    assert(index != -1);
-
-    bc.type = BYTECODE_VECREF_VEC_DEREF;
-    bc.attr.stack_level = 0;
-    bc.attr.index = index;
-    bytecode_add(module_value->code, &bc);
-
-    bc.type = BYTECODE_SLIDE;
-    bc.slide.m = 1;
-    bc.slide.q = 1;
+    bc.type = BYTECODE_VECREF_VEC_INDEX_DEREF;
     bytecode_add(module_value->code, &bc);
 
     return 0;

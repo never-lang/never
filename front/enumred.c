@@ -27,12 +27,13 @@
 #include "typecheck.h"
 #include "strutil.h"
 #include "utils.h"
+#include "inttab.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
 
-int enumerator_enumred(expr * value, int * result)
+int expr_enumerator_enumred(expr * value, int * result)
 {
     enumerator * enumerator_value = value->enumtype.id_enumerator_value;
 
@@ -105,7 +106,7 @@ int expr_enumred(expr * value, int * result)
     /* cannot be reduced */
     break;
     case EXPR_ENUMTYPE:
-        enumerator_enumred(value, result);
+        expr_enumerator_enumred(value, result);
     break;
     case EXPR_NEG:
         expr_enumred(value->left, result);
@@ -580,3 +581,204 @@ int expr_enumred(expr * value, int * result)
     }
     return 0;
 }
+
+#if 0
+int use_enumred(use * value, int * result)
+{
+    if (value->decl != NULL &&
+        value->decl->type == MODULE_DECL_TYPE_MOD)
+    {
+        module_enumred(value->decl, result);
+    }
+
+    return 0;
+}
+
+int use_list_enumred(use_list * list, int * result)
+{
+    use_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        use * value = node->value;
+        if (value != NULL)
+        {
+            use_enumred(value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+#endif
+
+int enumerator_index_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    if (value->expr_value)
+    {
+        expr_enumred(value->expr_value, result);
+        if (value->expr_value->type == EXPR_INT)
+        {
+            value->index = value->expr_value->int_value;
+        }
+        else
+        {
+            *result = ENUMRED_FAIL;
+            print_error_msg(value->line_no, "could not reduce enumerator index to integer, is %s", expr_type_str(value->expr_value->type));
+            return 0;
+        }
+    }
+
+    return 0;
+}
+
+int enumerator_index_check_value(enumtype * enumtype_value, enumerator * value, int * result)
+{
+    inttab_entry * ientry = inttab_lookup(enumtype_value->itab, value->index);
+
+    if (ientry != NULL)
+    {
+        *result = ENUMRED_FAIL;
+        print_error_msg(value->line_no, "enumerator %s::%s = %d with same value as %s::%s at line %d",
+                                         enumtype_value->id, value->id,
+                                         value->index,
+                                         enumtype_value->id, ientry->enumerator_value->id,
+                                         ientry->enumerator_value->line_no);
+    }
+    else
+    {
+        inttab_add_enumerator(enumtype_value->itab, value->index, value);
+    }
+
+    return 0;
+}
+
+int enumerator_item_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    enumerator_index_enumred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
+    return 0;
+}
+
+int enumerator_value_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    enumerator_index_enumred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
+    return 0;
+}
+
+int enumerator_record_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    enumerator_index_enumred(enumtype_value, value, index, result);
+    enumerator_index_check_value(enumtype_value, value, result);
+
+    return 0;
+}
+
+int enumerator_enumred(enumtype * enumtype_value, enumerator * value, int * index, int * result)
+{
+    switch (value->type)
+    {
+        case ENUMERATOR_TYPE_ITEM:
+            enumerator_item_enumred(enumtype_value, value, index, result);
+        break;
+        case ENUMERATOR_TYPE_VALUE:
+            enumerator_value_enumred(enumtype_value, value, index, result);
+        break;
+        case ENUMERATOR_TYPE_RECORD:
+            enumerator_record_enumred(enumtype_value, value, index, result);
+        break;
+    }
+
+    return 0;
+}
+
+int enumerator_list_enumred(enumtype * enumtype_value, enumerator_list * list, int * result)
+{
+    int index = 0;
+
+    enumerator_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        enumerator * enumerator_value = node->value;
+        if (enumerator_value != NULL)
+        {
+            enumerator_enumred(enumtype_value, enumerator_value, &index, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+int enumtype_enumred(enumtype * value, int * result)
+{
+    if (value->enums)
+    {
+        enumerator_list_enumred(value, value->enums, result);
+    }
+
+    return 0;
+}
+
+int decl_enumred(decl * value, int * result)
+{
+    switch (value->type)
+    {
+        case DECL_TYPE_ENUMTYPE:
+        {
+            if (value->enumtype_value != NULL)
+            {
+                enumtype_enumred(value->enumtype_value, result);
+            }
+        }
+        break;
+        case DECL_TYPE_RECORD:
+        break;
+    }
+
+    return 0;
+}
+
+int decl_list_enumred(decl_list * list, int * result)
+{
+    decl_list_node * node = list->tail;
+    while (node != NULL)
+    {
+        decl * value = node->value;
+        if (value != NULL)
+        {
+            decl_enumred(value, result);
+        }
+        node = node->next;
+    }
+
+    return 0;
+}
+
+#if 0
+int never_enumred(never * nev, int * result)
+{
+    /*if (nev->uses)
+    {
+        use_list_enumred(nev->uses, result);
+    }
+    if (nev->decls)
+    {
+        decl_list_enumred(nev->decls, result);
+    }*/
+
+    return 0;
+}
+
+int module_enumred(module_decl * value, int * result)
+{
+    if (value->nev != NULL)
+    {
+        never_enumred(value->nev, result);
+    }
+
+    return 0;
+}
+#endif

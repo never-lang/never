@@ -257,6 +257,7 @@ vm_execute_str vm_execute_op[] = {
     { BYTECODE_VEC_DEREF, vm_execute_vec_deref },
     { BYTECODE_VECREF_DEREF, vm_execute_vecref_deref },
     { BYTECODE_VECREF_VEC_DEREF, vm_execute_vecref_vec_deref },
+    { BYTECODE_VECREF_VEC_INDEX_DEREF, vm_execute_vecref_vec_index_deref },
     { BYTECODE_RECORD_UNPACK, vm_execute_record_unpack },
     { BYTECODE_NIL_RECORD_REF, vm_execute_nil_record_ref },
 
@@ -2614,6 +2615,40 @@ void vm_execute_vecref_vec_deref(vm * machine, bytecode * code)
     entry.addr = addr;
 
     machine->stack[machine->sp] = entry;
+}
+
+void vm_execute_vecref_vec_index_deref(vm * machine, bytecode * code)
+{
+    gc_stack entry = { 0 };
+
+    int index = gc_get_int(machine->collector, machine->stack[machine->sp].addr);
+
+    mem_ptr record_ref = machine->stack[machine->sp - 1].addr;
+    mem_ptr record_value = gc_get_vec_ref(machine->collector, record_ref);
+    if (record_value == nil_ptr)
+    {
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NIL_POINTER;
+        return;
+    }
+
+    unsigned int size = gc_get_vec_size(machine->collector, record_value);
+    if (index >= (int)size)
+    {
+        print_error_msg(machine->line_no, "touple index out of bounds");
+        machine->running = VM_EXCEPTION;
+        machine->exception = EXCEPT_NO_INDEX_OOB;
+        return;
+    }
+
+    mem_ptr addr =
+        gc_get_vec(machine->collector, record_value, index);
+
+    entry.type = GC_MEM_ADDR;
+    entry.addr = addr;
+
+    machine->stack[machine->sp - 1] = entry;
+    machine->sp--;
 }
 
 void vm_execute_record_unpack(vm * machine, bytecode * code)

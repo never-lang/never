@@ -2966,10 +2966,24 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
         {
             expr * expr_ref = expr_list_get_first(value->array_deref.ref);
             if (expr_ref != NULL &&
-                expr_constred(expr_ref, result) == CONSTRED_SUCC &&
-                expr_ref->type == EXPR_INT)
+                (expr_ref->comb.comb == COMB_TYPE_INT ||
+                 expr_ref->comb.comb == COMB_TYPE_ENUMTYPE))
             {
-                int index = expr_ref->int_value;
+                int index = -1;
+                if (expr_ref->comb.comb == COMB_TYPE_INT)
+                {
+                    if (expr_constred(expr_ref, result) == CONSTRED_SUCC && expr_ref->type == EXPR_INT)
+                    {
+                        index = expr_ref->int_value;
+                    }
+                }
+                else if (expr_ref->comb.comb == COMB_TYPE_ENUMTYPE)
+                {
+                    if (expr_enumred(expr_ref, result) == ENUMRED_SUCC && expr_ref->type == EXPR_INT)
+                    {
+                        index = expr_ref->int_value;
+                    }
+                }
                 if (index >= 0 && index < (int)value->array_deref.array_expr->comb.touple.comb_dims->count)
                 {
                     param * param_value = param_list_get_nth(value->array_deref.array_expr->comb.touple.comb_dims, (unsigned int)index);
@@ -2995,7 +3009,7 @@ int expr_array_deref_check_type(symtab * tab, expr * value,
             {
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no, "touples can be dereferenced with int type only");
+                print_error_msg(value->line_no, "touples can be dereferenced with int type only using %s", expr_ref != NULL ? comb_type_str(expr_ref->comb.comb) : "unknown");
             }
         }
         else
@@ -4813,6 +4827,7 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
     {
         /* check decls */
         decl_list_check_type(nev->stab, nev->decls, result);
+        decl_list_enumred(nev->decls, result);
     }
 
     if (nev->exprs != NULL)

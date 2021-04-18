@@ -248,6 +248,7 @@ typedef enum bytecode_type
     BYTECODE_VEC_DEREF,
     BYTECODE_VECREF_DEREF,
     BYTECODE_VECREF_VEC_DEREF,
+    BYTECODE_VECREF_VEC_INDEX_DEREF,
     BYTECODE_RECORD_UNPACK,
     BYTECODE_NIL_RECORD_REF,
 
@@ -678,6 +679,7 @@ void bytecode_print_record(bytecode * code);
 void bytecode_print_vec_deref(bytecode * code);
 void bytecode_print_vecref_deref(bytecode * code);
 void bytecode_print_vecref_vec_deref(bytecode * code);
+void bytecode_print_vecref_vec_index_deref(bytecode * code);
 void bytecode_print_record_unpack(bytecode * code);
 void bytecode_print_nil_record_ref(bytecode * code);
 

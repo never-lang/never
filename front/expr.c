@@ -596,6 +596,18 @@ int comb_type_is_basic(comb_type comb)
     return 0;
 }
 
+void expr_delete_enumtype(expr * value)
+{
+    if (value->enumtype.enum_id != NULL)
+    {
+        expr_delete(value->enumtype.enum_id);
+    }
+    if (value->enumtype.item_id != NULL)
+    {
+        free(value->enumtype.item_id);
+    }
+}
+
 void expr_delete(expr * value)
 {
     switch (value->type)
@@ -616,14 +628,7 @@ void expr_delete(expr * value)
         }
         break;
     case EXPR_ENUMTYPE:
-        if (value->enumtype.enum_id != NULL)
-        {
-            expr_delete(value->enumtype.enum_id);
-        }
-        if (value->enumtype.item_id != NULL)
-        {
-            free(value->enumtype.item_id);
-        }
+        expr_delete_enumtype(value);
         break;
     case EXPR_ID:
         free(value->id.id);

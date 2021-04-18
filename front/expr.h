@@ -395,6 +395,7 @@ expr * expr_conv(expr * expr_value, conv_type conv);
 int comb_type_is_basic(comb_type comb);
 
 void expr_delete(expr * value);
+void expr_delete_enumtype(expr * value);
 
 expr_list_node * expr_list_node_new(expr * value);
 void expr_list_node_delete(expr_list_node * node);
