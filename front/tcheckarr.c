@@ -214,6 +214,8 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
 
         if (value->array.array_value->dims != NULL)
         {
+            expr_list_check_type(tab, value->array.array_value->dims,
+                                 func_value, syn_level, result);
             array_dims_check_type_expr_list(tab, value->array.array_value->dims,
                                             func_value, syn_level, result);
         }

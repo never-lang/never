@@ -2870,7 +2870,6 @@ int array_dims_check_type_expr(symtab * tab, expr * value, func * func_value, un
 {
     int res = TYPECHECK_SUCC;
 
-    expr_check_type(tab, value, func_value, syn_level, result);
     if (value->comb.comb == COMB_TYPE_INT)
     {
         /* OK */
@@ -2925,7 +2924,7 @@ int expr_array_deref_array_check_type(symtab * tab, expr * value,
                                             func_value, syn_level, result) == TYPECHECK_SUCC)
         {
             expr_set_comb_type(value,
-                                value->array_deref.array_expr->comb.array.comb_ret);
+                               value->array_deref.array_expr->comb.array.comb_ret);
 
             if (value->array_deref.array_expr->comb.comb_const == COMB_CONST_TYPE_CONST)
             {
