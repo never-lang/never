@@ -3014,7 +3014,7 @@ int expr_array_deref_touple_check_type(symtab * tab, expr * value,
             {
                 *result = TYPECHECK_FAIL;
                 value->comb.comb = COMB_TYPE_ERR;
-                print_error_msg(value->line_no, "touples index not proper");
+                print_error_msg(value->line_no, "touples index not proper its type is %s", expr_ref != NULL ? expr_type_str(expr_ref->type) : "unknown");
             }
         }
         else
