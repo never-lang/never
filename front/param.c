@@ -35,8 +35,6 @@ param * param_new_bool(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
     
     return value;
@@ -50,8 +48,6 @@ param * param_new_int(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
 
     return value;
@@ -65,8 +61,6 @@ param * param_new_long(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
 
     return value;
@@ -80,8 +74,6 @@ param * param_new_float(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
 
     return value;
@@ -95,8 +87,6 @@ param * param_new_double(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
 
     return value;
@@ -110,8 +100,6 @@ param * param_new_char(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
     
     return value;
@@ -125,8 +113,6 @@ param * param_new_string(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
 
     return value;
@@ -140,8 +126,6 @@ param * param_new_void(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = NULL;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
 
     return value;
@@ -155,8 +139,6 @@ param * param_new_c_ptr(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = NULL;
-    value->ret = NULL;
     value->line_no = 0;
 
     return value;
@@ -170,8 +152,8 @@ param * param_new_dim(char * id)
     value->const_type = PARAM_CONST_TYPE_CONST;
     value->index = -1;
     value->id = id;
-    value->array = NULL;
-    value->ret = NULL;
+    value->array_dim.array = NULL;
+    /* TODO: check value->ret = NULL; */
     value->line_no = 0;
 
     return value;
@@ -185,13 +167,13 @@ param * param_new_array(char * id, param_list * dims, param * ret)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->dims = dims;
-    value->ret = ret;
+    value->array.dims = dims;
+    value->array.ret = ret;
     value->line_no = 0;
 
     if (dims != NULL)
     {
-        param_dim_set_array(dims, value);
+        param_dim_set_array(value->array.dims, value);
     }
 
     return value;
@@ -205,14 +187,14 @@ param * param_new_range(char * id, range_list * ranges)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->ranges = ranges;
+    value->range.ranges = ranges;
     value->line_no = 0;
 
-    value->ret = param_new_int(NULL);
+    value->range.ret = param_new_int(NULL);
 
-    if (value->ranges != NULL)
+    if (value->range.ranges != NULL)
     {
-        range_dim_set_range(value->ranges, value);
+        range_dim_set_range(value->range.ranges, value);
     }
 
     return value;
@@ -226,7 +208,6 @@ param * param_new_range_dim(char * id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->ret = NULL;
     value->line_no = 0;
 
     return value;
@@ -240,13 +221,13 @@ param * param_new_slice(char * id, range_list * ranges, param * ret)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->ranges = ranges;
-    value->ret = ret;
+    value->slice.ranges = ranges;
+    value->slice.ret = ret;
     value->line_no = 0;
 
-    if (value->ranges != NULL)
+    if (value->slice.ranges != NULL)
     {
-        range_dim_set_slice(value->ranges, value);
+        range_dim_set_slice(value->slice.ranges, value);
     }
 
     return value;
@@ -260,10 +241,9 @@ param * param_new_record(char * id, char * record_id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->record_id = record_id;
-    value->module_id = NULL;
-    value->record_value = NULL;
-    value->ret = NULL;
+    value->record.record_id = record_id;
+    value->record.module_id = NULL;
+    value->record.record_value = NULL;
     value->line_no = 0;
 
     return value;
@@ -277,10 +257,9 @@ param * param_new_record_module(char * id, char * record_id, char * module_id)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->record_id = record_id;
-    value->module_id = module_id;
-    value->record_value = NULL;
-    value->ret = NULL;
+    value->record.record_id = record_id;
+    value->record.module_id = module_id;
+    value->record.record_value = NULL;
     value->line_no = 0;
 
     return value;
@@ -294,8 +273,8 @@ param * param_new_func(char * id, param_list * params, param * ret)
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->index = -1;
     value->id = id;
-    value->params = params;
-    value->ret = ret;
+    value->func.params = params;
+    value->func.ret = ret;
     value->line_no = 0;
 
     return value;
@@ -308,8 +287,7 @@ param * param_new_touple(char * id, param_list * dims)
     value->type = PARAM_TOUPLE;
     value->const_type = PARAM_CONST_TYPE_UNKNOWN;
     value->id = id;
-    value->dims = dims;
-    value->ret = NULL;
+    value->touple.dims = dims;
     value->line_no = 0;
 
     return value;
@@ -338,46 +316,62 @@ void param_delete(param * value)
         case PARAM_SLICE_DIM:
         break;
         case PARAM_ARRAY:
-            if (value->dims != NULL)
+            if (value->array.dims != NULL)
             {
-                param_list_delete(value->dims);
+                param_list_delete(value->array.dims);
+            }
+            if (value->array.ret != NULL)
+            {
+                param_delete(value->array.ret);
             }
         break;
         case PARAM_RANGE:
-        case PARAM_SLICE:
-            if (value->ranges != NULL)
+            if (value->range.ranges != NULL)
             {
-                range_list_delete(value->ranges);
+                range_list_delete(value->range.ranges);
+            }
+            if (value->array.ret != NULL)
+            {
+                param_delete(value->array.ret);
+            }
+        break;
+        case PARAM_SLICE:
+            if (value->slice.ranges != NULL)
+            {
+                range_list_delete(value->slice.ranges);
+            }
+            if (value->array.ret != NULL)
+            {
+                param_delete(value->array.ret);
             }
         break;
         case PARAM_ENUMTYPE:
         case PARAM_RECORD:
-            if (value->record_id)
+            if (value->record.record_id)
             {
-                free(value->record_id);
+                free(value->record.record_id);
             }
-            if (value->module_id)
+            if (value->record.module_id)
             {
-                free(value->module_id);
+                free(value->record.module_id);
             }
         break;
         case PARAM_FUNC:
-            if (value->params != NULL)
+            if (value->func.params != NULL)
             {
-                param_list_delete(value->params);
+                param_list_delete(value->func.params);
+            }
+            if (value->func.ret != NULL)
+            {
+                param_delete(value->func.ret);
             }
         break;
         case PARAM_TOUPLE:
-            if (value->dims != NULL)
+            if (value->touple.dims != NULL)
             {
-                param_list_delete(value->dims);
+                param_list_delete(value->touple.dims);
             }
         break;
-    }
-
-    if (value->ret)
-    {
-        param_delete(value->ret);
     }
 
     free(value);
@@ -429,8 +423,8 @@ int param_cmp(param * param_one, param * param_two, bool const_cmp)
     }
     else if (param_one->type == PARAM_ARRAY && param_two->type == PARAM_ARRAY)
     {
-        if ((param_one->dims->count == param_two->dims->count) &&
-            (param_cmp(param_one->ret, param_two->ret, false) == PARAM_CMP_SUCC))
+        if ((param_one->array.dims->count == param_two->array.dims->count) &&
+            (param_cmp(param_one->array.ret, param_two->array.ret, false) == PARAM_CMP_SUCC))
         {
             return PARAM_CMP_SUCC;
         }
@@ -441,7 +435,7 @@ int param_cmp(param * param_one, param * param_two, bool const_cmp)
     }
     else if (param_one->type == PARAM_RANGE && param_two->type == PARAM_RANGE)
     {
-        if (param_one->ranges->count == param_two->ranges->count)        
+        if (param_one->range.ranges->count == param_two->range.ranges->count)
         {
             return PARAM_CMP_SUCC;
         }
@@ -456,8 +450,8 @@ int param_cmp(param * param_one, param * param_two, bool const_cmp)
     }
     else if (param_one->type == PARAM_SLICE && param_two->type == PARAM_SLICE)
     {
-        if ((param_one->ranges->count == param_two->ranges->count) &&
-            (param_cmp(param_one->ret, param_two->ret, false) == PARAM_CMP_SUCC))
+        if ((param_one->range.ranges->count == param_two->range.ranges->count) &&
+            (param_cmp(param_one->range.ret, param_two->range.ret, false) == PARAM_CMP_SUCC))
         {
             return PARAM_CMP_SUCC;
         }
@@ -468,7 +462,7 @@ int param_cmp(param * param_one, param * param_two, bool const_cmp)
     }
     else if (param_one->type == PARAM_ENUMTYPE && param_two->type == PARAM_ENUMTYPE)
     {
-        if (param_one->enumtype_value == param_two->enumtype_value)
+        if (param_one->record.enumtype_value == param_two->record.enumtype_value)
         {
             return PARAM_CMP_SUCC;
         }
@@ -479,7 +473,7 @@ int param_cmp(param * param_one, param * param_two, bool const_cmp)
     }
     else if (param_one->type == PARAM_RECORD && param_two->type == PARAM_RECORD)
     {
-         if (param_one->record_value == param_two->record_value)
+         if (param_one->record.record_value == param_two->record.record_value)
          {
              return PARAM_CMP_SUCC;
          }
@@ -490,12 +484,12 @@ int param_cmp(param * param_one, param * param_two, bool const_cmp)
     }
     else if (param_one->type == PARAM_FUNC && param_two->type == PARAM_FUNC)
     {
-        return func_cmp(param_one->params, param_one->ret, param_two->params,
-                        param_one->ret, const_cmp);
+        return func_cmp(param_one->func.params, param_one->func.ret,
+                        param_two->func.params, param_one->func.ret, const_cmp);
     }
     else if (param_one->type == PARAM_TOUPLE && param_two->type == PARAM_TOUPLE)
     {
-        return param_list_cmp(param_one->dims, param_two->dims, false);
+        return param_list_cmp(param_one->touple.dims, param_two->touple.dims, false);
     }
     else
     {
@@ -688,7 +682,7 @@ void param_dim_set_array(param_list * dims, param * array)
         if (value != NULL)
         {
             value->index = index++;
-            value->array = array;
+            value->array_dim.array = array;
         }
         node = node->next;
     }
@@ -701,7 +695,6 @@ void param_print(param * value)
 
     printf("param %s %d %s\n", param_type_str(value->type), value->index,
            value->id);
-    param_print(value->ret);
 }
 
 void param_list_print(param_list * list)

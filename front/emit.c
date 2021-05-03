@@ -147,20 +147,20 @@ int func_freevar_id_local_emit(freevar * value, int stack_level,
     {
         bc.type = BYTECODE_ID_DIM_LOCAL;
         bc.id_dim_local.stack_level = stack_level;
-        bc.id_dim_local.index = value->src.param_value->array->index;
+        bc.id_dim_local.index = value->src.param_value->array_dim.array->index;
         bc.id_dim_local.dim_index = value->src.param_value->index;
     }
     else if (value->src.param_value->type == PARAM_RANGE_DIM)
     {
         bc.type = BYTECODE_VECREF_VEC_DEREF;
-        bc.attr.stack_level = stack_level - value->src.param_value->range->index;
+        bc.attr.stack_level = stack_level - value->src.param_value->range_dim.range->index;
         bc.attr.index = value->src.param_value->index;
     }
     else if (value->src.param_value->type == PARAM_SLICE_DIM)
     {
         bc.type = BYTECODE_ID_DIM_SLICE;
         bc.id_dim_slice.stack_level = stack_level;
-        bc.id_dim_slice.index = value->src.param_value->slice->index;
+        bc.id_dim_slice.index = value->src.param_value->slice_dim.slice->index;
         bc.id_dim_slice.dim_index = value->src.param_value->index;
     }
     else
@@ -302,20 +302,20 @@ int expr_id_local_emit(expr * value, int stack_level, module * module_value,
     {
         bc.type = BYTECODE_ID_DIM_LOCAL;
         bc.id_dim_local.stack_level = stack_level;
-        bc.id_dim_local.index = value->id.id_param_value->array->index;
+        bc.id_dim_local.index = value->id.id_param_value->array_dim.array->index;
         bc.id_dim_local.dim_index = value->id.id_param_value->index;
     }
     else if (value->id.id_param_value->type == PARAM_RANGE_DIM)
     {
         bc.type = BYTECODE_VECREF_VEC_DEREF;
-        bc.attr.stack_level = stack_level - value->id.id_param_value->range->index;
+        bc.attr.stack_level = stack_level - value->id.id_param_value->range_dim.range->index;
         bc.attr.index = value->id.id_param_value->index;
     }
     else if (value->id.id_param_value->type == PARAM_SLICE_DIM)
     {
         bc.type = BYTECODE_ID_DIM_SLICE;
         bc.id_dim_slice.stack_level = stack_level;
-        bc.id_dim_slice.index = value->id.id_param_value->slice->index;
+        bc.id_dim_slice.index = value->id.id_param_value->slice_dim.slice->index;
         bc.id_dim_slice.dim_index = value->id.id_param_value->index;
     }
     else
@@ -4270,7 +4270,7 @@ int array_dims_emit(array * array_value, int stack_level, module * module_value,
     }
     else if (array_value->ret->type == PARAM_ENUMTYPE)
     {
-        switch (array_value->ret->enumtype_value->type)
+        switch (array_value->ret->record.enumtype_value->type)
         {
             case ENUMTYPE_TYPE_ITEM:
                 bc.type = BYTECODE_MK_ARRAY_INT;
@@ -4505,7 +4505,7 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
         dim_index = value->attr.id->id.id_param_value->index;
         assert(dim_index != -1);
 
-        array_index = value->attr.id->id.id_param_value->array->index;
+        array_index = value->attr.id->id.id_param_value->array_dim.array->index;
         assert(array_index != -1);
 
         bc.type = BYTECODE_VECREF_VEC_DEREF;
@@ -4529,7 +4529,7 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
         index = value->attr.id->id.id_param_value->index;
         assert(index != -1);
 
-        range_index = value->attr.id->id.id_param_value->range->index;
+        range_index = value->attr.id->id.id_param_value->range_dim.range->index;
         assert(range_index != -1);
 
         bc.type = BYTECODE_VECREF_VEC_DEREF;
@@ -4549,7 +4549,7 @@ int expr_record_attr_emit(expr * value, int stack_level, module * module_value,
         int dim_index = -1;
         int slice_index = -1;
 
-        slice_index = value->attr.id->id.id_param_value->slice->index;
+        slice_index = value->attr.id->id.id_param_value->slice_dim.slice->index;
         assert(slice_index != -1);
 
         dim_index = value->attr.id->id.id_param_value->index;
@@ -4781,19 +4781,19 @@ unsigned int func_body_emit_ffi_param(param * value, module * module_value, int 
         {
             bytecode * ffi_rec;
             bc.type = BYTECODE_FUNC_FFI_RECORD;
-            bc.ffi_record.count = value->record_value->params->count;
+            bc.ffi_record.count = value->record.record_value->params->count;
             ffi_rec = bytecode_add(module_value->code, &bc);
 
-            if (value->record_value->cycle == 0)
+            if (value->record.record_value->cycle == 0)
             {
-                value->record_value->cycle = 1;
-                total_count = 1 + func_body_emit_ffi_param_list(value->record_value->params, module_value, result);
-                value->record_value->cycle = 0;
+                value->record.record_value->cycle = 1;
+                total_count = 1 + func_body_emit_ffi_param_list(value->record.record_value->params, module_value, result);
+                value->record.record_value->cycle = 0;
             }
             else
             {
                 *result = EMIT_FAIL;
-                print_error_msg(value->line_no, "cannot generate ffi code for infinite records %s\n", value->record_value->id);
+                print_error_msg(value->line_no, "cannot generate ffi code for infinite records %s\n", value->record.record_value->id);
             }
 
             ffi_rec->ffi_record.total_count = total_count;

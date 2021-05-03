@@ -140,7 +140,7 @@ void range_dim_set_range(range_list * list, param * range_value)
             {
                 value->from->type = PARAM_RANGE_DIM;
                 value->from->index = index;
-                value->from->range = range_value;
+                value->from->range_dim.range = range_value;
             }
             index++;
 
@@ -148,7 +148,7 @@ void range_dim_set_range(range_list * list, param * range_value)
             {
                 value->to->type = PARAM_RANGE_DIM;
                 value->to->index = index;
-                value->to->range = range_value;
+                value->to->range_dim.range = range_value;
             }
             index++;
         }
@@ -170,7 +170,7 @@ void range_dim_set_slice(range_list * list, param * slice_value)
             {
                 value->from->type = PARAM_SLICE_DIM;
                 value->from->index = index;
-                value->from->slice = slice_value;
+                value->from->slice_dim.slice = slice_value;
             }
             index++;
 
@@ -178,7 +178,7 @@ void range_dim_set_slice(range_list * list, param * slice_value)
             {
                 value->to->type = PARAM_SLICE_DIM;
                 value->to->index = index;
-                value->to->slice = slice_value;
+                value->to->slice_dim.slice = slice_value;
             }
             index++;
         }

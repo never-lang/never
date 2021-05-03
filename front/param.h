@@ -67,12 +67,30 @@ typedef struct param
     int index;
     char * id;
     union {
-        struct param * array;
-        struct param * range;
-        struct param * slice;
-        struct param_list * params;
-        struct param_list * dims;
-        struct range_list * ranges;
+        struct {
+            struct param_list * dims;
+            struct param * ret;
+        } array;
+        struct {
+            struct param * array;
+        } array_dim;
+        struct {
+            struct range_list * ranges;
+            struct param * ret;
+        } range;
+        struct {
+            struct param * range;
+        } range_dim;
+        struct {
+            struct range_list * ranges;
+            struct param * ret;
+        } slice;
+        struct {
+            struct param * slice;
+        } slice_dim;
+        struct {
+            struct param_list * dims;
+        } touple;
         struct {
             char * record_id;
             char * module_id;
@@ -80,9 +98,12 @@ typedef struct param
                 struct record * record_value;
                 struct enumtype * enumtype_value;
             };
-        };
+        } record;
+        struct {
+            struct param_list * params;
+            struct param * ret;
+        } func;
     };
-    struct param * ret;
     unsigned int line_no;
 } param;
 
