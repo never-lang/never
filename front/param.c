@@ -724,43 +724,43 @@ char * param_type_str(param_type type)
     switch (type)
     {
     case PARAM_BOOL:
-        return "param bool";
+        return "bool";
     case PARAM_INT:
-        return "param int";
+        return "int";
     case PARAM_LONG:
-        return "param long";
+        return "long";
     case PARAM_FLOAT:
-        return "param float";
+        return "float";
     case PARAM_DOUBLE:
-        return "param double";
+        return "double";
     case PARAM_ENUMTYPE:
-        return "param enumtype";
+        return "enumtype";
     case PARAM_CHAR:
-        return "param char";
+        return "char";
     case PARAM_STRING:
-        return "param string";
+        return "string";
     case PARAM_VOID:
-        return "param void";
+        return "void";
     case PARAM_C_PTR:
-        return "param c_ptr";
+        return "c_ptr";
     case PARAM_RECORD:
-        return "param record";
+        return "record";
     case PARAM_DIM:
-        return "param dim";
+        return "dim";
     case PARAM_RANGE_DIM:
-        return "param range dim";
+        return "range dim";
     case PARAM_ARRAY:
-        return "param array";
+        return "array";
     case PARAM_RANGE:
-        return "param range";
+        return "range";
     case PARAM_SLICE:
-        return "param slice";
+        return "slice";
     case PARAM_SLICE_DIM:
-        return "param slice dim";
+        return "slice dim";
     case PARAM_FUNC:
-        return "param func";
+        return "func";
     case PARAM_TOUPLE:
-        return "param touple";
+        return "touple";
     }
-    return "unknown param";
+    return "unknown";
 }

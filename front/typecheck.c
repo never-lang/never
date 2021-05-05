@@ -1023,6 +1023,22 @@ int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp)
     }
     else
     {
+        if (param_value->id != NULL)
+        {
+            print_error_msg(expr_value->line_no, "expected param %s : %s in line %d but got %s instead",
+                                                 param_value->id,
+                                                 param_type_str(param_value->type),
+                                                 param_value->line_no,
+                                                 comb_type_str(expr_value->comb.comb));
+        }
+        else
+        {
+            print_error_msg(expr_value->line_no, "expected param %s in line %d but got %s instead",
+                                                 param_type_str(param_value->type),
+                                                 param_value->line_no,
+                                                 comb_type_str(expr_value->comb.comb));
+        }
+
         return TYPECHECK_FAIL;
     }
 

@@ -1,0 +1,12 @@
+
+func F1(s : string, a : int) -> int
+{
+    10
+}
+
+func main() -> int
+{
+    print(F1( "ala", 100));
+    0
+}
+
