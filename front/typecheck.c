@@ -137,7 +137,7 @@ int expr_set_comb_type(expr * value, param * param_value)
         break;
         case PARAM_ENUMTYPE:
             value->comb.comb = COMB_TYPE_ENUMTYPE;
-            value->comb.comb_enumtype = param_value->enumtype_value;
+            value->comb.comb_enumtype = param_value->record.enumtype_value;
         break;
         case PARAM_CHAR:
             value->comb.comb = COMB_TYPE_CHAR;
@@ -156,13 +156,13 @@ int expr_set_comb_type(expr * value, param * param_value)
         break;
         case PARAM_ARRAY:
             value->comb.comb = COMB_TYPE_ARRAY;
-            value->comb.array.comb_dims = param_value->dims->count;
-            value->comb.array.comb_ret = param_value->ret;
+            value->comb.array.comb_dims = param_value->array.dims->count;
+            value->comb.array.comb_ret = param_value->array.ret;
         break;
         case PARAM_RANGE:
             value->comb.comb = COMB_TYPE_RANGE;
-            value->comb.range.comb_dims = param_value->ranges->count;
-            value->comb.range.comb_ret = param_value->ret;
+            value->comb.range.comb_dims = param_value->range.ranges->count;
+            value->comb.range.comb_ret = param_value->range.ret;
         break;
         case PARAM_SLICE_DIM:
         case PARAM_RANGE_DIM:
@@ -170,21 +170,21 @@ int expr_set_comb_type(expr * value, param * param_value)
         break;
         case PARAM_SLICE:
             value->comb.comb = COMB_TYPE_SLICE;
-            value->comb.slice.comb_dims = param_value->ranges->count;
-            value->comb.slice.comb_ret = param_value->ret;
+            value->comb.slice.comb_dims = param_value->slice.ranges->count;
+            value->comb.slice.comb_ret = param_value->slice.ret;
         break;
         case PARAM_RECORD:
             value->comb.comb = COMB_TYPE_RECORD;
-            value->comb.comb_record = param_value->record_value;
+            value->comb.comb_record = param_value->record.record_value;
         break;
         case PARAM_FUNC:
             value->comb.comb = COMB_TYPE_FUNC;
-            value->comb.func.comb_params = param_value->params;
-            value->comb.func.comb_ret = param_value->ret;
+            value->comb.func.comb_params = param_value->func.params;
+            value->comb.func.comb_ret = param_value->func.ret;
         break;
         case PARAM_TOUPLE:
             value->comb.comb = COMB_TYPE_TOUPLE;
-            value->comb.touple.comb_dims = param_value->dims;
+            value->comb.touple.comb_dims = param_value->touple.dims;
         break;
     }
 
@@ -779,16 +779,16 @@ int param_is_dynamic_array(param * value)
 
 int param_expr_array_cmp(param * param_value, expr * expr_value)
 {
-    if (param_value->dims->count != expr_value->comb.array.comb_dims)
+    if (param_value->array.dims->count != expr_value->comb.array.comb_dims)
     {
         return TYPECHECK_FAIL;
     }
-    return param_cmp(param_value->ret, expr_value->comb.array.comb_ret, false);
+    return param_cmp(param_value->array.ret, expr_value->comb.array.comb_ret, false);
 }
 
 int param_expr_range_cmp(param * param_value, expr * expr_value)
 {
-    if (param_value->ranges->count == expr_value->comb.range.comb_dims)
+    if (param_value->range.ranges->count == expr_value->comb.range.comb_dims)
     {
         return TYPECHECK_SUCC;
     }
@@ -797,11 +797,11 @@ int param_expr_range_cmp(param * param_value, expr * expr_value)
 
 int param_expr_slice_cmp(param * param_value, expr * expr_value)
 {
-    if (param_value->ranges->count != expr_value->comb.slice.comb_dims)
+    if (param_value->slice.ranges->count != expr_value->comb.slice.comb_dims)
     {
         return TYPECHECK_FAIL;
     }
-    return param_cmp(param_value->ret, expr_value->comb.slice.comb_ret, false);
+    return param_cmp(param_value->slice.ret, expr_value->comb.slice.comb_ret, false);
 }
 
 int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp)
@@ -984,7 +984,7 @@ int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp)
             (expr_value->comb.comb == COMB_TYPE_RECORD ||
              expr_value->comb.comb == COMB_TYPE_RECORD_ID))
     {
-        if (param_value->record_value == expr_value->comb.comb_record)
+        if (param_value->record.record_value == expr_value->comb.comb_record)
         {
             return TYPECHECK_SUCC;
         }
@@ -995,7 +995,7 @@ int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp)
     }
     else if (param_value->type == PARAM_ENUMTYPE && expr_value->comb.comb == COMB_TYPE_ENUMTYPE)
     {
-        if (param_value->enumtype_value == expr_value->comb.comb_enumtype)
+        if (param_value->record.enumtype_value == expr_value->comb.comb_enumtype)
         {
             return TYPECHECK_SUCC;
         }
@@ -1014,12 +1014,12 @@ int param_expr_cmp(param * param_value, expr * expr_value, bool const_cmp)
     }
     else if (param_value->type == PARAM_FUNC && expr_value->comb.comb == COMB_TYPE_FUNC)
     {
-        return func_cmp(param_value->params, param_value->ret, expr_value->comb.func.comb_params,
-                        expr_value->comb.func.comb_ret, true);
+        return func_cmp(param_value->func.params, param_value->func.ret,
+                        expr_value->comb.func.comb_params, expr_value->comb.func.comb_ret, true);
     }
     else if (param_value->type == PARAM_TOUPLE && expr_value->comb.comb == COMB_TYPE_TOUPLE)
     {
-        return param_list_cmp(param_value->dims, expr_value->comb.touple.comb_dims, false);
+        return param_list_cmp(param_value->touple.dims, expr_value->comb.touple.comb_dims, false);
     }
     else
     {
@@ -1506,17 +1506,17 @@ int symtab_add_param_from_param(symtab * tab, param * param_value,
     if (param_value->type == PARAM_ARRAY)
     {
         symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
-        symtab_add_param_from_param_list(tab, param_value->dims, syn_level, result);
+        symtab_add_param_from_param_list(tab, param_value->array.dims, syn_level, result);
     }
     else if (param_value->type == PARAM_SLICE)
     {
         symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
-        symtab_add_param_from_range_list(tab, param_value->ranges, syn_level, result);
+        symtab_add_param_from_range_list(tab, param_value->slice.ranges, syn_level, result);
     }
     else if (param_value->type == PARAM_RANGE)
     {
         symtab_add_param_from_basic_param(tab, param_value, syn_level, result);
-        symtab_add_param_from_range_list(tab, param_value->ranges, syn_level, result);
+        symtab_add_param_from_range_list(tab, param_value->range.ranges, syn_level, result);
     }
     else
     {
@@ -1625,10 +1625,10 @@ int symtab_add_func_from_func(symtab * tab, func * func_value,
 int param_enum_record_check_type(symtab * tab, param * param_value,
                                  unsigned int syn_level, int * result)
 {
-    if (param_value->module_id != NULL)
+    if (param_value->record.module_id != NULL)
     {
         symtab_entry * mentry = NULL;
-        mentry = symtab_lookup(tab, param_value->module_id, SYMTAB_LOOKUP_GLOBAL);
+        mentry = symtab_lookup(tab, param_value->record.module_id, SYMTAB_LOOKUP_GLOBAL);
         if (mentry != NULL &&
             mentry->type == SYMTAB_MODULE_DECL &&
             mentry->module_decl_value->nev != NULL)
@@ -1638,35 +1638,35 @@ int param_enum_record_check_type(symtab * tab, param * param_value,
         else
         {
             *result = TYPECHECK_FAIL;
-            param_value->record_value = NULL;
+            param_value->record.record_value = NULL;
             
-            print_error_msg(param_value->line_no, "cannot find module %s", param_value->module_id);
+            print_error_msg(param_value->line_no, "cannot find module %s", param_value->record.module_id);
         }
     }
 
     symtab_entry * entry = NULL;
-    entry = symtab_lookup(tab, param_value->record_id, SYMTAB_LOOKUP_GLOBAL);
+    entry = symtab_lookup(tab, param_value->record.record_id, SYMTAB_LOOKUP_GLOBAL);
     if (entry == NULL)
     {
         *result = TYPECHECK_FAIL;
-        param_value->record_value = NULL;
+        param_value->record.record_value = NULL;
 
         print_error_msg(param_value->line_no, "cannot find record or enum %s",
-                        param_value->record_id);
+                        param_value->record.record_id);
     }
     else if (entry->type == SYMTAB_RECORD)
     {
-        param_value->record_value = entry->record_value; 
+        param_value->record.record_value = entry->record_value; 
     }
     else if (entry->type == SYMTAB_ENUMTYPE)
     {
         param_value->type = PARAM_ENUMTYPE;
-        param_value->enumtype_value = entry->enumtype_value;
+        param_value->record.enumtype_value = entry->enumtype_value;
     }
     else
     {
         *result = TYPECHECK_FAIL;
-        param_value->record_value = NULL;
+        param_value->record.record_value = NULL;
 
         print_error_msg(param_value->line_no, "expected record or enum but %s found",
                         symtab_entry_type_str(entry->type));
@@ -1804,55 +1804,55 @@ int param_check_type(symtab * tab, param * param_value,
         case PARAM_DIM:
         break;
         case PARAM_ARRAY:
-            if (param_value->dims != NULL)
+            if (param_value->array.dims != NULL)
             {
-                param_list_check_type(tab, param_value->dims, syn_level, false, PARAM_CONST_TYPE_CONST, result);
+                param_list_check_type(tab, param_value->array.dims, syn_level, false, PARAM_CONST_TYPE_CONST, result);
             }
-            if (param_value->ret != NULL)
+            if (param_value->array.ret != NULL)
             {
-                param_check_type(tab, param_value->ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
+                param_check_type(tab, param_value->array.ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
             }
         break;
         case PARAM_RANGE:
-            if (param_value->ranges != NULL)
+            if (param_value->range.ranges != NULL)
             {
-                param_range_list_check_type(tab, param_value->ranges, syn_level, change_const_allowed, param_value->const_type, result);
+                param_range_list_check_type(tab, param_value->range.ranges, syn_level, change_const_allowed, param_value->const_type, result);
             }
-            if (param_value->ret != NULL)
+            if (param_value->range.ret != NULL)
             {
-                param_check_type(tab, param_value->ret, syn_level, change_const_allowed, param_value->const_type, result);
+                param_check_type(tab, param_value->range.ret, syn_level, change_const_allowed, param_value->const_type, result);
             }
         break;
         case PARAM_RANGE_DIM:
         case PARAM_SLICE_DIM:
         break;
         case PARAM_SLICE:
-            if (param_value->ranges != NULL)
+            if (param_value->slice.ranges != NULL)
             {
-                param_range_list_check_type(tab, param_value->ranges, syn_level, false, PARAM_CONST_TYPE_CONST, result);
+                param_range_list_check_type(tab, param_value->slice.ranges, syn_level, false, PARAM_CONST_TYPE_CONST, result);
             }
-            if (param_value->ret != NULL)
+            if (param_value->slice.ret != NULL)
             {
-                param_check_type(tab, param_value->ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
+                param_check_type(tab, param_value->slice.ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
             }
         break;
         case PARAM_RECORD:
             param_enum_record_check_type(tab, param_value, syn_level, result);
         break;
         case PARAM_FUNC:
-            if (param_value->params != NULL)
+            if (param_value->func.params != NULL)
             {
-                param_list_check_type(tab, param_value->params, syn_level, true, PARAM_CONST_TYPE_CONST, result);
+                param_list_check_type(tab, param_value->func.params, syn_level, true, PARAM_CONST_TYPE_CONST, result);
             }
-            if (param_value->ret != NULL)
+            if (param_value->func.ret != NULL)
             {
-                param_check_type(tab, param_value->ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
+                param_check_type(tab, param_value->func.ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
             }
         break;
         case PARAM_TOUPLE:
-            if (param_value->dims != NULL)
+            if (param_value->touple.dims != NULL)
             {
-                param_list_check_type(tab, param_value->dims, syn_level, false, PARAM_CONST_TYPE_VAR, result);
+                param_list_check_type(tab, param_value->touple.dims, syn_level, false, PARAM_CONST_TYPE_VAR, result);
             }
         break;
     }
