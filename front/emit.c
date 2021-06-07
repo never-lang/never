@@ -4800,7 +4800,25 @@ unsigned int func_body_emit_ffi_param(param * value, module * module_value, int 
         }
         break;
         case PARAM_TOUPLE:
-            assert(0);
+        {
+            bc.type = BYTECODE_FUNC_FFI_RECORD;
+            bc.ffi_record.count = value->touple.dims->count;
+            bytecode * ffi_rec = bytecode_add(module_value->code, &bc);
+
+            if (value->touple.cycle == 0)
+            {
+                value->touple.cycle = 1;
+                total_count = 1 + func_body_emit_ffi_param_list(value->touple.dims, module_value, result);
+                value->touple.cycle = 0;
+            }
+            else
+            {
+                *result = EMIT_FAIL;
+                print_error_msg(value->line_no, "cannot generate ffi code for infinite touples\n");
+            }
+
+            ffi_rec->ffi_record.total_count = total_count;
+        }
         break;
         case PARAM_DIM:
         case PARAM_ARRAY:

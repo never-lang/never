@@ -89,6 +89,7 @@ typedef struct param
             struct param * slice;
         } slice_dim;
         struct {
+            char cycle;
             struct param_list * dims;
         } touple;
         struct {

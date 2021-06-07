@@ -289,6 +289,7 @@ param * param_new_touple(char * id, param_list * dims)
     value->id = id;
     value->touple.dims = dims;
     value->line_no = 0;
+    value->touple.cycle = 0;
 
     return value;
 }

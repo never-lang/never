@@ -302,6 +302,8 @@ void test_types_call(int i, long long l, float f, double d, bool b, char c, char
     assert(rec.ptr->y == 20);
     assert(rec.rec.x == 30);
     assert(rec.rec.y == 40);
+    assert(rec.tple.x == 200);
+    assert(rec.tple.y == 300);
 }
 
 void test_types_ptr(int * int_ptr, long long * long_ptr,
@@ -358,6 +360,18 @@ test_Types test_types_get_rec()
     ret.ptr = &p1;
     ret.rec.x = 20;
     ret.rec.y = 30;
+    ret.tple.x = 200;
+    ret.tple.y = 300;
+
+    return ret;
+}
+
+test_Touple test_types_get_touple()
+{
+    test_Touple ret;
+
+    ret.x = 200;
+    ret.y = 300;
 
     return ret;
 }
