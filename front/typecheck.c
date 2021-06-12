@@ -1734,11 +1734,10 @@ int param_ffi_check_type(symtab * tab, param * param_value,
         case PARAM_C_PTR:
         /* these types are supported for ffi */
         break;
+        case PARAM_TOUPLE:
+        break;
         case PARAM_RECORD:
             param_enum_record_check_type(tab, param_value, syn_level, result);
-        break;
-        case PARAM_TOUPLE:
-            assert(0);
         break;
         case PARAM_DIM:
         case PARAM_ARRAY:
@@ -3011,6 +3010,7 @@ int expr_array_deref_touple_check_type(symtab * tab, expr * value,
                 param * param_value = param_list_get_nth(value->array_deref.array_expr->comb.touple.comb_dims, (unsigned int)index);
                 if (param_value != NULL)
                 {
+                    param_value->const_type = COMB_CONST_TYPE_CONST;
                     expr_set_comb_type(value, param_value);
                 }
                 else

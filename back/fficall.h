@@ -76,6 +76,12 @@ typedef struct test_Rect
     test_Point c;
 } test_Rect;
 
+typedef struct test_Touple
+{
+    int x;
+    int y;
+} test_Touple;
+
 typedef struct test_Types
 {
     int i;
@@ -87,6 +93,7 @@ typedef struct test_Types
     char * str;
     test_Point * ptr;
     test_Point rec;
+    test_Touple tple;
 } test_Types;
 
 typedef struct test_PtrTypes
@@ -120,6 +127,7 @@ char test_types_get_char();
 char * test_types_get_string();
 test_Point * test_types_get_ptr();
 void test_types_call(int i, long long l, float f, double d, bool b, char c, char * str, test_Point * ptr, test_Types rec);
+test_Touple test_types_get_touple();
 test_Types test_types_get_rec();
 void test_types_ptr(int * int_ptr, long long * long_ptr,
                     float * float_ptr, double * double_ptr,
