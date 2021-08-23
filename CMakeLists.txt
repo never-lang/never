@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.2)
 project(never)
 enable_language(C)
 
-find_package(BISON)
+find_package(BISON 2.7.1)
 find_package(FLEX)
 BISON_TARGET(parser ${CMAKE_CURRENT_SOURCE_DIR}/front/parser.y ${CMAKE_CURRENT_SOURCE_DIR}/front/parser.c VERBOSE parser.txt)
 FLEX_TARGET(scanner ${CMAKE_CURRENT_SOURCE_DIR}/front/scanner.l  ${CMAKE_CURRENT_SOURCE_DIR}/front/scanner.c)
