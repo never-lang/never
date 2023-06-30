@@ -59,7 +59,7 @@ void test_three()
         inttab_add_enumerator(tab, value, NULL);
     }
 
-    for (value = 16; value < 16; value++)
+    for (value = -16; value < 16; value++)
     {
         inttab_entry * entry = inttab_lookup(tab, value);
         assert(entry != NULL && entry->value == value);
@@ -78,7 +78,7 @@ void test_four()
         inttab_add_enumerator(tab, value, NULL);
     }
 
-    for (value = 16; value < 16; value++)
+    for (value = -16; value < 16; value++)
     {
         inttab_entry * entry = inttab_lookup(tab, value);
         assert(entry != NULL && entry->value == value);
