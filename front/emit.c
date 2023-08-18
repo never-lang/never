@@ -5065,6 +5065,14 @@ int func_entry_params(func * func_value, module * module_value, int * result)
                 {
                     object_param->type = OBJECT_FLOAT;
                 }
+                else if (value->type == PARAM_STRING)
+                {
+                    object_param->type = OBJECT_STRING_REF;
+                }
+                else
+                {
+                    assert(0);
+                }
                 object_param++;
                 node = node->next;
             }

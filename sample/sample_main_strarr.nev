@@ -1,0 +1,13 @@
+
+func test(s : string) -> int
+{
+    prints(s);
+    0
+}
+
+func main(a1 : string, a2 : int) -> int
+{
+    test(a1);
+    print(a2);
+    0
+}

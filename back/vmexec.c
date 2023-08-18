@@ -2914,6 +2914,12 @@ void vm_execute_push_param(vm * machine, bytecode * code)
             addr = gc_alloc_float(machine->collector,
                                   machine->prog->params[i - 1].float_value);
         }
+        else if (machine->prog->params[i - 1].type == OBJECT_STRING_REF)
+        {
+            mem_ptr str_addr = gc_alloc_string(machine->collector,
+                                               machine->prog->params[i - 1].string_value);
+            addr = gc_alloc_string_ref(machine->collector, str_addr);
+        }
         else
         {
             printf("unsupported type\n");

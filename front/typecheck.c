@@ -4805,7 +4805,9 @@ int func_entry_check_num_params(param_list * params)
     while (node != NULL)
     {
         param * value = node->value;
-        if (value->type != PARAM_INT && value->type != PARAM_FLOAT)
+        if (value->type != PARAM_INT &&
+            value->type != PARAM_FLOAT &&
+            value->type != PARAM_STRING)
         {
             return 0;
         }
