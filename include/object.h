@@ -37,6 +37,7 @@ typedef enum object_type
     OBJECT_CHAR = 5,
     OBJECT_STRING = 6,
     OBJECT_STRING_REF = 7,
+    OBJECT_STRING_ARR = 14,
     OBJECT_C_PTR = 8,
     OBJECT_ARRAY = 9,
     OBJECT_ARRAY_REF = 10,
@@ -65,6 +66,12 @@ typedef struct object_arr
     mem_ptr * value;
 } object_arr;
 
+typedef struct object_str_arr
+{
+    unsigned int argc;
+    char ** argv;
+} object_str_arr;
+
 typedef struct object_func
 {
     mem_ptr vec;
@@ -82,6 +89,7 @@ typedef struct object
         char char_value;          /* OBJECT_CHAR */
         char * string_value;      /* OBJECT_STRING */
         mem_ptr string_ref_value; /* OBJECT_STRING_REF */
+        object_str_arr * string_arr_value; /* OBJECT_STRING_ARR */
         void * c_ptr_value;       /* OBJECT_C_PTR */
         object_vec * vec_value;   /* OBJECT_VEC */
         mem_ptr vec_ref_value;    /* OBJECT_VEC_REF */
@@ -108,6 +116,9 @@ object * object_new_func(mem_ptr vec, ip_ptr addr);
 
 void object_delete(object * obj);
 void object_arr_delete(object_arr * arr_value);
+
+object_str_arr * object_str_arr_new(unsigned int argc, char ** argv);
+void object_str_arr_delete(object_str_arr * value);
 
 object_arr_dim * object_arr_dim_new(unsigned int dims);
 void object_arr_dim_delete(object_arr_dim * dv);

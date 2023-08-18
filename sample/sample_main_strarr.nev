@@ -1,13 +1,16 @@
 
-func test(s : string) -> int
+func test(argv[argc] : string) -> int
 {
-    prints(s);
+    for (s in argv)
+    {
+        prints("****\t" + s + "\n")
+    };
     0
 }
 
-func main(a1 : string, a2 : int) -> int
+func main(argv[argc] : string) -> int
 {
-    test(a1);
-    print(a2);
+    test(argv);
     0
 }
+

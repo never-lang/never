@@ -2920,9 +2920,30 @@ void vm_execute_push_param(vm * machine, bytecode * code)
                                                machine->prog->params[i - 1].string_value);
             addr = gc_alloc_string_ref(machine->collector, str_addr);
         }
+        else if (machine->prog->params[i - 1].type == OBJECT_STRING_ARR)
+        {
+            unsigned int dims = 1;
+            object_arr_dim * dv = NULL;
+
+            dv = object_arr_dim_new(dims);
+            dv[0].elems = machine->prog->params[i - 1].string_arr_value->argc;
+
+            mem_ptr str_array = gc_alloc_arr(machine->collector, dims, dv);
+
+            for (unsigned int s = 0; s < dv[0].elems; s++)
+            {
+                mem_ptr str_addr = gc_alloc_string(machine->collector,
+                                                   machine->prog->params[i - 1].string_arr_value->argv[s]);
+                mem_ptr str_addr_ref = gc_alloc_string_ref(machine->collector, str_addr);
+
+                gc_set_arr_elem(machine->collector, str_array, s, str_addr_ref);
+            }
+
+            addr = gc_alloc_arr_ref(machine->collector, str_array);
+        }
         else
         {
-            printf("unsupported type\n");
+            printf("unsupported type %u\n", machine->prog->params[i - 1].type);
             assert(0);
         }
 

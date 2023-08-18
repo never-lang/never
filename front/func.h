@@ -41,10 +41,17 @@ typedef enum func_type
     FUNC_TYPE_FFI = 2,
 } func_type;
 
+typedef enum func_entry_type
+{
+    FUNC_ENTRY_TYPE_NONE = 0,
+    FUNC_ENTRY_TYPE_PARAM_LIST = 1,
+    FUNC_ENTRY_TYPE_STRING_ARRAY = 2
+} func_entry_type;
+
 typedef struct func
 {
     func_type type;
-    int entry;
+    func_entry_type entry;
     int index;
     func_decl * decl;
     symtab * stab;

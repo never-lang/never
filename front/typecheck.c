@@ -4801,6 +4801,10 @@ int decl_list_check_type(symtab * stab, decl_list * list, int * result)
 
 int func_entry_check_num_params(param_list * params)
 {
+    if (params == NULL)
+    {
+        return TYPECHECK_SUCC;
+    }
     param_list_node * node = params->tail;
     while (node != NULL)
     {
@@ -4809,31 +4813,49 @@ int func_entry_check_num_params(param_list * params)
             value->type != PARAM_FLOAT &&
             value->type != PARAM_STRING)
         {
-            return 0;
+            return TYPECHECK_FAIL;
         }
         node = node->next;
     }
-    return 1;
+    return TYPECHECK_SUCC;
+}
+
+int func_entry_check_array(param_list * params)
+{
+    if (params->count != 1)
+    {
+        return TYPECHECK_FAIL;
+    }
+    param_list_node * node = params->tail;
+    param * value = node->value;
+    if (value->type == PARAM_ARRAY &&
+        value->array.dims->count == 1 &&
+        value->array.ret->type == PARAM_STRING)
+    {
+        return TYPECHECK_SUCC;
+    }
+    return TYPECHECK_FAIL;
 }
 
 int func_entry_check_type(func * func_value, int * result)
 {
-    int is_entry = 1;
+    func_entry_type is_entry = FUNC_ENTRY_TYPE_NONE;
 
-    if (func_value->decl->params != NULL &&
-        func_entry_check_num_params(func_value->decl->params) == 0)
+    if (func_value->decl->ret != NULL &&
+        func_entry_check_num_params(func_value->decl->params) == TYPECHECK_SUCC &&
+        param_is_num(func_value->decl->ret) == TYPECHECK_SUCC)
     {
-        is_entry = 0;
+        is_entry = FUNC_ENTRY_TYPE_PARAM_LIST;
     }
-    if (func_value->decl->ret == NULL || param_is_num(func_value->decl->ret) == TYPECHECK_FAIL)
+    else if (func_value->decl->params != NULL &&
+             func_value->decl->ret != NULL &&
+             func_entry_check_array(func_value->decl->params) == TYPECHECK_SUCC &&
+             param_is_num(func_value->decl->ret) == TYPECHECK_SUCC)
     {
-        is_entry = 0;
+        is_entry = FUNC_ENTRY_TYPE_STRING_ARRAY;
     }
 
-    if (is_entry)
-    {
-        func_value->entry = 1;
-    }
+    func_value->entry = is_entry;
 
     return 0;
 }
