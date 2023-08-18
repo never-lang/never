@@ -10,6 +10,7 @@ func test(argv[argc] : string) -> int
 
 func main(argv[argc] : string) -> int
 {
+    prints(argv[0] + "\n");
     test(argv);
     0
 }
