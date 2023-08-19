@@ -2926,7 +2926,14 @@ void vm_execute_push_param(vm * machine, bytecode * code)
             object_arr_dim * dv = NULL;
 
             dv = object_arr_dim_new(dims);
-            dv[0].elems = machine->prog->params[i - 1].string_arr_value->argc;
+            if (machine->prog->params[i - 1].string_arr_value != NULL)
+            {
+                dv[0].elems = machine->prog->params[i - 1].string_arr_value->argc;
+            }
+            else
+            {
+                dv[0].elems = 0;
+            }
 
             mem_ptr str_array = gc_alloc_arr(machine->collector, dims, dv);
 
