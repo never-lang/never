@@ -246,6 +246,18 @@ int nev_prepare_argc_argv(program * prog, const char * entry_name, unsigned int 
         {
             prog->params[i].float_value = atof(argv[i]);
         }
+        else if (prog->params[i].type == OBJECT_STRING_REF)
+        {
+            prog->params[i].string_value = argv[i];
+        }
+        else if (prog->params[i].type == OBJECT_STRING_ARR)
+        {
+            prog->params[i].string_arr_value = object_str_arr_new(argc, argv);
+        }
+        else
+        {
+            assert(0);
+        }
     }
 
     return 0;

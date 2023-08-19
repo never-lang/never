@@ -201,6 +201,9 @@ void gc_mark(gc * collector, mem_ptr addr)
             gc_mark(collector,
                     collector->mem[addr].object_value->string_ref_value);
             break;
+        case OBJECT_STRING_ARR:
+            collector->mem[addr].mark = 1;
+            break;
         case OBJECT_C_PTR:
             collector->mem[addr].mark = 1;
             break;

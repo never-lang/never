@@ -114,6 +114,17 @@ object * object_new_string_ref(mem_ptr str_value)
     return obj;
 }
 
+object * object_new_string_arr(unsigned int argc, char ** argv)
+{
+    object * obj = (object *)malloc(sizeof(object));
+
+    obj->type = OBJECT_STRING_ARR;
+    obj->string_arr_value->argc = argc;
+    obj->string_arr_value->argv = argv;
+
+    return obj;
+}
+
 object * object_new_c_ptr(void * value)
 {
     object * obj = (object *)malloc(sizeof(object));
@@ -225,6 +236,9 @@ void object_delete(object * obj)
         break;
     case OBJECT_STRING_REF:
         break;
+    case OBJECT_STRING_ARR:
+        object_str_arr_delete(obj->string_arr_value);
+        break;
     case OBJECT_C_PTR:
         break;
     case OBJECT_VEC:
@@ -266,6 +280,25 @@ void object_arr_delete(object_arr * arr_value)
     }
     free(arr_value);
 }
+
+object_str_arr * object_str_arr_new(unsigned int argc, char ** argv)
+{
+    object_str_arr * value = (object_str_arr *)malloc(sizeof(object_str_arr));
+
+    value->argc = argc;
+    value->argv = argv;
+
+    return value;
+}
+
+void object_str_arr_delete(object_str_arr * value)
+{
+    if (value)
+    {
+        free(value);
+    }
+}
+
 
 object_arr_dim * object_arr_dim_new(unsigned int dims)
 {
@@ -457,6 +490,9 @@ void object_print(object * obj)
         break;
     case OBJECT_STRING_REF:
         printf("object_string_ref\n");
+        break;
+    case OBJECT_STRING_ARR:
+        printf("object_string_arr\n");
         break;
     case OBJECT_C_PTR:
         printf("object_c_ptr\n");

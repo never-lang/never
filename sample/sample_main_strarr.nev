@@ -1,0 +1,17 @@
+
+func test(argv[argc] : string) -> int
+{
+    for (s in argv)
+    {
+        prints("****\t" + s + "\n")
+    };
+    0
+}
+
+func main(argv[argc] : string) -> int
+{
+    prints(argv[0] + "\n");
+    test(argv);
+    0
+}
+

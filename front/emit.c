@@ -5037,11 +5037,12 @@ int func_emit(func * func_value, int stack_level, module * module_value,
     }
 
     return 0;
-}              
+}
 
 int func_entry_params(func * func_value, module * module_value, int * result)
 {
-    if (func_value->entry == 1)
+    if (func_value->entry == FUNC_ENTRY_TYPE_PARAM_LIST ||
+        func_value->entry == FUNC_ENTRY_TYPE_STRING_ARRAY)
     {
         object * params = NULL;
         object * object_param = NULL;
@@ -5064,6 +5065,18 @@ int func_entry_params(func * func_value, module * module_value, int * result)
                 else if (value->type == PARAM_FLOAT)
                 {
                     object_param->type = OBJECT_FLOAT;
+                }
+                else if (value->type == PARAM_STRING)
+                {
+                    object_param->type = OBJECT_STRING_REF;
+                }
+                else if (value->type == PARAM_ARRAY)
+                {
+                    object_param->type = OBJECT_STRING_ARR;
+                }
+                else
+                {
+                    assert(0);
                 }
                 object_param++;
                 node = node->next;
