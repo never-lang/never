@@ -56,7 +56,8 @@ void functab_entry_delete(functab_entry * entries, unsigned int size)
 }
 
 void functab_entry_add_func(functab_entry * entries, unsigned int size,
-                            func * func_value, object * params, unsigned int params_count)
+                            func * func_value, int entry_type,
+                            object * params, unsigned int params_count)
 {
     unsigned int times = 0;
     unsigned int index = 0;
@@ -75,6 +76,7 @@ void functab_entry_add_func(functab_entry * entries, unsigned int size,
     entries[index].id = func_value->decl->id;
     entries[index].func_addr = 0;
     entries[index].func_value = func_value;
+    entries[index].entry_type = entry_type;
     entries[index].params = params;
     entries[index].params_count = params_count;
 }
@@ -114,6 +116,7 @@ void functab_entry_resize(functab_entry * entries, unsigned int size,
         {
             functab_entry_add_func(entries_new, size_new,
                                    entries[i].func_value,
+                                   entries[i].entry_type,
                                    entries[i].params,
                                    entries[i].params_count);
         }
@@ -169,10 +172,11 @@ void functab_close(functab * tab)
     }
 }
 
-void functab_add_func(functab * tab, func * func_value,
+void functab_add_func(functab * tab, func * func_value, int entry_type,
                       object * params, unsigned int params_count)
 {
-    functab_entry_add_func(tab->entries, tab->size, func_value, params, params_count);
+    functab_entry_add_func(tab->entries, tab->size, func_value, entry_type,
+                           params, params_count);
 
     tab->count++;
     functab_resize(tab);

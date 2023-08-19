@@ -41,7 +41,12 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
         expr * value = node->value;
         if (value != NULL)
         {
-            if (node->distance == first_distance)
+            if (((value->type != EXPR_ARRAY) ||
+                 (value->type == EXPR_ARRAY &&
+                  value->array.array_value->elements != NULL) ||
+                 (value->type == EXPR_ARRAY &&
+                  value->array.array_value->type == ARRAY_DIMS)) &&
+                (node->distance == first_distance))
             {
                 if (param_expr_cmp(ret, value, false) == TYPECHECK_FAIL)
                 {
@@ -61,8 +66,15 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
                         (value->array.array_value->type == ARRAY_SUB ||
                          value->array.array_value->type == ARRAY_INIT))
                     {
-                        first_comb_elems =
-                            value->array.array_value->elements->count;
+                        if (value->array.array_value->elements)
+                        {
+                            first_comb_elems =
+                                value->array.array_value->elements->count;
+                        }
+                        else
+                        {
+                            first_comb_elems = 0;
+                        }
                     }
                     else
                     {
@@ -79,8 +91,11 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
                         (value->array.array_value->type == ARRAY_SUB ||
                          value->array.array_value->type == ARRAY_INIT))
                     {
-                        if (value->array.array_value->elements->count !=
-                            first_comb_elems)
+                        if ((value->array.array_value->elements == NULL &&
+                             first_comb_elems != 0) ||
+                            (value->array.array_value->elements != NULL &&
+                             value->array.array_value->elements->count !=
+                             first_comb_elems))
                         {
                             *result = TYPECHECK_FAIL;
                             print_error_msg(
@@ -109,7 +124,6 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
 
 int array_set_dims(expr_list_weak * depth_list)
 {
-    int dim = -1;
     int elems = 0;
     int distance = 0;
     expr_list_weak_node * node = NULL;
@@ -123,13 +137,19 @@ int array_set_dims(expr_list_weak * depth_list)
         {
             if (node->distance != distance)
             {
-                dim++;
                 distance = node->distance;
 
                 if (value->type == EXPR_ARRAY &&
                     value->array.array_value->type == ARRAY_SUB)
                 {
-                    elems = value->array.array_value->elements->count;
+                    if (value->array.array_value->elements)
+                    {
+                        elems = value->array.array_value->elements->count;
+                    }
+                    else
+                    {
+                        elems = 0;
+                    }
                     expr_list_add_beg(dims, expr_new_int(elems));
                 }
             }
@@ -142,7 +162,14 @@ int array_set_dims(expr_list_weak * depth_list)
     assert(node->value->type == EXPR_ARRAY &&
            node->value->array.array_value->type == ARRAY_INIT);
 
-    elems = node->value->array.array_value->elements->count;
+    if (node->value->array.array_value->elements != NULL)
+    {
+        elems = node->value->array.array_value->elements->count;
+    }
+    else
+    {
+        elems = 0;
+    }
     expr_list_add_beg(dims, expr_new_int(elems));
 
     node->value->array.array_value->dims = dims;
@@ -153,8 +180,8 @@ int array_set_dims(expr_list_weak * depth_list)
 int array_well_formed(expr * value, int * result)
 {
     expr_list_weak * depth_list = expr_list_weak_new();
-    array_to_depth_list(value, depth_list);
 
+    array_to_depth_list(value, depth_list);
     array_depth_list_well_formed(value->array.array_value, depth_list, result);
     if (*result == TYPECHECK_SUCC)
     {

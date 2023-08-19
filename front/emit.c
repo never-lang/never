@@ -4328,7 +4328,13 @@ int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,
     while (node != NULL)
     {
         expr * value = node->value;
-        if (value != NULL && node->distance == elem_dist)
+        if (value != NULL &&
+           ((value->type != EXPR_ARRAY) ||
+            (value->type == EXPR_ARRAY &&
+             value->array.array_value->elements != NULL) ||
+            (value->type == EXPR_ARRAY &&
+             value->array.array_value->type == ARRAY_DIMS)) &&
+            node->distance == elem_dist)
         {
             expr_emit(value, stack_level + (*elements_count)++, module_value,
                       list_weak, result);
@@ -5083,7 +5089,8 @@ int func_entry_params(func * func_value, module * module_value, int * result)
             }
         }
 
-        functab_add_func(module_value->functab_value, func_value, params, params_count);
+        functab_add_func(module_value->functab_value, func_value, func_value->entry,
+                         params, params_count);
     }
 
     return 0;

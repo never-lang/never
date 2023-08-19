@@ -100,7 +100,10 @@ int array_to_depth_list(expr * value, expr_list_weak * depth_list)
     expr_list_weak * bfs_list = expr_list_weak_new();
 
     expr_list_weak_add(bfs_list, value, 0);
-    elements_to_depth_list(value->array.array_value->elements, bfs_list, 1);
+    if (value->array.array_value->elements)
+    {
+        elements_to_depth_list(value->array.array_value->elements, bfs_list, 1);
+    }
 
     while (bfs_list->count > 0)
     {
@@ -108,7 +111,8 @@ int array_to_depth_list(expr * value, expr_list_weak * depth_list)
         expr * value = head->value;
 
         if (value->type == EXPR_ARRAY &&
-            value->array.array_value->type == ARRAY_SUB)
+            value->array.array_value->type == ARRAY_SUB &&
+            value->array.array_value->elements != NULL)
         {
             elements_to_depth_list(value->array.array_value->elements,
                                    bfs_list, head->distance + 1);

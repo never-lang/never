@@ -468,6 +468,12 @@ array: ARR_DIM_BEG expr_list ARR_DIM_END ':' param
     $$->line_no = $<line_no>1;
 };
 
+array: '[' ']' ':' param
+{
+    $$ = array_new(NULL, $4);
+    $$->line_no = $<line_no>1;
+};
+
 array: '[' expr_list ']' ':' param
 {
     $$ = array_new($2, $5);
@@ -477,6 +483,12 @@ array: '[' expr_list ']' ':' param
 array: '[' array_sub_list ']' ':' param
 {
     $$ = array_new($2, $5);
+    $$->line_no = $<line_no>1;
+};
+
+array_sub: '[' ']'
+{
+    $$ = array_new_sub(NULL);
     $$->line_no = $<line_no>1;
 };
 
