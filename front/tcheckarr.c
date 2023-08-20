@@ -41,12 +41,8 @@ int array_depth_list_well_formed(array * array_value, expr_list_weak * depth_lis
         expr * value = node->value;
         if (value != NULL)
         {
-            if (((value->type != EXPR_ARRAY) ||
-                 (value->type == EXPR_ARRAY &&
-                  value->array.array_value->elements != NULL) ||
-                 (value->type == EXPR_ARRAY &&
-                  value->array.array_value->type == ARRAY_DIMS)) &&
-                (node->distance == first_distance))
+            if (!expr_is_empty_array(value) &&
+                node->distance == first_distance)
             {
                 if (param_expr_cmp(ret, value, false) == TYPECHECK_FAIL)
                 {

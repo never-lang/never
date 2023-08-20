@@ -4329,11 +4329,7 @@ int array_init_elements_emit(expr_list_weak * depth_list, int * elements_count,
     {
         expr * value = node->value;
         if (value != NULL &&
-           ((value->type != EXPR_ARRAY) ||
-            (value->type == EXPR_ARRAY &&
-             value->array.array_value->elements != NULL) ||
-            (value->type == EXPR_ARRAY &&
-             value->array.array_value->type == ARRAY_DIMS)) &&
+            !expr_is_empty_array(value) &&
             node->distance == elem_dist)
         {
             expr_emit(value, stack_level + (*elements_count)++, module_value,

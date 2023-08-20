@@ -559,6 +559,18 @@ expr * expr_conv(expr * expr_value, conv_type conv)
     return ret;
 }
 
+int expr_is_empty_array(expr * value)
+{
+    if (value->type == EXPR_ARRAY &&
+        (value->array.array_value->type == ARRAY_INIT ||
+         value->array.array_value->type == ARRAY_SUB) &&
+        value->array.array_value->elements == NULL)
+    {
+        return 1;
+    }
+    return 0;
+}
+
 int comb_type_is_basic(comb_type comb)
 {
     switch(comb)
