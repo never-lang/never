@@ -1,0 +1,15 @@
+
+func f1(E : int, a[D] : int) -> int
+{
+    assert(D == E);
+    0
+}
+
+func main() -> int
+{
+    f1( 0, [] : int );
+    f1( 3, [ 1, 2, 3 ] : int );
+    f1( 10, {[ 10 ]} : int );
+    0
+}
+
