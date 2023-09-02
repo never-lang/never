@@ -1,0 +1,19 @@
+
+func call(tab[D1, D2] : int) -> int
+{
+    tab[0, 0]
+}
+
+func f1(a : int) -> int
+{
+    var t = [ {[10, 15]} : int,
+              {[20, 25]} : int ] : [D, D] : int;
+    t[1][0,0] = 122;
+    call( t[1] )
+}
+
+func main() -> bool
+{
+    assert(f1(8) == 122)
+}
+

@@ -1,5 +1,5 @@
 
-func test(argv[argc] : string) -> int
+func test1(argv[argc] : string) -> int
 {
     for (s in argv)
     {
@@ -8,9 +8,16 @@ func test(argv[argc] : string) -> int
     0
 }
 
-func main(argv[argc] : string) -> int
+func test2(argv[D1, D2] : string) -> int
 {
-    test(argv);
+    prints(argv[1,0] + "\n");
     0
 }
 
+func main(argv[argc] : string) -> int
+{
+    test1( [] : string );
+    test1( argv );
+    test2( [ [ "aa" ], [ "bbb" ] ] : string );
+    0
+}

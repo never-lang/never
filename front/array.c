@@ -95,30 +95,29 @@ int elements_to_depth_list(expr_list * elements, expr_list_weak * bfs_list,
     return 0;
 }
 
-int array_to_depth_list(expr * value, expr_list_weak * depth_list)
+int array_to_depth_list(expr * value, expr_list_weak * bfs_list)
 {
-    expr_list_weak * bfs_list = expr_list_weak_new();
-
     expr_list_weak_add(bfs_list, value, 0);
-    elements_to_depth_list(value->array.array_value->elements, bfs_list, 1);
-
-    while (bfs_list->count > 0)
+    if (value->array.array_value->elements)
     {
-        expr_list_weak_node * head = expr_list_weak_pop(bfs_list);
-        expr * value = head->value;
-
-        if (value->type == EXPR_ARRAY &&
-            value->array.array_value->type == ARRAY_SUB)
-        {
-            elements_to_depth_list(value->array.array_value->elements,
-                                   bfs_list, head->distance + 1);
-        }
-
-        expr_list_weak_add(depth_list, value, head->distance + 1);
-        expr_list_weak_node_delete(head);
+        elements_to_depth_list(value->array.array_value->elements, bfs_list, 1);
     }
 
-    expr_list_weak_delete(bfs_list);
+    expr_list_weak_node * node = bfs_list->head;
+    while (node != NULL)
+    {
+        expr * value = node->value;
+
+        if (value->type == EXPR_ARRAY &&
+            value->array.array_value->type == ARRAY_SUB &&
+            value->array.array_value->elements != NULL)
+        {
+            elements_to_depth_list(value->array.array_value->elements,
+                                   bfs_list, node->distance + 1);
+        }
+
+        node = node->prev;
+    }
 
     return 0;
 }

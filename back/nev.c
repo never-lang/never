@@ -229,7 +229,8 @@ int nev_prepare_argc_argv(program * prog, const char * entry_name, unsigned int 
     prog->params = entry->params;
     prog->entry_addr = entry->func_addr;
 
-    if (prog->params_count > argc)
+    if (entry->entry_type == FUNC_ENTRY_TYPE_PARAM_LIST &&
+        argc < prog->params_count)
     {
         fprintf(stderr, "too few parameters, expected %d got %d\n",
                 prog->params_count, argc);

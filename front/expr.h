@@ -392,6 +392,7 @@ expr * expr_new_touple(touple * touple_value);
 comb_type conv_to_comb_type(conv_type conv);
 expr * expr_conv(expr * expr_value, conv_type conv);
 
+int expr_is_empty_array(expr * value);
 int comb_type_is_basic(comb_type comb);
 
 void expr_delete(expr * value);
