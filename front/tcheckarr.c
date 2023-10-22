@@ -204,7 +204,11 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
 
         if (value->array.array_value->ret != NULL)
         {
-            param_check_type(tab, value->array.array_value->ret, syn_level, false, PARAM_CONST_TYPE_VAR, result);
+            if (value->array.array_value->ret->const_type == PARAM_CONST_TYPE_DEFAULT)
+            {
+                value->array.array_value->ret->const_type = PARAM_CONST_TYPE_VAR;
+            }
+            param_check_type(tab, value->array.array_value->ret, syn_level, result);
         }
 
         array_well_formed(value, &arr_result);
@@ -212,7 +216,6 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
         {
             value->comb.comb = COMB_TYPE_ARRAY;
             value->comb.comb_const = value->array.array_value->ret->const_type;
-            value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
             value->comb.array.comb_ret = value->array.array_value->ret;
             value->comb.array.comb_dims = value->array.array_value->dims->count;
         }
@@ -251,13 +254,16 @@ int array_check_type(symtab * tab, expr * value, func * func_value, unsigned int
                             param_type_str(value->array.array_value->ret->type));
         }
 
-        param_check_type(tab, value->array.array_value->ret, syn_level, false, PARAM_CONST_TYPE_VAR, &param_result);
+        if (value->array.array_value->ret->const_type == PARAM_CONST_TYPE_DEFAULT)
+        {
+            value->array.array_value->ret->const_type = PARAM_CONST_TYPE_VAR;
+        }
+        param_check_type(tab, value->array.array_value->ret, syn_level, &param_result);
 
         if (param_result == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_ARRAY;
             value->comb.comb_const = value->array.array_value->ret->const_type;
-            value->comb.comb_lr = COMB_LR_TYPE_RIGHT;
             value->comb.array.comb_ret = value->array.array_value->ret;
             value->comb.array.comb_dims = value->array.array_value->dims->count;
         }

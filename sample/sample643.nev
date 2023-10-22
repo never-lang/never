@@ -1,0 +1,22 @@
+
+func main() -> int
+{
+    let a = [ 1, 2, 3, 4 ] : var int;
+    var b = [ 100, 200 ] : var int;
+    var c = 10;
+    var d = [ c ] : var int;
+
+    a[0] = 10;
+    a[1] = 20;
+    a[2] = 30;
+    a[3] = 40;
+
+    a = b;
+    d[0] = 300;
+
+    prints("a[0] = " + a[0] + "\n");
+    prints("c = " + c + "\n");
+
+    0
+}
+

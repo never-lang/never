@@ -1,0 +1,13 @@
+
+
+func main() -> int
+{
+    var a = 10;
+    var b = a;
+
+    b = 20;
+
+    prints("a = " + a + "\n");
+
+    0
+}

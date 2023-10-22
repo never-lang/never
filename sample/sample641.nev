@@ -1,0 +1,20 @@
+
+func f1(var a : int, b : int) -> int
+{
+    var c = a;
+    let d = b;
+
+    c = 1110
+}
+
+func main() -> int
+{
+    var a = 1;
+    let b = 2;
+
+    f1(a, b + 20);
+
+    prints("a = " + a + " b = " + b + "\n");
+
+    0
+}

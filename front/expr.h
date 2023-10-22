@@ -134,17 +134,10 @@ typedef enum comb_type
 
 typedef enum comb_const_type
 {
-    COMB_CONST_TYPE_UNKNOWN = 0,
     COMB_CONST_TYPE_CONST,
-    COMB_CONST_TYPE_VAR
+    COMB_CONST_TYPE_VAR,
+    COMB_CONST_TYPE_TEMP
 } comb_const_type;
-
-typedef enum comb_lr_type
-{
-    COMB_LR_TYPE_UNKNOWN = 0,
-    COMB_LR_TYPE_LEFT = 1,
-    COMB_LR_TYPE_RIGHT = 2
-} comb_lr_type;
 
 typedef enum id_type
 {
@@ -187,7 +180,6 @@ typedef struct expr_comb
 {
     comb_type comb;
     comb_const_type comb_const; /* constness */
-    comb_lr_type comb_lr; /* lr type */
     union
     {
         struct
@@ -410,6 +402,7 @@ expr * expr_list_get_first(expr_list * list);
 
 const char * expr_type_str(expr_type type);
 const char * comb_type_str(comb_type type);
+const char * comb_const_type_str(comb_const_type type);
 const char * conv_type_str(conv_type conv);
 
 #endif /* __EXPR_H__ */
