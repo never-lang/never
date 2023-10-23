@@ -1,21 +1,38 @@
 
-func main() -> int
+func test1() -> int
 {
-    let a = [ 1, 2, 3, 4 ] : var int;
-    var b = [ 100, 200 ] : var int;
-    var c = 10;
-    var d = [ c ] : var int;
+    var a = [ 1, 2, 3, 4 ] : int;
+    var b = [ 10, 20, 30, 40 ] : int;
 
-    a[0] = 10;
-    a[1] = 20;
-    a[2] = 30;
-    a[3] = 40;
+    a[0] = 1;
+    a[1] = 2;
+    a[2] = 3;
+    a[3] = 4;
 
     a = b;
-    d[0] = 300;
+    b[0] = 2200;
 
     prints("a[0] = " + a[0] + "\n");
+
+    0
+}
+
+func test2() -> int
+{
+    var c = 10;
+    var d = [ c ] : int;
+
+    d[0] = 300;
+
     prints("c = " + c + "\n");
+
+    0
+}
+
+func main() -> int
+{
+    test1();
+    test2();
 
     0
 }

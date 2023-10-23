@@ -1,0 +1,21 @@
+
+enum EONE { one, two, three, four }
+
+func main() -> int
+{
+    var e1 = EONE::one;
+    var e2 = e1;
+
+    e2 = e1;
+    e2 = EONE::four;
+
+    match e1
+    {
+        EONE::one -> prints("EONE::one\n");
+        EONE::two -> prints("EONE::two\n");
+        EONE::three -> prints("EONE::three\n");
+        EONE::four -> prints("EONE::four\n");
+    };
+
+    0
+}

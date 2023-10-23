@@ -1,21 +1,24 @@
 
 record R
 {
-    a : int;
-    b : int;
+    var a : int;
+    var b : int;
 }
 
 func main() -> int
 {
-    let r1 = R(10, 20);
-    var r2 = R(12, 22);
+    var a = R(10, 20);
+    var b = R(100, 200);
 
-    r1.a = 100;
-    r1.b = 200;
+    a.a = 10;
+    a.b = 20;
 
-    r1 = r2;
+    a = b;
 
-    prints("r.a = " + r1.a + " r.b = " + r1.b +  "\n");
+    b.a = 1000;
+    b.b = 2000;
+
+    prints("a.a = " + a.a + " a.b = " + a.b +  "\n");
 
     0
 }

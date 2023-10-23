@@ -53,6 +53,10 @@ int record_enum_param_list(param_list * params)
         if (value != NULL)
         {
             value->index = index++;
+            if (value->const_type == PARAM_CONST_TYPE_DEFAULT)
+            {
+                value->const_type = PARAM_CONST_TYPE_VAR;
+            }
         }
         node = node->next;
     }
@@ -103,18 +107,7 @@ int expr_set_comb_type(expr * value, param * param_value)
         return 0;
     }
 
-    switch (param_value->const_type)
-    {
-        case PARAM_CONST_TYPE_DEFAULT:
-            value->comb.comb_const = COMB_CONST_TYPE_CONST;
-        break;
-        case PARAM_CONST_TYPE_CONST:
-            value->comb.comb_const = COMB_CONST_TYPE_CONST;
-        break;
-        case PARAM_CONST_TYPE_VAR:
-            value->comb.comb_const = COMB_CONST_TYPE_VAR;
-        break;
-    }
+    param_expr_cmp_init(param_value->const_type, value);
 
     switch (param_value->type)
     {
@@ -1938,6 +1931,9 @@ int expr_neg_check_type(symtab * tab, expr * value, func * func_value,
                         unsigned int syn_level, int * result)
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
+
     if (value->left->comb.comb == COMB_TYPE_INT)
     {
         value->comb.comb = COMB_TYPE_INT;
@@ -2077,6 +2073,9 @@ int expr_mul_check_type(symtab * tab, expr * value, func * func_value, unsigned 
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
+
     if (expr_conv_basic_type(value, value->left, value->right))
     {
         /* conversion done */
@@ -2323,6 +2322,9 @@ int expr_div_check_type(symtab * tab, expr * value, func * func_value, unsigned 
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
+
     if (expr_conv_basic_type(value, value->left, value->right))
     {
         /* conversion done */
@@ -2348,6 +2350,9 @@ int expr_mod_check_type(symtab * tab, expr * value, func * func_value, unsigned 
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
+
     if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
     {
@@ -2397,6 +2402,8 @@ int expr_lgte_check_type(symtab * tab, expr * value, func * func_value, unsigned
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
 
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
+
     if (expr_conv_basic_type(value, value->left, value->right))
     {
         /* converted type */
@@ -2428,6 +2435,9 @@ int expr_and_or_check_type(symtab * tab, expr * value, func * func_value, unsign
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
+
     if (value->left->comb.comb == COMB_TYPE_BOOL &&
         value->right->comb.comb == COMB_TYPE_BOOL)
     {
@@ -2451,6 +2461,8 @@ int expr_complr_check_type(symtab * tab, expr * value, func * func_value, unsign
     expr * value_right = value->right;
 
     expr_check_type(tab, value_left, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
 
     if (value_right->type != EXPR_CALL &&
         value_right->type != EXPR_LAST_CALL)
@@ -2517,6 +2529,9 @@ int expr_complr_check_type(symtab * tab, expr * value, func * func_value, unsign
 int expr_not_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
+
     if (value->left->comb.comb == COMB_TYPE_BOOL)
     {
         value->comb.comb = COMB_TYPE_BOOL;
@@ -2535,6 +2550,9 @@ int expr_not_check_type(symtab * tab, expr * value, func * func_value, unsigned 
 int expr_bin_not_check_type(symtab * tab, expr * value, func * func_value, unsigned int syn_level, int * result)
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
+
     if (value->left->comb.comb == COMB_TYPE_INT)
     {
         value->comb.comb = COMB_TYPE_INT;
@@ -2563,6 +2581,8 @@ int expr_bin_op_check_type(symtab * tab, expr * value, func * func_value, unsign
 {
     expr_check_type(tab, value->left, func_value, syn_level, result);
     expr_check_type(tab, value->right, func_value, syn_level, result);
+
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
 
     if (value->left->comb.comb == COMB_TYPE_INT &&
         value->right->comb.comb == COMB_TYPE_INT)
@@ -2629,6 +2649,8 @@ int expr_ass_check_type(symtab * tab, expr * value, func * func_value, unsigned 
                         comb_const_type_str(value->left->comb.comb_const),
                         comb_type_str(value->left->comb.comb));
     }
+
+    value->comb.comb_const = value->right->comb.comb_const;
 
     if (value->left->comb.comb == COMB_TYPE_BOOL &&
         value->right->comb.comb == COMB_TYPE_BOOL)
@@ -2993,7 +3015,6 @@ int expr_array_deref_touple_check_type(symtab * tab, expr * value,
                 param * param_value = param_list_get_nth(value->array_deref.array_expr->comb.touple.comb_dims, (unsigned int)index);
                 if (param_value != NULL)
                 {
-                    param_value->const_type = COMB_CONST_TYPE_CONST;
                     expr_set_comb_type(value, param_value);
                 }
                 else
@@ -3354,8 +3375,8 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
                                      value->call.params, false) == TYPECHECK_SUCC)
         {
             value->comb.comb = COMB_TYPE_RECORD;
+            value->comb.comb_const = COMB_CONST_TYPE_TEMP;
             value->comb.comb_record = value->call.func_expr->comb.comb_record;
-            value->comb.comb_const = COMB_CONST_TYPE_CONST;
         }
         else
         {
@@ -3378,6 +3399,7 @@ int expr_call_check_type(symtab * tab, expr * value, func * func_value, unsigned
         {
             value->call.func_expr->enumtype.called = 1;
             value->comb.comb = COMB_TYPE_ENUMTYPE;
+            value->comb.comb_const = COMB_CONST_TYPE_TEMP;
             value->comb.comb_enumtype = value->call.func_expr->comb.comb_enumtype;
         }
         else
@@ -3646,11 +3668,6 @@ int expr_attr_check_type(symtab * tab, expr * value, func * func_value, unsigned
                 value->attr.id->id.id_param_value = param_value;
 
                 expr_set_comb_type(value, param_value);
-
-                if (value->attr.record_value->comb.comb_const == COMB_CONST_TYPE_CONST)
-                {
-                    value->comb.comb_const = COMB_CONST_TYPE_CONST;
-                }
             }
             else
             {
@@ -3868,7 +3885,7 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         if (value->forloop.cond->comb.comb == COMB_TYPE_BOOL)
         {
             value->comb.comb = COMB_TYPE_INT;
-            value->comb.comb_const = COMB_CONST_TYPE_CONST;
+            value->comb.comb_const = COMB_CONST_TYPE_TEMP;
         }
         else
         {
@@ -4117,10 +4134,6 @@ int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int 
     switch (value->type)
     {
         case BIND_LET:
-            //if (param_expr_cmp_init(PARAM_CONST_TYPE_CONST, value->expr_value) == TYPECHECK_FAIL)
-            //{
-            //    *result = TYPECHECK_FAIL;
-            //}
         break;
         case BIND_VAR:
             if (value->expr_value->comb.comb_const == COMB_CONST_TYPE_CONST)
@@ -4130,10 +4143,6 @@ int bind_check_type(symtab * tab, bind * value, func * func_value, unsigned int 
                                 comb_type_str(value->expr_value->comb.comb));
                 *result = TYPECHECK_FAIL;
             }
-            //if (param_expr_cmp_init(PARAM_CONST_TYPE_VAR, value->expr_value) == TYPECHECK_FAIL)
-            //{
-            //    *result = TYPECHECK_FAIL;
-            //}
         break;
         case BIND_UNKNOWN:
             assert(0);

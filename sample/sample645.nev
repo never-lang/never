@@ -5,7 +5,7 @@ record R
     b : int;
 }
 
-func f1(var r : R) -> int
+func f1(var r : R) -> var int
 {
     r.a
 }

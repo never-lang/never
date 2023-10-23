@@ -3,11 +3,11 @@
 func main() -> int
 {
     var a = 10;
-    var b = a;
+    let b = 100;
 
-    b = 20;
+    b = a;
 
-    prints("a = " + a + "\n");
+    prints("b = " + b + "\n");
 
     0
 }
