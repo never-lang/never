@@ -23,7 +23,7 @@ func getF(f : F) -> (var int) -> int
 func main() -> int
 {
     var i = 0;
-    var f = getF(F::ONE);
+    let f = getF(F::ONE);
 
     f(i);
 

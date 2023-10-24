@@ -6,7 +6,7 @@ func f1(i : int) -> int
     0
 }
 
-func pT( t[D] : int, var [ F .. T ] : range ) -> int
+func pT( t[D] : int, [ F .. T ] : range ) -> int
 {
     print(F);
     print(T);

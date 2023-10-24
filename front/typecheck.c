@@ -1786,6 +1786,10 @@ int param_check_type(symtab * tab, param * param_value,
             }
             if (param_value->array.ret != NULL)
             {
+                if (param_value->array.ret->const_type == PARAM_CONST_TYPE_DEFAULT)
+                {
+                    param_value->array.ret->const_type = PARAM_CONST_TYPE_VAR;
+                }
                 param_check_type(tab, param_value->array.ret, syn_level, result);
             }
         break;
@@ -3277,7 +3281,7 @@ int expr_range_check_type(symtab * tab, expr * value, func * func_value,
     expr_range_list_check_type(tab, value->range.range_dims, func_value, syn_level, result);
 
     value->comb.comb = COMB_TYPE_RANGE;
-    value->comb.comb_const = COMB_CONST_TYPE_CONST;
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
     value->comb.range.comb_dims = value->range.range_dims->count;
     value->comb.range.comb_ret = value->range.ret;
 

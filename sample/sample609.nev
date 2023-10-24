@@ -7,13 +7,13 @@ record R
 
 func getR() -> R
 {
-    var r = R(10, 10);
+    let r = R(10, 10);
     r
 }
 
 func main() -> int
 {
-    var r = getR();
+    let r = getR();
 
     r.i = 20;
     r.j = 30;

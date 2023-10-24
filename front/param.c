@@ -205,7 +205,7 @@ param * param_new_range_dim(char * id)
     param * value = (param *)malloc(sizeof(param));
 
     value->type = PARAM_RANGE_DIM;
-    value->const_type = PARAM_CONST_TYPE_DEFAULT;
+    value->const_type = PARAM_CONST_TYPE_VAR;
     value->index = -1;
     value->id = id;
     value->line_no = 0;

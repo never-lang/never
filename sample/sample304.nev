@@ -7,7 +7,7 @@ record Tree {
 
 func get_Tree(value : int) -> Tree
 {
-    var t = Tree(value, nil, nil);
+    let t = Tree(value, nil, nil);
     t
 }
 
@@ -24,7 +24,7 @@ catch (nil_pointer)
 
 func main() -> int
 {
-    var t = get_Tree(110);
+    let t = get_Tree(110);
 
     print_Tree(t);
     print_Tree(get_Tree(120)); 

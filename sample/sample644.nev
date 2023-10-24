@@ -8,10 +8,7 @@ record R
 func main() -> int
 {
     var a = R(10, 20);
-    var b = R(100, 200);
-
-    a.a = 10;
-    a.b = 20;
+    let b = R(100, 200);
 
     a = b;
 

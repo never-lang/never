@@ -5,9 +5,10 @@ func main() -> int
     var a = 10;
     let b = 100;
 
-    b = a;
+    a = b;
+    a = 1000;
 
-    prints("b = " + b + "\n");
+    prints("a = " + a + "\n");
 
     0
 }

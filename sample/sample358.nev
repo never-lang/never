@@ -38,7 +38,7 @@ func get_primes(n : int) -> [_] : int
 
 func main() -> int
 {
-    var primes = get_primes(128);
+    let primes = get_primes(128);
 
     print_ints(primes);
 

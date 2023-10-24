@@ -48,7 +48,7 @@ func printRLC( RLC[D] : V ) -> int
 
 func main() -> int
 {
-    var rlc = testRLC();
+    let rlc = testRLC();
 
     printRLC(rlc);
 

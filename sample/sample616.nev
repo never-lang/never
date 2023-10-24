@@ -1,5 +1,5 @@
 
-func set(i : int) -> int
+func set(var i : int) -> int
 {
     var j = i;
 
