@@ -2,8 +2,8 @@
 
 func main() -> int
 {
-    let a = 10;
-    var b = 100;
+    var a = 10;
+    let b = 100;
 
     a = b;
     a = 1000;

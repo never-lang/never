@@ -541,7 +541,7 @@ mem_ptr gc_get_string_ref(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_STRING_REF);
-
+    
     return collector->mem[addr].object_value->string_ref_value;
 }
 
@@ -549,7 +549,7 @@ void gc_set_string_ref(gc * collector, mem_ptr addr, mem_ptr string_ref)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_STRING_REF);
-
+    
     collector->mem[addr].object_value->string_ref_value = string_ref;
 }
 
@@ -632,7 +632,7 @@ mem_ptr gc_get_arr_ref(gc * collector, mem_ptr addr)
 {
     assert(collector->mem_size >= addr);
     assert(collector->mem[addr].object_value->type == OBJECT_ARRAY_REF);
-
+    
     return collector->mem[addr].object_value->arr_ref_value;
 }
 

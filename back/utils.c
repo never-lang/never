@@ -20,10 +20,17 @@
  * THE SOFTWARE.
  */
 #include "utils.h"
+#include <stdlib.h>
+#include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
 
-const char * utils_file_name = "<stdin>";
+#define MAX_MSG_SIZE 1024
+
+static const char * utils_file_name = "<stdin>";
+static unsigned int * utils_msg_count = NULL;
+static unsigned int * utils_msg_array_size = NULL;
+static char *** utils_msg_array = NULL;
 
 const char * get_utils_file_name()
 {
@@ -35,20 +42,68 @@ void set_utils_file_name(const char * file_name)
     utils_file_name = file_name;
 }
 
-void print_error_msg(int line_no, const char * format, ...)
+void set_msg_buffer(unsigned int * msg_count, unsigned int * msg_array_size, char *** msg_array)
 {
-    va_list args;
+    utils_msg_count = msg_count;
+    utils_msg_array_size = msg_array_size;
+    utils_msg_array = msg_array;
+}
 
-    va_start(args, format);
+void print_msg_buffer(unsigned int msg_count, char ** msg_array)
+{
+    if (msg_array == NULL)
+    {
+        return;
+    }
+    unsigned int i = 0;
+    for (i = 0; i < msg_count; i++)
+    {
+        printf("%s\n", msg_array[i]);
+    }
+}
 
-    fprintf(stderr, "%s:%d: error: ", utils_file_name, line_no);
-    vfprintf(stderr, format, args);
+static void print_msg(const char * type, int line_no, const char * format, va_list args)
+{
+    va_list args_copy;
+
+    va_copy(args_copy, args);
+    fprintf(stderr, "%s:%d: %s: ", utils_file_name, line_no, type);
+    vfprintf(stderr, format, args_copy);
+    va_end(args_copy);
 
 #ifndef NO_FFI
     fprintf(stderr, "\n");
 #else
     fprintf(stderr, "\r\n");
 #endif
+
+    if (utils_msg_count != NULL)
+    {
+        unsigned int msg_len = 0;
+        char msg_buf[MAX_MSG_SIZE] = { 0 };
+
+        if (*utils_msg_count >= *utils_msg_array_size)
+        {
+            *utils_msg_array_size = *utils_msg_array_size + 10;
+            *utils_msg_array = realloc(*utils_msg_array, *utils_msg_array_size * sizeof(char *));
+        }
+
+        va_copy(args_copy, args);
+        msg_len = snprintf(msg_buf, MAX_MSG_SIZE, "%s:%d: %s: ", utils_file_name, line_no, type);
+        msg_len += vsnprintf(msg_buf + msg_len, MAX_MSG_SIZE, format, args_copy);
+        va_end(args_copy);
+
+        (*utils_msg_array)[*utils_msg_count] = strdup(msg_buf);
+        (*utils_msg_count)++;
+    }
+}
+
+void print_error_msg(int line_no, const char * format, ...)
+{
+    va_list args;
+    va_start(args, format);
+
+    print_msg("error", line_no, format, args);
 
     va_end(args);
 }
@@ -56,17 +111,10 @@ void print_error_msg(int line_no, const char * format, ...)
 void print_warning_msg(int line_no, const char * format, ...)
 {
     va_list args;
-
     va_start(args, format);
 
-    fprintf(stderr,"%s:%d: warning: ", utils_file_name, line_no);
-    vfprintf(stderr, format, args);
-
-#ifndef NO_FFI
-    fprintf(stderr, "\n");
-#else
-    fprintf(stderr, "\r\n");
-#endif
+    print_msg("warning", line_no, format, args);
 
     va_end(args);
 }
+

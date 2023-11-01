@@ -124,6 +124,8 @@ static int nev_compile_prog(const char * input, program * prog)
     set_line_no(1);
     parse_result = 0;
 
+    set_msg_buffer(&prog->msg_count, &prog->msg_array_size, &prog->msg_array);
+
     yyparse(&module_main);
     if ((ret = parse_result) == 0)
     {

@@ -31,6 +31,8 @@
 #define PATH_MAX 255
 #endif
 
+#define MAX_LINE_LEN 1024
+
 char * readall(const char * file)
 {
     FILE * f = fopen(file, "r");
@@ -49,6 +51,47 @@ char * readall(const char * file)
     fclose(f);
 
     return src;
+}
+
+int check_errors(const char * sample_path, program * prog)
+{
+    char error_file[PATH_MAX] = { 0 };
+
+    snprintf(error_file, PATH_MAX, "%s.err", sample_path);
+    FILE * f = fopen(error_file, "r");
+    if (f == NULL)
+    {
+        return 1;
+    }
+
+    char * ret = NULL;
+    unsigned int msg_idx = 0;
+    do
+    {
+        char line[MAX_LINE_LEN] = { 0 };
+        ret = fgets(line, MAX_LINE_LEN, f);
+        if (ret != NULL &&
+            msg_idx < prog->msg_count)
+        {
+            line[strcspn(line, "\n")] = 0;
+            printf("line: %s", line);
+            char * substr = strstr(prog->msg_array[msg_idx], line);
+            if (substr == NULL)
+            {
+                break;
+            }
+            msg_idx++;
+        }
+    } while (ret != NULL &&
+             msg_idx < prog->msg_count);
+
+    fclose(f);
+
+    if (msg_idx >= prog->msg_count) {
+        return 0;
+    }
+
+    return 1;
 }
 
 void run(program * prog, vm * machine, const char * entry_name, int param1, int param2)
@@ -191,6 +234,7 @@ void test_sample(const char * samplepath, unsigned int current, unsigned int cou
         if (ret != 0)
         {
             printf("[%d/%d] path: %s\nprog_str: %s\n", current, count, samplepath, prog_str);
+            ret = check_errors(samplepath, prog);
         }
         assert(ret == 0);
 
@@ -218,9 +262,23 @@ void test_sample(const char * samplepath, unsigned int current, unsigned int cou
 
 int skip_dir(struct dirent * ent)
 {
-    return strcmp(".", ent->d_name) == 0 ||
+    int skip = 0;
+
+    skip = strcmp(".", ent->d_name) == 0 ||
            strcmp("..", ent->d_name) == 0 ||
            strcmp("lib", ent->d_name) == 0;
+    if (skip)
+    {
+        return skip;
+    }
+
+    char * dot = strrchr(ent->d_name, '.');
+    if (dot && strcmp(dot, ".err") == 0)
+    {
+        return 1;
+    }
+
+    return skip;
 }
 
 void test_samples(const char * dirpath)

@@ -31,6 +31,9 @@ program * program_new()
     value->params = NULL;
     value->params_count = 0;
     value->entry_addr = 0;
+    value->msg_count = 0;
+    value->msg_array_size = 0;
+    value->msg_array = NULL;
     value->module_value = module_new();
 
     return value;
@@ -41,6 +44,15 @@ void program_delete(program * value)
     if (value->module_value != NULL)
     {
         module_delete(value->module_value);
+    }
+    if (value->msg_array != NULL)
+    {
+        unsigned int i = 0;
+        for (i = 0; i < value->msg_count; i++)
+        {
+            free(value->msg_array[i]);
+        }
+        free(value->msg_array);
     }
     free(value);
 }

@@ -1,0 +1,15 @@
+
+func f1(var a : int, var b : int) -> int
+{
+    0
+}
+
+func main() -> int
+{
+    var a = 1;
+    var b = 2;
+
+    f1(a, b);
+
+    0
+}
