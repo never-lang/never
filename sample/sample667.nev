@@ -1,0 +1,12 @@
+
+func main() -> int
+{
+    var t = (10.0, 20, 30, 40) : (float, int, int, int);
+
+    t[0] = 1.0;
+
+    assert(t[0] == 1.0);
+
+    0
+}
+

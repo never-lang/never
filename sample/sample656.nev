@@ -1,0 +1,17 @@
+
+func f1(var a : int) -> var int
+{
+    a
+}
+
+func main() -> int
+{
+    let a = 1;
+
+    f1(a) = 10;
+
+    assert(a == 10);
+
+    0
+}
+

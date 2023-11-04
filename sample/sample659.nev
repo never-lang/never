@@ -1,0 +1,16 @@
+
+func f1(t[D] : int) -> int
+{
+    t[0] = 0;
+    0
+}
+
+func main() -> int
+{
+    let t = [ 1, 2, 3, 4 ] : int;
+
+    f1(t);
+
+    0
+}
+

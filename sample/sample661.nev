@@ -1,0 +1,21 @@
+
+func f1([ from .. to ] : range) -> int
+{
+    from = 10;
+    to = 20;
+    0
+}
+
+func main() -> int
+{
+    var from = 0;
+    var to = 0;
+
+    f1( [ from .. to ] );
+
+    assert(from == 10);
+    assert(to == 20);
+
+    0
+}
+

@@ -41,11 +41,30 @@
 #include <string.h>
 #include <stdbool.h>
 
+
+int param_list_set_default_var(param_list * params)
+{
+    param_list_node * node = NULL;
+
+    node = params->tail;
+    while (node != NULL)
+    {
+        param * value = node->value;
+        if (value != NULL &&
+            value->const_type == PARAM_CONST_TYPE_DEFAULT)
+        {
+            value->const_type = PARAM_CONST_TYPE_VAR;
+        }
+        node = node->next;
+    }
+    return 0;
+}
+
 int record_enum_param_list(param_list * params)
 {
     int index = 0;
     param_list_node * node = NULL;
-    
+
     node = params->tail;
     while (node != NULL)
     {
@@ -53,10 +72,6 @@ int record_enum_param_list(param_list * params)
         if (value != NULL)
         {
             value->index = index++;
-            if (value->const_type == PARAM_CONST_TYPE_DEFAULT)
-            {
-                value->const_type = PARAM_CONST_TYPE_VAR;
-            }
         }
         node = node->next;
     }
@@ -3020,6 +3035,10 @@ int expr_array_deref_touple_check_type(symtab * tab, expr * value,
                 if (param_value != NULL)
                 {
                     expr_set_comb_type(value, param_value);
+                    if (value->array_deref.array_expr->comb.comb_const == COMB_CONST_TYPE_CONST)
+                    {
+                        value->comb.comb_const = COMB_CONST_TYPE_CONST;
+                    }
                 }
                 else
                 {
@@ -3099,7 +3118,6 @@ int expr_array_deref_slice_check_type(symtab * tab, expr * value,
                                             func_value, syn_level, result) == TYPECHECK_SUCC)
         {
             expr_set_comb_type(value, value->array_deref.array_expr->comb.slice.comb_ret);
-
             if (value->array_deref.array_expr->comb.comb_const == COMB_CONST_TYPE_CONST)
             {
                 value->comb.comb_const = COMB_CONST_TYPE_CONST;
@@ -3941,7 +3959,8 @@ int expr_check_type(symtab * tab, expr * value, func * func_value, unsigned int 
         expr_list_check_type(tab, value->touple_value->values, func_value, syn_level, result);
 
         if (value->touple_value->dims != NULL)
-        {   
+        {
+            param_list_set_default_var(value->touple_value->dims);
             param_list_check_type(tab, value->touple_value->dims, syn_level, result);
         }
 
@@ -4737,6 +4756,7 @@ int record_check_type(symtab * stab, record * record_value, int * result)
 {
     if (record_value->params != NULL)
     {
+        param_list_set_default_var(record_value->params);
         record_enum_param_list(record_value->params);
     }
 

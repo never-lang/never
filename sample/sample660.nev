@@ -1,0 +1,17 @@
+
+func f1(var t[D] : int) -> int
+{
+    D = 10;
+    t[0] = 0;
+    0
+}
+
+func main() -> int
+{
+    var t = [ 1, 2, 3, 4 ] : int;
+
+    f1(t);
+
+    0
+}
+
