@@ -1,0 +1,10 @@
+
+func main() -> int
+{
+    var s = [ x * x | x in [10, 20, 30, 40, 50] : int ] : int;
+
+    s[0] = 10;
+    assert(s[0] == 10);
+
+    0
+}

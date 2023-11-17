@@ -1,0 +1,11 @@
+
+enum Index { Zero, One, Two, Three, Four }
+
+func main() -> int
+{
+    var i = Index::Zero;
+
+    i = 10;
+
+    0
+}

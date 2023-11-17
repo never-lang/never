@@ -1,0 +1,10 @@
+
+
+func main() -> int
+{
+    var t = {[ 2, 2 ]} : let int;
+
+    t[0,0] = 10;
+
+    0
+}

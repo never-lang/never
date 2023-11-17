@@ -3653,6 +3653,10 @@ int expr_listcomp_check_type(symtab * tab, listcomp * listcomp_value,
 
     if (listcomp_value->ret != NULL)
     {
+        if (listcomp_value->ret->const_type == PARAM_CONST_TYPE_DEFAULT)
+        {
+            listcomp_value->ret->const_type = PARAM_CONST_TYPE_VAR;
+        }
         param_check_type(listcomp_value->stab, listcomp_value->ret, syn_level, result);
     }
 

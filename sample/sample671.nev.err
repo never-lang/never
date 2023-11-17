@@ -1,0 +1,2 @@
+:7: error: cannot assign to const int
+:7: error: cannot assign different types int char
