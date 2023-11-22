@@ -670,9 +670,21 @@ match_guard_item: TOK_ID TOK_DOT TOK_ID TOK_DDOT TOK_ID
     $$->line_no = $<line_no>1;
 };
 
+match_guard_record: TOK_ID TOK_DDOT TOK_ID '(' ')'
+{
+    $$ = match_guard_record_new($1, $3, NULL);
+    $$->line_no = $<line_no>1;
+};
+
 match_guard_record: TOK_ID TOK_DDOT TOK_ID '(' matchbind_list ')'
 {
     $$ = match_guard_record_new($1, $3, $5);
+    $$->line_no = $<line_no>1;
+};
+
+match_guard_record: TOK_ID TOK_DOT TOK_ID TOK_DDOT TOK_ID '(' ')'
+{
+    $$ = match_guard_record_new_module($3, $5, $1, NULL);
     $$->line_no = $<line_no>1;
 };
 

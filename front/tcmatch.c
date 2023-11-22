@@ -52,46 +52,14 @@ int symtab_add_matchbind_from_matchbind(symtab * tab, matchbind * matchbind_valu
 int symtab_add_matchbind_from_matchbind_list(symtab * tab, match_guard_record * guard_record,
                                              unsigned int syn_level, int * result)
 {
-    matchbind_list * matchbinds = guard_record->matchbinds;
-    enumtype * enumtype_value = guard_record->enumtype_value;
-    enumerator * enumerator_value = guard_record->enumerator_value;
-
     if (guard_record->stab == NULL)
     {
         guard_record->stab = symtab_new(8, SYMTAB_TYPE_BLOCK, tab);
     }
 
-    if (matchbinds == NULL || enumtype_value == NULL || enumerator_value == NULL)
-    {
-        return 0;
-    }
-
-    if ((enumerator_value->record_value == NULL ||
-         enumerator_value->record_value->params == NULL) && matchbinds->count == 0)
-    {
-        return 0;
-    }
-    else if ((enumerator_value->record_value == NULL ||
-              enumerator_value->record_value->params == NULL) && matchbinds->count > 0)
-    {
-        *result = TYPECHECK_FAIL;
-        print_error_msg(guard_record->line_no, "enum record %s.%s takes no params while guard has %d",
-                        guard_record->enum_id,
-                        guard_record->item_id,
-                        matchbinds->count);
-        return 0;
-    }
-
-    if (enumerator_value->record_value->params->count != matchbinds->count)
-    {
-        *result = TYPECHECK_FAIL;
-        print_error_msg(guard_record->line_no, "enum record %s.%s takes %d params while guard has %d",
-                        guard_record->enum_id,
-                        guard_record->item_id,
-                        enumerator_value->record_value->params->count,
-                        matchbinds->count);
-        return 0;
-    }
+    matchbind_list * matchbinds = guard_record->matchbinds;
+    enumtype * enumtype_value = guard_record->enumtype_value;
+    enumerator * enumerator_value = guard_record->enumerator_value;
 
     matchbind_list_node * matchbind_node = matchbinds->tail;
     param_list_node * param_node = enumerator_value->record_value->params->tail;
@@ -152,7 +120,7 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard_item * guard_item
             else
             {
                 *result = TYPECHECK_FAIL;
-                print_error_msg(guard_item->line_no, "cannot find enum item %s.%s",
+                print_error_msg(guard_item->line_no, "cannot find enum item %s::%s",
                                 guard_item->enum_id, guard_item->item_id);
             }
         }
@@ -206,6 +174,8 @@ int expr_match_guard_record_check_type(symtab * tab, match_guard_record * guard_
             {
                 guard_record->enumtype_value = entry->enumtype_value;
                 guard_record->enumerator_value = enumerator_value;
+
+                expr_match_guard_record_check_type_n(guard_record, result);
             }
             else
             {
@@ -230,7 +200,55 @@ int expr_match_guard_record_check_type(symtab * tab, match_guard_record * guard_
     }
 
     return 0;
-}                                     
+}
+
+int expr_match_guard_record_check_type_n(match_guard_record * guard_record, int * result)
+{
+    matchbind_list * matchbinds = guard_record->matchbinds;
+    enumerator * enumerator_value = guard_record->enumerator_value;
+
+    if ((enumerator_value->record_value == NULL ||
+         enumerator_value->record_value->params == NULL) &&
+        (matchbinds == NULL ||
+         matchbinds->count == 0))
+    {
+        return 0;
+    }
+    else if ((enumerator_value->record_value == NULL ||
+              enumerator_value->record_value->params == NULL) && matchbinds->count > 0)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(guard_record->line_no, "enum record %s::%s takes no params while guard has %d",
+                        guard_record->enum_id,
+                        guard_record->item_id,
+                        matchbinds->count);
+        return 0;
+    }
+
+    if (enumerator_value->record_value->params != NULL &&
+        matchbinds == NULL)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(guard_record->line_no, "enum record %s::%s takes %d params while guard has %d",
+                        guard_record->enum_id,
+                        guard_record->item_id,
+                        enumerator_value->record_value->params->count, 0);
+        return 0;
+    }
+
+    if (enumerator_value->record_value->params->count != matchbinds->count)
+    {
+        *result = TYPECHECK_FAIL;
+        print_error_msg(guard_record->line_no, "enum record %s::%s takes %d params while guard has %d",
+                        guard_record->enum_id,
+                        guard_record->item_id,
+                        enumerator_value->record_value->params->count,
+                        matchbinds->count);
+        return 0;
+    }
+
+    return 0;
+}
 
 int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
                                 func * func_value, unsigned int syn_level,
@@ -386,7 +404,7 @@ int expr_match_guard_mark_item(match_guard * match_value)
                 if (enumerator_value->mark == 1)
                 {
                     print_warning_msg(match_value->line_no,
-                                      "repeated enum name %s.%s in match expression",
+                                      "repeated enum name %s::%s in match expression",
                                       match_value->guard_item.guard->enum_id,
                                       match_value->guard_item.guard->item_id);
                 }
@@ -474,7 +492,7 @@ int expr_match_guard_are_all_mark_items(expr * value, int * result)
                 if (enumerator_value != NULL && enumerator_value->mark == 0)
                 {
                     print_error_msg(value->line_no,
-                                    "match expression does not cover %s.%s enum",
+                                    "match expression does not cover %s::%s enum",
                                     enum_value->id, enumerator_value->id);
                     *result = TYPECHECK_FAIL;
                 }
@@ -581,7 +599,7 @@ int expr_match_check_type(symtab * tab, expr * value, func * func_value,
 
     /* initially expression type is of check expression */
     value->comb = value->match.expr_value->comb;
-    
+
     if (value->match.match_guards != NULL)
     {
         expr_match_guard_list_check_type(tab, value->match.match_guards, func_value, syn_level, result);
@@ -596,6 +614,7 @@ int expr_match_check_type(symtab * tab, expr * value, func * func_value,
         expr_match_guard_list_right_cmp(value, value->match.match_guards, result);
     }
 
+    value->comb.comb_const = COMB_CONST_TYPE_TEMP;
     if (*result == TYPECHECK_FAIL)
     {
         value->comb.comb = COMB_TYPE_ERR;

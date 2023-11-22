@@ -1,0 +1,16 @@
+
+enum Result { Ok { value : int; }, Err { msg : string; }, Wsg }
+
+func main() -> int
+{
+    let r = Result::Ok(12);
+
+    match (r)
+    {
+        Result::Ok(value) -> print(value);
+        Result::Err(msg) -> { prints(msg); 0 };
+        Result::Wsg -> print(r);
+    } = 12;
+
+    0
+}
