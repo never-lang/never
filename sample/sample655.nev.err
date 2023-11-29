@@ -1,0 +1,2 @@
+:4: error: passing const expression to variable param at line 2
+:2: error: incorrect return type in function f1

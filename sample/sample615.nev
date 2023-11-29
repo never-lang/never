@@ -13,7 +13,7 @@ func getR(i : int) -> R
 func main() -> int
 {
     var i = 20;
-    var r = getR(i);
+    let r = getR(i);
 
     func processR(r : R) -> int
     {

@@ -1,0 +1,14 @@
+
+
+func main() -> int
+{
+    var a = 10;
+    let b = 100;
+
+    a = b;
+    a = 1000;
+
+    prints("a = " + a + "\n");
+
+    0
+}

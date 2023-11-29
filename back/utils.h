@@ -25,8 +25,10 @@
 const char * get_utils_file_name();
 void set_utils_file_name(const char * file_name);
 
-void print_error_msg(int line_no, const char * format, ...);
+void set_msg_buffer(unsigned int * msg_count, unsigned int * msg_array_size, char *** msg_array);
+void print_msg_buffer(unsigned int msg_count, char ** msg_array);
 
+void print_error_msg(int line_no, const char * format, ...);
 void print_warning_msg(int line_no, const char * format, ...);
 
 #endif /* __UTILS_H__ */

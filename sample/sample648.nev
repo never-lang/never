@@ -1,0 +1,24 @@
+enum Optional { Some { value : int; }, None }
+
+func main() -> int
+{
+    var a = 1000;
+    var o1 = Optional::Some(a);
+    let o2 = Optional::Some(a);
+
+    a = 1;
+
+    match o1
+    {
+        Optional::Some(value) -> value = 900;
+        Optional::None -> 0;
+    };
+
+    match o1
+    {
+        Optional::Some(value) -> prints(value + "\n");
+        Optional::None -> prints("None");
+    };
+
+    0
+}

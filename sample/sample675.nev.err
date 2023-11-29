@@ -1,0 +1,2 @@
+:10: warning: expression on assignment left side is not an identifier but do while
+:10: error: cannot assign to const int

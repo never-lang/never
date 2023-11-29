@@ -41,6 +41,7 @@ int expr_match_guard_item_check_type(symtab * tab, match_guard_item * guard_item
                                      int * result);
 int expr_match_guard_record_check_type(symtab * tab, match_guard_record * guard_item,
                                        int * result);
+int expr_match_guard_record_check_type_n(match_guard_record * guard_item, int * result);
 int expr_match_guard_check_type(symtab * tab, match_guard * match_value,
                                 func * func_value, unsigned int syn_level, int * result);
 int expr_match_guard_list_check_type(symtab * tab, match_guard_list * list,

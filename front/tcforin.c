@@ -38,7 +38,6 @@ int symtab_add_param_from_forin(symtab * tab, forin * value,
             expr_set_comb_type(value->iter, value->in_value->comb.array.comb_ret);
 
             value->iter->comb.comb_const = value->in_value->comb.comb_const;
-            value->iter->comb.comb_lr = COMB_LR_TYPE_LEFT;
 
             symtab_add_forin(tab, value, syn_level);
         break;

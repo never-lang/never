@@ -29,6 +29,9 @@ typedef struct program
     object * params;
     unsigned int params_count;
     unsigned int entry_addr;
+    unsigned int msg_count;
+    unsigned int msg_array_size;
+    char ** msg_array;
     struct module * module_value;
 } program;
 

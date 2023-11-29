@@ -1,0 +1,12 @@
+
+func main() -> int
+{
+    let f1 = let func() -> int { 1000 };
+    var f2 = let func() -> int { 2000 };
+
+    f2 = f1;
+    assert(f2() == 1000);
+    assert(f1() == 1000);
+
+    0
+}

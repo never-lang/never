@@ -1,0 +1,23 @@
+
+record R
+{
+    var a : int;
+    var b : int;
+}
+
+func main() -> int
+{
+    var a = R(10, 20);
+    let b = R(100, 200);
+
+    a = b;
+
+    b.a = 1000;
+    b.b = 2000;
+
+    prints("a.a = " + a.a + " a.b = " + a.b +  "\n");
+    assert(a.a == 1000);
+    assert(a.b == 2000);
+
+    0
+}

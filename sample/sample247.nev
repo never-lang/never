@@ -10,10 +10,10 @@ func print_str(hw[L] : float) -> int
 func reverse(hw[L] : float) -> [_] : float
 {
     var rev = {[ L ]} : float;
-    
+
     func __reverse(hw[L1] : float, var rev[L2] : float, i : int) -> int
     {
-        i < L1 ? { rev[L2 - i - 1] = hw[i]; __reverse(hw, rev, i + 1) } : 0 
+        i < L1 ? { rev[L2 - i - 1] = hw[i]; __reverse(hw, rev, i + 1) } : 0
     };
     __reverse(hw, rev, 0);
 
@@ -22,7 +22,7 @@ func reverse(hw[L] : float) -> [_] : float
 
 func main() -> int
 {
-    var hw = [ 72.0, 101.0, 108.0, 18.0 ] : float;
+    let hw = [ 72.0, 101.0, 108.0, 18.0 ] : float;
     
     print_str(hw);
     print_str(reverse(hw))

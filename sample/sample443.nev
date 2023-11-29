@@ -11,7 +11,7 @@ func main() -> int
 {
     let f = 10;
     let t = 30;
-    let r1 = [ 10 .. 30 ];
+    var r1 = [ 10 .. 30 ];
     var r2 = [ f .. t ];
 
     print_range( r1 );

@@ -11,10 +11,10 @@ extern "libm.so.6" func atanf(x : float) -> float
 
 func main() -> int
 {
-    var v1 = sinhf(1.0);
-    var v2 = coshf(1.0);
-    var v3 = powf(10.0, 2.0);
-    var pi = 4.0 * atanf(1.0);
+    let v1 = sinhf(1.0);
+    let v2 = coshf(1.0);
+    let v3 = powf(10.0, 2.0);
+    let pi = 4.0 * atanf(1.0);
 
     printf(v1);
     printf(v2);

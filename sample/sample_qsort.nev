@@ -74,7 +74,7 @@ func qsort_rec(var tab[D] : int,
 
 func qsort(var tab[D] : int) -> int
 {
-    var rand = randomize(6);
+    let rand = randomize(6);
 
     qsort_rec(tab, 0, D, rand)
 }

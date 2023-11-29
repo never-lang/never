@@ -2,8 +2,8 @@
 
 func main() -> int
 {
-    var system = let extern "libc.so.6" func system(cmd : string) -> float;
-    var v = system("uname -a");
+    let system = let extern "libc.so.6" func system(cmd : string) -> float;
+    let v = system("uname -a");
 
     0
 }

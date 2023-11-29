@@ -1,0 +1,19 @@
+
+enum Result { Ok { value : int; }, Err { msg : string; }, Wsg }
+
+func main() -> int
+{
+    let r = Result::Ok(12);
+
+    if let (Result::Ok(value) = r)
+    {
+        print(r)
+    }
+    else
+    {
+        assert(false);
+        0
+    } = 12;
+
+    0
+}

@@ -1,0 +1,4 @@
+:11: error: passing const expression to variable param a at line 2
+:11: error: function call type mismatch
+:11: error: cannot assign to temp error
+:11: error: cannot assign different types error int

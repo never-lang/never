@@ -16,6 +16,6 @@ func gf(v : int) -> (int) -> int
 
 func main() -> bool
 {
-    var f = gf(87);
+    let f = gf(87);
     assert(f(0) == 88)
 }

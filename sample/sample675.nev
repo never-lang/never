@@ -1,0 +1,14 @@
+
+func main() -> int
+{
+    var i = 1;
+    var s = 0;
+
+    do {
+        s = s + i;
+        i = i + 1
+    } while (i <= 10) = 55;
+    print(s);
+
+    0
+}

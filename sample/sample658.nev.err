@@ -1,0 +1,2 @@
+:12: error: passing const expression to variable param t at line 2
+:12: error: function call type mismatch

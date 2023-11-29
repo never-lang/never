@@ -1,0 +1,40 @@
+
+func test1() -> int
+{
+    var a = [ 1, 2, 3, 4 ] : int;
+    var b = [ 10, 20, 30, 40 ] : int;
+
+    a[0] = 1;
+    a[1] = 2;
+    a[2] = 3;
+    a[3] = 4;
+
+    a = b;
+    /* b[0] = 2200; */
+    b = [ 1000, 2000, 3000 ] : int;
+
+    prints("a[0] = " + a[0] + "\n");
+
+    0
+}
+
+func test2() -> int
+{
+    var c = 10;
+    var d = [ c ] : int;
+
+    d[0] = 300;
+
+    prints("c = " + c + "\n");
+
+    0
+}
+
+func main() -> int
+{
+    test1();
+    test2();
+
+    0
+}
+

@@ -1,0 +1,12 @@
+
+func f1( [ from .. to ] : range) -> int
+{
+    0
+}
+
+func main() -> int
+{
+    f1( [ 10 .. 200] );
+    0
+}
+

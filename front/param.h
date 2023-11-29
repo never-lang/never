@@ -55,9 +55,9 @@ typedef enum param_type
 
 typedef enum param_const_type
 {
-    PARAM_CONST_TYPE_UNKNOWN = 0,
+    PARAM_CONST_TYPE_DEFAULT,
     PARAM_CONST_TYPE_CONST,
-    PARAM_CONST_TYPE_VAR
+    PARAM_CONST_TYPE_VAR,
 } param_const_type;
 
 typedef struct param

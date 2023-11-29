@@ -1,0 +1,22 @@
+
+record R
+{
+    a : int;
+    b : int;
+}
+
+func f1(var r : R) -> var int
+{
+    r.a
+}
+
+func main() -> int
+{
+    var r1 = R(10, 20);
+
+    f1(r1) = 100;
+
+    prints("r.a = " + r1.a + " r.b = " + r1.b +  "\n");
+
+    0
+}
