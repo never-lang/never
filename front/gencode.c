@@ -73,235 +73,289 @@ int expr_enumtype_check_call(func * func_value, symtab * stab, expr * value, int
 /**
  * free variables
  */
+int expr_id_func_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result)
+{
+    func * sup_func_value = entry->func_value;
+    if (sup_func_value == NULL)
+    {
+        return 0;
+    }
+
+    if (entry->syn_level == 0)
+    {
+        value->id.id_type_value = ID_TYPE_FUNC_TOP;
+        value->id.id_func_value = sup_func_value;
+    }
+    else if (syn_level - 1 == entry->syn_level &&
+             func_value == sup_func_value) /* recursive call */
+    {
+        value->id.id_type_value = ID_TYPE_FUNC_NEST;
+        value->id.id_func_value = sup_func_value;
+    }
+    else if (syn_level == entry->syn_level)
+    {
+        value->id.id_type_value = ID_TYPE_FUNC;
+        value->id.id_func_value = sup_func_value;
+    }
+    else
+    {
+        freevar * freevar_value = NULL;
+        if (func_value->freevars == NULL)
+        {
+            func_value->freevars = freevar_list_new();
+        }
+
+        freevar_value =
+            freevar_list_add(func_value->freevars, value->id.id);
+
+        freevar_value->orig.type = FREEVAR_FUNC;
+        freevar_value->orig.func_value = sup_func_value;
+
+        value->id.id_type_value = ID_TYPE_GLOBAL;
+        value->id.id_freevar_value = freevar_value;
+    }
+
+    return 0;
+}
+
+int expr_id_param_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result)
+{
+    param * param_value = entry->param_value;
+    if (param_value == NULL)
+    {
+        return 0;
+    }
+
+    if (param_value->type == PARAM_BOOL ||
+        param_value->type == PARAM_INT ||
+        param_value->type == PARAM_LONG ||
+        param_value->type == PARAM_FLOAT ||
+        param_value->type == PARAM_DOUBLE ||
+        param_value->type == PARAM_CHAR ||
+        param_value->type == PARAM_STRING ||
+        param_value->type == PARAM_C_PTR ||
+        param_value->type == PARAM_ENUMTYPE ||
+        param_value->type == PARAM_DIM ||
+        param_value->type == PARAM_ARRAY ||
+        param_value->type == PARAM_TOUPLE ||
+        param_value->type == PARAM_RANGE ||
+        param_value->type == PARAM_RANGE_DIM ||
+        param_value->type == PARAM_SLICE ||
+        param_value->type == PARAM_SLICE_DIM ||
+        param_value->type == PARAM_RECORD ||
+        param_value->type == PARAM_FUNC)
+    {
+        if (syn_level == entry->syn_level)
+        {
+            value->id.id_type_value = ID_TYPE_LOCAL;
+            value->id.id_param_value = param_value;
+        }
+        else
+        {
+            freevar * freevar_value = NULL;
+            if (func_value->freevars == NULL)
+            {
+                func_value->freevars = freevar_list_new();
+            }
+
+            freevar_value =
+                freevar_list_add(func_value->freevars, value->id.id);
+
+            freevar_value->orig.type = FREEVAR_PARAM;
+            freevar_value->orig.param_value = param_value;
+
+            value->id.id_type_value = ID_TYPE_GLOBAL;
+            value->id.id_freevar_value = freevar_value;
+        }
+    }
+    else
+    {
+        printf("unknown param type %s\n", param_type_str(param_value->type));
+        assert(0);
+    }
+
+    return 0;
+}
+
+int expr_id_bind_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result)
+{
+    bind * bind_value = entry->bind_value;
+    if (bind_value == NULL)
+    {
+        return 0;
+    }
+
+    if (bind_value->type == BIND_LET || bind_value->type == BIND_VAR)
+    {
+        if (entry->syn_level == 0)
+        {
+            value->id.id_type_value = ID_TYPE_BIND_TOP;
+            value->id.id_bind_value = bind_value;
+        }
+        else if (syn_level == entry->syn_level)
+        {
+            value->id.id_type_value = ID_TYPE_BIND;
+            value->id.id_bind_value = bind_value;
+        }
+        else
+        {
+            freevar * freevar_value = NULL;
+            if (func_value->freevars == NULL)
+            {
+                func_value->freevars = freevar_list_new();
+            }
+            
+            freevar_value =
+                freevar_list_add(func_value->freevars, value->id.id);
+
+            freevar_value->orig.type = FREEVAR_BIND;
+            freevar_value->orig.bind_value = bind_value;
+            
+            value->id.id_type_value = ID_TYPE_GLOBAL;
+            value->id.id_freevar_value = freevar_value;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "unknown bind type %d\n", bind_value->type);
+        assert(0);
+    }
+
+    return 0;
+}
+
+int expr_id_matchbind_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result)
+{
+    matchbind * matchbind_value = entry->matchbind_value;
+    if (matchbind_value == NULL)
+    {
+        return 0;
+    }
+    if (syn_level == entry->syn_level)
+    {
+        value->id.id_type_value = ID_TYPE_MATCHBIND;
+        value->id.id_matchbind_value = matchbind_value;
+    }
+    else
+    {
+        freevar * freevar_value = NULL;
+        if (func_value->freevars == NULL)
+        {
+            func_value->freevars = freevar_list_new();
+        }
+        
+        freevar_value =
+            freevar_list_add(func_value->freevars, value->id.id);
+
+        freevar_value->orig.type = FREEVAR_MATCHBIND;
+        freevar_value->orig.matchbind_value = matchbind_value;
+        
+        value->id.id_type_value = ID_TYPE_GLOBAL;
+        value->id.id_freevar_value = freevar_value;
+    }
+
+    return 0;
+}
+
+int expr_id_qualifier_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result)
+{
+    qualifier * qualifier_value = entry->qualifier_value;
+    if (qualifier_value == NULL)
+    {
+        return 0;
+    }
+
+    if (syn_level == entry->syn_level)
+    {
+        value->id.id_type_value = ID_TYPE_QUALIFIER;
+        value->id.id_qualifier_value = qualifier_value;
+    }
+    else
+    {
+        freevar * freevar_value = NULL;
+        if (func_value->freevars == NULL)
+        {
+            func_value->freevars = freevar_list_new();
+        }
+        
+        freevar_value =
+            freevar_list_add(func_value->freevars, value->id.id);
+
+        freevar_value->orig.type = FREEVAR_QUALIFIER;
+        freevar_value->orig.qualifier_value = qualifier_value;
+        
+        value->id.id_type_value = ID_TYPE_GLOBAL;
+        value->id.id_freevar_value = freevar_value;
+    }
+
+    return 0;
+}
+
+int expr_id_forin_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result)
+{
+    forin * forin_value = entry->forin_value;
+    if (forin_value == NULL)
+    {
+        return 0;
+    }
+
+    if (syn_level == entry->syn_level)
+    {
+        value->id.id_type_value = ID_TYPE_FORIN;
+        value->id.id_forin_value = forin_value;
+    }
+    else
+    {
+        freevar * freevar_value = NULL;
+        if (func_value->freevars == NULL)
+        {
+            func_value->freevars = freevar_list_new();
+        }
+
+        freevar_value =
+            freevar_list_add(func_value->freevars, value->id.id);
+
+        freevar_value->orig.type = FREEVAR_FORIN;
+        freevar_value->orig.forin_value = forin_value;
+
+        value->id.id_type_value = ID_TYPE_GLOBAL;
+        value->id.id_freevar_value = freevar_value;
+    }
+
+    return 0;
+}
+
 int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * stab,
                     expr * value, int * result)
 {
-    symtab_entry * entry = NULL;
-
-    entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
+    symtab_entry * entry = symtab_lookup(stab, value->id.id, SYMTAB_LOOKUP_GLOBAL);
     if (entry != NULL)
     {
         switch (entry->type)
         {
         case SYMTAB_FUNC:
-            if (entry->func_value != NULL)
-            {
-                func * sup_func_value = entry->func_value;
-                if (sup_func_value)
-                {
-                    if (entry->syn_level == 0)
-                    {
-                        value->id.id_type_value = ID_TYPE_FUNC_TOP;
-                        value->id.id_func_value = sup_func_value;
-                    }
-                    else if (syn_level - 1 == entry->syn_level &&
-                            func_value == sup_func_value) /* recursive call */
-                    {
-                        value->id.id_type_value = ID_TYPE_FUNC_NEST;
-                        value->id.id_func_value = sup_func_value;
-                    }
-                    else if (syn_level == entry->syn_level)
-                    {
-                        value->id.id_type_value = ID_TYPE_FUNC;
-                        value->id.id_func_value = sup_func_value;
-                    }
-                    else
-                    {
-                        freevar * freevar_value = NULL;
-                        if (func_value->freevars == NULL)
-                        {
-                            func_value->freevars = freevar_list_new();
-                        }
-
-                        freevar_value =
-                            freevar_list_add(func_value->freevars, value->id.id);
-
-                        freevar_value->orig.type = FREEVAR_FUNC;
-                        freevar_value->orig.func_value = sup_func_value;
-
-                        value->id.id_type_value = ID_TYPE_GLOBAL;
-                        value->id.id_freevar_value = freevar_value;
-                    }
-                }
-            }
+            expr_id_func_gencode(syn_level, func_value, entry, value, result);
         break;
         case SYMTAB_PARAM:
-            if (entry->param_value != NULL)
-            {
-                param * param_value = entry->param_value;
-                if (param_value->type == PARAM_BOOL ||
-                    param_value->type == PARAM_INT ||
-                    param_value->type == PARAM_LONG ||
-                    param_value->type == PARAM_FLOAT ||
-                    param_value->type == PARAM_DOUBLE ||
-                    param_value->type == PARAM_CHAR ||
-                    param_value->type == PARAM_STRING ||
-                    param_value->type == PARAM_C_PTR ||
-                    param_value->type == PARAM_ENUMTYPE ||
-                    param_value->type == PARAM_DIM ||
-                    param_value->type == PARAM_ARRAY ||
-                    param_value->type == PARAM_TOUPLE ||
-                    param_value->type == PARAM_RANGE ||
-                    param_value->type == PARAM_RANGE_DIM ||
-                    param_value->type == PARAM_SLICE ||
-                    param_value->type == PARAM_SLICE_DIM ||
-                    param_value->type == PARAM_RECORD ||
-                    param_value->type == PARAM_FUNC)
-                {
-                    if (syn_level == entry->syn_level)
-                    {
-                        value->id.id_type_value = ID_TYPE_LOCAL;
-                        value->id.id_param_value = param_value;
-                    }
-                    else
-                    {
-                        freevar * freevar_value = NULL;
-                        if (func_value->freevars == NULL)
-                        {
-                            func_value->freevars = freevar_list_new();
-                        }
-
-                        freevar_value =
-                            freevar_list_add(func_value->freevars, value->id.id);
-
-                        freevar_value->orig.type = FREEVAR_PARAM;
-                        freevar_value->orig.param_value = param_value;
-
-                        value->id.id_type_value = ID_TYPE_GLOBAL;
-                        value->id.id_freevar_value = freevar_value;
-                    }
-                }
-                else
-                {
-                    printf("unknown param type %s\n", param_type_str(param_value->type));
-                    assert(0);
-                }
-            }
+            expr_id_param_gencode(syn_level, func_value, entry, value, result);
         break;
         case SYMTAB_BIND:
-            if (entry->bind_value != NULL)
-            {
-                bind * bind_value = entry->bind_value;
-                if (bind_value->type == BIND_LET || bind_value->type == BIND_VAR)
-                {
-                    if (entry->syn_level == 0)
-                    {
-                        value->id.id_type_value = ID_TYPE_BIND_TOP;
-                        value->id.id_bind_value = bind_value;
-                    }
-                    else if (syn_level == entry->syn_level)
-                    {
-                        value->id.id_type_value = ID_TYPE_BIND;
-                        value->id.id_bind_value = bind_value;
-                    }
-                    else
-                    {
-                        freevar * freevar_value = NULL;
-                        if (func_value->freevars == NULL)
-                        {
-                            func_value->freevars = freevar_list_new();
-                        }
-                        
-                        freevar_value =
-                            freevar_list_add(func_value->freevars, value->id.id);
-
-                        freevar_value->orig.type = FREEVAR_BIND;
-                        freevar_value->orig.bind_value = bind_value;
-                        
-                        value->id.id_type_value = ID_TYPE_GLOBAL;
-                        value->id.id_freevar_value = freevar_value;
-                    }
-                }
-                else
-                {
-                    fprintf(stderr, "unknown bind type %d\n", bind_value->type);
-                    assert(0);
-                }            
-            }
+            expr_id_bind_gencode(syn_level, func_value, entry, value, result);
         break;
         case SYMTAB_MATCHBIND:
-            if (entry->matchbind_value != NULL)
-            {
-                matchbind * matchbind_value = entry->matchbind_value;
-                if (syn_level == entry->syn_level)
-                {
-                    value->id.id_type_value = ID_TYPE_MATCHBIND;
-                    value->id.id_matchbind_value = matchbind_value;
-                }
-                else
-                {
-                    freevar * freevar_value = NULL;
-                    if (func_value->freevars == NULL)
-                    {
-                        func_value->freevars = freevar_list_new();
-                    }
-                    
-                    freevar_value =
-                        freevar_list_add(func_value->freevars, value->id.id);
-
-                    freevar_value->orig.type = FREEVAR_MATCHBIND;
-                    freevar_value->orig.matchbind_value = matchbind_value;
-                    
-                    value->id.id_type_value = ID_TYPE_GLOBAL;
-                    value->id.id_freevar_value = freevar_value;
-                }
-            }
+            expr_id_matchbind_gencode(syn_level, func_value, entry, value, result);
         break;
         case SYMTAB_QUALIFIER:
-            if (entry->qualifier_value != NULL)
-            {
-                qualifier * qualifier_value = entry->qualifier_value;
-                if (syn_level == entry->syn_level)
-                {
-                    value->id.id_type_value = ID_TYPE_QUALIFIER;
-                    value->id.id_qualifier_value = qualifier_value;
-                }
-                else
-                {
-                    freevar * freevar_value = NULL;
-                    if (func_value->freevars == NULL)
-                    {
-                        func_value->freevars = freevar_list_new();
-                    }
-                    
-                    freevar_value =
-                        freevar_list_add(func_value->freevars, value->id.id);
-
-                    freevar_value->orig.type = FREEVAR_QUALIFIER;
-                    freevar_value->orig.qualifier_value = qualifier_value;
-                    
-                    value->id.id_type_value = ID_TYPE_GLOBAL;
-                    value->id.id_freevar_value = freevar_value;
-                }
-            }
+            expr_id_qualifier_gencode(syn_level, func_value, entry, value, result);
         break;
         case SYMTAB_FORIN:
-            if (entry->forin_value != NULL)
-            {
-                forin * forin_value = entry->forin_value;
-                if (syn_level == entry->syn_level)
-                {
-                    value->id.id_type_value = ID_TYPE_FORIN;
-                    value->id.id_forin_value = forin_value;
-                }
-                else
-                {
-                    freevar * freevar_value = NULL;
-                    if (func_value->freevars == NULL)
-                    {
-                        func_value->freevars = freevar_list_new();
-                    }
-
-                    freevar_value =
-                        freevar_list_add(func_value->freevars, value->id.id);
-
-                    freevar_value->orig.type = FREEVAR_FORIN;
-                    freevar_value->orig.forin_value = forin_value;
-
-                    value->id.id_type_value = ID_TYPE_GLOBAL;
-                    value->id.id_freevar_value = freevar_value;
-                }
-            }
+            expr_id_forin_gencode(syn_level, func_value, entry, value, result);
         break;
         case SYMTAB_RECORD:
             if (entry->record_value != NULL)

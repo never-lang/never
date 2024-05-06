@@ -153,7 +153,6 @@ param * param_new_dim(char * id)
     value->index = -1;
     value->id = id;
     value->array_dim.array = NULL;
-    /* TODO: check value->ret = NULL; */
     value->line_no = 0;
 
     return value;

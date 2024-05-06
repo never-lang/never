@@ -106,13 +106,13 @@ int array_to_depth_list(expr * value, expr_list_weak * bfs_list)
     expr_list_weak_node * node = bfs_list->head;
     while (node != NULL)
     {
-        expr * value = node->value;
+        expr * node_value = node->value;
 
-        if (value->type == EXPR_ARRAY &&
-            value->array.array_value->type == ARRAY_SUB &&
-            value->array.array_value->elements != NULL)
+        if (node_value->type == EXPR_ARRAY &&
+            node_value->array.array_value->type == ARRAY_SUB &&
+            node_value->array.array_value->elements != NULL)
         {
-            elements_to_depth_list(value->array.array_value->elements,
+            elements_to_depth_list(node_value->array.array_value->elements,
                                    bfs_list, node->distance + 1);
         }
 

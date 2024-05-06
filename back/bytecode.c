@@ -1481,13 +1481,13 @@ void bytecode_func_addr(bytecode_list * code)
     bytecode_list_node * node = code->tail;
     while (node != NULL)
     {
-        bytecode * code = &node->value;
-        if (code != NULL)
+        bytecode * code_value = &node->value;
+        if (code_value != NULL)
         {
-            if (code->type == BYTECODE_ID_FUNC_FUNC)
+            if (code_value->type == BYTECODE_ID_FUNC_FUNC)
             {
-                code->type = BYTECODE_ID_FUNC_ADDR;
-                code->id_func.func_addr = code->id_func.func_value->addr;
+                code_value->type = BYTECODE_ID_FUNC_ADDR;
+                code_value->id_func.func_addr = code_value->id_func.func_value->addr;
             }
         }
         node = node->next;
@@ -1507,10 +1507,10 @@ void bytecode_list_print(bytecode_list * code)
 
     while (node != NULL)
     {
-        bytecode * code = &node->value;
-        if (code != NULL)
+        bytecode * code_value = &node->value;
+        if (code_value != NULL)
         {
-            bytecode_print(code);
+            bytecode_print(code_value);
         }
         node = node->next;
     }

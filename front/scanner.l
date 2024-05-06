@@ -623,10 +623,11 @@ double {
 }
 
 <C_STRING>\\[0-7]{1,3} {
+    int items;
     int result;
     
-    sscanf(yytext + 1, "%o", &result);
-    if (result > 0xff)
+    items = sscanf(yytext + 1, "%o", &result);
+    if (items > 3 || result > 0xff)
     {
         print_error_msg(line_no, "constant out of range");
         

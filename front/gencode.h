@@ -37,6 +37,24 @@ typedef struct match_guard_list match_guard_list;
 
 int expr_enumtype_check_call(func * func_value, symtab * stab, expr * value, int * result);
 
+int expr_id_func_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result);
+
+int expr_id_param_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result);
+
+int expr_id_bind_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result);
+
+int expr_id_matchbind_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result);
+
+int expr_id_qualifier_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result);
+
+int expr_id_forin_gencode(unsigned int syn_level, func * func_value,
+    symtab_entry * entry, expr * value, int * result);
+
 int expr_id_gencode(unsigned int syn_level, func * func_value, symtab * tab,
                     expr * value, int * result);
 

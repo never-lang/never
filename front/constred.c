@@ -2013,11 +2013,6 @@ int except_list_constred(except_list * list, int * result)
     return 0;
 }
 
-int func_constred_ffi(func * value, int * result)
-{
-    return 0;
-}
-
 int func_constred_native(func * value, int * result)
 {
     if (value->body != NULL && value->body->exprs != NULL)
@@ -2047,7 +2042,6 @@ int func_constred(func * value, int * result)
             func_constred_native(value, result);
         break;
         case FUNC_TYPE_FFI:
-            func_constred_ffi(value, result);
         break;
     }
     

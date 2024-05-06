@@ -266,8 +266,6 @@ int func_freevar_emit(freevar * value, int stack_level, module * module_value,
         bc.id_local.stack_level = stack_level;
         bc.id_local.index = value->src.func_value->index;
 
-        /* TODO: remove printf("freevar_func %s %d %d\n", value->src.func_value->decl->id, stack_level, value->src.func_value->index); */
-
         bytecode_add(module_value->code, &bc);
         break;
     }
@@ -380,8 +378,6 @@ int expr_id_bind_emit(expr * value, int stack_level, module * module_value,
     bc.id_local.stack_level = stack_level;
     bc.id_local.index = value->id.id_bind_value->index;
     bytecode_add(module_value->code, &bc);
-
-    /* printf("id %s sl %d index %d\n", value->id.id, stack_level, value->id.id_bind_value->index); */
 
     return 0;
 }
@@ -2858,7 +2854,7 @@ int expr_match_guard_list_emit(match_guard_list * list, int stack_level,
     labelA = bytecode_add(module_value->code, &bc);
     condA->jump.offset = labelA->addr - condA->addr;
 
-    match_guard_list_node * node = node = list->tail;
+    match_guard_list_node * node = list->tail;
     while (node != NULL)
     {
         match_guard * match_value = node->value;
@@ -3428,6 +3424,9 @@ int seq_list_emit(seq_list * list, int * stack_level, module * module_value,
         }
         switch (value->type)
         {
+            case SEQ_TYPE_UNKNOWN:
+                assert(0);
+            break;
             case SEQ_TYPE_EXPR:
             {
                 expr_emit(value->expr_value, *stack_level, module_value, list_weak, result);
@@ -3490,8 +3489,6 @@ int seq_list_emit(seq_list * list, int * stack_level, module * module_value,
                 pop_prev = 0;
             }
             break;
-            default:
-                assert(0);
         }
     }
 
@@ -5147,11 +5144,10 @@ int func_entry_emit(
 
     bc.type = BYTECODE_LABEL;
     labelE = bytecode_add(module_value->code, &bc);
-    
+
     bc.type = BYTECODE_UNHANDLED_EXCEPTION;
     bytecode_add(module_value->code, &bc);
-    
-    /* exception_tab_insert(module_value->exctab_value, labelA->addr, labelE->addr); */
+
     exception_tab_insert(module_value->exctab_value, 0, labelE->addr);
 
     return 0;

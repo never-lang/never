@@ -1140,9 +1140,9 @@ int param_list_expr_expr_list_cmp(param_list * params, expr * expr_value, expr_l
     while (param_node != NULL && expr_node != NULL)
     {
         param_value = param_node->value;
-        expr * expr_value = expr_node->value;
+        expr * expr_node_value = expr_node->value;
 
-        if (param_expr_cmp(param_value, expr_value, const_cmp) == TYPECHECK_FAIL)
+        if (param_expr_cmp(param_value, expr_node_value, const_cmp) == TYPECHECK_FAIL)
         {
             return TYPECHECK_FAIL;
         }
@@ -4058,11 +4058,11 @@ int seq_list_check_type(symtab * tab, seq_list * list, func * func_value, unsign
                    node->value != NULL &&
                    node->value->type == SEQ_TYPE_FUNC)
             {
-                func * func_value = node->value->func_value;
-                if (func_value)
+                func * func_node_value = node->value->func_value;
+                if (func_node_value)
                 {
-                    symtab_add_func_from_func(tab, func_value, syn_level, result);
-                    func_decl_check_type(tab, func_value, syn_level + 1, result);
+                    symtab_add_func_from_func(tab, func_node_value, syn_level, result);
+                    func_decl_check_type(tab, func_node_value, syn_level + 1, result);
                 }
                 node = node->next;
             }
@@ -4927,10 +4927,6 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
         never_add_decl_list(nev->stab, nev->decls, result);
     }
 
-    if (nev->exprs != NULL)
-    {
-        /* symtab_add_func_from_seq_list(nev->stab, nev->exprs, syn_level, result); */
-    }
     if (nev->uses != NULL)
     {
         never_add_use_list(module_modules, module_stdlib, nev->stab, nev->uses, result);
@@ -4945,7 +4941,6 @@ int never_check_type(module_decl * module_modules, module_decl * module_stdlib, 
 
     if (nev->exprs != NULL)
     {
-        /* symtab_remove_func_from_seq_list(nev->stab, nev->exprs, syn_level, result); */
         seq_list_check_type(nev->stab, nev->exprs, NULL, syn_level, result);
     }
 

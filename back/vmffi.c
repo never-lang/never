@@ -214,12 +214,12 @@ static int vm_execute_func_ffi_record_value(vm * machine, mem_ptr rec_addr, unsi
             {
                 unsigned int rec_offset = 0;
                 mem_ptr rec_ref_addr = gc_get_vec(machine->collector, rec_addr, i);
-                mem_ptr rec_addr = gc_get_vec_ref(machine->collector, rec_ref_addr);
+                mem_ptr rec_vec_addr = gc_get_vec_ref(machine->collector, rec_ref_addr);
 
                 *offset = rec_offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
-                if (rec_addr != nil_ptr)
+                if (rec_vec_addr != nil_ptr)
                 {
-                    ret |= vm_execute_func_ffi_record_value(machine, rec_addr, bc.ffi_record.count, type->elements[i], data, offset);
+                    ret |= vm_execute_func_ffi_record_value(machine, rec_vec_addr, bc.ffi_record.count, type->elements[i], data, offset);
                 }
                 else
                 {
@@ -354,13 +354,13 @@ static mem_ptr vm_execute_func_ffi_record_new(vm * machine, unsigned int count,
             break;
             case BYTECODE_FUNC_FFI_RECORD:
             {
-                unsigned int rec_offset = 0;
-                *offset = rec_offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
+                unsigned int record_offset = 0;
+                *offset = record_offset = vm_execute_func_ffi_align(*offset, type->elements[i]->alignment);
 
                 mem_ptr rec_addr = vm_execute_func_ffi_record_new(machine, bc.ffi_record.count,
                                                                   type->elements[i], data , offset);
 
-                *offset = rec_offset + type->elements[i]->size;
+                *offset = record_offset + type->elements[i]->size;
 
                 gc_set_vec(machine->collector, rec, i, rec_addr);            
             }

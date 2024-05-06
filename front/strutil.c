@@ -25,7 +25,7 @@
 #include <string.h>
 
 #define STRING_BUF_SIZE 32
-#define STRING_CONV_BUF_SIZE 32
+#define STRING_CONV_BUF_SIZE 316
 
 string * string_new()
 {

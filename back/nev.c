@@ -101,7 +101,6 @@ static int nev_compile_prog_modules(const char * input, program * prog, module_d
                 {
                     module_close(prog->module_value);
                 }
-                /* module_print(prog->module_value); */
             }
         }
     }
@@ -192,10 +191,6 @@ int nev_execute(program * prog, vm * machine, object * result)
     {
         machine->ip = prog->module_value->code_entry;
     }
-
-    /*printf("machine->ip %u\n", machine->ip);
-    bytecode_array_print(prog->module_value->code_arr,
-                        prog->module_value->code_size);*/
 
     return vm_execute(machine, prog, result);
 }
