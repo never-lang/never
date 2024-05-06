@@ -46,7 +46,6 @@ int qualifier_list_constred(qualifier_list * list, int * result);
 int listcomp_constred(listcomp * value, int * result);
 int array_constred(array * value, int * result);
 int bind_constred(bind * value, int * result);
-int func_constred_ffi(func * value, int * result);
 int func_constred_native(func * value, int * result);
 int func_constred(func * value, int * result);
 int never_constred(never * nev, int * result);

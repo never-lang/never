@@ -114,10 +114,8 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
     case EXPR_ENUMTYPE:
     case EXPR_NIL:
     case EXPR_C_NULL:
-        /* no tailrec possible */
-        break;
     case EXPR_ID:
-        expr_id_tailrec(syn_level, stab, value, op);
+        /* no tailrec possible */
         break;
     case EXPR_NEG:
         expr_tailrec(syn_level, stab, value->left, TAILREC_OP_SKIP);
@@ -188,7 +186,6 @@ int expr_tailrec(unsigned int syn_level, symtab * stab,
             expr_id_tailrec(syn_level, stab, value->call.func_expr, op))
         {
             value->type = EXPR_LAST_CALL;
-            /* printf("tailrec %s\n", value->call.func_expr->id.id); */
         }
         
         if (value->call.params != NULL)
@@ -499,11 +496,6 @@ int except_list_tailrec(unsigned int syn_level, symtab * stab,
     return 0;
 }
 
-int func_tailrec_ffi(unsigned int syn_level, func * value)
-{
-    return 0;
-}
-
 int func_tailrec_native(unsigned int syn_level, func * value)
 {
     if (value->body != NULL && value->body->exprs != NULL)
@@ -532,7 +524,6 @@ int func_tailrec(unsigned int syn_level, func * value)
             func_tailrec_native(syn_level, value);
         break;
         case FUNC_TYPE_FFI:
-            func_tailrec_ffi(syn_level, value);
         break;
     }
 

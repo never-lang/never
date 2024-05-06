@@ -272,11 +272,11 @@ char * test_types_get_string()
     return "CCC";
 }
 
-test_Point p1 = { 10, 20 };
+test_Point test_Point_p1 = { 10, 20 };
 
 test_Point * test_types_get_ptr()
 {
-    return &p1;
+    return &test_Point_p1;
 }
 
 void test_types_call(int i, long long l, float f, double d, bool b, char c, char * str, test_Point * ptr, test_Types rec)
@@ -357,7 +357,7 @@ test_Types test_types_get_rec()
     ret.b = false;
     ret.c = 'A';
     ret.str = "AAA";
-    ret.ptr = &p1;
+    ret.ptr = &test_Point_p1;
     ret.rec.x = 20;
     ret.rec.y = 30;
     ret.tple.x = 200;
