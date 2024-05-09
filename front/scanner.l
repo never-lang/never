@@ -63,7 +63,6 @@ void scanner_printf(const char * format, ...)
     va_list ap;
 
     va_start(ap, format);
-    /* vprintf(format, ap); */
     va_end(ap);
 }
 
@@ -627,9 +626,9 @@ double {
     int result;
     
     items = sscanf(yytext + 1, "%o", &result);
-    if (items > 3 || result > 0xff)
+    if (items > 1 || result > 0xff)
     {
-        print_error_msg(line_no, "constant out of range");
+        print_error_msg(line_no, "constant out of range %d", result);
         
         if (string_value) { string_delete(string_value); string_value = NULL; }
 
