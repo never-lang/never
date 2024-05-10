@@ -89,6 +89,548 @@ int expr_enumerator_enumred(expr * value, int * result)
     return 0;
 }
 
+int expr_neg_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+
+    if (value->left->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = -(left_value->int_value);
+
+        expr_delete(left_value);
+    }
+
+    return 0;
+}
+
+int expr_add_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value + right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_sub_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value - right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_mul_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value * right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_div_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        if (right_value->int_value == 0)
+        {
+            *result = ENUMRED_FAIL;
+            print_error_msg(value->line_no, "division by zero");
+            return 0;
+        }
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value / right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_mod_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        if (right_value->int_value == 0)
+        {
+            *result = ENUMRED_FAIL;
+            print_error_msg(value->line_no, "division by zero");
+            return 0;
+        }
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value % right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_lt_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value < right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_gt_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value > right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_lte_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value <= right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_gte_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value >= right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_eq_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_BOOL && value->right->type == EXPR_BOOL)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value == right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_neq_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_BOOL && value->right->type == EXPR_BOOL)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value != right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_and_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_BOOL && value->right->type == EXPR_BOOL)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value && right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_or_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_BOOL && value->right->type == EXPR_BOOL)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value || right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_not_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+
+    if (value->left->type == EXPR_BOOL)
+    {
+        expr * left_value = value->left;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = !(left_value->int_value);
+
+        expr_delete(left_value);
+    }
+
+    return 0;
+}
+
+int expr_bin_not_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+
+    if (value->left->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = ~(left_value->int_value);
+
+        expr_delete(left_value);
+    }
+
+    return 0;
+}
+
+int expr_bin_and_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value & right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_bin_or_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value | right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_bin_xor_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value ^ right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_bin_shl_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value << right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_bin_shr_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+        expr * right_value = value->right;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value >> right_value->int_value;
+
+        expr_delete(left_value);
+        expr_delete(right_value);
+    }
+
+    return 0;
+}
+
+int expr_sup_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+
+    if (value->left->type == EXPR_BOOL)
+    {
+        expr * left_value = value->left;
+
+        value->type = EXPR_BOOL;
+        value->comb.comb = COMB_TYPE_BOOL;
+        value->int_value = left_value->int_value;
+
+        expr_delete(left_value);
+    }
+    else if (value->left->type == EXPR_INT)
+    {
+        expr * left_value = value->left;
+
+        value->type = EXPR_INT;
+        value->comb.comb = COMB_TYPE_INT;
+        value->int_value = left_value->int_value;
+
+        expr_delete(left_value);
+    }
+    else if (value->left->type == EXPR_ENUMTYPE)
+    {
+        expr * left_value = value->left;
+
+        value->type = EXPR_ENUMTYPE;
+        value->comb = left_value->comb;
+        value->enumtype = left_value->enumtype;
+
+        free(left_value);
+    }
+
+    return 0;
+}
+
+int expr_cond_enumred(expr * value, int * result)
+{
+    expr_enumred(value->left, result);
+    expr_enumred(value->middle, result);
+    expr_enumred(value->right, result);
+
+    if (value->left->type == EXPR_BOOL)
+    {
+        expr * left_value = value->left;
+        expr * middle_value = value->middle;
+        expr * right_value = value->right;
+
+        if (left_value->int_value != 0)
+        {
+            value->type = EXPR_SUP;
+            value->left = middle_value;
+
+            expr_delete(left_value);
+            expr_delete(right_value);
+
+            expr_enumred(value, result);
+        }
+        else
+        {
+            value->type = EXPR_SUP;
+            value->left = right_value;
+
+            expr_delete(left_value);
+            expr_delete(middle_value);
+
+            expr_enumred(value, result);
+        }
+    }
+
+    return 0;
+}
+
+int expr_conv_enumred(expr * value, int * result)
+{
+    if (value->conv.type == CONV_ENUMTYPE_RECORD_TO_INT)
+    {
+        expr_enumred(value->conv.expr_value, result);
+
+        if (value->conv.expr_value->type == EXPR_INT)
+        {
+            expr * left_value = value->conv.expr_value;
+
+            value->type = EXPR_INT;
+            value->comb.comb = COMB_TYPE_INT;
+            value->int_value = left_value->int_value;
+
+            expr_delete(left_value);
+        }
+    }
+
+    return 0;
+}
+
 int expr_enumred(expr * value, int * result)
 {
     switch (value->type)
@@ -109,450 +651,76 @@ int expr_enumred(expr * value, int * result)
         expr_enumerator_enumred(value, result);
     break;
     case EXPR_NEG:
-        expr_enumred(value->left, result);
-
-        if (value->left->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = -(left_value->int_value);
-
-            expr_delete(left_value);
-        }
+        expr_neg_enumred(value, result);
         break;
     case EXPR_ADD:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value + right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_add_enumred(value, result);
         break;
     case EXPR_SUB:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value - right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_sub_enumred(value, result);
         break;
     case EXPR_MUL:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value * right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_mul_enumred(value, result);
         break;
     case EXPR_DIV:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            if (right_value->int_value == 0)
-            {
-                *result = ENUMRED_FAIL;
-                print_error_msg(value->line_no, "division by zero");
-                return 0;
-            }
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value / right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_div_enumred(value, result);
         break;
     case EXPR_MOD:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            if (right_value->int_value == 0)
-            {
-                *result = ENUMRED_FAIL;
-                print_error_msg(value->line_no, "division by zero");
-                return 0;
-            }
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value % right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_mod_enumred(value, result);
         break;
     case EXPR_LT:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value < right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_lt_enumred(value, result);
         break;
     case EXPR_GT:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value > right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_gt_enumred(value, result);
         break;
     case EXPR_LTE:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value <= right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_lte_enumred(value, result);
         break;
     case EXPR_GTE:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value >= right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_gte_enumred(value, result);
         break;
     case EXPR_EQ:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_BOOL && value->right->type == EXPR_BOOL)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value == right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_eq_enumred(value, result);
         break;
     case EXPR_NEQ:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_BOOL && value->right->type == EXPR_BOOL)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value != right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_neq_enumred(value, result);
         break;
     case EXPR_AND:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_BOOL && value->right->type == EXPR_BOOL)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value && right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_and_enumred(value, result);
         break;
     case EXPR_OR:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_BOOL && value->right->type == EXPR_BOOL)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value || right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_or_enumred(value, result);
         break;
     case EXPR_NOT:
-        expr_enumred(value->left, result);
-
-        if (value->left->type == EXPR_BOOL)
-        {
-            expr * left_value = value->left;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = !(left_value->int_value);
-
-            expr_delete(left_value);
-        }
+        expr_not_enumred(value, result);
         break;
     case EXPR_BIN_NOT:
-        expr_enumred(value->left, result);
-
-        if (value->left->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = ~(left_value->int_value);
-
-            expr_delete(left_value);
-        }
+        expr_bin_not_enumred(value, result);
         break;
     case EXPR_BIN_AND:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value & right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_bin_and_enumred(value, result);
         break;
     case EXPR_BIN_OR:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value | right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_bin_or_enumred(value, result);
         break;
     case EXPR_BIN_XOR:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value ^ right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_bin_xor_enumred(value, result);
         break;
     case EXPR_BIN_SHL:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value << right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_bin_shl_enumred(value, result);
         break;
     case EXPR_BIN_SHR:
-        expr_enumred(value->left, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_INT && value->right->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-            expr * right_value = value->right;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value >> right_value->int_value;
-
-            expr_delete(left_value);
-            expr_delete(right_value);
-        }
+        expr_bin_shr_enumred(value, result);
         break;
     case EXPR_SUP:
-        expr_enumred(value->left, result);
-
-        if (value->left->type == EXPR_BOOL)
-        {
-            expr * left_value = value->left;
-
-            value->type = EXPR_BOOL;
-            value->comb.comb = COMB_TYPE_BOOL;
-            value->int_value = left_value->int_value;
-
-            expr_delete(left_value);
-        }
-        else if (value->left->type == EXPR_INT)
-        {
-            expr * left_value = value->left;
-
-            value->type = EXPR_INT;
-            value->comb.comb = COMB_TYPE_INT;
-            value->int_value = left_value->int_value;
-
-            expr_delete(left_value);
-        }
-        else if (value->left->type == EXPR_ENUMTYPE)
-        {
-            expr * left_value = value->left;
-
-            value->type = EXPR_ENUMTYPE;
-            value->comb = left_value->comb;
-            value->enumtype = left_value->enumtype;
-
-            free(left_value);
-        }
+        expr_sup_enumred(value, result);
         break;
     case EXPR_COND:
-        expr_enumred(value->left, result);
-        expr_enumred(value->middle, result);
-        expr_enumred(value->right, result);
-
-        if (value->left->type == EXPR_BOOL)
-        {
-            expr * left_value = value->left;
-            expr * middle_value = value->middle;
-            expr * right_value = value->right;
-
-            if (left_value->int_value != 0)
-            {
-                value->type = EXPR_SUP;
-                value->left = middle_value;
-
-                expr_delete(left_value);
-                expr_delete(right_value);
-
-                expr_enumred(value, result);
-            }
-            else
-            {
-                value->type = EXPR_SUP;
-                value->left = right_value;
-
-                expr_delete(left_value);
-                expr_delete(middle_value);
-
-                expr_enumred(value, result);
-            }
-        }
+        expr_cond_enumred(value, result);
         break;
     case EXPR_CONV:
-        if (value->conv.type == CONV_ENUMTYPE_RECORD_TO_INT)
-        {
-            expr_enumred(value->conv.expr_value, result);
-
-            if (value->conv.expr_value->type == EXPR_INT)
-            {
-                expr * left_value = value->conv.expr_value;
-
-                value->type = EXPR_INT;
-                value->comb.comb = COMB_TYPE_INT;
-                value->int_value = left_value->int_value;
-
-                expr_delete(left_value);
-            }
-        }
+        expr_conv_enumred(value, result);
         break;
     case EXPR_PIPEL:
     case EXPR_ARRAY:

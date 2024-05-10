@@ -626,10 +626,17 @@ double {
     int result;
     
     items = sscanf(yytext + 1, "%o", &result);
-    if (items > 1 || result > 0xff)
+    if (items != 1)
+    {
+        print_error_msg(line_no, "constant scan constant");
+        if (string_value) { string_delete(string_value); string_value = NULL; }
+
+        yyterminate();
+        return yytext[0];
+    }
+    if (result > 0xff)
     {
         print_error_msg(line_no, "constant out of range %d", result);
-        
         if (string_value) { string_delete(string_value); string_value = NULL; }
 
         yyterminate();
