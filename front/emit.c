@@ -3398,6 +3398,53 @@ int expr_list_emit(expr_list * list, int stack_level, module * module_value,
     return 0;
 }
 
+int seq_func_emit(seq_list_node ** node, int * stack_level,
+                  module * module_value, func_list_weak * list_weak,
+                  int * result)
+{
+    unsigned int count = 0;
+    seq_list_node * func_first_node = *node;
+
+    while ((*node) != NULL &&
+           (*node)->value != NULL &&
+           (*node)->value->type == SEQ_TYPE_FUNC)
+    {
+        func * func_value = (*node)->value->func_value;
+        if (func_value)
+        {
+            func_value->index = *stack_level + count + 1;
+            count++;
+        }
+        *node = (*node)->next;
+    }
+
+    bytecode bc = { 0 };
+    bc.type = BYTECODE_ALLOC;
+    bc.alloc.n = count;
+    bytecode_add(module_value->code, &bc);
+
+    (*node) = func_first_node;
+    *stack_level = *stack_level + count;
+
+    while ((*node) != NULL &&
+           (*node)->value != NULL &&
+           (*node)->value->type == SEQ_TYPE_FUNC)
+    {
+        func * func_value = (*node)->value->func_value;
+        if (func_value)
+        {
+            func_emit(func_value, *stack_level, module_value, list_weak, result);
+
+            bc.type = BYTECODE_REWRITE;
+            bc.rewrite.j = count--;
+            bytecode_add(module_value->code, &bc);
+        }
+        *node = (*node)->next;
+    }
+
+    return 0;
+}
+
 int seq_list_emit(seq_list * list, int * stack_level, module * module_value,
                   func_list_weak * list_weak,  int * result)
 {
@@ -3446,45 +3493,7 @@ int seq_list_emit(seq_list * list, int * stack_level, module * module_value,
             break;
             case SEQ_TYPE_FUNC:
             {
-                bytecode bc = { 0 };
-                unsigned int count = 0;
-                seq_list_node * func_first_node = node;
-
-                while (node != NULL &&
-                       node->value != NULL &&
-                       node->value->type == SEQ_TYPE_FUNC)
-                {
-                    func * func_value = node->value->func_value;
-                    if (func_value)
-                    {
-                        func_value->index = (*stack_level) + count + 1;
-                        count++;
-                    }
-                    node = node->next;
-                }
-
-                bc.type = BYTECODE_ALLOC;
-                bc.alloc.n = count;
-                bytecode_add(module_value->code, &bc);
-
-                node = func_first_node;
-                (*stack_level) = (*stack_level) + count;
-
-                while (node != NULL &&
-                       node->value != NULL &&
-                       node->value->type == SEQ_TYPE_FUNC)
-                {
-                    func * func_value = node->value->func_value;
-                    if (func_value)
-                    {
-                        func_emit(func_value, (*stack_level), module_value, list_weak, result);
-
-                        bc.type = BYTECODE_REWRITE;
-                        bc.rewrite.j = count--;
-                        bytecode_add(module_value->code, &bc);
-                    }
-                    node = node->next;
-                }
+                seq_func_emit(&node, stack_level, module_value, list_weak, result);
 
                 pop_prev = 0;
             }
@@ -3496,7 +3505,7 @@ int seq_list_emit(seq_list * list, int * stack_level, module * module_value,
 }
 
 int seq_emit(seq * value, int stack_level, module * module_value,
-                  func_list_weak * list_weak,  int * result)
+             func_list_weak * list_weak,  int * result)
 {
     if (value->list)
     {
