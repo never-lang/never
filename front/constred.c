@@ -368,7 +368,7 @@ int expr_mul_constred(expr * value, int * result)
 
         value->type = EXPR_LONG;
         value->comb.comb = COMB_TYPE_LONG;
-        value->long_value = left_value->int_value * right_value->int_value;
+        value->long_value = (long long)left_value->int_value * (long long)right_value->int_value;
 
         expr_delete(left_value);
         expr_delete(right_value);
