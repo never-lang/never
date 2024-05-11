@@ -201,6 +201,8 @@ int expr_emit(expr * value, int stack_level, module * module_value,
               func_list_weak * list_weak, int * result);
 int expr_list_emit(expr_list * list, int stack_level, module * module_value,
                    func_list_weak * list_weak, int * result);
+int seq_func_emit(seq_list_node ** node, int * stack_level, module * module_value,
+                  func_list_weak * list_weak, int * result);
 int seq_emit(seq * value, int stack_level, module * module_value,
                   func_list_weak * list_weak,  int * result);
 int seq_list_emit(seq_list * list, int * stack_level, module * module_value,
