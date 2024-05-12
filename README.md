@@ -1,5 +1,4 @@
 # Never - Functional Programming Language
-[![Build Status](https://travis-ci.org/never-lang/never.svg?branch=master)](https://travis-ci.org/never-lang/never)
 [![Version](https://img.shields.io/github/release/never-lang/never.svg)](https://github.com/never-lang/never/releases)
 [![Codecov](https://codecov.io/gh/never-lang/never/branch/master/graph/badge.svg)](https://codecov.io/gh/never-lang/never)
 
